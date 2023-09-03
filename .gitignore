@@ -15,6 +15,7 @@ bin-int
 *.vcxproj
 *.filters
 imgui.ini
+/vendor
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

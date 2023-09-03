@@ -1,31 +1,51 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
-VisualStudioVersion = 17.5.33627.172
-MinimumVisualStudioVersion = 10.0.40219.1
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Purring_Engine", "Purring_Engine\Purring_Engine.vcxproj", "{B4240D38-999E-4572-A51C-44313A7102AD}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Application", "Application\Application.vcxproj", "{D9DE78AF-4594-F1A4-CE88-EB7B3A3DE8A8}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Library", "Library", "{A1975F28-0D58-DB5E-D692-24DC4212203B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GLFW", "vendor\GLFW\GLFW.vcxproj", "{154B857C-0182-860D-AA6E-6C109684020F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Glad", "vendor\Glad\Glad.vcxproj", "{BDD6857C-A90D-870D-52FA-6C103E10030F}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ImGui", "vendor\imgui\ImGui.vcxproj", "{C0FF640D-2C14-8DBE-F595-301E616989EF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Purring_Engine", "Purring_Engine\Purring_Engine.vcxproj", "{61AAAB04-4D78-9F0A-360C-103122797B6F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
-		Debug|x86 = Debug|x86
 		Release|x64 = Release|x64
-		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B4240D38-999E-4572-A51C-44313A7102AD}.Debug|x64.ActiveCfg = Debug|x64
-		{B4240D38-999E-4572-A51C-44313A7102AD}.Debug|x64.Build.0 = Debug|x64
-		{B4240D38-999E-4572-A51C-44313A7102AD}.Debug|x86.ActiveCfg = Debug|Win32
-		{B4240D38-999E-4572-A51C-44313A7102AD}.Debug|x86.Build.0 = Debug|Win32
-		{B4240D38-999E-4572-A51C-44313A7102AD}.Release|x64.ActiveCfg = Release|x64
-		{B4240D38-999E-4572-A51C-44313A7102AD}.Release|x64.Build.0 = Release|x64
-		{B4240D38-999E-4572-A51C-44313A7102AD}.Release|x86.ActiveCfg = Release|Win32
-		{B4240D38-999E-4572-A51C-44313A7102AD}.Release|x86.Build.0 = Release|Win32
+		{D9DE78AF-4594-F1A4-CE88-EB7B3A3DE8A8}.Debug|x64.ActiveCfg = Debug|x64
+		{D9DE78AF-4594-F1A4-CE88-EB7B3A3DE8A8}.Debug|x64.Build.0 = Debug|x64
+		{D9DE78AF-4594-F1A4-CE88-EB7B3A3DE8A8}.Release|x64.ActiveCfg = Release|x64
+		{D9DE78AF-4594-F1A4-CE88-EB7B3A3DE8A8}.Release|x64.Build.0 = Release|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Debug|x64.ActiveCfg = Debug|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Debug|x64.Build.0 = Debug|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Release|x64.ActiveCfg = Release|x64
+		{154B857C-0182-860D-AA6E-6C109684020F}.Release|x64.Build.0 = Release|x64
+		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Debug|x64.ActiveCfg = Debug|x64
+		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Debug|x64.Build.0 = Debug|x64
+		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Release|x64.ActiveCfg = Release|x64
+		{BDD6857C-A90D-870D-52FA-6C103E10030F}.Release|x64.Build.0 = Release|x64
+		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Debug|x64.ActiveCfg = Debug|x64
+		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Debug|x64.Build.0 = Debug|x64
+		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Release|x64.ActiveCfg = Release|x64
+		{C0FF640D-2C14-8DBE-F595-301E616989EF}.Release|x64.Build.0 = Release|x64
+		{61AAAB04-4D78-9F0A-360C-103122797B6F}.Debug|x64.ActiveCfg = Debug|x64
+		{61AAAB04-4D78-9F0A-360C-103122797B6F}.Debug|x64.Build.0 = Debug|x64
+		{61AAAB04-4D78-9F0A-360C-103122797B6F}.Release|x64.ActiveCfg = Release|x64
+		{61AAAB04-4D78-9F0A-360C-103122797B6F}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {52EB18B8-69A1-4A13-89B6-58FF2D32AEA5}
+	GlobalSection(NestedProjects) = preSolution
+		{154B857C-0182-860D-AA6E-6C109684020F} = {A1975F28-0D58-DB5E-D692-24DC4212203B}
+		{BDD6857C-A90D-870D-52FA-6C103E10030F} = {A1975F28-0D58-DB5E-D692-24DC4212203B}
+		{C0FF640D-2C14-8DBE-F595-301E616989EF} = {A1975F28-0D58-DB5E-D692-24DC4212203B}
 	EndGlobalSection
 EndGlobal
