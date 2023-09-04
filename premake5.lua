@@ -138,11 +138,11 @@ project "Purring_Engine"
     objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 
     pchheader "prpch.h"
-    pchsource "Purring_Engine/src/prpch.cpp"
+    pchsource "Purring_Engine/src/prpch/prpch.cpp"
 
     files
     {
-        "%{prj.name}/include/**.h",
+        "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
         "vendor/stb_image/**.h",
         "vendor/stb_image/**.cpp",
@@ -152,7 +152,8 @@ project "Purring_Engine"
 
     includedirs
     {
-        "%{prj.name}/include",
+        "%{prj.name}/src",
+        "%{prj.name}/src/prpch",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
@@ -194,14 +195,14 @@ project "Application"
 
 	files
 	{
-		"%{prj.name}/include/**.h",
+		"%{prj.name}/src/**.h",
 		"%{prj.name}/src/**.cpp"
 	}
 
     includedirs
     {
-        "%{prj.name}/include",
-        "Purring_Engine/include",
+        "%{prj.name}/src",
+        "Purring_Engine/src",
         "vendor",
         "%{IncludeDir.glm}"
     }
