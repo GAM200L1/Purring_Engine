@@ -1,10 +1,13 @@
 #pragma once
+//#define GLEW_STATIC
 
-extern Purr::Application* Purr::CreateApplication();
+#include "CoreApplication.h"
+
+extern PE::CoreApplication* PE::CreateApplication();
 
 int main(int argc, char** argv) {
-
-	auto app = Purr::CreateApplication();
+	
+	auto app = PE::CreateApplication();
 	app->Run();
 	delete app;
 }

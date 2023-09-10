@@ -21,7 +21,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include <iostream>
 #include <sstream>
 #include "Logging/Logger.h"
-//#include "imgui/ImGuiConsole.h"
+#include "imgui/ImGuiConsole.h"
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 

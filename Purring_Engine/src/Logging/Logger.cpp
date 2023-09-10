@@ -11,6 +11,7 @@
 
 All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *******************************************************************************/
+#include "prpch.h"
 #include "Logger.h"
 #pragma warning(disable : 4996)
 

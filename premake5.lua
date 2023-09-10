@@ -15,10 +15,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include directories 
 IncludeDir = {}
 IncludeDir["GLFW"]          = "vendor/GLFW/include"
-IncludeDir["Glad"]          = "vendor/Glad/include"
 IncludeDir["ImGui"]         = "vendor/imgui"
 IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
+IncludeDir["GLEW"]          = "vendor/GLEW/include"
 
 -- external libraries
 group "Library"
@@ -26,7 +26,8 @@ group "Library"
     project "GLFW"
         location "vendor/GLFW"
 
-        kind "StaticLib"
+        kind "StaticLib"        
+        staticruntime "on"
 
         language "C"
 
@@ -47,7 +48,6 @@ group "Library"
 
         filter "system:windows"
             systemversion "latest"
-            staticruntime "on"
 
         filter "configurations:Debug"
             runtime "Debug"
@@ -71,45 +71,22 @@ group "Library"
         files
         {
             "vendor/imgui/*.h",
-            "vendor/imgui/*.cpp"
+            "vendor/imgui/*.cpp",
+            "vendor/imgui/backends/imgui_impl_glfw.*",
+            "vendor/imgui/backends/imgui_impl_opengl3.*",
+            "vendor/imgui/misc/**.h",
+            "vendor/imgui/misc/**.cpp"
         }
 
-        filter "system:windows"
-            systemversion "latest"
-
-        filter "system:linux"
-            pic "On"
-            systemversion "latest"
-            cppdialect "C++17"
-            staticruntime "On"
-
-        filter "configurations:Debug"
-            runtime "Debug"
-            symbols "on"
-
-        filter "configurations:Release"
-            runtime "Release"
-            optimize "on"
-    -- Glad
-    project "Glad"
-        location "vendor/Glad"
-        kind "StaticLib"
-        staticruntime "on"
-
-        language "C"
-
-        targetdir ("bin/" .. outputdir .. "/vendor/%{prj.name}")
-        objdir ("bin-int/" .. outputdir .. "/vendor/%{prj.name}")
-
-        files
-        {
-            "vendor/Glad/include/**.h",
-            "vendor/Glad/src/glad.c"
+        removefiles
+        { 
+            "vendor/imgui/misc/freetype/*.*"
         }
 
         includedirs
         {
-            "%{IncludeDir.Glad}"
+            "vendor/imgui",
+            "%{IncludeDir.GLFW}"
         }
 
         filter "system:windows"
@@ -155,16 +132,21 @@ project "Purring_Engine"
         "%{prj.name}/src",
         "%{prj.name}/src/prpch",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.Glad}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.stb_image}"
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.GLEW}"
+    }
+
+    libdirs
+    {
+        "vendor/GLEW/lib/Release/x64"
     }
 
     links
     {
         "GLFW",
-        "Glad",
+        "glew32s",
         "ImGui",
         "opengl32.lib" -- not sure if needed
     }
@@ -204,7 +186,8 @@ project "Application"
         "%{prj.name}/src",
         "Purring_Engine/src",
         "vendor",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.GLFW}"        
     }
 
     links

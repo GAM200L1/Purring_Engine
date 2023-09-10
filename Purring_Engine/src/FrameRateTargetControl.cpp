@@ -16,6 +16,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
+#include "prpch.h"
 #include "FrameRateTargetControl.h"
 #include <iostream>
 #include <thread>
