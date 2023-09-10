@@ -113,6 +113,9 @@ GLFWwindow* WindowManager::InitWindow(int width, int height, const char* title)
 
 void WindowManager::OnWindowEvent(const temp::Event<temp::WindowEvents>& e)
 {
+    
+    
+    
     ImGuiWindow::GetInstance()->addLog(e.ToString());
     switch (e.GetType())
     {

@@ -93,6 +93,7 @@ void PE::CoreApplication::Run()
         //////////////////////////////////////////////////////////////////////////
         //Chunk of IMGUI code needed for all the imgui windows to start
         ImGuiIO& io = ImGui::GetIO();
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
         int width, height;
         glfwGetWindowSize(m_window, &width, &height);
 
@@ -111,6 +112,7 @@ void PE::CoreApplication::Run()
         // DRAW -----------------------------------------------------
             // Render scene (placeholder: clear screen)
         glClear(GL_COLOR_BUFFER_BIT);
+
 
         ImGuiWindow::GetInstance()->Render();
 
