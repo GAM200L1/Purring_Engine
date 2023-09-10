@@ -1,7 +1,7 @@
 #include "prpch.h"
 
 // imgui
-#include "Imgui/ImGuiConsole.h"
+#include "Imgui/ImGuiWindow.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -112,7 +112,7 @@ void PE::CoreApplication::Run()
             // Render scene (placeholder: clear screen)
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGuiConsole::GetInstance()->Render();
+        ImGuiWindow::GetInstance()->Render();
 
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());

@@ -21,7 +21,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include <iostream>
 #include <sstream>
 #include "Logging/Logger.h"
-#include "imgui/ImGuiConsole.h"
+#include "imgui/ImGuiWindow.h"
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -113,7 +113,7 @@ GLFWwindow* WindowManager::InitWindow(int width, int height, const char* title)
 
 void WindowManager::OnWindowEvent(const temp::Event<temp::WindowEvents>& e)
 {
-    ImGuiConsole::GetInstance()->addLog(e.ToString());
+    ImGuiWindow::GetInstance()->addLog(e.ToString());
     switch (e.GetType())
     {
     case temp::WindowEvents::WindowResize:
@@ -140,7 +140,7 @@ void WindowManager::OnWindowEvent(const temp::Event<temp::WindowEvents>& e)
 
 void WindowManager::OnMouseEvent(const temp::Event<temp::MouseEvents>& e)
 {
-    ImGuiConsole::GetInstance()->addLog(e.ToString());
+    ImGuiWindow::GetInstance()->addLog(e.ToString());
     switch (e.GetType())
     {
     case temp::MouseEvents::MouseMoved:
@@ -162,7 +162,7 @@ void WindowManager::OnMouseEvent(const temp::Event<temp::MouseEvents>& e)
 
 void WindowManager::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
 {
-    ImGuiConsole::GetInstance()->addLog(e.ToString());
+    ImGuiWindow::GetInstance()->addLog(e.ToString());
     switch (e.GetType())
     {
     case temp::KeyEvents::KeyPressed:
