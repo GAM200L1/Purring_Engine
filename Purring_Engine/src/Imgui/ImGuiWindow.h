@@ -14,6 +14,7 @@ public:
 
 	void Render();
 	void showConsole(bool* Active);
+	void showObject(bool* Active);
 	void addLog(std::string text);
 	void addCommand(std::string text);
 	void clearLog();
@@ -23,6 +24,7 @@ public:
 
 private:
 	bool Active;
+	bool ObjectActive;
 	bool consoleLogs;
 	static std::unique_ptr<ImGuiWindow> s_Instance;
 	std::vector<std::string> logOutput;

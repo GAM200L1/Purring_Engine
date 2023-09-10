@@ -36,11 +36,18 @@ ImGuiWindow* ImGuiWindow::GetInstance()
 
 void ImGuiWindow::Render()
 {
+
+
     if (Active) 
     {
         ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
         ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
         showConsole(&Active);
+    }
+
+    if (ObjectActive) 
+    {
+        showObject(&ObjectActive);
     }
 }
 
@@ -117,6 +124,23 @@ void ImGuiWindow::showConsole(bool* Active)
 
 }
 
+void ImGuiWindow::showObject(bool* Active)
+{
+    if (!ImGui::Begin("test", Active))
+    {
+        ImGui::End();
+    }
+    else 
+    {
+        if (ImGui::Button("Create Object"))
+        {
+            addCommand("Object Created");
+        }
+
+        ImGui::End();
+    }
+}
+
 void ImGuiWindow::addLog(std::string text)
 {
     logOutput.push_back(text);
@@ -147,11 +171,16 @@ void ImGuiWindow::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
         KPE = dynamic_cast<const temp::KeyPressedEvent&>(e);
     }
 
-        if (KPE.keycode == GLFW_KEY_F1) 
-        {
-            if (Active)
-                consoleLogs = !consoleLogs;
-            Active = true;
-        }
+    if (KPE.keycode == GLFW_KEY_F1) 
+    {
+        if (Active)
+            consoleLogs = !consoleLogs;
+        Active = true;
+    }
+
+    if (KPE.keycode == GLFW_KEY_F2)
+    {
+            ObjectActive = !ObjectActive;
+    }
 }
 
