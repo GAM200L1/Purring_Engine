@@ -75,10 +75,11 @@ void PE::CoreApplication::Run()
     // tmp
     while (!glfwWindowShouldClose(m_window))
     {
+        m_fpsController.StartFrame();
         engine_logger.SetTime();
 
         // UPDATE -----------------------------------------------------
-        m_fpsController.StartFrame();
+        
 
         // List of keys to check
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
@@ -105,6 +106,7 @@ void PE::CoreApplication::Run()
         //////////////////////////////////////////////////////////////////////////
         // UPDATE -----------------------------------------------------------------
 
+        // Move to render manager update
         // DRAW -----------------------------------------------------
             // Render scene (placeholder: clear screen)
         glClear(GL_COLOR_BUFFER_BIT);
@@ -132,16 +134,18 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        m_fpsController.EndFrame();
-        engine_logger.FlushLog();
-        // Poll for and process events
-        glfwPollEvents();
-
         // update systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
             m_systemList[i]->UpdateSystem();
         }
+
+        
+        engine_logger.FlushLog();
+
+        // Poll for and process events
+        glfwPollEvents(); // should be called before glfwSwapbuffers
+        m_fpsController.EndFrame();
     }
 
     /// <summary>
