@@ -19,8 +19,10 @@
 		static ImGuiWindow* GetInstance();
 
 		void Render();
+		void showLogs(bool* Active);
 		void showConsole(bool* Active);
 		void showObject(bool* Active);
+		void setDockingPort();
 		void addLog(std::string text);
 		void addCommand(std::string text);
 		void clearLog();
@@ -29,12 +31,14 @@
 		void OnKeyEvent(const temp::Event<temp::KeyEvents>& e);
 
 	private:
-		bool Active;
+		bool logsActive;
 		bool ObjectActive;
-		bool consoleLogs;
+		bool consoleActive;
 		static std::unique_ptr<ImGuiWindow> s_Instance;
 		std::vector<std::string> logOutput;
-		std::vector<std::string> commandOutput;
+		std::vector<std::string> consoleOutput;
 		std::string input;
 		ImVec2 imGuiWindowSize;
+		int currentSelectedIndex;
+		std::vector<std::string> items;
 	};
