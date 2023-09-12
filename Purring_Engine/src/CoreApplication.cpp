@@ -12,7 +12,7 @@
 #include "GLFW/glfw3.h"
 
 #include "CoreApplication.h"
-#include "WindowSystem.h"
+#include "WindowManager.h"
 #include "Logging/Logger.h"
 
 // testing
@@ -42,6 +42,7 @@ PE::CoreApplication::CoreApplication()
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
 
+    // IMGUI STUFF -------------------------------------
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -53,6 +54,7 @@ PE::CoreApplication::CoreApplication()
     ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 
     ImGui_ImplOpenGL3_Init("#version 460");
+    // ------------------------------------
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -89,7 +91,6 @@ void PE::CoreApplication::Run()
             }
         }
 
-
         //////////////////////////////////////////////////////////////////////////
         //Chunk of IMGUI code needed for all the imgui windows to start
         ImGuiIO& io = ImGui::GetIO();
@@ -101,16 +102,16 @@ void PE::CoreApplication::Run()
         float time = (float)glfwGetTime();
         io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
         m_time = time;
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
         //////////////////////////////////////////////////////////////////////////
-        //-----------------------------------------------------------------
+        // UPDATE -----------------------------------------------------------------
 
         // DRAW -----------------------------------------------------
             // Render scene (placeholder: clear screen)
         glClear(GL_COLOR_BUFFER_BIT);
+
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
 
         ImGuiConsole::GetInstance()->Render();
 
@@ -119,7 +120,7 @@ void PE::CoreApplication::Run()
 
         // Swap front and back buffers
         glfwSwapBuffers(m_window);
-        // ----------------------------------------------------------
+        // DRAW ----------------------------------------------------------
 
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
@@ -136,6 +137,11 @@ void PE::CoreApplication::Run()
         // Poll for and process events
         glfwPollEvents();
 
+        // update systems
+        for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
+        {
+            m_systemList[i]->UpdateSystem();
+        }
     }
 
     /// <summary>
@@ -149,13 +155,28 @@ void PE::CoreApplication::Run()
     m_windowManager.Cleanup();
 }
 
-void PE::CoreApplication::Initialize()
+void PE::CoreApplication::InitSystems()
 {
-	// init systems
+    // init all systems
+    for (System* system : m_systemList)
+    {
+        system->InitSystem();
+    }
+}
+
+void PE::CoreApplication::DestroySystems()
+{
+    // destroy all systems
+    for (System* system : m_systemList)
+    {
+        delete system;
+    }
 }
 
 void PE::CoreApplication::AddSystem(System* system)
 {
+    // add system to core application
+    m_systemList.push_back(system);
 
 }
 
