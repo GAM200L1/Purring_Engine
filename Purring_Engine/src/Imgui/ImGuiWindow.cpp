@@ -36,8 +36,42 @@
         return s_Instance.get();
     }
 
+    void ImGuiWindow::Init()
+    {
+        //IMGUI_CHECKVERSION();
+        //ImGui::CreateContext();
+        //ImGui::StyleColorsDark();
+
+        //ImGuiIO& io = ImGui::GetIO();
+        //io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+        //io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+
+        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+
+        //int width, height;
+        //glfwGetWindowSize(m_window, &width, &height);
+        //io.DisplaySize = ImVec2(width, height);
+
+        //ImGuiStyle& style = ImGui::GetStyle();
+        //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        //    style.WindowRounding = 0.0f;
+        //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        //}
+
+        //ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+
+        //ImGui_ImplOpenGL3_Init("#version 460");
+    }
+
     void ImGuiWindow::Render()
     {
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
         setDockingPort();
 
         if (logsActive)
@@ -57,6 +91,23 @@
             ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
             ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
             showConsole(&consoleActive);
+        }
+
+        ImGui::Render();
+
+        ImGuiIO& io = ImGui::GetIO();
+
+        //float time = (float)glfwGetTime();
+        //io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
+        //m_time = time;
+
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+        {
+            GLFWwindow* backup_current_context = glfwGetCurrentContext();
+            ImGui::UpdatePlatformWindows();
+            ImGui::RenderPlatformWindowsDefault();
+            glfwMakeContextCurrent(backup_current_context);
         }
     }
 
@@ -145,10 +196,7 @@
             ImGui::End();
         }
         else
-        {
-
-            
-
+        {       
             if (ImGui::Button("Create Object"))
             {
                 addCommand("Object Created");
@@ -160,10 +208,12 @@
             ImGui::SameLine();
             if (ImGui::Button("Delete Object"))
             {
+             if(currentSelectedIndex <= items.size() && !items.empty()){
                 addCommand("Object Deleted");
                 std::stringstream ss;
                 ss << "deleted object " << currentSelectedIndex;
                 items.erase(items.begin() + currentSelectedIndex);
+             }
             }
 
 

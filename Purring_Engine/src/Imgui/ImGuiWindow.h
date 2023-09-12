@@ -18,6 +18,7 @@
 		virtual ~ImGuiWindow();
 		static ImGuiWindow* GetInstance();
 
+		void Init();
 		void Render();
 		void showLogs(bool* Active);
 		void showConsole(bool* Active);

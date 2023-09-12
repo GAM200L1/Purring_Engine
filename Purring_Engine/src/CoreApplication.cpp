@@ -98,12 +98,6 @@ void PE::CoreApplication::Run()
             }
         }
 
-        ImGuiIO& io = ImGui::GetIO();
-        float time = (float)glfwGetTime();
-        io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
-        m_time = time;
-
-
         //////////////////////////////////////////////////////////////////////////
         //-----------------------------------------------------------------
 
@@ -111,23 +105,17 @@ void PE::CoreApplication::Run()
             // Render scene (placeholder: clear screen)
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
+        //needs access from window before i can remove
+        ImGuiIO& io = ImGui::GetIO();
+        float time = (float)glfwGetTime();
+        io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
+        m_time = time;
 
         //ImGui::ShowDemoWindow();
 
         ImGuiWindow::GetInstance()->Render();
-        ImGui::Render();
+        //ImGui::Render();
 
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-        {
-            GLFWwindow* backup_current_context = glfwGetCurrentContext();
-            ImGui::UpdatePlatformWindows();
-            ImGui::RenderPlatformWindowsDefault();
-            glfwMakeContextCurrent(backup_current_context);
-        }
         // Swap front and back buffers
         glfwSwapBuffers(m_window);
         // ----------------------------------------------------------
