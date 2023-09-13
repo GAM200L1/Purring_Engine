@@ -7,8 +7,7 @@
  \author               Foong Jun Wei
  \par      email:      f.junwei\@digipen.edu
  
- \brief     Contains the implementation of ComponentPool. As well as various test
-            components.
+ \brief     Contains the implementation of ComponentPool. 
  
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -23,7 +22,6 @@ constexpr size_t DEFAULT_ENTITY_CNT = 16;		// default bytes allocated to compone
 
 namespace Engine
 {
-
     struct ComponentPool
     {
         /*!***********************************************************************************
@@ -80,12 +78,12 @@ namespace Engine
         /*!***********************************************************************************
          \brief Gets a void pointer to the specified entity's component in the pool
 
-         \param[in] index   Entity's component to get
+         \param[in] index   Entity's component to Get
          \return void*      nullptr -> the requested  component does not exist in this pool
                             (this entity does not have this component)
                             Otherwise retursn the start of that entity's component in memory
         *************************************************************************************/
-        inline void* get(size_t index)
+        inline void* Get(size_t index)
         {
             return (!m_idxMap.count(index)) ? nullptr : (p_data + m_idxMap[index] * m_elementSize);
         }
@@ -94,13 +92,26 @@ namespace Engine
          \brief Gets a reference to the component in memory
 
          \tparam T              The component typing (the safety is handled by EntityManager)
-         \param[in,out] index   The Entity's ID to search
+         \param[in] index       The Entity's ID to search
          \return T&             The reference to the coponent in memory
         *************************************************************************************/
         template <typename T>
-        T& get(size_t index)
+        T& Get(size_t index)
         {
-            return static_cast<T>(get(index));
+            return static_cast<T>(Get(index));
+        }
+
+        /*!***********************************************************************************
+         \brief Gets a reference to the component in memory (const) 
+
+         \tparam T              The component typing (the safety is handled by EntityManager)
+         \param[in] index       The Entity's ID to search
+         \return const T&       The reference to the coponent in memory
+        *************************************************************************************/
+        template <typename T>
+        const T& Get(size_t index) const
+        {
+            return static_cast<T>(Get(index));
         }
 
         /*!***********************************************************************************
@@ -112,6 +123,7 @@ namespace Engine
         {
             if (!m_idxMap.count(index))
                 throw; // log in the future
+            memset(Get(index), 0, m_elementSize);
             m_idxMap.erase(index);
         }
 
@@ -130,18 +142,18 @@ namespace Engine
 
         char* p_data{ nullptr };
         std::map<size_t, size_t> m_idxMap;  // map to decouple the entity ID from the internal index
-        std::queue<size_t> m_removed;
-        size_t m_elementSize{};
-        size_t m_size{};
-        size_t m_capacity{};
+        std::queue<size_t> m_removed;       // keep track of removed indexes
+        size_t m_elementSize{};             // the size of each element in the pool
+        size_t m_size{};                    // the current size of the pool (entity count, should lineup to m_idxMap)
+        size_t m_capacity{};                // the actual capacity of the pool
     };
 
     class Component {}; // no implementation needed
 
     class ComponentCreator
     {
+    // ----- Public Methods -----//
     public:
-        virtual ~ComponentCreator() {};
         virtual const size_t& GetSize() const = 0;
     };
 
@@ -149,11 +161,22 @@ namespace Engine
     template<typename type>
     class ComponentCreatorType : public ComponentCreator
     {
+    // ----- Constructors -----//
     public:
         ComponentCreatorType(size_t sz) : m_size(sz) { }
+    
+    // ----- Public Methods -----//
+    public:
+        /*!***********************************************************************************
+         \brief Get the Size of the component
+
+         \return const size_t&  The size of the component
+        *************************************************************************************/
         virtual const size_t& GetSize() const { return m_size; }
+
+    // ----- Private Variables -----//
     private:
-        const size_t m_size;
+        const size_t m_size;    // stores the size of type
     };
 };
 

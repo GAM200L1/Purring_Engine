@@ -7,7 +7,7 @@
  \author               Foong Jun Wei
  \par      email:      f.junwei\@digipen.edu
  
- \brief 
+ \brief 	This file contains function defenitions for Entity factory.
  
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -17,14 +17,17 @@
 
 namespace Engine
 {
+	// The pointer to the current instance
 	EntityFactory* g_entityFactory{ nullptr };
 
+	
 	EntityFactory::EntityFactory() : p_entityManager(Engine::g_entityManager)
 	{ 
 		if (g_entityFactory != nullptr)
 			throw;
 		g_entityFactory = this;
 	};
+
 
 	EntityFactory::~EntityFactory()
 	{
@@ -33,7 +36,6 @@ namespace Engine
 			delete cmt.second;
 		}
 	}
-
 
 
 	EntityID EntityFactory::Clone(EntityID id)

@@ -28,23 +28,38 @@
 
 // Typedefs
 typedef unsigned long long EntityID;				// typedef for storing the unique ID of the entity, same as size_t
-typedef std::string ComponentID;					// typedf for component ID 32 bits, max components is 32
+typedef std::string ComponentID;					// ComponentID type, internally it is a std::string
 
-// Global & static vars
-static unsigned g_componentCounter = 0;
 namespace Engine
 {
+	/*!***********************************************************************************
+	 \brief Entity manager struct
+	 
+	*************************************************************************************/
 	class EntityManager
 	{
-	private:
-		std::set<EntityID> m_entities;
-		std::map<ComponentID, ComponentPool*> m_componentPools;
-		std::queue<EntityID> m_removed;
+	// ----- Constructors ----- //
 	public:
-		EntityManager();
-		~EntityManager();
+		/*!***********************************************************************************
+		 \brief Construct a new Entity Manager object
+		 		Handles the instancing of the entity manager as well
+				if an additional instance was created, an exception will be thrown
 
-		
+		*************************************************************************************/
+		EntityManager();
+		/*!***********************************************************************************
+		 \brief Destroy the Entity Manager object
+		 		Handles the deleteion of the component pools
+		 
+		*************************************************************************************/
+		~EntityManager();
+	// ----- Public Methods -----//
+	public:
+		/*!***********************************************************************************
+		 \brief Creates a new entity and returns its' ID
+		 
+		 \return EntityID ID of the generated entity
+		*************************************************************************************/
 		EntityID NewEntity();
 		
 		/*!************************************************************************
@@ -57,65 +72,212 @@ namespace Engine
 		template<typename T>
 		T* Assign(EntityID id);
 		
-
+		/*!***********************************************************************************
+		 \brief 	Assigns a componnet to an enity, and initializes it's component with val
+		 
+		 \tparam T 		Type of component to assign
+		 \param[in] id 	The id of the entity to asign it to
+		 \param[in] val The value to initialize the component with
+		 \return T* 	The created entity
+		*************************************************************************************/
 		template<typename T>
 		T* Assign(EntityID id, T const& val);
 
-
+		/*!***********************************************************************************
+		 \brief Assign an entity with a component specified by the componentID & the 
+		 		createor input parameters
+		 
+		 \param[in] id 				ID of the entity to assign components to
+		 \param[in] componentID 	The ID of the component to assign 
+		 \param[in] creator 		The ComponentCreator for the component
+		*************************************************************************************/
 		void Assign(const EntityID& id, const char* componentID, const ComponentCreator* creator);
 
+		/*!***********************************************************************************
+		 \brief Assign an entity with a component specified by the componentID 
+		 
+		 \param[in] id 				ID of the entity to asign components to
+		 \param[in] componentID 	The component to assign
+		*************************************************************************************/
 		void Assign(const EntityID& id, const ComponentID& componentID);
 
+		/*!***********************************************************************************
+		 \brief Get the Component ID
+		 
+		 \tparam T 				The component to Get the ID of
+		 \return ComponentID 	The component's id
+		*************************************************************************************/
 		template<typename T>
 		ComponentID GetComponentID() const;
-
+		
+		/*!***********************************************************************************
+		 \brief Get a pointer to a specific component pool
+		 
+		 \tparam T 				The pool to Get
+		 \return ComponentPool* The pointer to the pool
+		*************************************************************************************/
 		template<typename T>
-		ComponentPool* GetComponentPoolPtr();
+		ComponentPool* GetComponentPoolPointer();
 
-		const ComponentPool* GetComponentPoolPtr(const ComponentID& component) const;
+		/*!***********************************************************************************
+		 \brief Get a pointer to a specific component pool (const)
+		 
+		 \param[in] component 			The pool to Get
+		 \return const ComponentPool* 	The pointer to the pool
+		*************************************************************************************/
+		const ComponentPool* GetComponentPoolPointer(const ComponentID& component) const;
 
+		/*!***********************************************************************************
+		 \brief Get a reference to a component pool
+		 
+		 \tparam T 				The pool to Get
+		 \return ComponentPool& The component pool
+		*************************************************************************************/
 		template<typename T>
 		ComponentPool& GetComponentPool();
 
+		/*!***********************************************************************************
+		 \brief Get a reference to a component pool (const)
+		 
+		 \tparam T 						The pool to Get
+		 \return const ComponentPool& 	The component pool
+		*************************************************************************************/
 		template<typename T>
 		const ComponentPool& GetComponentPool() const;
 
+		/*!***********************************************************************************
+		 \brief Get a pointer to the entity's component
+		 
+		 \tparam T 		Component to Get
+		 \param[in] id 	Entity to Get the component from
+		 \return T* 	Pointer to the component (nullptr if not found)
+		*************************************************************************************/
 		template<typename T>
-		T* GetPtr(EntityID id);
+		T* GetPointer(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Get a pointer to the entity's component (const)
+
+		 \tparam T 			Component to Get
+		 \param[in] id 		Entity to Get the component from
+		 \return const T* 	Pointer to the component (nullptr if not found)
+		*************************************************************************************/
+		template<typename T>
+		const T* GetPointer(EntityID id) const;
+
+		/*!***********************************************************************************
+		 \brief Get a reference to the entity's component
+		 
+		 \tparam T 		Component to Get
+		 \param[in] id 	Entity to Get the component from
+		 \return T& 	Reference to the component
+		*************************************************************************************/
 		template<typename T>
 		T& Get(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Get a reference to the entity's component (const)
+		 
+		 \tparam T 			Component to Get
+		 \param[in] id 		Entity to Get the component from
+		 \return const T& 	Const reference to the component
+		*************************************************************************************/
 		template<typename T>
 		const T& Get(EntityID id) const;
 
+		/*!***********************************************************************************
+		 \brief Copies a component from src entity into dest entity
+		 		If the destination does not have the the component, it will be assigned it,
+				and the value copied over afterward.
+		 
+		 \param[in] src 		Source to copy from
+		 \param[in] dest 		Destination to copy to
+		 \param[in] component 	The component to copy
+		*************************************************************************************/
 		void CopyComponent(EntityID src, EntityID dest, const ComponentID& component);
 
+		/*!***********************************************************************************
+		 \brief Copies a component's value from src into the entity specified by id
+		 
+		 \tparam T 			The type of the component to copy
+		 \param[in] id 		The destination entity
+		 \param[in] src 	The source component to copy from
+		*************************************************************************************/
 		template <typename T>
 		void Copy(EntityID id, const T& src);
 
+		/*!***********************************************************************************
+		 \brief Checks if the entity has component type T
+		 
+		 \tparam T 		The component to check
+		 \param[in] id 	The entity to check
+		 \return true 	Entity has component T
+		 \return false 	Entity does not have component T
+		*************************************************************************************/
 		template<typename T>
 		bool Has(EntityID id) const;
 
+		/*!***********************************************************************************
+		 \brief Checks if entity has component using ComponentID
+		 
+		 \param[in] id 			The entity to check
+		 \param[in] component 	The component to check
+		 \return true 			Entity has component
+		 \return false 			Entity does not have component
+		*************************************************************************************/
 		bool Has(EntityID id, const ComponentID& component) const;
 
+		/*!***********************************************************************************
+		 \brief Removes a component from an entity
+		 
+		 \tparam T 		Component to remove
+		 \param[in] id 	Entity to remove
+		*************************************************************************************/
 		template<typename T>
 		void Remove(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Removes an entity
+		 
+		 \param[in] id Entity to remove
+		*************************************************************************************/
 		void RemoveEntity(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Checks if an entity is valid(exists within the current pool of entities)
+		 
+		 \param[in] id 	The id of the entity to find
+		 \return true 	The entity is valid/exists
+		 \return false 	The entity is not valid/does not exist
+		*************************************************************************************/
 		inline bool IsEntityValid(EntityID id) const
 		{
 			return m_entities.count(id);
 		}
 
+		/*!***********************************************************************************
+		 \brief Gets the number of entities
+		 
+		 \return size_t The number of entities
+		*************************************************************************************/
 		inline size_t Size() const
 		{
 			return m_entities.size();
 		}
+	// ----- Private Variables -----//
+	private:
+		// set of entities picked over vector to increase the speed of searches for specific entites
+		std::set<EntityID> m_entities;
+		// map of to store pointers to individual componnet pools
+		std::map<ComponentID, ComponentPool*> m_componentPools;
+		// a queue of entity IDs to handle removed entities
+		std::queue<EntityID> m_removed;
 	};
+
+	// extern to allow the access to the entity manager instance
 	extern EntityManager* g_entityManager;
 
+	//-------------------- Templated function implementations --------------------//
 
 	template<typename T>
 	T* EntityManager::Assign(EntityID id)
@@ -147,7 +309,7 @@ namespace Engine
 		}
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead of allocating more memory
-		T* p_component = new (m_componentPools[componentID]->get(id)) T();
+		T* p_component = new (m_componentPools[componentID]->Get(id)) T();
 		++(m_componentPools[componentID]->m_size);
 
 		//m_entities[id].mask.set(componentID);
@@ -187,23 +349,24 @@ namespace Engine
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead of allocating more memory
-		T* p_component = new (m_componentPools[componentID]->get(id)) T(val);
+		T* p_component = new (m_componentPools[componentID]->Get(id)) T(val);
 		++(m_componentPools[componentID]->size);
 
 		//m_entities[id].mask.set(componentID);
 		return p_component;
 	}
 
+	//-------------------- Templated function implementations --------------------//
 
 	template<typename T>
 	ComponentID EntityManager::GetComponentID() const
 	{
 		return (typeid(T).name()[0] == 's') ? typeid(T).name() + 7 :
-			(typeid(T).name()[0] == 'c') ? typeid(T).name() + 6 : typeid(T).name();
+			   (typeid(T).name()[0] == 'c') ? typeid(T).name() + 6 : typeid(T).name();
 	}
 
 	template<typename T>
-	ComponentPool* EntityManager::GetComponentPoolPtr()
+	ComponentPool* EntityManager::GetComponentPoolPointer()
 	{
 		return m_componentPools[GetComponentID<T>()];
 	}
@@ -211,25 +374,31 @@ namespace Engine
 	template<typename T>
 	ComponentPool& EntityManager::GetComponentPool()
 	{
-		return *GetComponentPoolPtr<T>();
+		return *GetComponentPoolPointer<T>();
 	}
 
 	template<typename T>
 	const ComponentPool& EntityManager::GetComponentPool() const
 	{
-		return *GetComponentPoolPtr<T>();
+		return *GetComponentPoolPointer<T>();
 	}
 
 	template<typename T>
-	T* EntityManager::GetPtr(EntityID id)
+	T* EntityManager::GetPointer(EntityID id)
 	{
-		return static_cast<T*>(m_componentPools[GetComponentID<T>()]->get(id));
+		return static_cast<T*>(m_componentPools[GetComponentID<T>()]->Get(id));
+	}
+
+	template<typename T>
+	const T* EntityManager::GetPointer(EntityID id) const
+	{
+		return static_cast<T*>(m_componentPools.at(GetComponentID<T>())->Get(id));
 	}
 
 	template<typename T>
 	T& EntityManager::Get(EntityID id)
 	{
-		T* p_comp = GetPtr<T>(id);
+		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
 			throw;	// to add error
 		return *p_comp;
@@ -238,7 +407,7 @@ namespace Engine
 	template<typename T>
 	const T& EntityManager::Get(EntityID id) const
 	{
-		T* p_comp = GetPtr<T>(id);
+		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
 			throw;	// to add error
 		return *p_comp;
@@ -255,14 +424,14 @@ namespace Engine
 	bool EntityManager::Has(EntityID id) const
 	{
 		// if the return is not a nullptr, it has the component
-		return (GetPtr<T>(id) != nullptr);
+		return (GetPointer<T>(id) != nullptr);
 	}
 	template<typename T>
 	void EntityManager::Remove(EntityID id)
 	{
 		if (!Has<T>(id))
 			return; // log in the future
-		const unsigned componentID = GetComponentID<T>();
+		const ComponentID componentID = GetComponentID<T>();
 		size_t lastEntID = (*std::prev(m_componentPools[componentID]->m_idxMap.end())).first;
 		size_t poolID = m_componentPools[componentID]->m_idxMap[id];
 		if (m_componentPools[componentID]->m_idxMap.size() > 1)
@@ -274,118 +443,6 @@ namespace Engine
 		m_componentPools[componentID]->remove(lastEntID);
 		// re-empalce the "last" entity inplace to the existing id's position
 		m_componentPools[componentID]->m_idxMap.emplace(lastEntID, poolID);
-		--(m_componentPools[componentID]->size);
+		--(m_componentPools[componentID]->m_size);
 	}
 }
-
-/*
-
-template<typename... ComponentTypes>
-struct SceneView
-{
-	SceneView() : p_entityManager(Engine::g_entityManager)
-	{
-		if constexpr(sizeof...(ComponentTypes))
-		{
-			std::initializer_list<ComponentID> componentIDs = { p_entityManager->GetComponentID<ComponentTypes>() ... };
-			for (const ComponentID& c : componentIDs)
-			{
-				m_components.emplace_back(c);
-			}
-		}
-		else
-		{
-			m_all = true;
-		}
-	}
-
-	struct Iterator
-	{
-		Iterator(EntityID index, const std::vector<ComponentID>& components, bool all) : 
-			p_entityManager(Engine::g_entityManager), m_index(index), m_components(components), m_all(all)
-		{
-		}
-
-		EntityID operator* () const
-		{
-			return *(p_entityManager->m_entities.find(m_index));
-		}
-
-		bool operator== (const Iterator& rhs) const
-		{
-			return (m_index == rhs.m_index) || (m_index == p_entityManager->m_entities.size());
-		}
-
-		bool operator!= (const Iterator& rhs) const
-		{
-			return (m_index != rhs.m_index) || (m_index != p_entityManager->m_entities.size());
-		}
-
-		bool HasComponents() const
-		{
-			for (const ComponentID& components : m_components)
-			{
-				if (!p_entityManager->m_componentPools[components]->HasEntity(m_index))
-					return false;
-			}
-			return true;
-		}
-
-		bool ValidIndex() const
-		{
-			return (p_entityManager->m_entities.contains(m_index)) &&
-				   (m_all || (HasComponents()));
-		}
-
-		Iterator& operator++()
-		{
-			do
-			{
-				++m_index;
-			} while (m_index < p_entityManager->m_entities.size() && !ValidIndex());
-			return *this;
-		}
-
-		Engine::EntityManager* p_entityManager;
-		EntityID m_index;
-		const std::vector<ComponentID>& m_components;
-		bool m_all{ false };
-	};
-
-	bool HasComponents(size_t index) const
-	{
-		for (const ComponentID& components : m_components)
-		{
-			if (!p_entityManager->m_componentPools[components]->HasEntity(index))
-				return false;
-		}
-		return true;
-	}
-
-
-	const Iterator begin() const
-	{
-		if (p_entityManager->m_entities.empty())
-			throw; // update to error log
-		size_t firstIndex{};
-		while (firstIndex < p_entityManager->m_entities.size() &&
-			  (!HasComponents(firstIndex)) ||
-			  (!p_entityManager->m_entities.contains(firstIndex))
-			)
-		{
-			++firstIndex;
-		}
-		return Iterator(firstIndex, m_components, m_all);
-	}
-
-	const Iterator end() const
-	{
-		return Iterator(p_entityManager->m_entities.size(), m_components, m_all);
-	}
-
-	Engine::EntityManager* p_entityManager{ nullptr };
-	std::vector<ComponentID> m_components;
-	bool m_all{ false };
-};
-
-*/

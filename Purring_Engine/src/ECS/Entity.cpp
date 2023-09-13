@@ -39,11 +39,6 @@ namespace Engine
 		m_componentPools.clear();
 	}
 
-	/*!************************************************************************
-		 \brief
-
-		 \return EntityID
-		**************************************************************************/
 	EntityID EntityManager::NewEntity()
 	{
 		size_t id = (m_removed.empty()) ? m_entities.size() : m_removed.front();
@@ -82,7 +77,7 @@ namespace Engine
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		//void* ret = new (m_componentPools[componentID]->get(id)) char[creator->GetSize()]();
+		//void* ret = new (m_componentPools[componentID]->Get(id)) char[creator->GetSize()]();
 		++(m_componentPools[componentID]->m_size);
 	}
 
@@ -113,11 +108,11 @@ namespace Engine
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		//void* ret = new (m_componentPools[componentID]->get(id)) char[creator->GetSize()]();
+		//void* ret = new (m_componentPools[componentID]->Get(id)) char[creator->GetSize()]();
 		++(m_componentPools[componentID]->m_size);
 	}
 
-	const ComponentPool* EntityManager::GetComponentPoolPtr(const ComponentID& component) const
+	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& component) const
 	{
 		return m_componentPools.at(component);
 	}
@@ -129,7 +124,7 @@ namespace Engine
 		if (!Has(dest, component))
 			Assign(dest, component);
 
-		memcpy_s(m_componentPools[component]->get(dest), m_componentPools[component]->m_elementSize, m_componentPools[component]->get(src), m_componentPools[component]->m_elementSize);
+		memcpy_s(m_componentPools[component]->Get(dest), m_componentPools[component]->m_elementSize, m_componentPools[component]->Get(src), m_componentPools[component]->m_elementSize);
 	}
 
 	
