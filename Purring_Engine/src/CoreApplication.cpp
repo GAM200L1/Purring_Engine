@@ -41,7 +41,7 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
-
+    //init imgui settings
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -55,6 +55,8 @@ PE::CoreApplication::CoreApplication()
     io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 
+    ///////////////////////////////////////////
+    //temp here untill i can get window exposed
     int width, height;
     glfwGetWindowSize(m_window, &width, &height);
     io.DisplaySize = ImVec2(width, height);
@@ -68,6 +70,7 @@ PE::CoreApplication::CoreApplication()
     ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 
     ImGui_ImplOpenGL3_Init("#version 460");
+    ///////////////////////////////////////////
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -98,24 +101,23 @@ void PE::CoreApplication::Run()
             }
         }
 
-        //////////////////////////////////////////////////////////////////////////
-        //-----------------------------------------------------------------
+
 
         // DRAW -----------------------------------------------------
             // Render scene (placeholder: clear screen)
         glClear(GL_COLOR_BUFFER_BIT);
 
-        //needs access from window before i can remove
+        //////////////////////////////////////////////////////////////////////////
+        //temp here untill window is exposed
         ImGuiIO& io = ImGui::GetIO();
         float time = (float)glfwGetTime();
         io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
         m_time = time;
 
-        //ImGui::ShowDemoWindow();
-
+        //redering of all windows
         ImGuiWindow::GetInstance()->Render();
-        //ImGui::Render();
-
+        //////////////////////////////////////////////////////////////////////
+        // 
         // Swap front and back buffers
         glfwSwapBuffers(m_window);
         // ----------------------------------------------------------
@@ -123,6 +125,7 @@ void PE::CoreApplication::Run()
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the title to show FPS (every second in this example)
+
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
