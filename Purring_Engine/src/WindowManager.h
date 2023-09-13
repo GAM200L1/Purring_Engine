@@ -20,28 +20,33 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "FrameRateTargetControl.h"
 #include "InputHandler.h"
 #include "Events/EventHandler.h"
+#include "System.h"
 
-class WindowManager
+namespace PE
 {
-public:
-    WindowManager();
-    ~WindowManager();
+    class WindowManager
+    {
+    public:
+        WindowManager();
+        ~WindowManager();
 
-    GLFWwindow* InitWindow(int width, int height, const char* title);
-    void UpdateTitle(GLFWwindow* window, double fps);
-    void Cleanup();
+        GLFWwindow* InitWindow(int width, int height, const char* title);
+        void UpdateTitle(GLFWwindow* window, double fps);
+        void Cleanup();
+        virtual std::string GetName() { return "Windows Manager"; }
 
-    //window callback functions
-    void static window_resize_callback(GLFWwindow* window, int width, int height);
-    void static window_pos_callback(GLFWwindow* window, int width, int height);
-    void static window_close_callback(GLFWwindow* window);
-    void static window_focus_callback(GLFWwindow* window, int focus);
+        //window callback functions
+        void static window_resize_callback(GLFWwindow* window, int width, int height);
+        void static window_pos_callback(GLFWwindow* window, int width, int height);
+        void static window_close_callback(GLFWwindow* window);
+        void static window_focus_callback(GLFWwindow* window, int focus);
 
 
-    void OnWindowEvent(const temp::Event<temp::WindowEvents>& e);
-    void OnMouseEvent(const temp::Event<temp::MouseEvents>& e);
-    void OnKeyEvent(const temp::Event<temp::KeyEvents>& e);
-};
+        void OnWindowEvent(const temp::Event<temp::WindowEvents>& e);
+        void OnMouseEvent(const temp::Event<temp::MouseEvents>& e);
+        void OnKeyEvent(const temp::Event<temp::KeyEvents>& e);
+    };
+}
 
 
 

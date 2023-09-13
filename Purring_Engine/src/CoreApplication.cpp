@@ -12,7 +12,7 @@
 #include "GLFW/glfw3.h"
 
 #include "CoreApplication.h"
-#include "WindowSystem.h"
+#include "WindowManager.h"
 #include "Logging/Logger.h"
 
 // testing
@@ -85,10 +85,11 @@ void PE::CoreApplication::Run()
 
     while (!glfwWindowShouldClose(m_window))
     {
+        m_fpsController.StartFrame();
         engine_logger.SetTime();
 
         // UPDATE -----------------------------------------------------
-        m_fpsController.StartFrame();
+        
 
         // List of keys to check
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
@@ -120,7 +121,7 @@ void PE::CoreApplication::Run()
         // 
         // Swap front and back buffers
         glfwSwapBuffers(m_window);
-        // ----------------------------------------------------------
+        // DRAW ----------------------------------------------------------
 
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
@@ -133,11 +134,18 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        m_fpsController.EndFrame();
-        engine_logger.FlushLog();
-        // Poll for and process events
-        glfwPollEvents();
+        // update systems
+        for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
+        {
+            m_systemList[i]->UpdateSystem();
+        }
 
+        
+        engine_logger.FlushLog();
+
+        // Poll for and process events
+        glfwPollEvents(); // should be called before glfwSwapbuffers
+        m_fpsController.EndFrame();
     }
 
     /// <summary>
@@ -151,13 +159,28 @@ void PE::CoreApplication::Run()
     m_windowManager.Cleanup();
 }
 
-void PE::CoreApplication::Initialize()
+void PE::CoreApplication::InitSystems()
 {
-	// init systems
+    // init all systems
+    for (System* system : m_systemList)
+    {
+        system->InitSystem();
+    }
+}
+
+void PE::CoreApplication::DestroySystems()
+{
+    // destroy all systems
+    for (System* system : m_systemList)
+    {
+        delete system;
+    }
 }
 
 void PE::CoreApplication::AddSystem(System* system)
 {
+    // add system to core application
+    m_systemList.push_back(system);
 
 }
 
