@@ -17,8 +17,6 @@
 ----------------------------------------------------------------------------- */
 #include "prpch.h"
 
-#define GLEW_STATIC
-#include <GL/glew.h> // for access to OpenGL API declarations 
 #include <glm/gtc/constants.hpp>    // pi()
 #include <glm/gtc/matrix_transform.hpp> // ortho()
 

@@ -16,8 +16,9 @@
 
 /*                                                                   includes
 ----------------------------------------------------------------------------- */
+#include "GLHeaders.h"
+
 #include <cstddef>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>

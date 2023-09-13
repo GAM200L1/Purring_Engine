@@ -10,6 +10,8 @@
 #include <misc/cpp/imgui_stdlib.h>
 #include <iostream>
 
+#include "Graphics/GLHeaders.h"
+
 
 	class ImGuiWindow 
 	{

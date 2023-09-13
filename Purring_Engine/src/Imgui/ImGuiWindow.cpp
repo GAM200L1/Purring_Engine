@@ -1,10 +1,6 @@
 #include "prpch.h"
 #include "ImGuiWindow.h"
 
-
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
-
     std::unique_ptr<ImGuiWindow> ImGuiWindow::s_Instance = nullptr;
     static int TextEditCallbackStub(ImGuiInputTextCallbackData* data)
     {

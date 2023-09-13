@@ -7,9 +7,7 @@
 #include "backends/imgui_impl_opengl3.h"
 
 // graphics
-#define GLEW_STATIC
-#include <GL/glew.h>
-#include <GLFW/glfw3.h>
+#include "Graphics/GLHeaders.h"
 
 #include "CoreApplication.h"
 #include "WindowManager.h"
