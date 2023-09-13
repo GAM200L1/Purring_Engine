@@ -29,10 +29,13 @@ namespace PE
 {
     namespace Graphics
     {
-        void RendererManager::Initialize(GLFWwindow* p_window)
+        RendererManager::RendererManager(GLFWwindow* p_window) 
         {
             p_windowRef = p_window;
-
+        }
+        
+        void RendererManager::InitializeSystem()
+        {
             // Initialize the base meshes to use
             // Note: Making shallow copies of the meshData objects to store in the map.
 
@@ -103,11 +106,11 @@ namespace PE
             quadMesh.indices.emplace_back(3);
             quadMesh.indices.emplace_back(0);
 
-            meshes["triangle"] = triangleMesh;
-            meshes["quad"] = quadMesh;
+            m_meshes["triangle"] = triangleMesh;
+            m_meshes["quad"] = quadMesh;
 
-            meshes["triangle"].CreateVertexArrayObject();
-            meshes["quad"].CreateVertexArrayObject();
+            m_meshes["triangle"].CreateVertexArrayObject();
+            m_meshes["quad"].CreateVertexArrayObject();
 
 
             // Create a shader program
@@ -141,19 +144,19 @@ namespace PE
             }
         )" };
 
-            shaderPrograms["basic"] = new ShaderProgram{};
-            shaderPrograms["basic"]->CompileLinkValidateProgram(vertexShaderString, fragmentShaderString);
+            m_shaderPrograms["basic"] = new ShaderProgram{};
+            m_shaderPrograms["basic"]->CompileLinkValidateProgram(vertexShaderString, fragmentShaderString);
 
 
             // Add a triangle and quad as renderable objects
-            renderableObjects.emplace_back(Renderer{});
-            renderableObjects.emplace_back(Renderer{});
+            m_renderableObjects.emplace_back(Renderer{});
+            m_renderableObjects.emplace_back(Renderer{});
 
-            renderableObjects[1].meshName = "triangle";
-            renderableObjects[1].transform.width = 100.f;
-            renderableObjects[1].transform.height = 400.f;
-            renderableObjects[1].transform.orientation = 45.f;
-            renderableObjects[1].transform.position = glm::vec2{ 200.f, 400.f };
+            m_renderableObjects[1].meshName = "triangle";
+            m_renderableObjects[1].transform.width = 100.f;
+            m_renderableObjects[1].transform.height = 400.f;
+            m_renderableObjects[1].transform.orientation = 45.f;
+            m_renderableObjects[1].transform.position = glm::vec2{ 200.f, 400.f };
 
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
@@ -162,29 +165,13 @@ namespace PE
         }
 
 
-        void RendererManager::DestroyManager()
-        {
-            // Release the buffer objects in each mesh
-            for (auto& mesh : meshes) {
-                mesh.second.Cleanup();
-            }
-            meshes.clear();
-
-            // Delete the shader programs
-            for (auto& shaderProgram : shaderPrograms) {
-                shaderProgram.second->DeleteProgram();
-                delete shaderProgram.second;
-            }
-            shaderPrograms.clear();
-        }
-
-
-        void RendererManager::DrawScene()
+        void RendererManager::UpdateSystem(float deltaTime)
         {
             if (!p_windowRef)
             {
                 return;
             }
+            deltaTime; // Prevent warnings
 
             // Set viewport size
             int width, height;
@@ -195,34 +182,60 @@ namespace PE
             glClearColor(0.f, 0.f, 0.f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
+            // Draw game objects in the scene
+            DrawScene(width, height);
+
+            // Poll for and process events
+            glfwPollEvents(); // should be called before glfwSwapbuffers
+
+            // Swap front and back buffers
+            glfwSwapBuffers(p_windowRef);
+        }
+
+
+        void RendererManager::DestroySystem()
+        {
+            // Release the buffer objects in each mesh
+            for (auto& mesh : m_meshes) {
+                mesh.second.Cleanup();
+            }
+            m_meshes.clear();
+
+            // Delete the shader programs
+            for (auto& shaderProgram : m_shaderPrograms) {
+                shaderProgram.second->DeleteProgram();
+                delete shaderProgram.second;
+            }
+            m_shaderPrograms.clear();
+        }
+
+
+        void RendererManager::DrawScene(int const width, int const height)
+        {
             float halfWidth{ static_cast<float>(width) * 0.5f };
             float halfHeight{ static_cast<float>(height) * 0.5f };
             glm::mat4 viewToNdc{
                 glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
             };
 
-            for (auto& renderable : renderableObjects) {
-                shaderPrograms[renderable.shaderProgramName]->Use();
+            for (auto& renderable : m_renderableObjects) {
+                m_shaderPrograms[renderable.shaderProgramName]->Use();
 
-                meshes[renderable.meshName].BindMesh();
+                m_meshes[renderable.meshName].BindMesh();
 
-                shaderPrograms[renderable.shaderProgramName]->SetUniform(
+                m_shaderPrograms[renderable.shaderProgramName]->SetUniform(
                     "uModelToNdc",
-                    viewToNdc * mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix()
+                    viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix()
                 );
 
                 glDrawElements(GL_TRIANGLES,
-                    static_cast<GLsizei>(meshes[renderable.meshName].indices.size()),
+                    static_cast<GLsizei>(m_meshes[renderable.meshName].indices.size()),
                     GL_UNSIGNED_SHORT, NULL);
 
-                meshes[renderable.meshName].UnbindMesh();
+                m_meshes[renderable.meshName].UnbindMesh();
 
-                shaderPrograms[renderable.shaderProgramName]->UnUse();
+                m_shaderPrograms[renderable.shaderProgramName]->UnUse();
             }
-
-
-            // Swap front and back buffers
-            glfwSwapBuffers(p_windowRef);
         }
 
 

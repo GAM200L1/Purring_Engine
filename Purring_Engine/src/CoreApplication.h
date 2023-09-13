@@ -8,6 +8,7 @@
 //tmp
 #include "WindowManager.h"
 #include "FrameRateTargetControl.h"
+#include "Graphics/RendererManager.h"
 
 namespace PE {
 

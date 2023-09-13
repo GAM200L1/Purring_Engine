@@ -26,6 +26,7 @@
 #include "MeshData.h"
 #include "Renderer.h"
 #include "ShaderProgram.h"
+#include "System.h"
 
 
 namespace PE
@@ -33,54 +34,68 @@ namespace PE
     namespace Graphics
     {
         // In charge of calling the draw functions in all the renderer components.
-        class RendererManager
+        class RendererManager : public System
         {
-            // ----- Enum Definitions ----- //
+            // ----- Constructors ----- //
         public:
-            enum class RenderMode {
-                wireframe_black = 0,
-                wireframe_color,
-                triangle_flat,
-                triangle_smooth
-            };
+            /*!***********************************************************************************
+             \brief Sets the reference to the window to draw to. 
+
+             \param[in,out] p_window Pointer to the GLFWwindow to render to.
+            *************************************************************************************/
+            RendererManager(GLFWwindow* p_window);
 
             // ----- Public methods ----- //
         public:
             /*!***********************************************************************************
-             \brief Sets the reference to the window to draw to. Creates a VAO and VBO for a
-                    quad and stores it, and compiles and links a simple shader program to draw
-                    the triangle.
-
-             \param[in,out] p_window Pointer to the GLFWwindow to render to.
+             \brief Creates a VAO and VBO for a quad and stores it, and compiles and links a 
+                    simple shader program to draw the triangle.
             *************************************************************************************/
-            void Initialize(GLFWwindow* p_window);
+            void InitializeSystem();
+
+            /*!***********************************************************************************
+             \brief Calls the drawing functions
+
+             \param[in] deltaTime Timestep (in seconds)
+            *************************************************************************************/
+            void UpdateSystem(float deltaTime);
 
             /*!***********************************************************************************
              \brief Delete the buffers, VAO and shader program allocated through OpenGL.
             *************************************************************************************/
-            void DestroyManager();
+            void DestroySystem();
+
+            /*!***********************************************************************************
+             \brief Returns the name of the Graphics system.
+            *************************************************************************************/
+            inline std::string GetName() 
+            {
+                return m_systemName;
+            }
 
             /*!***********************************************************************************
              \brief Clears the color buffer, sets the size of the viewport to the full window
                     and draw a triangle.
             *************************************************************************************/
-            void DrawScene();
+            void DrawScene(int const width, int const height);
 
 
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_windowRef{};
+            GLFWwindow* p_windowRef{}; //! Pointer to the GLFW window to render to
 
-            Graphics::Camera mainCamera{}; //! Camera object
+            Graphics::Camera m_mainCamera{}; //! Camera object
+
+            std::string m_systemName{ "Graphics" }; //! Name of system
 
             //! Container of shaders
-            std::map<std::string, Graphics::ShaderProgram*> shaderPrograms;
+            std::map<std::string, Graphics::ShaderProgram*> m_shaderPrograms;
 
             //! Container of meshes
-            std::map<std::string, Graphics::MeshData> meshes{};
+            std::map<std::string, Graphics::MeshData> m_meshes{};
 
             //! Container of objects to draw
-            std::vector<Graphics::Renderer> renderableObjects{};
+            std::vector<Graphics::Renderer> m_renderableObjects{};
 
             // ----- Private methods ----- //
         private:

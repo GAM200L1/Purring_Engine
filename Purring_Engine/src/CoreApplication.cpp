@@ -41,6 +41,11 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
+
+    // Pass the pointer to the GLFW window to the rendererManager
+    Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
+    AddSystem(rendererManager);
+
     //init imgui settings
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -106,7 +111,7 @@ void PE::CoreApplication::Run()
 
         // DRAW -----------------------------------------------------
             // Render scene (placeholder: clear screen)
-        glClear(GL_COLOR_BUFFER_BIT);
+        //glClear(GL_COLOR_BUFFER_BIT);
 
         //////////////////////////////////////////////////////////////////////////
         //temp here untill window is exposed
@@ -120,7 +125,7 @@ void PE::CoreApplication::Run()
         //////////////////////////////////////////////////////////////////////
         // 
         // Swap front and back buffers
-        glfwSwapBuffers(m_window);
+        //glfwSwapBuffers(m_window);
         // DRAW ----------------------------------------------------------
 
 
@@ -137,14 +142,12 @@ void PE::CoreApplication::Run()
         // update systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            m_systemList[i]->UpdateSystem();
+            m_systemList[i]->UpdateSystem(1.f); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
         
         engine_logger.FlushLog();
 
-        // Poll for and process events
-        glfwPollEvents(); // should be called before glfwSwapbuffers
         m_fpsController.EndFrame();
     }
 
@@ -164,7 +167,7 @@ void PE::CoreApplication::InitSystems()
     // init all systems
     for (System* system : m_systemList)
     {
-        system->InitSystem();
+        system->InitializeSystem();
     }
 }
 
@@ -173,6 +176,7 @@ void PE::CoreApplication::DestroySystems()
     // destroy all systems
     for (System* system : m_systemList)
     {
+        system->DestroySystem();
         delete system;
     }
 }
