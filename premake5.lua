@@ -110,6 +110,8 @@ project "Purring_Engine"
 
     language "C++"
     cppdialect "C++17"
+    
+    warnings "Extra"
 
     targetdir("bin/" .. outputdir .. "/%{prj.name}")
     objdir("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -172,6 +174,8 @@ project "Application"
     language "C++"
     cppdialect "C++17"
 
+    warnings "Extra"
+
     targetdir("bin/" .. outputdir .. "/%{prj.name}")
     objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 
@@ -187,7 +191,8 @@ project "Application"
         "Purring_Engine/src",
         "vendor",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.GLFW}"        
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLEW}"       
     }
 
     links
