@@ -15,16 +15,37 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
+#include "ECS/Components.h"
+#include "ECS/Entity.h"
+#include "ECS/EntityFactory.h"
+#include "ECS/SceneView.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
 
+
+
 PE::CoreApplication::CoreApplication()
 {
+    Engine::EntityManager entityManager;
+    Engine::EntityFactory entityFactory;
+    REGISTERCOMPONENT(test, sizeof(test))
+    for (size_t i{}; i < 100; ++i)
+    {
+        Engine::g_entityFactory->CreateEntity<test>();
+    }
+    Engine::g_entityManager->Get<test>(0).x = 5;
+    std::cout << "Testing ECS entity 0's x value set to 5: " << Engine::g_entityManager->Get<test>(0).x << std::endl;
+    std::cout << "All entities in SceneView<test>(): " << std::endl;
+    for (EntityID id : Engine::SceneView<test>())
+    {
+        std::cout << id << std::endl;
+    }
 	m_Running = true;
 	m_lastFrameTime = 0;
 
     // Create and set up the window using WindowManager
-    m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
+    m_window = m_windowManager.InitWindow(1000, 1000, "Engine");
 
     // Initialize GLEW
     if (glewInit() != GLEW_OK)
@@ -140,7 +161,6 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem();
         }
 
-        
         engine_logger.FlushLog();
 
         // Poll for and process events
