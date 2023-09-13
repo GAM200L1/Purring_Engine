@@ -8,8 +8,8 @@
 
 // graphics
 #define GLEW_STATIC
-#include "GL/glew.h"
-#include "GLFW/glfw3.h"
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
 
 #include "CoreApplication.h"
 #include "WindowManager.h"
@@ -25,15 +25,6 @@ PE::CoreApplication::CoreApplication()
 
     // Create and set up the window using WindowManager
     m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
-
-    // Initialize GLEW
-    if (glewInit() != GLEW_OK)
-    {
-        std::cerr << "Failed to initialize GLEW." << std::endl;
-        exit(-1);
-    }
-
-    PrintSpecs();
 
     m_fpsController.SetTargetFPS(60);  // Default to 60 FPS
     // set flags
@@ -185,34 +176,4 @@ void PE::CoreApplication::AddSystem(System* system)
 {
     // add system to core application
     m_systemList.push_back(system);
-
-}
-
-void PE::CoreApplication::PrintSpecs()
-{
-    // Declare variables to store specs info
-    GLint majorVersion, minorVersion, maxVertexCount, maxIndicesCount, maxTextureSize, maxViewportDims[2];
-    GLboolean isdoubleBuffered;
-
-    // Get and store values
-    glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
-    glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
-    glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &maxVertexCount);
-    glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxIndicesCount);
-    glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
-    glGetIntegerv(GL_MAX_VIEWPORT_DIMS, maxViewportDims);
-    glGetBooleanv(GL_DOUBLEBUFFER, &isdoubleBuffered);
-
-    // Print out specs
-    std::cout << "GPU Vendor: " << glGetString(GL_VENDOR)
-        << "\nGL Renderer: " << glGetString(GL_RENDERER)
-        << "\nGL Version: " << glGetString(GL_VERSION)
-        << "\nGL Shader Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION)
-        << "\nGL Major Version: " << majorVersion
-        << "\nGL Minor Version: " << minorVersion
-        << "\nCurrent OpenGL Context is " << (isdoubleBuffered ? "double buffered" : "single buffered")
-        << "\nMaximum Vertex Count: " << maxVertexCount
-        << "\nMaximum Indices Count: " << maxIndicesCount
-        << "\nGL Maximum texture size: " << maxTextureSize
-        << "\nMaximum Viewport Dimensions: " << maxViewportDims[0] << " x " << maxViewportDims[1] << "\n" << std::endl;
 }

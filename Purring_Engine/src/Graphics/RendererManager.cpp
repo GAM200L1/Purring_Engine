@@ -16,6 +16,8 @@
 /*                                                                   includes
 ----------------------------------------------------------------------------- */
 #include "prpch.h"
+
+#define GLEW_STATIC
 #include <GL/glew.h> // for access to OpenGL API declarations 
 #include <glm/gtc/constants.hpp>    // pi()
 #include <glm/gtc/matrix_transform.hpp> // ortho()
@@ -31,6 +33,15 @@ namespace PE
     {
         RendererManager::RendererManager(GLFWwindow* p_window) 
         {
+            // Initialize GLEW
+            if (glewInit() != GLEW_OK)
+            {
+                std::cerr << "Failed to initialize GLEW." << std::endl;
+                exit(-1);
+            }
+
+            PrintSpecifications();
+
             p_windowRef = p_window;
         }
         
@@ -252,6 +263,35 @@ namespace PE
                     glm::cos(totalAngle),
                     glm::sin(totalAngle)));
             }
+        }
+
+        void RendererManager::PrintSpecifications()
+        {
+            // Declare variables to store specs info
+            GLint majorVersion, minorVersion, maxVertexCount, maxIndicesCount, maxTextureSize, maxViewportDims[2];
+            GLboolean isdoubleBuffered;
+
+            // Get and store values
+            glGetIntegerv(GL_MAJOR_VERSION, &majorVersion);
+            glGetIntegerv(GL_MINOR_VERSION, &minorVersion);
+            glGetIntegerv(GL_MAX_ELEMENTS_VERTICES, &maxVertexCount);
+            glGetIntegerv(GL_MAX_ELEMENTS_INDICES, &maxIndicesCount);
+            glGetIntegerv(GL_MAX_TEXTURE_SIZE, &maxTextureSize);
+            glGetIntegerv(GL_MAX_VIEWPORT_DIMS, maxViewportDims);
+            glGetBooleanv(GL_DOUBLEBUFFER, &isdoubleBuffered);
+
+            // Print out specs
+            std::cout << "GPU Vendor: " << glGetString(GL_VENDOR)
+                << "\nGL Renderer: " << glGetString(GL_RENDERER)
+                << "\nGL Version: " << glGetString(GL_VERSION)
+                << "\nGL Shader Version: " << glGetString(GL_SHADING_LANGUAGE_VERSION)
+                << "\nGL Major Version: " << majorVersion
+                << "\nGL Minor Version: " << minorVersion
+                << "\nCurrent OpenGL Context is " << (isdoubleBuffered ? "double buffered" : "single buffered")
+                << "\nMaximum Vertex Count: " << maxVertexCount
+                << "\nMaximum Indices Count: " << maxIndicesCount
+                << "\nGL Maximum texture size: " << maxTextureSize
+                << "\nMaximum Viewport Dimensions: " << maxViewportDims[0] << " x " << maxViewportDims[1] << "\n" << std::endl;
         }
     } // End of Graphics namespace
 } // End of PE namespace

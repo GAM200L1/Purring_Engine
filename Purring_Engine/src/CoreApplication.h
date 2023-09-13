@@ -35,9 +35,6 @@ namespace PE {
 		void AddLayer(Layer* layer);
 		void AddOverlay(Layer* overlay);
 
-		// tmp
-		void PrintSpecs();
-
 		//inline static Application& Get() { return *s_Instance; }
 		//inline Window& GetWindow() { return *m_Window; }
 	private:

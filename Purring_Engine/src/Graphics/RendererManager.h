@@ -107,6 +107,11 @@ namespace PE
              \param[in,out] r_points Vector that the vertex positions should be output to.
             *************************************************************************************/
             void GenerateCirclePoints(std::size_t const segments, std::vector<glm::vec2>& r_points);
+
+            /*!***********************************************************************************
+             \brief Prints the graphics specifications of the device.
+            *************************************************************************************/
+            void PrintSpecifications();
         };
 
 

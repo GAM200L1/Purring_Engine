@@ -7,6 +7,8 @@ namespace PE
 	{
 	public:
 
+		virtual ~System() {}
+
 		virtual void InitializeSystem() {}
 
 		virtual void UpdateSystem(float deltaTime) = 0;
