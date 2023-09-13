@@ -1,7 +1,7 @@
 #include "prpch.h"
 
 // imgui
-#include "Imgui/ImGuiConsole.h"
+#include "Imgui/ImGuiWindow.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -12,7 +12,7 @@
 #include "GLFW/glfw3.h"
 
 #include "CoreApplication.h"
-#include "WindowSystem.h"
+#include "WindowManager.h"
 #include "Logging/Logger.h"
 
 // testing
@@ -41,7 +41,7 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
-
+    //init imgui settings
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGui::StyleColorsDark();
@@ -50,9 +50,27 @@ PE::CoreApplication::CoreApplication()
     io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
     io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
+    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+
+    ///////////////////////////////////////////
+    //temp here untill i can get window exposed
+    int width, height;
+    glfwGetWindowSize(m_window, &width, &height);
+    io.DisplaySize = ImVec2(width, height);
+
+    ImGuiStyle& style = ImGui::GetStyle();
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+        style.WindowRounding = 0.0f;
+        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    }
+
     ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 
     ImGui_ImplOpenGL3_Init("#version 460");
+    ///////////////////////////////////////////
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -65,18 +83,13 @@ void PE::CoreApplication::Run()
 	std::cout << "test" << std::endl;
 	// main app loop
 
-	//while (m_Running)
-	//{
-
-	//}
-
-    // tmp
     while (!glfwWindowShouldClose(m_window))
     {
+        m_fpsController.StartFrame();
         engine_logger.SetTime();
 
         // UPDATE -----------------------------------------------------
-        m_fpsController.StartFrame();
+        
 
         // List of keys to check
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
@@ -90,40 +103,30 @@ void PE::CoreApplication::Run()
         }
 
 
-        //////////////////////////////////////////////////////////////////////////
-        //Chunk of IMGUI code needed for all the imgui windows to start
-        ImGuiIO& io = ImGui::GetIO();
-        int width, height;
-        glfwGetWindowSize(m_window, &width, &height);
-
-        io.DisplaySize = ImVec2(width, height);
-
-        float time = (float)glfwGetTime();
-        io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
-        m_time = time;
-
-        ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        //////////////////////////////////////////////////////////////////////////
-        //-----------------------------------------------------------------
 
         // DRAW -----------------------------------------------------
             // Render scene (placeholder: clear screen)
         glClear(GL_COLOR_BUFFER_BIT);
 
-        ImGuiConsole::GetInstance()->Render();
+        //////////////////////////////////////////////////////////////////////////
+        //temp here untill window is exposed
+        ImGuiIO& io = ImGui::GetIO();
+        float time = (float)glfwGetTime();
+        io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
+        m_time = time;
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
+        //redering of all windows
+        ImGuiWindow::GetInstance()->Render();
+        //////////////////////////////////////////////////////////////////////
+        // 
         // Swap front and back buffers
         glfwSwapBuffers(m_window);
-        // ----------------------------------------------------------
+        // DRAW ----------------------------------------------------------
 
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the title to show FPS (every second in this example)
+
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
@@ -131,11 +134,18 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        m_fpsController.EndFrame();
-        engine_logger.FlushLog();
-        // Poll for and process events
-        glfwPollEvents();
+        // update systems
+        for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
+        {
+            m_systemList[i]->UpdateSystem();
+        }
 
+        
+        engine_logger.FlushLog();
+
+        // Poll for and process events
+        glfwPollEvents(); // should be called before glfwSwapbuffers
+        m_fpsController.EndFrame();
     }
 
     /// <summary>
@@ -149,13 +159,28 @@ void PE::CoreApplication::Run()
     m_windowManager.Cleanup();
 }
 
-void PE::CoreApplication::Initialize()
+void PE::CoreApplication::InitSystems()
 {
-	// init systems
+    // init all systems
+    for (System* system : m_systemList)
+    {
+        system->InitSystem();
+    }
+}
+
+void PE::CoreApplication::DestroySystems()
+{
+    // destroy all systems
+    for (System* system : m_systemList)
+    {
+        delete system;
+    }
 }
 
 void PE::CoreApplication::AddSystem(System* system)
 {
+    // add system to core application
+    m_systemList.push_back(system);
 
 }
 

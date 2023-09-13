@@ -35,4 +35,5 @@ private:
     double m_frameCount;
     double m_timeSinceLastFPSUpdate;
     double m_currentFPS;
+    double m_deltaTime;
 };

@@ -3,8 +3,10 @@
 #include "System.h"
 #include <vector>
 
+#include "LayerStack.h"
+
 //tmp
-#include "WindowSystem.h"
+#include "WindowManager.h"
 #include "FrameRateTargetControl.h"
 
 namespace PE {
@@ -22,7 +24,15 @@ namespace PE {
 		void AddSystem(System* system);
 
 		// Initializes all systems
-		void Initialize();
+		void InitSystems();
+			
+		// Destroys all systems
+		void DestroySystems();
+
+		// OnEvent?
+
+		void AddLayer(Layer* layer);
+		void AddOverlay(Layer* overlay);
 
 		// tmp
 		void PrintSpecs();
@@ -38,9 +48,8 @@ namespace PE {
 		// holds all the systems in the engine
 		std::vector<System*> m_systemList;
 
-		// layer
-
 		// layerstack
+		LayerStack m_LayerStack;
 
 		// tmp
 		WindowManager m_windowManager;

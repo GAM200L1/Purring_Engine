@@ -35,7 +35,8 @@ FrameRateTargetControl::FrameRateTargetControl()
     m_lastFrameStartTime(0.0),
     m_frameCount(0),
     m_timeSinceLastFPSUpdate(0.0),
-    m_currentFPS(0.0)
+    m_currentFPS(0.0),
+    m_deltaTime(0.0)
 {}
 
 
@@ -60,7 +61,9 @@ void FrameRateTargetControl::SetTargetFPS(unsigned int fps)
 ----------------------------------------------------------------------------- */
 void FrameRateTargetControl::StartFrame()
 {
-    m_lastFrameStartTime = glfwGetTime();
+    float currentFrameTime = glfwGetTime();
+    m_deltaTime = currentFrameTime - m_lastFrameStartTime;
+    m_lastFrameStartTime = currentFrameTime;
     m_frameCount++;
 }
 
@@ -74,9 +77,7 @@ void FrameRateTargetControl::StartFrame()
 ----------------------------------------------------------------------------- */
 void FrameRateTargetControl::EndFrame()
 {
-    double currentFrameTime = glfwGetTime() - m_lastFrameStartTime;
-
-    m_timeSinceLastFPSUpdate += currentFrameTime;
+    m_timeSinceLastFPSUpdate += m_deltaTime;
     if (m_timeSinceLastFPSUpdate > 1.0)  // Update FPS value once per second
     {
         m_currentFPS = static_cast<double>(m_frameCount) / m_timeSinceLastFPSUpdate;
@@ -84,11 +85,16 @@ void FrameRateTargetControl::EndFrame()
         m_timeSinceLastFPSUpdate = 0.0;
     }
 
+        // delta time
+    double currentFrameTime = glfwGetTime() - m_lastFrameStartTime;
+    //std::cout << m_currentFPS << ", " << m_targetFrameTime << ", " << m_deltaTime << ", "  << currentFrameTime << '\n';
     if (currentFrameTime < m_targetFrameTime)
     {
         double sleepTime = m_targetFrameTime - currentFrameTime;
+        //std::cout << "Sleep: " << sleepTime << '\n';
         std::this_thread::sleep_for(std::chrono::duration<double>(sleepTime));
     }
+    
 }
 
 

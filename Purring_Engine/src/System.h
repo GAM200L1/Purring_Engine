@@ -9,7 +9,7 @@ namespace PE
 
 		virtual void InitSystem() {}
 
-		virtual void UpdateSystem() = 0;
+		virtual void UpdateSystem() {}
 
 		virtual std::string GetName() = 0;
 
