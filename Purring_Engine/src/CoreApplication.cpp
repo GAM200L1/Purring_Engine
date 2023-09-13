@@ -36,34 +36,34 @@ PE::CoreApplication::CoreApplication()
     AddSystem(rendererManager);
 
     //init imgui settings
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGui::StyleColorsDark();
+    //IMGUI_CHECKVERSION();
+    //ImGui::CreateContext();
+    //ImGui::StyleColorsDark();
 
-    ImGuiIO& io = ImGui::GetIO();
-    io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-    io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+    //ImGuiIO& io = ImGui::GetIO();
+    //io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+    //io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
-    io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 
     ///////////////////////////////////////////
     //temp here untill i can get window exposed
-    int width, height;
-    glfwGetWindowSize(m_window, &width, &height);
-    io.DisplaySize = ImVec2(width, height);
+    //int width, height;
+    //glfwGetWindowSize(m_window, &width, &height);
+    //io.DisplaySize = ImVec2(width, height);
 
-    ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        style.WindowRounding = 0.0f;
-        style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    }
+    //ImGuiStyle& style = ImGui::GetStyle();
+    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    //    style.WindowRounding = 0.0f;
+    //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    //}
 
-    ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+    //ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 
-    ImGui_ImplOpenGL3_Init("#version 460");
+    //ImGui_ImplOpenGL3_Init("#version 460");
     ///////////////////////////////////////////
 }
 
@@ -104,13 +104,13 @@ void PE::CoreApplication::Run()
 
         //////////////////////////////////////////////////////////////////////////
         //temp here untill window is exposed
-        ImGuiIO& io = ImGui::GetIO();
-        float time = (float)glfwGetTime();
-        io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
-        m_time = time;
+        //ImGuiIO& io = ImGui::GetIO();
+        //float time = (float)glfwGetTime();
+        //io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
+        //m_time = time;
 
-        //redering of all windows
-        ImGuiWindow::GetInstance()->Render();
+        ////redering of all windows
+        //ImGuiWindow::GetInstance()->Render();
         //////////////////////////////////////////////////////////////////////
         // 
         // Swap front and back buffers

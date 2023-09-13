@@ -20,12 +20,14 @@
 		virtual ~ImGuiWindow();
 		static ImGuiWindow* GetInstance();
 
-		void Init();
-		void Render();
+		void GetWindowSize(float&, float&);
+		void Init(GLFWwindow*);
+		void Render(GLuint texture_id);
 		void showLogs(bool* Active);
 		void showConsole(bool* Active);
 		void showObject(bool* Active);
 		void setDockingPort();
+		void renderSceneOnWindow(GLuint texture_id);
 		void addLog(std::string text);
 		void addCommand(std::string text);
 		void clearLog();
@@ -44,4 +46,6 @@
 		ImVec2 imGuiWindowSize;
 		int currentSelectedIndex;
 		std::vector<std::string> items;
+		float m_time;
+		float renderWindowWidth, renderWindowHeight;
 	};

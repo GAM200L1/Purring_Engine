@@ -32,37 +32,43 @@
         return s_Instance.get();
     }
 
-    void ImGuiWindow::Init()
+    void ImGuiWindow::GetWindowSize(float& width, float& height)
     {
-        //IMGUI_CHECKVERSION();
-        //ImGui::CreateContext();
-        //ImGui::StyleColorsDark();
-
-        //ImGuiIO& io = ImGui::GetIO();
-        //io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-        //io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-
-        //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-        //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-        //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-
-        //int width, height;
-        //glfwGetWindowSize(m_window, &width, &height);
-        //io.DisplaySize = ImVec2(width, height);
-
-        //ImGuiStyle& style = ImGui::GetStyle();
-        //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-        //    style.WindowRounding = 0.0f;
-        //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-        //}
-
-        //ImGui_ImplGlfw_InitForOpenGL(m_window, true);
-
-        //ImGui_ImplOpenGL3_Init("#version 460");
+        width = renderWindowWidth;
+        height = renderWindowHeight;
     }
 
-    void ImGuiWindow::Render()
+    void ImGuiWindow::Init(GLFWwindow* m_window)
+    {
+        IMGUI_CHECKVERSION();
+        ImGui::CreateContext();
+        ImGui::StyleColorsDark();
+
+        ImGuiIO& io = ImGui::GetIO();
+        io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+        io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+
+        io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+        io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+
+        int width, height;
+        glfwGetWindowSize(m_window, &width, &height);
+        io.DisplaySize = ImVec2(width, height);
+
+        ImGuiStyle& style = ImGui::GetStyle();
+        if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+            style.WindowRounding = 0.0f;
+            style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+        }
+
+        ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+
+        ImGui_ImplOpenGL3_Init("#version 460");
+    }
+
+    void ImGuiWindow::Render(GLuint texture_id)
     {
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -89,13 +95,15 @@
             showConsole(&consoleActive);
         }
 
+        renderSceneOnWindow(texture_id);
+
         ImGui::Render();
 
         ImGuiIO& io = ImGui::GetIO();
 
-        //float time = (float)glfwGetTime();
-        //io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
-        //m_time = time;
+        float time = (float)glfwGetTime();
+        io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
+        m_time = time;
 
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
@@ -302,6 +310,26 @@
         }
         ImGui::EndMainMenuBar();
 
+
+        ImGui::End();
+    }
+
+    void ImGuiWindow::renderSceneOnWindow(GLuint texture_id)
+    {
+        ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+        ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
+        ImGui::Begin("My Scene", nullptr, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+
+        renderWindowWidth = ImGui::GetContentRegionAvail().x;
+        renderWindowHeight = ImGui::GetContentRegionAvail().y;
+        ImVec2 pos = ImGui::GetCursorScreenPos();
+
+        ImGui::Image(
+            (void*)texture_id,
+            ImVec2(renderWindowWidth, renderWindowHeight),
+            ImVec2(0, 1),
+            ImVec2(1, 0)
+        );
 
         ImGui::End();
     }
