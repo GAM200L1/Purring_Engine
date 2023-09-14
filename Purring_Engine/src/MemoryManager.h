@@ -18,6 +18,7 @@ Header file containing the declaration and definition of the event and nmemory m
 #include <string>
 #include <vector>
 #include <memory>
+#include <iostream>
 // CONSTANT VARIABLESs
 constexpr size_t max_size = 1000000;
 
@@ -35,9 +36,9 @@ namespace PE {
 	struct MemoryData
 	{
 		std::string s_name;
-		int s_size;
-
-		MemoryData(std::string name, int size) : s_name(name), s_size(size) {}
+		int s_size; // total size;
+		int s_bufferSize; // (10 + 2 - 1) / 2 = 11/2 = 5
+		MemoryData(std::string name, int size) : s_name(name), s_size(size) ,s_bufferSize((size + 2 - 1)/2){}
 	};
 
 	//Allocator
@@ -46,7 +47,10 @@ namespace PE {
 	public:
 		StackAllocator(int size = max_size) : m_totalSize(size), m_stackTop(0)
 		{
-			m_stack = new uint8_t[size];
+			static int test = 1;
+			std::cout << "Stack Allocator launched: "<<test++<<"size: "<<size << std::endl;
+			m_stack = new char[size]();
+			memset(m_stack, '\0', size);
 		}
 
 		~StackAllocator() { delete[] m_stack; }
@@ -55,10 +59,12 @@ namespace PE {
 
 		void Free(int size);
 
+		char* getStack();
 	private:
-		uint8_t* m_stack{ nullptr }; //where all the data in the stack will be stored
+		char* m_stack{ nullptr }; //where all the data in the stack will be stored
 		int m_totalSize; // size of the stack
 		int m_stackTop; // current top of the stack
+		//hold a shared pointer to ECS pool allocator
 	};
 
 	class MemoryManager
@@ -75,6 +81,8 @@ namespace PE {
 
 		//free the latest used chunk of memory
 		void  Pop_BackMemory();
+
+		void CheckMemoryOver();
 
 	private:
 		//for storing what memory allocated to where
