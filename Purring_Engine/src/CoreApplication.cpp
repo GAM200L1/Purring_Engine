@@ -14,6 +14,7 @@
 #include "CoreApplication.h"
 #include "WindowManager.h"
 #include "Logging/Logger.h"
+#include "MemoryManager.h"
 
 // testing
 Logger engine_logger = Logger("ENGINE");
@@ -34,7 +35,11 @@ PE::CoreApplication::CoreApplication()
 
 
     // Pass the pointer to the GLFW window to the rendererManager
-    Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
+    
+    MemoryManager::GetInstance();
+    
+    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    //Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
     AddSystem(rendererManager);
 
     //init imgui settings
@@ -83,7 +88,7 @@ void PE::CoreApplication::Run()
     {
         m_fpsController.StartFrame();
         engine_logger.SetTime();
-
+        MemoryManager::GetInstance()->CheckMemoryOver();
         // UPDATE -----------------------------------------------------
         
 

@@ -7,7 +7,6 @@ namespace PE
 
 	MemoryManager::MemoryManager()
 	{
-		//m_stackAllocator = StackAllocator();
 	}
 
 	MemoryManager::~MemoryManager()
@@ -31,7 +30,8 @@ namespace PE
 			int buffer = (size + 1) / 2;
 			void* newptr = m_stackAllocator.Allocate(size + buffer);
 			m_memoryAllocationData.push_back(MemoryData(name, size));
-			std::cout << "memoryAllocated of size: " << size << "to: " << name << std::endl;
+			std::cout << "memoryAllocated of size: " << size << " to: " << name << std::endl;
+			std::cout << "allocated buffer of " << buffer << std::endl;
 			return newptr;
 		}
 		catch (int i) {
@@ -64,6 +64,14 @@ namespace PE
 		}
 	}
 
+
+	StackAllocator::StackAllocator(int size) : m_totalSize(size), m_stackTop(0)
+	{
+		static int test = 1;
+		std::cout << "Stack Allocator launched: " << test++ << " size: " << size << std::endl;
+		m_stack = new char[size]();
+		memset(m_stack, '\0', size);
+	}
 
 	void* StackAllocator::Allocate(int size)
 	{

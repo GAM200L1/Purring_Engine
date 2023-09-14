@@ -45,13 +45,7 @@ namespace PE {
 	class StackAllocator
 	{
 	public:
-		StackAllocator(int size = max_size) : m_totalSize(size), m_stackTop(0)
-		{
-			static int test = 1;
-			std::cout << "Stack Allocator launched: "<<test++<<"size: "<<size << std::endl;
-			m_stack = new char[size]();
-			memset(m_stack, '\0', size);
-		}
+		StackAllocator(int size = max_size);
 
 		~StackAllocator() { delete[] m_stack; }
 
