@@ -19,6 +19,7 @@ IncludeDir["ImGui"]         = "vendor/imgui"
 IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
+IncludeDir["FMOD"]          = "vendor/FMOD/core/inc"
 
 -- external libraries
 group "Library"
@@ -86,7 +87,8 @@ group "Library"
         includedirs
         {
             "vendor/imgui",
-            "%{IncludeDir.GLFW}"
+            "%{IncludeDir.GLFW}",
+            "%{IncludeDir.FMOD}"
         }
 
         filter "system:windows"
@@ -99,6 +101,44 @@ group "Library"
         filter "configurations:Release"
             runtime "Release"
             optimize "on"
+    -- FMOD
+    project "FMOD"
+    location "vendor/FMOD"
+
+    kind "StaticLib"
+    staticruntime "on"
+
+    language "C++"
+    cppdialect "C++17"
+
+    targetdir ("bin/" .. outputdir .. "/vendor/%{prj.name}")
+    objdir ("bin-int/" .. outputdir .. "/vendor/%{prj.name}")
+
+    files
+    {
+        "vendor/FMOD/core/inc/**.h",
+        "vendor/FMOD/core/inc/**.hpp",
+        "vendor/FMOD/core/inc/**.cs",
+        "vendor/FMOD/core/inc/**.cpp",
+        "vendor/FMOD/core/inc/fmod.*"
+        
+    }
+
+    includedirs
+    {
+        "vendor/FMOD/core/inc"
+    }
+
+    filter "system:windows"
+        systemversion "latest"
+
+    filter "configurations:Debug"
+        runtime "Debug"
+        symbols "on"
+
+    filter "configurations:Release"
+        runtime "Release"
+        optimize "on"
 group ""
 
 -- Purring_Engine
@@ -126,7 +166,13 @@ project "Purring_Engine"
         "vendor/stb_image/**.h",
         "vendor/stb_image/**.cpp",
         "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl"
+        "vendor/glm/glm/**.inl",
+
+        "vendor/FMOD/core/inc/**.h",
+        "vendor/FMOD/core/inc/**.hpp",
+        "vendor/FMOD/core/inc/**.cs",
+        "vendor/FMOD/core/inc/**.cpp",
+        "vendor/FMOD/core/inc/fmod.*"
     }
 
     includedirs
@@ -137,12 +183,14 @@ project "Purring_Engine"
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
-        "%{IncludeDir.GLEW}"
+        "%{IncludeDir.GLEW}",
+        "%{IncludeDir.FMOD}"
     }
 
     libdirs
     {
-        "vendor/GLEW/lib/Release/x64"
+        "vendor/GLEW/lib/Release/x64",
+        "vendor/FMOD/core/lib/x64"
     }
 
     links
@@ -150,7 +198,8 @@ project "Purring_Engine"
         "GLFW",
         "glew32s",
         "ImGui",
-        "opengl32.lib" -- not sure if needed
+        "opengl32.lib",  -- not sure if needed
+        "fmod_vc"
     }
 
     filter "system:windows"
@@ -182,6 +231,7 @@ project "Application"
 	files
 	{
 		"%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.hpp",
 		"%{prj.name}/src/**.cpp"
 	}
 
@@ -192,12 +242,14 @@ project "Application"
         "vendor",
         "%{IncludeDir.glm}",
         "%{IncludeDir.GLFW}",
-        "%{IncludeDir.GLEW}"       
+        "%{IncludeDir.GLEW}",
+        "%{IncludeDir.FMOD}"
     }
 
     links
     {
-        "Purring_Engine"
+        "Purring_Engine",
+        "fmod_vc"
     }
 
     filter "system:windows"
@@ -210,4 +262,3 @@ project "Application"
     filter "configurations:Release"
 			runtime "Release"
 			optimize "on"
-

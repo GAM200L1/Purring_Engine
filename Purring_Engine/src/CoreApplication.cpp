@@ -13,6 +13,9 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
+// Audio
+#include "AudioManager.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
 
