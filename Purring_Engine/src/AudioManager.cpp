@@ -32,13 +32,13 @@ bool AudioManager::Init()
         return false;
     }
 
-    result = system->createSound("C:\\Users\\ongyo\\OneDrive\\Documents\\GitHub\\Purring_Engine\\Audio\\sound1.wav", FMOD_DEFAULT, 0, &sound1);
+    result = system->createSound("Audio/sound1.wav", FMOD_DEFAULT, 0, &sound1);
     if (result != FMOD_OK) {
         std::cout << "FMOD createSound failed for sound1: " << FMOD_ErrorString(result) << "\n";
         return false;
     }
 
-    result = system->createSound("C:\\Users\\ongyo\\OneDrive\\Documents\\GitHub\\Purring_Engine\\Audio\\sound2.wav", FMOD_DEFAULT, 0, &sound2);
+    result = system->createSound("Audio/sound2.wav", FMOD_DEFAULT, 0, &sound2);
     if (result != FMOD_OK) {
         std::cout << "FMOD createSound failed for sound2: " << FMOD_ErrorString(result) << "\n";
         return false;
@@ -56,10 +56,10 @@ void AudioManager::PlaySound(const char* filePath)
 {
     FMOD::Sound* sound = nullptr;
 
-    if (strcmp(filePath, "C:\\Users\\ongyo\\OneDrive\\Documents\\GitHub\\Purring_Engine\\Audio\\sound1.wav") == 0) {
+    if (strcmp(filePath, "Audio/sound1.wav") == 0) {
         sound = sound1;
     }
-    else if (strcmp(filePath, "C:\\Users\\ongyo\\OneDrive\\Documents\\GitHub\\Purring_Engine\\Audio\\sound2.wav") == 0) {
+    else if (strcmp(filePath, "Audio/sound2.wav") == 0) {
         sound = sound2;
     }
 

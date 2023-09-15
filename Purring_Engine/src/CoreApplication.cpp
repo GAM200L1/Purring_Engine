@@ -116,12 +116,12 @@ void PE::CoreApplication::Run()
                 if (key == GLFW_KEY_A)
                 {
                     std::cout << "A key pressed\n";
-                    m_audioManager.PlaySound("C:\\Users\\ongyo\\OneDrive\\Documents\\GitHub\\Purring_Engine\\Audio\\sound1.wav");
+                    m_audioManager.PlaySound("Audio/sound1.wav");
                 }
                 else if (key == GLFW_KEY_S)
                 {
                     std::cout << "S key pressed\n";
-                    m_audioManager.PlaySound("C:\\Users\\ongyo\\OneDrive\\Documents\\GitHub\\Purring_Engine\\Audio\\sound2.wav");
+                    m_audioManager.PlaySound("Audio/sound2.wav");
                 }
             }
         }
