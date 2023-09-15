@@ -213,6 +213,11 @@ project "Application"
         "Purring_Engine"
     }
 
+    postbuildcommands
+    {
+        ("{COPY} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application")
+    }
+
     filter "system:windows"
         systemversion "latest"
 
