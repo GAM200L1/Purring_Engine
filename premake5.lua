@@ -129,8 +129,7 @@ project "Purring_Engine"
         "vendor/stb_image/**.h",
         "vendor/stb_image/**.cpp",
         "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl",
-        "vendor/FMOD/core/inc/*"
+        "vendor/glm/glm/**.inl"
     }
 
     includedirs
@@ -157,7 +156,7 @@ project "Purring_Engine"
         "glew32s",
         "ImGui",
         "opengl32.lib",  -- not sure if needed
-        "fmod_vc"
+        "fmod_vc",
     }
 
     filter "system:windows"
@@ -202,6 +201,11 @@ project "Application"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLEW}",
         "%{IncludeDir.FMOD}"
+    }
+
+    libdirs
+    {
+
     }
 
     links
