@@ -40,6 +40,9 @@ PE::CoreApplication::CoreApplication()
 
     // Audio Stuff - HANS
     m_audioManager.Init();
+    {
+        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
+    }
 
     //init imgui settings
     //IMGUI_CHECKVERSION();
@@ -112,14 +115,17 @@ void PE::CoreApplication::Run()
             {
                 if (key == GLFW_KEY_A)
                 {
-                    m_audioManager.PlaySound("Audio/sound1.wav");
+                    std::cout << "A key pressed\n";
+                    m_audioManager.PlaySound("C:\\Users\\ongyo\\OneDrive\\Documents\\GitHub\\Purring_Engine\\Audio\\sound1.wav");
                 }
                 else if (key == GLFW_KEY_S)
                 {
-                    m_audioManager.PlaySound("Audio/sound2.wav");
+                    std::cout << "S key pressed\n";
+                    m_audioManager.PlaySound("C:\\Users\\ongyo\\OneDrive\\Documents\\GitHub\\Purring_Engine\\Audio\\sound2.wav");
                 }
             }
         }
+
 
 
 
