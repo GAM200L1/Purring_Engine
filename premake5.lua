@@ -19,7 +19,7 @@ IncludeDir["ImGui"]         = "vendor/imgui"
 IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
-IncludeDir["FMOD"]          = "vendor/FMOD/core/inc"
+IncludeDir["FMOD"]          = "vendor/FMOD/core/inc" -- CORE
 
 -- external libraries
 group "Library"
@@ -101,44 +101,7 @@ group "Library"
         filter "configurations:Release"
             runtime "Release"
             optimize "on"
-    -- FMOD
-    project "FMOD"
-    location "vendor/FMOD"
-
-    kind "StaticLib"
-    staticruntime "on"
-
-    language "C++"
-    cppdialect "C++17"
-
-    targetdir ("bin/" .. outputdir .. "/vendor/%{prj.name}")
-    objdir ("bin-int/" .. outputdir .. "/vendor/%{prj.name}")
-
-    files
-    {
-        "vendor/FMOD/core/inc/**.h",
-        "vendor/FMOD/core/inc/**.hpp",
-        "vendor/FMOD/core/inc/**.cs",
-        "vendor/FMOD/core/inc/**.cpp",
-        "vendor/FMOD/core/inc/fmod.*"
-        
-    }
-
-    includedirs
-    {
-        "vendor/FMOD/core/inc"
-    }
-
-    filter "system:windows"
-        systemversion "latest"
-
-    filter "configurations:Debug"
-        runtime "Debug"
-        symbols "on"
-
-    filter "configurations:Release"
-        runtime "Release"
-        optimize "on"
+   
 group ""
 
 -- Purring_Engine
@@ -167,12 +130,7 @@ project "Purring_Engine"
         "vendor/stb_image/**.cpp",
         "vendor/glm/glm/**.hpp",
         "vendor/glm/glm/**.inl",
-
-        "vendor/FMOD/core/inc/**.h",
-        "vendor/FMOD/core/inc/**.hpp",
-        "vendor/FMOD/core/inc/**.cs",
-        "vendor/FMOD/core/inc/**.cpp",
-        "vendor/FMOD/core/inc/fmod.*"
+        "vendor/FMOD/core/inc/*"
     }
 
     includedirs
@@ -248,8 +206,7 @@ project "Application"
 
     links
     {
-        "Purring_Engine",
-        "fmod_vc"
+        "Purring_Engine"
     }
 
     filter "system:windows"
