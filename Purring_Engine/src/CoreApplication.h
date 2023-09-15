@@ -9,6 +9,7 @@
 #include "WindowManager.h"
 #include "FrameRateTargetControl.h"
 #include "Graphics/RendererManager.h"
+#include "AudioManager.h"
 
 namespace PE {
 
@@ -58,6 +59,9 @@ namespace PE {
 
 	private:
 		//static Application* s_Instance;
+
+		// Audio Stuff - HANS
+		AudioManager m_audioManager;
 	};
 
 	// defined by client

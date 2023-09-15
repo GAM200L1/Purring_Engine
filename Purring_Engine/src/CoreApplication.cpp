@@ -13,7 +13,7 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
-// Audio
+// Audio Stuff - HANS
 #include "AudioManager.h"
 
 // testing
@@ -37,6 +37,9 @@ PE::CoreApplication::CoreApplication()
     // Pass the pointer to the GLFW window to the rendererManager
     Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
     AddSystem(rendererManager);
+
+    // Audio Stuff - HANS
+    m_audioManager.Init();
 
     //init imgui settings
     //IMGUI_CHECKVERSION();
@@ -98,6 +101,26 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
+
+        // Audio Stuff - HANS
+        m_audioManager.Update();
+
+        const int audioKeys[] = { GLFW_KEY_A, GLFW_KEY_S };
+        for (int key : audioKeys)
+        {
+            if (glfwGetKey(m_window, key) == GLFW_PRESS)
+            {
+                if (key == GLFW_KEY_A)
+                {
+                    m_audioManager.PlaySound("Audio/sound1.wav");
+                }
+                else if (key == GLFW_KEY_S)
+                {
+                    m_audioManager.PlaySound("Audio/sound2.wav");
+                }
+            }
+        }
+
 
 
 
