@@ -24,6 +24,7 @@
 
 #include "Logging/Logger.h" // ----- @TODO: Fix the include paths... ------
 #include "RendererManager.h" // <cstddef>, <GLFW/glfw3.h>, <glm/glm.hpp>, <vector>
+#include "ResourceManager/ResourceManager.h" // shader loading & instancing
 
 extern Logger engine_logger;
 
@@ -155,8 +156,10 @@ namespace PE
             }
         )" };
 
-            m_shaderPrograms["basic"] = new ShaderProgram{};
-            m_shaderPrograms["basic"]->CompileLinkValidateProgram(vertexShaderString, fragmentShaderString);
+            
+            PE::ResourceManager::GetShaderProgram("basic", vertexShaderString, fragmentShaderString);
+            //m_shaderPrograms["basic"] = 
+            //m_shaderPrograms["basic"]->CompileLinkValidateProgram(vertexShaderString, fragmentShaderString);
 
 
             // Add a triangle and quad as renderable objects
@@ -230,11 +233,11 @@ namespace PE
             };
 
             for (auto& renderable : m_renderableObjects) {
-                m_shaderPrograms[renderable.shaderProgramName]->Use();
+                PE::ResourceManager::m_shaderPrograms[renderable.shaderProgramName]->Use();
 
                 m_meshes[renderable.meshName].BindMesh();
 
-                m_shaderPrograms[renderable.shaderProgramName]->SetUniform(
+                PE::ResourceManager::m_shaderPrograms[renderable.shaderProgramName]->SetUniform(
                     "uModelToNdc",
                     viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix()
                 );
@@ -245,7 +248,7 @@ namespace PE
 
                 m_meshes[renderable.meshName].UnbindMesh();
 
-                m_shaderPrograms[renderable.shaderProgramName]->UnUse();
+                PE::ResourceManager::m_shaderPrograms[renderable.shaderProgramName]->UnUse();
             }
         }
 

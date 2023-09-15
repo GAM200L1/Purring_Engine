@@ -15,6 +15,9 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
+// Resource manager
+#include "ResourceManager/ResourceManager.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -151,6 +154,7 @@ void PE::CoreApplication::Run()
 
     // Cleanup (if needed)
     m_windowManager.Cleanup();
+    PE::ResourceManager::UnloadResources();
 }
 
 void PE::CoreApplication::InitSystems()
