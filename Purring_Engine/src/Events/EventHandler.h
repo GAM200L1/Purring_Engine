@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     EventHandler.h
+ \date     8/30/2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+Header file containing the declaration and definition of the event and event dispatcher template
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #ifndef EVENT_HANDLER_H
 #define EVENT_HANDLER_H
 
@@ -9,17 +25,28 @@
 namespace temp {
 	class EventHandler
 	{
+		// ----- Constructors ----- // 
 	public:
 		EventHandler() : WindowEventDispatcher(), MouseEventDispatcher(), KeyEventDispatcher() {}
+
+		// ----- Public getters ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief     returns the current instance of event handler
+
+		 \return EventHandler* pointer to the single instance of event handler
+		*************************************************************************************/
 		static EventHandler* GetInstance();
 
-		//WindowEvents
+		// ----- Public variables ----- // 
+	public:
 		EventDispatcher<WindowEvents> WindowEventDispatcher;
 
 		EventDispatcher<MouseEvents> MouseEventDispatcher;
 
 		EventDispatcher<KeyEvents> KeyEventDispatcher;
 
+		// ----- Private variables ----- // 
 	private:
 		static std::unique_ptr<EventHandler> s_Instance;
 	};
