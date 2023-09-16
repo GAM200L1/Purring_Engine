@@ -16,8 +16,7 @@
 
 /*                                                                   includes
 ----------------------------------------------------------------------------- */
-#define GLEW_STATIC
-#include <GL/glew.h> // for access to OpenGL API declarations 
+#include "Graphics/GLHeaders.h"
 #include <glm/glm.hpp>
 #include <string>
 

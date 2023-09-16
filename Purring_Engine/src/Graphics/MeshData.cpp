@@ -137,7 +137,7 @@ namespace PE
             // Check if this mesh's VAO is currently bound
             GLint out{};
             glGetIntegerv(GL_VERTEX_ARRAY_BINDING, &out);
-            if (out == m_vertexArrayObject)
+            if (static_cast<GLuint>(out) == m_vertexArrayObject)
             {
                 // Unbind this VAO
                 glBindVertexArray(0);
