@@ -54,6 +54,14 @@ namespace PE
         return p_instance;
     }
 
+    void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderString,
+                             std::string const& r_fragmentShaderString)
+    {
+        auto* shaderProgram = new Graphics::ShaderProgram();
+        shaderProgram->LoadAndCompileShadersFromFile(r_vertexShaderString, r_fragmentShaderString);
+        m_shaderPrograms[r_key] = shaderProgram;
+    }
+
     Graphics::ShaderProgram* ResourceManager::GetShaderProgram(std::string const& r_key, std::string const& r_vertexShaderString, std::string const& r_fragmentShaderString)
     {
         if (m_shaderPrograms.find(r_key) == m_shaderPrograms.end())
@@ -69,15 +77,15 @@ namespace PE
         return m_shaderPrograms[r_key];
     }
 
-    void ResourceManager::LoadTextureFromFile(std::string name, std::string const& filePath)
+    void ResourceManager::LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath)
     {
-        Textures[name] = std::make_shared<Graphics::Texture>();
-        Textures[name]->CreateTexture(filePath);
+        Textures[r_name] = std::make_shared<Graphics::Texture>();
+        Textures[r_name]->CreateTexture(r_filePath);
     }
 
-    std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string name)
+    std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
     {
-        return Textures[name];
+        return Textures[r_name];
     }
 
     void ResourceManager::UnloadResources()
@@ -89,5 +97,6 @@ namespace PE
         }
 
         m_shaderPrograms.clear();
+        Textures.clear();
     }
 }

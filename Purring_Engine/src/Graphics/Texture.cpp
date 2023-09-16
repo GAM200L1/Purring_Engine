@@ -27,7 +27,7 @@ namespace PE
 			glBindTexture(GL_TEXTURE_2D, 0);
 		}
 
-		void Texture::CreateTexture(std::string const& path)
+		bool Texture::CreateTexture(std::string const& path)
 		{
 			int width, height, channels, internalFormat, imageFormat;
 			unsigned char* textureData = stbi_load(path.c_str(), &width, &height, &channels, 0);
@@ -53,6 +53,12 @@ namespace PE
 				glTextureSubImage2D(m_textureID, 0, 0, 0, m_width, m_height, imageFormat, GL_UNSIGNED_BYTE, textureData);
 			
 				stbi_image_free(textureData);
+				return true;
+			}
+			// texture fail to load
+			else
+			{
+				return false;
 			}
 		}
 	}

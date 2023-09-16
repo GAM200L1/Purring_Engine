@@ -42,7 +42,27 @@ namespace PE
 
         bool ShaderProgram::LoadAndCompileShadersFromFile(std::string vertexFile, std::string fragmentFile)
         {
-            return false;
+            std::ifstream vertexFileStream(vertexFile);
+            std::ifstream fragmentFileStream(fragmentFile);
+
+            if (!vertexFileStream)
+            {
+                // error
+                return false;
+            }
+
+            std::stringstream vertexStream;
+            std::stringstream fragmentStream;
+
+            vertexStream << vertexFileStream.rdbuf();
+            fragmentStream << fragmentFileStream.rdbuf();
+
+            vertexFileStream.close();
+            fragmentFileStream.close();
+
+            CompileLinkValidateProgram(vertexStream.str(), fragmentStream.str());
+
+            return true;
         }
 
 

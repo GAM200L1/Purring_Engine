@@ -70,13 +70,15 @@ namespace PE
         // ----- Public methods ----- //
         // ----- Get/Load Resource/Asset Functions ----- //
         // to get an element from the map in this class
+        static void LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderString,
+            std::string const& r_fragmentShaderString);
         static PE::Graphics::ShaderProgram* GetShaderProgram(std::string const& r_key,
             std::string const& r_vertexShaderString,
             std::string const& r_fragmentShaderString);
 
         // load texture from file
-        static void LoadTextureFromFile(std::string name, std::string const& filePath);
-        static std::shared_ptr<Graphics::Texture> GetTexture(std::string name);
+        static void LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
+        static std::shared_ptr<Graphics::Texture> GetTexture(std::string const& r_name);
 
     private:
 

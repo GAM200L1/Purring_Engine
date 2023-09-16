@@ -27,7 +27,7 @@ namespace PE
 			void Bind(unsigned int textureUnit) const;
 			void UnBind() const;
 			
-			void CreateTexture(std::string const& path);
+			bool CreateTexture(std::string const& path);
 
 			inline unsigned int GetTextureID() { return m_textureID; }
 			inline unsigned int GetWidth() { return m_width; }
