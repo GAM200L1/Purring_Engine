@@ -26,7 +26,8 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
-#include "../Graphics/ShaderProgram.h"
+#include "Graphics/ShaderProgram.h"
+#include "Graphics/Texture.h"
 
 //class Resource
 //{
@@ -50,7 +51,8 @@ namespace PE
     public:
         // ----- Public Variables ----- //
         static std::map<std::string, Graphics::ShaderProgram*> m_shaderPrograms;
-        
+        static std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;  
+        // Icons?
 
         // Delete any copy functions
         // don't need copy constructor or assignment
@@ -72,11 +74,15 @@ namespace PE
             std::string const& r_vertexShaderString,
             std::string const& r_fragmentShaderString);
 
+        // load texture from file
+        static void LoadTextureFromFile(std::string name, std::string const& filePath);
+        static std::shared_ptr<Graphics::Texture> GetTexture(std::string name);
+
     private:
 
         // pointer to the instance of this class
         static ResourceManager* p_instance;
-        //constructor
+        // constructor
         ResourceManager() {}
     };
 }

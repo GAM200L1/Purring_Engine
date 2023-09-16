@@ -6,8 +6,14 @@
  
  \author               Liew Yeni
  \par      email:      yeni.l\@digipen.edu
- \par      code %:     95%
+ \par      code %:     55%
  \par      changes:    Original Author
+
+ \co-author            Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho\@digipen.edu
+ \par      code %:     40%
+ \par      changes:    16-09-2023
+                       Texture loading
  
  \co-author            Foong Jun Wei
  \par      email:      f.junwei\@digipen.edu
@@ -59,7 +65,19 @@ namespace PE
             else
                 throw;
         }
+
         return m_shaderPrograms[r_key];
+    }
+
+    void ResourceManager::LoadTextureFromFile(std::string name, std::string const& filePath)
+    {
+        Textures[name] = std::make_shared<Graphics::Texture>();
+        Textures[name]->CreateTexture(filePath);
+    }
+
+    std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string name)
+    {
+        return Textures[name];
     }
 
     void ResourceManager::UnloadResources()
@@ -69,6 +87,7 @@ namespace PE
             shaderProgram.second->DeleteProgram();
             delete shaderProgram.second;
         }
+
         m_shaderPrograms.clear();
     }
 }
