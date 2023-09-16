@@ -50,6 +50,7 @@ namespace PE
     public:
         // ----- Public Variables ----- //
         static std::map<std::string, Graphics::ShaderProgram*> m_shaderPrograms;
+        
 
         // Delete any copy functions
         // don't need copy constructor or assignment
