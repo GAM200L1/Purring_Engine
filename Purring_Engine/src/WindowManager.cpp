@@ -208,8 +208,8 @@ namespace PE
 	void WindowManager::window_resize_callback(GLFWwindow* window, int width, int height)
 	{
 		temp::WindowResizeEvent WRE;
-		WRE.m_Width = width;
-		WRE.m_Height = height;
+		WRE.width = width;
+		WRE.height = height;
 
 		temp::SEND_WINDOW_EVENT(WRE)
 	}

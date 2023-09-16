@@ -5,6 +5,7 @@
 #include <string>
 
 #include <imgui.h>
+#include <imgui_internal.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <misc/cpp/imgui_stdlib.h>
@@ -12,40 +13,134 @@
 
 #include "Graphics/GLHeaders.h"
 
+namespace PE {
 
-	class ImGuiWindow 
+	class ImGuiWindow
 	{
+		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief	Constructor of the class ImGuiWindow();
+		*************************************************************************************/
 		ImGuiWindow();
+		/*!***********************************************************************************
+		\brief	Destructor of the class ImGuiWindow();
+		*************************************************************************************/
 		virtual ~ImGuiWindow();
-		static ImGuiWindow* GetInstance();
 
-		void GetWindowSize(float&, float&);
+		// ----- System Functions ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief Runs ImGui init functions
+
+		 \param[in] GLFWwindow 	the glfw window that we are drawing onto
+		*************************************************************************************/
 		void Init(GLFWwindow*);
+		/*!***********************************************************************************
+		 \brief Render all imgui windows
+
+		 \param[in] GLuint 	the id of the texture to be drawn on the scene view
+		*************************************************************************************/
 		void Render(GLuint texture_id);
+
+		// ----- ImGui Window Functions ----- // 
+	private:
+		/*!***********************************************************************************
+		 \brief render the logs window
+
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
 		void showLogs(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the console window
+
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
 		void showConsole(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the object list window
+
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
 		void showObject(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the docking port window
+
+		 \param[in] bool* reference to the boolean that sets the window active (Ill add soon maybe)
+		*************************************************************************************/
 		void setDockingPort();
-		void renderSceneOnWindow(GLuint texture_id);
+		/*!***********************************************************************************
+		 \brief render the sceneview window
+
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
+		void showSceneView(GLuint texture_id, bool* active);
+
+		// ----- ImGui Logging Functions ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief add logs to the log vector to print on the log window
+
+		 \param[in] std::string the string to print on the log window
+		*************************************************************************************/
 		void addLog(std::string text);
+		/*!***********************************************************************************
+		 \brief add text to the console vector to print on the console window
+
+		 \param[in] std::string the string to print on the console window
+		*************************************************************************************/
 		void addCommand(std::string text);
+	private:
+		/*!***********************************************************************************
+		 \brief empty the log vector
+		*************************************************************************************/
 		void clearLog();
+		/*!***********************************************************************************
+		 \brief empty the console vector
+		*************************************************************************************/
 		void clearConsole();
 
+		// -----Event Callbacks ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief the callback function for an onkeyevent
+		 \param[in] const temp::Event<temp::KeyEvents>& event called
+		*************************************************************************************/
 		void OnKeyEvent(const temp::Event<temp::KeyEvents>& e);
 
+		// ----- Getters ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief Get the instance of imguiwindow, if it does not exist, create it.
+		 \return ImGuiWindow* 	 pointer to ImGuiWindow
+		*************************************************************************************/
+		static ImGuiWindow* GetInstance();
+		/*!***********************************************************************************
+		 \brief Get the instance of imguiwindow, if it does not exist, create it.
+		 \param[out] float x value
+		 \param[out] float y value
+		*************************************************************************************/
+		void GetWindowSize(float&, float&);
+		/*!***********************************************************************************
+		 \brief Get the instance of imguiwindow, if it does not exist, create it.
+		 \return bool whether sceneview is active so we know we need to transfer the buffer
+		*************************************************************************************/
+		bool isSceneViewActive();
+		// ----- Private Variables ----- // 
 	private:
-		bool logsActive;
-		bool ObjectActive;
-		bool consoleActive;
+		bool m_logsActive;
+		bool m_objectActive;
+		bool m_consoleActive;
+		bool m_sceneViewActive;
+		bool m_firstLaunch;
 		static std::unique_ptr<ImGuiWindow> s_Instance;
-		std::vector<std::string> logOutput;
-		std::vector<std::string> consoleOutput;
-		std::string input;
-		ImVec2 imGuiWindowSize;
-		int currentSelectedIndex;
-		std::vector<std::string> items;
+		std::vector<std::string> m_logOutput;
+		std::vector<std::string> m_consoleOutput;
+		std::string m_input;
+		int m_currentSelectedIndex;
+		std::vector<std::string> m_items;
 		float m_time;
-		float renderWindowWidth, renderWindowHeight;
+		float m_renderWindowWidth, m_renderWindowHeight;
 	};
+}
+
