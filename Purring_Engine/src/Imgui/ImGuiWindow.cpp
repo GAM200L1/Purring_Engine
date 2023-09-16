@@ -80,7 +80,7 @@ void ImGuiWindow::Init(GLFWwindow* m_window)
 
 	int width, height;
 	glfwGetWindowSize(m_window, &width, &height);
-	io.DisplaySize = ImVec2(width, height);
+	io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
 
 	//looks nicer
 	ImGuiStyle& style = ImGui::GetStyle();
@@ -359,7 +359,8 @@ void ImGuiWindow::showSceneView(GLuint texture_id, bool* active)
 	ImVec2 pos = ImGui::GetCursorScreenPos();
 
 	ImGui::Image(
-		(void*)texture_id,
+			reinterpret_cast<void*>(
+					static_cast<intptr_t>(texture_id)),
 		ImVec2(m_renderWindowWidth, m_renderWindowHeight),
 		ImVec2(0, 1),
 		ImVec2(1, 0)
