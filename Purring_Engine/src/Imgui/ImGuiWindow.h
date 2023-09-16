@@ -90,8 +90,6 @@ namespace PE {
 		*************************************************************************************/
 		void showSceneView(GLuint texture_id, bool* active);
 
-		void autoDockWindowsAtLaunch();
-
 		// ----- ImGui Logging Functions ----- // 
 	public:
 		/*!***********************************************************************************

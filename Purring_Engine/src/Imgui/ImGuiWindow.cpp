@@ -231,7 +231,7 @@ namespace PE {
 
 	void ImGuiWindow::showObject(bool* Active)
 	{
-		if (!ImGui::Begin("objectlist", Active))
+		if (!ImGui::Begin("objectlistwindow", Active))
 		{
 			ImGui::End();
 		}
@@ -255,8 +255,6 @@ namespace PE {
 					m_items.erase(m_items.begin() + m_currentSelectedIndex);
 				}
 			}
-
-
 
 			ImGui::Separator();
 
@@ -311,26 +309,36 @@ namespace PE {
 			//set default docking positions, may need to use serialization to set first launch
 			if (m_firstLaunch)
 			{
+				//after setting first dock positions
 				m_firstLaunch = false;
 
+				//start dock
 				ImGui::DockBuilderRemoveNode(dockspace_id);
 				ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
 				ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
-				ImGui::DockBuilderDockWindow("objectlist", dockspace_id);
+				//Imgui docks right side by default
+				ImGui::DockBuilderDockWindow("objectlistwindow", dockspace_id);
 
+				//set the other sides
 				ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.3f, nullptr, &dockspace_id);
 				ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.7f, &dockspace_id, &dockspace_id);
+				
+				//setting the other dock locations
+				ImGui::DockBuilderDockWindow("sceneview", dock_id_left);
+				
+				//set on the save location to dock ontop of eachother
 				ImGui::DockBuilderDockWindow("consolewindow", dock_id_down);
 				ImGui::DockBuilderDockWindow("debugwindow", dock_id_down);
-				ImGui::DockBuilderDockWindow("sceneview", dock_id_left);
 
+				//end dock
 				ImGui::DockBuilderFinish(dockspace_id);
 
 			}
 
 		}
 
+		//docking port menu bar
 		if (ImGui::BeginMainMenuBar())
 		{
 			if (ImGui::BeginMenu("File"))
@@ -396,12 +404,6 @@ namespace PE {
 		ImGui::End();
 	}
 
-	void ImGuiWindow::autoDockWindowsAtLaunch()
-	{
-
-
-	}
-
 	void ImGuiWindow::addLog(std::string text)
 	{
 		m_logOutput.push_back(text);
@@ -431,6 +433,8 @@ namespace PE {
 		{
 			KPE = dynamic_cast<const temp::KeyPressedEvent&>(e);
 		}
+
+		//may want to change this to switch case to look cleaner
 
 		if (KPE.keycode == GLFW_KEY_F1)
 		{
