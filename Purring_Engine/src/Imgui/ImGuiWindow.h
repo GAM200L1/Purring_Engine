@@ -27,8 +27,6 @@ Header file containing the declaration and definition of the event and event dis
 
 #include "Graphics/GLHeaders.h"
 
-#include "Graphics/GLHeaders.h"
-
 
 class ImGuiWindow
 {
