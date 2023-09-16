@@ -36,8 +36,8 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 
     temp::MouseMovedEvent mme;
 
-    mme.x = static_cast<int>(xpos);
-    mme.y = static_cast<int>(ypos);
+    mme.x = xpos;
+    mme.y = ypos;
 
     temp::SEND_MOUSE_EVENT(mme)
 }
@@ -82,8 +82,8 @@ void check_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
         temp::MouseScrolledEvent mse;
-        mse.xOffset = static_cast<int>(xoffset);
-        mse.yOffset = static_cast<int>(yoffset);
+        mse.xOffset = xoffset;
+        mse.yOffset = yoffset;
         temp::SEND_MOUSE_EVENT(mse)
 }
 

@@ -9,6 +9,7 @@
 #include "WindowManager.h"
 #include "FrameRateTargetControl.h"
 #include "Graphics/RendererManager.h"
+#include "AudioManager.h"
 
 namespace PE {
 
@@ -41,7 +42,7 @@ namespace PE {
 
 		//std::unique_ptr<Window> m_Window;
 		bool m_Running;
-		double m_lastFrameTime;
+		float m_lastFrameTime;
 
 		// holds all the systems in the engine
 		std::vector<System*> m_systemList;
@@ -58,6 +59,9 @@ namespace PE {
 
 	private:
 		//static Application* s_Instance;
+
+		// Audio Stuff - HANS
+		AudioManager m_audioManager;
 	};
 
 	// defined by client
