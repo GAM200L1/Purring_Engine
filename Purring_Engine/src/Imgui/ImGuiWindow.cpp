@@ -18,8 +18,84 @@ Header file containing the declaration and definition of the event and event dis
 #include "ImGuiWindow.h"
 
 namespace PE {
+	//single static instance of imguiwindow 
+	std::unique_ptr<ImGuiWindow> ImGuiWindow::s_Instance = nullptr;
+
+	ImGuiWindow::ImGuiWindow() {
+		//initializing variables 
+		m_consoleActive = true;
+		m_logsActive = true;
+		m_objectActive = true;
+		m_sceneViewActive = true;
+		//m_firstLaunch needs to be serialized 
+		m_firstLaunch = true;
+		//Subscribe to key pressed event 
+		ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyPressed, ImGuiWindow::OnKeyEvent, this)
+
+			m_currentSelectedIndex = 0;
+
+		m_items = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
 	}
 
+	ImGuiWindow::~ImGuiWindow()
+	{
+	}
+
+	ImGuiWindow* ImGuiWindow::GetInstance()
+	{
+		//may need to make another function to manually allocate memory for this 
+		if (!s_Instance)
+			s_Instance = std::make_unique<ImGuiWindow>();
+
+		return s_Instance.get();
+	}
+
+	void ImGuiWindow::GetWindowSize(float& width, float& height)
+	{
+		width = m_renderWindowWidth;
+		height = m_renderWindowHeight;
+	}
+
+	bool ImGuiWindow::isSceneViewActive()
+	{
+		return m_sceneViewActive;
+	}
+
+	void ImGuiWindow::Init(GLFWwindow* m_window)
+	{
+		//check imgui's version 
+		IMGUI_CHECKVERSION();
+		//create imgui context 
+		ImGui::CreateContext();
+		//set to dark mode 
+		ImGui::StyleColorsDark();
+
+		//setting the flags for imgui 
+		ImGuiIO& io = ImGui::GetIO();
+		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+
+		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+
+		int width, height;
+		glfwGetWindowSize(m_window, &width, &height);
+		io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
+
+		//looks nicer 
+		ImGuiStyle& style = ImGui::GetStyle();
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
+
+		//init imgui for glfw and opengl 
+		ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+
+		ImGui_ImplOpenGL3_Init("#version 460");
+	}
 	void ImGuiWindow::Render(GLuint texture_id)
 	{
 		ImGui_ImplOpenGL3_NewFrame();
@@ -246,10 +322,10 @@ namespace PE {
 				//set the other sides
 				ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.3f, nullptr, &dockspace_id);
 				ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.7f, &dockspace_id, &dockspace_id);
-				
+
 				//setting the other dock locations
 				ImGui::DockBuilderDockWindow("sceneview", dock_id_left);
-				
+
 				//set on the save location to dock ontop of eachother
 				ImGui::DockBuilderDockWindow("consolewindow", dock_id_down);
 				ImGui::DockBuilderDockWindow("debugwindow", dock_id_down);
@@ -377,11 +453,6 @@ namespace PE {
 		if (KPE.keycode == GLFW_KEY_F4)
 		{
 			m_sceneViewActive = !m_sceneViewActive;
-		}
-
-		if (KPE.keycode == GLFW_KEY_ESCAPE)
-		{
-			m_items.erase(m_items.begin() + m_currentSelectedIndex);
 		}
 	}
 }
