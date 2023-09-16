@@ -43,6 +43,8 @@
 namespace PE
 {
     std::map<std::string, Graphics::ShaderProgram*> ResourceManager::m_shaderPrograms;
+    std::map<std::string, std::shared_ptr<Graphics::Texture>> ResourceManager::Textures;
+
     ResourceManager* ResourceManager::p_instance;
 
     ResourceManager* ResourceManager::GetInstance()
