@@ -13,6 +13,9 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
+// Audio Stuff - HANS
+#include "AudioManager.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -35,6 +38,11 @@ PE::CoreApplication::CoreApplication()
     Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
     AddSystem(rendererManager);
 
+    // Audio Stuff - HANS
+    m_audioManager.Init();
+    {
+        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
+    }
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -66,7 +74,28 @@ void PE::CoreApplication::Run()
             }
         }
 
-         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
+        // Audio Stuff - HANS
+        m_audioManager.Update();
+
+        const int audioKeys[] = { GLFW_KEY_A, GLFW_KEY_S };
+        for (int key : audioKeys)
+        {
+            if (glfwGetKey(m_window, key) == GLFW_PRESS)
+            {
+                if (key == GLFW_KEY_A)
+                {
+                    std::cout << "A key pressed\n";
+                    m_audioManager.PlaySound("Audio/sound1.wav");
+                }
+                else if (key == GLFW_KEY_S)
+                {
+                    std::cout << "S key pressed\n";
+                    m_audioManager.PlaySound("Audio/sound2.wav");
+                }
+            }
+        }
+
+        // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the title to show FPS (every second in this example)
 
         double currentTime = glfwGetTime();

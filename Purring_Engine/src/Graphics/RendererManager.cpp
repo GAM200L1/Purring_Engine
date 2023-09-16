@@ -25,6 +25,8 @@
 
 #include "Imgui/ImGuiWindow.h"
 
+#include "Imgui/ImGuiWindow.h"
+
 extern Logger engine_logger;
 
 namespace PE
@@ -43,6 +45,12 @@ namespace PE
             }
 
             p_windowRef = p_window;
+
+            int width, height;
+            glfwGetWindowSize(p_windowRef, &width, &height);
+            create_framebuffer(width, height);
+
+            ImGuiWindow::GetInstance()->Init(p_window);
         }
         
         void RendererManager::InitializeSystem()
@@ -131,8 +139,8 @@ namespace PE
             glViewport(0, 0, windowWidthInt, windowHeightInt);
 
             // Set background color to black
-            glClearColor(0.f, 0.f, 0.f, 1.f);
-            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+            //glClearColor(1.f, 1.f, 1.f, 1.f);
+            //glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
             // Bind the RBO for rendering to the ImGui window
             BindFrameBuffer();
