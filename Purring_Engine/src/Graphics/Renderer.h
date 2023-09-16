@@ -18,8 +18,7 @@
 
 /*                                                                   includes
 ----------------------------------------------------------------------------- */
-#define GLEW_STATIC
-#include <GL/glew.h> // GLushort
+#include "Graphics/GLHeaders.h"
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>

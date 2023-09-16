@@ -17,14 +17,14 @@
 ----------------------------------------------------------------------------- */
 #include "prpch.h"
 
-#define GLEW_STATIC
-#include <GL/glew.h> // for access to OpenGL API declarations 
 #include <glm/gtc/constants.hpp>    // pi()
 #include <glm/gtc/matrix_transform.hpp> // ortho()
 
 #include "Logging/Logger.h" // ----- @TODO: Fix the include paths... ------
-#include "RendererManager.h" // <cstddef>, <GLFW/glfw3.h>, <glm/glm.hpp>, <vector>
+#include "RendererManager.h"
 #include "ResourceManager/ResourceManager.h" // shader loading & instancing
+
+#include "Imgui/ImGuiWindow.h"
 
 extern Logger engine_logger;
 
@@ -37,98 +37,35 @@ namespace PE
             // Initialize GLEW
             if (glewInit() != GLEW_OK)
             {
-                std::cerr << "Failed to initialize GLEW." << std::endl;
-                exit(-1);
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, "Failed to initialize GLEW.", __FUNCTION__);
+                throw;
             }
-
-            PrintSpecifications();
 
             p_windowRef = p_window;
         }
         
         void RendererManager::InitializeSystem()
         {
+            // Print the specs
+            PrintSpecifications();
+
+            // Create the framebuffer to render to ImGui window
+            int width, height;
+            glfwGetWindowSize(p_windowRef, &width, &height);
+            CreateFrameBuffer(width, height);
+
+            ImGuiWindow::GetInstance()->Init(p_windowRef);
+
             // Initialize the base meshes to use
-            // Note: Making shallow copies of the meshData objects to store in the map.
-
-            // Triangle mesh  
-            MeshData triangleMesh{};
-            triangleMesh.vertices.emplace_back(
-                VertexData{
-                    glm::vec2{-0.5f, -0.5f},
-                    glm::vec3{1.f, 0.f, 0.f},
-                    glm::vec2{0.f, 0.f}
-                }
-            );
-            triangleMesh.vertices.emplace_back(
-                VertexData{
-                    glm::vec2{0.5f, -0.5f},
-                    glm::vec3{0.f, 1.f, 0.f},
-                    glm::vec2{1.f, 0.f}
-                }
-            );
-            triangleMesh.vertices.emplace_back(
-                VertexData{
-                    glm::vec2{0.f, 0.5f},
-                    glm::vec3{0.f, 0.f, 1.f},
-                    glm::vec2{0.5f, 1.f}
-                }
-            );
-
-            triangleMesh.indices.emplace_back(0);
-            triangleMesh.indices.emplace_back(1);
-            triangleMesh.indices.emplace_back(2);
-
-
-            // Quad mesh  
-            MeshData quadMesh{};
-            quadMesh.vertices.emplace_back( // bottom-left
-                VertexData{
-                    glm::vec2{-0.5f, -0.5f},
-                    glm::vec3{1.f, 0.f, 0.f},
-                    glm::vec2{0.f, 0.f}
-                }
-            );
-            quadMesh.vertices.emplace_back( // bottom-right
-                VertexData{
-                    glm::vec2{0.5f, -0.5f},
-                    glm::vec3{0.f, 1.f, 0.f},
-                    glm::vec2{1.f, 0.f}
-                }
-            );
-            quadMesh.vertices.emplace_back( // top-right
-                VertexData{
-                    glm::vec2{0.5f, 0.5f},
-                    glm::vec3{0.f, 0.f, 1.f},
-                    glm::vec2{1.f, 1.f}
-                }
-            );
-            quadMesh.vertices.emplace_back( // top-left
-                VertexData{
-                    glm::vec2{-0.5f, 0.5f},
-                    glm::vec3{0.f, 1.f, 0.f},
-                    glm::vec2{0.f, 1.f}
-                }
-            );
-
-            quadMesh.indices.emplace_back(0);
-            quadMesh.indices.emplace_back(1);
-            quadMesh.indices.emplace_back(2);
-            quadMesh.indices.emplace_back(2);
-            quadMesh.indices.emplace_back(3);
-            quadMesh.indices.emplace_back(0);
-
-            m_meshes["triangle"] = triangleMesh;
-            m_meshes["quad"] = quadMesh;
-
-            m_meshes["triangle"].CreateVertexArrayObject();
-            m_meshes["quad"].CreateVertexArrayObject();
-
+            InitializeTriangleMesh(m_meshes["triangle"]);
+            InitializeQuadMesh(m_meshes["quad"]);
 
             // Create a shader program
             // Store the vert shader
             const std::string vertexShaderString{ R"(            
-            #version 450 core
+            #version 460 core
 
             layout (location = 0) in vec2 aVertexPosition;
             layout (location = 1) in vec3 aVertexColor;
@@ -145,7 +82,7 @@ namespace PE
 
             // Store the fragment shader
             const std::string fragmentShaderString{ R"( 
-            #version 450 core
+            #version 460 core
 
             layout(location = 0) in vec3 vColor;
 
@@ -187,17 +124,33 @@ namespace PE
             }
             deltaTime; // Prevent warnings
 
-            // Set viewport size
-            int width, height;
-            glfwGetFramebufferSize(p_windowRef, &width, &height);
-            glViewport(0, 0, width, height);
+            // Get the size of the ImGui window to render in
+            float windowWidth{}, windowHeight{};
+            ImGuiWindow::GetInstance()->GetWindowSize(windowWidth, windowHeight);
+
+            GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
+            GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
+            ResizeFrameBuffer(windowWidthInt, windowHeightInt);
+            glViewport(0, 0, windowWidthInt, windowHeightInt);
 
             // Set background color to black
             glClearColor(0.f, 0.f, 0.f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
+            // Bind the RBO for rendering to the ImGui window
+            BindFrameBuffer();
+
+            // Set the background color of the ImGui window to white
+            glClearColor(1.f, 1.f, 1.f, 1.f);
+            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+
             // Draw game objects in the scene
-            DrawScene(width, height);
+            DrawScene(windowWidth, windowHeight);
+
+            // Unbind the RBO for rendering to the ImGui window
+            UnbindFrameBuffer();
+
+            ImGuiWindow::GetInstance()->Render(m_imguiTextureId);
 
             // Poll for and process events
             glfwPollEvents(); // should be called before glfwSwapbuffers
@@ -221,17 +174,22 @@ namespace PE
                 delete shaderProgram.second;
             }
             m_shaderPrograms.clear();
+
+            // Delete the framebuffer object
+            glDeleteTextures(1, &m_imguiTextureId);
+            glDeleteFramebuffers(1, &m_frameBufferObjectIndex);
         }
 
 
-        void RendererManager::DrawScene(int const width, int const height)
+        void RendererManager::DrawScene(float const width, float const height)
         {
-            float halfWidth{ static_cast<float>(width) * 0.5f };
-            float halfHeight{ static_cast<float>(height) * 0.5f };
+            float halfWidth{ width * 0.5f };
+            float halfHeight{ height * 0.5f };
             glm::mat4 viewToNdc{
                 glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
             };
 
+            // Call glDrawElements for each renderable object
             for (auto& renderable : m_renderableObjects) {
                 PE::ResourceManager::m_shaderPrograms[renderable.shaderProgramName]->Use();
 
@@ -253,20 +211,118 @@ namespace PE
         }
 
 
-        void RendererManager::GenerateCirclePoints(std::size_t const segments, std::vector<glm::vec2>& r_points)
-        {
-            r_points.clear();
-            r_points.reserve(segments);
+        void RendererManager::InitializeCircleMesh(std::size_t const segments, MeshData& r_mesh)
+        { 
+            // ------------------------------------ THIS FUNCTION IS NOT DONE
+
+            r_mesh.vertices.clear();
+            r_mesh.vertices.reserve(segments);
             float const angle{ glm::pi<float>() * 2.f / static_cast<float>(segments) };
 
             // Generate vertices in a circle
             for (size_t i{ 0 }; i < segments; ++i) {
                 float const totalAngle{ static_cast<float>(i) * angle };
-                r_points.emplace_back(glm::vec2(
-                    glm::cos(totalAngle),
-                    glm::sin(totalAngle)));
+                r_mesh.vertices.emplace_back(
+                    VertexData{
+                        glm::vec2{glm::cos(totalAngle), glm::sin(totalAngle)},
+                        glm::vec3{1.f, 0.f, 0.f},
+                        glm::vec2{0.f, 0.f}
+                    });
             }
         }
+
+
+        void RendererManager::InitializeTriangleMesh(MeshData& r_mesh)
+        {
+            // Add vertex positions, colors and tex coords
+            r_mesh.vertices.clear();
+            r_mesh.vertices.reserve(3);
+
+            r_mesh.vertices.emplace_back(
+                VertexData{
+                    glm::vec2{-0.5f, -0.5f},
+                    glm::vec3{1.f, 0.f, 0.f},
+                    glm::vec2{0.f, 0.f}
+                }
+            );
+            r_mesh.vertices.emplace_back(
+                VertexData{
+                    glm::vec2{0.5f, -0.5f},
+                    glm::vec3{0.f, 1.f, 0.f},
+                    glm::vec2{1.f, 0.f}
+                }
+            );
+            r_mesh.vertices.emplace_back(
+                VertexData{
+                    glm::vec2{0.f, 0.5f},
+                    glm::vec3{0.f, 0.f, 1.f},
+                    glm::vec2{0.5f, 1.f}
+                }
+            );
+
+            // Add indices
+            r_mesh.indices.clear();
+            r_mesh.indices.reserve(3);
+
+            r_mesh.indices.emplace_back(0);
+            r_mesh.indices.emplace_back(1);
+            r_mesh.indices.emplace_back(2);
+
+            // Generate VAO
+            r_mesh.CreateVertexArrayObject();
+        }
+
+
+        void RendererManager::InitializeQuadMesh(MeshData& r_mesh)
+        {
+            // Add vertex positions, colors and tex coords
+            r_mesh.vertices.clear();
+            r_mesh.vertices.reserve(4);
+
+            r_mesh.vertices.emplace_back( // bottom-left
+                VertexData{
+                    glm::vec2{-0.5f, -0.5f},
+                    glm::vec3{1.f, 0.f, 0.f},
+                    glm::vec2{0.f, 0.f}
+                }
+            );
+            r_mesh.vertices.emplace_back( // bottom-right
+                VertexData{
+                    glm::vec2{0.5f, -0.5f},
+                    glm::vec3{0.f, 1.f, 0.f},
+                    glm::vec2{1.f, 0.f}
+                }
+            );
+            r_mesh.vertices.emplace_back( // top-right
+                VertexData{
+                    glm::vec2{0.5f, 0.5f},
+                    glm::vec3{0.f, 0.f, 1.f},
+                    glm::vec2{1.f, 1.f}
+                }
+            );
+            r_mesh.vertices.emplace_back( // top-left
+                VertexData{
+                    glm::vec2{-0.5f, 0.5f},
+                    glm::vec3{0.f, 1.f, 0.f},
+                    glm::vec2{0.f, 1.f}
+                }
+            );
+
+            // Add indices
+            r_mesh.indices.clear();
+            r_mesh.indices.reserve(6);
+
+            r_mesh.indices.emplace_back(0);
+            r_mesh.indices.emplace_back(1);
+            r_mesh.indices.emplace_back(2);
+            r_mesh.indices.emplace_back(2);
+            r_mesh.indices.emplace_back(3);
+            r_mesh.indices.emplace_back(0);
+
+            // Generate VAO
+            r_mesh.CreateVertexArrayObject();
+        }
+
 
         void RendererManager::PrintSpecifications()
         {
@@ -296,5 +352,63 @@ namespace PE
                 << "\nGL Maximum texture size: " << maxTextureSize
                 << "\nMaximum Viewport Dimensions: " << maxViewportDims[0] << " x " << maxViewportDims[1] << "\n" << std::endl;
         }
+
+
+        void RendererManager::CreateFrameBuffer(int const bufferWidth, int const bufferHeight)
+        {
+            // Create a frame buffer
+            glGenFramebuffers(1, &m_frameBufferObjectIndex);
+            glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
+
+            // Attach a texture to the framebuffer
+            glGenTextures(1, &m_imguiTextureId);
+            glBindTexture(GL_TEXTURE_2D, m_imguiTextureId);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_imguiTextureId, 0);
+
+            // Check if the framebuffer was created successfully
+            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, "Framebuffer is not complete.", __FUNCTION__);
+                throw;
+            }
+
+            // Unbind all the buffers created
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
+
+
+        void RendererManager::BindFrameBuffer()
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
+        }
+
+
+        void RendererManager::UnbindFrameBuffer()
+        {
+            GLint currentFrameBuffer{};
+            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
+
+            // Unbind the framebuffer object (if it is currently bound)
+            if (m_frameBufferObjectIndex == static_cast<GLuint>(currentFrameBuffer)) 
+            {
+                glBindFramebuffer(GL_FRAMEBUFFER, 0);
+            }
+        }
+
+
+        void RendererManager::ResizeFrameBuffer(GLsizei const newWidth, GLsizei const newHeight)
+        {
+            glBindTexture(GL_TEXTURE_2D, m_imguiTextureId);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newWidth, newHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_imguiTextureId, 0);
+        }
+
     } // End of Graphics namespace
 } // End of PE namespace

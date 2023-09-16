@@ -16,7 +16,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
-#include <GLFW/glfw3.h>
+#include "Graphics/GLHeaders.h"
 
 class FrameRateTargetControl
 {
