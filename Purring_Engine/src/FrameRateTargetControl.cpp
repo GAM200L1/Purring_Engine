@@ -61,7 +61,7 @@ void FrameRateTargetControl::SetTargetFPS(unsigned int fps)
 ----------------------------------------------------------------------------- */
 void FrameRateTargetControl::StartFrame()
 {
-    float currentFrameTime = glfwGetTime();
+    double currentFrameTime = glfwGetTime();
     m_deltaTime = currentFrameTime - m_lastFrameStartTime;
     m_lastFrameStartTime = currentFrameTime;
     m_frameCount++;

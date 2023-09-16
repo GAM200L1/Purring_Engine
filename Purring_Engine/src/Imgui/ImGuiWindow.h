@@ -142,7 +142,7 @@ public:
 	// ----- Private Variables ----- // 
 private:
 	bool m_logsActive;
-	bool m_ObjectActive;
+	bool m_objectActive;
 	bool m_consoleActive;
 	bool m_sceneViewActive;
 	static std::unique_ptr<ImGuiWindow> s_Instance;
