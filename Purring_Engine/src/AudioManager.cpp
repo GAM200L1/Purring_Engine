@@ -7,8 +7,8 @@
  \author               You Yang ONG
  \par      email:      youyang.o@digipen.edu
 
- \brief    This file contains the RendererManager class, which manages
-           the render passes and includes helper functions to draw debug shapes.
+ \brief    This file contains the AudioManager class, which manages
+           audio playback and includes FMOD as the underlying audio system.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
