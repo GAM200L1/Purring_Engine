@@ -24,7 +24,7 @@ ImGuiWindow::ImGuiWindow() {
 	//initializing variables
 	m_consoleActive = true;
 	m_logsActive = true;
-	m_ObjectActive = true;
+	m_objectActive = true;
 	m_sceneViewActive = true;
 
 	//Subscribe to key pressed event
@@ -113,9 +113,9 @@ void ImGuiWindow::Render(GLuint texture_id)
 	}
 
 	//render object list
-	if (m_ObjectActive)
+	if (m_objectActive)
 	{
-		showObject(&m_ObjectActive);
+		showObject(&m_objectActive);
 	}
 
 	//render console
@@ -410,7 +410,7 @@ void ImGuiWindow::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
 
 	if (KPE.keycode == GLFW_KEY_F2)
 	{
-		m_ObjectActive = !m_ObjectActive;
+		m_objectActive = !m_objectActive;
 	}
 
 	if (KPE.keycode == GLFW_KEY_F3)

@@ -66,7 +66,7 @@ void PE::CoreApplication::Run()
             }
         }
 
-        // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
+         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the title to show FPS (every second in this example)
 
         double currentTime = glfwGetTime();
