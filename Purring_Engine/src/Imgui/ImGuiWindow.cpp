@@ -335,6 +335,10 @@ void ImGuiWindow::setDockingPort()
 			{
 				m_logsActive = !m_logsActive;
 			}
+			if (ImGui::MenuItem("Scenes", NULL, m_sceneViewActive, !m_sceneViewActive))
+			{
+				m_sceneViewActive = !m_sceneViewActive;
+			}
 			ImGui::Separator();
 			if (ImGui::MenuItem("test", "test", false, false)) {}
 			if (ImGui::MenuItem("test", "test")) {}
@@ -412,6 +416,11 @@ void ImGuiWindow::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
 	if (KPE.keycode == GLFW_KEY_F3)
 	{
 		m_logsActive = !m_logsActive;
+	}
+
+	if (KPE.keycode == GLFW_KEY_F4)
+	{
+		m_sceneViewActive = !m_sceneViewActive;
 	}
 
 	if (KPE.keycode == GLFW_KEY_ESCAPE)
