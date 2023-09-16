@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     WindowEvent.h
+ \date     8/30/2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+Header file containing the declaration and definition of the event and event dispatcher template
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #ifndef WINDOW_EVENTS_H
 #define WINDOW_EVENTS_H
 
@@ -7,6 +23,7 @@
 
 namespace temp {
 
+	//Window Event Types
 	enum class WindowEvents
 	{
 		WindowResize,
@@ -18,42 +35,66 @@ namespace temp {
 
 	class WindowResizeEvent : public Event<WindowEvents>
 	{
+		// ----- Constructors ----- // 
 	public:
 		WindowResizeEvent() : Event<WindowEvents>(WindowEvents::WindowResize, "WindowResize") {}
 		virtual ~WindowResizeEvent() {}
-		//inline unsigned int GetWidth() const { return m_Width; }
-		//inline unsigned int GetHeight() const { return m_Height; }
 
+		// ----- Public methods ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief					implicit conversion to a std::string, used for output streams
+
+		 \return std::string	Returns information about the event
+		*************************************************************************************/
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "WindowResizeEvent: " << m_Width << ", " << m_Height;
+			ss << "WindowResizeEvent: " << width << ", " << height;
 			return ss.str();
 		}
 
-		unsigned int m_Width = 0, m_Height = 0;
+		// ----- Public variables ----- // 
+	public:
+		unsigned int width = 0, height = 0;
 	};
 
 	class WindowCloseEvent : public Event<WindowEvents>
 	{
+		// ----- Constructors ----- // 
 	public:
 		WindowCloseEvent() : Event<WindowEvents>(WindowEvents::WindowClose, "WindowClose") {}
+		virtual ~WindowCloseEvent() {}
 
+		// ----- Public methods ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief					implicit conversion to a std::string, used for output streams
+
+		 \return std::string	Returns information about the event
+		*************************************************************************************/
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
 			ss << "Window Closed";
 			return ss.str();
 		}
-
-		virtual ~WindowCloseEvent() {}
 	};
 
 	class WindowFocusEvent : public Event<WindowEvents>
 	{
+		// ----- Constructors ----- // 
 	public:
 		WindowFocusEvent() : Event<WindowEvents>(WindowEvents::WindowFocus, "WindowFocus") {}
+		virtual ~WindowFocusEvent() {}
 
+		// ----- Public methods ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief					implicit conversion to a std::string, used for output streams
+
+		 \return std::string	Returns information about the event
+		*************************************************************************************/
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -61,14 +102,21 @@ namespace temp {
 			return ss.str();
 		}
 
-		virtual ~WindowFocusEvent() {}
 	};
 
 	class WindowLostFocusEvent : public Event<WindowEvents>
 	{
+		// ----- Constructors ----- // 
 	public:
 		WindowLostFocusEvent() : Event<WindowEvents>(WindowEvents::WindowLostFocus, "WindowLostFocus") {}
 
+		// ----- Public methods ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief					implicit conversion to a std::string, used for output streams
+
+		 \return std::string	Returns information about the event
+		*************************************************************************************/
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -81,10 +129,18 @@ namespace temp {
 
 	class WindowMovedEvent : public Event<WindowEvents>
 	{
+		// ----- Constructors ----- // 
 	public:
 		WindowMovedEvent() : Event<WindowEvents>(WindowEvents::WindowMoved, "WindowMoved") {}
 		virtual ~WindowMovedEvent() {}
 
+		// ----- Public methods ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief					implicit conversion to a std::string, used for output streams
+
+		 \return std::string	Returns information about the event
+		*************************************************************************************/
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
