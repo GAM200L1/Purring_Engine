@@ -16,13 +16,14 @@
 // testing
 Logger engine_logger = Logger("ENGINE");
 
+
 PE::CoreApplication::CoreApplication()
 {
 	m_Running = true;
 	m_lastFrameTime = 0;
 
     // Create and set up the window using WindowManager
-    m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
+    m_window = m_windowManager.InitWindow(1000, 1000, "Engine");
 
     m_fpsController.SetTargetFPS(60);  // Default to 60 FPS
     // set flags
@@ -82,7 +83,6 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(1.f); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
-        
         engine_logger.FlushLog();
 
         m_fpsController.EndFrame();
