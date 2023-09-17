@@ -393,12 +393,12 @@ namespace PE {
 			ImGui::Text("Audio Test");
 			if (ImGui::Button("Play Audio 1"))
 			{
-				AudioManager::GetInstance()->PlaySound("Audio/sound2.wav");
+				AudioManager::GetInstance()->PlaySound("../Assets/Audio/sound2.wav");
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Play Audio 2"))
 			{
-				AudioManager::GetInstance()->PlaySound("Audio/sound1.wav");
+				AudioManager::GetInstance()->PlaySound("../Assets/Audio/sound1.wav");
 			}
 			ImGui::End();
 		}
