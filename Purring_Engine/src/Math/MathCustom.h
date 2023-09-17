@@ -28,7 +28,7 @@
 #define _USE_MATH_DEFINES
 #include "prpch.h"
 
-namespace Engine
+namespace PE
 {
 	// forward declaring these structs
 	struct vec2;

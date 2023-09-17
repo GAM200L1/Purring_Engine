@@ -30,7 +30,7 @@
 typedef unsigned long long EntityID;				// typedef for storing the unique ID of the entity, same as size_t
 typedef std::string ComponentID;					// ComponentID type, internally it is a std::string
 
-namespace Engine
+namespace PE
 {
 	/*!***********************************************************************************
 	 \brief Entity manager struct

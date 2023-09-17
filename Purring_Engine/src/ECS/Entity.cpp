@@ -17,7 +17,7 @@
 #include "prpch.h"
 #include "Entity.h"
 
-namespace Engine
+namespace PE
 {
 	// singleton
 	EntityManager* g_entityManager{ nullptr };
