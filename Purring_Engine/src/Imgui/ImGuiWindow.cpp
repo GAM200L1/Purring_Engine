@@ -1,6 +1,23 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     ImGuiWindow.cpp
+ \date     8/30/2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	cpp file containing the definition of the imguiwindow class
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "ImGuiWindow.h"
-
+#include "MemoryManager.h"
+#include "AudioManager.h"
 namespace PE {
 	//single static instance of imguiwindow 
 	std::unique_ptr<ImGuiWindow> ImGuiWindow::s_Instance = nullptr;
@@ -11,6 +28,7 @@ namespace PE {
 		m_logsActive = true;
 		m_objectActive = true;
 		m_sceneViewActive = true;
+		m_debugTests = true;
 		//m_firstLaunch needs to be serialized 
 		m_firstLaunch = true;
 		//Subscribe to key pressed event 
@@ -18,7 +36,7 @@ namespace PE {
 
 			m_currentSelectedIndex = 0;
 
-		m_items = { "AAAA", "BBBB", "CCCC", "DDDD", "EEEE", "FFFF", "GGGG", "HHHH", "IIII", "JJJJ", "KKKK", "LLLLLLL", "MMMM", "OOOOOOO" };
+		m_items = {};
 	}
 
 	ImGuiWindow::~ImGuiWindow()
@@ -100,6 +118,8 @@ namespace PE {
 		//render object list
 		if (m_objectActive)
 		{
+			ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+			ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
 			showObject(&m_objectActive);
 		}
 
@@ -114,6 +134,14 @@ namespace PE {
 		//draw scene view
 		if (m_sceneViewActive)
 			showSceneView(texture_id, &m_sceneViewActive);
+
+		if (m_debugTests)
+		{
+			ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+			ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
+			showDebugTests(&m_debugTests);
+		}
+			
 
 		//final imgui render functions
 		ImGui::Render();
@@ -176,17 +204,30 @@ namespace PE {
 			if (ImGui::Button("clear console"))
 			{
 				clearConsole();
-				addCommand("console Cleared");
+				addConsole("console Cleared");
+			}			ImGui::SameLine();
+			if (ImGui::Button("Print Memory Data"))
+			{
+				MemoryManager::GetInstance()->printData();
 			}
 			ImGui::Separator();
 
 			float const spacing = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing();
 			if (ImGui::BeginChild("console scroll area", ImVec2(0, -spacing), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-
-
 				for (std::string i : m_consoleOutput)
 				{
-					ImGui::Text(i.c_str());
+					
+					ImVec4 color;
+					bool has_color = false;
+					if (i.find("[ERROR]") != std::string::npos) { color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true; }
+					//else if (strncmp(item, "# ", 2) == 0) { color = ImVec4(1.0f, 0.8f, 0.6f, 1.0f); has_color = true; }
+					if (has_color)
+						ImGui::PushStyleColor(ImGuiCol_Text, color);
+					ImGui::TextUnformatted(i.c_str());
+					if (has_color)
+						ImGui::PopStyleColor();
+
+					//ImGui::Text(i.c_str());
 				}
 				if ((ImGui::GetScrollY() >= ImGui::GetScrollMaxY()))
 					ImGui::SetScrollHereY(1.0f);
@@ -199,7 +240,7 @@ namespace PE {
 			ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll;
 			if (ImGui::InputText("Type stuff", &m_input, input_text_flags))
 			{
-				addCommand(m_input);
+				addConsole(m_input);
 				m_input = "";
 				reclaim_focus = true;
 			}
@@ -220,10 +261,11 @@ namespace PE {
 		}
 		else
 		{
+			static int count = 0;
 			if (ImGui::Button("Create Object"))
 			{
-				addCommand("Object Created");
-				static int count = 0;
+				addConsole("Object Created");
+
 				std::stringstream ss;
 				ss << "new object " << count++;
 				m_items.push_back(ss.str().c_str());
@@ -232,10 +274,11 @@ namespace PE {
 			if (ImGui::Button("Delete Object"))
 			{
 				if (m_currentSelectedIndex <= m_items.size() && !m_items.empty()) {
-					addCommand("Object Deleted");
+					addConsole("Object Deleted");
 					std::stringstream ss;
 					ss << "deleted object " << m_currentSelectedIndex;
 					m_items.erase(m_items.begin() + m_currentSelectedIndex);
+					count--;
 				}
 			}
 
@@ -259,6 +302,68 @@ namespace PE {
 			}
 			ImGui::EndChild();
 
+			ImGui::End();
+		}
+	}
+
+	void ImGuiWindow::showDebugTests(bool* Active)
+	{
+		if (!ImGui::Begin("debugTests", Active, ImGuiWindowFlags_AlwaysAutoResize))
+		{
+			ImGui::End();
+		}
+		else
+		{
+			//test 1
+			ImGui::Text("Memory Test");
+			ImGui::Spacing();
+			if (ImGui::Button("Allocating Memory"))
+			{
+				char* allocationtest = (char*)MemoryManager::GetInstance()->AllocateMemory("AllocationTest", 30);
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Create Out of Index Object on Stack"))
+			{
+				char* outofmemorytest = (char*)MemoryManager::GetInstance()->AllocateMemory("out of index test", 1000);
+			}
+			//test 2
+			static bool buffertester = false;
+			ImGui::BeginDisabled(buffertester);
+			if (ImGui::Button("Written over Buffer Tests"))
+			{
+				buffertester = true;
+				char* buffertest = (char*)MemoryManager::GetInstance()->AllocateMemory("buffertest", 7);
+
+				strcpy(buffertest, "testtest");
+				addConsole("writing \"testtest\" 8byte into buffertest of 7 byte + 4 buffer bytes");
+				addConsole(buffertest);
+
+			}
+			ImGui::EndDisabled();
+			ImGui::SameLine();
+			//test 3
+			ImGui::BeginDisabled(!buffertester);
+			if (ImGui::Button("popback previous allocation"))
+			{
+				buffertester = false;
+				MemoryManager::GetInstance()->Pop_BackMemory();
+				addConsole("delete and popping back previously allocated object");
+
+			}
+			ImGui::EndDisabled();
+			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
+
+			ImGui::Separator();
+			ImGui::Text("Audio Test");
+			if (ImGui::Button("Play Audio 1"))
+			{
+				AudioManager::GetInstance()->PlaySound("Audio/sound1.wav");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Play Audio 2"))
+			{
+				AudioManager::GetInstance()->PlaySound("Audio/sound2.wav");
+			}
 			ImGui::End();
 		}
 	}
@@ -312,7 +417,10 @@ namespace PE {
 
 				//set on the save location to dock ontop of eachother
 				ImGui::DockBuilderDockWindow("consolewindow", dock_id_down);
-				ImGui::DockBuilderDockWindow("debugwindow", dock_id_down);
+
+				ImGuiID dock_id_down2 = ImGui::DockBuilderSplitNode(dock_id_down, ImGuiDir_Right, 0.5f, nullptr, &dock_id_down);
+
+				ImGui::DockBuilderDockWindow("debugwindow", dock_id_down2);
 
 				//end dock
 				ImGui::DockBuilderFinish(dockspace_id);
@@ -392,9 +500,17 @@ namespace PE {
 		m_logOutput.push_back(text);
 	}
 
-	void ImGuiWindow::addCommand(std::string text)
+	void ImGuiWindow::addConsole(std::string text)
 	{
 		m_consoleOutput.push_back(text);
+	}
+
+	void ImGuiWindow::addError(std::string text)
+	{
+		std::stringstream ss;
+		ss << "[ERROR] " << text;
+		m_consoleOutput.push_back(ss.str());
+
 	}
 
 	void ImGuiWindow::clearLog()

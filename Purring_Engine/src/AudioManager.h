@@ -26,7 +26,7 @@ public:
     void Update();
     void PlaySound(const char* filePath);
     void StopSound();
-
+    static AudioManager* GetInstance();
 private:
     // FMOD system object for managing audio resources
     FMOD::System* system;
@@ -38,4 +38,7 @@ private:
     // FMOD channel objects to control playback
     FMOD::Channel* channel1;
     FMOD::Channel* channel2;
+
+    static std::unique_ptr<AudioManager> s_Instance;
+
 };

@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     ImGuiWindow.h
+ \date     8/30/2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	header file containing the declaration of the imguiwindow class
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #pragma once
 
 #include "../Events/EventHandler.h"
@@ -63,6 +79,10 @@ namespace PE {
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void showObject(bool* Active);
+
+		void showDebugTests(bool* Active);
+
+
 		/*!***********************************************************************************
 		 \brief render the docking port window
 
@@ -89,7 +109,13 @@ namespace PE {
 
 		 \param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void addCommand(std::string text);
+		void addConsole(std::string text);
+		/*!***********************************************************************************
+		\brief add text appeneded with error to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void addError(std::string text);
 	private:
 		/*!***********************************************************************************
 		 \brief empty the log vector
@@ -133,6 +159,7 @@ namespace PE {
 		bool m_consoleActive;
 		bool m_sceneViewActive;
 		bool m_firstLaunch;
+		bool m_debugTests;
 		static std::unique_ptr<ImGuiWindow> s_Instance;
 		std::vector<std::string> m_logOutput;
 		std::vector<std::string> m_consoleOutput;

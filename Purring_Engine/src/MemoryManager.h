@@ -9,7 +9,7 @@
  \par      email:      jarranyanzhi.tan@digipen.edu
 
  \brief
-Header file containing the declaration and definition of the event and nmemory manager class
+	Header file containing the declerations of the memorymanager
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -19,26 +19,19 @@ Header file containing the declaration and definition of the event and nmemory m
 #include <vector>
 #include <memory>
 #include <iostream>
-// CONSTANT VARIABLESs
-constexpr size_t max_size = 1000000;
+// CONSTANT VARIABLES
+constexpr size_t max_size = 1024;
 
 namespace PE {
-	//Need to create a memory manager system that calls the stack allocator
-	//memory manager is to track amount of memory allocated and who was it allocated to
-	//maybe should create some function to calculated amt of memory in the memory allocated is used as well?
 
-	//stores an array of structure
-	//contains string name
-	//contains amount of memory allocated
-	//because its an array, its already indexed? or do we still want to add an id
-
-	//store the amount of memory allocated to a given name on the engine
 	struct MemoryData
 	{
 		std::string s_name;
 		int s_size; // total size;
 		int s_bufferSize; // (10 + 2 - 1) / 2 = 11/2 = 5
-		MemoryData(std::string name, int size) : s_name(name), s_size(size) ,s_bufferSize((size + 2 - 1)/2){}
+		MemoryData(std::string name, int size, int buffersize) : s_name(name), s_size(size) ,s_bufferSize(buffersize){}
+
+		std::string ToString() const;
 	};
 
 	//Allocator
@@ -54,6 +47,8 @@ namespace PE {
 		void Free(int size);
 
 		char* getStack();
+
+		int getStackTop();
 	private:
 		char* m_stack{ nullptr }; //where all the data in the stack will be stored
 		int m_totalSize; // size of the stack
@@ -78,6 +73,7 @@ namespace PE {
 
 		void CheckMemoryOver();
 
+		void printData();
 	private:
 		//for storing what memory allocated to where
 		std::vector<MemoryData> m_memoryAllocationData;

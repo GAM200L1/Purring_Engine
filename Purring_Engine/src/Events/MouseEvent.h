@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     MouseEvent.h
+ \date     8/30/2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	Header file containing the declaration and definition of the Mouse Events
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #ifndef MOUSE_EVENTS_H
 #define MOUSE_EVENTS_H
 
