@@ -16,8 +16,9 @@
 
 /*                                                                   includes
 ----------------------------------------------------------------------------- */
+#include "GLHeaders.h"
+
 #include <cstddef>
-#include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
 #include <map>
 #include <vector>
@@ -96,6 +97,16 @@ namespace PE
 
             //! Container of objects to draw
             std::vector<Graphics::Renderer> m_renderableObjects{};
+
+            // global defined indices for OpenGL
+            GLuint FBO; // frame buffer object
+            GLuint RBO; // rendering buffer object
+            GLuint texture_id; // the texture id we'll need later to create a texture 
+
+            void create_framebuffer(int const WIDTH, int const HEIGHT);
+            void bind_framebuffer();
+            void unbind_framebuffer();
+            void rescale_framebuffer(float width, float height);
 
             // ----- Private methods ----- //
         private:
