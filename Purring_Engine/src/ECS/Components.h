@@ -16,11 +16,12 @@
 
 // INCLUDES
 #include "prpch.h"
+#include "Math/MathCustom.h"
 
 // CONSTANT VARIABLES
 constexpr size_t DEFAULT_ENTITY_CNT = 16;		// default bytes allocated to components pool
 
-namespace Engine
+namespace PE
 {
     struct ComponentPool
     {
@@ -182,8 +183,35 @@ namespace Engine
 
 #define REGISTERCOMPONENT(type, size) Engine::g_entityFactory->AddComponentCreator( #type, new Engine::ComponentCreatorType<type>( size ) );
 
-class test : public Engine::Component
+class test : public PE::Component
 {
 public:
     float x, y;
 };
+
+namespace PE
+{
+    struct Transform : public Component
+    {
+        vec2 scale;
+        float angle; // in radians
+        vec2 position;
+
+        mat3x3 GetMat3x3() const
+        {
+            mat3x3 scaleMat;
+            scaleMat.Scale(scale.x, scale.y);
+            mat3x3 rotMat;
+            rotMat.RotateRad(angle);
+            mat3x3 transMat;
+            transMat.Translate(position.x, position.y);
+
+            return transMat * rotMat * scaleMat;
+
+        }
+        mat4x4 GetMat4x4() const
+        {
+            return GetMat3x3().ConvertTo4x4();
+        }
+    };
+}
