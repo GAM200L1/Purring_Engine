@@ -217,7 +217,7 @@ namespace PE
 		 
 		 \return vec2 	The copy of this vec2's normalized vector
 		*************************************************************************************/
-		vec2 Normal() const;
+		vec2 GetNormalized() const;
 
 		// Find length^2
 		/*!***********************************************************************************
@@ -436,7 +436,7 @@ namespace PE
 		 
 		 \return vec3 	The normalized vector of this vec3
 		*************************************************************************************/
-		vec3 Normal() const;
+		vec3 GetNormalized() const;
 
 		// Find length^2
 		/*!***********************************************************************************

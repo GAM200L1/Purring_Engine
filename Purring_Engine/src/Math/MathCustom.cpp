@@ -138,7 +138,7 @@ namespace PE
 		return sqrtf(this->DistanceSquared(r_rhs));
 	}
 
-	vec2 vec2::Normal() const
+	vec2 vec2::GetNormalized() const
 	{
 		return vec2{ *this / this->Length() };
 	}
@@ -276,7 +276,7 @@ namespace PE
 		return sqrtf(this->LengthSquared());
 	}
 
-	vec3 vec3::Normal() const
+	vec3 vec3::GetNormalized() const
 	{
 		return vec3{ *this / this->Length() };
 	}
