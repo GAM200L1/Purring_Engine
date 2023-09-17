@@ -32,6 +32,23 @@ namespace PE
 		r_circle.radius = r_scale.x * 0.5f;
 	}
 
+
+	// ----- Line Segment Constructor ----- //
+	LineSegment::LineSegment(vec2 const& r_startPt, vec2 const& r_endPt)
+	{
+		point0 = r_startPt;
+		point1 = r_endPt;
+		normal = point1 - point0;
+		normal = vec2{ normal.y, -normal.x };
+		normal.Normalize();
+	}
+
+	Manifold::Manifold(Contact const& r_contData,
+					   Transform& r_transA, Transform& r_transB,
+					   RigidBody* r_rbA, RigidBody* r_rbB)
+					   : contactData{ r_contData },
+					     r_transformA{ r_transA }, r_transformB{ r_transB },
+					     r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
 }
 
 

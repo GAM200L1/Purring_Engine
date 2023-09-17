@@ -14,17 +14,12 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 #include "Math/MathCustom.h"
 #include "ECS/Components.h"
+#include "RigidBody.h"
 #include <variant>
 
 
 namespace PE
 {
-	struct Collider : Component
-	{
-		std::variant<AABBCollider, CircleCollider> colliderVariant;
-	};
-
-
 	// may change this to box collider to combine obb and aabb in the future
 	struct AABBCollider
 	{
@@ -42,29 +37,44 @@ namespace PE
 		float radius;
 	};
 
+	struct Collider : Component
+	{
+		std::variant<AABBCollider, CircleCollider> colliderVariant;
+		std::set<size_t> objectsCollided;
+	};
+
+	struct LineSegment
+	{
+		LineSegment() = default;
+		LineSegment(vec2 const& r_startPt, vec2 const& r_endPt);
+		vec2 point0;
+		vec2 point1;
+		vec2 normal;
+	};
+
+
+	struct Contact
+	{
+		vec2 position{ 0.f, 0.f };
+		vec2 normal{ 0.f, 0.f };
+		float penetrationDepth{ 0.f };
+	};
+
+	struct Manifold
+	{
+		Manifold() = delete;
+		Manifold(Contact const& r_contData,
+				 Transform& r_transA, Transform& r_transB,
+				 RigidBody* r_rbA, RigidBody* r_rbB);
+
+		Transform& r_transformA;
+		Transform& r_transformB;
+
+		RigidBody* r_rigidBodyA = nullptr;
+		RigidBody* r_rigidBodyB = nullptr;
+
+		Contact contactData;
+	};
+
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
 }
-
-
-
-// ----- Public Methods ----- //
-
-//void Update(vec2 const& r_position, vec2 const& r_scale);
-// ----- Public Methods ----- //
-
-//void Update(vec2 const& r_position, vec2 const& r_scale);
-/*bool TestCollision(Collider& r_collisionObj);
-bool TestCollision(CircleCollider& r_collisionCircle);
-bool TestCollision(AABBCollider& r_collisionBox);*/
-
-/*bool TestCollision(Collider& r_collisionObj);
-bool TestCollision(CircleCollider& r_collisionCircle);
-bool TestCollision(AABBCollider& r_collisionBox);*/
-
-//struct Collider : public Component
-//{
-//	virtual void Update(vec2 const& r_position, vec2 const& r_scale) = 0;
-//	virtual bool TestCollision(Collider& r_collisionObj) = 0;
-//	virtual bool TestCollision(CircleCollider& r_collisionCircle) = 0;
-//	virtual bool TestCollision(AABBCollider& r_collisionBox) = 0;
-//};
