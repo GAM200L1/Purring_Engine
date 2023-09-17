@@ -17,6 +17,7 @@ bin-int
 imgui.ini
 /vendor
 */Assets
+/Assets
 *.sln
 
 # User-specific files (MonoDevelop/Xamarin Studio)

@@ -86,7 +86,7 @@ bool AudioManager::Init()
     }
 
     // Create the sound object for sound1
-    result = system->createSound("Assets/Audio/sound1.wav", FMOD_DEFAULT, 0, &sound1);
+    result = system->createSound("../Assets/Audio/sound1.wav", FMOD_DEFAULT, 0, &sound1);
 
     // Check if sound1 was successfully created
     if (result != FMOD_OK)
@@ -96,7 +96,7 @@ bool AudioManager::Init()
     }
 
     // Create the sound object for sound2
-    result = system->createSound("Assets/Audio/sound2.wav", FMOD_DEFAULT, 0, &sound2);
+    result = system->createSound("../Assets/Audio/sound2.wav", FMOD_DEFAULT, 0, &sound2);
 
     // Check if sound2 was successfully created
     if (result != FMOD_OK)
@@ -136,10 +136,10 @@ void AudioManager::PlaySound(const char* filePath)
 {
     FMOD::Sound* sound = nullptr;
 
-    if (strcmp(filePath, "Assets/Audio/sound1.wav") == 0) {
+    if (strcmp(filePath, "../Assets/Audio/sound1.wav") == 0) {
         sound = sound1;
     }
-    else if (strcmp(filePath, "Assets/Audio/sound2.wav") == 0) {
+    else if (strcmp(filePath, "../Assets/Audio/sound2.wav") == 0) {
         sound = sound2;
     }
 
