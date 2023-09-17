@@ -1,27 +1,3 @@
-/*!***********************************************************************************
- \project  Purring Engine
- \module   CSD2401-A
- \file     CoreApplication.cpp
- \creation date:       To check
- \last updated:        16-09-2023
- \author:              Brandon HO Jun Jie
- \co-author:           Hans (You Yang) ONG
- \co-author:           Jarran TAN Yan Zhi
-
- \par      email:      brandonjunjie.ho@digipen.edu
- \par      email:      youyang.o@digipen.edu
- \par      email:      jarranyanzhi.tan@digipen.edu
-
- \brief    This file contains the CoreApplication class, which serves as the entry point for
-           the engine. It handles the main application loop, initializes and updates all registered 
-           systems, and manages application-level resources such as the window and FPS controller.
-
- All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*************************************************************************************/
-
-
-/*                                                                                                          includes
---------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
 // imgui
@@ -43,14 +19,6 @@
 // testing
 Logger engine_logger = Logger("ENGINE");
 
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Constructor for the CoreApplication class.
-/// Initializes variables and sets up the application window, FPS controller,
-/// logging, and rendering system.
-/// </summary>
------------------------------------------------------------------------------ */
 PE::CoreApplication::CoreApplication()
 {
 	m_Running = true;
@@ -59,7 +27,7 @@ PE::CoreApplication::CoreApplication()
     // Create and set up the window using WindowManager
     m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
 
-    m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
+    m_fpsController.SetTargetFPS(60);  // Default to 60 FPS
     // set flags
     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
@@ -76,56 +44,115 @@ PE::CoreApplication::CoreApplication()
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
     }
 
+    //init imgui settings
+    //IMGUI_CHECKVERSION();
+    //ImGui::CreateContext();
+    //ImGui::StyleColorsDark();
+
+    //ImGuiIO& io = ImGui::GetIO();
+    //io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
+    //io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
+
+    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
+    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
+
+
+    ///////////////////////////////////////////
+    //temp here untill i can get window exposed
+    //int width, height;
+    //glfwGetWindowSize(m_window, &width, &height);
+    //io.DisplaySize = ImVec2(width, height);
+
+    //ImGuiStyle& style = ImGui::GetStyle();
+    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    //    style.WindowRounding = 0.0f;
+    //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+    //}
+
+    //ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+
+    //ImGui_ImplOpenGL3_Init("#version 460");
+    ///////////////////////////////////////////
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Destructor for the CoreApplication class.
-/// Responsible for cleaning up resources.
-/// </summary>
------------------------------------------------------------------------------ */
 PE::CoreApplication::~CoreApplication()
 {
 	// anything for destructor to do?
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Main loop for the CoreApplication class.
-/// Controls the game loop, updates systems, and handles user input and FPS.
-/// </summary>
------------------------------------------------------------------------------ */
 void PE::CoreApplication::Run()
 {
-    // std::cout << "test" << std::endl;                // Debug to test msg to console
+	std::cout << "test" << std::endl;
+	// main app loop
 
-    // Main Application Loop
-    while (!glfwWindowShouldClose(m_window))            // Continue until the GLFW window is flagged to close
+    while (!glfwWindowShouldClose(m_window))
     {
-        m_fpsController.StartFrame();                   // Init FPS calculations for the current frame
-        engine_logger.SetTime();                        // Set the time in the logger
+        m_fpsController.StartFrame();
+        engine_logger.SetTime();
 
-        // UPDATE SECTION --------------------------------------------
+        // UPDATE -----------------------------------------------------
+        
 
-        // List of keys to check for FPS adjustment
+        // List of keys to check
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
 
-        // Iterate through the list of keys and check if any are pressed
         for (int key : keys)
         {
-            // Update target FPS if a key is pressed
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
             {
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
-        // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
 
-        // Update the window title to display FPS (every second)
+        // Audio Stuff - HANS
+        m_audioManager.Update();
+
+        const int audioKeys[] = { GLFW_KEY_A, GLFW_KEY_S };
+        for (int key : audioKeys)
+        {
+            if (glfwGetKey(m_window, key) == GLFW_PRESS)
+            {
+                if (key == GLFW_KEY_A)
+                {
+                    std::cout << "A key pressed\n";
+                    m_audioManager.PlaySound("../Assets/Audio/sound1.wav");
+                }
+                else if (key == GLFW_KEY_S)
+                {
+                    std::cout << "S key pressed\n";
+                    m_audioManager.PlaySound("../Assets/Audio/sound2.wav");
+                }
+            }
+        }
+
+
+
+
+
+        // DRAW -----------------------------------------------------
+            // Render scene (placeholder: clear screen)
+        //glClear(GL_COLOR_BUFFER_BIT);
+
+        //////////////////////////////////////////////////////////////////////////
+        //temp here untill window is exposed
+        //ImGuiIO& io = ImGui::GetIO();
+        //float time = (float)glfwGetTime();
+        //io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
+        //m_time = time;
+
+        ////redering of all windows
+        //ImGuiWindow::GetInstance()->Render();
+        //////////////////////////////////////////////////////////////////////
+        // 
+        // Swap front and back buffers
+        //glfwSwapBuffers(m_window);
+        // DRAW ----------------------------------------------------------
+
+
+        // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
+        // Update the title to show FPS (every second in this example)
+
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
@@ -133,81 +160,50 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        // Iterate over and update all systems
+        // update systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            // Provide an accurate delta time for the UpdateSystem function
-            m_systemList[i]->UpdateSystem(1.f);
+            m_systemList[i]->UpdateSystem(1.f); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
         }
 
-        // Flush log entries
+        
         engine_logger.FlushLog();
 
-        // Finalize FPS calculations for the current frame
         m_fpsController.EndFrame();
     }
 
-    // Cleanup for ImGui
+    /// <summary>
+    /// Clean up of imgui functions
+    /// </summary>
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    // Additional Cleanup (if required)
+    // Cleanup (if needed)
     m_windowManager.Cleanup();
 }
 
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Initializes all registered systems in CoreApplication.
-/// Iterates through each system in the system list and calls their
-/// respective InitializeSystem function.
-/// </summary>
------------------------------------------------------------------------------ */
 void PE::CoreApplication::InitSystems()
 {
-    // Init all systems and iterate through each system in m_systemList and initialize it
+    // init all systems
     for (System* system : m_systemList)
     {
-        system->InitializeSystem();                             // Call the InitializeSystem method for each system
+        system->InitializeSystem();
     }
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Destroys all registered systems in CoreApplication.
-/// Iterates through each system in the system list, calls their respective
-/// DestroySystem function, and then deletes them.
-/// </summary>
------------------------------------------------------------------------------ */
 void PE::CoreApplication::DestroySystems()
 {
-    // Destroy all systems iterate through each system in m_systemList and destroy it
+    // destroy all systems
     for (System* system : m_systemList)
     {
-        system->DestroySystem();                                // Call the DestroySystem method for each system
-        delete system;                                          // Free the memory allocated for the system object
+        system->DestroySystem();
+        delete system;
     }
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Adds a system to the CoreApplication's system list.
-/// Appends the given system pointer to the end of the system list,
-/// </summary>
-///
-/// <param name="system">
-/// A pointer to the system that will be managed by CoreApplication.
-/// </param>
------------------------------------------------------------------------------ */
 void PE::CoreApplication::AddSystem(System* system)
 {
-    // Add a system to CoreApplication append the provided system pointer to the m_systemList vector
+    // add system to core application
     m_systemList.push_back(system);
 }

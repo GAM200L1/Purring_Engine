@@ -1,19 +1,17 @@
-/*!***********************************************************************************
- \project  Purring Engine
- \module   CSD2401-A
- \file     FrameRateTargetControl.h
- \creation date:       13-08-2023
- \last updated:        16-09-2023
- \author:              Hans (You Yang) ONG
+/*!*****************************************************************************
+    @file       FrameRateTargetControl.h
+    @author     Hans (You Yang) ONG
+    @co-author
+    @par        DP email: youyang.o\@digipen.edu
+    @par        Course: CSD2401, Section A
+    @date       130823
 
- \par      email:      youyang.o\@digipen.edu
+    @brief      This file contains the declaration of the FrameRateTargetControl class.
+                FrameRateTargetControl ensures frame-rate consistency, enabling control and monitoring
+                of frame rates throughout the application runtime.
 
- \brief    This file contains the implementation details of the FrameRateTargetControl class.
-           FrameRateTargetControl ensures frame-rate consistency, enabling control and monitoring
-           of frame rates throughout the application runtime.
-
- All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*************************************************************************************/
+All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*******************************************************************************/
 #pragma once
 
 /*                                                                                                          includes

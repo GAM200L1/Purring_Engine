@@ -1,46 +1,40 @@
- \date     8/30/2023
 /*!***********************************************************************************
+
  \project  Purring Engine
  \module   CSD2401-A
  \file     Event.h
- \creation date:       30-08-2023
- \last updated:        16-09-2023
- \author:              Jarran TAN Yan Zhi
+ \date     8/30/2023
 
+ \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
 
- \brief    This header file declares and defines the template-based Event and EventDispatcher
-           classes for event management within the Purring Engine.
+ \brief
+Header file containing the declaration and definition of the event and event dispatcher template
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
 *************************************************************************************/
 
 #ifndef EVENT_H
 #define EVENT_H
 
-/*                                                                                                          includes
---------------------------------------------------------------------------------------------------------------------- */
-#include <string>			// For names
-#include <map>				// To map functions to event typer
-#include <functional>		// To bind functions
+#include <string> // for names
+#include <map> // to map functions to event typer
+#include <functional> // to bind functions
 
-namespace temp
-{
-	/*!***********************************************************************************
-	 \class     Event<T>
-	 \brief     A templated base class for event objects.
-	 \details   Provides methods for querying event type and status.
-	*************************************************************************************/
+namespace temp {
+
+	//base class for events to inherit	
 	template <typename T>
 	class Event
 	{
-		// Member variables
+		// ----- Protected variables ----- // 
 	protected:
 		T m_Type;
 		std::string m_Name;
 		bool m_Handled = false;
 
-		// Constructors and destructors
+		// ----- Constructors ----- // 
 	public:
 		Event() = default;
 		Event(T type, const std::string& name = "") : m_Type(type), m_Name(name) {}
@@ -49,37 +43,49 @@ namespace temp
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
-		 \brief     Implicit conversion to a std::string, used for output streams.
-		 \return    std::string - Returns the name of the event.
+		 \brief     implicit conversion to a std::string, used for output streams
+
+		 \return std::string        by default returns the name of the event
 		*************************************************************************************/
 		virtual std::string ToString() const { return GetName(); }
-
 		/*!***********************************************************************************
-		 \brief     Checks if the event has been handled.
-		 \return    bool - Returns true if the event has been handled, false otherwise.
+
+		\brief			Has the event been handled
+
+		\return bool	returns whether the event has been handled
+
 		*************************************************************************************/
-		virtual bool Handled() const { return m_Handled; }
+		virtual bool Handled() const
+		{
+			return m_Handled;
+		}
 
 		// ----- Public getters ----- // 
 	public:
 		/*!***********************************************************************************
-		 \brief     Gets the event type of the current event.
-		 \return    T - Returns the event type, which is typically an enum.
+
+		 \brief				Returns the event type of the current event.
+
+		 \return T			Returns the event type, which is an enum
+
 		*************************************************************************************/
-		inline const T GetType() const { return m_Type; }
+		inline const T GetType() const {
+			return m_Type;
+		}
 
 		/*!***********************************************************************************
-		 \brief     Gets the name of the event.
-		 \return    const std::string& - Returns the name of the event.
+
+		 \brief							return the name of the event
+
+		 \return const std::string		the name of the current event
+
 		*************************************************************************************/
-		inline const std::string& GetName() const { return m_Name; }
+		inline const std::string& GetName() const
+		{
+			return m_Name;
+		}
 	};
 
-	/*!***********************************************************************************
-	 \class     EventDispatcher<T>
-	 \brief     A templated class responsible for dispatching events to registered listeners.
-	 \details   Supports the addition of listeners and the broadcasting of events.
-	*************************************************************************************/
 	template<typename T>
 	class EventDispatcher
 	{
@@ -87,21 +93,32 @@ namespace temp
 	private:
 		using Func = std::function<void(const Event<T>&)>;
 		std::map<T, std::vector<Func>> m_Listerners;
-
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
-		 \brief     Adds a listener for a specific event type.
-		 \param[in] T type - The type of event to listen to.
-		 \param[in] const Func& func - The callback function to be invoked when the event is dispatched.
+
+		 \brief		Subscrive an object as a listerner of a specific event
+
+
+
+		 \param[in] T type The type of event to subscribe to
+
+		 \param[in] const Func& A function that returns void and takes in an event
+
 		*************************************************************************************/
-		void AddListener(T type, const Func& func) { m_Listerners[type].push_back(func); }				// Map type to a function
+		void AddListener(T type, const Func& func)
+		{
+			//map type to a function
+			m_Listerners[type].push_back(func);
+		}
 
-
-		// To be defined within engine to makesure only accessible through the engine
+		//to be defined within engine to makesure only accessible through the engine
 		/*!***********************************************************************************
-		 \brief     Dispatches an event to all registered listeners of its type.
-		 \param[in] Event<T>& event - The event object to be dispatched.
+
+		 \brief		Send an event of a specific type, then call out to all the listeners subscribed to the event
+
+		 \param[in] Event<T>& event Any event
+
 		*************************************************************************************/
 		void SendEvent(const Event<T>& event)
 		{
@@ -118,10 +135,11 @@ namespace temp
 	};
 
 	/*!***********************************************************************************
-	 \brief     Overloads the output stream operator for easy logging of Event objects.
-	 \param[out] std::ostream& os - The output stream.
-	 \param[in]  Event<T>& e - The event to log.
-	 \return    std::ostream& - Returns the modified output stream.
+
+	 \brief		ostream overload to print out the event as a string
+
+	 \param[out] std::ostream
+
 	*************************************************************************************/
 	template<typename T>
 	inline std::ostream& operator<<(std::ostream& os, const Event<T>& e)
@@ -129,6 +147,18 @@ namespace temp
 		return os << e.ToString() << "\n";
 	}
 
-} // namespace temp
 
-#endif // EVENT_H
+
+
+
+
+
+
+
+
+
+
+
+}
+
+#endif
