@@ -3,10 +3,6 @@
 
 #include "CoreApplication.h"
 
-// detect memory leaks
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
-
 extern PE::CoreApplication* PE::CreateApplication();
 
 int main(int argc, char** argv) {
