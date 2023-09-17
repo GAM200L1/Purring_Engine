@@ -1,17 +1,19 @@
-/*!*****************************************************************************
-	@file       WindowManager.cpp
-	@author     Hans (You Yang) ONG
-	@co-author
-	@par        DP email: youyang.o\@digipen.edu
-	@par        Course: CSD2401, Section A
-	@date       130823
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     WindowManager.cpp
+ \creation date:       13-08-2023
+ \last updated:        16-09-2023
+ \author:              Hans (You Yang) ONG
 
-	@brief      This file contains the implementation of the WindowManager class.
-				WindowManager handles the initialization, maintenance, and cleanup
-				of a GLFW window, along with the relevant callbacks and window operations.
+ \par      email:      youyang.o@digipen.edu
 
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+ \brief    This file contains the implementation of the WindowManager class.
+		   WindowManager handles the initialization, maintenance, and cleanup
+		   of a GLFW window, along with the relevant callbacks and window operations.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 
 
 /*                                                                                                          includes
@@ -22,6 +24,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include <sstream>
 #include "Logging/Logger.h"
 #include "imgui/ImGuiWindow.h"
+
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -37,6 +40,7 @@ namespace PE
 	----------------------------------------------------------------------------- */
 	WindowManager::WindowManager()
 	{
+		// Attempt to initialize GLFW
 		if (!glfwInit())
 		{
 			std::cerr << "Failed to initialize GLFW." << std::endl;
@@ -70,49 +74,56 @@ namespace PE
 	----------------------------------------------------------------------------- */
 	GLFWwindow* WindowManager::InitWindow(int width, int height, const char* title)
 	{
+		// Create a GLFW window with the specified dimensions and title
 		GLFWwindow* window = glfwCreateWindow(width, height, title, nullptr, nullptr);
+
+		// Check if window creation was successful
 		if (!window)
 		{
+			// Log the error and terminate the GLFW library
 			std::cerr << "Failed to create GLFW window." << std::endl;
 			glfwTerminate();
+
+			// Exit the program with an error code
 			exit(-1);
 		}
+
+		// Make the newly created window the current OpenGL context
 		glfwMakeContextCurrent(window);
 
-		// Set glfw callbacks from input
-		glfwSetCursorPosCallback(window, mouse_callback);        // For mouse movement
-		glfwSetMouseButtonCallback(window, check_mouse_buttons); // For mouse button presses
-		glfwSetScrollCallback(window, scroll_callback);
-		glfwSetKeyCallback(window, key_callback);
+		// Set GLFW input callbacks
+		glfwSetCursorPosCallback(window, mouse_callback);				// For mouse movement
+		glfwSetMouseButtonCallback(window, check_mouse_buttons);		// For mouse button presses
+		glfwSetScrollCallback(window, scroll_callback);					// For scroll wheel events
+		glfwSetKeyCallback(window, key_callback);						// For keyboard events
 
-		//required to set window user pointer to access the callback methods in a class
+		// Required to set window user pointer for accessing callback methods in this class
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
-		glfwSetWindowSizeCallback(window, window_resize_callback);
-		glfwSetWindowCloseCallback(window, window_close_callback);
-		glfwSetWindowFocusCallback(window, window_focus_callback);
-		glfwSetWindowPosCallback(window, window_pos_callback);
 
-		//subscription to events
-		//temp::ADD_WINDOW_EVENT_LISTENER(temp::WindowEvents::WindowResize, WindowManager::OnWindowEvent, this)
-		//temp::ADD_WINDOW_EVENT_LISTENER(temp::WindowEvents::WindowClose, WindowManager::OnWindowEvent, this)
-		//temp::ADD_WINDOW_EVENT_LISTENER(temp::WindowEvents::WindowFocus, WindowManager::OnWindowEvent, this)
-		//temp::ADD_WINDOW_EVENT_LISTENER(temp::WindowEvents::WindowLostFocus, WindowManager::OnWindowEvent, this)
-		//temp::ADD_WINDOW_EVENT_LISTENER(temp::WindowEvents::WindowMoved, WindowManager::OnWindowEvent, this)
+		// Set GLFW window callbacks
+		glfwSetWindowSizeCallback(window, window_resize_callback);		// For window resizing
+		glfwSetWindowCloseCallback(window, window_close_callback);		// For window closing
+		glfwSetWindowFocusCallback(window, window_focus_callback);		// For window focus events
+		glfwSetWindowPosCallback(window, window_pos_callback);			// For window position changes
+
+		// Add event listeners (presumably custom macros)
 		ADD_ALL_WINDOW_EVENT_LISTENER(WindowManager::OnWindowEvent, this)
+		ADD_ALL_MOUSE_EVENT_LISTENER(WindowManager::OnMouseEvent, this)
+		ADD_ALL_KEY_EVENT_LISTENER(WindowManager::OnKeyEvent, this)
 
-			//ADD_MOUSE_EVENT_LISTENER(temp::MouseEvents::MouseMoved, WindowManager::OnMouseEvent, this)
-			//ADD_MOUSE_EVENT_LISTENER(temp::MouseEvents::MouseButtonPressed, WindowManager::OnMouseEvent, this)
-			//ADD_MOUSE_EVENT_LISTENER(temp::MouseEvents::MouseButtonRelease, WindowManager::OnMouseEvent, this)
-			//ADD_MOUSE_EVENT_LISTENER(temp::MouseEvents::MouseScrolled, WindowManager::OnMouseEvent, this)
-			ADD_ALL_MOUSE_EVENT_LISTENER(WindowManager::OnMouseEvent, this)
-
-			//ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyPressed, WindowManager::OnKeyEvent, this)
-			//ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyRelease, WindowManager::OnKeyEvent, this)
-			ADD_ALL_KEY_EVENT_LISTENER(WindowManager::OnKeyEvent, this)
-
-			return window;
+		// Return the created window pointer
+		return window;
 	}
 
+
+
+	/*-----------------------------------------------------------------------------
+	/// <summary>
+	/// Handles window-related events.
+	/// Logs the events and takes appropriate actions depending on the event type.
+	/// </summary>
+	/// <param name="e">The event to be processed.</param>
+	----------------------------------------------------------------------------- */
 	void WindowManager::OnWindowEvent(const temp::Event<temp::WindowEvents>& e)
 	{
 		ImGuiWindow::GetInstance()->AddLog(e.ToString());
@@ -121,6 +132,15 @@ namespace PE
 		//event_logger.FlushLog();
 	}
 
+
+
+	/*-----------------------------------------------------------------------------
+	/// <summary>
+	/// Handles mouse-related events.
+	/// Logs the events and performs appropriate actions based on the event type.
+	/// </summary>
+	/// <param name="e">The mouse event to be processed.</param>
+	----------------------------------------------------------------------------- */
 	void WindowManager::OnMouseEvent(const temp::Event<temp::MouseEvents>& e)
 	{
 		ImGuiWindow::GetInstance()->AddLog(e.ToString());
@@ -129,6 +149,15 @@ namespace PE
 		//event_logger.FlushLog();
 	}
 
+
+
+	/*-----------------------------------------------------------------------------
+	/// <summary>
+	/// Handles keyboard-related events.
+	/// Logs the events and takes appropriate actions based on the type of keyboard event.
+	/// </summary>
+	/// <param name="e">The keyboard event to be processed.</param>
+	----------------------------------------------------------------------------- */
 	void WindowManager::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
 	{
 		ImGuiWindow::GetInstance()->AddLog(e.ToString());
@@ -136,6 +165,8 @@ namespace PE
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
 	}
+
+
 
 	/*-----------------------------------------------------------------------------
 	/// <summary>
@@ -155,15 +186,24 @@ namespace PE
 
 	/*-----------------------------------------------------------------------------
 	/// <summary>
-	/// Cleans up the resources by terminating GLFW.
+	/// Releases any resources allocated by GLFW to clean up before program termination.
 	/// </summary>
-	/// ----------------------------------------------------------------------------- */
+	----------------------------------------------------------------------------- */
 	void WindowManager::Cleanup()
 	{
 		glfwTerminate();
 	}
 
 
+
+	/*-----------------------------------------------------------------------------
+	/// <summary>
+	/// Callback function to handle window resizing events.
+	/// </summary>
+	/// <param name="window">Pointer to the GLFWwindow that has been resized.</param>
+	/// <param name="width">New width of the window in pixels.</param>
+	/// <param name="height">New height of the window in pixels.</param>
+	----------------------------------------------------------------------------- */
 	void WindowManager::window_resize_callback(GLFWwindow* window, int width, int height)
 	{
 		temp::WindowResizeEvent WRE;
@@ -173,24 +213,53 @@ namespace PE
 		temp::SEND_WINDOW_EVENT(WRE)
 	}
 
+
+
+	/*-----------------------------------------------------------------------------
+	/// <summary>
+	/// Callback function to handle window close events.
+	/// </summary>
+	/// <param name="window">Pointer to the GLFWwindow that is being closed.</param>
+	----------------------------------------------------------------------------- */
 	void WindowManager::window_close_callback(GLFWwindow* window)
 	{
 		temp::WindowCloseEvent WCE;
 		temp::SEND_WINDOW_EVENT(WCE)
 	}
 
+
+
+	/*-----------------------------------------------------------------------------
+	/// <summary>
+	/// Callback function to handle window focus change events.
+	/// </summary>
+	/// <param name="window">Pointer to the GLFWwindow that has changed focus.</param>
+	/// <param name="focus">Integer representing the focus state. 1 for focus gained, 0 for focus lost.</param>
+	----------------------------------------------------------------------------- */
 	void WindowManager::window_focus_callback(GLFWwindow* window, int focus)
 	{
-		if (focus) {
+		if (focus)
+		{
 			temp::WindowFocusEvent WFE;
 			temp::SEND_WINDOW_EVENT(WFE)
 		}
-		else {
+		else
+		{
 			temp::WindowLostFocusEvent WLFE;
 			temp::SEND_WINDOW_EVENT(WLFE)
 		}
 	}
 
+
+
+	/*-----------------------------------------------------------------------------
+	/// <summary>
+	/// Callback function to handle window position change events.
+	/// </summary>
+	/// <param name="window">Pointer to the GLFWwindow that has changed position.</param>
+	/// <param name="xpos">New X-coordinate position of the window.</param>
+	/// <param name="ypos">New Y-coordinate position of the window.</param>
+	----------------------------------------------------------------------------- */
 	void WindowManager::window_pos_callback(GLFWwindow* window, int xpos, int ypos)
 	{
 		temp::WindowMovedEvent WME;
@@ -199,5 +268,4 @@ namespace PE
 
 		temp::SEND_WINDOW_EVENT(WME)
 	}
-
 }

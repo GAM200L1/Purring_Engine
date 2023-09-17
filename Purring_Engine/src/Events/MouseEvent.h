@@ -17,6 +17,8 @@
 #ifndef MOUSE_EVENTS_H
 #define MOUSE_EVENTS_H
 
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "Event.h"
 #include <sstream>
 #include <utility>
@@ -96,19 +98,6 @@ namespace temp
 		int xOffset = 0, yOffset = 0;
 	};
 
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
 
 #endif
