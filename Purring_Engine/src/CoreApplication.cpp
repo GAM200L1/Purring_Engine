@@ -37,6 +37,9 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
+// Audio Stuff - HANS
+#include "AudioManager.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -66,6 +69,13 @@ PE::CoreApplication::CoreApplication()
     // Pass the pointer to the GLFW window to the rendererManager
     Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
     AddSystem(rendererManager);
+
+    // Audio Stuff - HANS
+    m_audioManager.Init();
+    {
+        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
+    }
+
 }
 
 
@@ -113,7 +123,6 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
-
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
 
         // Update the window title to display FPS (every second)

@@ -16,35 +16,26 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-#pragma once
-#define GLFW_INCLUDE_NONE
+#pragma once 
+#define GLFW_INCLUDE_NONE 
 
-/*                                                                                                          includes
---------------------------------------------------------------------------------------------------------------------- */
-#include "CoreApplication.h"
+#include "CoreApplication.h" 
 
-// Detect memory leaks
-#define _CRTDBG_MAP_ALLOC
-#include <crtdbg.h>
+// detect memory leaks 
+#define _CRTDBG_MAP_ALLOC 
+#include <crtdbg.h> 
 
 extern PE::CoreApplication* PE::CreateApplication();
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// The entry point of the application. Responsible for creating the CoreApplication
-/// instance, initializing its systems, running the main game loop, and finally
-/// destroying the systems before application termination. It also includes diagnostics
-/// to detect memory leaks.
-/// </summary>
------------------------------------------------------------------------------ */
-int main(int argc, char** argv)
-{
-	auto app = PE::CreateApplication();			// Create CoreApplication instance
-	app->InitSystems();							// Initialize all registered systems
-	app->Run();									// Execute the main game loop
-	app->DestroySystems();						// Cleanup and destroy systems
+int main(int argc, char** argv) {
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	auto app = PE::CreateApplication();
+	app->InitSystems();
+	app->Run();
+	app->DestroySystems();
+	delete app;
 
-	// Detect memory leaks
+	// detect memory leaks 
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
-	_CrtDumpMemoryLeaks();
 }
+

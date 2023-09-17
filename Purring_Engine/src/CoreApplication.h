@@ -33,6 +33,7 @@
 #include "WindowManager.h"
 #include "FrameRateTargetControl.h"
 #include "Graphics/RendererManager.h"
+#include "AudioManager.h"
 
 namespace PE
 {
@@ -73,7 +74,6 @@ namespace PE
 
 		// Running state flag
 		bool m_Running;
-
 		// Time of the last frame for FPS calculations
 		double m_lastFrameTime;
 
@@ -93,6 +93,9 @@ namespace PE
 
 		// Uncomment if a singleton instance is required
 		//static Application* s_Instance;
+
+		// Audio Stuff - HANS
+		AudioManager m_audioManager;
 
 	};
 
