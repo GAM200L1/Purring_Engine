@@ -1,17 +1,19 @@
-/*!*****************************************************************************
-    @file       WindowManager.h
-    @author     Hans (You Yang) ONG
-    @co-author
-    @par        DP email: youyang.o\@digipen.edu
-    @par        Course: CSD2401, Section A
-    @date       130823
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     WindowManager.h
+ \creation date:       13-08-2023
+ \last updated:        16-09-2023
+ \author:              Hans (You Yang) ONG
 
-    @brief      This file contains the declaration of the WindowManager class.
-                WindowManager provides interfaces for the initialization, maintenance,
-                and cleanup of a GLFW window, along with relevant callbacks and window operations.
+ \par      email:      youyang.o@digipen.edu
 
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+ \brief    This file contains the implementation of the WindowManager class.
+           WindowManager handles the initialization, maintenance, and cleanup
+           of a GLFW window, along with the relevant callbacks and window operations.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #pragma once
 
 /*                                                                                                          includes
@@ -47,6 +49,3 @@ namespace PE
         void OnKeyEvent(const temp::Event<temp::KeyEvents>& e);
     };
 }
-
-
-

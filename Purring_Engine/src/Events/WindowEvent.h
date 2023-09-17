@@ -1,29 +1,29 @@
 /*!***********************************************************************************
-
  \project  Purring Engine
  \module   CSD2401-A
  \file     WindowEvent.h
- \date     8/30/2023
+ \creation date:       30-08-2023
+ \last updated:        16-09-2023
+ \author:              Jarran TAN Yan Zhi
 
- \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
 
- \brief
-Header file containing the declaration and definition of the event and event dispatcher template
+ \brief    Header file containing the declaration and definition of the event and event dispatcher template
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-
 *************************************************************************************/
 #ifndef WINDOW_EVENTS_H
 #define WINDOW_EVENTS_H
 
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "Event.h"
 #include <sstream>
 #include <utility>
 
-namespace temp {
-
-	//Window Event Types
+namespace temp
+{
+	// Enumeration representing different window event types
 	enum class WindowEvents
 	{
 		WindowResize,
@@ -33,20 +33,20 @@ namespace temp {
 		WindowMoved
 	};
 
+	// Class for handling window resize events
 	class WindowResizeEvent : public Event<WindowEvents>
 	{
 		// ----- Constructors ----- // 
 	public:
+		// Default constructor
 		WindowResizeEvent() : Event<WindowEvents>(WindowEvents::WindowResize, "WindowResize") {}
+
+		// Virtual destructor
 		virtual ~WindowResizeEvent() {}
 
 		// ----- Public methods ----- // 
 	public:
-		/*!***********************************************************************************
-		 \brief					implicit conversion to a std::string, used for output streams
-
-		 \return std::string	Returns information about the event
-		*************************************************************************************/
+		// Method for converting event information to a string
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -151,12 +151,6 @@ namespace temp {
 		int xpos = 0, ypos = 0;
 	};
 
-
-
 };
-
-
-
-
 
 #endif

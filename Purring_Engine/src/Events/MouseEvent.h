@@ -1,6 +1,23 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     MouseEvent.h
+ \creation date:       30-08-2023
+ \last updated:        16-09-2023
+ \author:              Jarran TAN Yan Zhi
+
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief    Header file for the EventHandler class, which manages event dispatching within
+		   the Purring Engine.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #ifndef MOUSE_EVENTS_H
 #define MOUSE_EVENTS_H
 
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "Event.h"
 #include <sstream>
 #include <utility>
@@ -80,19 +97,6 @@ namespace temp
 		int xOffset = 0, yOffset = 0;
 	};
 
-
-
-
-
-
-
-
 }
-
-
-
-
-
-
 
 #endif
