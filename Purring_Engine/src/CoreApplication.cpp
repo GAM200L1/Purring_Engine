@@ -13,6 +13,12 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
+// Resource manager
+#include "ResourceManager/ResourceManager.h"
+
+// Audio Stuff - HANS
+#include "AudioManager.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -35,6 +41,11 @@ PE::CoreApplication::CoreApplication()
     m_rendererManager = new Graphics::RendererManager{ m_window };
     AddSystem(m_rendererManager);
 
+    // Audio Stuff - HANS
+    m_audioManager.Init();
+    {
+        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
+    }
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -105,9 +116,28 @@ void PE::CoreApplication::Run()
             m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
         }
 
-         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
-        // Update the title to show FPS (every second in this example)
+        // Audio Stuff - HANS
+        m_audioManager.Update();
 
+        const int audioKeys[] = { GLFW_KEY_A, GLFW_KEY_S };
+        for (int key : audioKeys)
+        {
+            if (glfwGetKey(m_window, key) == GLFW_PRESS)
+            {
+                if (key == GLFW_KEY_A)
+                {
+                    std::cout << "A key pressed\n";
+                    m_audioManager.PlaySound("../Assets/Audio/sound1.wav");
+                }
+                else if (key == GLFW_KEY_S)
+                {
+                    std::cout << "S key pressed\n";
+                    m_audioManager.PlaySound("../Assets/Audio/sound2.wav");
+                }
+            }
+        }
+
+        // Update the title to show FPS (every second in this example)
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
@@ -127,15 +157,14 @@ void PE::CoreApplication::Run()
         m_fpsController.EndFrame();
     }
 
-    /// <summary>
-    /// Clean up of imgui functions
-    /// </summary>
+    // Clean up of imgui functions
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
     // Cleanup (if needed)
     m_windowManager.Cleanup();
+    PE::ResourceManager::UnloadResources();
 }
 
 void PE::CoreApplication::InitSystems()
