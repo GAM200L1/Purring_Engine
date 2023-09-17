@@ -21,7 +21,11 @@
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
+#include "prpch.h"
+#include <cmath>
 #include "MathCustom.h"
+
+constexpr float PE_PI = 3.14159265358979323846f;
 
 namespace PE
 {
@@ -99,6 +103,11 @@ namespace PE
 		x /= scale;
 		y /= scale;
 		return *this;
+	}
+
+	vec2 vec2::operator-() const
+	{
+		return vec2{ -x, -y };
 	}
 
 	// zero the vector
@@ -584,8 +593,7 @@ namespace PE
 	// create rotation matrix from angle which is in degrees
 	void mat3x3::RotateDeg(float angle)
 	{
-		float angleRad{ ConvertDegToRad(angle) };
-		this->RotateRad(angle);
+		this->RotateRad(ConvertDegToRad(angle));
 	}
 	// find the determinant of a matrix
 	float mat3x3::Determinant() const
@@ -817,12 +825,12 @@ namespace PE
 
 	float ConvertRadToDeg(float radAngle)
 	{
-		return radAngle * 180.f / static_cast<float>(M_PI);
+		return radAngle * 180.f / static_cast<float>(PE_PI);
 	}
 
 	float ConvertDegToRad(float degAngle)
 	{
-		return degAngle * static_cast<float>(M_PI) / 180.f;
+		return degAngle * static_cast<float>(PE_PI) / 180.f;
 	}
 
 }
