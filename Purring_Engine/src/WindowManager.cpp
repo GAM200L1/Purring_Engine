@@ -207,6 +207,7 @@ namespace PE
 
 	void WindowManager::window_resize_callback(GLFWwindow* window, int width, int height)
 	{
+		window;
 		temp::WindowResizeEvent WRE;
 		WRE.width = width;
 		WRE.height = height;
@@ -216,12 +217,14 @@ namespace PE
 
 	void WindowManager::window_close_callback(GLFWwindow* window)
 	{
+		window;
 		temp::WindowCloseEvent WCE;
 		temp::SEND_WINDOW_EVENT(WCE)
 	}
 
 	void WindowManager::window_focus_callback(GLFWwindow* window, int focus)
 	{
+		window;
 		if (focus) {
 			temp::WindowFocusEvent WFE;
 			temp::SEND_WINDOW_EVENT(WFE)
@@ -232,11 +235,12 @@ namespace PE
 		}
 	}
 
-	void WindowManager::window_pos_callback(GLFWwindow* window, int xpos, int ypos)
+	void WindowManager::window_pos_callback(GLFWwindow* window, int xPos, int yPos)
 	{
+		window;
 		temp::WindowMovedEvent WME;
-		WME.xpos = xpos;
-		WME.ypos = ypos;
+		WME.xpos = xPos;
+		WME.ypos = yPos;
 
 		temp::SEND_WINDOW_EVENT(WME)
 	}

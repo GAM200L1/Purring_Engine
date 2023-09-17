@@ -24,8 +24,8 @@ Logger engine_logger = Logger("ENGINE");
 
 PE::CoreApplication::CoreApplication()
 {
-	m_Running = true;
-	m_lastFrameTime = 0;
+	  m_Running = true;
+	  m_lastFrameTime = 0.0;
 
     // Create and set up the window using WindowManager
     m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");

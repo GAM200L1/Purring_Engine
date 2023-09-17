@@ -6,6 +6,8 @@
 extern PE::CoreApplication* PE::CreateApplication();
 
 int main(int argc, char** argv) {
+  argc; argv;
+
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	auto app = PE::CreateApplication();
 	app->InitSystems();

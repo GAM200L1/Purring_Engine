@@ -32,7 +32,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 ----------------------------------------------------------------------------- */
 void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
-    //std::cout << "Mouse Position: x: " << xpos << ", y: " << ypos << std::endl;
+    window;
 
     temp::MouseMovedEvent mme;
 
@@ -51,6 +51,7 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 ----------------------------------------------------------------------------- */
 void check_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
 {
+    window; mods;
 
     switch (action)
     {
@@ -81,10 +82,11 @@ void check_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
 ----------------------------------------------------------------------------- */
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-        temp::MouseScrolledEvent mse;
-        mse.xOffset = static_cast<int>(xoffset);
-        mse.yOffset = static_cast<int>(yoffset);
-        temp::SEND_MOUSE_EVENT(mse)
+    window;
+    temp::MouseScrolledEvent mse;
+    mse.xOffset = static_cast<int>(xoffset);
+    mse.yOffset = static_cast<int>(yoffset);
+    temp::SEND_MOUSE_EVENT(mse)
 }
 
 
@@ -95,6 +97,8 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 ----------------------------------------------------------------------------- */
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
+    window; scancode; mods;
+
     switch(action)
     {
      case GLFW_PRESS:
