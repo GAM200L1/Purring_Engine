@@ -8,7 +8,8 @@
 
  \par      email:      jarranyanzhi.tan@digipen.edu
 
- \brief    Header file containing the declaration and definition of the event and event dispatcher template
+ \brief
+	Header file containing the declaration and definition of the Window Events
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/

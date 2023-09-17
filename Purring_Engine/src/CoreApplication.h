@@ -33,7 +33,6 @@
 #include "WindowManager.h"
 #include "FrameRateTargetControl.h"
 #include "Graphics/RendererManager.h"
-#include "AudioManager.h"
 
 namespace PE
 {
@@ -91,12 +90,7 @@ namespace PE
 
 	private:
 
-		// Uncomment if a singleton instance is required
-		//static Application* s_Instance;
-
-		// Audio Stuff - HANS
-		AudioManager m_audioManager;
-
+	public:
 	};
 
 	// Function to create an instance of CoreApplication, defined by the client

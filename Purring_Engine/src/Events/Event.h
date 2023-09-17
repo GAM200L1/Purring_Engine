@@ -23,12 +23,11 @@
 #include <map>				// To map functions to event typer
 #include <functional>		// To bind functions
 
-namespace temp
-{
+namespace temp {
+
 	/*!***********************************************************************************
-	 \class     Event<T>
-	 \brief     A templated base class for event objects.
-	 \details   Provides methods for querying event type and status.
+	 \brief				Base event class for the other events to inherhit
+	 \tparam T          Type of Event
 	*************************************************************************************/
 	template <typename T>
 	class Event

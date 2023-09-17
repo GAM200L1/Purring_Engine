@@ -36,6 +36,7 @@
 #include "CoreApplication.h"
 #include "WindowManager.h"
 #include "Logging/Logger.h"
+#include "MemoryManager.h"
 
 // Audio Stuff - HANS
 #include "AudioManager.h"
@@ -67,14 +68,18 @@ PE::CoreApplication::CoreApplication()
 
 
     // Pass the pointer to the GLFW window to the rendererManager
-    Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
-    AddSystem(rendererManager);
 
     // Audio Stuff - HANS
-    m_audioManager.Init();
+    
+    AudioManager::GetInstance()->Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
     }
+    //create instance of memory manager (prob shld bring this out to entry point)
+    MemoryManager::GetInstance();
+    //assignning memory manually to renderer manager
+    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    AddSystem(rendererManager);
 
 }
 
@@ -106,10 +111,11 @@ void PE::CoreApplication::Run()
     // Main Application Loop
     while (!glfwWindowShouldClose(m_window))            // Continue until the GLFW window is flagged to close
     {
-        m_fpsController.StartFrame();                   // Init FPS calculations for the current frame
-        engine_logger.SetTime();                        // Set the time in the logger
-
-        // UPDATE SECTION --------------------------------------------
+        m_fpsController.StartFrame();
+        engine_logger.SetTime();
+        MemoryManager::GetInstance()->CheckMemoryOver();
+        // UPDATE -----------------------------------------------------
+        
 
         // List of keys to check for FPS adjustment
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
@@ -123,6 +129,10 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
+
+        //Audio Stuff - HANS
+        AudioManager::GetInstance()->Update();
+
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
 
         // Update the window title to display FPS (every second)
@@ -186,11 +196,14 @@ void PE::CoreApplication::InitSystems()
 ----------------------------------------------------------------------------- */
 void PE::CoreApplication::DestroySystems()
 {
-    // Destroy all systems iterate through each system in m_systemList and destroy it
+    //memory auto deallocated by memory manager
+
+     //destroy all systems
     for (System* system : m_systemList)
     {
-        system->DestroySystem();                                // Call the DestroySystem method for each system
-        delete system;                                          // Free the memory allocated for the system object
+        system->DestroySystem();
+        system->~System();
+        //delete system;
     }
 }
 
