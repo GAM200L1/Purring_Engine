@@ -6,6 +6,13 @@
  
  \author               Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
+  \par      code %:     95%
+
+ \co-author            Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    16-09-2023
+                       Load shader from file
  
  \brief    This file contains the ShaderProgram class, which contains methods
            to compile and store a shader program.
@@ -38,6 +45,7 @@ namespace PE
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
             engine_logger.AddLog(true, "Destroyng shader program", __FUNCTION__);
+            DeleteProgram();
         }
 
         bool ShaderProgram::LoadAndCompileShadersFromFile(std::string vertexFile, std::string fragmentFile)

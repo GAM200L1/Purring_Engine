@@ -94,7 +94,8 @@ namespace PE
         )" };
 
             
-            PE::ResourceManager::GetShaderProgram("basic", vertexShaderString, fragmentShaderString);
+            PE::ResourceManager::LoadShadersFromFile("basic", "Assets/Shaders/vertex.vert", "Assets/Shaders/fragment.frag");
+            //PE::ResourceManager::GetShaderProgram("basic", vertexShaderString, fragmentShaderString);
             //m_shaderPrograms["basic"] = 
             //m_shaderPrograms["basic"]->CompileLinkValidateProgram(vertexShaderString, fragmentShaderString);
 
@@ -191,11 +192,11 @@ namespace PE
 
             // Call glDrawElements for each renderable object
             for (auto& renderable : m_renderableObjects) {
-                PE::ResourceManager::m_shaderPrograms[renderable.shaderProgramName]->Use();
+                PE::ResourceManager::ShaderPrograms[renderable.shaderProgramName]->Use();
 
                 m_meshes[renderable.meshName].BindMesh();
 
-                PE::ResourceManager::m_shaderPrograms[renderable.shaderProgramName]->SetUniform(
+                PE::ResourceManager::ShaderPrograms[renderable.shaderProgramName]->SetUniform(
                     "uModelToNdc",
                     viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix()
                 );
@@ -206,7 +207,7 @@ namespace PE
 
                 m_meshes[renderable.meshName].UnbindMesh();
 
-                PE::ResourceManager::m_shaderPrograms[renderable.shaderProgramName]->UnUse();
+                PE::ResourceManager::ShaderPrograms[renderable.shaderProgramName]->UnUse();
             }
         }
 

@@ -13,7 +13,7 @@
  \par      email:      brandonjunjie.ho\@digipen.edu
  \par      code %:     40%
  \par      changes:    16-09-2023
-                       Texture loading
+                       Texture loading, Shader loading
  
  \co-author            Foong Jun Wei
  \par      email:      f.junwei\@digipen.edu
@@ -42,7 +42,7 @@
 
 namespace PE
 {
-    std::map<std::string, Graphics::ShaderProgram*> ResourceManager::m_shaderPrograms;
+    std::map<std::string, std::shared_ptr<Graphics::ShaderProgram>> ResourceManager::ShaderPrograms;
     std::map<std::string, std::shared_ptr<Graphics::Texture>> ResourceManager::Textures;
 
     ResourceManager* ResourceManager::p_instance;
@@ -56,33 +56,41 @@ namespace PE
         return p_instance;
     }
 
-    void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderString,
-                             std::string const& r_fragmentShaderString)
+    // 
+    void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderPath,
+                             std::string const& r_fragmentShaderPath)
     {
-        auto* shaderProgram = new Graphics::ShaderProgram();
-        shaderProgram->LoadAndCompileShadersFromFile(r_vertexShaderString, r_fragmentShaderString);
-        m_shaderPrograms[r_key] = shaderProgram;
-    }
-
-    Graphics::ShaderProgram* ResourceManager::GetShaderProgram(std::string const& r_key, std::string const& r_vertexShaderString, std::string const& r_fragmentShaderString)
-    {
-        if (m_shaderPrograms.find(r_key) == m_shaderPrograms.end())
+       ShaderPrograms[r_key] = std::make_shared<Graphics::ShaderProgram>();
+        
+        if (!ShaderPrograms[r_key]->LoadAndCompileShadersFromFile(r_vertexShaderPath, r_fragmentShaderPath))
         {
-            // Graphics::ShaderProgram newShader{};
-            Graphics::ShaderProgram* newShader = new Graphics::ShaderProgram();
-            if (newShader->CompileLinkValidateProgram(r_vertexShaderString, r_fragmentShaderString))
-                m_shaderPrograms[r_key] = newShader;
-            else
-                throw;
+            // fail to compile, throw?
         }
-
-        return m_shaderPrograms[r_key];
     }
+
+    // wip
+    //Graphics::ShaderProgram* ResourceManager::GetShaderProgram(std::string const& r_key, std::string const& r_vertexShaderString, std::string const& r_fragmentShaderString)
+    //{
+    //    //if (m_shaderPrograms.find(r_key) == m_shaderPrograms.end())
+    //    //{
+    //    //    // Graphics::ShaderProgram newShader{};
+    //    //    Graphics::ShaderProgram* newShader = new Graphics::ShaderProgram();
+    //    //    if (newShader->CompileLinkValidateProgram(r_vertexShaderString, r_fragmentShaderString))
+    //    //        m_shaderPrograms[r_key] = newShader;
+    //    //    else
+    //    //        throw;
+    //    //}
+
+    //    //return m_shaderPrograms[r_key];
+    //}
 
     void ResourceManager::LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath)
     {
         Textures[r_name] = std::make_shared<Graphics::Texture>();
-        Textures[r_name]->CreateTexture(r_filePath);
+        if (!Textures[r_name]->CreateTexture(r_filePath))
+        {
+            // fail to create texture, throw?
+        }
     }
 
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
@@ -92,13 +100,7 @@ namespace PE
 
     void ResourceManager::UnloadResources()
     {
-        for (auto& shaderProgram : m_shaderPrograms)
-        {
-            shaderProgram.second->DeleteProgram();
-            delete shaderProgram.second;
-        }
-
-        m_shaderPrograms.clear();
+        ShaderPrograms.clear();
         Textures.clear();
     }
 }
