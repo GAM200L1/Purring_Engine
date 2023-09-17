@@ -384,7 +384,7 @@ namespace PE {
 			//print memory stuff
 			if (ImGui::Button("Print Memory Data"))
 			{
-				MemoryManager::GetInstance()->printData();
+				MemoryManager::GetInstance()->PrintData();
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 
