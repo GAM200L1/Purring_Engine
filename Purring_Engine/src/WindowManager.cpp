@@ -115,67 +115,26 @@ namespace PE
 
 	void WindowManager::OnWindowEvent(const temp::Event<temp::WindowEvents>& e)
 	{
-		ImGuiWindow::GetInstance()->addLog(e.ToString());
-		switch (e.GetType())
-		{
-		case temp::WindowEvents::WindowResize:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::WindowEvents::WindowClose:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::WindowEvents::WindowFocus:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::WindowEvents::WindowLostFocus:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::WindowEvents::WindowMoved:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		default:
-			break;
-		}
-
-		event_logger.FlushLog();
+		ImGuiWindow::GetInstance()->AddLog(e.ToString());
+		//commented so it stops flooding the console
+		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
+		//event_logger.FlushLog();
 	}
 
 	void WindowManager::OnMouseEvent(const temp::Event<temp::MouseEvents>& e)
 	{
-		ImGuiWindow::GetInstance()->addLog(e.ToString());
-		switch (e.GetType())
-		{
-		case temp::MouseEvents::MouseMoved:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::MouseEvents::MouseButtonPressed:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::MouseEvents::MouseButtonReleased:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::MouseEvents::MouseScrolled:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		default:
-			break;
-		}
+		ImGuiWindow::GetInstance()->AddLog(e.ToString());
+		//commented so it stops flooding the console
+		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
+		//event_logger.FlushLog();
 	}
 
 	void WindowManager::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
 	{
-		ImGuiWindow::GetInstance()->addLog(e.ToString());
-		switch (e.GetType())
-		{
-		case temp::KeyEvents::KeyPressed:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::KeyEvents::KeyRelease:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		default:
-			break;
-		}
+		ImGuiWindow::GetInstance()->AddLog(e.ToString());
+		//commented so it stops flooding the console
+		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
+		//event_logger.FlushLog();
 	}
 
 	/*-----------------------------------------------------------------------------

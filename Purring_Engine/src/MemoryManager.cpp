@@ -23,14 +23,8 @@ namespace PE
 {
 	std::unique_ptr<MemoryManager> MemoryManager::s_Instance = nullptr;
 
-	MemoryManager::MemoryManager()
-	{
-	}
-
-	MemoryManager::~MemoryManager()
-	{
-		//m_stackAllocator.~StackAllocator();
-	}
+	MemoryManager::MemoryManager(){}
+	MemoryManager::~MemoryManager(){}
 
 	MemoryManager* MemoryManager::GetInstance()
 	{
@@ -45,11 +39,11 @@ namespace PE
 	{
 		try
 		{
+			//printing total allocated memory
 			std::stringstream ss1;
-			ss1 << "currently allocated: " << m_stackAllocator.getStackTop();
-			ImGuiWindow::GetInstance()->addConsole(ss1.str());
-
-			ImGuiWindow::GetInstance()->addConsole("trying to allocate more memory now");
+			ss1 << "Currently allocated: " << m_stackAllocator.GetStackTop();
+			ImGuiWindow::GetInstance()->AddConsole(ss1.str());
+			ImGuiWindow::GetInstance()->AddConsole("trying to allocate more memory now");
 
 			//determine buffer size incase of writing over
 			int buffer = (size + 1) / 2;
@@ -59,10 +53,10 @@ namespace PE
 			//save data of allocated memory
 			m_memoryAllocationData.push_back(MemoryData(name, size, buffer));
 
-			//print to console
+			//print to console how much was allocated
 			std::stringstream ss;
 			ss << "memory allocated of size: " << size << " to: " << name << " along with buffer of: " << buffer;
-			ImGuiWindow::GetInstance()->addConsole(ss.str());
+			ImGuiWindow::GetInstance()->AddConsole(ss.str());
 
 			return newptr;
 		}
@@ -70,7 +64,7 @@ namespace PE
 			//sending error to logs
 			std::stringstream ss;
 			ss << "memory cannot be allocated to " << name;
-			ImGuiWindow::GetInstance()->addError(ss.str());
+			ImGuiWindow::GetInstance()->AddError(ss.str());
 			return nullptr;
 		}
 	}
@@ -79,12 +73,12 @@ namespace PE
 	{
 		try
 		{
+			//freeing the latest allocated memory, have to give the size + buffer
 			m_stackAllocator.Free(m_memoryAllocationData[m_memoryAllocationData.size()-1].s_size + m_memoryAllocationData[m_memoryAllocationData.size() - 1].s_bufferSize);
 			m_memoryAllocationData.pop_back();
 		}
 		catch (int i) {
-			throw; //error message
-			//maybe dont need throw here if we catch outside but if we throw we send error here
+			throw;
 		}
 	}
 
@@ -93,39 +87,47 @@ namespace PE
 		//loop through the entire memory stack from 0
 		int totalMemory = 0;
 		
-		for (int i = 0; i < m_memoryAllocationData.size(); i++) {
-			if (*(m_stackAllocator.getStack() + m_memoryAllocationData[i].s_size + totalMemory) != '\0')
+		//loop through all allocated objects
+		for (int i = 0; i < m_memoryAllocationData.size(); i++) 
+		{
+			//if written over buffer
+			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].s_size + totalMemory) != '\0')
 			{
 				std::stringstream ss;
 				ss << m_memoryAllocationData[i].s_name << " Writing into more than allocated spaces!" << std::endl;
-				ImGuiWindow::GetInstance()->addError(ss.str());
+				ImGuiWindow::GetInstance()->AddError(ss.str());
 			}
+
+			//go to next object
 			totalMemory += m_memoryAllocationData[i].s_size + m_memoryAllocationData[i].s_bufferSize;
 		}
 	}
 
-	void MemoryManager::printData()
+	void MemoryManager::PrintData()
 	{
+		//print total allocated memory
 		std::stringstream ss;
-		ss << "currently allocated: " << m_stackAllocator.getStackTop();
-		ImGuiWindow::GetInstance()->addConsole(ss.str());
+		ss << "currently allocated: " << m_stackAllocator.GetStackTop();
+		ImGuiWindow::GetInstance()->AddConsole(ss.str());
 
+		//print structure data
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) {
-			ImGuiWindow::GetInstance()->addConsole(m_memoryAllocationData[i].ToString());
+			ImGuiWindow::GetInstance()->AddConsole(m_memoryAllocationData[i].ToString());
 		}
 	}
 
 
 	StackAllocator::StackAllocator(int size) : m_totalSize(size), m_stackTop(0)
 	{
-		static int test = 1;
-		std::cout << "Stack Allocator launched: " << test++ << " size: " << size << std::endl;
+		//allocate memory based on given size
 		m_stack = new char[size]();
+		//initialize values just incase
 		memset(m_stack, '\0', size);
 	}
 
 	void* StackAllocator::Allocate(int size)
 	{
+		//if trying to allocate over max size
 		if (m_stackTop + size <= m_totalSize)
 		{
 			void* newPtr = (m_stack + m_stackTop);
@@ -141,6 +143,7 @@ namespace PE
 
 	void StackAllocator::Free(int size)
 	{
+		//if trying to free over 0
 		if (m_stackTop != 0 && size < m_stackTop)
 		{
 			m_stackTop -= size;
@@ -152,12 +155,12 @@ namespace PE
 		}
 	}
 
-	char* StackAllocator::getStack()
+	char* StackAllocator::GetStack()
 	{
 		return m_stack;
 	}
 
-	int StackAllocator::getStackTop()
+	int StackAllocator::GetStackTop()
 	{
 		return m_stackTop;
 	}

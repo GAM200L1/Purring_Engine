@@ -24,7 +24,10 @@
 
 namespace temp {
 
-	//base class for events to inherit	
+	/*!***********************************************************************************
+	 \brief				Base event class for the other events to inherhit
+	 \tparam T          Type of Event
+	*************************************************************************************/
 	template <typename T>
 	class Event
 	{

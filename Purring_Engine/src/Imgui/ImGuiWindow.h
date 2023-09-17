@@ -66,21 +66,21 @@ namespace PE {
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void showLogs(bool* Active);
+		void ShowLogs(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the console window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void showConsole(bool* Active);
+		void ShowConsole(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the object list window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void showObject(bool* Active);
+		void ShowObject(bool* Active);
 
-		void showDebugTests(bool* Active);
+		void ShowDebugTests(bool* Active);
 
 
 		/*!***********************************************************************************
@@ -88,13 +88,13 @@ namespace PE {
 
 		 \param[in] bool* reference to the boolean that sets the window active (Ill add soon maybe)
 		*************************************************************************************/
-		void setDockingPort();
+		void SetDockingPort(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the sceneview window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void showSceneView(GLuint texture_id, bool* active);
+		void ShowSceneView(GLuint texture_id, bool* active);
 
 		// ----- ImGui Logging Functions ----- // 
 	public:
@@ -103,28 +103,28 @@ namespace PE {
 
 		 \param[in] std::string the string to print on the log window
 		*************************************************************************************/
-		void addLog(std::string text);
+		void AddLog(std::string text);
 		/*!***********************************************************************************
 		 \brief add text to the console vector to print on the console window
 
 		 \param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void addConsole(std::string text);
+		void AddConsole(std::string text);
 		/*!***********************************************************************************
 		\brief add text appeneded with error to the console vector to print on the console window
 
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void addError(std::string text);
+		void AddError(std::string text);
 	private:
 		/*!***********************************************************************************
 		 \brief empty the log vector
 		*************************************************************************************/
-		void clearLog();
+		void ClearLog();
 		/*!***********************************************************************************
 		 \brief empty the console vector
 		*************************************************************************************/
-		void clearConsole();
+		void ClearConsole();
 
 		// -----Event Callbacks ----- // 
 	public:
@@ -142,16 +142,20 @@ namespace PE {
 		*************************************************************************************/
 		static ImGuiWindow* GetInstance();
 		/*!***********************************************************************************
-		 \brief Get the instance of imguiwindow, if it does not exist, create it.
+		 \brief Return the size of the imgui window
 		 \param[out] float x value
 		 \param[out] float y value
 		*************************************************************************************/
 		void GetWindowSize(float&, float&);
 		/*!***********************************************************************************
-		 \brief Get the instance of imguiwindow, if it does not exist, create it.
-		 \return bool whether sceneview is active so we know we need to transfer the buffer
+		 \brief get the boolean to show if the editor is active
+		 \return bool whether editor is active so we know we need to transfer the buffer
 		*************************************************************************************/
-		bool isSceneViewActive();
+		bool IsEditorActive();
+		/*!***********************************************************************************
+		 \brief set the editor on or off
+		*************************************************************************************/
+		void ToggleEditor();
 		// ----- Private Variables ----- // 
 	private:
 		bool m_logsActive;
@@ -160,6 +164,7 @@ namespace PE {
 		bool m_sceneViewActive;
 		bool m_firstLaunch;
 		bool m_debugTests;
+		bool m_showEditor;
 		static std::unique_ptr<ImGuiWindow> s_Instance;
 		std::vector<std::string> m_logOutput;
 		std::vector<std::string> m_consoleOutput;
