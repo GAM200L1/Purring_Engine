@@ -119,7 +119,12 @@ namespace PE
                 glm::vec2{ 0.f, 0.f }, texObj, glm::vec4{ 1.f, 0.f, 0.f, 0.5f });
             AddRendererObject(EnumMeshType::TRIANGLE, 100.f, 400.f, 45.f,
                 glm::vec2{ 200.f, 400.f }, texObj, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
-                    
+
+            AddRendererObject(EnumMeshType::QUAD, 100.f, 100.f, 20.f,
+                glm::vec2{ -300.f, -300.f }, glm::vec4{ 1.f, 1.f, 0.f, 1.f});
+            AddRendererObject(EnumMeshType::TRIANGLE, 200.f, 200.f, -10.f,
+                glm::vec2{ -100.f, -100.f }, glm::vec4{ 0.f, 1.f, 1.f, 0.5f});
+
             AddDebugSquare(400.f, 200.f, 30.f, glm::vec2{10.f, 30.f}, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
             AddDebugSquare(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
             AddDebugLine(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
@@ -383,8 +388,8 @@ namespace PE
 
 
         void RendererManager::AddRendererObject(EnumMeshType meshType,
-            float const width, float const height,
-            float const orientation, glm::vec2 const& r_position)
+            float const width, float const height, float const orientation, 
+            glm::vec2 const& r_position, glm::vec4 const& r_color)
         {
             Renderer newRenderer{};
             newRenderer.meshType = meshType;
@@ -393,6 +398,8 @@ namespace PE
             newRenderer.transform.height = height;
             newRenderer.transform.orientation = orientation;
             newRenderer.transform.position = r_position;
+
+            newRenderer.color = r_color;
 
             m_triangleObjects.emplace_back(newRenderer);
         }

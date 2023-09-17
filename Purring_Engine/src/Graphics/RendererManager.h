@@ -86,28 +86,92 @@ namespace PE
             *************************************************************************************/
             void DrawDebug(glm::mat4 const& r_viewToNdc);
 
+            /*!***********************************************************************************
+             \brief Adds a filled renderer object to be drawn.
+             
+             \param[in] meshType Type of mesh (Quad or triangle).
+             \param[in] width Width of the mesh.
+             \param[in] height Height of the mesh.
+             \param[in] orientation Angle (in degrees) of the square about the z-axis from the
+                                    x-axis. Positive for counter-clockwise rotation, negative
+                                    for clockwise.
+             \param[in] r_position Position of the center of the mesh.
+             \param[in] r_color Color of the object fill. White by default.
+            *************************************************************************************/
             void AddRendererObject(EnumMeshType meshType,
-                float const width, float const height,
-                float const orientation, glm::vec2 const& r_position);
+                float const width, float const height, float const orientation, 
+                glm::vec2 const& r_position, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
 
+            /*!***********************************************************************************
+             \brief Adds a filled/textured renderer object to be drawn.
+             
+             \param[in] meshType Type of mesh (Quad or triangle).
+             \param[in] width Width of the mesh.
+             \param[in] height Height of the mesh.
+             \param[in] orientation Angle (in degrees) of the square about the z-axis from the 
+                                    x-axis. Positive for counter-clockwise rotation, negative 
+                                    for clockwise.
+             \param[in] r_position Position of the center of the mesh.
+             \param[in] r_texture Texture to apply to the mesh.
+             \param[in] r_color Color of the object fill. White by default.
+            *************************************************************************************/
             void AddRendererObject(EnumMeshType meshType,
                 float const width, float const height,
                 float const orientation, glm::vec2 const& r_position,
                 temp::Texture const& r_texture, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
-
+            
+            /*!***********************************************************************************
+             \brief Adds the outline of a square to be drawn when debug mode is enabled. 
+             
+             \param[in] width Width of the square.
+             \param[in] height Height of the square.
+             \param[in] orientation Angle (in degrees) of the square about the z-axis from the 
+                                    x-axis. Positive for counter-clockwise rotation, negative 
+                                    for clockwise.
+             \param[in] r_centerPosition Coordinates of the center of the square.
+             \param[in] r_color Color of the square. White by default.
+            *************************************************************************************/
             void AddDebugSquare(float const width, float const height,
                 float const orientation, glm::vec2 const& r_centerPosition,
                 glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
 
+            /*!***********************************************************************************
+             \brief Adds the outline of a square to be drawn when debug mode is enabled. 
+                    Assumes that the square is axis-aligned.
+             
+             \param[in] r_bottomLeft Coordinates of the bottom left corner of the square.
+             \param[in] r_topRight Coordinates of the top right corner of the square.
+             \param[in] r_color Color of the square. White by default.
+            *************************************************************************************/
             void AddDebugSquare(glm::vec2 const& r_bottomLeft, glm::vec2 const& r_topRight,
                 glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
 
+            /*!***********************************************************************************
+             \brief Adds the outline of a circle to be drawn when debug mode is enabled.
+             
+             \param[in] radius Radius of the circle.
+             \param[in] r_centerPosition Position of the center of the circle.
+             \param[in] r_color Color of the circle. White by default.
+            *************************************************************************************/
             void AddDebugCircle(float const radius, glm::vec2 const& r_centerPosition,
                 glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
 
+            /*!***********************************************************************************
+             \brief Adds a line to be drawn when debug mode is enabled.
+             
+             \param[in] r_position1 Position of one endpoint of the line.
+             \param[in] r_position2 Position of one endpoint of the line.
+             \param[in] r_color Color of the line. White by default.
+            *************************************************************************************/
             void AddDebugLine(glm::vec2 const& r_position1, glm::vec2 const& r_position2,
                 glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
 
+            /*!***********************************************************************************
+            \brief Adds a point to be drawn when debug mode is enabled.
+            
+            \param[in] r_position Position of the point.
+            \param[in] r_color Color of the point. White by default.
+            *************************************************************************************/
             void AddDebugPoint(glm::vec2 const& r_position, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
 
             Graphics::Camera m_mainCamera{}; //! Camera object
