@@ -58,54 +58,73 @@ namespace PE
             ImGuiWindow::GetInstance()->Init(p_windowRef);
 
             // Initialize the base meshes to use
-            InitializeTriangleMesh(m_meshes["triangle"]);
-            InitializeQuadMesh(m_meshes["quad"]);
+            m_meshes.resize(5);
+            InitializeTriangleMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::TRIANGLE)]);
+            InitializeQuadMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::QUAD)]);
+            InitializeCircleMesh(32, m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_CIRCLE)]);
+            InitializeSquareMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_SQUARE)]);
+            InitializeLineMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_LINE)]);
 
             // Create a shader program
             // Store the vert shader
             const std::string vertexShaderString{ R"(            
-            #version 460 core
+                #version 460 core
 
-            layout (location = 0) in vec2 aVertexPosition;
-            layout (location = 1) in vec3 aVertexColor;
+                layout (location = 0) in vec2 aVertexPosition; // IN vertex position
+                layout (location = 2) in vec2 aTextureCoord;   // IN texture coordinate
 
-            layout (location = 0) out vec3 vColor;
+                layout (location = 0) out vec2 vTextureCoord;     // OUT texture coordinate
 
-            uniform mat4 uModelToNdc;
+                uniform mat4 uModelToNdc;
 
-            void main(void) {
-                gl_Position = uModelToNdc * vec4(aVertexPosition, 0.0, 1.0);
-                vColor = aVertexColor;
-            }
-        )" };
+                void main(void) {
+                  gl_Position = uModelToNdc * vec4(aVertexPosition, 0.0, 1.0);
+	                vTextureCoord = aTextureCoord;
+                }
+            )" };
 
             // Store the fragment shader
-            const std::string fragmentShaderString{ R"( 
-            #version 460 core
+            const std::string fragmentShaderString{ R"(        
+                #version 460 core
 
-            layout(location = 0) in vec3 vColor;
+                layout (location = 0) in vec2 vTextureCoord;     // IN texture coordinate
 
-            layout(location = 0) out vec4 fFragColor;
+                layout (location = 0) out vec4 fFragColor;	// OUT RGBA color
 
-            void main(void) {
-                fFragColor = vec4(vColor, 1.0);
-            }
-        )" };
+                uniform vec4 uColor;	// RGBA color to tint the texture
+                uniform sampler2D uTextureSampler2d;   // Texture sampler to access texture image
+                uniform bool uIsTextured; // Set to true to sample texture coordinates, false to just use the color
+
+                void main(void) {
+	                if(uIsTextured)
+	                {
+		                // Sample the texture using the texture coordinates
+		                fFragColor = texture(uTextureSampler2d, vTextureCoord);
+		                fFragColor *= uColor;
+	                } 
+	                else 
+	                {
+		                fFragColor = uColor;
+	                }
+                }
+            )" };
 
             m_shaderPrograms["basic"] = new ShaderProgram{};
             m_shaderPrograms["basic"]->CompileLinkValidateProgram(vertexShaderString, fragmentShaderString);
 
+            texObj.CreateTextureObject("../Textures/duck-rgba-256.tex");
 
             // Add a triangle and quad as renderable objects
-            m_renderableObjects.emplace_back(Renderer{});
-            m_renderableObjects.emplace_back(Renderer{});
-
-            m_renderableObjects[1].meshName = "triangle";
-            m_renderableObjects[1].transform.width = 100.f;
-            m_renderableObjects[1].transform.height = 400.f;
-            m_renderableObjects[1].transform.orientation = 45.f;
-            m_renderableObjects[1].transform.position = glm::vec2{ 200.f, 400.f };
-
+            AddRendererObject(EnumMeshType::QUAD, 400.f, 400.f, 0.f,
+                { 0.f, 0.f }, texObj, { 1.f, 0.f, 0.f, 0.5f });
+            AddRendererObject(EnumMeshType::TRIANGLE, 100.f, 400.f, 45.f,
+                { 200.f, 400.f }, texObj, { 0.f, 1.f, 0.f, 0.5f });
+                    
+            AddDebugSquare(400.f, 200.f, 30.f, {10.f, 30.f}, { 1.f, 0.f, 1.f, 0.5f });
+            AddDebugSquare({-50.f, -50.f}, {50.f, 50.f}, { 0.f, 0.f, 1.f, 0.5f });
+            AddDebugLine({-50.f, -50.f}, {50.f, 50.f}, { 0.f, 0.f, 1.f, 0.5f });
+            AddDebugCircle(250.f, { -200.f, 200.f }, { 0.f, 1.f, 0.f, 0.5f });
+            AddDebugPoint({ 10.f, 0.f }, { 0.f, 0.f, 0.f, 1.f });
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -134,6 +153,10 @@ namespace PE
             glClearColor(0.f, 0.f, 0.f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
+            // Enable alpha blending
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
             // Bind the RBO for rendering to the ImGui window
             BindFrameBuffer();
 
@@ -141,13 +164,24 @@ namespace PE
             glClearColor(1.f, 1.f, 1.f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
-            // Draw game objects in the scene
-            DrawScene(windowWidth, windowHeight);
+            // Compute the view to NDC matrix
+            float halfWidth{ windowWidth * 0.5f };
+            float halfHeight{ windowHeight * 0.5f };
+            glm::mat4 viewToNdc{
+                glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
+            };
+
+            DrawScene(viewToNdc); // Draw game objects in the scene
+
+            DrawDebug(viewToNdc); // Draw debug gizmos in the scene
 
             // Unbind the RBO for rendering to the ImGui window
             UnbindFrameBuffer();
 
             ImGuiWindow::GetInstance()->Render(m_imguiTextureId);
+
+            // Disable alpha blending
+            glDisable(GL_BLEND);
 
             // Poll for and process events
             glfwPollEvents(); // should be called before glfwSwapbuffers
@@ -161,7 +195,7 @@ namespace PE
         {
             // Release the buffer objects in each mesh
             for (auto& mesh : m_meshes) {
-                mesh.second.Cleanup();
+                mesh.Cleanup();
             }
             m_meshes.clear();
 
@@ -175,57 +209,322 @@ namespace PE
             // Delete the framebuffer object
             glDeleteTextures(1, &m_imguiTextureId);
             glDeleteFramebuffers(1, &m_frameBufferObjectIndex);
+
+            // Delete the texture object
+            glDeleteTextures(1, &(texObj.textureObjectHandle));
         }
 
 
-        void RendererManager::DrawScene(float const width, float const height)
+        void RendererManager::DrawScene(glm::mat4 const& r_viewToNdc)
         {
-            float halfWidth{ width * 0.5f };
-            float halfHeight{ height * 0.5f };
-            glm::mat4 viewToNdc{
-                glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
-            };
-
             // Call glDrawElements for each renderable object
-            for (auto& renderable : m_renderableObjects) {
+            for (auto& renderable : m_triangleObjects) {
+                auto shaderProgram{ m_shaderPrograms.find(renderable.shaderProgramName) };
+
+                // Check if shader program is valid
+                if (shaderProgram == m_shaderPrograms.end()) 
+                {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(false, "Shader program " + renderable.shaderProgramName + " does not exist.", __FUNCTION__);
+                    continue;
+                }
+
                 m_shaderPrograms[renderable.shaderProgramName]->Use();
 
-                m_meshes[renderable.meshName].BindMesh();
+                // Check if mesh index is valid
+                unsigned char meshIndex{ static_cast<unsigned char>(renderable.meshType) };
+                if (meshIndex >= m_meshes.size()) 
+                {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+                }
 
-                m_shaderPrograms[renderable.shaderProgramName]->SetUniform(
-                    "uModelToNdc",
-                    viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix()
+                m_meshes[meshIndex].BindMesh();
+
+                // Pass the model to NDC transform matrix as a uniform variable
+                m_shaderPrograms[renderable.shaderProgramName]->SetUniform( "uModelToNdc",
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix()
                 );
 
-                glDrawElements(GL_TRIANGLES,
-                    static_cast<GLsizei>(m_meshes[renderable.meshName].indices.size()),
+                // Pass the color of the quad as a uniform variable
+                m_shaderPrograms[renderable.shaderProgramName]->SetUniform("uColor", renderable.color);
+
+                // Bind the texture object
+                if (renderable.texture.textureObjectHandle != 0) 
+                {
+                    renderable.texture.BindTextureObject();
+                    m_shaderPrograms[renderable.shaderProgramName]->SetUniform("uTextureSampler2d", renderable.texture.textureUnit);
+                    m_shaderPrograms[renderable.shaderProgramName]->SetUniform("uIsTextured", true);
+                }
+                else {
+                    m_shaderPrograms[renderable.shaderProgramName]->SetUniform("uIsTextured", false);
+                }
+
+                glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
                     GL_UNSIGNED_SHORT, NULL);
 
-                m_meshes[renderable.meshName].UnbindMesh();
-
-                m_shaderPrograms[renderable.shaderProgramName]->UnUse();
+                // Unbind everything
+                m_meshes[meshIndex].UnbindMesh();
+                m_shaderPrograms[renderable.shaderProgramName]->UnUse();                
+                renderable.texture.UnbindTextureObject();
             }
+        }
+
+
+        void RendererManager::DrawDebug(glm::mat4 const& r_viewToNdc)
+        {
+            glLineWidth(3.f);
+
+            // Make draw call for each debug object
+            for (auto& debugShape : m_lineObjects) {
+                auto shaderProgram{ m_shaderPrograms.find(debugShape.shaderProgramName) };
+
+                // Check if shader program is valid
+                if (shaderProgram == m_shaderPrograms.end())
+                {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(false, "Shader program " + debugShape.shaderProgramName + " does not exist.", __FUNCTION__);
+                    continue;
+                }
+
+                m_shaderPrograms[debugShape.shaderProgramName]->Use();
+
+                // Check if mesh index is valid
+                unsigned char meshIndex{ static_cast<unsigned char>(debugShape.meshType) };
+                if (meshIndex >= m_meshes.size())
+                {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+                }
+
+                m_meshes[meshIndex].BindMesh();
+
+
+                // Pass the model to NDC transform matrix as a uniform variable
+                m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uModelToNdc",
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * debugShape.transform.GetTransformMatrix()
+                );
+
+                // Pass the color of the quad as a uniform variable
+                m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uColor", debugShape.color);
+
+                // Bind the texture object
+                if (debugShape.texture.textureObjectHandle != 0)
+                {
+                    debugShape.texture.BindTextureObject();
+                    m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uTextureSampler2d", debugShape.texture.textureUnit);
+                    m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uIsTextured", true);
+                }
+                else {
+                    m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uIsTextured", false);
+                }
+
+
+                glDrawElements(GL_LINES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                    GL_UNSIGNED_SHORT, NULL);
+
+                // Unbind everything
+                m_meshes[meshIndex].UnbindMesh();
+                m_shaderPrograms[debugShape.shaderProgramName]->UnUse();
+                debugShape.texture.UnbindTextureObject();
+            }
+
+            glPointSize(10.f);
+
+            // Make draw call for each point
+            for (auto& point : m_pointObjects) {
+                auto shaderProgram{ m_shaderPrograms.find(point.shaderProgramName) };
+
+                // Check if shader program is valid
+                if (shaderProgram == m_shaderPrograms.end())
+                {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(false, "Shader program " + point.shaderProgramName + " does not exist.", __FUNCTION__);
+                    continue;
+                }
+
+                m_shaderPrograms[point.shaderProgramName]->Use();
+
+                // Check if mesh index is valid
+                unsigned char meshIndex{ static_cast<unsigned char>(point.meshType) };
+                if (meshIndex >= m_meshes.size())
+                {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+                }
+
+                m_meshes[meshIndex].BindMesh();
+
+
+                // Pass the model to NDC transform matrix as a uniform variable
+                m_shaderPrograms[point.shaderProgramName]->SetUniform("uModelToNdc",
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * point.transform.GetTransformMatrix()
+                );
+
+                // Pass the color of the quad as a uniform variable
+                m_shaderPrograms[point.shaderProgramName]->SetUniform("uColor", point.color);
+                
+                glDrawArrays(GL_POINTS, 0, 1);
+
+                // Unbind everything
+                m_meshes[meshIndex].UnbindMesh();
+                m_shaderPrograms[point.shaderProgramName]->UnUse();
+            }
+
+            glPointSize(1.f);
+            glLineWidth(1.f);
+        }
+
+
+        void RendererManager::AddRendererObject(EnumMeshType meshType,
+            float const width, float const height,
+            float const orientation, glm::vec2 const& r_position)
+        {
+            Renderer newRenderer{};
+            newRenderer.meshType = meshType;
+
+            newRenderer.transform.width = width;
+            newRenderer.transform.height = height;
+            newRenderer.transform.orientation = orientation;
+            newRenderer.transform.position = r_position;
+
+            m_triangleObjects.emplace_back(newRenderer);
+        }
+
+        void RendererManager::AddRendererObject(EnumMeshType meshType,
+            float const width, float const height,
+            float const orientation, glm::vec2 const& r_position,
+            temp::Texture const& r_texture, glm::vec4 const& r_color)
+        {
+            Renderer newRenderer{};
+            newRenderer.meshType = meshType;
+
+            newRenderer.transform.width = width;
+            newRenderer.transform.height = height;
+            newRenderer.transform.orientation = orientation;
+            newRenderer.transform.position = r_position;
+
+            newRenderer.texture = r_texture;
+            newRenderer.color = r_color;
+
+            m_triangleObjects.emplace_back(newRenderer);
+        }
+
+        void RendererManager::AddDebugSquare(
+            float const width, float const height,
+            float const orientation, glm::vec2 const& r_centerPosition,
+            glm::vec4 const& r_color)
+        {
+            Renderer newRenderer{};
+            newRenderer.meshType = EnumMeshType::DEBUG_SQUARE;
+
+            newRenderer.transform.width = width;
+            newRenderer.transform.height = height;
+            newRenderer.transform.orientation = orientation;
+            newRenderer.transform.position = r_centerPosition;
+
+            newRenderer.color = r_color;
+
+            m_lineObjects.emplace_back(newRenderer);
+        }
+
+
+        void RendererManager::AddDebugSquare(
+            glm::vec2 const& r_bottomLeft, glm::vec2 const& r_topRight,
+            glm::vec4 const& r_color)
+        {
+            // Assumes that this is a axis - aligned
+            AddDebugSquare(
+                r_topRight.x - r_bottomLeft.x,
+                r_topRight.y - r_bottomLeft.y,
+                0.f, (r_bottomLeft + r_topRight) * 0.5f,
+                r_color
+            );
+        }
+
+
+        void RendererManager::AddDebugCircle(
+            float const radius, glm::vec2 const& r_centerPosition,
+            glm::vec4 const& r_color)
+        {
+            Renderer newRenderer{};
+            newRenderer.meshType = EnumMeshType::DEBUG_CIRCLE;
+
+            float diameter{ radius * 2.f };
+            newRenderer.transform.width = diameter;
+            newRenderer.transform.height = diameter;
+            newRenderer.transform.position = r_centerPosition;
+
+            newRenderer.color = r_color;
+
+            m_lineObjects.emplace_back(newRenderer);
+        }
+
+
+        void RendererManager::AddDebugLine(
+            glm::vec2 const& r_position1, glm::vec2 const& r_position2,
+            glm::vec4 const& r_color)
+        {
+            Renderer newRenderer{};
+            newRenderer.meshType = EnumMeshType::DEBUG_LINE;
+
+            float angleRadians = glm::atan2(r_position2.y - r_position1.y, r_position2.x - r_position1.x);
+            newRenderer.transform.orientation = glm::degrees(angleRadians);
+            newRenderer.transform.width = glm::distance(r_position1, r_position2);
+            newRenderer.transform.position = (r_position1 + r_position2) * 0.5f;
+
+            newRenderer.color = r_color;
+
+            m_lineObjects.emplace_back(newRenderer);
+        }
+
+
+        void RendererManager::AddDebugPoint(glm::vec2 const& r_position,
+            glm::vec4 const& r_color)
+        {
+            Renderer newRenderer{};
+            newRenderer.meshType = EnumMeshType::DEBUG_LINE;
+
+            newRenderer.transform.width = 0.f;
+            newRenderer.transform.position = r_position;
+
+            newRenderer.color = r_color;
+
+            m_pointObjects.emplace_back(newRenderer);
         }
 
 
         void RendererManager::InitializeCircleMesh(std::size_t const segments, MeshData& r_mesh)
         { 
-            // ------------------------------------ THIS FUNCTION IS NOT DONE
-
             r_mesh.vertices.clear();
             r_mesh.vertices.reserve(segments);
+            r_mesh.indices.clear();
+            r_mesh.indices.reserve(segments);
+
             float const angle{ glm::pi<float>() * 2.f / static_cast<float>(segments) };
 
             // Generate vertices in a circle
-            for (size_t i{ 0 }; i < segments; ++i) {
+            for (int i{ 0 }; i < (int)segments; ++i) {
                 float const totalAngle{ static_cast<float>(i) * angle };
                 r_mesh.vertices.emplace_back(
                     VertexData{
                         glm::vec2{glm::cos(totalAngle), glm::sin(totalAngle)},
-                        glm::vec3{1.f, 0.f, 0.f},
+                        //glm::vec3{glm::cos(totalAngle), glm::sin(totalAngle), 1.f},
                         glm::vec2{0.f, 0.f}
                     });
+
+                r_mesh.indices.emplace_back(((i - 1) < 0 ? (short)segments - 1 : (short)i - 1));
+                r_mesh.indices.emplace_back((short)i);
             }
+
+            // Generate VAO
+            r_mesh.CreateVertexArrayObject();
         }
 
 
@@ -235,27 +534,13 @@ namespace PE
             r_mesh.vertices.clear();
             r_mesh.vertices.reserve(3);
 
-            r_mesh.vertices.emplace_back(
-                VertexData{
-                    glm::vec2{-0.5f, -0.5f},
-                    glm::vec3{1.f, 0.f, 0.f},
-                    glm::vec2{0.f, 0.f}
-                }
-            );
-            r_mesh.vertices.emplace_back(
-                VertexData{
-                    glm::vec2{0.5f, -0.5f},
-                    glm::vec3{0.f, 1.f, 0.f},
-                    glm::vec2{1.f, 0.f}
-                }
-            );
-            r_mesh.vertices.emplace_back(
-                VertexData{
-                    glm::vec2{0.f, 0.5f},
-                    glm::vec3{0.f, 0.f, 1.f},
-                    glm::vec2{0.5f, 1.f}
-                }
-            );
+            // bottom-left
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f} });
+            // bottom-right
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f} });
+            // top-center
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.f, 0.5f}, glm::vec2{0.5f, 1.f} });
+
 
             // Add indices
             r_mesh.indices.clear();
@@ -276,34 +561,15 @@ namespace PE
             r_mesh.vertices.clear();
             r_mesh.vertices.reserve(4);
 
-            r_mesh.vertices.emplace_back( // bottom-left
-                VertexData{
-                    glm::vec2{-0.5f, -0.5f},
-                    glm::vec3{1.f, 0.f, 0.f},
-                    glm::vec2{0.f, 0.f}
-                }
-            );
-            r_mesh.vertices.emplace_back( // bottom-right
-                VertexData{
-                    glm::vec2{0.5f, -0.5f},
-                    glm::vec3{0.f, 1.f, 0.f},
-                    glm::vec2{1.f, 0.f}
-                }
-            );
-            r_mesh.vertices.emplace_back( // top-right
-                VertexData{
-                    glm::vec2{0.5f, 0.5f},
-                    glm::vec3{0.f, 0.f, 1.f},
-                    glm::vec2{1.f, 1.f}
-                }
-            );
-            r_mesh.vertices.emplace_back( // top-left
-                VertexData{
-                    glm::vec2{-0.5f, 0.5f},
-                    glm::vec3{0.f, 1.f, 0.f},
-                    glm::vec2{0.f, 1.f}
-                }
-            );
+            // bottom-left
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f} });
+            // bottom-right
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f} });
+            // top-right
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, 0.5f}, glm::vec2{1.f, 1.f} });
+            // top-left
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, 0.5f}, glm::vec2{0.f, 1.f} });
+
 
             // Add indices
             r_mesh.indices.clear();
@@ -315,6 +581,60 @@ namespace PE
             r_mesh.indices.emplace_back(2);
             r_mesh.indices.emplace_back(3);
             r_mesh.indices.emplace_back(0);
+
+            // Generate VAO
+            r_mesh.CreateVertexArrayObject();
+        }
+
+
+        void RendererManager::InitializeSquareMesh(MeshData& r_mesh)
+        {
+            // Add vertex positions, colors and tex coords
+            r_mesh.vertices.clear();
+            r_mesh.vertices.reserve(4);
+
+            // bottom-left
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f} });
+            // bottom-right
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f} });
+            // top-right
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, 0.5f}, glm::vec2{1.f, 1.f} });
+            // top-left
+            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, 0.5f}, glm::vec2{0.f, 1.f} });
+
+            // Add indices
+            r_mesh.indices.clear();
+            r_mesh.indices.reserve(8);
+
+            r_mesh.indices.emplace_back(0);
+            r_mesh.indices.emplace_back(1);
+            r_mesh.indices.emplace_back(1);
+            r_mesh.indices.emplace_back(2);
+            r_mesh.indices.emplace_back(2);
+            r_mesh.indices.emplace_back(3);
+            r_mesh.indices.emplace_back(3);
+            r_mesh.indices.emplace_back(0);
+
+            // Generate VAO
+            r_mesh.CreateVertexArrayObject();
+        }
+
+
+        void RendererManager::InitializeLineMesh(MeshData& r_mesh)
+        {
+            // Add vertex positions, colors and tex coords
+            r_mesh.vertices.clear();
+            r_mesh.vertices.reserve(2);
+
+            r_mesh.vertices.emplace_back( VertexData{ glm::vec2{-0.5f, 0.f}, glm::vec2{0.f, 0.f} } );
+            r_mesh.vertices.emplace_back( VertexData{ glm::vec2{0.5f, 0.f}, glm::vec2{1.f, 0.f} } );
+
+            // Add indices
+            r_mesh.indices.clear();
+            r_mesh.indices.reserve(2);
+
+            r_mesh.indices.emplace_back(0);
+            r_mesh.indices.emplace_back(1);
 
             // Generate VAO
             r_mesh.CreateVertexArrayObject();

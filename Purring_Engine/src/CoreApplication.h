@@ -53,6 +53,7 @@ namespace PE {
 		WindowManager m_windowManager;
 		GLFWwindow* m_window;
 		FrameRateTargetControl m_fpsController;
+		Graphics::RendererManager* m_rendererManager;
 		float m_time;
 
 

@@ -194,6 +194,75 @@ namespace PE
         }
 
 
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, glm::vec4 const& r_vector4) {
+
+            GLint uniformLocation = glGetUniformLocation(m_programId,
+                reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
+
+            // Check if the uniform variable can be found
+            if (uniformLocation >= 0 &&
+                !(GL_INVALID_OPERATION == uniformLocation ||
+                    GL_INVALID_VALUE == uniformLocation)) {
+
+                // Pass the vector values as a uniform variable
+                glUniform4f(uniformLocation, static_cast<GLfloat>(r_vector4.x),
+                    static_cast<GLfloat>(r_vector4.y),
+                    static_cast<GLfloat>(r_vector4.z),
+                    static_cast<GLfloat>(r_vector4.w));
+            }
+            else {
+                std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, errorLog, __FUNCTION__);
+            }
+        }
+
+
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, bool const value) {
+
+            GLint uniformLocation = glGetUniformLocation(m_programId,
+                reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
+
+            // Check if the uniform variable can be found
+            if (uniformLocation >= 0 &&
+                !(GL_INVALID_OPERATION == uniformLocation ||
+                    GL_INVALID_VALUE == uniformLocation)) {
+
+                // Pass the boolean value as a uniform variable
+                glUniform1i(uniformLocation, static_cast<GLint>(value));
+            }
+            else {
+                std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, errorLog, __FUNCTION__);
+            }
+        }
+
+
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, GLuint const value) {
+
+            GLint uniformLocation = glGetUniformLocation(m_programId,
+                reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
+
+            // Check if the uniform variable can be found
+            if (uniformLocation >= 0 &&
+                !(GL_INVALID_OPERATION == uniformLocation ||
+                    GL_INVALID_VALUE == uniformLocation)) {
+
+                // Pass the int value as a uniform variable
+                glUniform1ui(uniformLocation, value);
+            }
+            else {
+                std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, errorLog, __FUNCTION__);
+            }
+        }
+
+
         bool ShaderProgram::CheckProgramId() {
 
             if (m_programId <= 0)

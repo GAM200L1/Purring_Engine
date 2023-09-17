@@ -32,8 +32,8 @@ PE::CoreApplication::CoreApplication()
 
 
     // Pass the pointer to the GLFW window to the rendererManager
-    Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
-    AddSystem(rendererManager);
+    m_rendererManager = new Graphics::RendererManager{ m_window };
+    AddSystem(m_rendererManager);
 
 }
 
@@ -64,6 +64,45 @@ void PE::CoreApplication::Run()
             {
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustRotationDegrees(-1.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustMagnification(-0.1f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
         }
 
          // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);

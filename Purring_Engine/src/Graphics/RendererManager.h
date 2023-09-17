@@ -20,6 +20,7 @@
 
 #include <cstddef>
 #include <glm/glm.hpp>
+#include <glm/gtx/compatibility.hpp> // atan2()
 #include <map>
 #include <vector>
 
@@ -72,31 +73,68 @@ namespace PE
             inline std::string GetName() { return m_systemName; }
 
             /*!***********************************************************************************
-             \brief Clears the color buffer, sets the size of the viewport to the full window
-                    and draw a triangle.
+             \brief Draws all renderable objects in [m_renderableObjects].
 
-             \param[in] width Width of the viewport being rendered to.
-             \param[in] height Height of the viewport being rendered to.
+             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
             *************************************************************************************/
-            void DrawScene(float const width, float const height);
+            void DrawScene(glm::mat4 const& r_viewToNdc);
 
+            /*!***********************************************************************************
+             \brief Draws all debug objects in [m_renderableObjects].
+
+             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+            *************************************************************************************/
+            void DrawDebug(glm::mat4 const& r_viewToNdc);
+
+            void AddRendererObject(EnumMeshType meshType,
+                float const width, float const height,
+                float const orientation, glm::vec2 const& r_position);
+
+            void AddRendererObject(EnumMeshType meshType,
+                float const width, float const height,
+                float const orientation, glm::vec2 const& r_position,
+                temp::Texture const& r_texture, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+
+            void AddDebugSquare(float const width, float const height,
+                float const orientation, glm::vec2 const& r_centerPosition,
+                glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+
+            void AddDebugSquare(glm::vec2 const& r_bottomLeft, glm::vec2 const& r_topRight,
+                glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+
+            void AddDebugCircle(float const radius, glm::vec2 const& r_centerPosition,
+                glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+
+            void AddDebugLine(glm::vec2 const& r_position1, glm::vec2 const& r_position2,
+                glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+
+            void AddDebugPoint(glm::vec2 const& r_position, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+
+            Graphics::Camera m_mainCamera{}; //! Camera object
 
             // ----- Private variables ----- //
         private:
             GLFWwindow* p_windowRef{}; //! Pointer to the GLFW window to render to
 
-            Graphics::Camera m_mainCamera{}; //! Camera object
 
             std::string m_systemName{ "Graphics" }; //! Name of system
+
+            temp::Texture texObj{}; //! Temp texture
 
             //! Container of shaders
             std::map<std::string, Graphics::ShaderProgram*> m_shaderPrograms;
 
             //! Container of meshes
-            std::map<std::string, Graphics::MeshData> m_meshes{};
+            std::vector<Graphics::MeshData> m_meshes{};
 
-            //! Container of objects to draw
-            std::vector<Graphics::Renderer> m_renderableObjects{};
+            //! Container of textured and filled objects to draw
+            std::vector<Graphics::Renderer> m_triangleObjects{};
+
+            //! Container of debug objects to draw
+            std::vector<Graphics::Renderer> m_lineObjects{};
+
+            //! Container of debug points to draw
+            std::vector<Graphics::Renderer> m_pointObjects{};
 
 
             // ----- For rendering to ImGui window ----- //
@@ -128,11 +166,27 @@ namespace PE
 
             /*!***********************************************************************************
              \brief Sets the vertex positions and indices of the object passed in to that of 
-                    a 1x1 square centered at the origin and creates a VAO.
+                    a 1x1 quad made of 2 triangles centered at the origin and creates a VAO.
 
              \param[in,out] r_mesh Object containing the mesh data generated.
             *************************************************************************************/
             void InitializeQuadMesh(MeshData& r_mesh);
+
+            /*!***********************************************************************************
+             \brief Sets the vertex positions and indices of the object passed in to that of 
+                    a 1x1 square outline centered at the origin and creates a VAO.
+
+             \param[in,out] r_mesh Object containing the mesh data generated.
+            *************************************************************************************/
+            void InitializeSquareMesh(MeshData& r_mesh);
+
+            /*!***********************************************************************************
+             \brief Sets the vertex positions and indices of the object passed in to that of 
+                    a 1 unit long horizontal line centered at the origin and creates a VAO.
+
+             \param[in,out] r_mesh Object containing the mesh data generated.
+            *************************************************************************************/
+            void InitializeLineMesh(MeshData& r_mesh);
 
             /*!***********************************************************************************
              \brief Prints the graphics specifications of the device.
