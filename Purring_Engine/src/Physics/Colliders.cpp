@@ -10,45 +10,64 @@
 
 All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *******************************************************************************/
+#include "prpch.h"
 #include "Colliders.h"
 
 namespace PE
 {
-	struct Collider : public Component
+	// ----- AABB Collider ----- //
+	
+	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
-		virtual bool TestCollision(Collider& r_collisionObj) = 0;
-		virtual bool TestCollision(CircleCollider& r_collisionCircle) = 0;
-		virtual bool TestCollision(AABBCollider& r_collisionBox) = 0;
-	};
+		r_AABB.min = r_position - (r_scale * 0.5f);
+		r_AABB.max = r_position + (r_scale * 0.5f);
+	}
+	
 
-	// may change this to box collider to combine obb and aabb in the future
-	struct AABBCollider : public Collider
+	// ---- Circle Collider ----- //
+	
+	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
-		// ----- Public Variables ----- //
-		vec2 min;
-		vec2 max;
+		r_circle.center = r_position;
+		r_circle.radius = r_scale.x * 0.5f;
+	}
 
-		// ----- Public Methods ----- //
-		bool TestCollision(Collider& r_collisionObj);
-		bool TestCollision(CircleCollider& r_collisionCircle);
-		bool TestCollision(AABBCollider& r_collisionBox);
-	};
-
-	struct CircleCollider : public Collider
-	{
-		// ----- Public Variables ----- //
-		vec2 center;
-		float radius;
-
-		// ----- Public Methods ----- //
-		bool TestCollision(Collider& r_collisionObj);
-		bool TestCollision(CircleCollider& r_collisionCircle);
-		bool TestCollision(AABBCollider& r_collisionBox);
-	};
-
-	// do not do this for m1
-	/*struct OBB
-	{
-
-	};*/
 }
+
+
+//bool AABBCollider::TestCollision(Collider& r_collisionObj)
+//{
+
+//}
+//
+//bool AABBCollider::TestCollision(CircleCollider& r_collisionCircle)
+//{
+
+//}
+//
+//bool AABBCollider::TestCollision(AABBCollider& r_collisionBox)
+//{
+
+//}
+
+
+//bool CircleCollider::TestCollision(Collider& r_collisionObj)
+//{
+
+//}
+//
+//bool CircleCollider::TestCollision(CircleCollider& r_collisionCircle)
+//{
+
+//}
+//
+//bool CircleCollider::TestCollision(AABBCollider& r_collisionBox)
+//{
+
+//}
+
+// do not do this for m1
+/*struct OBB
+{
+
+};*/

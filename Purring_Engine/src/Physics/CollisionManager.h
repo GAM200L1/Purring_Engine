@@ -11,14 +11,17 @@
 All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *******************************************************************************/
 #pragma once
+
 #include "Math/MathCustom.h"
-#include "ECS/Components.h"
+#include "Colliders.h"
 
 namespace PE
 {
 	class CollisionManager
 	{
 	public:
+
+		CollisionManager() = default;
 
 		// ----- Removed Copy Ctors/Assignments ----- //
 		CollisionManager(CollisionManager const& r_cpyCollisionManager) = delete;
@@ -28,15 +31,24 @@ namespace PE
 		CollisionManager* GetInstance();
 
 		// ----- Public Methods ----- //
-		
+		void UpdateColliders();
+		void TestColliders();
 
 	private:
 		CollisionManager* m_ptrInstance;
-		float m_worldGravity;
 	};
 
+	// Rect + Rect
+	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2);
+	// Circle + Circle
+	bool CollisionIntersection(CircleCollider const& r_circle1, CircleCollider const& r_circle2);	
+	// Rect + Circle
+	bool CollisionIntersection(AABBCollider const& r_AABB, CircleCollider const& r_circle);
+	// Circle + Rect
+	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB);
+
 	// ----- Rectangle Collisions ----- //
-	bool CheckCollision(AABB const& r_aabb1, vec2 const& r_vel1, AABB const& r_aabb2, vec2 const& r_vel2);
+	//bool CheckCollision(AABB const& r_aabb1, vec2 const& r_vel1, AABB const& r_aabb2, vec2 const& r_vel2);
 
 
 	// ----- Circle Collisions ----- //

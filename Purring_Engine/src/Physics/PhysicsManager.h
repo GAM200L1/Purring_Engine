@@ -22,7 +22,7 @@ namespace PE
 		PhysicsManager& operator=(PhysicsManager const& r_cpyPhysicsManager) = delete;
 
 		// ----- Public Getters ----- //
-		PhysicsManager();
+		PhysicsManager() = default;
 		PhysicsManager* GetInstance();
 
 		// ----- Public Methods ----- //

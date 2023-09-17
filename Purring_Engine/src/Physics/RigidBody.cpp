@@ -10,14 +10,28 @@
 
 All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *******************************************************************************/
-
+#include "prpch.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
 #include <sstream>
 
 namespace PE
 {
-	const vec2 UP_VECTOR{ 0.f, 1.f };
+	RigidBody::RigidBody() :
+		m_velocity{ vec2{ 0.f, 0.f } }, m_rotationVelocity{ 0.f },
+		m_force{ vec2{ 0.f, 0.f } }, m_torque{ 0.f }, m_awake{ false },
+		m_mass{ 0.f }, m_inverseMass{ 0.f }, m_drag{ 0.f }, m_rotationDrag{ 0.f } {}
+
+	RigidBody::RigidBody(RigidBody const& r_cpy) :
+		m_velocity{ r_cpy.m_velocity }, m_rotationVelocity{ r_cpy.m_rotationVelocity },
+		m_force{ r_cpy.m_force }, m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
+		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag } {}
+
+	RigidBody& RigidBody::operator=(RigidBody const& r_cpy)
+	{
+		RigidBody rb{ r_cpy };
+		return rb;
+	}
 
 	// ----- Getters/Setters ----- //
 
