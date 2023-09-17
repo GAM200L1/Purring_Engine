@@ -29,8 +29,16 @@ namespace PE
 
 	RigidBody& RigidBody::operator=(RigidBody const& r_cpy)
 	{
-		RigidBody rb{ r_cpy };
-		return rb;
+		m_velocity = r_cpy.m_velocity;
+		m_rotationVelocity = r_cpy.m_rotationVelocity;
+		m_force = r_cpy.m_force;
+		m_torque = r_cpy.m_torque;
+		m_awake = r_cpy.m_awake;
+		m_mass = r_cpy.m_mass;
+		m_inverseMass = r_cpy.m_inverseMass;
+		m_drag = r_cpy.m_drag;
+		m_rotationDrag = r_cpy.m_rotationDrag;
+		return *this;
 	}
 
 	// ----- Getters/Setters ----- //
