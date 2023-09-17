@@ -2,19 +2,20 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     RendererManager.cpp
- \date     20-08-2023
- 
- \author               Krystal YAMIN
+ \creation date:       20-08-2023
+ \last updated:        16-09-2023
+ \author:              Krystal YAMIN
+
  \par      email:      krystal.y@digipen.edu
- 
+
  \brief    This file contains the RendererManager class, which manages 
            the render passes and includes helper functions to draw debug shapes.
-  
+
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
 #include <glm/gtc/constants.hpp>    // pi()
