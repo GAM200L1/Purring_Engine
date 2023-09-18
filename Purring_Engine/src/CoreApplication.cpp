@@ -26,18 +26,30 @@ Logger engine_logger = Logger("ENGINE");
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
 
+PE::EntityManager entityManager;
+PE::EntityFactory entityFactory;
+
 PE::CoreApplication::CoreApplication()
 {
+
+
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
     REGISTERCOMPONENT(Collider, sizeof(Collider));
+    REGISTERCOMPONENT(Transform, sizeof(Transform));
     EntityID id = g_entityFactory->CreateEntity();
     EntityID id2 = g_entityFactory->CreateEntity();
-    PE::g_entityFactory->Assign(id, { "RigidBody", "CircleCollider", "Transform"});
-    PE::g_entityFactory->Assign(id2, { "RigidBody", "CircleCollider", "Transform"});
+    PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
+    PE::g_entityFactory->Assign(id2, { "RigidBody", "Collider", "Transform"});
+    Collider tmp, tmp2;
+    tmp.colliderVariant = CircleCollider();
+    tmp2.colliderVariant = AABBCollider();
+    PE::g_entityFactory->Copy(id, tmp);
+    PE::g_entityFactory->Copy(id2, tmp2);
     PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
     PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
     PE::g_entityManager->Get<Transform>(id).scale = vec2{ 10.f, 10.f };
     PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 10.f, 10.f };
+
 
 	m_Running = true;
 	m_lastFrameTime = 0;
