@@ -143,7 +143,8 @@ void PE::CoreApplication::Run()
         {
             m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
         }
-        // PhysicsManager::UpdateDynamics(deltaTime)
+        
+        PhysicsManager::UpdateDynamics();
         CollisionManager::UpdateColliders();
         CollisionManager::TestColliders();
 

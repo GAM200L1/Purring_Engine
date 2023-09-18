@@ -25,7 +25,7 @@ enum class EnumRigidBodyType
 
 namespace PE
 {
-	class RigidBody : public Component // dynamic stuff
+	class RigidBody // dynamic stuff
 	{
 	public:
 		// ----- Public Variables ----- //
@@ -43,7 +43,7 @@ namespace PE
 
 		RigidBody();
 		~RigidBody() = default;
-		
+
 		RigidBody(RigidBody const& r_cpy);
 		RigidBody& operator=(RigidBody const& r_cpy);
 
@@ -80,6 +80,8 @@ namespace PE
 		// Applies impulse - directly adds to linear velocity
 		void ApplyLinearImpulse(vec2 const& r_impulseForce);
 
+		float m_drag;
+		float m_rotationDrag;
 	private:
 		// ----- Private Variables ----- //
 		EnumRigidBodyType m_type = EnumRigidBodyType::STATIC;
@@ -87,8 +89,7 @@ namespace PE
 		float m_mass;
 		float m_inverseMass;
 
-		float m_drag;
-		float m_rotationDrag;
+
 	};
 
 }

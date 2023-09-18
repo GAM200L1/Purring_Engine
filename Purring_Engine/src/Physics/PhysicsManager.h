@@ -21,17 +21,19 @@ namespace PE
 		PhysicsManager(PhysicsManager const& r_cpyPhysicsManager) = delete;
 		PhysicsManager& operator=(PhysicsManager const& r_cpyPhysicsManager) = delete;
 
-		// ----- Public Getters ----- //
+		// ----- Public Getters and Setters ----- //
 		PhysicsManager() = default;
 		static PhysicsManager* GetInstance();
 
+		static float GetLinearDragCoefficient();
+		static void SetLinearDragCoefficient(float newCoefficient);
+
 		// ----- Public Methods ----- //
 		static void UpdateDynamics(float deltaTime); // update forces, acceleration and velocity here
-		static void UpdatePositions(float deltaTime); // update positions here
 
 	private:
 		// ----- Private Variables ----- //
 		static PhysicsManager* m_ptrInstance;
-		static float m_worldGravity;
+		static float m_linearDragCoefficient;
 	};
 }

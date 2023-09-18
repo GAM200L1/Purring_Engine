@@ -19,6 +19,9 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 namespace PE
 {
+	PhysicsManager* PhysicsManager::m_ptrInstance;
+	float PhysicsManager::m_linearDragCoefficient = -2.f;
+
 	// ----- Public Getters ----- //
 	PhysicsManager* PhysicsManager::GetInstance()
 	{
@@ -28,34 +31,43 @@ namespace PE
 		}
 		return m_ptrInstance;
 	}
-	
+
+	float PhysicsManager::GetLinearDragCoefficient()
+	{
+		return m_linearDragCoefficient;
+	}
+
+	void PhysicsManager::SetLinearDragCoefficient(float newCoefficient)
+	{
+		m_linearDragCoefficient = (newCoefficient < 0.f) ? newCoefficient : -newCoefficient;
+	}
+
 	// ----- Public Methods ----- //
 	void PhysicsManager::UpdateDynamics(float deltaTime) // update forces, acceleration and velocity here
 	{
-		for (EntityID rigidBodyID : SceneView<RigidBody>())
+		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
-			RigidBody& rb = g_entityManager->Get<RigidBody>(rigidBodyID);
+			RigidBody& rb = g_entityManager->Get<RigidBody>(RigidBodyID);
+			Transform& transform = g_entityManager->Get<Transform>(RigidBodyID);
 
-			//rb.ApplyForce(); // probably apply the friction forces here
-			//rb.ApplyTorque(); // not sure yet
-			//rb.ApplyLinearImpulse() // for dashes etc.
-
-			if (rb.m_awake) // object does not need to be moved
+			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
+			{
+				// Quick dirty implementation of drag force
+				rb.ApplyForce(rb.m_velocity * rb.GetMass() * m_linearDragCoefficient);
 				rb.m_velocity += rb.m_force * rb.GetInverseMass() * deltaTime;
-		}
-	}
 
-	void PhysicsManager::UpdatePositions(float deltaTime) // update positions here
-	{
-		for (EntityID objectID : SceneView<RigidBody, Transform>())
-		{
-			RigidBody const &rb = g_entityManager->Get<RigidBody>(objectID);
-			
-			if (!rb.m_awake) // object does not need to be moved
-			{ continue; }
-			
-			vec2& objPos = g_entityManager->Get<Transform>(objectID).position;
-			objPos += rb.m_velocity * deltaTime;
+				// at negligible velocity, velocity will set to 0.f
+				rb.m_velocity.x = (rb.m_velocity.x < 0.1f && rb.m_velocity.x > -0.1f) ? 0.f : rb.m_velocity.x;
+				rb.m_velocity.y = (rb.m_velocity.y < 0.1f && rb.m_velocity.y > -0.1f) ? 0.f : rb.m_velocity.y;
+			}
+
+			if (rb.GetType() != EnumRigidBodyType::STATIC)
+			{
+				transform.position += rb.m_velocity * deltaTime;
+				transform.angle += rb.m_rotationVelocity * deltaTime;
+			}
+			rb.ZeroForce();
+			rb.m_rotationVelocity = 0.f;
 		}
 	}
 }
