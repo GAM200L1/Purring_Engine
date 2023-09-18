@@ -136,6 +136,8 @@ void PE::CoreApplication::Run()
 
                 if (entityID != -1) {
                     std::cout << std::any_cast<int>(loadedEntity.data["someInt"]) << std::endl;
+                    std::cout << std::any_cast<float > (loadedEntity.data["someFloat"]) << std::endl;
+                    std::cout << std::any_cast<std::string> (loadedEntity.data["someString"]) << std::endl;
                     std::cout << "Successfully loaded entity with ID: " << entityID << std::endl;
                 }
                 else {
