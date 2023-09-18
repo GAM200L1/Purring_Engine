@@ -85,7 +85,7 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
         else
         {
             // Handle the case when there's no underscore in the name.
-            idString = "";                      // @jw, you can define some default behavior here if you want to.
+            idString = "1";                      // @jw, you can define some default behavior here if you want to.
         }
 
         // Convert the extracted ID string to an integer, or set entityID to -1 if it's empty.
