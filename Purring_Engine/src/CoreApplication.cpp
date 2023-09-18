@@ -25,14 +25,13 @@ Logger engine_logger = Logger("ENGINE");
 #include "ECS//EntityFactory.h"
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
+#include "ECS/Prefabs.h"
 
 PE::EntityManager entityManager;
 PE::EntityFactory entityFactory;
 
 PE::CoreApplication::CoreApplication()
 {
-
-
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
     REGISTERCOMPONENT(Collider, sizeof(Collider));
     REGISTERCOMPONENT(Transform, sizeof(Transform));
@@ -50,6 +49,16 @@ PE::CoreApplication::CoreApplication()
     PE::g_entityManager->Get<Transform>(id).scale = vec2{ 10.f, 10.f };
     PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 10.f, 10.f };
 
+    PE::LoadPrefabs();
+
+    EntityID id3 = PE::CreatePrefab("GameObject");
+    Collider col;
+    col.colliderVariant = AABBCollider();
+    col.objectsCollided.emplace(1);
+    PE::InitializeCollider(id3, static_cast<void*>(&col));
+
+    std::cout << PE::g_entityManager->Get<Transform>(id3).position.x << std::endl;
+    std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
 
 	m_Running = true;
 	m_lastFrameTime = 0;
