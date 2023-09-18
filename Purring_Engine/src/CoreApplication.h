@@ -41,8 +41,8 @@ namespace PE {
 	private:
 
 		//std::unique_ptr<Window> m_Window;
-		bool m_Running;
-		float m_lastFrameTime;
+		bool m_Running{};
+		double m_lastFrameTime{};
 
 		// holds all the systems in the engine
 		std::vector<System*> m_systemList;
@@ -54,6 +54,7 @@ namespace PE {
 		WindowManager m_windowManager;
 		GLFWwindow* m_window;
 		FrameRateTargetControl m_fpsController;
+		Graphics::RendererManager* m_rendererManager;
 		float m_time;
 
 
