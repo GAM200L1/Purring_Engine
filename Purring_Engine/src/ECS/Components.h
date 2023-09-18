@@ -181,7 +181,7 @@ namespace PE
     };
 };
 
-#define REGISTERCOMPONENT(type, size) Engine::g_entityFactory->AddComponentCreator( #type, new Engine::ComponentCreatorType<type>( size ) );
+#define REGISTERCOMPONENT(type, size) PE::g_entityFactory->AddComponentCreator( #type, new PE::ComponentCreatorType<type>( size ) );
 
 class test : public PE::Component
 {

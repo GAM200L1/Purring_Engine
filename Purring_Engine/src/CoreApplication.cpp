@@ -18,10 +18,27 @@
 
 // testing
 Logger engine_logger = Logger("ENGINE");
-
+#include "Physics/RigidBody.h"
+#include "Physics/Colliders.h"
+#include "Physics/CollisionManager.h"
+#include "Physics/PhysicsManager.h"
+#include "ECS//EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
 
 PE::CoreApplication::CoreApplication()
 {
+    REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
+    REGISTERCOMPONENT(Collider, sizeof(Collider));
+    EntityID id = g_entityFactory->CreateEntity();
+    EntityID id2 = g_entityFactory->CreateEntity();
+    PE::g_entityFactory->Assign(id, { "RigidBody", "CircleCollider", "Transform"});
+    PE::g_entityFactory->Assign(id2, { "RigidBody", "CircleCollider", "Transform"});
+    PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
+    PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
+    PE::g_entityManager->Get<Transform>(id).scale = vec2{ 10.f, 10.f };
+    PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 10.f, 10.f };
+
 	m_Running = true;
 	m_lastFrameTime = 0;
 
@@ -34,16 +51,15 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
-
     // Pass the pointer to the GLFW window to the rendererManager
     Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
     AddSystem(rendererManager);
 
     // Audio Stuff - HANS
-    m_audioManager.Init();
+    /*m_audioManager.Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
-    }
+    }*/
 
     //init imgui settings
     //IMGUI_CHECKVERSION();
@@ -107,7 +123,7 @@ void PE::CoreApplication::Run()
         }
 
         // Audio Stuff - HANS
-        m_audioManager.Update();
+        //m_audioManager.Update();
 
         const int audioKeys[] = { GLFW_KEY_A, GLFW_KEY_S };
         for (int key : audioKeys)
@@ -117,18 +133,21 @@ void PE::CoreApplication::Run()
                 if (key == GLFW_KEY_A)
                 {
                     std::cout << "A key pressed\n";
-                    m_audioManager.PlaySound("Audio/sound1.wav");
+                    //m_audioManager.PlaySound("Audio/sound1.wav");
                 }
                 else if (key == GLFW_KEY_S)
                 {
                     std::cout << "S key pressed\n";
-                    m_audioManager.PlaySound("Audio/sound2.wav");
+                    //m_audioManager.PlaySound("Audio/sound2.wav");
                 }
             }
         }
 
 
-
+        // Physics test
+        //PhysicsManager::UpdateDynamics(60.f);
+        CollisionManager::TestColliders();
+        CollisionManager::UpdateColliders();
 
 
         // DRAW -----------------------------------------------------

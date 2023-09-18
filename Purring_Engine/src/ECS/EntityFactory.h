@@ -19,11 +19,12 @@
 
 #pragma once
 #include "prpch.h"
+#include "EntityFactory.h"
 #include "Entity.h"
-//#include "Components.h"
+#include "Components.h"
 
 
-namespace Engine
+namespace PE
 {
 	/*!***********************************************************************************
 	 \brief Enity factory struct
@@ -129,10 +130,10 @@ namespace Engine
 		void Copy(EntityID id, T ... component);
 
 	// ----- Private Variables ----- //
-	private:
+	public:
 		typedef std::map<ComponentID, ComponentCreator*> ComponentMapType; // component map typedef
 		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
-		Engine::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
+		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
 	};
 
 	// extern for those including the .h to access the factory instance
@@ -183,9 +184,9 @@ namespace Engine
 				{
 					if (typeid(T) != typeid(ComponentID) && typeid(T) != typeid(const char*))
 						throw;
-					if (ComponentMap.contains(var))
+					if (m_componentMap.contains(var))
 					{
-						p_entityManager->Assign(id, var, ComponentMap[var]);
+						p_entityManager->Assign(id, var, m_componentMap[var]);
 					}
 				}
 			(), ...);
@@ -199,9 +200,9 @@ namespace Engine
 			throw;
 		for (const T& type : var)
 		{
-			if (ComponentMap.contains(type))
+			if (m_componentMap.find(type) != m_componentMap.end())
 			{
-				p_entityManager->Assign(id, type, ComponentMap[type]);
+				p_entityManager->Assign(id, type, m_componentMap[type]);
 			}
 		}
 	}

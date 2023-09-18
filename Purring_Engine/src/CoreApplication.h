@@ -61,7 +61,7 @@ namespace PE {
 		//static Application* s_Instance;
 
 		// Audio Stuff - HANS
-		AudioManager m_audioManager;
+		//AudioManager m_audioManager;
 	};
 
 	// defined by client
