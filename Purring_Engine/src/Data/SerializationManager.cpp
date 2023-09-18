@@ -3,6 +3,57 @@
 
 /*-----------------------------------------------------------------------------
 /// <summary>
+/// Deserialize a JSON object into an entity's data.
+
+/// </summary>
+/// <param name="j">The JSON object containing the serialized entity data.</param>
+/// <param name="entityId">Reference to the entity ID that will be updated with the deserialized value.</param>
+/// <param name="sm">Reference to the SerializationManager used for deserialization.</param>
+----------------------------------------------------------------------------- */
+void PlayerStats::from_json(const nlohmann::json& j, int& entityId, SerializationManager& sm)
+{
+    entityId = j.at("entityId").get<int>();                                // Deserialize entityId from JSON
+
+    sm.setEntityName(entityId, j.at("entityName").get<std::string>());     // Deserialize entityName from JSON
+
+    // Deserialize data from JSON
+    health = j.at("health").get<int>();
+    level = j.at("level").get<int>();   
+    experience = j.at("experience").get<float>();
+    playerName = j.at("playerName").get<std::string>();
+}
+
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Serialize an entity's data into a JSON object.
+/// This function takes an entity ID as input and serializes the entity's data
+/// into a JSON format, including its name and various data fields.
+/// </summary>
+/// <param name="entityId">The ID of the entity to serialize.</param>
+/// <param name="sm">Reference to the SerializationManager for additional data.</param>
+/// <returns>A JSON object containing the serialized entity data.</returns>
+----------------------------------------------------------------------------- */
+nlohmann::json PlayerStats::to_json(int entityId, SerializationManager& sm) const
+{
+    nlohmann::json j;                               // Create a JSON object
+
+    j["entityId"] = entityId;                       // Serialize entityId to JSON
+    j["entityName"] = sm.getEntityName(entityId);   // Serialize entityName to JSON
+
+    // serialize thhe data from JSON
+    j["health"] = health;
+    j["level"] = level;
+    j["experience"] = experience;
+    j["playerName"] = playerName;
+    return j;                                       // Return the JSON object
+}
+
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
 /// Serialize an entity's data into a JSON object.
 /// This function takes an entity ID as input and serializes the entity's data
 /// into a JSON format, including its name and various data fields.

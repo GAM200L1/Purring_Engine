@@ -8,6 +8,17 @@
 #include <any>
 #include <unordered_map>
 
+struct PlayerStats {
+    int health;
+    int level;
+    float experience;
+    std::string playerName;
+
+    void from_json(const nlohmann::json& j, int& entityId, class SerializationManager& sm);
+    nlohmann::json to_json(int entityId, class SerializationManager& sm) const;
+};
+
+
 // Structure to represent an Entity with variable names and data
 struct Entity
 {
@@ -28,6 +39,45 @@ struct Entity
 class SerializationManager
 {
 public:
+    // @JWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
+    // A map to store the mapping between entity IDs and their corresponding names
+    std::unordered_map<int, std::string> entityIdToNameMap;
+
+    // Method to set the name associated with an entity ID
+    void setEntityName(int entityId, const std::string& name)
+    {
+        entityIdToNameMap[entityId] = name;
+    }
+
+    // Method to retrieve the name associated with an entity ID
+    std::string getEntityName(int entityId)
+    {
+        if (entityIdToNameMap.find(entityId) != entityIdToNameMap.end())
+        {
+            return entityIdToNameMap[entityId];
+        }
+        return "";
+    }
+
+
+
+
+    // @JW I comment this out as I was test setEntityName and getEntityName functions above**
+    //// New function to serialize a PlayerStats object.
+    //nlohmann::json serializePlayerStats(const PlayerStats& stats) {
+    //    return stats.to_json();
+    //}
+
+    //// New function to deserialize a PlayerStats object.
+    //PlayerStats deserializePlayerStats(const nlohmann::json& j) {
+    //    PlayerStats stats;
+    //    stats.from_json(j);
+    //    return stats;
+    //}
+
+
+
+
     // Set an entity with a given ID
     void setEntity(int id, const Entity& entity)
     {
