@@ -82,7 +82,7 @@ namespace PE {
 
 		void ShowDebugTests(bool* Active);
 
-
+		void ShowComponentWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the docking port window
 
@@ -132,7 +132,8 @@ namespace PE {
 		 \brief the callback function for an onkeyevent
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
-		void OnKeyEvent(const temp::Event<temp::KeyEvents>& e);
+		void OnKeyPressedEvent(const temp::Event<temp::KeyEvents>& e);
+		void OnMousePressedEvent(const temp::Event<temp::MouseEvents>& e);
 
 		// ----- Getters ----- // 
 	public:
@@ -165,10 +166,12 @@ namespace PE {
 		bool m_firstLaunch;
 		bool m_debugTests;
 		bool m_showEditor;
+		bool m_showComponentWindow;
 		static std::unique_ptr<ImGuiWindow> s_Instance;
 		std::vector<std::string> m_logOutput;
 		std::vector<std::string> m_consoleOutput;
 		std::string m_input;
+		bool m_objectIsSelected;
 		int m_currentSelectedIndex;
 		std::vector<std::string> m_items;
 		float m_time;
