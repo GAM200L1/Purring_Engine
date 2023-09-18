@@ -16,6 +16,9 @@
 // Audio Stuff - HANS
 #include "AudioManager.h"
 
+// Time
+#include "Time/TimeManager.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -83,13 +86,16 @@ PE::CoreApplication::~CoreApplication()
 
 void PE::CoreApplication::Run()
 {
-	std::cout << "test" << std::endl;
+    TimeManager::GetInstance().EngineStart();
 	// main app loop
 
     while (!glfwWindowShouldClose(m_window))
     {
-        m_fpsController.StartFrame();
+        // time start
+        TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
+
+        //std::cout << TimeManager::GetInstance().GetRunTime() << " Delta Time: " << TimeManager::GetInstance().GetDeltaTime() << std::endl;
 
         // UPDATE -----------------------------------------------------
         
@@ -163,12 +169,20 @@ void PE::CoreApplication::Run()
         // update systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            m_systemList[i]->UpdateSystem(1.f); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            TimeManager::GetInstance().SystemStartFrame(i);
+            m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            TimeManager::GetInstance().SystemEndFrame(i);
         }
 
+        //-----System profiling to be moved to IMGUI
+        std::cout << "Percentage %: " << TimeManager::GetInstance().GetSystemFrameTime(0) << ", " 
+                  << TimeManager::GetInstance().GetFrameTime() << " | "
+                  << ((TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime()) * 100.f) << "%" << '\n';
+        //-----------------------
         
         engine_logger.FlushLog();
 
+        TimeManager::GetInstance().EndFrame();
         m_fpsController.EndFrame();
     }
 
