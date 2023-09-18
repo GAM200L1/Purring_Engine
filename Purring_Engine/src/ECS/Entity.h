@@ -361,8 +361,12 @@ namespace PE
 	template<typename T>
 	ComponentID EntityManager::GetComponentID() const
 	{
-		return (typeid(T).name()[0] == 's') ? typeid(T).name() + 7 :
-			   (typeid(T).name()[0] == 'c') ? typeid(T).name() + 6 : typeid(T).name();
+		ComponentID tmp = typeid(T).name();
+		size_t cPos = tmp.find_last_of(":");
+		cPos = (cPos == std::string::npos) ? 0 : cPos + 1;
+		tmp = tmp.substr(cPos);
+		return (tmp[0] == 's') ? tmp.substr(7) :
+			   (tmp[0] == 'c') ? tmp.substr(6) : tmp;
 	}
 
 	template<typename T>
@@ -416,8 +420,10 @@ namespace PE
 	template <typename T>
 	void EntityManager::Copy(EntityID id, const T& src)
 	{
-		if (Has<T>(id))
-			Get<T>(id) = src;
+		if (m_componentPools[GetComponentID<T>()]->HasEntity(id))
+		{
+			new (GetPointer<T>(id)) T(src);
+		}
 	}
 
 	template<typename T>
