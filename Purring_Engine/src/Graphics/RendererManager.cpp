@@ -115,7 +115,7 @@ namespace PE
             texObj.CreateTextureObject("../Textures/duck-rgba-256.tex");
 
             // Add a triangle and quad as renderable objects
-            AddRendererObject(EnumMeshType::QUAD, 400.f, 400.f, 0.f,
+            /*AddRendererObject(EnumMeshType::QUAD, 400.f, 400.f, 0.f,
                 glm::vec2{ 0.f, 0.f }, texObj, glm::vec4{ 1.f, 0.f, 0.f, 0.5f });
             AddRendererObject(EnumMeshType::TRIANGLE, 100.f, 400.f, 45.f,
                 glm::vec2{ 200.f, 400.f }, texObj, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
@@ -123,13 +123,13 @@ namespace PE
             AddRendererObject(EnumMeshType::QUAD, 100.f, 100.f, 20.f,
                 glm::vec2{ -300.f, -300.f }, glm::vec4{ 1.f, 1.f, 0.f, 1.f});
             AddRendererObject(EnumMeshType::TRIANGLE, 200.f, 200.f, -10.f,
-                glm::vec2{ -100.f, -100.f }, glm::vec4{ 0.f, 1.f, 1.f, 0.5f});
+                glm::vec2{ -100.f, -100.f }, glm::vec4{ 0.f, 1.f, 1.f, 0.5f});*/
 
-            AddDebugSquare(400.f, 200.f, 30.f, glm::vec2{10.f, 30.f}, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
-            AddDebugSquare(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
-            AddDebugLine(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
-            AddDebugCircle(250.f, glm::vec2{ -200.f, 200.f }, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
-            AddDebugPoint(glm::vec2{ 10.f, 0.f }, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
+            AddDebugSquare(100.f, 100.f, 0.f, glm::vec2{10.f, 10.f}, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
+            //AddDebugSquare(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
+            //AddDebugLine(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
+            AddDebugCircle(50.f, glm::vec2{ 10.f, 80.f }, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
+            //AddDebugPoint(glm::vec2{ 10.f, 0.f }, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -463,9 +463,8 @@ namespace PE
             Renderer newRenderer{};
             newRenderer.meshType = EnumMeshType::DEBUG_CIRCLE;
 
-            float diameter{ radius * 2.f };
-            newRenderer.transform.width = diameter;
-            newRenderer.transform.height = diameter;
+            newRenderer.transform.width = radius;
+            newRenderer.transform.height = radius;
             newRenderer.transform.position = r_centerPosition;
 
             newRenderer.color = r_color;
