@@ -73,18 +73,30 @@ namespace PE
             inline std::string GetName() { return m_systemName; }
 
             /*!***********************************************************************************
-             \brief Draws all renderable objects in [m_renderableObjects].
+             \brief Calls DrawRenderer() on all renderable objects in [m_renderableObjects].
 
              \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
             *************************************************************************************/
             void DrawScene(glm::mat4 const& r_viewToNdc);
 
             /*!***********************************************************************************
-             \brief Draws all debug objects in [m_renderableObjects].
+             \brief Calls DrawRenderer() on all debug objects in [m_lineObjects] and 
+                    [m_pointObjects].
 
              \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
             *************************************************************************************/
             void DrawDebug(glm::mat4 const& r_viewToNdc);
+
+            /*!***********************************************************************************
+             \brief Binds the shader program, vertex array object and texture and makes the
+                    draw call for the [r_renderer] passed in.
+
+             \param[in] r_renderer Renderer object with all the information to draw with.
+             \param[in] primitiveType GL Primitive type to make the draw call with.
+             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+            *************************************************************************************/
+            void DrawRenderer(Renderer const& r_renderer, GLenum const primitiveType, 
+                glm::mat4 const& r_viewToNdc);
 
             /*!***********************************************************************************
              \brief Adds a filled renderer object to be drawn.

@@ -46,7 +46,7 @@ namespace temp
 
         \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
         *************************************************************************************/
-        glm::mat4 GetTransformMatrix()
+        glm::mat4 GetTransformMatrix() const
         {
             // Get scale matrix
             glm::mat4 scale_matrix{
@@ -90,7 +90,7 @@ namespace temp
         /*!***********************************************************************************
          \brief Binds this texture object.
         *************************************************************************************/
-        void BindTextureObject() 
+        void BindTextureObject() const
         {
             // Bind the texture
             glBindTextureUnit(textureUnit, textureObjectHandle);
@@ -105,7 +105,7 @@ namespace temp
 
          \param[in] textureUnit Texture unit that this object was bound to
         *************************************************************************************/
-        void UnbindTextureObject()
+        void UnbindTextureObject() const
         {
             // Retrieve current texture
             GLint currentTexture{};

@@ -224,56 +224,7 @@ namespace PE
         {
             // Call glDrawElements for each renderable object
             for (auto& renderable : m_triangleObjects) {
-                auto shaderProgram{ m_shaderPrograms.find(renderable.shaderProgramName) };
-
-                // Check if shader program is valid
-                if (shaderProgram == m_shaderPrograms.end()) 
-                {
-                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                    engine_logger.SetTime();
-                    engine_logger.AddLog(false, "Shader program " + renderable.shaderProgramName + " does not exist.", __FUNCTION__);
-                    continue;
-                }
-
-                m_shaderPrograms[renderable.shaderProgramName]->Use();
-
-                // Check if mesh index is valid
-                unsigned char meshIndex{ static_cast<unsigned char>(renderable.meshType) };
-                if (meshIndex >= m_meshes.size()) 
-                {
-                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                    engine_logger.SetTime();
-                    engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
-                }
-
-                m_meshes[meshIndex].BindMesh();
-
-                // Pass the model to NDC transform matrix as a uniform variable
-                m_shaderPrograms[renderable.shaderProgramName]->SetUniform( "uModelToNdc",
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix()
-                );
-
-                // Pass the color of the quad as a uniform variable
-                m_shaderPrograms[renderable.shaderProgramName]->SetUniform("uColor", renderable.color);
-
-                // Bind the texture object
-                if (renderable.texture.textureObjectHandle != 0) 
-                {
-                    renderable.texture.BindTextureObject();
-                    m_shaderPrograms[renderable.shaderProgramName]->SetUniform("uTextureSampler2d", renderable.texture.textureUnit);
-                    m_shaderPrograms[renderable.shaderProgramName]->SetUniform("uIsTextured", true);
-                }
-                else {
-                    m_shaderPrograms[renderable.shaderProgramName]->SetUniform("uIsTextured", false);
-                }
-
-                glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-                    GL_UNSIGNED_SHORT, NULL);
-
-                // Unbind everything
-                m_meshes[meshIndex].UnbindMesh();
-                m_shaderPrograms[renderable.shaderProgramName]->UnUse();                
-                renderable.texture.UnbindTextureObject();
+                DrawRenderer(renderable, GL_TRIANGLES, r_viewToNdc);
             }
         }
 
@@ -284,106 +235,74 @@ namespace PE
 
             // Make draw call for each debug object
             for (auto& debugShape : m_lineObjects) {
-                auto shaderProgram{ m_shaderPrograms.find(debugShape.shaderProgramName) };
-
-                // Check if shader program is valid
-                if (shaderProgram == m_shaderPrograms.end())
-                {
-                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                    engine_logger.SetTime();
-                    engine_logger.AddLog(false, "Shader program " + debugShape.shaderProgramName + " does not exist.", __FUNCTION__);
-                    continue;
-                }
-
-                m_shaderPrograms[debugShape.shaderProgramName]->Use();
-
-                // Check if mesh index is valid
-                unsigned char meshIndex{ static_cast<unsigned char>(debugShape.meshType) };
-                if (meshIndex >= m_meshes.size())
-                {
-                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                    engine_logger.SetTime();
-                    engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
-                }
-
-                m_meshes[meshIndex].BindMesh();
-
-
-                // Pass the model to NDC transform matrix as a uniform variable
-                m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uModelToNdc",
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * debugShape.transform.GetTransformMatrix()
-                );
-
-                // Pass the color of the quad as a uniform variable
-                m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uColor", debugShape.color);
-
-                // Bind the texture object
-                if (debugShape.texture.textureObjectHandle != 0)
-                {
-                    debugShape.texture.BindTextureObject();
-                    m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uTextureSampler2d", debugShape.texture.textureUnit);
-                    m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uIsTextured", true);
-                }
-                else {
-                    m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uIsTextured", false);
-                }
-
-
-                glDrawElements(GL_LINES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-                    GL_UNSIGNED_SHORT, NULL);
-
-                // Unbind everything
-                m_meshes[meshIndex].UnbindMesh();
-                m_shaderPrograms[debugShape.shaderProgramName]->UnUse();
-                debugShape.texture.UnbindTextureObject();
+                DrawRenderer(debugShape, GL_LINES, r_viewToNdc);
             }
 
             glPointSize(10.f);
 
             // Make draw call for each point
             for (auto& point : m_pointObjects) {
-                auto shaderProgram{ m_shaderPrograms.find(point.shaderProgramName) };
-
-                // Check if shader program is valid
-                if (shaderProgram == m_shaderPrograms.end())
-                {
-                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                    engine_logger.SetTime();
-                    engine_logger.AddLog(false, "Shader program " + point.shaderProgramName + " does not exist.", __FUNCTION__);
-                    continue;
-                }
-
-                m_shaderPrograms[point.shaderProgramName]->Use();
-
-                // Check if mesh index is valid
-                unsigned char meshIndex{ static_cast<unsigned char>(point.meshType) };
-                if (meshIndex >= m_meshes.size())
-                {
-                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                    engine_logger.SetTime();
-                    engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
-                }
-
-                m_meshes[meshIndex].BindMesh();
-
-
-                // Pass the model to NDC transform matrix as a uniform variable
-                m_shaderPrograms[point.shaderProgramName]->SetUniform("uModelToNdc",
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * point.transform.GetTransformMatrix()
-                );
-
-                // Pass the color of the quad as a uniform variable
-                m_shaderPrograms[point.shaderProgramName]->SetUniform("uColor", point.color);
-                
-                glDrawArrays(GL_POINTS, 0, 1);
-
-                // Unbind everything
-                m_meshes[meshIndex].UnbindMesh();
-                m_shaderPrograms[point.shaderProgramName]->UnUse();
+                DrawRenderer(point, GL_POINTS, r_viewToNdc);
             }
 
             glPointSize(1.f);
             glLineWidth(1.f);
+        }
+
+
+        void RendererManager::DrawRenderer(Renderer const& r_renderer, GLenum const primitiveType, glm::mat4 const& r_viewToNdc)
+        {
+            auto shaderProgram{ m_shaderPrograms.find(r_renderer.shaderProgramName) };
+
+            // Check if shader program is valid
+            if (shaderProgram == m_shaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + r_renderer.shaderProgramName + " does not exist.", __FUNCTION__);
+                return;
+            }
+
+            m_shaderPrograms[r_renderer.shaderProgramName]->Use();
+
+            // Check if mesh index is valid
+            unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.meshType) };
+            if (meshIndex >= m_meshes.size())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+                return;
+            }
+
+            m_meshes[meshIndex].BindMesh();
+
+            // Pass the model to NDC transform matrix as a uniform variable
+            m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uModelToNdc",
+                r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * r_renderer.transform.GetTransformMatrix()
+            );
+
+            // Pass the color of the quad as a uniform variable
+            m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uColor", r_renderer.color);
+
+            // Bind the texture object
+            if (r_renderer.texture.textureObjectHandle != 0)
+            {
+                r_renderer.texture.BindTextureObject();
+                m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uTextureSampler2d", r_renderer.texture.textureUnit);
+                m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uIsTextured", true);
+            }
+            else {
+                m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uIsTextured", false);
+            }
+
+            glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL);
+
+            // Unbind everything
+            m_meshes[meshIndex].UnbindMesh();
+            m_shaderPrograms[r_renderer.shaderProgramName]->UnUse();
+            r_renderer.texture.UnbindTextureObject();
         }
 
 
