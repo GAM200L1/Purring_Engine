@@ -139,43 +139,54 @@ namespace PE
 	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
 	{
 		float interTime{ 1.f };
-		if (r_circle.center.x >= r_AABB.min.x && r_circle.center.x <= r_AABB.max.x && r_circle.center.y >= r_AABB.min.y && r_circle.center.y <= r_AABB.max.y)
-		{ return true; }
+		int collided = 0;
 
 		if (r_circle.center.x < r_AABB.min.x) // left side
 		{
 			LineSegment lineSeg{ r_AABB.min, vec2{r_AABB.min.x, r_AABB.max.y} };
-			CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
+			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
 			std::cout << "Left\n";
 		}
 		else if (r_circle.center.x > r_AABB.max.x) // right side
 		{
 			LineSegment lineSeg{ r_AABB.max, vec2{r_AABB.max.x, r_AABB.min.y} };
-			CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
+			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
 			std::cout << "Right\n";
+		}
+		else
+		{
+			collided += 1;
 		}
 		if (r_circle.center.y < r_AABB.min.y) // bottom side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.max.x, r_AABB.min.y}, r_AABB.min };
-			CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
+			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
 			std::cout << "bottom\n";
 		}
 		else if (r_circle.center.y > r_AABB.max.y) // top side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
-			CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
+			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
 			std::cout << "top\n";
 		}
+		{
+			collided += 1;
+		}
 
-		return (interTime != 1.f)? true : false;
+		return (collided >= 2);
 	}
 
 	// Circle + Line
-	bool CircleLineIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1, float& r_interTime, Contact& r_contactPt)
+	int CircleLineIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1, float& r_interTime, Contact& r_contactPt)
 	{
-		float const check = Dot(r_lineSeg.normal, r_circle.center) - Dot(r_lineSeg.normal, r_lineSeg.point0);
-		if (check <= -r_circle.radius || check >= r_circle.radius)
+		float const check = Dot(r_lineSeg.normal, r_circle.center - r_lineSeg.point0);
+		if (check <= r_circle.radius)
 		{
+			float p0centerLength = (r_circle.center - r_lineSeg.point0).LengthSquared();
+			float p1centerLength = (r_circle.center - r_lineSeg.point1).LengthSquared();
+			float radiusSquare = r_circle.radius * r_circle.radius;
+			return (p0centerLength <= radiusSquare) + (p1centerLength <= radiusSquare);
+
 			vec2 normalScaleRadius = (check <= -r_circle.radius) ? -(r_lineSeg.normal * r_circle.radius) : (r_lineSeg.normal * r_circle.radius);
 
 			vec2 _p0 = r_lineSeg.point0 + normalScaleRadius;

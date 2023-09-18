@@ -46,8 +46,8 @@ PE::CoreApplication::CoreApplication()
     tmp2.colliderVariant = CircleCollider();
     PE::g_entityFactory->Copy(id, tmp);
     PE::g_entityFactory->Copy(id2, tmp2);
-    PE::g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
-    PE::g_entityManager->Get<Transform>(id2).position = vec2{ 80.f, 0.f };
+    PE::g_entityManager->Get<Transform>(id).position = vec2{ 40.f, 84.f };
+    PE::g_entityManager->Get<Transform>(id2).position = vec2{ 130.f, 50.f };
     PE::g_entityManager->Get<Transform>(id).scale = vec2{ 100.f, 100.f };
     PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 100.f, 100.f };
 

@@ -125,10 +125,10 @@ namespace PE
             AddRendererObject(EnumMeshType::TRIANGLE, 200.f, 200.f, -10.f,
                 glm::vec2{ -100.f, -100.f }, glm::vec4{ 0.f, 1.f, 1.f, 0.5f});*/
 
-            AddDebugSquare(100.f, 100.f, 0.f, glm::vec2{10.f, 10.f}, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
+            AddDebugSquare(100.f, 100.f, 0.f, glm::vec2{40.f, 84.f}, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
             //AddDebugSquare(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
             //AddDebugLine(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
-            AddDebugCircle(50.f, glm::vec2{ 10.f, 80.f }, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
+            AddDebugCircle(50.f, glm::vec2{ 130.f, 50.f }, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
             //AddDebugPoint(glm::vec2{ 10.f, 0.f }, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);

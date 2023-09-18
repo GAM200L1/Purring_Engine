@@ -162,19 +162,49 @@ namespace PE
 		}
 	}
 
+	//void WindowManager::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
+	//{
+	//	ImGuiWindow::GetInstance()->addLog(e.ToString());
+	//	switch (e.GetType())
+	//	{
+	//	case temp::KeyEvents::KeyPressed:
+	//		event_logger.AddLog(false, e.ToString(), __FUNCTION__);
+	//		break;
+	//	case temp::KeyEvents::KeyRelease:
+	//		event_logger.AddLog(false, e.ToString(), __FUNCTION__);
+	//		break;
+	//	default:
+	//		break;
+	//	}
+	//}
+
 	void WindowManager::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
 	{
 		ImGuiWindow::GetInstance()->addLog(e.ToString());
-		switch (e.GetType())
+		//commented so it stops flooding the console
+		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
+		//event_logger.FlushLog();
+		temp::KeyPressedEvent KPE;
+
+		//dynamic cast
+		if (e.GetType() == temp::KeyEvents::KeyPressed)
 		{
-		case temp::KeyEvents::KeyPressed:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		case temp::KeyEvents::KeyRelease:
-			event_logger.AddLog(false, e.ToString(), __FUNCTION__);
-			break;
-		default:
-			break;
+			KPE = dynamic_cast<const temp::KeyPressedEvent&>(e);
+		}
+
+		//may want to change this to switch case to look cleaner
+
+		if (KPE.keycode == GLFW_KEY_W)
+		{
+		}
+		if (KPE.keycode == GLFW_KEY_A)
+		{
+		}
+		if (KPE.keycode == GLFW_KEY_S)
+		{
+		}
+		if (KPE.keycode == GLFW_KEY_D)
+		{
 		}
 	}
 
