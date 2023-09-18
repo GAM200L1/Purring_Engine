@@ -180,107 +180,107 @@
 /// Returns true if all initializations are successful, otherwise returns false.
 /// </returns>
 ----------------------------------------------------------------------------- */
-bool AudioManager::Init()
-{
-    // Create the FMOD System object
-    FMOD_RESULT result = FMOD::System_Create(&system);
-
-    // Check if FMOD System object was successfully created
-    if (result != FMOD_OK)
-    {
-        std::cout << "FMOD System_Create failed: " << FMOD_ErrorString(result) << "\n";
-        return false;                           // Return false if init failed
-    }
-
-    // Initialize the FMOD System object with 512 channels
-    result = system->init(512, FMOD_INIT_NORMAL, 0);
-
-    // Check if FMOD System was successfully initialized
-    if (result != FMOD_OK)
-    {
-        std::cout << "FMOD init failed: " << FMOD_ErrorString(result) << "\n";
-        return false;                           // Return false if init failed
-    }
-
-    // Create the sound object for sound1
-    result = system->createSound("../Assets/Audio/sound1.wav", FMOD_DEFAULT, 0, &sound1);
-
-    // Check if sound1 was successfully created
-    if (result != FMOD_OK)
-    {
-        std::cout << "FMOD createSound failed for sound1: " << FMOD_ErrorString(result) << "\n";
-        return false;                           // Return false if init failed
-    }
-
-    // Create the sound object for sound2
-    result = system->createSound("../Assets/Audio/sound2.wav", FMOD_DEFAULT, 0, &sound2);
-
-    // Check if sound2 was successfully created
-    if (result != FMOD_OK)
-    {
-        std::cout << "FMOD createSound failed for sound2: " << FMOD_ErrorString(result) << "\n";
-        return false;                           // Return false if init failed
-    }
-
-    return true;
-}
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Updates the FMOD audio system.
-/// This method calles once per frame keeping the FMOD system updated.
-/// </summary>
------------------------------------------------------------------------------ */
-void AudioManager::Update()
-{
-    system->update();
-}
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Plays a sound specified by the file path.
-/// The method maps the given filePath to a preloaded FMOD::Sound object and plays it.
-/// </summary>
-/// <param name="filePath">
-/// The file path of the sound to be played.
-/// </param>
------------------------------------------------------------------------------ */
-void AudioManager::PlaySound(const char* filePath)
-{
-    FMOD::Sound* sound = nullptr;
-
-    if (strcmp(filePath, "../Assets/Audio/sound1.wav") == 0) {
-        sound = sound1;
-    }
-    else if (strcmp(filePath, "../Assets/Audio/sound2.wav") == 0) {
-        sound = sound2;
-    }
-
-    if (sound) {
-        FMOD_RESULT result = system->playSound(sound, 0, false, &channel1);
-        if (result != FMOD_OK) {
-            std::cout << "Failed to play sound: " << FMOD_ErrorString(result) << "\n";
-        }
-    }
-    else {
-        std::cout << "Sound not found for filePath: " << filePath << "\n";
-    }
-}
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Stops any sound currently being played on channel1 and channel2.
-/// This method checks if the channels are initialized and then stops the sound playback.
-/// </summary>
------------------------------------------------------------------------------ */
-void AudioManager::StopSound()
-{
-    if (channel1) channel1->stop();
-    if (channel2) channel2->stop();
-}
+//bool AudioManager::Init()
+//{
+//    // Create the FMOD System object
+//    FMOD_RESULT result = FMOD::System_Create(&system);
+//
+//    // Check if FMOD System object was successfully created
+//    if (result != FMOD_OK)
+//    {
+//        std::cout << "FMOD System_Create failed: " << FMOD_ErrorString(result) << "\n";
+//        return false;                           // Return false if init failed
+//    }
+//
+//    // Initialize the FMOD System object with 512 channels
+//    result = system->init(512, FMOD_INIT_NORMAL, 0);
+//
+//    // Check if FMOD System was successfully initialized
+//    if (result != FMOD_OK)
+//    {
+//        std::cout << "FMOD init failed: " << FMOD_ErrorString(result) << "\n";
+//        return false;                           // Return false if init failed
+//    }
+//
+//    // Create the sound object for sound1
+//    result = system->createSound("../Assets/Audio/sound1.wav", FMOD_DEFAULT, 0, &sound1);
+//
+//    // Check if sound1 was successfully created
+//    if (result != FMOD_OK)
+//    {
+//        std::cout << "FMOD createSound failed for sound1: " << FMOD_ErrorString(result) << "\n";
+//        return false;                           // Return false if init failed
+//    }
+//
+//    // Create the sound object for sound2
+//    result = system->createSound("../Assets/Audio/sound2.wav", FMOD_DEFAULT, 0, &sound2);
+//
+//    // Check if sound2 was successfully created
+//    if (result != FMOD_OK)
+//    {
+//        std::cout << "FMOD createSound failed for sound2: " << FMOD_ErrorString(result) << "\n";
+//        return false;                           // Return false if init failed
+//    }
+//
+//    return true;
+//}
+//
+//
+//
+///*-----------------------------------------------------------------------------
+///// <summary>
+///// Updates the FMOD audio system.
+///// This method calles once per frame keeping the FMOD system updated.
+///// </summary>
+//----------------------------------------------------------------------------- */
+//void AudioManager::Update()
+//{
+//    system->update();
+//}
+//
+//
+//
+///*-----------------------------------------------------------------------------
+///// <summary>
+///// Plays a sound specified by the file path.
+///// The method maps the given filePath to a preloaded FMOD::Sound object and plays it.
+///// </summary>
+///// <param name="filePath">
+///// The file path of the sound to be played.
+///// </param>
+//----------------------------------------------------------------------------- */
+//void AudioManager::PlaySound(const char* filePath)
+//{
+//    FMOD::Sound* sound = nullptr;
+//
+//    if (strcmp(filePath, "../Assets/Audio/sound1.wav") == 0) {
+//        sound = sound1;
+//    }
+//    else if (strcmp(filePath, "../Assets/Audio/sound2.wav") == 0) {
+//        sound = sound2;
+//    }
+//
+//    if (sound) {
+//        FMOD_RESULT result = system->playSound(sound, 0, false, &channel1);
+//        if (result != FMOD_OK) {
+//            std::cout << "Failed to play sound: " << FMOD_ErrorString(result) << "\n";
+//        }
+//    }
+//    else {
+//        std::cout << "Sound not found for filePath: " << filePath << "\n";
+//    }
+//}
+//
+//
+//
+///*-----------------------------------------------------------------------------
+///// <summary>
+///// Stops any sound currently being played on channel1 and channel2.
+///// This method checks if the channels are initialized and then stops the sound playback.
+///// </summary>
+//----------------------------------------------------------------------------- */
+//void AudioManager::StopSound()
+//{
+//    if (channel1) channel1->stop();
+//    if (channel2) channel2->stop();
+//}

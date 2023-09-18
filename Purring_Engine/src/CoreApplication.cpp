@@ -34,30 +34,28 @@ PE::EntityFactory entityFactory;
 
 PE::CoreApplication::CoreApplication()
 {
-
-
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
     REGISTERCOMPONENT(Collider, sizeof(Collider));
     REGISTERCOMPONENT(Transform, sizeof(Transform));
     EntityID id = g_entityFactory->CreateEntity();
     EntityID id2 = g_entityFactory->CreateEntity();
-    PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
-    PE::g_entityFactory->Assign(id2, { "RigidBody", "Collider", "Transform"});
+    PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform" });
+    PE::g_entityFactory->Assign(id2, { "RigidBody", "Collider", "Transform" });
     Collider tmp, tmp2;
-    tmp.colliderVariant = CircleCollider();
-    tmp2.colliderVariant = AABBCollider();
+    tmp.colliderVariant = AABBCollider();
+    tmp2.colliderVariant = CircleCollider();
     PE::g_entityFactory->Copy(id, tmp);
     PE::g_entityFactory->Copy(id2, tmp2);
-    PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
-    PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
-    PE::g_entityManager->Get<Transform>(id).scale = vec2{ 10.f, 10.f };
-    PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 10.f, 10.f };
+    PE::g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+    PE::g_entityManager->Get<Transform>(id2).position = vec2{ 80.f, 0.f };
+    PE::g_entityManager->Get<Transform>(id).scale = vec2{ 100.f, 100.f };
+    PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 100.f, 100.f };
 
 
-	m_Running = true;
-	m_lastFrameTime = 0;
-	  m_Running = true;
-	  m_lastFrameTime = 0.0;
+    m_Running = true;
+    m_lastFrameTime = 0;
+    m_Running = true;
+    m_lastFrameTime = 0.0;
 
     // Create and set up the window using WindowManager
     m_window = m_windowManager.InitWindow(1000, 1000, "Engine");
@@ -71,13 +69,12 @@ PE::CoreApplication::CoreApplication()
     // Pass the pointer to the GLFW window to the rendererManager
     m_rendererManager = new Graphics::RendererManager{ m_window };
     AddSystem(m_rendererManager);
-
+}
     // Audio Stuff - HANS
     /*m_audioManager.Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
-    }
-}
+    }*/
 
 PE::CoreApplication::~CoreApplication()
 {
@@ -146,8 +143,11 @@ void PE::CoreApplication::Run()
         {
             m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
         }
+        // PhysicsManager::UpdateDynamics(deltaTime)
+        CollisionManager::UpdateColliders();
+        CollisionManager::TestColliders();
 
-        // Audio Stuff - HANS
+        /*// Audio Stuff - HANS
         //m_audioManager.Update();
 
         const int audioKeys[] = { GLFW_KEY_A, GLFW_KEY_S };
@@ -166,7 +166,7 @@ void PE::CoreApplication::Run()
                     m_audioManager.PlaySound("../Assets/Audio/sound2.wav");
                 }
             }
-        }
+        }*/
 
         // Update the title to show FPS (every second in this example)
         double currentTime = glfwGetTime();
@@ -188,13 +188,13 @@ void PE::CoreApplication::Run()
     }
 
     // Clean up of imgui functions
-    ImGui_ImplOpenGL3_Shutdown();
+    /*ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
     // Cleanup (if needed)
     m_windowManager.Cleanup();
-    PE::ResourceManager::UnloadResources();
+    PE::ResourceManager::UnloadResources();*/
 }
 
 void PE::CoreApplication::InitSystems()
