@@ -15,13 +15,13 @@
 #include "prpch.h"
 #include "EntityFactory.h"
 
-namespace Engine
+namespace PE
 {
 	// The pointer to the current instance
 	EntityFactory* g_entityFactory{ nullptr };
 
 	
-	EntityFactory::EntityFactory() : p_entityManager(Engine::g_entityManager)
+	EntityFactory::EntityFactory() : p_entityManager(PE::g_entityManager)
 	{ 
 		if (g_entityFactory != nullptr)
 			throw;

@@ -1,5 +1,5 @@
 #pragma once
-//#define GLEW_STATIC
+#define GLFW_INCLUDE_NONE
 
 #include "CoreApplication.h"
 
@@ -8,6 +8,7 @@ extern PE::CoreApplication* PE::CreateApplication();
 int main(int argc, char** argv) {
 	
 	auto app = PE::CreateApplication();
+	app->InitSystems();
 	app->Run();
-	delete app;
+	app->DestroySystems();
 }

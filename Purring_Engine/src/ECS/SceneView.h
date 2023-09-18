@@ -23,7 +23,7 @@
 #include "Components.h"
 
 
-namespace Engine
+namespace PE
 {
 	/*!***********************************************************************************
 	 \brief 
@@ -39,7 +39,7 @@ namespace Engine
 		 \brief Construct a new Scene View object
 		 
 		*************************************************************************************/
-		SceneView() : p_entityManager(Engine::g_entityManager)
+		SceneView() : p_entityManager(PE::g_entityManager)
 		{
 			// checks if the number of components is zero
 			if constexpr (sizeof...(ComponentTypes))
@@ -72,7 +72,7 @@ namespace Engine
 			 \param[in] all 		Whether or not the scope is to all copmonents
 			*************************************************************************************/
 			Iterator(EntityID index, const std::set<ComponentID>& components, bool all) :
-				p_entityManager(Engine::g_entityManager), m_index(index), m_components(components), m_all(all)
+				p_entityManager(PE::g_entityManager), m_index(index), m_components(components), m_all(all)
 			{
 			}
 
@@ -156,7 +156,7 @@ namespace Engine
 			}
 			
 			// ptr to the entity manager
-			Engine::EntityManager* p_entityManager;
+			PE::EntityManager* p_entityManager;
 			// the current index/entity
 			EntityID m_index;
 			// the set of components in this scope
@@ -213,7 +213,7 @@ namespace Engine
 		}
 
 		// ptr to the entity manager
-		Engine::EntityManager* p_entityManager{ nullptr };
+		PE::EntityManager* p_entityManager{ nullptr };
 		// the components for this scope
 		std::set<ComponentID> m_components;
 		// flag for toggling whether all components are in scope

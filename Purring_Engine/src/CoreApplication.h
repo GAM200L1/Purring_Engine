@@ -8,6 +8,8 @@
 //tmp
 #include "WindowManager.h"
 #include "FrameRateTargetControl.h"
+#include "Graphics/RendererManager.h"
+#include "AudioManager.h"
 
 namespace PE {
 
@@ -34,9 +36,6 @@ namespace PE {
 		void AddLayer(Layer* layer);
 		void AddOverlay(Layer* overlay);
 
-		// tmp
-		void PrintSpecs();
-
 		//inline static Application& Get() { return *s_Instance; }
 		//inline Window& GetWindow() { return *m_Window; }
 	private:
@@ -60,6 +59,9 @@ namespace PE {
 
 	private:
 		//static Application* s_Instance;
+
+		// Audio Stuff - HANS
+		//AudioManager m_audioManager;
 	};
 
 	// defined by client

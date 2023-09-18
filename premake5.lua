@@ -19,6 +19,7 @@ IncludeDir["ImGui"]         = "vendor/imgui"
 IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
+IncludeDir["FMOD"]          = "vendor/FMOD/core/inc" -- CORE
 
 -- external libraries
 group "Library"
@@ -86,7 +87,8 @@ group "Library"
         includedirs
         {
             "vendor/imgui",
-            "%{IncludeDir.GLFW}"
+            "%{IncludeDir.GLFW}",
+            "%{IncludeDir.FMOD}"
         }
 
         filter "system:windows"
@@ -99,6 +101,7 @@ group "Library"
         filter "configurations:Release"
             runtime "Release"
             optimize "on"
+   
 group ""
 
 -- Purring_Engine
@@ -110,6 +113,8 @@ project "Purring_Engine"
 
     language "C++"
     cppdialect "C++17"
+    
+    warnings "Extra"
 
     targetdir("bin/" .. outputdir .. "/%{prj.name}")
     objdir("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -135,12 +140,14 @@ project "Purring_Engine"
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
-        "%{IncludeDir.GLEW}"
+        "%{IncludeDir.GLEW}",
+        "%{IncludeDir.FMOD}"
     }
 
     libdirs
     {
-        "vendor/GLEW/lib/Release/x64"
+        "vendor/GLEW/lib/Release/x64",
+        "vendor/FMOD/core/lib/x64"
     }
 
     links
@@ -148,7 +155,8 @@ project "Purring_Engine"
         "GLFW",
         "glew32s",
         "ImGui",
-        "opengl32.lib" -- not sure if needed
+        "opengl32.lib",  -- not sure if needed
+        "fmod_vc",
     }
 
     filter "system:windows"
@@ -172,12 +180,15 @@ project "Application"
     language "C++"
     cppdialect "C++17"
 
+    warnings "Extra"
+
     targetdir("bin/" .. outputdir .. "/%{prj.name}")
     objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 
 	files
 	{
 		"%{prj.name}/src/**.h",
+        "%{prj.name}/src/**.hpp",
 		"%{prj.name}/src/**.cpp"
 	}
 
@@ -187,12 +198,24 @@ project "Application"
         "Purring_Engine/src",
         "vendor",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.GLFW}"        
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLEW}",
+        "%{IncludeDir.FMOD}"
+    }
+
+    libdirs
+    {
+
     }
 
     links
     {
         "Purring_Engine"
+    }
+
+    postbuildcommands
+    {
+        ("{COPY} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application")
     }
 
     filter "system:windows"
@@ -205,4 +228,3 @@ project "Application"
     filter "configurations:Release"
 			runtime "Release"
 			optimize "on"
-
