@@ -94,10 +94,10 @@ namespace PE
              \param[in] r_renderer Renderer object with all the information to draw with.
              \param[in] r_shaderProgram Shader program to use.
              \param[in] primitiveType GL Primitive type to make the draw call with.
-             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+             \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
             *************************************************************************************/
             void DrawRenderer(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, GLenum const primitiveType,
-                glm::mat4 const& r_viewToNdc);
+                glm::mat4 const& r_modelToNdc);
 
             /*!***********************************************************************************
              \brief Adds a filled renderer object to be drawn.
@@ -116,7 +116,7 @@ namespace PE
                 glm::vec2 const& r_position, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
 
             /*!***********************************************************************************
-             \brief Adds a filled/textured renderer object to be drawn.
+             \brief Adds a textured renderer object to be drawn.
              
              \param[in] meshType Type of mesh (Quad or triangle).
              \param[in] width Width of the mesh.
@@ -131,6 +131,36 @@ namespace PE
             void AddRendererObject(EnumMeshType meshType,
                 float const width, float const height,
                 float const orientation, glm::vec2 const& r_position,
+                std::string const& r_textureName, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+            
+            /*!***********************************************************************************
+             \brief Adds a filled renderer object to be drawn the same size as the window.
+             
+             \param[in] meshType Type of mesh (Quad or triangle).
+             \param[in] width Width of the mesh.
+             \param[in] height Height of the mesh.
+             \param[in] orientation Angle (in degrees) of the square about the z-axis from the
+                                    x-axis. Positive for counter-clockwise rotation, negative
+                                    for clockwise.
+             \param[in] r_position Position of the center of the mesh.
+             \param[in] r_color Color of the object fill. White by default.
+            *************************************************************************************/
+            void AddBackgroundObject(float const width, float const height, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Adds a textured renderer object to be drawn the same size as the window.
+             
+             \param[in] meshType Type of mesh (Quad or triangle).
+             \param[in] width Width of the mesh.
+             \param[in] height Height of the mesh.
+             \param[in] orientation Angle (in degrees) of the square about the z-axis from the 
+                                    x-axis. Positive for counter-clockwise rotation, negative 
+                                    for clockwise.
+             \param[in] r_position Position of the center of the mesh.
+             \param[in] r_texture Texture to apply to the mesh.
+             \param[in] r_color Color of the object fill. White by default.
+            *************************************************************************************/
+            void AddBackgroundObject(float const width, float const height,
                 std::string const& r_textureName, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
             
             /*!***********************************************************************************
@@ -208,6 +238,9 @@ namespace PE
             //! Container of textured and filled objects to draw
             std::vector<Graphics::Renderer> m_triangleObjects{};
 
+            //! Container of textured and filled objects to draw that should have the same size as the window
+            std::vector<Graphics::Renderer> m_backgroundObjects{};
+
             //! Container of debug objects to draw
             std::vector<Graphics::Renderer> m_lineObjects{};
 
@@ -218,7 +251,7 @@ namespace PE
             // ----- For rendering to ImGui window ----- //
             GLuint m_frameBufferObjectIndex{}; //! Frame buffer object to draw to render to ImGui window
             GLuint m_imguiTextureId{}; //! Texture ID of the texture generated to render to the ImGui window
-
+            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
 
             // ----- Private methods ----- //
         private:

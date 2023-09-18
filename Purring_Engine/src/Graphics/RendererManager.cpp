@@ -55,6 +55,7 @@ namespace PE
             int width, height;
             glfwGetWindowSize(p_windowRef, &width, &height);
             CreateFrameBuffer(width, height);
+            m_cachedWindowWidth = width, m_cachedWindowHeight = height;
 
             ImGuiWindow::GetInstance()->Init(p_windowRef);
 
@@ -71,6 +72,10 @@ namespace PE
             
             // Load a texture
             ResourceManager::GetInstance()->LoadTextureFromFile(m_defaultTextureName, "../Textures/Cat1_128x128.png");
+
+            // Add background objects
+            AddBackgroundObject(width, height, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
+            AddBackgroundObject(width, height, m_defaultTextureName, glm::vec4{ 1.f, 1.f, 0.f, 0.5f });
 
             // Add a triangle and quad as renderable objects
             AddRendererObject(EnumMeshType::QUAD, 400.f, 400.f, 0.f,
@@ -107,10 +112,23 @@ namespace PE
             float windowWidth{}, windowHeight{};
             ImGuiWindow::GetInstance()->GetWindowSize(windowWidth, windowHeight);
 
-            GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
-            GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
-            ResizeFrameBuffer(windowWidthInt, windowHeightInt);
-            glViewport(0, 0, windowWidthInt, windowHeightInt);
+            // If the window size has changed
+            if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight) 
+            {
+                m_cachedWindowWidth = windowWidth, m_cachedWindowHeight = windowHeight;
+
+                // Update the frame buffer
+                GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
+                GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
+                ResizeFrameBuffer(windowWidthInt, windowHeightInt);
+                glViewport(0, 0, windowWidthInt, windowHeightInt);
+
+                // Update size of background objects
+                for (auto& backgroundObject : m_backgroundObjects) {
+                    backgroundObject.transform.width = windowWidth;
+                    backgroundObject.transform.height = windowHeight;
+                }
+            }
 
             // Set background color to black
             glClearColor(0.f, 0.f, 0.f, 1.f);
@@ -181,10 +199,17 @@ namespace PE
                 return;
             }
 
+            // Make draw call for each background object
+            for (auto& backgroundObject : m_backgroundObjects) {
+                DrawRenderer(backgroundObject, *(shaderProgramIterator->second), GL_TRIANGLES,
+                    r_viewToNdc * backgroundObject.transform.GetTransformMatrix());
+            }
+
             // Call glDrawElements for each renderable object
             for (auto& renderable : m_triangleObjects) {
 
-                DrawRenderer(renderable, *(shaderProgramIterator->second), GL_TRIANGLES, r_viewToNdc);
+                DrawRenderer(renderable, *(shaderProgramIterator->second), GL_TRIANGLES,
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix());
             }
         }
 
@@ -206,14 +231,16 @@ namespace PE
 
             // Make draw call for each debug object
             for (auto& debugShape : m_lineObjects) {
-                DrawRenderer(debugShape, *(shaderProgramIterator->second), GL_LINES, r_viewToNdc);
+                DrawRenderer(debugShape, *(shaderProgramIterator->second), GL_LINES, 
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * debugShape.transform.GetTransformMatrix());
             }
 
             glPointSize(10.f);
 
             // Make draw call for each point
             for (auto& point : m_pointObjects) {
-                DrawRenderer(point, *(shaderProgramIterator->second), GL_POINTS, r_viewToNdc);
+                DrawRenderer(point, *(shaderProgramIterator->second), GL_POINTS, 
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * point.transform.GetTransformMatrix());
             }
 
             glPointSize(1.f);
@@ -221,7 +248,7 @@ namespace PE
         }
 
 
-        void RendererManager::DrawRenderer(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, GLenum const primitiveType, glm::mat4 const& r_viewToNdc)
+        void RendererManager::DrawRenderer(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
         {
             r_shaderProgram.Use();
 
@@ -239,7 +266,7 @@ namespace PE
 
             // Pass the model to NDC transform matrix as a uniform variable
             r_shaderProgram.SetUniform("uModelToNdc",
-                r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * r_renderer.transform.GetTransformMatrix()
+                r_modelToNdc
             );
 
             // Pass the color of the quad as a uniform variable
@@ -305,6 +332,40 @@ namespace PE
             newRenderer.color = r_color;
 
             m_triangleObjects.emplace_back(newRenderer);
+        }
+
+        void RendererManager::AddBackgroundObject(
+            float const width, float const height, glm::vec4 const& r_color)
+        {
+            Renderer newRenderer{};
+            newRenderer.meshType = EnumMeshType::QUAD;
+
+            newRenderer.transform.width = width;
+            newRenderer.transform.height = height;
+            newRenderer.transform.orientation = 0.f;
+            newRenderer.transform.position = glm::vec2{ 0.f, 0.f };
+
+            newRenderer.color = r_color;
+
+            m_backgroundObjects.emplace_back(newRenderer);
+        }
+
+        void RendererManager::AddBackgroundObject(
+            float const width, float const height,
+            std::string const& r_texture, glm::vec4 const& r_color)
+        {
+            Renderer newRenderer{};
+            newRenderer.meshType = EnumMeshType::QUAD;
+
+            newRenderer.transform.width = width;
+            newRenderer.transform.height = height;
+            newRenderer.transform.orientation = 0.f;
+            newRenderer.transform.position = glm::vec2{ 0.f, 0.f };
+
+            newRenderer.p_texture = ResourceManager::GetInstance()->GetTexture(r_texture);
+            newRenderer.color = r_color;
+
+            m_backgroundObjects.emplace_back(newRenderer);
         }
 
         void RendererManager::AddDebugSquare(
