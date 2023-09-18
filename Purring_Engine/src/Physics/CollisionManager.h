@@ -21,24 +21,23 @@ namespace PE
 	class CollisionManager
 	{
 	public:
-
-		CollisionManager() = default;
-
+		
 		// ----- Removed Copy Ctors/Assignments ----- //
 		CollisionManager(CollisionManager const& r_cpyCollisionManager) = delete;
 		CollisionManager& operator=(CollisionManager const& r_cpyCollisionManager) = delete;
 
 		// ----- Public Getters ----- //
-		CollisionManager* GetInstance();
+		static CollisionManager* GetInstance();
 
 		// ----- Public Methods ----- //
-		void UpdateColliders();
-		void TestColliders();
-		void ResolveCollision();
+		static void UpdateColliders();
+		static void TestColliders();
+		static void ResolveCollision();
 
 	private:
-		CollisionManager* m_ptrInstance;
-		std::vector<Manifold> m_manifolds;
+		CollisionManager() {}
+		static std::vector<Manifold> m_manifolds;
+		static CollisionManager* m_ptrInstance;
 	};
 
 	// Static + Dynamic Collision Checks

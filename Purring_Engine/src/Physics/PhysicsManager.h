@@ -23,15 +23,15 @@ namespace PE
 
 		// ----- Public Getters ----- //
 		PhysicsManager() = default;
-		PhysicsManager* GetInstance();
+		static PhysicsManager* GetInstance();
 
 		// ----- Public Methods ----- //
-		void UpdateDynamics(float deltaTime); // update forces, acceleration and velocity here
-		void UpdatePositions(float deltaTime); // update positions here
+		static void UpdateDynamics(float deltaTime); // update forces, acceleration and velocity here
+		static void UpdatePositions(float deltaTime); // update positions here
 
 	private:
 		// ----- Private Variables ----- //
-		PhysicsManager* m_ptrInstance;
-		float m_worldGravity;
+		static PhysicsManager* m_ptrInstance;
+		static float m_worldGravity;
 	};
 }

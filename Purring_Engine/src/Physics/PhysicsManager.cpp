@@ -55,7 +55,7 @@ namespace PE
 			{ continue; }
 			
 			vec2& objPos = g_entityManager->Get<Transform>(objectID).position;
-				objPos += rb.m_velocity * deltaTime;
+			objPos += rb.m_velocity * deltaTime;
 		}
 	}
 }
