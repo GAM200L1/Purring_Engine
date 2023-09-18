@@ -1,6 +1,202 @@
 #include "prpch.h"
-
 #include "SerializationManager.h"
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Serialize an entity's data into a JSON object.
+/// This function takes an entity ID as input and serializes the entity's data
+/// into a JSON format, including its name and various data fields.
+/// </summary>
+/// <param name="entityID">The ID of the entity to serialize.</param>
+/// <returns>A JSON object containing the serialized entity data.</returns>
+----------------------------------------------------------------------------- */
+nlohmann::json SerializationManager::serializeEntity(int entityID)
+{
+    nlohmann::json j;                           // Create a JSON object to store the serialized data.
+    Entity& entity = entities[entityID];        // Get a reference to the entity with the specified ID.
+
+    // Set the entity's name in the JSON object.
+    j["Entity"]["name"] = entity.name;
+
+    // Loop through the data associated with the entity.
+    for (const auto& [key, val] : entity.data)
+    {
+        // Check the type of the data stored in 'val' using std::type_info.
+        if (val.type() == typeid(int))
+        {
+            // If it's an int, add type information and the int value to JSON.
+            j["Entity"]["data"][key]["type"] = "int";
+            j["Entity"]["data"][key]["value"] = std::any_cast<int>(val);
+        }
+        else if (val.type() == typeid(float))
+        {
+            // If it's a float, add type information and the float value to JSON.
+            j["Entity"]["data"][key]["type"] = "float";
+            j["Entity"]["data"][key]["value"] = std::any_cast<float>(val);
+        }
+        else if (val.type() == typeid(std::string))
+        {
+            // If it's a string, add type information and the string value to JSON.
+            j["Entity"]["data"][key]["type"] = "string";
+            j["Entity"]["data"][key]["value"] = std::any_cast<std::string>(val);
+        }
+        else if (val.type() == typeid(std::vector<int>))
+        {
+            // If it's a vector of int(s), add type information and the vector value to JSON.
+            j["Entity"]["data"][key]["type"] = "vector<int>";
+            j["Entity"]["data"][key]["value"] = std::any_cast<std::vector<int>>(val);
+        }
+        // To add similar blocks for other data types in the future..... -hans
+    }
+
+    return j; // Return the JSON object containing the serialized entity.
+}
+
+
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Deserialize a JSON object into an Entity and an associated entity ID.
+/// This function takes a JSON object and extracts information to create an
+/// Entity object and its associated entity ID. It then parses the entity's name to
+/// determine the ID and processes data fields.
+/// </summary>
+/// <param name="j">The JSON object containing the serialized entity data.</param>
+/// <returns>A pair containing the deserialized Entity and its associated entity ID.</returns>
+----------------------------------------------------------------------------- */
+std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::json& j)
+{
+    Entity entity;                              // Create an empty Entity object to store the deserialized data.
+    int entityID = -1;                          // Initialize entityID with a failure code.
+
+    if (j.contains("Entity"))
+    {
+        entity.name = j["Entity"]["name"];      // Extract the entity's name from the JSON.
+
+        // Find the last underscore in the entity's name to extract the entityID.
+        size_t lastUnderscore = entity.name.find_last_of('_');
+        std::string idString;
+
+        if (lastUnderscore != std::string::npos)
+        {
+            idString = entity.name.substr(lastUnderscore + 1);
+        }
+        else
+        {
+            // Handle the case when there's no underscore in the name.
+            idString = "";                      // @jw, you can define some default behavior here if you want to.
+        }
+
+        // Convert the extracted ID string to an integer, or set entityID to -1 if it's empty.
+        entityID = (idString.empty()) ? -1 : std::stoi(idString);
+
+        // Loop through the data items in the JSON and deserialize them based on their types.
+        for (const auto& [key, val] : j["Entity"]["data"].items())
+        {
+            std::string type = val["type"];
+
+            // Deserialize and store data based on their types.
+            if (type == "int")
+            {
+                entity.data[key] = std::any(val["value"].get<int>());
+            }
+            else if (type == "float")
+            {
+                entity.data[key] = std::any(val["value"].get<float>());
+            }
+            else if (type == "string")
+            {
+                entity.data[key] = std::any(val["value"].get<std::string>());
+            }
+            else if (type == "vector<int>")
+            {
+                entity.data[key] = std::any(val["value"].get<std::vector<int>>());
+            }
+            // To add similar blocks for other data types in the future..... -hans
+        }
+    }
+
+    // Return a pair containing the deserialized entity and its entityID.
+    return std::make_pair(entity, entityID);
+}
+
+
+
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Save a serialized Entity to a JSON file.
+/// This function takes a serialized Entity in JSON format and writes it to a
+/// specified file. It includes the entity's data and structure.
+/// </summary>
+/// <param name="filename">The name of the file to save the JSON data to.</param>
+/// <param name="entityID">The ID of the entity to serialize and save.</param>
+----------------------------------------------------------------------------- */
+void SerializationManager::saveToFile(const std::string& filename, int entityID)
+{
+    // Serialize the entity with the given entityID into a JSON object.
+    nlohmann::json serializedEntity = serializeEntity(entityID);
+
+    // Open the specified file for writing.
+    std::ofstream outFile(filename);
+
+    if (outFile.is_open())
+    {
+        // Write the serialized JSON to the file with 4-space indentation for readability.
+        outFile << serializedEntity.dump(4);
+
+        // Close the file after writing.
+        outFile.close();
+    }
+    else
+    {
+        // Print an error message if the file couldn't be opened for writing.
+        std::cerr << "Could not open the file for writing: " << filename << std::endl;
+    }
+}
+
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Load and deserialize an Entity from a JSON file.
+/// This function reads a JSON file containing serialized entity data and
+/// deserializes it into an Entity object. It returns a pair containing the
+/// deserialized Entity and an associated entity ID.
+/// </summary>
+/// <param name="filename">The name of the JSON file to load data from.</param>
+/// <returns>A pair containing the deserialized Entity and its associated entity ID,
+///          or an empty Entity and a failure code if the file cannot be opened.</returns>
+----------------------------------------------------------------------------- */
+std::pair<Entity, int> SerializationManager::loadFromFile(const std::string& filename)
+{
+    // Open the specified file for reading.
+    std::ifstream inFile(filename);
+
+    if (!inFile.is_open())
+    {
+        // Print an error message if the file couldn't be opened for reading.
+        std::cerr << "Could not open the file for reading: " << filename << std::endl;
+        return std::make_pair(Entity(), -1);        // Return an empty Entity and a failure code.
+    }
+
+    nlohmann::json j;
+
+    // Read the JSON data from the file into the 'j' JSON object.
+    inFile >> j;
+
+    // Close the file after reading.
+    inFile.close();
+
+    // Call the deserializeEntity function to convert the JSON into an Entity and entityID.
+    return deserializeEntity(j);
+}
+
+
+/*------------------------------------------------ OLD STUFF -----------------------------------------------------*/
+
 
 //nlohmann::json SerializationManager::serializeEntity(int entityID)
 //{
@@ -31,93 +227,6 @@
 //
 //    return { e, e.id };
 //}
-
-nlohmann::json SerializationManager::serializeEntity(int entityID)
-{
-    nlohmann::json j;
-    Entity& entity = entities[entityID];
-
-    j["Entity"]["name"] = entity.name;
-
-    for (const auto& [key, val] : entity.data) {
-        if (val.type() == typeid(int)) {
-            j["Entity"]["data"][key]["type"] = "int";
-            j["Entity"]["data"][key]["value"] = std::any_cast<int>(val);
-        }
-        else if (val.type() == typeid(float)) {
-            j["Entity"]["data"][key]["type"] = "float";
-            j["Entity"]["data"][key]["value"] = std::any_cast<float>(val);
-        }
-        else if (val.type() == typeid(std::string)) {
-            j["Entity"]["data"][key]["type"] = "string";
-            j["Entity"]["data"][key]["value"] = std::any_cast<std::string>(val);
-        }
-        else if (val.type() == typeid(std::vector<int>)) {
-            j["Entity"]["data"][key]["type"] = "vector<int>";
-            j["Entity"]["data"][key]["value"] = std::any_cast<std::vector<int>>(val);
-        }
-        // handle other types
-    }
-
-    return j;
-}
-
-std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::json& j)
-{
-    Entity entity;
-    int entityID = -1; // Initialize with a failure code
-
-    if (j.contains("Entity")) {
-        try {
-            entity.name = j["Entity"]["name"];
-            size_t lastUnderscore = entity.name.find_last_of('_');
-            std::string idString;
-
-            if (lastUnderscore != std::string::npos) {
-                idString = entity.name.substr(lastUnderscore + 1);
-            }
-            else {
-                // Handle the case when there's no underscore
-                idString = ""; // or some other default behavior
-            }
-
-            std::cout << "Extracting entityID from: " << idString << std::endl; // Debug line
-            entityID = (idString.empty()) ? -1 : std::stoi(idString); // -1 if idString is empty
-        }
-        catch (const std::invalid_argument& e) {
-            std::cout << "Invalid argument for stoi: " << entity.name << std::endl;
-            return std::make_pair(Entity(), -1);
-        }
-        catch (const std::out_of_range& e) {
-            std::cout << "Out of range for stoi: " << entity.name << std::endl;
-            return std::make_pair(Entity(), -1);
-        }
-
-        for (const auto& [key, val] : j["Entity"]["data"].items())
-        {
-            std::string type = val["type"];
-            if (type == "int") {
-                entity.data[key] = std::any(val["value"].get<int>());
-            }
-            else if (type == "float") {
-                entity.data[key] = std::any(val["value"].get<float>());
-            }
-            else if (type == "string") {
-                entity.data[key] = std::any(val["value"].get<std::string>());
-            }
-            else if (type == "vector<int>") {
-                entity.data[key] = std::any(val["value"].get<std::vector<int>>());
-            }
-            // handle other types
-        }
-    }
-    return std::make_pair(entity, entityID);
-}
-
-
-
-
-
 
 //void SerializationManager::saveToFile(const std::string& filename, int entityID)
 //{
@@ -158,32 +267,3 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
 //        return { Entity{}, -1 };                            // Return an 'invalid' entity and ID
 //    }
 //}
-
-void SerializationManager::saveToFile(const std::string& filename, int entityID) {
-    nlohmann::json serializedEntity = serializeEntity(entityID);
-
-    // Write JSON to file
-    std::ofstream outFile(filename);
-    if (outFile.is_open()) {
-        outFile << serializedEntity.dump(4);  // The '4' argument pretty-prints the JSON with 4-space indentation
-        outFile.close();
-    }
-    else {
-        std::cerr << "Could not open the file for writing: " << filename << std::endl;
-    }
-}
-
-std::pair<Entity, int> SerializationManager::loadFromFile(const std::string& filename) {
-    std::ifstream inFile(filename);
-    if (!inFile.is_open()) {
-        std::cerr << "Could not open the file for reading: " << filename << std::endl;
-        return std::make_pair(Entity(), -1); // Return an empty Entity and a failure code
-    }
-
-    nlohmann::json j;
-    inFile >> j;
-    inFile.close();
-
-    return deserializeEntity(j);
-}
-
