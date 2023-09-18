@@ -15,9 +15,13 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
+#include "Data/SerializationManager.h"
+
+
 // testing
 Logger engine_logger = Logger("ENGINE");
-
+// Create an instance of the SerializationManager class.
+SerializationManager sm;
 
 PE::CoreApplication::CoreApplication()
 {
@@ -102,6 +106,77 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
+
+
+        // Initialize an Entity and set its name 
+        Entity entity1;
+        entity1.name = "TestEntity1";
+        entity1.data["someInt"] = std::any(42);
+        entity1.data["someFloat"] = std::any(3.14f);
+        entity1.data["someString"] = std::any(std::string("Hello, world!"));
+        entity1.data["someIntArray"] = std::any(std::vector<int>{1, 2, 3, 4, 5});
+
+        // Add the Entity to the SerializationManager
+        sm.setEntity(1, entity1);
+
+        // S to serialize
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            sm.saveToFile("serializedEntity.json", 1);
+            std::cout << "Entity has been serialized and saved to 'serializedEntity.json'." << std::endl;
+        }
+
+        // L to deserialize
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            try {
+                std::pair<Entity, int> loadedData = sm.loadFromFile("serializedEntity.json");
+                Entity loadedEntity = loadedData.first;
+                int entityID = loadedData.second;
+
+                if (entityID != -1) {
+                    std::cout << "Successfully loaded entity with ID: " << entityID << std::endl;
+                }
+                else {
+                    std::cout << "Failed to load entity from file." << std::endl;
+                }
+            }
+            catch (const std::exception& e) {
+                std::cerr << "Exception caught: " << e.what() << std::endl;
+            }
+        }
+
+
+        //// Initialize newEntity with new fields
+        //Entity newEntity;
+        //newEntity.id = 5;
+        //newEntity.someInt = 42;
+        //newEntity.someFloat = 3.14f;
+        //newEntity.someDouble = 2.71828;
+        //newEntity.someChar = 'A';
+        //newEntity.someBool = true;
+        //newEntity.someString = "Hello, world!";
+
+        //// Set entity in manager
+        //manager.setEntity(5, newEntity);
+
+        //// Just for example, let's assume you press the 'S' key to serialize data
+        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        //{
+        //    // Serialize data
+        //    manager.saveToFile("SavedFile.json", 5);
+        //}
+
+        //// Let's assume you press the 'L' key to load serialized data
+        //if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        //{
+        //    // Deserialize data
+        //    auto [loadedEntity, loadedID] = manager.loadFromFile("SavedFile.json");
+        //    // Now loadedEntity contains the deserialized data, use it as needed
+        //}
+
+
+
 
 
 

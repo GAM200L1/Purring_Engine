@@ -128,6 +128,10 @@ namespace Engine
 		template<typename ... T>
 		void Copy(EntityID id, T ... component);
 
+		// Hans
+		void AssignComponent(EntityID id, const std::string& name, int componentData);
+
+
 	// ----- Private Variables ----- //
 	private:
 		typedef std::map<ComponentID, ComponentCreator*> ComponentMapType; // component map typedef

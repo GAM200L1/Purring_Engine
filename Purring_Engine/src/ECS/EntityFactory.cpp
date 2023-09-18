@@ -62,5 +62,14 @@ namespace Engine
 	{
 		m_componentMap[name] = creator;
 	}
+
+	// Hans
+	void EntityFactory::AssignComponent(EntityID id, const std::string& name, int componentData)
+	{
+		// Here you will assign and initialize the component to the entity
+		// For now, I'll leave this as a placeholder.
+		// This might call something like:
+		// entityManager->AssignComponent(id, name, componentData);
+	}
 	
 }
