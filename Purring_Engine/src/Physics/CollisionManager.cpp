@@ -72,7 +72,9 @@ namespace PE
 					{
 						Contact contactPt;
 						if (CollisionIntersection(col1, col2, ColliderID_1, ColliderID_2, contactPt))
-						{							
+						{						
+							std::cout << "Collided!\n";
+
 							// adds collided objects so that it won't be checked again
 							collider1.objectsCollided.emplace(ColliderID_2);
 							collider2.objectsCollided.emplace(ColliderID_1);
@@ -122,7 +124,7 @@ namespace PE
 		{ return false; }
 		if ((r_circle1.center - r_circle2.center).LengthSquared() < r_circle2.radius * r_circle2.radius)
 		{ return false; }
-		std::cout << "yay\n";
+
 		// to do dynamic detection
 		return true;
 	}
@@ -137,28 +139,35 @@ namespace PE
 	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
 	{
 		float interTime{ 1.f };
+		if (r_circle.center.x >= r_AABB.min.x && r_circle.center.x <= r_AABB.max.x && r_circle.center.y >= r_AABB.min.y && r_circle.center.y <= r_AABB.max.y)
+		{ return true; }
+
 		if (r_circle.center.x < r_AABB.min.x) // left side
 		{
 			LineSegment lineSeg{ r_AABB.min, vec2{r_AABB.min.x, r_AABB.max.y} };
 			CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
+			std::cout << "Left\n";
 		}
 		else if (r_circle.center.x > r_AABB.max.x) // right side
 		{
 			LineSegment lineSeg{ r_AABB.max, vec2{r_AABB.max.x, r_AABB.min.y} };
 			CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
+			std::cout << "Right\n";
 		}
 		if (r_circle.center.y < r_AABB.min.y) // bottom side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.max.x, r_AABB.min.y}, r_AABB.min };
 			CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
+			std::cout << "bottom\n";
 		}
 		else if (r_circle.center.y > r_AABB.max.y) // top side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
 			CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
+			std::cout << "top\n";
 		}
 
-		return (interTime != 1.f);
+		return (interTime != 1.f)? true : false;
 	}
 
 	// Circle + Line
