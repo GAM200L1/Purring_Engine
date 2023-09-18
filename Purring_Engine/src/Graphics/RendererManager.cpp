@@ -22,6 +22,7 @@
 
 #include "Logging/Logger.h" 
 #include "RendererManager.h"
+#include "ResourceManager/ResourceManager.h"
 
 #include "Imgui/ImGuiWindow.h"
 
@@ -65,60 +66,17 @@ namespace PE
             InitializeSquareMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_SQUARE)]);
             InitializeLineMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_LINE)]);
 
-            // Create a shader program
-            // Store the vert shader
-            const std::string vertexShaderString{ R"(            
-                #version 460 core
-
-                layout (location = 0) in vec2 aVertexPosition; // IN vertex position
-                layout (location = 2) in vec2 aTextureCoord;   // IN texture coordinate
-
-                layout (location = 0) out vec2 vTextureCoord;     // OUT texture coordinate
-
-                uniform mat4 uModelToNdc;
-
-                void main(void) {
-                  gl_Position = uModelToNdc * vec4(aVertexPosition, 0.0, 1.0);
-	                vTextureCoord = aTextureCoord;
-                }
-            )" };
-
-            // Store the fragment shader
-            const std::string fragmentShaderString{ R"(        
-                #version 460 core
-
-                layout (location = 0) in vec2 vTextureCoord;     // IN texture coordinate
-
-                layout (location = 0) out vec4 fFragColor;	// OUT RGBA color
-
-                uniform vec4 uColor;	// RGBA color to tint the texture
-                uniform sampler2D uTextureSampler2d;   // Texture sampler to access texture image
-                uniform bool uIsTextured; // Set to true to sample texture coordinates, false to just use the color
-
-                void main(void) {
-	                if(uIsTextured)
-	                {
-		                // Sample the texture using the texture coordinates
-		                fFragColor = texture(uTextureSampler2d, vTextureCoord);
-		                fFragColor *= uColor;
-	                } 
-	                else 
-	                {
-		                fFragColor = uColor;
-	                }
-                }
-            )" };
-
-            m_shaderPrograms["basic"] = new ShaderProgram{};
-            m_shaderPrograms["basic"]->CompileLinkValidateProgram(vertexShaderString, fragmentShaderString);
-
-            texObj.CreateTextureObject("../Textures/duck-rgba-256.tex");
+            // Load a shader program
+            ResourceManager::GetInstance()->LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
+            
+            // Load a texture
+            ResourceManager::GetInstance()->LoadTextureFromFile(m_defaultTextureName, "../Textures/Cat1_128x128.png");
 
             // Add a triangle and quad as renderable objects
             AddRendererObject(EnumMeshType::QUAD, 400.f, 400.f, 0.f,
-                glm::vec2{ 0.f, 0.f }, texObj, glm::vec4{ 1.f, 0.f, 0.f, 0.5f });
+                glm::vec2{ 0.f, 0.f }, m_defaultTextureName, glm::vec4{ 1.f, 0.f, 0.f, 0.5f });
             AddRendererObject(EnumMeshType::TRIANGLE, 100.f, 400.f, 45.f,
-                glm::vec2{ 200.f, 400.f }, texObj, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
+                glm::vec2{ 200.f, 400.f }, m_defaultTextureName, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
 
             AddRendererObject(EnumMeshType::QUAD, 100.f, 100.f, 20.f,
                 glm::vec2{ -300.f, -300.f }, glm::vec4{ 1.f, 1.f, 0.f, 1.f});
@@ -204,45 +162,58 @@ namespace PE
             }
             m_meshes.clear();
 
-            // Delete the shader programs
-            for (auto& shaderProgram : m_shaderPrograms) {
-                shaderProgram.second->DeleteProgram();
-                delete shaderProgram.second;
-            }
-            m_shaderPrograms.clear();
-
             // Delete the framebuffer object
             glDeleteTextures(1, &m_imguiTextureId);
             glDeleteFramebuffers(1, &m_frameBufferObjectIndex);
-
-            // Delete the texture object
-            glDeleteTextures(1, &(texObj.textureObjectHandle));
         }
 
 
         void RendererManager::DrawScene(glm::mat4 const& r_viewToNdc)
         {
+            auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
+
+            // Check if shader program is valid
+            if (shaderProgramIterator == ResourceManager::GetInstance()->ShaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + m_defaultShaderProgramKey + " does not exist.", __FUNCTION__);
+                return;
+            }
+
             // Call glDrawElements for each renderable object
             for (auto& renderable : m_triangleObjects) {
-                DrawRenderer(renderable, GL_TRIANGLES, r_viewToNdc);
+
+                DrawRenderer(renderable, *(shaderProgramIterator->second), GL_TRIANGLES, r_viewToNdc);
             }
         }
 
 
         void RendererManager::DrawDebug(glm::mat4 const& r_viewToNdc)
         {
+            auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
+
+            // Check if shader program is valid
+            if (shaderProgramIterator == ResourceManager::GetInstance()->ShaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + m_defaultShaderProgramKey + " does not exist.", __FUNCTION__);
+                return;
+            }
+
             glLineWidth(3.f);
 
             // Make draw call for each debug object
             for (auto& debugShape : m_lineObjects) {
-                DrawRenderer(debugShape, GL_LINES, r_viewToNdc);
+                DrawRenderer(debugShape, *(shaderProgramIterator->second), GL_LINES, r_viewToNdc);
             }
 
             glPointSize(10.f);
 
             // Make draw call for each point
             for (auto& point : m_pointObjects) {
-                DrawRenderer(point, GL_POINTS, r_viewToNdc);
+                DrawRenderer(point, *(shaderProgramIterator->second), GL_POINTS, r_viewToNdc);
             }
 
             glPointSize(1.f);
@@ -250,20 +221,9 @@ namespace PE
         }
 
 
-        void RendererManager::DrawRenderer(Renderer const& r_renderer, GLenum const primitiveType, glm::mat4 const& r_viewToNdc)
+        void RendererManager::DrawRenderer(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, GLenum const primitiveType, glm::mat4 const& r_viewToNdc)
         {
-            auto shaderProgram{ m_shaderPrograms.find(r_renderer.shaderProgramName) };
-
-            // Check if shader program is valid
-            if (shaderProgram == m_shaderPrograms.end())
-            {
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(false, "Shader program " + r_renderer.shaderProgramName + " does not exist.", __FUNCTION__);
-                return;
-            }
-
-            m_shaderPrograms[r_renderer.shaderProgramName]->Use();
+            r_shaderProgram.Use();
 
             // Check if mesh index is valid
             unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.meshType) };
@@ -278,22 +238,23 @@ namespace PE
             m_meshes[meshIndex].BindMesh();
 
             // Pass the model to NDC transform matrix as a uniform variable
-            m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uModelToNdc",
+            r_shaderProgram.SetUniform("uModelToNdc",
                 r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * r_renderer.transform.GetTransformMatrix()
             );
 
             // Pass the color of the quad as a uniform variable
-            m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uColor", r_renderer.color);
+            r_shaderProgram.SetUniform("uColor", r_renderer.color);
 
             // Bind the texture object
-            if (r_renderer.texture.textureObjectHandle != 0)
+            if (r_renderer.p_texture != nullptr)
             {
-                r_renderer.texture.BindTextureObject();
-                m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uTextureSampler2d", r_renderer.texture.textureUnit);
-                m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uIsTextured", true);
+                unsigned int textureUnit{ 0 };
+                r_renderer.p_texture->Bind(textureUnit);
+                r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+                r_shaderProgram.SetUniform("uIsTextured", true);
             }
             else {
-                m_shaderPrograms[r_renderer.shaderProgramName]->SetUniform("uIsTextured", false);
+                r_shaderProgram.SetUniform("uIsTextured", false);
             }
 
             glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
@@ -301,8 +262,12 @@ namespace PE
 
             // Unbind everything
             m_meshes[meshIndex].UnbindMesh();
-            m_shaderPrograms[r_renderer.shaderProgramName]->UnUse();
-            r_renderer.texture.UnbindTextureObject();
+            r_shaderProgram.UnUse();
+
+            if (r_renderer.p_texture != nullptr)
+            {
+                r_renderer.p_texture->Unbind();
+            }
         }
 
 
@@ -326,7 +291,7 @@ namespace PE
         void RendererManager::AddRendererObject(EnumMeshType meshType,
             float const width, float const height,
             float const orientation, glm::vec2 const& r_position,
-            temp::Texture const& r_texture, glm::vec4 const& r_color)
+            std::string const& r_texture, glm::vec4 const& r_color)
         {
             Renderer newRenderer{};
             newRenderer.meshType = meshType;
@@ -336,7 +301,7 @@ namespace PE
             newRenderer.transform.orientation = orientation;
             newRenderer.transform.position = r_position;
 
-            newRenderer.texture = r_texture;
+            newRenderer.p_texture = ResourceManager::GetInstance()->GetTexture(r_texture);
             newRenderer.color = r_color;
 
             m_triangleObjects.emplace_back(newRenderer);
@@ -381,10 +346,11 @@ namespace PE
         {
             Renderer newRenderer{};
             newRenderer.meshType = EnumMeshType::DEBUG_CIRCLE;
-
-            float diameter{ radius * 2.f };
-            newRenderer.transform.width = diameter;
-            newRenderer.transform.height = diameter;
+            
+            // circle mesh has a radius of two, so setting the width and height
+            // to the radius is what we want
+            newRenderer.transform.width = radius; 
+            newRenderer.transform.height = radius;
             newRenderer.transform.position = r_centerPosition;
 
             newRenderer.color = r_color;

@@ -27,8 +27,8 @@ namespace PE
         class ShaderProgram
         {
         public:
-            ShaderProgram();
-            ~ShaderProgram();
+            ShaderProgram();    // Does nothing.
+            ~ShaderProgram();   // Deletes the shader program.
 
             // ----- Public methods ----- //
         public:
@@ -65,12 +65,12 @@ namespace PE
             /*!***********************************************************************************
              \brief Use this program.
             *************************************************************************************/
-            void Use();
+            void Use() const;
 
             /*!***********************************************************************************
              \brief Stop using this program.
             *************************************************************************************/
-            void UnUse();
+            void UnUse() const;
 
             /*!***********************************************************************************
              \brief Delete the shader program. Call this when cleaning up.

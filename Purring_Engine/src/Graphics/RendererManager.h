@@ -92,10 +92,11 @@ namespace PE
                     draw call for the [r_renderer] passed in.
 
              \param[in] r_renderer Renderer object with all the information to draw with.
+             \param[in] r_shaderProgram Shader program to use.
              \param[in] primitiveType GL Primitive type to make the draw call with.
              \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
             *************************************************************************************/
-            void DrawRenderer(Renderer const& r_renderer, GLenum const primitiveType, 
+            void DrawRenderer(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, GLenum const primitiveType,
                 glm::mat4 const& r_viewToNdc);
 
             /*!***********************************************************************************
@@ -130,7 +131,7 @@ namespace PE
             void AddRendererObject(EnumMeshType meshType,
                 float const width, float const height,
                 float const orientation, glm::vec2 const& r_position,
-                temp::Texture const& r_texture, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+                std::string const& r_textureName, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
             
             /*!***********************************************************************************
              \brief Adds the outline of a square to be drawn when debug mode is enabled. 
@@ -195,10 +196,11 @@ namespace PE
 
             std::string m_systemName{ "Graphics" }; //! Name of system
 
-            temp::Texture texObj{}; //! Temp texture
+            //! Default texture to use
+            std::string m_defaultTextureName{ "Cat" };
 
-            //! Container of shaders
-            std::map<std::string, Graphics::ShaderProgram*> m_shaderPrograms;
+            //! Default shader program to use
+            std::string m_defaultShaderProgramKey{"Textured"};
 
             //! Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};

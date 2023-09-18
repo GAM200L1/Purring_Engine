@@ -90,6 +90,7 @@ namespace PE
         if (!Textures[r_name]->CreateTexture(r_filePath))
         {
             // fail to create texture, throw?
+            std::cout << "Couldn't create texture " << r_filePath << std::endl;
         }
     }
 

@@ -44,7 +44,7 @@ namespace PE
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(true, "Destroyng shader program", __FUNCTION__);
+            engine_logger.AddLog(true, "Destroying shader program", __FUNCTION__);
             DeleteProgram();
         }
 
@@ -175,7 +175,7 @@ namespace PE
         }
 
 
-        void ShaderProgram::Use()
+        void ShaderProgram::Use() const
         {
             if (m_programId > 0 && m_isLinked)
             {
@@ -184,7 +184,7 @@ namespace PE
         }
 
 
-        void ShaderProgram::UnUse()
+        void ShaderProgram::UnUse() const
         {
             glUseProgram(0);
         }

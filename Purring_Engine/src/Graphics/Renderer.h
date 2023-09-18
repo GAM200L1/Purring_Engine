@@ -26,6 +26,7 @@
 #include <iostream>
 
 #include "VertexData.h"
+#include "Texture.h"
 
 // This namespace contains classes made to store the data
 // that should be found in the gameobject / transform components
@@ -78,95 +79,6 @@ namespace temp
             return translation_matrix * rotation_matrix * scale_matrix;
         }
     };
-
-    // Temp class to store texture object members and helper functions
-    class Texture
-    {
-    public:
-        GLuint textureObjectHandle{};		//! Handle to texture object
-        GLuint textureUnit{};				    //! Texture unit that the object is bound to
-        GLenum textureWrapMode{ GL_REPEAT }; //! Texture wrap mode
-
-        /*!***********************************************************************************
-         \brief Binds this texture object.
-        *************************************************************************************/
-        void BindTextureObject() const
-        {
-            // Bind the texture
-            glBindTextureUnit(textureUnit, textureObjectHandle);
-
-            // Set the wrap mode
-            glTextureParameteri(textureObjectHandle, GL_TEXTURE_WRAP_S, static_cast<GLint>(textureWrapMode));
-            glTextureParameteri(textureObjectHandle, GL_TEXTURE_WRAP_T, static_cast<GLint>(textureWrapMode));
-        }
-
-        /*!***********************************************************************************
-         \brief Unbinds this texture object if it is bound.
-
-         \param[in] textureUnit Texture unit that this object was bound to
-        *************************************************************************************/
-        void UnbindTextureObject() const
-        {
-            // Retrieve current texture
-            GLint currentTexture{};
-            glGetIntegerv(GL_TEXTURE_BINDING_2D, &currentTexture);
-
-            // Unbind if currently bound
-            if (static_cast<GLuint>(currentTexture) == textureObjectHandle) 
-            {
-                glBindTextureUnit(textureUnit, 0);
-            }
-        }
-
-        /*!***********************************************************************************
-         \brief Creates a 2D texture object and stores the handle.
-
-         \param[in] pathname Filepath of the texture to load and use as the texture object.
-        *************************************************************************************/
-        void CreateTextureObject(std::string pathname)
-        {
-            GLuint width{ 256 }, height{ 256 }, bytes_per_texel{ 4 };
-
-            // Open the texture file
-            std::ifstream ifs{ pathname, std::ios::binary };
-
-            if (!ifs) {
-                std::cout << "ERROR: Unable to open texture file: "
-                    << pathname << "\n";
-                return;
-            }
-            ifs.seekg(std::ios::beg);
-
-            // Copy contents of the file to heap memory
-            GLuint num_bytes{ width * height * bytes_per_texel };
-            char* ptr_texels{ new char[static_cast<std::size_t>(num_bytes)] };
-
-            while (ifs) {
-                ifs.read(ptr_texels,
-                    static_cast<std::streamsize>(num_bytes));
-            }
-
-            // Define and initialize a handle to the texture object
-            GLuint texobj_hdl;
-            glCreateTextures(GL_TEXTURE_2D, 1, &texobj_hdl);
-
-            // Allocate GPU storage for texture image data loaded from file
-            glTextureStorage2D(texobj_hdl, 1, GL_RGBA8,
-                static_cast<GLsizei>(width), static_cast<GLsizei>(height));
-
-            // Copy image data from client memory to GPU texture buffer memory
-            glTextureSubImage2D(texobj_hdl, 0, 0, 0,
-                static_cast<GLsizei>(width), static_cast<GLsizei>(height),
-                GL_RGBA, GL_UNSIGNED_BYTE, reinterpret_cast<void*>(ptr_texels));
-
-
-            // Delete client-side memory; Data is buffered on GPU
-            delete[] ptr_texels;
-
-            textureObjectHandle = texobj_hdl;
-
-        }
-    };
 }
 
 
@@ -191,10 +103,9 @@ namespace PE
         public:
             bool enabled{ true }; // Set to true to render the object, false not to.
             glm::vec4 color{ 1.f, 0.f, 0.f, 0.5f }; // RGBA values of a color in a range of 0 to 1
-            std::string shaderProgramName{ "basic" }; // Name of the shader program
             Graphics::EnumMeshType meshType{ EnumMeshType::QUAD }; // Type of mesh
             temp::Transform transform{};
-            temp::Texture texture{}; // Will move the texture object out later
+            std::shared_ptr<Graphics::Texture> p_texture{ nullptr }; // Will move the texture object out later
             // obj factory will set a hidden layer value
         };
     } // End of Graphics namespace
