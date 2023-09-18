@@ -26,6 +26,7 @@ Logger engine_logger = Logger("ENGINE");
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
+#include "ECS/SceneView.h"
 
 PE::EntityManager entityManager;
 PE::EntityFactory entityFactory;
@@ -43,7 +44,12 @@ PE::CoreApplication::CoreApplication()
     tmp.colliderVariant = CircleCollider();
     tmp2.colliderVariant = AABBCollider();
     PE::g_entityFactory->Copy(id, tmp);
+    PE::g_entityFactory->Copy(id, RigidBody());
+    PE::g_entityFactory->Copy(id2, RigidBody());
+    PE::g_entityFactory->Copy(id, Transform());
+    PE::g_entityFactory->Copy(id2, Transform());
     PE::g_entityFactory->Copy(id2, tmp2);
+
     PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
     PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
     PE::g_entityManager->Get<Transform>(id).scale = vec2{ 10.f, 10.f };
@@ -75,6 +81,31 @@ PE::CoreApplication::CoreApplication()
     // Pass the pointer to the GLFW window to the rendererManager
     Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
     AddSystem(rendererManager);
+
+
+    for (EntityID id : SceneView())
+    {
+        std::vector<ComponentID> components = g_entityManager->GetComponentIDs(id);
+        std::cout << "Entity " << id << " Has: \n";
+        for (const ComponentID& name : components)
+        {
+            std::cout << name << ", ";
+            if (name == "RigidBody")
+            {
+                std::cout << "Awake: " << g_entityManager->Get<RigidBody>(id).m_awake << std::endl;
+            }
+            if (name == "Collider")
+            {
+                std::cout << "Number of collisions: " <<
+                g_entityManager->Get<Collider>(id).objectsCollided.size() << std::endl;
+            }
+            if (name == "Transform")
+            {
+                std::cout << "Angle: " << g_entityManager->Get<Transform>(id).position.x << std::endl;
+            }
+        }
+        std::cout << std::endl;
+    }
 
     // Audio Stuff - HANS
     /*m_audioManager.Init();
