@@ -16,6 +16,9 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "ECS/Entity.h"
 #include "ECS/SceneView.h"
 
+std::vector<PE::Manifold> PE::CollisionManager::m_manifolds;
+PE::CollisionManager* PE::CollisionManager::m_ptrInstance;
+
 namespace PE
 {
 	// ----- Public Getters ----- //
@@ -205,6 +208,7 @@ namespace PE
 		{
 			return false; // call check line edges function here with true
 		}
+		return false;
 	}
 }
 
