@@ -83,6 +83,8 @@ namespace PE {
 		void ShowDebugTests(bool* Active);
 
 		void ShowComponentWindow(bool* Active);
+
+		void ShowResourceWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the docking port window
 
@@ -159,14 +161,15 @@ namespace PE {
 		void ToggleEditor();
 		// ----- Private Variables ----- // 
 	private:
-		bool m_logsActive;
-		bool m_objectActive;
-		bool m_consoleActive;
-		bool m_sceneViewActive;
-		bool m_firstLaunch;
-		bool m_debugTests;
+		bool m_showLogs;
+		bool m_showObjectList;
+		bool m_showConsole;
+		bool m_showSceneView;
+		bool m_showTestWindows;
 		bool m_showEditor;
 		bool m_showComponentWindow;
+		bool m_showResourceWindow;
+		bool m_firstLaunch;
 		static std::unique_ptr<ImGuiWindow> s_Instance;
 		std::vector<std::string> m_logOutput;
 		std::vector<std::string> m_consoleOutput;
@@ -176,6 +179,7 @@ namespace PE {
 		std::vector<std::string> m_items;
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
+		GLFWwindow* p_window;
 	};
 }
 
