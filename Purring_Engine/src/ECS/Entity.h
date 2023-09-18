@@ -264,6 +264,20 @@ namespace PE
 		{
 			return m_entities.size();
 		}
+
+		std::vector<ComponentID> GetComponentIDs(EntityID id)
+		{
+			std::vector<ComponentID> ret;
+			for (std::pair<const ComponentID, ComponentPool*>& component : m_componentPools)
+			{
+				if (component.second->HasEntity(id))
+				{
+					ret.emplace_back(component.first);
+				}
+			}
+			return ret;
+		}
+
 	// ----- Private Variables -----//
 	private:
 		// set of entities picked over vector to increase the speed of searches for specific entites
