@@ -51,8 +51,15 @@ PE::CoreApplication::CoreApplication()
     PE::g_entityFactory->Copy(id2, tmp2);
     PE::g_entityManager->Get<Transform>(id).position = vec2{ 40.f, 84.f };
     PE::g_entityManager->Get<Transform>(id2).position = vec2{ 130.f, 50.f };
+    PE::g_entityManager->Get<Transform>(id).angle = 0.f;
     PE::g_entityManager->Get<Transform>(id).scale = vec2{ 100.f, 100.f };
     PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 100.f, 100.f };
+    PE::g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+    PE::g_entityManager->Get<RigidBody>(id).m_velocity = vec2{ 0.f, 0.f };
+    PE::g_entityManager->Get<RigidBody>(id).m_force = vec2{ 0.f, 0.f };
+    PE::g_entityManager->Get<RigidBody>(id).m_drag = 0.5f;
+    PE::g_entityManager->Get<RigidBody>(id).SetMass(10.f);
+
 
 
     m_Running = true;
@@ -102,7 +109,7 @@ void PE::CoreApplication::Run()
 
         // List of keys to check
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
-
+        RigidBody& rb = g_entityManager->Get<RigidBody>(0);
         for (int key : keys)
         {
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
@@ -127,30 +134,49 @@ void PE::CoreApplication::Run()
 
         if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
+            //m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
+            if (rb.m_velocity.Dot(rb.m_velocity) == 0.f)
+                rb.m_velocity = vec2{ 1.f, 0.f };
+            rb.ApplyLinearImpulse(rb.m_velocity.GetNormalized() * 1000.f);
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
+            //m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
+            //if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
+                rb.ApplyForce(vec2{ 0.f, 5000.f });
+            //else
+               // rb.m_velocity += vec2{ 0.f, 50.f };
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
+            //m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
+            //if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
+                rb.ApplyForce(vec2{ 0.f, -5000.f });
+            //else
+               // rb.m_velocity += vec2{ 0.f, -50.f };
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
+            //m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
+            //if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
+                rb.ApplyForce(vec2{ -5000.f, 0.f });
+            //else
+               // rb.m_velocity += vec2{ -50.f, 0.f };
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
+            //m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
+            //if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
+                rb.ApplyForce(vec2{ 5000.f, 0.f });
+            //else
+                //rb.m_velocity += vec2{ 50.f, 0.f };
         }
         
-        PhysicsManager::UpdateDynamics();
+        PhysicsManager::UpdateDynamics(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
         CollisionManager::TestColliders();
 
@@ -192,9 +218,9 @@ void PE::CoreApplication::Run()
         }
 
         //-----System profiling to be moved to IMGUI
-        std::cout << "Percentage %: " << TimeManager::GetInstance().GetSystemFrameTime(0) << ", " 
-                  << TimeManager::GetInstance().GetFrameTime() << " | "
-                  << ((TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime()) * 100.f) << "%" << '\n';
+        // std::cout << "Percentage %: " << TimeManager::GetInstance().GetSystemFrameTime(0) << ", " 
+        //           << TimeManager::GetInstance().GetFrameTime() << " | "
+        //           << ((TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime()) * 100.f) << "%" << '\n';
         //-----------------------
         
         engine_logger.FlushLog();
