@@ -35,6 +35,7 @@ PE::CoreApplication::CoreApplication()
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
     REGISTERCOMPONENT(Collider, sizeof(Collider));
     REGISTERCOMPONENT(Transform, sizeof(Transform));
+    REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
     EntityID id = g_entityFactory->CreateEntity();
     EntityID id2 = g_entityFactory->CreateEntity();
     PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
@@ -59,7 +60,7 @@ PE::CoreApplication::CoreApplication()
     Collider col;
     col.colliderVariant = AABBCollider();
     col.objectsCollided.emplace(1);
-    PE::g_entityFactory->InitializeCollider(id3, static_cast<void*>(&col));
+    PE::g_entityFactory->LoadComponent(id3, "Collider", static_cast<void*>(&col));
 
     std::cout << PE::g_entityManager->Get<Transform>(id3).position.x << std::endl;
     std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
@@ -208,13 +209,15 @@ void PE::CoreApplication::Run()
                 inFile.close();
                 myStats.from_json(j, playerEntityId, sm);
 
+                PE::g_entityFactory->LoadComponent(2, "PlayerStats", static_cast<void*>(&myStats));
+
                 // Output all data members of PlayerStats
-                std::cout << "Successfully deserialized PlayerStats:" << std::endl;
-                std::cout << "Health: " << myStats.health << std::endl;
-                std::cout << "Level: " << myStats.level << std::endl;
-                std::cout << "Experience: " << myStats.experience << std::endl;
-                std::cout << "Player Name: " << myStats.playerName << std::endl;
-                std::cout << "Entity ID: " << playerEntityId << std::endl;
+                std::cout << "Successfully deserialized and loaded PlayerStats:" << std::endl;
+                std::cout << "Health: " << PE::g_entityManager->Get<PlayerStats>(2).health << std::endl;
+                std::cout << "Level: " << PE::g_entityManager->Get<PlayerStats>(2).level << std::endl;
+                std::cout << "Experience: " << PE::g_entityManager->Get<PlayerStats>(2).experience << std::endl;
+                std::cout << "Player Name: " << PE::g_entityManager->Get<PlayerStats>(2).playerName << std::endl;
+                std::cout << "Entity ID: " << 2 << std::endl;
                 std::cout << "Entity Name: " << sm.getEntityName(playerEntityId) << std::endl;
             }
         }

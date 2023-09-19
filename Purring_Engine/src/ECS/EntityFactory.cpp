@@ -81,6 +81,7 @@ namespace PE
 		g_initializeComponent.emplace("RigidBody", &EntityFactory::InitializeRigidBody);
 		g_initializeComponent.emplace("Collider", &EntityFactory::InitializeCollider);
 		g_initializeComponent.emplace("Transform", &EntityFactory::InitializeTransform);
+		g_initializeComponent.emplace("PlayerStats", &EntityFactory::InitializePlayerStats);
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& id, void* data)
@@ -110,6 +111,16 @@ namespace PE
 		return true;
 	}
 
+	bool EntityFactory::InitializePlayerStats(const EntityID& id, void* data)
+	{
+		(data == nullptr) ?
+			new (g_entityManager->GetPointer<PlayerStats>(id)) PlayerStats()
+			:
+			new (g_entityManager->GetPointer<PlayerStats>(id)) PlayerStats(*static_cast<PlayerStats*>(data));
+		return true;
+	}
+
+
 	EntityID EntityFactory::CreateFromPrefab(const char* prefab)
 	{
 		EntityID id = CreateEntity();
@@ -125,4 +136,14 @@ namespace PE
 		}
 		return id;
 	}
+
+	bool EntityFactory::LoadComponent(EntityID id, const char* component, void* data)
+	{
+		if (!g_entityManager->IsEntityValid(id))
+			return false;
+		// if the prefab exists in the current list
+		Assign(id, { component });
+		return std::invoke(g_initializeComponent[component], this, id, data);
+	}
+
 }

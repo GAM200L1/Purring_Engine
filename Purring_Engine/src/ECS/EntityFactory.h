@@ -152,11 +152,15 @@ namespace PE
 
 
 		EntityID CreateFromPrefab(const char* prefab);
+		bool LoadComponent(EntityID id, const char* component, void* data);
+
 
 		// Components Handling
 		bool InitializeRigidBody(const EntityID& id, void* data);
 		bool InitializeCollider(const EntityID& id, void* data);
 		bool InitializeTransform(const EntityID& id, void* data);
+		bool InitializePlayerStats(const EntityID& id, void* data);
+
 		void LoadComponents();
 
 	// ----- Private Variables ----- //

@@ -57,7 +57,10 @@ namespace PE
 			// add to map
 			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(creator->GetSize())));
 		}
-
+		if (m_componentPools[componentID]->HasEntity(id))
+		{
+			return;
+		}
 		// add to component pool's map keeping track of index
 		if (m_componentPools[componentID]->m_removed.empty())
 		{
@@ -89,7 +92,10 @@ namespace PE
 			// add to map
 			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(creator->GetSize())));
 		}
-
+		if (m_componentPools[componentID]->HasEntity(id))
+		{
+			return;
+		}
 		// add to component pool's map keeping track of index
 		if (m_componentPools[componentID]->m_removed.empty())
 		{
@@ -121,6 +127,10 @@ namespace PE
 			throw;
 		}
 
+		if (m_componentPools[componentID]->HasEntity(id))
+		{
+			return;
+		}
 		// add to component pool's map keeping track of index
 		if (m_componentPools[componentID]->m_removed.empty())
 		{
