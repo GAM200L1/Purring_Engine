@@ -15,7 +15,9 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "CollisionManager.h"
 #include "ECS/Entity.h"
 #include "ECS/SceneView.h"
+#include "Logging/Logger.h"
 
+extern Logger engine_logger;
 std::vector<PE::Manifold> PE::CollisionManager::m_manifolds;
 PE::CollisionManager* PE::CollisionManager::m_ptrInstance;
 
@@ -73,7 +75,7 @@ namespace PE
 						Contact contactPt;
 						if (CollisionIntersection(col1, col2, ColliderID_1, ColliderID_2, contactPt))
 						{						
-							std::cout << "Collided!\n";
+							engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
 
 							// adds collided objects so that it won't be checked again
 							collider1.objectsCollided.emplace(ColliderID_2);
@@ -86,6 +88,8 @@ namespace PE
 									   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
 									   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
 						}
+						else
+							engine_logger.AddLog(false, "Not Collided!\n", __FUNCTION__);
 
 					}, collider2.colliderVariant);
 
@@ -145,13 +149,13 @@ namespace PE
 		{
 			LineSegment lineSeg{ r_AABB.min, vec2{r_AABB.min.x, r_AABB.max.y} };
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
-			std::cout << "Left\n";
+			//std::cout << "Left\n";
 		}
 		else if (r_circle.center.x > r_AABB.max.x) // right side
 		{
 			LineSegment lineSeg{ r_AABB.max, vec2{r_AABB.max.x, r_AABB.min.y} };
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
-			std::cout << "Right\n";
+			//std::cout << "Right\n";
 		}
 		else
 		{
@@ -161,14 +165,15 @@ namespace PE
 		{
 			LineSegment lineSeg{ vec2{r_AABB.max.x, r_AABB.min.y}, r_AABB.min };
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
-			std::cout << "bottom\n";
+			//std::cout << "bottom\n";
 		}
 		else if (r_circle.center.y > r_AABB.max.y) // top side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
-			std::cout << "top\n";
+			//std::cout << "top\n";
 		}
+		else
 		{
 			collided += 1;
 		}
