@@ -123,12 +123,13 @@ void PE::CoreApplication::Run()
 
         if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustRotationDegrees(-1.f);
+            PhysicsManager::advanceStep = !PhysicsManager::advanceStep;
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustMagnification(-0.1f);
+            PhysicsManager::applyStepPhysics = !PhysicsManager::applyStepPhysics;
+            (PhysicsManager::applyStepPhysics) ? engine_logger.AddLog(false, "Step Physics Active!\n", __FUNCTION__) : engine_logger.AddLog(false, "Step Physics Inactive!\n", __FUNCTION__);
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
@@ -175,7 +176,8 @@ void PE::CoreApplication::Run()
                 //rb.m_velocity += vec2{ 50.f, 0.f };
         }
         
-        PhysicsManager::UpdateDynamics(TimeManager::GetInstance().GetDeltaTime());
+        
+        PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
         CollisionManager::TestColliders();
 
