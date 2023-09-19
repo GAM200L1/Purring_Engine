@@ -26,7 +26,7 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
-
+constexpr float PE_PI = 3.14159265358979323846f;
 namespace PE
 {
 	// forward declaring these structs
@@ -659,6 +659,10 @@ namespace PE
 	float ConvertRadToDeg(float radAngle);
 
 	float ConvertDegToRad(float degAngle);
+
+	void Clamp(float& r_varToClamp, float min, float max);
+
+	//void Wrap(float& r_varToWrap, float min, float max);
 }
 
 

@@ -25,8 +25,6 @@
 #include <cmath>
 #include "MathCustom.h"
 
-constexpr float PE_PI = 3.14159265358979323846f;
-
 namespace PE
 {
 	/*																				   vec2 struct member implementations
@@ -833,4 +831,18 @@ namespace PE
 		return degAngle * static_cast<float>(PE_PI) / 180.f;
 	}
 
+	void Clamp(float& r_varToClamp, float min, float max)
+	{
+		r_varToClamp = (r_varToClamp < min) ? min : ((r_varToClamp > max) ? max : r_varToClamp);
+	}
+
+	// broken
+	//void Wrap(float& r_varToWrap, float min, float max)
+	//{
+	//	//r_varToWrap = (r_varToWrap < min) ? max : ((r_varToWrap > max) ? min : r_varToWrap);
+	//	if (r_varToWrap < min)
+	//		r_varToWrap = max;
+	//	else if (r_varToWrap > max)
+	//		r_varToWrap = min;
+	//}
 }
