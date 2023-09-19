@@ -4,7 +4,7 @@
 	@co-author
 	@par        DP email: yeni.l\@digipen.edu
 	@par        Course: CSD2401, Section A
-	@date       9/9/2023
+	@date       10/9/2023
 
 	@brief
 
@@ -61,14 +61,14 @@ namespace PE
 	vec2 RigidBody::GetVelocity() const
 	{
 		if (m_type == EnumRigidBodyType::STATIC)
-			throw;
+			return vec2{};
 
 		return m_velocity;
 	}
 	void RigidBody::SetVelocity(vec2 const& r_linearVelocity)
 	{
 		if (m_type == EnumRigidBodyType::STATIC)
-			throw;
+			return;
 
 		m_velocity = r_linearVelocity;
 	}
@@ -76,14 +76,14 @@ namespace PE
 	float RigidBody::GetRotationVelocity() const
 	{
 		if (m_type == EnumRigidBodyType::STATIC)
-			throw;
+			return 0.f;
 
 		return m_rotationVelocity;
 	}
 	void RigidBody::SetRotationVelocity(float angularVelocity)
 	{
 		if (m_type == EnumRigidBodyType::STATIC)
-			throw;
+			return;
 
 		m_rotationVelocity = angularVelocity;
 	}
@@ -91,21 +91,21 @@ namespace PE
 	vec2 RigidBody::GetForce() const
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC)
-			throw;
+			return vec2{};
 
 		return m_force;
 	}
 	void RigidBody::SetForce(vec2 const& r_force)
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC)
-			throw;
+			return; // should change to throw
 
 		m_force = r_force;
 	}
 	void RigidBody::ZeroForce()
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC)
-			throw;
+			return;
 
 		m_force = vec2{ 0.f, 0.f };
 	}

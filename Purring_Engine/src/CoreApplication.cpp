@@ -57,7 +57,6 @@ PE::CoreApplication::CoreApplication()
     PE::g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
     PE::g_entityManager->Get<RigidBody>(id).m_velocity = vec2{ 0.f, 0.f };
     PE::g_entityManager->Get<RigidBody>(id).m_force = vec2{ 0.f, 0.f };
-    PE::g_entityManager->Get<RigidBody>(id).m_drag = 0.5f;
     PE::g_entityManager->Get<RigidBody>(id).SetMass(10.f);
 
 
@@ -139,12 +138,12 @@ void PE::CoreApplication::Run()
                 rb.m_velocity = vec2{ 1.f, 0.f };
             rb.ApplyLinearImpulse(rb.m_velocity.GetNormalized() * 1000.f);
         }
-
+        float force = 5000.f;
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
             //m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
             //if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
-                rb.ApplyForce(vec2{ 0.f, 5000.f });
+                rb.ApplyForce(vec2{ 0.f, 1.f } * force);
             //else
                // rb.m_velocity += vec2{ 0.f, 50.f };
         }
@@ -153,7 +152,7 @@ void PE::CoreApplication::Run()
         {
             //m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
             //if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
-                rb.ApplyForce(vec2{ 0.f, -5000.f });
+                rb.ApplyForce(vec2{ 0.f, -1.f } * force);
             //else
                // rb.m_velocity += vec2{ 0.f, -50.f };
         }
@@ -162,7 +161,7 @@ void PE::CoreApplication::Run()
         {
             //m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
             //if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
-                rb.ApplyForce(vec2{ -5000.f, 0.f });
+                rb.ApplyForce(vec2{ -1.f, 0.f }*force);
             //else
                // rb.m_velocity += vec2{ -50.f, 0.f };
         }
@@ -171,7 +170,7 @@ void PE::CoreApplication::Run()
         {
             //m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
             //if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
-                rb.ApplyForce(vec2{ 5000.f, 0.f });
+                rb.ApplyForce(vec2{ 1.f, 0.f } * force);
             //else
                 //rb.m_velocity += vec2{ 50.f, 0.f };
         }

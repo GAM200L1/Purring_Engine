@@ -4,7 +4,7 @@
 	@co-author
 	@par        DP email: yeni.l\@digipen.edu
 	@par        Course: CSD2401, Section A
-	@date       9/9/2023
+	@date       10/9/2023
 
 	@brief
 
@@ -56,6 +56,8 @@ namespace PE
 			{
 				// Quick dirty implementation of drag force
 				rb.ApplyForce(rb.m_velocity * rb.GetMass() * m_linearDragCoefficient);
+				
+				// Update Speed based on total forces
 				rb.m_velocity += rb.m_force * rb.GetInverseMass() * deltaTime;
 
 				// at negligible velocity, velocity will set to 0.f
