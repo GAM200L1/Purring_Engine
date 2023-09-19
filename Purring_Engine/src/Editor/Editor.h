@@ -9,7 +9,7 @@
  \par      email:      jarranyanzhi.tan@digipen.edu
 
  \brief
-	header file containing the declaration of the imguiwindow class
+	header file containing the declaration of the editor class
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -85,6 +85,7 @@ namespace PE {
 		void ShowComponentWindow(bool* Active);
 
 		void ShowResourceWindow(bool* Active);
+		void ShowPerformanceWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the docking port window
 
@@ -169,6 +170,7 @@ namespace PE {
 		bool m_showEditor;
 		bool m_showComponentWindow;
 		bool m_showResourceWindow;
+		bool m_showPerformanceWindow;
 		bool m_firstLaunch;
 		static std::unique_ptr<Editor> s_Instance;
 		std::vector<std::string> m_logOutput;

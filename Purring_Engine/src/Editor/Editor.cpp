@@ -9,7 +9,7 @@
  \par      email:      jarranyanzhi.tan@digipen.edu
 
  \brief
-	cpp file containing the definition of the imguiwindow class
+	cpp file containing the definition of the editor class
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -24,6 +24,9 @@ namespace PE {
 
 	Editor::Editor() {
 		//initializing variables 
+		//m_firstLaunch needs to be serialized 
+		m_firstLaunch = true;
+		//if firstlaunch, everything is true and needs to be serialized to true, otherwise let imgui do it
 		m_showConsole = true;
 		m_showLogs = true;
 		m_showObjectList = true;
@@ -31,10 +34,10 @@ namespace PE {
 		m_showTestWindows = true;
 		m_showComponentWindow = true;
 		m_showResourceWindow = true;
-		//m_firstLaunch needs to be serialized 
-		m_firstLaunch = true;
-		//show the entire gui
-		m_showEditor = true;
+		m_showPerformanceWindow = false;
+		//show the entire gui 
+		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
+
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
 		ADD_MOUSE_EVENT_LISTENER(temp::MouseEvents::MouseButtonPressed, Editor::OnMousePressedEvent, this)
@@ -154,6 +157,8 @@ namespace PE {
 		if (m_showTestWindows) ShowDebugTests(&m_showTestWindows);
 
 		if (m_showResourceWindow) ShowResourceWindow(&m_showResourceWindow);
+
+		if (m_showPerformanceWindow) ShowPerformanceWindow(&m_showPerformanceWindow);
 
 		//imgui end frame render functions
 		ImGui::Render();
@@ -407,6 +412,60 @@ namespace PE {
 			{
 				//to be implemented
 			}
+			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
+
+			ImGui::Separator();
+			ImGui::Text("Physics Test");
+			if (ImGui::Button("Physics Scene 1"))
+			{
+
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Physics Scene 2"))
+			{
+
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Physics Scene 3"))
+			{
+
+			}
+			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
+
+			ImGui::Separator();
+			ImGui::Text("Object Test");
+			if (ImGui::Button("Object Scene 1"))
+			{
+
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Object Scene 2"))
+			{
+
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Object Scene 3"))
+			{
+
+			}
+			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
+			ImGui::Separator();
+			ImGui::Text("Other Test");
+			if (ImGui::Button("Crash Log"))
+			{
+
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Performance Viewer"))
+			{
+				m_showPerformanceWindow = !m_showPerformanceWindow;
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Object Scene 3"))
+			{
+
+			}
+			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
 		}
 	}
@@ -541,6 +600,44 @@ namespace PE {
 
 
 	}
+
+	void Editor::ShowPerformanceWindow(bool* Active)
+	{
+		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
+		ImGui::SetNextWindowSize(ImVec2(100, 100), ImGuiCond_FirstUseEver);
+		//testing for drag and drop
+		if (!ImGui::Begin("performanceWindow", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		{
+			ImGui::End(); //imgui close
+		}
+		else
+		{
+			float values[] = { .3f,.2f,.5f };
+			char* names[] = { "Graphics","Editor","Physics" };
+			ImGui::PlotHistogram("##Test",values,IM_ARRAYSIZE(values),0,NULL,0.0f,1.0f,ImVec2(200,80.0f));
+			
+			if (ImGui::IsItemHovered())
+			{
+				//current mouse position - the top left position of the rect to get your actual mouse
+				float MousePositionX = ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x;
+				//so your mouseposition/ rect length * number of values to get your current index
+				int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * IM_ARRAYSIZE(values));
+
+				if (hoveredIndex > -1 && hoveredIndex < IM_ARRAYSIZE(values))
+				{
+					ImGui::BeginTooltip();
+					ImGui::Text("%s: %.2f",names[hoveredIndex],values[hoveredIndex]);
+					ImGui::EndTooltip();
+				}
+			}
+			
+			
+			ImGui::End(); //imgui close
+		}
+
+
+	}
+
 
 	void Editor::SetDockingPort(bool* Active)
 	{
@@ -813,5 +910,6 @@ namespace PE {
 
 		
 	}
+
 }
 
