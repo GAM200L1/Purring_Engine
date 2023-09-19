@@ -24,6 +24,9 @@
 #include "RendererManager.h"
 
 #include "Imgui/ImGuiWindow.h"
+#include "ECS/Components.h"
+#include "ECS/EntityFactory.h"
+#include "ECS/Entity.h"
 
 extern Logger engine_logger;
 
@@ -308,6 +311,8 @@ namespace PE
 
                 m_meshes[meshIndex].BindMesh();
 
+                if (debugShape.meshType == Graphics::EnumMeshType::DEBUG_SQUARE)
+                    debugShape.transform.position = glm::vec2{ g_entityManager->Get<Transform>(0).position.x, g_entityManager->Get<Transform>(0).position.y };
 
                 // Pass the model to NDC transform matrix as a uniform variable
                 m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uModelToNdc",
