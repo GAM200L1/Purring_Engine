@@ -15,6 +15,8 @@
 #include "prpch.h"
 #include "EntityFactory.h"
 
+
+
 namespace PE
 {
 	// The pointer to the current instance
@@ -26,6 +28,8 @@ namespace PE
 		if (g_entityFactory != nullptr)
 			throw;
 		g_entityFactory = this;
+		LoadComponents();
+		m_prefabs.LoadPrefabs();
 	};
 
 
@@ -72,4 +76,53 @@ namespace PE
 		// entityManager->AssignComponent(id, name, componentData);
 	}
 	
+	void EntityFactory::LoadComponents()
+	{
+		g_initializeComponent.emplace("RigidBody", &EntityFactory::InitializeRigidBody);
+		g_initializeComponent.emplace("Collider", &EntityFactory::InitializeCollider);
+		g_initializeComponent.emplace("Transform", &EntityFactory::InitializeTransform);
+	}
+
+	bool EntityFactory::InitializeRigidBody(const EntityID& id, void* data)
+	{
+		(data == nullptr) ?
+			new (g_entityManager->GetPointer<RigidBody>(id)) RigidBody()
+			:
+			new (g_entityManager->GetPointer<RigidBody>(id)) RigidBody(*static_cast<RigidBody*>(data));
+		return true;
+	}
+
+	bool EntityFactory::InitializeCollider(const EntityID& id, void* data)
+	{
+		(data == nullptr) ?
+			new (g_entityManager->GetPointer<Collider>(id)) Collider()
+			:
+			new (g_entityManager->GetPointer<Collider>(id)) Collider(*static_cast<Collider*>(data));
+		return true;
+	}
+
+	bool EntityFactory::InitializeTransform(const EntityID& id, void* data)
+	{
+		(data == nullptr) ?
+			new (g_entityManager->GetPointer<Transform>(id)) Transform()
+			:
+			new (g_entityManager->GetPointer<Transform>(id)) Transform(*static_cast<Transform*>(data));
+		return true;
+	}
+
+	EntityID EntityFactory::CreateFromPrefab(const char* prefab)
+	{
+		EntityID id = CreateEntity();
+
+		// if the prefab exists in the current list
+		if (m_prefabs.m_map.count(prefab))
+		{
+			Assign(id, m_prefabs.m_map.at(prefab));
+			for (const ComponentID& componentID : m_prefabs.m_map[prefab])
+			{
+				std::invoke(g_initializeComponent[componentID], this, id, nullptr);
+			}
+		}
+		return id;
+	}
 }

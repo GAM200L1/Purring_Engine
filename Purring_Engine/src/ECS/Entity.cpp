@@ -81,6 +81,38 @@ namespace PE
 		++(m_componentPools[componentID]->m_size);
 	}
 
+	void EntityManager::Assign(const EntityID& id, const ComponentID& componentID, const ComponentCreator* creator)
+	{
+		// if component is not found
+		if (m_componentPools.find(componentID) == m_componentPools.end())
+		{
+			// add to map
+			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(creator->GetSize())));
+		}
+
+		// add to component pool's map keeping track of index
+		if (m_componentPools[componentID]->m_removed.empty())
+		{
+			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		}
+		else
+		{
+			// reuse old slot if exists
+			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
+			m_componentPools[componentID]->m_removed.pop();
+		}
+		// initialize that region of memory
+		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
+		{
+			m_componentPools[componentID]->resize(m_componentPools[componentID]->m_capacity * 2);
+		}
+
+		// if you new at an existing region of allocated memory, and you specify where, like in this case
+		// it will call the constructor at this position instead  of allocating more memory
+		//void* ret = new (m_componentPools[componentID]->Get(id)) char[creator->GetSize()]();
+		++(m_componentPools[componentID]->m_size);
+	}
+
 	void EntityManager::Assign(const EntityID& id, const ComponentID& componentID)
 	{
 		// if component is not found

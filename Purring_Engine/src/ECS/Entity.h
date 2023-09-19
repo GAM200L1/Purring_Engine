@@ -94,6 +94,7 @@ namespace PE
 		 \param[in] creator 		The ComponentCreator for the component
 		*************************************************************************************/
 		void Assign(const EntityID& id, const char* componentID, const ComponentCreator* creator);
+		void Assign(const EntityID& id, const ComponentID& componentID, const ComponentCreator* creator);
 
 		/*!***********************************************************************************
 		 \brief Assign an entity with a component specified by the componentID 
