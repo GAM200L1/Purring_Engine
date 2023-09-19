@@ -19,6 +19,7 @@ namespace PE
 	public:
 
 		static bool applyStepPhysics;
+		static bool advanceStep;
 
 		// ----- Removed Copy Ctors/Assignments ----- //
 		PhysicsManager(PhysicsManager const& r_cpyPhysicsManager) = delete;
@@ -32,11 +33,13 @@ namespace PE
 		static void SetLinearDragCoefficient(float newCoefficient);
 
 		// ----- Public Methods ----- //
+		static void Step(float deltaTime);
 		static void UpdateDynamics(float deltaTime); // update forces, acceleration and velocity here
 
 	private:
 		// ----- Private Variables ----- //
 		static PhysicsManager* m_ptrInstance;
 		static float m_linearDragCoefficient;
+		static float m_velocityNegligence;
 	};
 }

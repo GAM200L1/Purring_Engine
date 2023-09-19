@@ -21,6 +21,9 @@ namespace PE
 {
 	PhysicsManager* PhysicsManager::m_ptrInstance;
 	float PhysicsManager::m_linearDragCoefficient = -2.f;
+	float PhysicsManager::m_velocityNegligence = 2.f;
+	bool PhysicsManager::applyStepPhysics = false;
+	bool PhysicsManager::advanceStep = false;
 
 	// ----- Public Getters ----- //
 	PhysicsManager* PhysicsManager::GetInstance()
@@ -43,6 +46,20 @@ namespace PE
 	}
 
 	// ----- Public Methods ----- //
+	void PhysicsManager::Step(float deltaTime)
+	{
+		if (!applyStepPhysics)
+			UpdateDynamics(deltaTime);
+		else
+		{
+			if (advanceStep)
+			{
+				UpdateDynamics(deltaTime);
+				advanceStep = false;
+			}
+		}
+	}
+
 	void PhysicsManager::UpdateDynamics(float deltaTime) // update forces, acceleration and velocity here
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
@@ -61,20 +78,18 @@ namespace PE
 				rb.m_velocity += rb.m_force * rb.GetInverseMass() * deltaTime;
 
 				// at negligible velocity, velocity will set to 0.f
-				rb.m_velocity.x = (rb.m_velocity.x < 2.f && rb.m_velocity.x > -2.f) ? 0.f : rb.m_velocity.x;
-				rb.m_velocity.y = (rb.m_velocity.y < 2.f && rb.m_velocity.y > -2.f) ? 0.f : rb.m_velocity.y;
+				rb.m_velocity.x = (rb.m_velocity.x < m_velocityNegligence && rb.m_velocity.x > -m_velocityNegligence) ? 0.f : rb.m_velocity.x;
+				rb.m_velocity.y = (rb.m_velocity.y < m_velocityNegligence && rb.m_velocity.y > -m_velocityNegligence) ? 0.f : rb.m_velocity.y;
 			}
-			//std::cout << rb.GetMass() << '\n';
-			//std::cout << rb.m_velocity.x << ' ' << rb.m_velocity.y << '\n';
+
 			if (rb.GetType() != EnumRigidBodyType::STATIC)
 			{
 				transform.position += rb.m_velocity * deltaTime;
 				transform.angle += rb.m_rotationVelocity * deltaTime;
+				//Wrap(transform.angle, -PE_PI, PE_PI);
 			}
 			rb.ZeroForce();
 			rb.m_rotationVelocity = 0.f;
-			if (rb.GetType() == EnumRigidBodyType::KINEMATIC)
-				rb.m_velocity *= 0.5f;
 		}
 	}
 }
