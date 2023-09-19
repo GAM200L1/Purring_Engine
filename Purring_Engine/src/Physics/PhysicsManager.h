@@ -17,6 +17,9 @@ namespace PE
 	class PhysicsManager
 	{
 	public:
+
+		static bool applyStepPhysics;
+
 		// ----- Removed Copy Ctors/Assignments ----- //
 		PhysicsManager(PhysicsManager const& r_cpyPhysicsManager) = delete;
 		PhysicsManager& operator=(PhysicsManager const& r_cpyPhysicsManager) = delete;
