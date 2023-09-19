@@ -13,11 +13,10 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
-// Audio Stuff - HANS
-#include "AudioManager.h"
-
+#include "Data/SerializationManager.h"
 // testing
 Logger engine_logger = Logger("ENGINE");
+SerializationManager sm;
 #include "Physics/RigidBody.h"
 #include "Physics/Colliders.h"
 #include "Physics/CollisionManager.h"
@@ -30,7 +29,6 @@ Logger engine_logger = Logger("ENGINE");
 
 PE::EntityManager entityManager;
 PE::EntityFactory entityFactory;
-
 PE::CoreApplication::CoreApplication()
 {
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
@@ -174,32 +172,126 @@ void PE::CoreApplication::Run()
             }
         }
 
-        // Audio Stuff - HANS
-        //m_audioManager.Update();
+        // Just test assigning entity IDs
+        int playerEntityId = 5;
+        // Assign the entity name for the player
+        sm.setEntityName(playerEntityId, "PlayerStatistics");
 
-        const int audioKeys[] = { GLFW_KEY_A, GLFW_KEY_S };
-        for (int key : audioKeys)
+        // PlayerStats object with some sample data
+        PlayerStats myStats;
+        myStats.health = 100;
+        myStats.level = 5;
+        myStats.experience = 24.5;
+
+        // Fetch the entity name if available
+        myStats.playerName = sm.getEntityName(playerEntityId);
+
+        // S to serialize
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            if (glfwGetKey(m_window, key) == GLFW_PRESS)
-            {
-                if (key == GLFW_KEY_A)
-                {
-                    std::cout << "A key pressed\n";
-                    //m_audioManager.PlaySound("Audio/sound1.wav");
-                }
-                else if (key == GLFW_KEY_S)
-                {
-                    std::cout << "S key pressed\n";
-                    //m_audioManager.PlaySound("Audio/sound2.wav");
-                }
+            nlohmann::json serializedStats = myStats.to_json(playerEntityId, sm);
+            std::ofstream outFile("serializedPlayerStats.json");
+            if (outFile.is_open()) {
+                outFile << serializedStats.dump(4);
+                outFile.close();
+                std::cout << "PlayerStats serialized and saved to 'serializedPlayerStats.json'." << std::endl;
             }
         }
 
+        // L to deserialize
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            std::ifstream inFile("serializedPlayerStats.json");
+            if (inFile.is_open()) {
+                nlohmann::json j;
+                inFile >> j;
+                inFile.close();
+                myStats.from_json(j, playerEntityId, sm);
 
-        // Physics test
-        //PhysicsManager::UpdateDynamics(60.f);
-        CollisionManager::TestColliders();
-        CollisionManager::UpdateColliders();
+                // Output all data members of PlayerStats
+                std::cout << "Successfully deserialized PlayerStats:" << std::endl;
+                std::cout << "Health: " << myStats.health << std::endl;
+                std::cout << "Level: " << myStats.level << std::endl;
+                std::cout << "Experience: " << myStats.experience << std::endl;
+                std::cout << "Player Name: " << myStats.playerName << std::endl;
+                std::cout << "Entity ID: " << playerEntityId << std::endl;
+                std::cout << "Entity Name: " << sm.getEntityName(playerEntityId) << std::endl;
+            }
+        }
+
+        //// Initialize an Entity and set its name 
+        //Entity entity1;
+        //entity1.name = "TestEntity1";
+        //entity1.data["someInt"] = std::any(42);
+        //entity1.data["someFloat"] = std::any(3.14f);
+        //entity1.data["someString"] = std::any(std::string("Hello, world!"));
+        //entity1.data["someIntArray"] = std::any(std::vector<int>{1, 2, 3, 4, 5});
+
+        //// Add the Entity to the SerializationManager
+        //sm.setEntity(1, entity1);
+
+        //// S to serialize
+        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        //{
+        //    sm.saveToFile("serializedEntity.json", 1);
+        //    std::cout << "Entity has been serialized and saved to 'serializedEntity.json'." << std::endl;
+        //}
+
+        //// L to deserialize
+        //if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        //{
+        //    try {
+        //        std::pair<Entity, int> loadedData = sm.loadFromFile("serializedEntity.json");
+        //        Entity loadedEntity = loadedData.first;
+        //        int entityID = loadedData.second;
+
+        //        if (entityID != -1) {
+        //            std::cout << std::any_cast<int>(loadedEntity.data["someInt"]) << std::endl;
+        //            std::cout << std::any_cast<float > (loadedEntity.data["someFloat"]) << std::endl;
+        //            std::cout << std::any_cast<std::string> (loadedEntity.data["someString"]) << std::endl;
+        //            std::cout << "Successfully loaded entity with ID: " << entityID << std::endl;
+        //        }
+        //        else {
+        //            std::cout << "Failed to load entity from file." << std::endl;
+        //        }
+        //    }
+        //    catch (const std::exception& e) {
+        //        std::cerr << "Exception caught: " << e.what() << std::endl;
+        //    }
+        //}
+
+
+        //// Initialize newEntity with new fields
+        //Entity newEntity;
+        //newEntity.id = 5;
+        //newEntity.someInt = 42;
+        //newEntity.someFloat = 3.14f;
+        //newEntity.someDouble = 2.71828;
+        //newEntity.someChar = 'A';
+        //newEntity.someBool = true;
+        //newEntity.someString = "Hello, world!";
+
+        //// Set entity in manager
+        //manager.setEntity(5, newEntity);
+
+        //// Just for example, let's assume you press the 'S' key to serialize data
+        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        //{
+        //    // Serialize data
+        //    manager.saveToFile("SavedFile.json", 5);
+        //}
+
+        //// Let's assume you press the 'L' key to load serialized data
+        //if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        //{
+        //    // Deserialize data
+        //    auto [loadedEntity, loadedID] = manager.loadFromFile("SavedFile.json");
+        //    // Now loadedEntity contains the deserialized data, use it as needed
+        //}
+
+
+
+
 
 
         // DRAW -----------------------------------------------------

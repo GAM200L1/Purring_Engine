@@ -1,0 +1,29 @@
+{
+    "Entity": {
+        "data": {
+            "someFloat": {
+                "type": "float",
+                "value": 3.140000104904175
+            },
+            "someInt": {
+                "type": "int",
+                "value": 42
+            },
+            "someIntArray": {
+                "type": "vector<int>",
+                "value": [
+                    1,
+                    2,
+                    3,
+                    4,
+                    5
+                ]
+            },
+            "someString": {
+                "type": "string",
+                "value": "Hello, world!"
+            }
+        },
+        "name": "TestEntity1"
+    }
+}

@@ -25,6 +25,8 @@
 // INCLUDES
 #include "prpch.h"
 #include "Components.h"
+#include "Data/SerializationManager.h"
+
 
 // Typedefs
 typedef unsigned long long EntityID;				// typedef for storing the unique ID of the entity, same as size_t

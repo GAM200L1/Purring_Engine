@@ -129,6 +129,10 @@ namespace PE
 		template<typename ... T>
 		void Copy(EntityID id, T ... component);
 
+		// Hans
+		void AssignComponent(EntityID id, const std::string& name, int componentData);
+
+
 	// ----- Private Variables ----- //
 	public:
 		typedef std::map<ComponentID, ComponentCreator*> ComponentMapType; // component map typedef
