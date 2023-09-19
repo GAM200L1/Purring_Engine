@@ -1,14 +1,15 @@
 #ifndef SERIALIZATION_MANAGER_H
 #define SERIALIZATION_MANAGER_H
-
 #include <unordered_map>
 #include <utility>
 #include <string>
 #include "json.hpp"
 #include <any>
 #include <unordered_map>
+#include "ECS/Components.h"
 
-struct PlayerStats {
+struct PlayerStats : public PE::Component
+{
     int health;
     int level;
     float experience;
@@ -17,7 +18,6 @@ struct PlayerStats {
     void from_json(const nlohmann::json& j, int& entityId, class SerializationManager& sm);
     nlohmann::json to_json(int entityId, class SerializationManager& sm) const;
 };
-
 
 // Structure to represent an Entity with variable names and data
 struct Entity
