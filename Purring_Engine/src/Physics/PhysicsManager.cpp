@@ -47,6 +47,8 @@ namespace PE
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
+			if (RigidBodyID == 1)
+				continue;
 			RigidBody& rb = g_entityManager->Get<RigidBody>(RigidBodyID);
 			Transform& transform = g_entityManager->Get<Transform>(RigidBodyID);
 
@@ -57,10 +59,11 @@ namespace PE
 				rb.m_velocity += rb.m_force * rb.GetInverseMass() * deltaTime;
 
 				// at negligible velocity, velocity will set to 0.f
-				rb.m_velocity.x = (rb.m_velocity.x < 0.1f && rb.m_velocity.x > -0.1f) ? 0.f : rb.m_velocity.x;
-				rb.m_velocity.y = (rb.m_velocity.y < 0.1f && rb.m_velocity.y > -0.1f) ? 0.f : rb.m_velocity.y;
+				rb.m_velocity.x = (rb.m_velocity.x < 2.f && rb.m_velocity.x > -2.f) ? 0.f : rb.m_velocity.x;
+				rb.m_velocity.y = (rb.m_velocity.y < 2.f && rb.m_velocity.y > -2.f) ? 0.f : rb.m_velocity.y;
 			}
-
+			//std::cout << rb.GetMass() << '\n';
+			//std::cout << rb.m_velocity.x << ' ' << rb.m_velocity.y << '\n';
 			if (rb.GetType() != EnumRigidBodyType::STATIC)
 			{
 				transform.position += rb.m_velocity * deltaTime;
@@ -68,6 +71,8 @@ namespace PE
 			}
 			rb.ZeroForce();
 			rb.m_rotationVelocity = 0.f;
+			if (rb.GetType() == EnumRigidBodyType::KINEMATIC)
+				rb.m_velocity *= 0.5f;
 		}
 	}
 }
