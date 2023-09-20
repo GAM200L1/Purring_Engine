@@ -1,7 +1,31 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     CoreApplication.cpp
+ \creation date:       To check
+ \last updated:        16-09-2023
+ \author:              Brandon HO Jun Jie
+ \co-author:           Hans (You Yang) ONG
+ \co-author:           Jarran TAN Yan Zhi
+
+ \par      email:      brandonjunjie.ho@digipen.edu
+ \par      email:      youyang.o@digipen.edu
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief    This file contains the CoreApplication class, which serves as the entry point for
+           the engine. It handles the main application loop, initializes and updates all registered 
+           systems, and manages application-level resources such as the window and FPS controller.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
+
+
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
 // imgui
-#include "Imgui/ImGuiWindow.h"
+#include "Editor/Editor.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
@@ -12,6 +36,7 @@
 #include "CoreApplication.h"
 #include "WindowManager.h"
 #include "Logging/Logger.h"
+#include "MemoryManager.h"
 
 // Resource manager
 #include "ResourceManager/ResourceManager.h"
@@ -40,6 +65,14 @@ SerializationManager sm;
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
 
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Constructor for the CoreApplication class.
+/// Initializes variables and sets up the application window, FPS controller,
+/// logging, and rendering system.
+/// </summary>
+----------------------------------------------------------------------------- */
 PE::CoreApplication::CoreApplication()
 {
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
@@ -87,75 +120,68 @@ PE::CoreApplication::CoreApplication()
     // Create and set up the window using WindowManager
     m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
 
-    m_fpsController.SetTargetFPS(60);  // Default to 60 FPS
+    m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
     // set flags
     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
 
-    // Pass the pointer to the GLFW window to the rendererManager
-    m_rendererManager = new Graphics::RendererManager{ m_window };
-    AddSystem(m_rendererManager);
-
-
-    //for (EntityID id : SceneView())
-    //{
-    //    std::vector<ComponentID> components = g_entityManager->GetComponentIDs(id);
-    //    std::cout << "Entity " << id << " Has: \n";
-    //    for (const ComponentID& name : components)
-    //    {
-    //        std::cout << name << ", ";
-    //        if (name == "RigidBody")
-    //        {
-    //            std::cout << "Awake: " << g_entityManager->Get<RigidBody>(id).m_awake << std::endl;
-    //        }
-    //        if (name == "Collider")
-    //        {
-    //            std::cout << "Number of collisions: " <<
-    //            g_entityManager->Get<Collider>(id).objectsCollided.size() << std::endl;
-    //        }
-    //        if (name == "Transform")
-    //        {
-    //            std::cout << "Angle: " << g_entityManager->Get<Transform>(id).position.x << std::endl;
-    //        }
-    //    }
-    //    std::cout << std::endl;
-    //}
-
     // Audio Stuff - HANS
-    //m_audioManager.Init();
-    //{
-    //    engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
-    //}
+    
+    AudioManager::GetInstance()->Init();
+    {
+        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
+    }
+    //create instance of memory manager (prob shld bring this out to entry point)
+    MemoryManager::GetInstance();
+    //assignning memory manually to renderer manager
+    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    AddSystem(rendererManager);
+
 }
 
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Destructor for the CoreApplication class.
+/// Responsible for cleaning up resources.
+/// </summary>
+----------------------------------------------------------------------------- */
 PE::CoreApplication::~CoreApplication()
 {
 	// anything for destructor to do?
 }
 
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Main loop for the CoreApplication class.
+/// Controls the game loop, updates systems, and handles user input and FPS.
+/// </summary>
+----------------------------------------------------------------------------- */
 void PE::CoreApplication::Run()
 {
+    // Start engine run time
     TimeManager::GetInstance().EngineStart();
-	// main app loop
 
-    while (!glfwWindowShouldClose(m_window))
+    // Main Application Loop
+    while (!glfwWindowShouldClose(m_window))            // Continue until the GLFW window is flagged to close
     {
-        // time start
+        // Time start
         TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
-
-        //std::cout << TimeManager::GetInstance().GetRunTime() << " Delta Time: " << TimeManager::GetInstance().GetDeltaTime() << std::endl;
-
+        MemoryManager::GetInstance()->CheckMemoryOver();
         // UPDATE -----------------------------------------------------
         
 
-        // List of keys to check
+        // List of keys to check for FPS adjustment
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
 
+        // Iterate through the list of keys and check if any are pressed
         for (int key : keys)
         {
+            // Update target FPS if a key is pressed
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
             {
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
@@ -163,75 +189,51 @@ void PE::CoreApplication::Run()
         }
         if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+
         }
 
-        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
-        {
-            m_rendererManager->m_mainCamera.AdjustRotationDegrees(-1.f);
-        }
+        //Audio Stuff - HANS
+        AudioManager::GetInstance()->Update();
 
-        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
-        {
-            m_rendererManager->m_mainCamera.AdjustMagnification(-0.1f);
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustMagnification(-0.1f);
+        //}
 
-        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
-        {
-            m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
+        //}
 
-        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
+        //}
 
-        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        {
-            m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
+        //}
 
-        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-        {
-            m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
+        //}
 
-        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-        {
-            m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
-        }
-
-
-
+        //if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
+        //}
 
         // Physics test
         //PhysicsManager::UpdateDynamics(60.f);
         CollisionManager::TestColliders();
         CollisionManager::UpdateColliders();
 
-
-        // DRAW -----------------------------------------------------
-            // Render scene (placeholder: clear screen)
-        //glClear(GL_COLOR_BUFFER_BIT);
-
-        //////////////////////////////////////////////////////////////////////////
-        //temp here untill window is exposed
-        //ImGuiIO& io = ImGui::GetIO();
-        //float time = (float)glfwGetTime();
-        //io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
-        //m_time = time;
-
-        ////redering of all windows
-        //ImGuiWindow::GetInstance()->Render();
-        //////////////////////////////////////////////////////////////////////
-        // 
-        // Swap front and back buffers
-        //glfwSwapBuffers(m_window);
-        // DRAW ----------------------------------------------------------
-
-
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
-        // Update the title to show FPS (every second in this example)
+        // Update the window title to display FPS (every second)
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
@@ -239,7 +241,7 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        // update systems
+        // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
             TimeManager::GetInstance().SystemStartFrame(i);
@@ -247,50 +249,80 @@ void PE::CoreApplication::Run()
             TimeManager::GetInstance().SystemEndFrame(i);
         }
 
-        //-----System profiling to be moved to IMGUI
-        // std::cout << "Percentage %: " << TimeManager::GetInstance().GetSystemFrameTime(0) << ", " 
-        //           << TimeManager::GetInstance().GetFrameTime() << " | "
-        //           << ((TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime()) * 100.f) << "%" << '\n';
-        //-----------------------
-        
+        // Flush log entries
         engine_logger.FlushLog();
 
         TimeManager::GetInstance().EndFrame();
+        // Finalize FPS calculations for the current frame
         m_fpsController.EndFrame();
     }
 
-    // Clean up of imgui functions
+    // Cleanup for ImGui
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
-    // Cleanup (if needed)
+    // Additional Cleanup (if required)
     m_windowManager.Cleanup();
     ResourceManager::UnloadResources();
     ResourceManager::DeleteInstance();
 }
 
+
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Initializes all registered systems in CoreApplication.
+/// Iterates through each system in the system list and calls their
+/// respective InitializeSystem function.
+/// </summary>
+----------------------------------------------------------------------------- */
 void PE::CoreApplication::InitSystems()
 {
-    // init all systems
+    // Init all systems and iterate through each system in m_systemList and initialize it
     for (System* system : m_systemList)
     {
-        system->InitializeSystem();
+        system->InitializeSystem();                             // Call the InitializeSystem method for each system
     }
 }
 
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Destroys all registered systems in CoreApplication.
+/// Iterates through each system in the system list, calls their respective
+/// DestroySystem function, and then deletes them.
+/// </summary>
+----------------------------------------------------------------------------- */
 void PE::CoreApplication::DestroySystems()
 {
-    // destroy all systems
+    //memory auto deallocated by memory manager
+
+     //destroy all systems
     for (System* system : m_systemList)
     {
         system->DestroySystem();
-        delete system;
+        system->~System();
+        //delete system;
     }
 }
 
+
+
+/*-----------------------------------------------------------------------------
+/// <summary>
+/// Adds a system to the CoreApplication's system list.
+/// Appends the given system pointer to the end of the system list,
+/// </summary>
+///
+/// <param name="system">
+/// A pointer to the system that will be managed by CoreApplication.
+/// </param>
+----------------------------------------------------------------------------- */
 void PE::CoreApplication::AddSystem(System* system)
 {
-    // add system to core application
+    // Add a system to CoreApplication append the provided system pointer to the m_systemList vector
     m_systemList.push_back(system);
 }

@@ -20,11 +20,14 @@
 
 namespace PE
 {
-	constexpr auto TotalSystems = 2; // hardcoded?
-	enum class SystemType
+	constexpr auto TotalSystems = 3; // hardcoded?
+	enum SystemType
 	{
-		NONE = 0,
-		GRAPHICS
+		//LOGIC = 0,
+		PHYSICS,
+		COLLISION,
+		GRAPHICS,
+		SYSTEMCOUNT
 	};
 
 	class TimeManager {

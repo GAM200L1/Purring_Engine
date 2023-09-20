@@ -1,17 +1,18 @@
-/*!*****************************************************************************
-    @file       InputHandler.cpp
-    @author     Hans (You Yang) ONG
-    @co-author
-    @par        DP email: youyang.o\@digipen.edu
-    @par        Course: CSD2401, Section A
-    @date       130823
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     InputHandler.cpp
+ \creation date:       13-08-2023
+ \last updated:        16-09-2023
+ \author:              Hans (You Yang) ONG
 
-    @brief      This file contains the implementation details of the mouse input callbacks.
-                Functions in this file handle mouse movements and button presses.
+ \par      email:      youyang.o\@digipen.edu
 
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+ \brief    This file contains the implementation details of the mouse input callbacks.
+           The functions in this file handle mouse movements and button presses.
 
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 
 
 /*                                                                                                          includes
@@ -127,4 +128,3 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
     
 }
-

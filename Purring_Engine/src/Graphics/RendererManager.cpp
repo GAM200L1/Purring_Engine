@@ -2,19 +2,20 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     RendererManager.cpp
- \date     20-08-2023
- 
- \author               Krystal YAMIN
+ \creation date:       20-08-2023
+ \last updated:        16-09-2023
+ \author:              Krystal YAMIN
+
  \par      email:      krystal.y@digipen.edu
- 
+
  \brief    This file contains the RendererManager class, which manages 
            the render passes and includes helper functions to draw debug shapes.
-  
+
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
 #include <glm/gtc/constants.hpp>    // pi()
@@ -24,7 +25,7 @@
 #include "RendererManager.h"
 #include "ResourceManager/ResourceManager.h"
 
-#include "Imgui/ImGuiWindow.h"
+#include "Editor/Editor.h"
 
 extern Logger engine_logger;
 
@@ -44,6 +45,12 @@ namespace PE
             }
 
             p_windowRef = p_window;
+
+            int width, height;
+            glfwGetWindowSize(p_windowRef, &width, &height);
+            CreateFrameBuffer(width, height);
+
+            Editor::GetInstance()->Init(p_window);
         }
         
         void RendererManager::InitializeSystem()
@@ -56,8 +63,6 @@ namespace PE
             glfwGetWindowSize(p_windowRef, &width, &height);
             CreateFrameBuffer(width, height);
             m_cachedWindowWidth = width, m_cachedWindowHeight = height;
-
-            ImGuiWindow::GetInstance()->Init(p_windowRef);
 
             // Initialize the base meshes to use
             m_meshes.resize(5);
@@ -110,7 +115,9 @@ namespace PE
 
             // Get the size of the ImGui window to render in
             float windowWidth{}, windowHeight{};
-            ImGuiWindow::GetInstance()->GetWindowSize(windowWidth, windowHeight);
+            Editor::GetInstance()->GetWindowSize(windowWidth, windowHeight);
+            ResizeFrameBuffer(windowWidth, windowHeight);
+            glViewport(0, 0, windowWidth, windowHeight);
 
             // If the window size has changed
             if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight) 
@@ -152,14 +159,14 @@ namespace PE
                 glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
             };
 
-            DrawScene(viewToNdc); // Draw game objects in the scene
+
 
             DrawDebug(viewToNdc); // Draw debug gizmos in the scene
 
             // Unbind the RBO for rendering to the ImGui window
             UnbindFrameBuffer();
 
-            ImGuiWindow::GetInstance()->Render(m_imguiTextureId);
+            Editor::GetInstance()->Render(m_imguiTextureId);
 
             // Disable alpha blending
             glDisable(GL_BLEND);
