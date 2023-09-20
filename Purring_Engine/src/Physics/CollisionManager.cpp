@@ -19,18 +19,18 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 extern Logger engine_logger;
 std::vector<PE::Manifold> PE::CollisionManager::m_manifolds;
-PE::CollisionManager* PE::CollisionManager::m_ptrInstance;
+PE::CollisionManager* PE::CollisionManager::p_instance;
 
 namespace PE
 {
 	// ----- Public Getters ----- //
 	CollisionManager* CollisionManager::GetInstance()
 	{
-		if (!m_ptrInstance)
+		if (!p_instance)
 		{
-			m_ptrInstance = new CollisionManager();
+			p_instance = new CollisionManager();
 		}
-		return m_ptrInstance;
+		return p_instance;
 	}
 
 	void CollisionManager::UpdateColliders()
@@ -108,6 +108,14 @@ namespace PE
 		m_manifolds.clear();
 	}
 
+
+	void CollisionManager::DeleteInstance()
+	{
+		delete p_instance;
+		p_instance = nullptr;
+	}
+
+
 	// Rect + Rect
 	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
 	{
@@ -133,7 +141,7 @@ namespace PE
 		if (deltaLengthSquared < totalRadius * totalRadius)
 		{
 			// get contact point data etc.
-			if (deltaLengthSquared < 0.f)
+			if (deltaLengthSquared <= 0.f)
 			{
 				r_contactPt.intersectionPoint = (r_contactPt.normal * r_circle2.radius) + r_circle2.center;
 				r_contactPt.normal = vec2{ 0.f, 1.f };

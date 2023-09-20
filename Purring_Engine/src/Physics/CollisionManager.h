@@ -33,11 +33,12 @@ namespace PE
 		static void UpdateColliders();
 		static void TestColliders();
 		static void ResolveCollision(float deltaTime);
+		static void DeleteInstance();
 
 	private:
 		CollisionManager() {}
 		static std::vector<Manifold> m_manifolds;
-		static CollisionManager* m_ptrInstance;
+		static CollisionManager* p_instance;
 	};
 
 	// Static + Dynamic Collision Checks

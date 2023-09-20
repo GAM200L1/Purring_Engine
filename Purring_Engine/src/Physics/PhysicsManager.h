@@ -35,10 +35,11 @@ namespace PE
 		// ----- Public Methods ----- //
 		static void Step(float deltaTime);
 		static void UpdateDynamics(float deltaTime); // update forces, acceleration and velocity here
+		static void DeleteInstance();
 
 	private:
 		// ----- Private Variables ----- //
-		static PhysicsManager* m_ptrInstance;
+		static PhysicsManager* p_instance;
 		static float m_linearDragCoefficient;
 		static float m_velocityNegligence;
 	};

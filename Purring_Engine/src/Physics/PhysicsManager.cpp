@@ -19,7 +19,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 namespace PE
 {
-	PhysicsManager* PhysicsManager::m_ptrInstance;
+	PhysicsManager* PhysicsManager::p_instance;
 	float PhysicsManager::m_linearDragCoefficient = -2.f;
 	float PhysicsManager::m_velocityNegligence = 2.f;
 	bool PhysicsManager::applyStepPhysics = false;
@@ -28,11 +28,11 @@ namespace PE
 	// ----- Public Getters ----- //
 	PhysicsManager* PhysicsManager::GetInstance()
 	{
-		if (!m_ptrInstance)
+		if (!p_instance)
 		{
-			m_ptrInstance = new PhysicsManager();
+			p_instance = new PhysicsManager();
 		}
-		return m_ptrInstance;
+		return p_instance;
 	}
 
 	float PhysicsManager::GetLinearDragCoefficient()
@@ -64,8 +64,6 @@ namespace PE
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
-			if (RigidBodyID == 1)
-				continue;
 			RigidBody& rb = g_entityManager->Get<RigidBody>(RigidBodyID);
 			Transform& transform = g_entityManager->Get<Transform>(RigidBodyID);
 
@@ -84,6 +82,7 @@ namespace PE
 
 			if (rb.GetType() != EnumRigidBodyType::STATIC)
 			{
+				rb.m_prevPosition = transform.position;
 				transform.position += rb.m_velocity * deltaTime;
 				transform.angle += rb.m_rotationVelocity * deltaTime;
 				//Wrap(transform.angle, -PE_PI, PE_PI);
@@ -91,5 +90,11 @@ namespace PE
 			rb.ZeroForce();
 			rb.m_rotationVelocity = 0.f;
 		}
+	}
+
+	void PhysicsManager::DeleteInstance()
+	{
+		delete p_instance;
+		p_instance = nullptr;
 	}
 }
