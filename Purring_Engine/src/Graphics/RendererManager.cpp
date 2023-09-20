@@ -24,7 +24,16 @@
 #include "RendererManager.h"
 #include "ResourceManager/ResourceManager.h"
 
+// ECS Components
+#include "ECS/Entity.h"
+#include "ECS/EntityFactory.h"
+#include "ECS/SceneView.h"
+
+// ImGui
 #include "Imgui/ImGuiWindow.h"
+
+// Physics and collision
+#include "Physics/Colliders.h"
 
 extern Logger engine_logger;
 
@@ -55,7 +64,8 @@ namespace PE
             int width, height;
             glfwGetWindowSize(p_windowRef, &width, &height);
             CreateFrameBuffer(width, height);
-            m_cachedWindowWidth = width, m_cachedWindowHeight = height;
+            m_cachedWindowWidth = static_cast<float>(width), 
+                m_cachedWindowHeight = static_cast<float>(height);
 
             ImGuiWindow::GetInstance()->Init(p_windowRef);
 
@@ -71,28 +81,7 @@ namespace PE
             ResourceManager::GetInstance()->LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
             
             // Load a texture
-            ResourceManager::GetInstance()->LoadTextureFromFile(m_defaultTextureName, "../Textures/Cat1_128x128.png");
-
-            // Add background objects
-            AddBackgroundObject(width, height, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
-            AddBackgroundObject(width, height, m_defaultTextureName, glm::vec4{ 1.f, 1.f, 0.f, 0.5f });
-
-            // Add a triangle and quad as renderable objects
-            AddRendererObject(EnumMeshType::QUAD, 400.f, 400.f, 0.f,
-                glm::vec2{ 0.f, 0.f }, m_defaultTextureName, glm::vec4{ 1.f, 0.f, 0.f, 0.5f });
-            AddRendererObject(EnumMeshType::TRIANGLE, 100.f, 400.f, 45.f,
-                glm::vec2{ 200.f, 400.f }, m_defaultTextureName, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
-
-            AddRendererObject(EnumMeshType::QUAD, 100.f, 100.f, 20.f,
-                glm::vec2{ -300.f, -300.f }, glm::vec4{ 1.f, 1.f, 0.f, 1.f});
-            AddRendererObject(EnumMeshType::TRIANGLE, 200.f, 200.f, -10.f,
-                glm::vec2{ -100.f, -100.f }, glm::vec4{ 0.f, 1.f, 1.f, 0.5f});
-
-            AddDebugSquare(400.f, 200.f, 30.f, glm::vec2{10.f, 30.f}, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
-            AddDebugSquare(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
-            AddDebugLine(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
-            AddDebugCircle(250.f, glm::vec2{ -200.f, 200.f }, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
-            AddDebugPoint(glm::vec2{ 10.f, 0.f }, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
+            ResourceManager::GetInstance()->LoadTextureFromFile(m_defaultTextureName, "../Assets/Textures/Cat1_128x128.png");
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -122,12 +111,6 @@ namespace PE
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
                 ResizeFrameBuffer(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
-
-                // Update size of background objects
-                for (auto& backgroundObject : m_backgroundObjects) {
-                    backgroundObject.transform.width = windowWidth;
-                    backgroundObject.transform.height = windowHeight;
-                }
             }
 
             // Set background color to black
@@ -199,17 +182,13 @@ namespace PE
                 return;
             }
 
-            // Make draw call for each background object
-            for (auto& backgroundObject : m_backgroundObjects) {
-                DrawRenderer(backgroundObject, *(shaderProgramIterator->second), GL_TRIANGLES,
-                    r_viewToNdc * backgroundObject.transform.GetTransformMatrix());
-            }
-
-            // Call glDrawElements for each renderable object
-            for (auto& renderable : m_triangleObjects) {
-
-                DrawRenderer(renderable, *(shaderProgramIterator->second), GL_TRIANGLES,
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix());
+            // Make draw call for each game object with a renderer component
+            for (EntityID id : SceneView<Renderer, Transform>())
+            {
+                Renderer const& renderer{ g_entityManager->Get<Renderer>(id) };
+                Transform const& transform{ g_entityManager->Get<Transform>(id) };
+                Draw(renderer, *(shaderProgramIterator->second), GL_TRIANGLES,
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * transform.GetTransformMatrix());
             }
         }
 
@@ -227,20 +206,57 @@ namespace PE
                 return;
             }
 
+            // Set the width and size of lines and points
             glLineWidth(3.f);
-
-            // Make draw call for each debug object
-            for (auto& debugShape : m_lineObjects) {
-                DrawRenderer(debugShape, *(shaderProgramIterator->second), GL_LINES, 
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * debugShape.transform.GetTransformMatrix());
-            }
-
             glPointSize(10.f);
 
-            // Make draw call for each point
-            for (auto& point : m_pointObjects) {
-                DrawRenderer(point, *(shaderProgramIterator->second), GL_POINTS, 
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * point.transform.GetTransformMatrix());
+
+            // Draw a rectangle for each AABB collider
+            for (EntityID id : SceneView<AABBCollider>())
+            {
+                AABBCollider const& collider{ g_entityManager->Get<AABBCollider>(id) };
+                Draw(EnumMeshType::DEBUG_SQUARE, glm::vec4{ 1.f, 0.f, 0.f, 1.f },
+                    *(shaderProgramIterator->second), GL_LINES,
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * 
+                    GenerateTransformMatrix(collider.max.x - collider.min.x, collider.max.y - collider.min.y, 
+                        0.f, (collider.min.x + collider.max.x) / 2.f, (collider.min.y + collider.max.y) / 2.f));
+            }
+
+            // Draw a circle for each circle collider
+            for (EntityID id : SceneView<CircleCollider>())
+            {
+                CircleCollider const& collider{ g_entityManager->Get<CircleCollider>(id) };
+                Draw(EnumMeshType::DEBUG_CIRCLE, glm::vec4{ 0.f, 1.f, 0.f, 1.f },
+                    *(shaderProgramIterator->second), GL_LINES,
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * 
+                    GenerateTransformMatrix(collider.radius, collider.radius, 0.f, 
+                        collider.center.x, collider.center.y));
+
+                // circle mesh has a radius of two, so setting the width and height
+                // to the radius is what we want
+            }
+
+            // Draw a point and line for each rigidbody representing the position and velocity
+            for (EntityID id : SceneView<RigidBody, Transform>())
+            {
+                RigidBody const& rigidbody{ g_entityManager->Get<RigidBody>(id) };
+                Transform const& transform{ g_entityManager->Get<Transform>(id) };
+
+                // Draw a point at the center of the object
+                Draw(EnumMeshType::DEBUG_LINE, glm::vec4{ 0.f, 0.f, 1.f, 1.f },
+                    *(shaderProgramIterator->second), GL_POINTS,
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() *
+                    GenerateTransformMatrix(0.f, 0.f, 0.f,
+                        transform.position.x, transform.position.y));
+
+                // Draw a line that represents the velocity
+                Draw(EnumMeshType::DEBUG_LINE, glm::vec4{ 0.f, 0.f, 1.f, 1.f },
+                    *(shaderProgramIterator->second), GL_LINES,
+                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() *
+                    GenerateTransformMatrix(glm::vec2{ rigidbody.m_velocity.x, 0.f }, 
+                        glm::vec2{ 0.f, rigidbody.m_velocity.y },
+                        glm::vec2{ rigidbody.m_velocity.x, rigidbody.m_velocity.y } * 0.5f 
+                        + glm::vec2{ transform.position.x, transform.position.y }));
             }
 
             glPointSize(1.f);
@@ -248,12 +264,45 @@ namespace PE
         }
 
 
-        void RendererManager::DrawRenderer(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
+        void RendererManager::Draw(EnumMeshType meshType, glm::vec4 const& r_color, 
+            ShaderProgram& r_shaderProgram, GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
         {
             r_shaderProgram.Use();
 
             // Check if mesh index is valid
-            unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.meshType) };
+            unsigned char meshIndex{ static_cast<unsigned char>(meshType) };
+            if (meshIndex >= m_meshes.size())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+                return;
+            }
+
+            m_meshes[meshIndex].BindMesh();
+
+            // Pass the model to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
+
+            // Pass the color of the quad as a uniform variable
+            r_shaderProgram.SetUniform("uColor", r_color);
+
+            glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL);
+
+            // Unbind everything
+            m_meshes[meshIndex].UnbindMesh();
+            r_shaderProgram.UnUse();
+        }
+
+
+        void RendererManager::Draw(Renderer const& r_renderer, ShaderProgram& r_shaderProgram,
+            GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
+        {
+            r_shaderProgram.Use();
+
+            // Check if mesh index is valid
+            unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.GetMeshType()) };
             if (meshIndex >= m_meshes.size())
             {
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
@@ -270,18 +319,36 @@ namespace PE
             );
 
             // Pass the color of the quad as a uniform variable
-            r_shaderProgram.SetUniform("uColor", r_renderer.color);
+            r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
 
-            // Bind the texture object
-            if (r_renderer.p_texture != nullptr)
+            // Attempt to retrieve and bind the texture
+            std::shared_ptr<Graphics::Texture> p_texture{};
+
+            if (r_renderer.GetTextureKey().empty()) 
             {
-                unsigned int textureUnit{ 0 };
-                r_renderer.p_texture->Bind(textureUnit);
-                r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
-                r_shaderProgram.SetUniform("uIsTextured", true);
-            }
-            else {
                 r_shaderProgram.SetUniform("uIsTextured", false);
+            }
+            else 
+            {
+                auto textureIterator{ ResourceManager::GetInstance()->Textures.find(r_renderer.GetTextureKey()) };
+
+                // Check if shader program is valid
+                if (textureIterator == ResourceManager::GetInstance()->Textures.end())
+                {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(false, "Texture " + r_renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
+
+                    r_shaderProgram.SetUniform("uIsTextured", false);
+                }
+                else 
+                {
+                    p_texture = textureIterator->second;
+                    unsigned int textureUnit{ 0 };
+                    p_texture->Bind(textureUnit);
+                    r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+                    r_shaderProgram.SetUniform("uIsTextured", true);
+                }
             }
 
             glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
@@ -291,166 +358,10 @@ namespace PE
             m_meshes[meshIndex].UnbindMesh();
             r_shaderProgram.UnUse();
 
-            if (r_renderer.p_texture != nullptr)
+            if (p_texture != nullptr)
             {
-                r_renderer.p_texture->Unbind();
+                p_texture->Unbind();
             }
-        }
-
-
-        void RendererManager::AddRendererObject(EnumMeshType meshType,
-            float const width, float const height, float const orientation, 
-            glm::vec2 const& r_position, glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = meshType;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
-
-            newRenderer.color = r_color;
-
-            m_triangleObjects.emplace_back(newRenderer);
-        }
-
-        void RendererManager::AddRendererObject(EnumMeshType meshType,
-            float const width, float const height,
-            float const orientation, glm::vec2 const& r_position,
-            std::string const& r_texture, glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = meshType;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
-
-            newRenderer.p_texture = ResourceManager::GetInstance()->GetTexture(r_texture);
-            newRenderer.color = r_color;
-
-            m_triangleObjects.emplace_back(newRenderer);
-        }
-
-        void RendererManager::AddBackgroundObject(
-            float const width, float const height, glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::QUAD;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = 0.f;
-            newRenderer.transform.position = vec2{ 0.f, 0.f };
-
-            newRenderer.color = r_color;
-
-            m_backgroundObjects.emplace_back(newRenderer);
-        }
-
-        void RendererManager::AddBackgroundObject(
-            float const width, float const height,
-            std::string const& r_texture, glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::QUAD;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = 0.f;
-            newRenderer.transform.position = vec2{ 0.f, 0.f };
-
-            newRenderer.p_texture = ResourceManager::GetInstance()->GetTexture(r_texture);
-            newRenderer.color = r_color;
-
-            m_backgroundObjects.emplace_back(newRenderer);
-        }
-
-        void RendererManager::AddDebugSquare(
-            float const width, float const height,
-            float const orientation, glm::vec2 const& r_centerPosition,
-            glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::DEBUG_SQUARE;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = vec2{ r_centerPosition.x, r_centerPosition.y };
-
-            newRenderer.color = r_color;
-
-            m_lineObjects.emplace_back(newRenderer);
-        }
-
-
-        void RendererManager::AddDebugSquare(
-            glm::vec2 const& r_bottomLeft, glm::vec2 const& r_topRight,
-            glm::vec4 const& r_color)
-        {
-            // Assumes that this is a axis - aligned
-            AddDebugSquare(
-                r_topRight.x - r_bottomLeft.x,
-                r_topRight.y - r_bottomLeft.y,
-                0.f, (r_bottomLeft + r_topRight) * 0.5f,
-                r_color
-            );
-        }
-
-
-        void RendererManager::AddDebugCircle(
-            float const radius, glm::vec2 const& r_centerPosition,
-            glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::DEBUG_CIRCLE;
-            
-            // circle mesh has a radius of two, so setting the width and height
-            // to the radius is what we want
-            newRenderer.transform.width = radius; 
-            newRenderer.transform.height = radius;
-            newRenderer.transform.position = vec2{ r_centerPosition.x, r_centerPosition.y };
-
-            newRenderer.color = r_color;
-
-            m_lineObjects.emplace_back(newRenderer);
-        }
-
-
-        void RendererManager::AddDebugLine(
-            glm::vec2 const& r_position1, glm::vec2 const& r_position2,
-            glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::DEBUG_LINE;
-
-            float angleRadians = glm::atan2(r_position2.y - r_position1.y, r_position2.x - r_position1.x);
-            newRenderer.transform.orientation = glm::degrees(angleRadians);
-            newRenderer.transform.width = glm::distance(r_position1, r_position2);
-            glm::vec2 linePos = (r_position1 + r_position2) * 0.5f;
-            newRenderer.transform.position = vec2{ linePos.x, linePos.y };
-
-            newRenderer.color = r_color;
-
-            m_lineObjects.emplace_back(newRenderer);
-        }
-
-
-        void RendererManager::AddDebugPoint(glm::vec2 const& r_position,
-            glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::DEBUG_LINE;
-
-            newRenderer.transform.width = 0.f;
-            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
-
-            newRenderer.color = r_color;
-
-            m_pointObjects.emplace_back(newRenderer);
         }
 
 
@@ -594,6 +505,50 @@ namespace PE
             r_mesh.CreateVertexArrayObject();
         }
 
+
+        glm::mat4 RendererManager::GenerateTransformMatrix(float const width, float const height,
+            float const orientation, float const positionX, float const positionY) 
+        {
+            // Get scale matrix
+            glm::mat4 scale_matrix{
+                width,  0.f,    0.f, 0.f,
+                0.f,    height, 0.f, 0.f,
+                0.f,    0.f,    1.f, 0.f,
+                0.f,    0.f,    0.f, 1.f
+            };
+
+            // Get rotation matrix
+            GLfloat sin_angle{ glm::sin(orientation) };
+            GLfloat cos_angle{ glm::cos(orientation) };
+            glm::mat4 rotation_matrix{
+                cos_angle,  sin_angle, 0.f, 0.f,
+                -sin_angle, cos_angle, 0.f, 0.f,
+                0.f,        0.f,       1.f, 0.f,
+                0.f,        0.f,       0.f, 1.f
+            };
+
+            // Get translation matrix
+            glm::mat4 translation_matrix{
+                1.f,    0.f,    0.f,    0.f,
+                0.f,    1.f,    0.f,    0.f,
+                0.f,    0.f,    1.f,    0.f,
+                positionX, positionY, 0.f, 1.f
+            };
+
+            return translation_matrix * rotation_matrix * scale_matrix;
+        }
+
+
+        glm::mat4 RendererManager::GenerateTransformMatrix(glm::vec2 const& horizontalVector,
+            glm::vec2 const& verticalVector, glm::vec2 const& centerPosition)
+        {
+            return glm::mat4{
+                horizontalVector.x, horizontalVector.y, 0.f,    0.f,
+                verticalVector.x,   verticalVector.y,   0.f,    0.f,
+                0.f,    0.f,    1.f,    0.f,
+                centerPosition.x, centerPosition.y,     0.f,    1.f
+            };
+        }
 
         void RendererManager::PrintSpecifications()
         {

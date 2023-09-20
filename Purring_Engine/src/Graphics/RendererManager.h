@@ -96,133 +96,26 @@ namespace PE
              \param[in] primitiveType GL Primitive type to make the draw call with.
              \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
             *************************************************************************************/
-            void DrawRenderer(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, GLenum const primitiveType,
-                glm::mat4 const& r_modelToNdc);
+            void Draw(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, 
+                GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
 
             /*!***********************************************************************************
-             \brief Adds a filled renderer object to be drawn.
-             
-             \param[in] meshType Type of mesh (Quad or triangle).
-             \param[in] width Width of the mesh.
-             \param[in] height Height of the mesh.
-             \param[in] orientation Angle (in degrees) of the square about the z-axis from the
-                                    x-axis. Positive for counter-clockwise rotation, negative
-                                    for clockwise.
-             \param[in] r_position Position of the center of the mesh.
-             \param[in] r_color Color of the object fill. White by default.
-            *************************************************************************************/
-            void AddRendererObject(EnumMeshType meshType,
-                float const width, float const height, float const orientation, 
-                glm::vec2 const& r_position, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+             \brief Binds the shader program, vertex array object and texture and makes the
+                    draw call for the [r_renderer] passed in.
 
-            /*!***********************************************************************************
-             \brief Adds a textured renderer object to be drawn.
-             
-             \param[in] meshType Type of mesh (Quad or triangle).
-             \param[in] width Width of the mesh.
-             \param[in] height Height of the mesh.
-             \param[in] orientation Angle (in degrees) of the square about the z-axis from the 
-                                    x-axis. Positive for counter-clockwise rotation, negative 
-                                    for clockwise.
-             \param[in] r_position Position of the center of the mesh.
-             \param[in] r_texture Texture to apply to the mesh.
-             \param[in] r_color Color of the object fill. White by default.
+             \param[in] r_renderer Renderer object with all the information to draw with.
+             \param[in] r_shaderProgram Shader program to use.
+             \param[in] primitiveType GL Primitive type to make the draw call with.
+             \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
             *************************************************************************************/
-            void AddRendererObject(EnumMeshType meshType,
-                float const width, float const height,
-                float const orientation, glm::vec2 const& r_position,
-                std::string const& r_textureName, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
-            
-            /*!***********************************************************************************
-             \brief Adds a filled renderer object to be drawn the same size as the window.
-             
-             \param[in] meshType Type of mesh (Quad or triangle).
-             \param[in] width Width of the mesh.
-             \param[in] height Height of the mesh.
-             \param[in] orientation Angle (in degrees) of the square about the z-axis from the
-                                    x-axis. Positive for counter-clockwise rotation, negative
-                                    for clockwise.
-             \param[in] r_position Position of the center of the mesh.
-             \param[in] r_color Color of the object fill. White by default.
-            *************************************************************************************/
-            void AddBackgroundObject(float const width, float const height, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
-
-            /*!***********************************************************************************
-             \brief Adds a textured renderer object to be drawn the same size as the window.
-             
-             \param[in] meshType Type of mesh (Quad or triangle).
-             \param[in] width Width of the mesh.
-             \param[in] height Height of the mesh.
-             \param[in] orientation Angle (in degrees) of the square about the z-axis from the 
-                                    x-axis. Positive for counter-clockwise rotation, negative 
-                                    for clockwise.
-             \param[in] r_position Position of the center of the mesh.
-             \param[in] r_texture Texture to apply to the mesh.
-             \param[in] r_color Color of the object fill. White by default.
-            *************************************************************************************/
-            void AddBackgroundObject(float const width, float const height,
-                std::string const& r_textureName, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
-            
-            /*!***********************************************************************************
-             \brief Adds the outline of a square to be drawn when debug mode is enabled. 
-             
-             \param[in] width Width of the square.
-             \param[in] height Height of the square.
-             \param[in] orientation Angle (in degrees) of the square about the z-axis from the 
-                                    x-axis. Positive for counter-clockwise rotation, negative 
-                                    for clockwise.
-             \param[in] r_centerPosition Coordinates of the center of the square.
-             \param[in] r_color Color of the square. White by default.
-            *************************************************************************************/
-            void AddDebugSquare(float const width, float const height,
-                float const orientation, glm::vec2 const& r_centerPosition,
-                glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
-
-            /*!***********************************************************************************
-             \brief Adds the outline of a square to be drawn when debug mode is enabled. 
-                    Assumes that the square is axis-aligned.
-             
-             \param[in] r_bottomLeft Coordinates of the bottom left corner of the square.
-             \param[in] r_topRight Coordinates of the top right corner of the square.
-             \param[in] r_color Color of the square. White by default.
-            *************************************************************************************/
-            void AddDebugSquare(glm::vec2 const& r_bottomLeft, glm::vec2 const& r_topRight,
-                glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
-
-            /*!***********************************************************************************
-             \brief Adds the outline of a circle to be drawn when debug mode is enabled.
-             
-             \param[in] radius Radius of the circle.
-             \param[in] r_centerPosition Position of the center of the circle.
-             \param[in] r_color Color of the circle. White by default.
-            *************************************************************************************/
-            void AddDebugCircle(float const radius, glm::vec2 const& r_centerPosition,
-                glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
-
-            /*!***********************************************************************************
-             \brief Adds a line to be drawn when debug mode is enabled.
-             
-             \param[in] r_position1 Position of one endpoint of the line.
-             \param[in] r_position2 Position of one endpoint of the line.
-             \param[in] r_color Color of the line. White by default.
-            *************************************************************************************/
-            void AddDebugLine(glm::vec2 const& r_position1, glm::vec2 const& r_position2,
-                glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
-
-            /*!***********************************************************************************
-            \brief Adds a point to be drawn when debug mode is enabled.
-            
-            \param[in] r_position Position of the point.
-            \param[in] r_color Color of the point. White by default.
-            *************************************************************************************/
-            void AddDebugPoint(glm::vec2 const& r_position, glm::vec4 const& r_color = { 1.f, 1.f, 1.f, 1.f });
+            void Draw(EnumMeshType meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
+                GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
 
             Graphics::Camera m_mainCamera{}; //! Camera object
 
             // ----- Private variables ----- //
         private:
             GLFWwindow* p_windowRef{}; //! Pointer to the GLFW window to render to
-
 
             std::string m_systemName{ "Graphics" }; //! Name of system
 
@@ -234,18 +127,6 @@ namespace PE
 
             //! Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
-
-            //! Container of textured and filled objects to draw
-            std::vector<Graphics::Renderer> m_triangleObjects{};
-
-            //! Container of textured and filled objects to draw that should have the same size as the window
-            std::vector<Graphics::Renderer> m_backgroundObjects{};
-
-            //! Container of debug objects to draw
-            std::vector<Graphics::Renderer> m_lineObjects{};
-
-            //! Container of debug points to draw
-            std::vector<Graphics::Renderer> m_pointObjects{};
 
 
             // ----- For rendering to ImGui window ----- //
@@ -298,6 +179,24 @@ namespace PE
              \param[in,out] r_mesh Object containing the mesh data generated.
             *************************************************************************************/
             void InitializeLineMesh(MeshData& r_mesh);
+            
+
+            /*!***********************************************************************************
+             \brief 
+
+             \param[in] orientation (in radians)
+            *************************************************************************************/
+            glm::mat4 GenerateTransformMatrix(float const width, float const height, 
+                float const orientation, float const positionX, float const positionY);
+
+
+            /*!***********************************************************************************
+             \brief 
+
+             \param[in] 
+            *************************************************************************************/
+            glm::mat4 GenerateTransformMatrix(glm::vec2 const& horizontalVector, 
+                glm::vec2 const& verticalVector, glm::vec2 const& centerPosition);
 
             /*!***********************************************************************************
              \brief Prints the graphics specifications of the device.
