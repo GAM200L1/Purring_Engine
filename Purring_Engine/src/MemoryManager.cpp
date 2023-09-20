@@ -17,7 +17,7 @@
 #include "prpch.h"
 #include "MemoryManager.h"
 #include "cstdio"
-#include "Imgui/ImGuiWindow.h"
+#include "Editor/Editor.h"
 
 namespace PE
 {
@@ -42,8 +42,8 @@ namespace PE
 			//printing total allocated memory
 			std::stringstream ss1;
 			ss1 << "Currently allocated: " << m_stackAllocator.GetStackTop();
-			ImGuiWindow::GetInstance()->AddConsole(ss1.str());
-			ImGuiWindow::GetInstance()->AddConsole("trying to allocate more memory now");
+			Editor::GetInstance()->AddConsole(ss1.str());
+			Editor::GetInstance()->AddConsole("trying to allocate more memory now");
 
 			//determine buffer size incase of writing over
 			int buffer = (size + 1) / 2;
@@ -56,7 +56,7 @@ namespace PE
 			//print to console how much was allocated
 			std::stringstream ss;
 			ss << "memory allocated of size: " << size << " to: " << name << " along with buffer of: " << buffer;
-			ImGuiWindow::GetInstance()->AddConsole(ss.str());
+			Editor::GetInstance()->AddConsole(ss.str());
 
 			return newptr;
 		}
@@ -64,7 +64,7 @@ namespace PE
 			//sending error to logs
 			std::stringstream ss;
 			ss << "memory cannot be allocated to " << name;
-			ImGuiWindow::GetInstance()->AddError(ss.str());
+			Editor::GetInstance()->AddError(ss.str());
 			return nullptr;
 		}
 	}
@@ -95,7 +95,7 @@ namespace PE
 			{
 				std::stringstream ss;
 				ss << m_memoryAllocationData[i].s_name << " Writing into more than allocated spaces!" << std::endl;
-				ImGuiWindow::GetInstance()->AddError(ss.str());
+				Editor::GetInstance()->AddError(ss.str());
 			}
 
 			//go to next object
@@ -108,11 +108,11 @@ namespace PE
 		//print total allocated memory
 		std::stringstream ss;
 		ss << "currently allocated: " << m_stackAllocator.GetStackTop();
-		ImGuiWindow::GetInstance()->AddConsole(ss.str());
+		Editor::GetInstance()->AddConsole(ss.str());
 
 		//print structure data
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) {
-			ImGuiWindow::GetInstance()->AddConsole(m_memoryAllocationData[i].ToString());
+			Editor::GetInstance()->AddConsole(m_memoryAllocationData[i].ToString());
 		}
 	}
 

@@ -23,7 +23,7 @@
 #include <iostream>
 #include <sstream>
 #include "Logging/Logger.h"
-#include "imgui/ImGuiWindow.h"
+#include "Editor/Editor.h"
 
 //logger instantiation
 Logger event_logger = Logger("EVENT");
@@ -126,7 +126,7 @@ namespace PE
 	----------------------------------------------------------------------------- */
 	void WindowManager::OnWindowEvent(const temp::Event<temp::WindowEvents>& e)
 	{
-		ImGuiWindow::GetInstance()->AddLog(e.ToString());
+		Editor::GetInstance()->AddLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -143,7 +143,7 @@ namespace PE
 	----------------------------------------------------------------------------- */
 	void WindowManager::OnMouseEvent(const temp::Event<temp::MouseEvents>& e)
 	{
-		ImGuiWindow::GetInstance()->AddLog(e.ToString());
+		Editor::GetInstance()->AddLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -160,7 +160,7 @@ namespace PE
 	----------------------------------------------------------------------------- */
 	void WindowManager::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
 	{
-		ImGuiWindow::GetInstance()->AddLog(e.ToString());
+		Editor::GetInstance()->AddLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
