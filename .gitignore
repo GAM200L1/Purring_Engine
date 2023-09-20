@@ -407,3 +407,9 @@ FodyWeavers.xsd
 # JetBrains Rider
 *.sln.iml
 Textures/Cat1_128x128.png
+
+Application/Audio/
+
+Purring_Engine/Audio/
+
+Textures/
