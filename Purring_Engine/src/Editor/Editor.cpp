@@ -618,10 +618,10 @@ namespace PE {
 			std::vector<float> values{
 				TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime(),
 				TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
+				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime()
+				//TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
 			};
-			char* names[] = { "Logics", "Physics", "Collision", "Graphics" };
+			char* names[] = { /*"Logics",*/ "Physics", "Collision", "Graphics" };
 			ImGui::PlotHistogram("##Test",values.data(), values.size(), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
 			
 			if (ImGui::IsItemHovered())
@@ -634,7 +634,7 @@ namespace PE {
 				if (hoveredIndex > -1 && hoveredIndex < values.size())
 				{
 					ImGui::BeginTooltip();
-					ImGui::Text("%s: %.2f%%",names[hoveredIndex],values[hoveredIndex]);
+					ImGui::Text("%s: %.2f%%",names[hoveredIndex],values[hoveredIndex] * 100);
 					ImGui::EndTooltip();
 				}
 			}
