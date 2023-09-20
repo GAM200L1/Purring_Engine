@@ -78,8 +78,12 @@ namespace PE
 		 \param[in] creator Component creator class that is only used for the size of the
 		 					class/struct
 		*************************************************************************************/
-		void AddComponentCreator(const ComponentID& name, ComponentCreator* creator);
-
+		template <typename T>
+		void AddComponentCreator(const ComponentID& name, const size_t& creator)
+		{
+			m_componentMap[name] = creator;
+			g_entityManager->AddToPool<T>();
+		}
 		/*!***********************************************************************************
 		 \brief Create a Entity object with input component types.
 		 		Variadic template function, any number of components can be added.
@@ -168,7 +172,7 @@ namespace PE
 		// hide it
 		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& id, void* data);
 
-		typedef std::map<ComponentID, ComponentCreator*> ComponentMapType; // component map typedef
+		typedef std::map<ComponentID, size_t> ComponentMapType; // component map typedef
 		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
 		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
 		std::map<std::string, fnptrVoidptrConstruct> g_initializeComponent;

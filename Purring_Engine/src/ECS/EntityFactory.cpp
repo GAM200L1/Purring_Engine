@@ -35,10 +35,7 @@ namespace PE
 
 	EntityFactory::~EntityFactory()
 	{
-		for (std::pair<const ComponentID, ComponentCreator*>& cmt : m_componentMap)
-		{
-			delete cmt.second;
-		}
+		
 	}
 
 
@@ -47,7 +44,7 @@ namespace PE
 		if (p_entityManager->IsEntityValid(id))
 		{
 			EntityID clone = CreateEntity();
-			for (std::pair<const ComponentID, ComponentCreator*>& componentCreator : m_componentMap)
+			for (std::pair<const ComponentID, size_t>& componentCreator : m_componentMap)
 			{
 				if (p_entityManager->Has(id, componentCreator.first))
 				{
@@ -62,10 +59,7 @@ namespace PE
 		}
 	}
 
-	void EntityFactory::AddComponentCreator(const ComponentID& name, ComponentCreator* creator)
-	{
-		m_componentMap[name] = creator;
-	}
+	
 
 	// Hans
 	void EntityFactory::AssignComponent(EntityID id, const std::string& name, int componentData)
@@ -86,37 +80,41 @@ namespace PE
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& id, void* data)
 	{
-		(data == nullptr) ?
-			new (g_entityManager->GetPointer<RigidBody>(id)) RigidBody()
+		g_entityManager->Get<RigidBody>(id) =
+			(data == nullptr) ?
+			RigidBody()
 			:
-			new (g_entityManager->GetPointer<RigidBody>(id)) RigidBody(*static_cast<RigidBody*>(data));
+			*reinterpret_cast<RigidBody*>(data);
 		return true;
 	}
 
 	bool EntityFactory::InitializeCollider(const EntityID& id, void* data)
 	{
-		(data == nullptr) ?
-			new (g_entityManager->GetPointer<Collider>(id)) Collider()
+		g_entityManager->Get<Collider>(id) =
+			(data == nullptr) ?
+			Collider()
 			:
-			new (g_entityManager->GetPointer<Collider>(id)) Collider(*static_cast<Collider*>(data));
+			*reinterpret_cast<Collider*>(data);
 		return true;
 	}
 
 	bool EntityFactory::InitializeTransform(const EntityID& id, void* data)
 	{
-		(data == nullptr) ?
-			new (g_entityManager->GetPointer<Transform>(id)) Transform()
+		g_entityManager->Get<Transform>(id) =
+			(data == nullptr) ?
+			Transform()
 			:
-			new (g_entityManager->GetPointer<Transform>(id)) Transform(*static_cast<Transform*>(data));
+			*reinterpret_cast<Transform*>(data);
 		return true;
 	}
 
 	bool EntityFactory::InitializePlayerStats(const EntityID& id, void* data)
 	{
+		g_entityManager->Get<PlayerStats>(id) = 
 		(data == nullptr) ?
-			new (g_entityManager->GetPointer<PlayerStats>(id)) PlayerStats()
+			PlayerStats()
 			:
-			new (g_entityManager->GetPointer<PlayerStats>(id)) PlayerStats(*static_cast<PlayerStats*>(data));
+			*reinterpret_cast<PlayerStats*>(data);
 		return true;
 	}
 
@@ -131,7 +129,7 @@ namespace PE
 			Assign(id, m_prefabs.m_map.at(prefab));
 			for (const ComponentID& componentID : m_prefabs.m_map[prefab])
 			{
-				std::invoke(g_initializeComponent[componentID], this, id, nullptr);
+				LoadComponent(id, componentID.c_str(), nullptr);
 			}
 		}
 		return id;
@@ -145,5 +143,4 @@ namespace PE
 		Assign(id, { component });
 		return std::invoke(g_initializeComponent[component], this, id, data);
 	}
-
 }

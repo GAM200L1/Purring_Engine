@@ -17,13 +17,12 @@
 // INCLUDES
 #include "prpch.h"
 #include "Math/MathCustom.h"
-
-
 // CONSTANT VARIABLES
-constexpr size_t DEFAULT_ENTITY_CNT = 16;		// default bytes allocated to components pool
+constexpr size_t DEFAULT_ENTITY_CNT = 5;		// default bytes allocated to components pool
 
 namespace PE
 {
+    struct Transform;
     struct ComponentPool
     {
         /*!***********************************************************************************
@@ -38,22 +37,10 @@ namespace PE
         ComponentPool(size_t elementsize, size_t entcnt = DEFAULT_ENTITY_CNT)
         {
             m_elementSize = elementsize;
-            m_capacity = entcnt;
-            p_data = new char[m_elementSize * m_capacity];
-            if (!p_data)
-                throw;
+            m_capacity = entcnt;            
         }
 
-        /*!***********************************************************************************
-         \brief Destroy the Component Pool object
-                Frees all dynamically allocated data, in this case, the pool itself
-
-        *************************************************************************************/
-        ~ComponentPool()
-        {
-            delete[] p_data;
-        }
-
+        virtual ~ComponentPool() { };
         /*!***********************************************************************************
          \brief Takes in param numEntity to be the new number of elements to support within
                 the pool
@@ -62,20 +49,7 @@ namespace PE
          \return true           Sucessflly resized
          \return false          Failed to resize
         *************************************************************************************/
-        bool resize(size_t numEntity)
-        {
-            char* p_tmp = new char[numEntity * m_elementSize];
-            // allocation failed!!
-            if (!p_tmp)
-            {
-                // @TODO add log message, error, not enough memory
-                return false;
-            }
-            std::swap(p_tmp, p_data);
-            m_capacity = numEntity;
-            delete[] p_tmp;
-            return true;
-        }
+        virtual bool resize(size_t numEntity) = 0;
 
         /*!***********************************************************************************
          \brief Gets a void pointer to the specified entity's component in the pool
@@ -85,10 +59,7 @@ namespace PE
                             (this entity does not have this component)
                             Otherwise retursn the start of that entity's component in memory
         *************************************************************************************/
-        inline void* Get(size_t index)
-        {
-            return (!m_idxMap.count(index)) ? nullptr : (p_data + m_idxMap[index] * m_elementSize);
-        }
+        virtual void* Get(size_t index) = 0;
 
         /*!***********************************************************************************
          \brief Gets a reference to the component in memory
@@ -97,11 +68,11 @@ namespace PE
          \param[in] index       The Entity's ID to search
          \return T&             The reference to the coponent in memory
         *************************************************************************************/
-        template <typename T>
-        T& Get(size_t index)
-        {
-            return static_cast<T>(Get(index));
-        }
+        //template <typename T>
+        //T& Get(size_t index)
+        //{
+        //    return static_cast<T>(Get(index));
+        //}
 
         /*!***********************************************************************************
          \brief Gets a reference to the component in memory (const) 
@@ -110,24 +81,18 @@ namespace PE
          \param[in] index       The Entity's ID to search
          \return const T&       The reference to the coponent in memory
         *************************************************************************************/
-        template <typename T>
-        const T& Get(size_t index) const
-        {
-            return static_cast<T>(Get(index));
-        }
+        //template <typename T>
+        //const T& Get(size_t index) const
+        //{
+        //    return static_cast<T>(Get(index));
+        //}
 
         /*!***********************************************************************************
          \brief Removes an entity from this pool
 
          \param[in] index   The entity id
         *************************************************************************************/
-        void remove(size_t index)
-        {
-            if (!m_idxMap.count(index))
-                throw; // log in the future
-            memset(Get(index), 0, m_elementSize);
-            m_idxMap.erase(index);
-        }
+        virtual void remove(size_t index) = 0;
 
 
         /*!***********************************************************************************
@@ -142,7 +107,6 @@ namespace PE
             return (this) ? m_idxMap.count(id) : false;
         }
 
-        char* p_data{ nullptr };
         std::map<size_t, size_t> m_idxMap;  // map to decouple the entity ID from the internal index
         std::queue<size_t> m_removed;       // keep track of removed indexes
         size_t m_elementSize{};             // the size of each element in the pool
@@ -150,41 +114,86 @@ namespace PE
         size_t m_capacity{};                // the actual capacity of the pool
     };
 
-    class Component {}; // no implementation needed
-
-    class ComponentCreator
+    template <typename T>
+    class PoolData : public ComponentPool
     {
-    // ----- Public Methods -----//
     public:
-        virtual const size_t& GetSize() const = 0;
-    };
+        PoolData(size_t entcnt = DEFAULT_ENTITY_CNT) : ComponentPool(sizeof(T), entcnt)
+        {
+            p_data = new T[entcnt];
+        }
 
+        ~PoolData()
+        {
+            delete[] p_data;
+        }
 
-    template<typename type>
-    class ComponentCreatorType : public ComponentCreator
-    {
-    // ----- Constructors -----//
-    public:
-        ComponentCreatorType(size_t sz) : m_size(sz) { }
-    
-    // ----- Public Methods -----//
-    public:
-        /*!***********************************************************************************
-         \brief Get the Size of the component
+        bool resize(size_t numEntity)
+        {
+            T* p_tmp = new T[numEntity];
+            // allocation failed!!
+            if (!p_tmp)
+            {
+                // @TODO add log message, error, not enough memory
+                return false;
+            }
+            std::swap(p_tmp, p_data);
+            m_capacity = numEntity;
+            delete[] p_tmp;
+            return true;
+        }
 
-         \return const size_t&  The size of the component
-        *************************************************************************************/
-        virtual const size_t& GetSize() const { return m_size; }
+        void* Get(size_t index)
+        {
+            return reinterpret_cast<void*>(p_data + index);
+        }
 
-    // ----- Private Variables -----//
+        void remove(size_t index)
+        {
+            if (!m_idxMap.count(index))
+                throw; // log in the future
+            p_data[index] = T();
+            m_idxMap.erase(index);
+        }
     private:
-        const size_t m_size;    // stores the size of type
+        T* p_data{ nullptr };
     };
+
+    //class Component {}; // no implementation needed
+
+    //class ComponentCreator
+    //{
+    //// ----- Public Methods -----//
+    //public:
+    //    virtual const size_t& GetSize() const = 0;
+    //};
+
+
+    //template<typename type>
+    //class ComponentCreatorType : public ComponentCreator
+    //{
+    //// ----- Constructors -----//
+    //public:
+    //    ComponentCreatorType(size_t sz) : m_size(sz) { }
+    //
+    //// ----- Public Methods -----//
+    //public:
+    //    /*!***********************************************************************************
+    //     \brief Get the Size of the component
+
+    //     \return const size_t&  The size of the component
+    //    *************************************************************************************/
+    //    virtual const size_t& GetSize() const { return m_size; }
+
+    //// ----- Private Variables -----//
+    //private:
+    //    const size_t m_size;    // stores the size of type
+    //};
 };
 
-#define REGISTERCOMPONENT(type, size) PE::g_entityFactory->AddComponentCreator( #type, new PE::ComponentCreatorType<type>( size ) );
+#define REGISTERCOMPONENT(type, size) PE::g_entityFactory->AddComponentCreator<type>( #type,  size  );
 
-class test : public PE::Component
+class test
 {
 public:
     float x, y;
@@ -192,7 +201,7 @@ public:
 
 namespace PE
 {
-    struct Transform : public Component
+    struct Transform
     {
         vec2 scale;
         float angle; // in radians

@@ -16,6 +16,8 @@
 
 #include "prpch.h"
 #include "Entity.h"
+#include "SceneView.h"
+#include "Physics/Colliders.h"
 
 namespace PE
 {
@@ -27,6 +29,7 @@ namespace PE
 		if (g_entityManager != nullptr)
 			throw;
 		g_entityManager = this;
+
 	}
 
 	EntityManager::~EntityManager()
@@ -49,13 +52,13 @@ namespace PE
 	}
 
 
-	void EntityManager::Assign(const EntityID& id, const char* componentID, const ComponentCreator* creator)
+	void EntityManager::Assign(const EntityID& id, const char* componentID, const size_t& creator)
 	{
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
 			// add to map
-			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(creator->GetSize())));
+			throw;
 		}
 		if (m_componentPools[componentID]->HasEntity(id))
 		{
@@ -84,13 +87,14 @@ namespace PE
 		++(m_componentPools[componentID]->m_size);
 	}
 
-	void EntityManager::Assign(const EntityID& id, const ComponentID& componentID, const ComponentCreator* creator)
+	void EntityManager::Assign(const EntityID& id, const ComponentID& componentID, const size_t& creator)
 	{
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
 			// add to map
-			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(creator->GetSize())));
+			//m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(creator)));
+			throw;
 		}
 		if (m_componentPools[componentID]->HasEntity(id))
 		{
@@ -189,6 +193,5 @@ namespace PE
 			m_entities.erase(id);
 		}
 	}
-	
 	
 }

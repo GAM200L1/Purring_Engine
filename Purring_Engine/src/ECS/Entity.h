@@ -93,8 +93,8 @@ namespace PE
 		 \param[in] componentID 	The ID of the component to assign 
 		 \param[in] creator 		The ComponentCreator for the component
 		*************************************************************************************/
-		void Assign(const EntityID& id, const char* componentID, const ComponentCreator* creator);
-		void Assign(const EntityID& id, const ComponentID& componentID, const ComponentCreator* creator);
+		void Assign(const EntityID& id, const char* componentID, const size_t& creator);
+		void Assign(const EntityID& id, const ComponentID& componentID, const size_t& creator);
 
 		/*!***********************************************************************************
 		 \brief Assign an entity with a component specified by the componentID 
@@ -268,6 +268,13 @@ namespace PE
 			return m_entities.size();
 		}
 
+		template<typename T>
+		void AddToPool()
+		{
+			m_componentPools.emplace(GetComponentID<T>(), new PoolData<T>());
+		}
+
+
 		std::vector<ComponentID> GetComponentIDs(EntityID id)
 		{
 			std::vector<ComponentID> ret;
@@ -280,8 +287,13 @@ namespace PE
 			}
 			return ret;
 		}
-
-	// ----- Private Variables -----//
+	// ----- Private Functions ----- //
+	private:
+		void DeletePools();
+		bool DestructRigidBody();
+		bool DestructCollider();
+		bool DestructTransform();
+	// ----- Private Variables ----- //
 	private:
 		// set of entities picked over vector to increase the speed of searches for specific entites
 		std::set<EntityID> m_entities;
@@ -289,6 +301,8 @@ namespace PE
 		std::map<ComponentID, ComponentPool*> m_componentPools;
 		// a queue of entity IDs to handle removed entities
 		std::queue<EntityID> m_removed;
+		
+		// fns ptr to functions for handling the destruction of component pool
 	};
 
 	// extern to allow the access to the entity manager instance
@@ -305,7 +319,7 @@ namespace PE
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
 			// add to map
-			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(sizeof(T))));
+			throw;
 		}
 
 		// add to component pool's map keeping track of index
@@ -326,7 +340,7 @@ namespace PE
 		}
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead of allocating more memory
-		T* p_component = new (m_componentPools[componentID]->Get(id)) T();
+		m_componentPools[componentID]->Get(id) =  T();
 		++(m_componentPools[componentID]->m_size);
 
 		//m_entities[id].mask.set(componentID);
@@ -366,7 +380,7 @@ namespace PE
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead of allocating more memory
-		T* p_component = new (m_componentPools[componentID]->Get(id)) T(val);
+		m_componentPools[componentID]->Get(id) = T(val);
 		++(m_componentPools[componentID]->size);
 
 		//m_entities[id].mask.set(componentID);
@@ -439,7 +453,7 @@ namespace PE
 	{
 		if (m_componentPools[GetComponentID<T>()]->HasEntity(id))
 		{
-			new (GetPointer<T>(id)) T(src);
+			Get<T>(id) = T(src);
 		}
 	}
 

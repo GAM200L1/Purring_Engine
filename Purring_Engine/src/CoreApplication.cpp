@@ -35,20 +35,19 @@ PE::CoreApplication::CoreApplication()
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
     REGISTERCOMPONENT(Collider, sizeof(Collider));
     REGISTERCOMPONENT(Transform, sizeof(Transform));
-    REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
+    //REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
     EntityID id = g_entityFactory->CreateEntity();
     EntityID id2 = g_entityFactory->CreateEntity();
     PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
-    PE::g_entityFactory->Assign(id2, { "RigidBody", "Collider", "Transform"});
-    Collider tmp, tmp2;
+    PE::g_entityFactory->Assign(id2, { "RigidBody", "Transform"});
+    Collider tmp;
     tmp.colliderVariant = CircleCollider();
-    tmp2.colliderVariant = AABBCollider();
     PE::g_entityFactory->Copy(id, tmp);
     PE::g_entityFactory->Copy(id, RigidBody());
     PE::g_entityFactory->Copy(id2, RigidBody());
     PE::g_entityFactory->Copy(id, Transform());
     PE::g_entityFactory->Copy(id2, Transform());
-    PE::g_entityFactory->Copy(id2, tmp2);
+    //PE::g_entityFactory->Copy(id2, tmp2);
 
     PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
     PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
@@ -56,14 +55,23 @@ PE::CoreApplication::CoreApplication()
     PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 10.f, 10.f };
 
 
-    EntityID id3 = PE::g_entityFactory->CreateFromPrefab("GameObject");
-    Collider col;
-    col.colliderVariant = AABBCollider();
-    col.objectsCollided.emplace(1);
-    PE::g_entityFactory->LoadComponent(id3, "Collider", static_cast<void*>(&col));
+    //EntityID id3 = PE::g_entityFactory->CreateFromPrefab("GameObject");
+    //Collider col;
+    //col.colliderVariant = AABBCollider();
+    //col.objectsCollided.emplace(1);
+    //PE::g_entityFactory->LoadComponent(id3, "Collider", static_cast<void*>(&col));
 
-    std::cout << PE::g_entityManager->Get<Transform>(id3).position.x << std::endl;
-    std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
+    //std::cout << PE::g_entityManager->Get<Transform>(id3).position.x << std::endl;
+   // std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
+
+
+    for (size_t i{}; i < 5000; ++i)
+    {
+        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+    }
+
+    //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
+    //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
 
 	m_Running = true;
 	m_lastFrameTime = 0;
@@ -82,29 +90,29 @@ PE::CoreApplication::CoreApplication()
     AddSystem(rendererManager);
 
 
-    for (EntityID id : SceneView())
-    {
-        std::vector<ComponentID> components = g_entityManager->GetComponentIDs(id);
-        std::cout << "Entity " << id << " Has: \n";
-        for (const ComponentID& name : components)
-        {
-            std::cout << name << ", ";
-            if (name == "RigidBody")
-            {
-                std::cout << "Awake: " << g_entityManager->Get<RigidBody>(id).m_awake << std::endl;
-            }
-            if (name == "Collider")
-            {
-                std::cout << "Number of collisions: " <<
-                g_entityManager->Get<Collider>(id).objectsCollided.size() << std::endl;
-            }
-            if (name == "Transform")
-            {
-                std::cout << "Angle: " << g_entityManager->Get<Transform>(id).position.x << std::endl;
-            }
-        }
-        std::cout << std::endl;
-    }
+    //for (EntityID id : SceneView())
+    //{
+    //    std::vector<ComponentID> components = g_entityManager->GetComponentIDs(id);
+    //    std::cout << "Entity " << id << " Has: \n";
+    //    for (const ComponentID& name : components)
+    //    {
+    //        std::cout << name << ", ";
+    //        if (name == "RigidBody")
+    //        {
+    //            std::cout << "Awake: " << g_entityManager->Get<RigidBody>(id).m_awake << std::endl;
+    //        }
+    //        if (name == "Collider")
+    //        {
+    //            std::cout << "Number of collisions: " <<
+    //            g_entityManager->Get<Collider>(id).objectsCollided.size() << std::endl;
+    //        }
+    //        if (name == "Transform")
+    //        {
+    //            std::cout << "Angle: " << g_entityManager->Get<Transform>(id).position.x << std::endl;
+    //        }
+    //    }
+    //    std::cout << std::endl;
+    //}
 
     // Audio Stuff - HANS
     /*m_audioManager.Init();
