@@ -49,39 +49,45 @@ namespace PE
 					   : contactData{ r_contData },
 					     r_transformA{ r_transA }, r_transformB{ r_transB },
 					     r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
+
+	void Manifold::Resolve(float deltaTime)
+	{
+		ResolveVelocity();
+		ResolvePosition(deltaTime);
+	}
+
+	// set the objects to where they would be when they just collide
+	void Manifold::ResolvePosition(float deltaTime)
+	{
+		float totalInvMass = r_rigidBodyA->GetInverseMass() + r_rigidBodyB->GetInverseMass();
+
+		vec2 penM = contactData.normal * (contactData.penetrationDepth / totalInvMass);
+
+		if (r_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
+		{
+			r_transformA.position += (penM * r_rigidBodyA->GetInverseMass());
+		}
+		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
+		{
+			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());
+		}
+	}
+
+	// set the post trajectory
+	void Manifold::ResolveVelocity()
+	{
+		float p = (2.f * (Dot(r_rigidBodyA->m_velocity, contactData.normal) - Dot(r_rigidBodyB->m_velocity, contactData.normal))) / (r_rigidBodyA->GetMass() + r_rigidBodyB->GetMass());
+		std::cout << p << '\n';
+		if (r_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
+		{
+			r_rigidBodyA->m_velocity = r_rigidBodyA->m_velocity - (contactData.normal * r_rigidBodyA->GetMass() * p);
+		}
+		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
+		{	
+			r_rigidBodyB->m_velocity = r_rigidBodyB->m_velocity + (contactData.normal * r_rigidBodyB->GetMass() * p);
+		}
+	}
 }
-
-
-//bool AABBCollider::TestCollision(Collider& r_collisionObj)
-//{
-
-//}
-//
-//bool AABBCollider::TestCollision(CircleCollider& r_collisionCircle)
-//{
-
-//}
-//
-//bool AABBCollider::TestCollision(AABBCollider& r_collisionBox)
-//{
-
-//}
-
-
-//bool CircleCollider::TestCollision(Collider& r_collisionObj)
-//{
-
-//}
-//
-//bool CircleCollider::TestCollision(CircleCollider& r_collisionCircle)
-//{
-
-//}
-//
-//bool CircleCollider::TestCollision(AABBCollider& r_collisionBox)
-//{
-
-//}
 
 // do not do this for m1
 /*struct OBB

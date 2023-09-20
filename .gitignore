@@ -16,6 +16,8 @@ bin-int
 *.filters
 imgui.ini
 /vendor
+*/Assets
+/Assets
 *.sln
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -404,3 +406,4 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
+Textures/Cat1_128x128.png

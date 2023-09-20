@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     ImGuiWindow.cpp
+ \date     9/5/2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+Header file containing the declaration and definition of the event and event dispatcher template
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "ImGuiWindow.h"
 
@@ -440,4 +456,3 @@ namespace PE {
 		}
 	}
 }
-

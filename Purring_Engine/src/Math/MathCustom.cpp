@@ -22,10 +22,7 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #include "prpch.h"
-#include <cmath>
 #include "MathCustom.h"
-
-constexpr float PE_PI = 3.14159265358979323846f;
 
 namespace PE
 {
@@ -640,8 +637,8 @@ namespace PE
 	{
 		mat4x4 ret{};
 		ret.Identity();				 // c3
-		ret[0] = m[0]; ret[4] = m[3];		ret[12] = m[6];
-		ret[1] = m[1]; ret[5] = m[4];		ret[13] = m[7];
+		ret[0] = m[0]; ret[4] = m[3];	ret[12] = m[6];
+		ret[1] = m[1]; ret[5] = m[4];	ret[13] = m[7];
 		return ret;
 	}
 
@@ -703,14 +700,12 @@ namespace PE
 	{
 		return m[index];
 	}
-	// float operator[][](unsigned int index1, unsigned int index2) const; // [col][row]
 
 	// allows modification
 	float& mat4x4::operator[](unsigned int index) // 0-8
 	{
 		return m[index];
 	}
-	// float& operator[][](unsigned int index1, unsigned int index2); // [col][row]
 
 	// addition
 	mat4x4 mat4x4::operator+(mat4x4 const& r_rhs) const
@@ -833,4 +828,18 @@ namespace PE
 		return degAngle * static_cast<float>(PE_PI) / 180.f;
 	}
 
+	void Clamp(float& r_varToClamp, float min, float max)
+	{
+		r_varToClamp = (r_varToClamp < min) ? min : ((r_varToClamp > max) ? max : r_varToClamp);
+	}
+
+	// broken
+	//void Wrap(float& r_varToWrap, float min, float max)
+	//{
+	//	//r_varToWrap = (r_varToWrap < min) ? max : ((r_varToWrap > max) ? min : r_varToWrap);
+	//	if (r_varToWrap < min)
+	//		r_varToWrap = max;
+	//	else if (r_varToWrap > max)
+	//		r_varToWrap = min;
+	//}
 }

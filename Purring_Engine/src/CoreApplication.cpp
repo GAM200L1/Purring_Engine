@@ -13,6 +13,15 @@
 #include "WindowManager.h"
 #include "Logging/Logger.h"
 
+// Resource manager
+#include "ResourceManager/ResourceManager.h"
+
+// Audio Stuff - HANS
+#include "AudioManager.h"
+
+// Time
+#include "Time/TimeManager.h"
+
 #include "Data/SerializationManager.h"
 // testing
 Logger engine_logger = Logger("ENGINE");
@@ -26,9 +35,6 @@ SerializationManager sm;
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
-
-PE::EntityManager entityManager;
-PE::EntityFactory entityFactory;
 
 PE::CoreApplication::CoreApplication()
 {
@@ -77,7 +83,7 @@ PE::CoreApplication::CoreApplication()
 	m_lastFrameTime = 0;
 
     // Create and set up the window using WindowManager
-    m_window = m_windowManager.InitWindow(1000, 1000, "Engine");
+    m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
 
     m_fpsController.SetTargetFPS(60);  // Default to 60 FPS
     // set flags
@@ -85,9 +91,10 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
+
     // Pass the pointer to the GLFW window to the rendererManager
-    Graphics::RendererManager* rendererManager{ new Graphics::RendererManager{m_window} };
-    AddSystem(rendererManager);
+    m_rendererManager = new Graphics::RendererManager{ m_window };
+    AddSystem(m_rendererManager);
 
 
     //for (EntityID id : SceneView())
@@ -115,41 +122,10 @@ PE::CoreApplication::CoreApplication()
     //}
 
     // Audio Stuff - HANS
-    /*m_audioManager.Init();
+    m_audioManager.Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
-    }*/
-
-    //init imgui settings
-    //IMGUI_CHECKVERSION();
-    //ImGui::CreateContext();
-    //ImGui::StyleColorsDark();
-
-    //ImGuiIO& io = ImGui::GetIO();
-    //io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
-    //io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
-
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
-    //io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
-    //io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
-
-    ///////////////////////////////////////////
-    //temp here untill i can get window exposed
-    //int width, height;
-    //glfwGetWindowSize(m_window, &width, &height);
-    //io.DisplaySize = ImVec2(width, height);
-
-    //ImGuiStyle& style = ImGui::GetStyle();
-    //if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
-    //    style.WindowRounding = 0.0f;
-    //    style.Colors[ImGuiCol_WindowBg].w = 1.0f;
-    //}
-
-    //ImGui_ImplGlfw_InitForOpenGL(m_window, true);
-
-    //ImGui_ImplOpenGL3_Init("#version 460");
-    ///////////////////////////////////////////
+    }
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -159,13 +135,16 @@ PE::CoreApplication::~CoreApplication()
 
 void PE::CoreApplication::Run()
 {
-	std::cout << "test" << std::endl;
+    TimeManager::GetInstance().EngineStart();
 	// main app loop
 
     while (!glfwWindowShouldClose(m_window))
     {
-        m_fpsController.StartFrame();
+        // time start
+        TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
+
+        //std::cout << TimeManager::GetInstance().GetRunTime() << " Delta Time: " << TimeManager::GetInstance().GetDeltaTime() << std::endl;
 
         // UPDATE -----------------------------------------------------
         
@@ -180,11 +159,48 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
+        if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+        }
 
-        // Just test assigning entity IDs
-        int playerEntityId = 5;
-        // Assign the entity name for the player
-        sm.setEntityName(playerEntityId, "PlayerStatistics");
+        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustRotationDegrees(-1.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustMagnification(-0.1f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
+        }
+
+        // Audio Stuff - HANS
+        m_audioManager.Update();
 
         // PlayerStats object with some sample data
         PlayerStats myStats;
@@ -198,111 +214,26 @@ void PE::CoreApplication::Run()
         // S to serialize
         if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            nlohmann::json serializedStats = myStats.to_json(playerEntityId, sm);
-            std::ofstream outFile("serializedPlayerStats.json");
-            if (outFile.is_open()) {
-                outFile << serializedStats.dump(4);
-                outFile.close();
-                std::cout << "PlayerStats serialized and saved to 'serializedPlayerStats.json'." << std::endl;
+            if (glfwGetKey(m_window, key) == GLFW_PRESS)
+            {
+                if (key == GLFW_KEY_A)
+                {
+                    std::cout << "A key pressed\n";
+                    m_audioManager.PlaySound("../Assets/Audio/sound1.wav");
+                }
+                else if (key == GLFW_KEY_S)
+                {
+                    std::cout << "S key pressed\n";
+                    m_audioManager.PlaySound("../Assets/Audio/sound2.wav");
+                }
             }
         }
 
-        // L to deserialize
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            std::ifstream inFile("serializedPlayerStats.json");
-            if (inFile.is_open()) {
-                nlohmann::json j;
-                inFile >> j;
-                inFile.close();
-                myStats.from_json(j, playerEntityId, sm);
 
-                PE::g_entityFactory->LoadComponent(2, "PlayerStats", static_cast<void*>(&myStats));
-
-                // Output all data members of PlayerStats
-                std::cout << "Successfully deserialized and loaded PlayerStats:" << std::endl;
-                std::cout << "Health: " << PE::g_entityManager->Get<PlayerStats>(2).health << std::endl;
-                std::cout << "Level: " << PE::g_entityManager->Get<PlayerStats>(2).level << std::endl;
-                std::cout << "Experience: " << PE::g_entityManager->Get<PlayerStats>(2).experience << std::endl;
-                std::cout << "Player Name: " << PE::g_entityManager->Get<PlayerStats>(2).playerName << std::endl;
-                std::cout << "Entity ID: " << 2 << std::endl;
-                std::cout << "Entity Name: " << sm.getEntityName(playerEntityId) << std::endl;
-            }
-        }
-
-        //// Initialize an Entity and set its name 
-        //Entity entity1;
-        //entity1.name = "TestEntity1";
-        //entity1.data["someInt"] = std::any(42);
-        //entity1.data["someFloat"] = std::any(3.14f);
-        //entity1.data["someString"] = std::any(std::string("Hello, world!"));
-        //entity1.data["someIntArray"] = std::any(std::vector<int>{1, 2, 3, 4, 5});
-
-        //// Add the Entity to the SerializationManager
-        //sm.setEntity(1, entity1);
-
-        //// S to serialize
-        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        //{
-        //    sm.saveToFile("serializedEntity.json", 1);
-        //    std::cout << "Entity has been serialized and saved to 'serializedEntity.json'." << std::endl;
-        //}
-
-        //// L to deserialize
-        //if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        //{
-        //    try {
-        //        std::pair<Entity, int> loadedData = sm.loadFromFile("serializedEntity.json");
-        //        Entity loadedEntity = loadedData.first;
-        //        int entityID = loadedData.second;
-
-        //        if (entityID != -1) {
-        //            std::cout << std::any_cast<int>(loadedEntity.data["someInt"]) << std::endl;
-        //            std::cout << std::any_cast<float > (loadedEntity.data["someFloat"]) << std::endl;
-        //            std::cout << std::any_cast<std::string> (loadedEntity.data["someString"]) << std::endl;
-        //            std::cout << "Successfully loaded entity with ID: " << entityID << std::endl;
-        //        }
-        //        else {
-        //            std::cout << "Failed to load entity from file." << std::endl;
-        //        }
-        //    }
-        //    catch (const std::exception& e) {
-        //        std::cerr << "Exception caught: " << e.what() << std::endl;
-        //    }
-        //}
-
-
-        //// Initialize newEntity with new fields
-        //Entity newEntity;
-        //newEntity.id = 5;
-        //newEntity.someInt = 42;
-        //newEntity.someFloat = 3.14f;
-        //newEntity.someDouble = 2.71828;
-        //newEntity.someChar = 'A';
-        //newEntity.someBool = true;
-        //newEntity.someString = "Hello, world!";
-
-        //// Set entity in manager
-        //manager.setEntity(5, newEntity);
-
-        //// Just for example, let's assume you press the 'S' key to serialize data
-        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        //{
-        //    // Serialize data
-        //    manager.saveToFile("SavedFile.json", 5);
-        //}
-
-        //// Let's assume you press the 'L' key to load serialized data
-        //if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        //{
-        //    // Deserialize data
-        //    auto [loadedEntity, loadedID] = manager.loadFromFile("SavedFile.json");
-        //    // Now loadedEntity contains the deserialized data, use it as needed
-        //}
-
-
-
-
+        // Physics test
+        //PhysicsManager::UpdateDynamics(60.f);
+        CollisionManager::TestColliders();
+        CollisionManager::UpdateColliders();
 
 
         // DRAW -----------------------------------------------------
@@ -327,7 +258,6 @@ void PE::CoreApplication::Run()
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the title to show FPS (every second in this example)
-
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
@@ -338,23 +268,32 @@ void PE::CoreApplication::Run()
         // update systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            m_systemList[i]->UpdateSystem(1.f); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            TimeManager::GetInstance().SystemStartFrame(i);
+            m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            TimeManager::GetInstance().SystemEndFrame(i);
         }
 
+        //-----System profiling to be moved to IMGUI
+        // std::cout << "Percentage %: " << TimeManager::GetInstance().GetSystemFrameTime(0) << ", " 
+        //           << TimeManager::GetInstance().GetFrameTime() << " | "
+        //           << ((TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime()) * 100.f) << "%" << '\n';
+        //-----------------------
+        
         engine_logger.FlushLog();
 
+        TimeManager::GetInstance().EndFrame();
         m_fpsController.EndFrame();
     }
 
-    /// <summary>
-    /// Clean up of imgui functions
-    /// </summary>
+    // Clean up of imgui functions
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
     // Cleanup (if needed)
     m_windowManager.Cleanup();
+    ResourceManager::UnloadResources();
+    ResourceManager::DeleteInstance();
 }
 
 void PE::CoreApplication::InitSystems()

@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     ImGuiWindow.h
+ \date     9/5/2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+Header file containing the declaration and definition of the event and event dispatcher template
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #pragma once
 
 #include "../Events/EventHandler.h"
@@ -9,7 +25,6 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <misc/cpp/imgui_stdlib.h>
-#include <iostream>
 
 #include "Graphics/GLHeaders.h"
 
@@ -143,4 +158,3 @@ namespace PE {
 		float m_renderWindowWidth, m_renderWindowHeight;
 	};
 }
-

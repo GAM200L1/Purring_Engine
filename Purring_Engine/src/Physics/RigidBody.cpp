@@ -4,7 +4,7 @@
 	@co-author
 	@par        DP email: yeni.l\@digipen.edu
 	@par        Course: CSD2401, Section A
-	@date       9/9/2023
+	@date       10/9/2023
 
 	@brief
 
@@ -20,12 +20,15 @@ namespace PE
 	RigidBody::RigidBody() :
 		m_velocity{ vec2{ 0.f, 0.f } }, m_rotationVelocity{ 0.f },
 		m_force{ vec2{ 0.f, 0.f } }, m_torque{ 0.f }, m_awake{ false },
-		m_mass{ 0.f }, m_inverseMass{ 0.f }, m_drag{ 0.f }, m_rotationDrag{ 0.f } {}
+		m_mass{ 0.f }, m_inverseMass{ 0.f }, m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
+		m_prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
 
 	RigidBody::RigidBody(RigidBody const& r_cpy) :
 		m_velocity{ r_cpy.m_velocity }, m_rotationVelocity{ r_cpy.m_rotationVelocity },
 		m_force{ r_cpy.m_force }, m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
-		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag } {}
+		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, 
+		m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag },
+		m_prevPosition{ r_cpy.m_prevPosition }, m_type{ r_cpy.m_type } {}
 
 	RigidBody& RigidBody::operator=(RigidBody const& r_cpy)
 	{
@@ -36,8 +39,10 @@ namespace PE
 		m_awake = r_cpy.m_awake;
 		m_mass = r_cpy.m_mass;
 		m_inverseMass = r_cpy.m_inverseMass;
+		m_prevPosition = r_cpy.m_prevPosition;
 		m_drag = r_cpy.m_drag;
 		m_rotationDrag = r_cpy.m_rotationDrag;
+		m_type = r_cpy.m_type;
 		return *this;
 	}
 
@@ -59,6 +64,9 @@ namespace PE
 
 	vec2 RigidBody::GetVelocity() const
 	{
+		if (m_type == EnumRigidBodyType::STATIC)
+			return vec2{};
+
 		return m_velocity;
 	}
 	void RigidBody::SetVelocity(vec2 const& r_linearVelocity)
@@ -66,14 +74,14 @@ namespace PE
 		if (m_type == EnumRigidBodyType::STATIC)
 			return;
 
-		if (r_linearVelocity.Dot(r_linearVelocity) > 0.f)
-			SetAwake(true);
-
 		m_velocity = r_linearVelocity;
 	}
 
 	float RigidBody::GetRotationVelocity() const
 	{
+		if (m_type == EnumRigidBodyType::STATIC)
+			return 0.f;
+
 		return m_rotationVelocity;
 	}
 	void RigidBody::SetRotationVelocity(float angularVelocity)
@@ -81,22 +89,28 @@ namespace PE
 		if (m_type == EnumRigidBodyType::STATIC)
 			return;
 
-		if (angularVelocity * angularVelocity > 0.f)
-			SetAwake(true);
-
 		m_rotationVelocity = angularVelocity;
 	}
 
 	vec2 RigidBody::GetForce() const
 	{
+		if (m_type != EnumRigidBodyType::DYNAMIC)
+			return vec2{};
+
 		return m_force;
 	}
 	void RigidBody::SetForce(vec2 const& r_force)
 	{
-		m_force += r_force;
+		if (m_type != EnumRigidBodyType::DYNAMIC)
+			return; // should change to throw
+
+		m_force = r_force;
 	}
 	void RigidBody::ZeroForce()
 	{
+		if (m_type != EnumRigidBodyType::DYNAMIC)
+			return;
+
 		m_force = vec2{ 0.f, 0.f };
 	}
 
@@ -125,9 +139,7 @@ namespace PE
 		if (m_type != EnumRigidBodyType::DYNAMIC)
 			return;
 
-		m_awake = true;
 		m_force += r_addOnForce;
-		m_force *= m_drag;
 	}
 
 	// Adds on to existing torque, ultimately affects rotation
@@ -136,80 +148,13 @@ namespace PE
 		if (m_type != EnumRigidBodyType::DYNAMIC)
 			return;
 
-		m_awake = true;
 		m_torque += r_addOnTorque;
-		m_torque *= m_rotationDrag;
 	}
 
-	// affects velocity directly
 	void RigidBody::ApplyLinearImpulse(vec2 const& r_impulseForce)
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC)
 			return;
-
-		m_awake = true;
-		vec2 acceleration = r_impulseForce / m_mass;
-		m_velocity += acceleration * m_mass;
+		m_velocity += r_impulseForce * m_inverseMass;
 	}
 }
-
-// ignore! remove before pulling!! //
-/*
-float RigidBody::GetTorque() const
-{
-	return m_torque;
-}
-void RigidBody::SetTorque(float torque)
-{
-	m_torque += torque;
-}
-void RigidBody::ZeroTorque()
-{
-	m_torque = 0.f;
-}
-void RigidBody::PrintDebug() const
-{
-	std::ostringstream oss;
-	oss << "Position: " << m_position.x << ' ' << m_position.y << '\n';
-	oss << "Direction: " << m_direction.x << ' ' << m_direction.x << '\n';
-	oss << "Angle: " << m_angle << '\n';
-	oss << "Mass: " << m_mass << '\n';
-	oss << "Linear Velocity: " << m_linearVelocity.x << ' ' << m_linearVelocity.y << '\n';
-	oss << "Angular Velocity: " << m_angularVelocity << '\n';
-	oss << "Force: " << m_force.x << ' ' << m_force.y << '\n';
-	oss << "Torque: " << m_torque << '\n';
-	oss << "Awake: " << m_awake << '\n';
-
-	engine_logger.AddLog(false, oss.str(), __FUNCTION__);
-
-	oss.clear();
-}
-// Applies forces acting against RigidBody changing its m_force
-void RigidBody::ApplyLinearDrag()
-{
-	if (m_type != EnumRigidBodyType::DYNAMIC || !m_awake)
-		return;
-
-	if (m_force.LengthSquared() <= 0.001f)
-	{
-		m_force.Zero();
-		m_awake = false;
-	}
-
-	m_force *= m_linearDrag;
-}
-
-// Applies forces acting against RigidBody changing its m_torque
-void RigidBody::ApplyRotationalDrag()
-{
-	if (m_type != EnumRigidBodyType::DYNAMIC || !m_awake)
-		return;
-
-	if (abs(m_torque) < 0.001f) // negligible
-	{
-		m_torque = 0.f;
-		m_awake = false;
-	}
-
-	m_torque *= m_linearDrag;
-}*/
