@@ -37,7 +37,7 @@ namespace PE
 		float radius;
 	};
 
-	struct Collider : Component
+	struct Collider
 	{
 		std::variant<AABBCollider, CircleCollider> colliderVariant;
 		std::set<size_t> objectsCollided;

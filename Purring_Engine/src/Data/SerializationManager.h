@@ -8,7 +8,7 @@
 #include <unordered_map>
 #include "ECS/Components.h"
 
-struct PlayerStats : public PE::Component
+struct PlayerStats
 {
     int health;
     int level;

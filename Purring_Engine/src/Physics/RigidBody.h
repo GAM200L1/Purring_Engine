@@ -25,7 +25,7 @@ enum class EnumRigidBodyType
 
 namespace PE
 {
-	class RigidBody : public Component // dynamic stuff
+	class RigidBody // dynamic stuff
 	{
 	public:
 		// ----- Public Variables ----- //
