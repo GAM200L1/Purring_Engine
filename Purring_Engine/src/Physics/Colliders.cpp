@@ -76,17 +76,15 @@ namespace PE
 	// set the post trajectory
 	void Manifold::ResolveVelocity()
 	{
+		float p = (2.f * (Dot(r_rigidBodyA->m_velocity, contactData.normal) - Dot(r_rigidBodyB->m_velocity, contactData.normal))) / (r_rigidBodyA->GetMass() + r_rigidBodyB->GetMass());
+		std::cout << p << '\n';
 		if (r_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			vec2 pSpInter = contactData.intersectionPoint - r_rigidBodyA->m_prevPosition;
-			vec2 reflectionVec = pSpInter - (contactData.normal * (2.f * Dot(pSpInter, contactData.normal)));
-			r_rigidBodyA->m_velocity = reflectionVec.GetNormalized() * r_rigidBodyA->m_velocity.Length();
+			r_rigidBodyA->m_velocity = r_rigidBodyA->m_velocity - (contactData.normal * r_rigidBodyA->GetMass() * p);
 		}
 		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
 		{	
-			vec2 pSpInter = contactData.intersectionPoint - r_rigidBodyB->m_prevPosition;
-			vec2 reflectionVec = pSpInter - (-contactData.normal * (2.f * Dot(pSpInter, -contactData.normal)));
-			r_rigidBodyB->m_velocity = reflectionVec.GetNormalized() * r_rigidBodyB->m_velocity.Length();
+			r_rigidBodyB->m_velocity = r_rigidBodyB->m_velocity + (contactData.normal * r_rigidBodyB->GetMass() * p);
 		}
 	}
 }
