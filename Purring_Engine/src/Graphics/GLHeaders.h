@@ -17,5 +17,11 @@
 
 #define GLFW_INCLUDE_NONE
 #define GLEW_STATIC
+#define GLM_FORCE_SILENT_WARNINGS
+
+// Suppress warnings for glm's type_quat.hpp
+# pragma warning(push)
+# pragma warning(disable:4201) // warning C4201: nonstandard extension used : nameless struct/union
+
 #include <GL/glew.h> // for access to OpenGL API declarations 
 #include <GLFW/glfw3.h>

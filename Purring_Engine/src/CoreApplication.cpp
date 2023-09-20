@@ -38,14 +38,32 @@
 #include "Logging/Logger.h"
 #include "MemoryManager.h"
 
+// Resource manager
+#include "ResourceManager/ResourceManager.h"
+
 // Audio Stuff - HANS
 #include "AudioManager.h"
 
 // Time
 #include "Time/TimeManager.h"
 
+#include "Data/SerializationManager.h"
 // testing
 Logger engine_logger = Logger("ENGINE");
+SerializationManager sm;
+#include "Physics/RigidBody.h"
+#include "Physics/Colliders.h"
+#include "Physics/CollisionManager.h"
+#include "Physics/PhysicsManager.h"
+#include "ECS//EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
+#include "ECS/Prefabs.h"
+#include "ECS/SceneView.h"
+
+
+PE::EntityManager entManager;
+PE::EntityFactory entFactory;
 
 
 /*-----------------------------------------------------------------------------
@@ -57,6 +75,45 @@ Logger engine_logger = Logger("ENGINE");
 ----------------------------------------------------------------------------- */
 PE::CoreApplication::CoreApplication()
 {
+    REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
+    REGISTERCOMPONENT(Collider, sizeof(Collider));
+    REGISTERCOMPONENT(Transform, sizeof(Transform));
+    //REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
+    //EntityID id = g_entityFactory->CreateEntity();
+    //EntityID id2 = g_entityFactory->CreateEntity();
+    //PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
+    //PE::g_entityFactory->Assign(id2, { "RigidBody", "Transform"});
+    //Collider tmp;
+    //tmp.colliderVariant = CircleCollider();
+    //PE::g_entityFactory->Copy(id, tmp);
+    //PE::g_entityFactory->Copy(id, RigidBody());
+    //PE::g_entityFactory->Copy(id2, RigidBody());
+    //PE::g_entityFactory->Copy(id, Transform());
+    //PE::g_entityFactory->Copy(id2, Transform());
+    ////PE::g_entityFactory->Copy(id2, tmp2);
+
+    //PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
+    //PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
+
+
+    //EntityID id3 = PE::g_entityFactory->CreateFromPrefab("GameObject");
+    //Collider col;
+    //col.colliderVariant = AABBCollider();
+    //col.objectsCollided.emplace(1);
+    //PE::g_entityFactory->LoadComponent(id3, "Collider", static_cast<void*>(&col));
+
+    //std::cout << PE::g_entityManager->Get<Transform>(id3).position.x << std::endl;
+    //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
+
+
+    for (size_t i{}; i < 10; ++i)
+    {
+        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+    }
+
+    //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
+    //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
+
 	m_Running = true;
 	m_lastFrameTime = 0;
 
@@ -69,8 +126,6 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
-
-    // Pass the pointer to the GLFW window to the rendererManager
 
     // Audio Stuff - HANS
     
@@ -85,8 +140,6 @@ PE::CoreApplication::CoreApplication()
     AddSystem(rendererManager);
 
 }
-
-
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -134,12 +187,52 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
+        if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+
+        }
 
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();
 
-        // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
+        //if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustMagnification(-0.1f);
+        //}
 
+        //if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
+        //}
+
+        //if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
+        //}
+
+        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
+        //}
+
+        //if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
+        //}
+
+        //if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+        //{
+        //    m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
+        //}
+
+        // Physics test
+        //PhysicsManager::UpdateDynamics(60.f);
+        CollisionManager::TestColliders();
+        CollisionManager::UpdateColliders();
+
+        // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
@@ -171,6 +264,8 @@ void PE::CoreApplication::Run()
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();
+    ResourceManager::UnloadResources();
+    ResourceManager::DeleteInstance();
 }
 
 

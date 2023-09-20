@@ -29,7 +29,7 @@ namespace PE
         {
         public:
             glm::vec2 position{};	    //! xy coordinates of the vertex
-            glm::vec3 color{};	        //! 3D vector representing the rgb values of the vertex
+            //glm::vec3 color{};	    //! xy coordinates of the vertex
             glm::vec2 textureCoord{};	//! 2D texture coordinates of the vertex
         };
     } // End of Graphics namespace

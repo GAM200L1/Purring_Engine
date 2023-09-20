@@ -22,8 +22,12 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include <string>
+#include <fstream>
+#include <iostream>
 
 #include "VertexData.h"
+#include "Texture.h"
+#include "Math/Transform.h"
 
 // This namespace contains classes made to store the data
 // that should be found in the gameobject / transform components
@@ -44,7 +48,7 @@ namespace temp
 
         \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
         *************************************************************************************/
-        glm::mat4 GetTransformMatrix()
+        glm::mat4 GetTransformMatrix() const
         {
             // Get scale matrix
             glm::mat4 scale_matrix{
@@ -83,16 +87,26 @@ namespace PE
 {
     namespace Graphics
     {
+        //! Types of primitives 
+        enum class EnumMeshType : unsigned char
+        {
+            QUAD,
+            TRIANGLE,
+            DEBUG_SQUARE,
+            DEBUG_CIRCLE,
+            DEBUG_LINE
+        };
+
         // Renderer component. Attach one to each gameobject to be drawn.
         class Renderer
         {
             // ----- Public variables ----- //
         public:
             bool enabled{ true }; // Set to true to render the object, false not to.
-            glm::vec4 color{ 1.f, 1.f, 1.f, 1.f }; // RGBA values of a color in a range of 0 to 1
-            std::string shaderProgramName{ "basic" };
-            std::string meshName{ "quad" };
-            temp::Transform transform{};
+            glm::vec4 color{ 1.f, 0.f, 0.f, 0.5f }; // RGBA values of a color in a range of 0 to 1
+            Graphics::EnumMeshType meshType{ EnumMeshType::QUAD }; // Type of mesh
+            PE::Transform transform{};
+            std::shared_ptr<Graphics::Texture> p_texture{ nullptr }; // Will move the texture object out later
             // obj factory will set a hidden layer value
         };
     } // End of Graphics namespace
