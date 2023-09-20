@@ -32,7 +32,7 @@ namespace PE
 		// ----- Public Methods ----- //
 		static void UpdateColliders();
 		static void TestColliders();
-		static void ResolveCollision();
+		static void ResolveCollision(float deltaTime);
 
 	private:
 		CollisionManager() {}
@@ -52,11 +52,4 @@ namespace PE
 	// Circle + Line
 	int CircleLineIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1, float& r_interTime, Contact& r_contactPt);
 	
-	
-	// ----- Rectangle Collisions ----- //
-	//bool CheckCollision(AABB const& r_aabb1, vec2 const& r_vel1, AABB const& r_aabb2, vec2 const& r_vel2);
-
-
-	// ----- Circle Collisions ----- //
-	//bool CircleAndLineSegmentCollision(BoundingCircle const& r_circle, vec2 const& r_ptEnd, Line)
 }

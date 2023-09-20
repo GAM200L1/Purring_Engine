@@ -55,7 +55,7 @@ namespace PE
 
 	struct Contact
 	{
-		vec2 position{ 0.f, 0.f };
+		vec2 intersectionPoint{ 0.f, 0.f };
 		vec2 normal{ 0.f, 0.f };
 		float penetrationDepth{ 0.f };
 	};
@@ -74,6 +74,10 @@ namespace PE
 		RigidBody* r_rigidBodyB = nullptr;
 
 		Contact contactData;
+
+		void Resolve(float deltaTime);
+		void ResolveVelocity();
+		void ResolvePosition(float deltaTime);
 	};
 
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);

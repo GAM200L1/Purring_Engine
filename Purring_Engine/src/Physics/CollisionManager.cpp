@@ -88,8 +88,8 @@ namespace PE
 									   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
 									   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
 						}
-						else
-							engine_logger.AddLog(false, "Not Collided!\n", __FUNCTION__);
+						//else
+							//engine_logger.AddLog(false, "Not Collided!\n", __FUNCTION__);
 
 					}, collider2.colliderVariant);
 
@@ -99,38 +99,92 @@ namespace PE
 		}
 	}
 
-	void CollisionManager::ResolveCollision()
+	void CollisionManager::ResolveCollision(float deltaTime)
 	{
-		/*for (Manifold& r_manifold : m_manifolds)
+		for (Manifold& r_manifold : m_manifolds)
 		{
-
+			r_manifold.Resolve(deltaTime);
 		}
-		m_manifolds.clear();*/
+		m_manifolds.clear();
 	}
 
 	// Rect + Rect
 	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
 	{
+		// Static Collision
 		if (r_AABB1.max.x < r_AABB2.min.x || r_AABB1.min.x > r_AABB2.max.x)
 		{ return false; }
 		if (r_AABB1.max.y < r_AABB2.min.y || r_AABB1.min.y > r_AABB2.max.y)
 		{ return false; }
+
+		// Dynamic Collision
 		
-		// to do dynamic detection
+		
 		return true;
 	}
 	
 	// Circle + Circle
 	bool CollisionIntersection(CircleCollider const& r_circle1, CircleCollider const& r_circle2, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
 	{
+		vec2 const deltaPosition{ r_circle1.center - r_circle2.center };
+		float const deltaLengthSquared = deltaPosition.LengthSquared();
+		float const totalRadius{ (r_circle1.radius + r_circle2.radius) };
+		// Static Collision
+		if (deltaLengthSquared < totalRadius * totalRadius)
+		{
+			// get contact point data etc.
+			if (deltaLengthSquared < 0.f)
+			{
+				r_contactPt.intersectionPoint = (r_contactPt.normal * r_circle2.radius) + r_circle2.center;
+				r_contactPt.normal = vec2{ 0.f, 1.f };
+				r_contactPt.penetrationDepth = r_circle1.radius;
+			}
+			else
+			{
+				r_contactPt.normal = deltaPosition.GetNormalized();
+				r_contactPt.intersectionPoint = (r_contactPt.normal * r_circle2.radius) + r_circle2.center;
+				r_contactPt.penetrationDepth = totalRadius - sqrtf(deltaLengthSquared);
+			}
+			return true; 
+		}
+		//else
+		//{
+		//	// Dynamic Collision Check
 
-		if ((r_circle1.center - r_circle2.center).LengthSquared() < r_circle1.radius * r_circle1.radius)
-		{ return false; }
-		if ((r_circle1.center - r_circle2.center).LengthSquared() < r_circle2.radius * r_circle2.radius)
-		{ return false; }
+		//	vec2 const& startPos_e1 = g_entityManager->Get<RigidBody>(r_entity1).m_prevPosition;
+		//	vec2 const& endPos_e1 = r_circle1.center;
+		//	//vec2 const& v_e1 = endPos_e1 - startPos_e1;
 
-		// to do dynamic detection
-		return true;
+		//	vec2 const& startPos_e2 = g_entityManager->Get<RigidBody>(r_entity2).m_prevPosition;
+		//	vec2 const& endPos_e2 = r_circle2.center;
+		//	//vec2 const& v_e2 = endPos_e2 - startPos_e2;
+
+		//	vec2 const v = (endPos_e1 - startPos_e1) - (endPos_e2 - startPos_e2); // v = v1 - v2
+		//	vec2 const s = startPos_e1 - startPos_e2;
+		//	
+		//	float eqnC = Dot(s, s) - (totalRadius * totalRadius);
+		//	if (eqnC < 0.f)
+		//	{
+		//		
+		//	}
+
+		//	// quadratic equation to solve for t
+		//	float eqnA = Dot(v, v);
+		//	if (eqnA < std::numeric_limits<float>::epsilon()) 
+		//	{ return false; } // not moving relative to each other
+		//	
+		//	float eqnB = Dot(v, s);
+		//	if (eqnB >= 0.f)
+		//	{ return false; } // not moving towards each other
+
+		//	
+		//	
+		//	// checks if it has root values;
+		//	float discriminant = 
+		//}
+		
+
+		return false;
 	}
 
 	// Rect + Circle
@@ -184,6 +238,7 @@ namespace PE
 	// Circle + Line
 	int CircleLineIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1, float& r_interTime, Contact& r_contactPt)
 	{
+		// Static Collision
 		float const check = Dot(r_lineSeg.normal, r_circle.center - r_lineSeg.point0);
 		if (check <= r_circle.radius)
 		{
@@ -218,7 +273,7 @@ namespace PE
 					if (r_interTime > interTime)
 					{
 						r_interTime = interTime;
-						r_contactPt.position = r_circle.center + (v * interTime);
+						r_contactPt.intersectionPoint = r_circle.center + (v * interTime);
 						r_contactPt.normal = (check <= -r_circle.radius) ? -r_lineSeg.normal : r_lineSeg.normal;
 					}
 					return true;

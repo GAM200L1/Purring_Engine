@@ -33,6 +33,9 @@ namespace PE
 	{
 	public:
 		// ----- Public Variables ----- //
+
+		vec2 m_prevPosition;
+		
 		vec2 m_velocity;
 		float m_rotationVelocity;
 

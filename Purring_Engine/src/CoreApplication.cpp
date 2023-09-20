@@ -176,10 +176,10 @@ void PE::CoreApplication::Run()
                 //rb.m_velocity += vec2{ 50.f, 0.f };
         }
         
-        
         PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
         CollisionManager::TestColliders();
+        CollisionManager::ResolveCollision(TimeManager::GetInstance().GetDeltaTime());
 
         /*// Audio Stuff - HANS
         //m_audioManager.Update();

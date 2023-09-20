@@ -49,39 +49,47 @@ namespace PE
 					   : contactData{ r_contData },
 					     r_transformA{ r_transA }, r_transformB{ r_transB },
 					     r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
+
+	void Manifold::Resolve(float deltaTime)
+	{
+		ResolveVelocity();
+		ResolvePosition(deltaTime);
+	}
+
+	// set the objects to where they would be when they just collide
+	void Manifold::ResolvePosition(float deltaTime)
+	{
+		float totalInvMass = r_rigidBodyA->GetInverseMass() + r_rigidBodyB->GetInverseMass();
+
+		vec2 penM = contactData.normal * (contactData.penetrationDepth / totalInvMass);
+
+		if (r_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
+		{
+			r_transformA.position += (penM * r_rigidBodyA->GetInverseMass());
+		}
+		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
+		{
+			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());
+		}
+	}
+
+	// set the post trajectory
+	void Manifold::ResolveVelocity()
+	{
+		if (r_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
+		{
+			vec2 pSpInter = contactData.intersectionPoint - r_rigidBodyA->m_prevPosition;
+			vec2 reflectionVec = pSpInter - (contactData.normal * (2.f * Dot(pSpInter, contactData.normal)));
+			r_rigidBodyA->m_velocity = reflectionVec.GetNormalized() * r_rigidBodyA->m_velocity.Length();
+		}
+		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
+		{	
+			vec2 pSpInter = contactData.intersectionPoint - r_rigidBodyB->m_prevPosition;
+			vec2 reflectionVec = pSpInter - (-contactData.normal * (2.f * Dot(pSpInter, -contactData.normal)));
+			r_rigidBodyB->m_velocity = reflectionVec.GetNormalized() * r_rigidBodyB->m_velocity.Length();
+		}
+	}
 }
-
-
-//bool AABBCollider::TestCollision(Collider& r_collisionObj)
-//{
-
-//}
-//
-//bool AABBCollider::TestCollision(CircleCollider& r_collisionCircle)
-//{
-
-//}
-//
-//bool AABBCollider::TestCollision(AABBCollider& r_collisionBox)
-//{
-
-//}
-
-
-//bool CircleCollider::TestCollision(Collider& r_collisionObj)
-//{
-
-//}
-//
-//bool CircleCollider::TestCollision(CircleCollider& r_collisionCircle)
-//{
-
-//}
-//
-//bool CircleCollider::TestCollision(AABBCollider& r_collisionBox)
-//{
-
-//}
 
 // do not do this for m1
 /*struct OBB
