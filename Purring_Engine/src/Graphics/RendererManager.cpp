@@ -218,30 +218,30 @@ namespace PE
             glPointSize(10.f);
 
 
-            // Draw a rectangle for each AABB collider
-            for (EntityID id : SceneView<AABBCollider>())
-            {
-                AABBCollider const& collider{ g_entityManager->Get<AABBCollider>(id) };
-                Draw(EnumMeshType::DEBUG_SQUARE, glm::vec4{ 1.f, 0.f, 0.f, 1.f },
-                    *(shaderProgramIterator->second), GL_LINES,
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * 
-                    GenerateTransformMatrix(collider.max.x - collider.min.x, collider.max.y - collider.min.y, 
-                        0.f, (collider.min.x + collider.max.x) / 2.f, (collider.min.y + collider.max.y) / 2.f));
-            }
+             //Draw a rectangle for each AABB collider
+            //for (EntityID id : SceneView<Collider>())
+            //{
+            //    AABBCollider const& collider{ g_entityManager->Get<AABBCollider>(id) };
+            //    Draw(EnumMeshType::DEBUG_SQUARE, glm::vec4{ 1.f, 0.f, 0.f, 1.f },
+            //        *(shaderProgramIterator->second), GL_LINES,
+            //        r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * 
+            //        GenerateTransformMatrix(collider.max.x - collider.min.x, collider.max.y - collider.min.y, 
+            //            0.f, (collider.min.x + collider.max.x) / 2.f, (collider.min.y + collider.max.y) / 2.f));
+            //}
 
-            // Draw a circle for each circle collider
-            for (EntityID id : SceneView<CircleCollider>())
-            {
-                CircleCollider const& collider{ g_entityManager->Get<CircleCollider>(id) };
-                Draw(EnumMeshType::DEBUG_CIRCLE, glm::vec4{ 0.f, 1.f, 0.f, 1.f },
-                    *(shaderProgramIterator->second), GL_LINES,
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * 
-                    GenerateTransformMatrix(collider.radius, collider.radius, 0.f, 
-                        collider.center.x, collider.center.y));
+            //// Draw a circle for each circle collider
+            //for (EntityID id : SceneView<CircleCollider>())
+            //{
+            //    CircleCollider const& collider{ g_entityManager->Get<CircleCollider>(id) };
+            //    Draw(EnumMeshType::DEBUG_CIRCLE, glm::vec4{ 0.f, 1.f, 0.f, 1.f },
+            //        *(shaderProgramIterator->second), GL_LINES,
+            //        r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * 
+            //        GenerateTransformMatrix(collider.radius, collider.radius, 0.f, 
+            //            collider.center.x, collider.center.y));
 
-                // circle mesh has a radius of two, so setting the width and height
-                // to the radius is what we want
-            }
+            //    // circle mesh has a radius of two, so setting the width and height
+            //    // to the radius is what we want
+            //}
 
             // Draw a point and line for each rigidbody representing the position and velocity
             for (EntityID id : SceneView<RigidBody, Transform>())

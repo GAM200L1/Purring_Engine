@@ -76,6 +76,7 @@ namespace PE
 		g_initializeComponent.emplace("Collider", &EntityFactory::InitializeCollider);
 		g_initializeComponent.emplace("Transform", &EntityFactory::InitializeTransform);
 		g_initializeComponent.emplace("PlayerStats", &EntityFactory::InitializePlayerStats);
+		g_initializeComponent.emplace("Renderer", &EntityFactory::InitializeRenderer);
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& id, void* data)
@@ -115,6 +116,16 @@ namespace PE
 			PlayerStats()
 			:
 			*reinterpret_cast<PlayerStats*>(data);
+		return true;
+	}
+
+	bool EntityFactory::InitializeRenderer(const EntityID& id, void* data)
+	{
+		g_entityManager->Get<Graphics::Renderer>(id) =
+			(data == nullptr) ?
+			Graphics::Renderer()
+			:
+			*reinterpret_cast<Graphics::Renderer*>(data);
 		return true;
 	}
 

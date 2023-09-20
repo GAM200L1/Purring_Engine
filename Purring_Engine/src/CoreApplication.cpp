@@ -60,6 +60,7 @@ SerializationManager sm;
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "Graphics/Renderer.h"
 
 
 PE::EntityManager entManager;
@@ -78,6 +79,7 @@ PE::CoreApplication::CoreApplication()
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
     REGISTERCOMPONENT(Collider, sizeof(Collider));
     REGISTERCOMPONENT(Transform, sizeof(Transform));
+    REGISTERCOMPONENT(Graphics::Renderer, sizeof(Graphics::Renderer));
     //REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
     //EntityID id = g_entityFactory->CreateEntity();
     //EntityID id2 = g_entityFactory->CreateEntity();
@@ -106,11 +108,11 @@ PE::CoreApplication::CoreApplication()
     //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
 
 
-    for (size_t i{}; i < 10; ++i)
+    for (size_t i{}; i < 1; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
     }
-
+    g_entityManager->Get<Transform>(0).position.x = 100;
     //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
     //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
 
@@ -194,43 +196,45 @@ void PE::CoreApplication::Run()
 
         }
 
+        
+
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();
 
-        //if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustMagnification(-0.1f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        {
+           
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        {
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+        }
 
         // Physics test
-        //PhysicsManager::UpdateDynamics(60.f);
-        CollisionManager::TestColliders();
+        PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
+        CollisionManager::TestColliders();
+        CollisionManager::ResolveCollision(TimeManager::GetInstance().GetDeltaTime());
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)
@@ -266,6 +270,8 @@ void PE::CoreApplication::Run()
     m_windowManager.Cleanup();
     ResourceManager::UnloadResources();
     ResourceManager::DeleteInstance();
+    PhysicsManager::DeleteInstance();
+    CollisionManager::DeleteInstance();
 }
 
 

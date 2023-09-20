@@ -26,7 +26,7 @@ namespace PE
 {
 	namespace Prefabs
 	{
-		constexpr std::initializer_list<const char*> GameObject = { "RigidBody", "Collider", "Transform" };
+		constexpr std::initializer_list<const char*> GameObject = { "RigidBody", "Collider", "Transform", "Renderer"};
 	}
 	class Prefab
 	{

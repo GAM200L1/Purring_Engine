@@ -45,7 +45,7 @@ namespace PE
         };
 
         // Renderer component. Attach one to each gameobject to be drawn.
-        class Renderer : public Component
+        class Renderer
         {
             // ----- Public functions ----- //
         public:
