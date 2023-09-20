@@ -36,29 +36,31 @@ SerializationManager sm;
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 
+
+PE::EntityManager entManager;
+PE::EntityFactory entFactory;
+
 PE::CoreApplication::CoreApplication()
 {
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
     REGISTERCOMPONENT(Collider, sizeof(Collider));
     REGISTERCOMPONENT(Transform, sizeof(Transform));
     //REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
-    EntityID id = g_entityFactory->CreateEntity();
-    EntityID id2 = g_entityFactory->CreateEntity();
-    PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
-    PE::g_entityFactory->Assign(id2, { "RigidBody", "Transform"});
-    Collider tmp;
-    tmp.colliderVariant = CircleCollider();
-    PE::g_entityFactory->Copy(id, tmp);
-    PE::g_entityFactory->Copy(id, RigidBody());
-    PE::g_entityFactory->Copy(id2, RigidBody());
-    PE::g_entityFactory->Copy(id, Transform());
-    PE::g_entityFactory->Copy(id2, Transform());
-    //PE::g_entityFactory->Copy(id2, tmp2);
+    //EntityID id = g_entityFactory->CreateEntity();
+    //EntityID id2 = g_entityFactory->CreateEntity();
+    //PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
+    //PE::g_entityFactory->Assign(id2, { "RigidBody", "Transform"});
+    //Collider tmp;
+    //tmp.colliderVariant = CircleCollider();
+    //PE::g_entityFactory->Copy(id, tmp);
+    //PE::g_entityFactory->Copy(id, RigidBody());
+    //PE::g_entityFactory->Copy(id2, RigidBody());
+    //PE::g_entityFactory->Copy(id, Transform());
+    //PE::g_entityFactory->Copy(id2, Transform());
+    ////PE::g_entityFactory->Copy(id2, tmp2);
 
-    PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
-    PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
-    PE::g_entityManager->Get<Transform>(id).scale = vec2{ 10.f, 10.f };
-    PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 10.f, 10.f };
+    //PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
+    //PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
 
 
     //EntityID id3 = PE::g_entityFactory->CreateFromPrefab("GameObject");
@@ -68,10 +70,10 @@ PE::CoreApplication::CoreApplication()
     //PE::g_entityFactory->LoadComponent(id3, "Collider", static_cast<void*>(&col));
 
     //std::cout << PE::g_entityManager->Get<Transform>(id3).position.x << std::endl;
-   // std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
+    //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
 
 
-    for (size_t i{}; i < 5000; ++i)
+    for (size_t i{}; i < 10; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
     }
@@ -122,10 +124,10 @@ PE::CoreApplication::CoreApplication()
     //}
 
     // Audio Stuff - HANS
-    m_audioManager.Init();
-    {
-        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
-    }
+    //m_audioManager.Init();
+    //{
+    //    engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
+    //}
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -199,35 +201,7 @@ void PE::CoreApplication::Run()
             m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
         }
 
-        // Audio Stuff - HANS
-        m_audioManager.Update();
 
-        // PlayerStats object with some sample data
-        PlayerStats myStats;
-        myStats.health = 100;
-        myStats.level = 5;
-        myStats.experience = 24.5;
-
-        // Fetch the entity name if available
-        myStats.playerName = sm.getEntityName(playerEntityId);
-
-        // S to serialize
-        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        {
-            if (glfwGetKey(m_window, key) == GLFW_PRESS)
-            {
-                if (key == GLFW_KEY_A)
-                {
-                    std::cout << "A key pressed\n";
-                    m_audioManager.PlaySound("../Assets/Audio/sound1.wav");
-                }
-                else if (key == GLFW_KEY_S)
-                {
-                    std::cout << "S key pressed\n";
-                    m_audioManager.PlaySound("../Assets/Audio/sound2.wav");
-                }
-            }
-        }
 
 
         // Physics test

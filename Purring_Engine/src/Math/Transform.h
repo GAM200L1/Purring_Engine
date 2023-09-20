@@ -69,7 +69,7 @@
 
 namespace PE
 {
-    struct Transform : public Component
+    struct Transform
     {
         float width, height;
         float orientation; // in radians

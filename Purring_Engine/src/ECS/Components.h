@@ -15,7 +15,8 @@
 #pragma once
 
 // INCLUDES
-#include "prpch.h"
+#include <set>
+#include <queue>
 #include "Math/MathCustom.h"
 // CONSTANT VARIABLES
 constexpr size_t DEFAULT_ENTITY_CNT = 5;		// default bytes allocated to components pool
