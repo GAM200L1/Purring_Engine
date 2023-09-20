@@ -18,6 +18,8 @@
 #include "Editor.h"
 #include "MemoryManager.h"
 #include "AudioManager.h"
+#include "Time/TimeManager.h"
+
 namespace PE {
 	//single static instance of imguiwindow 
 	std::unique_ptr<Editor> Editor::s_Instance = nullptr;
@@ -612,21 +614,27 @@ namespace PE {
 		}
 		else
 		{
-			float values[] = { .3f,.2f,.5f };
-			char* names[] = { "Graphics","Editor","Physics" };
-			ImGui::PlotHistogram("##Test",values,IM_ARRAYSIZE(values),0,NULL,0.0f,1.0f,ImVec2(200,80.0f));
+			// HARD CODED
+			std::vector<float> values{
+				TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime(),
+				TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime(),
+				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime()
+				//TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
+			};
+			char* names[] = { /*"Logics",*/ "Physics", "Collision", "Graphics" };
+			ImGui::PlotHistogram("##Test",values.data(), values.size(), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
 			
 			if (ImGui::IsItemHovered())
 			{
 				//current mouse position - the top left position of the rect to get your actual mouse
 				float MousePositionX = ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x;
 				//so your mouseposition/ rect length * number of values to get your current index
-				int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * IM_ARRAYSIZE(values));
+				int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * values.size());
 
-				if (hoveredIndex > -1 && hoveredIndex < IM_ARRAYSIZE(values))
+				if (hoveredIndex > -1 && hoveredIndex < values.size())
 				{
 					ImGui::BeginTooltip();
-					ImGui::Text("%s: %.2f",names[hoveredIndex],values[hoveredIndex]);
+					ImGui::Text("%s: %.2f%%",names[hoveredIndex],values[hoveredIndex] * 100);
 					ImGui::EndTooltip();
 				}
 			}

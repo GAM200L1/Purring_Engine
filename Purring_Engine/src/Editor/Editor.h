@@ -79,12 +79,29 @@ namespace PE {
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowObject(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the test windows
 
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
 		void ShowDebugTests(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the object component window
 
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
 		void ShowComponentWindow(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the resource list window
 
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
 		void ShowResourceWindow(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the peformance profile window
+
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
 		void ShowPerformanceWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the docking port window

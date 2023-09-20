@@ -20,22 +20,25 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Graphics/GLHeaders.h"
 
-class FrameRateTargetControl
+namespace PE
 {
-public:
-    FrameRateTargetControl();
+    class FrameRateTargetControl
+    {
+    public:
+        FrameRateTargetControl();
 
-    void SetTargetFPS(unsigned int fps);
-    void StartFrame();
-    void EndFrame();
-    double GetFPS() const;
-    void UpdateTargetFPSBasedOnKey(int key);
+        void SetTargetFPS(unsigned int fps);
+        void EndFrame();
+        double GetFPS() const;
+        void UpdateTargetFPSBasedOnKey(int key);
 
-private:
-    double m_targetFrameTime;
-    double m_lastFrameStartTime;
-    double m_frameCount;
-    double m_timeSinceLastFPSUpdate;
-    double m_currentFPS;
-    double m_deltaTime;
-};
+    private:
+        double m_targetFrameTime;
+        double m_frameCount;
+        float m_timeSinceLastFPSUpdate;
+        double m_currentFPS;
+
+        // not needed
+        double m_deltaTime;
+    };
+}

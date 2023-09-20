@@ -41,6 +41,9 @@
 // Audio Stuff - HANS
 #include "AudioManager.h"
 
+// Time
+#include "Time/TimeManager.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -106,12 +109,14 @@ PE::CoreApplication::~CoreApplication()
 ----------------------------------------------------------------------------- */
 void PE::CoreApplication::Run()
 {
-    // std::cout << "test" << std::endl;                // Debug to test msg to console
+    // Start engine run time
+    TimeManager::GetInstance().EngineStart();
 
     // Main Application Loop
     while (!glfwWindowShouldClose(m_window))            // Continue until the GLFW window is flagged to close
     {
-        m_fpsController.StartFrame();
+        // Time start
+        TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
         MemoryManager::GetInstance()->CheckMemoryOver();
         // UPDATE -----------------------------------------------------
@@ -146,13 +151,15 @@ void PE::CoreApplication::Run()
         // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            // Provide an accurate delta time for the UpdateSystem function
-            m_systemList[i]->UpdateSystem(1.f);
+            TimeManager::GetInstance().SystemStartFrame(i);
+            m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            TimeManager::GetInstance().SystemEndFrame(i);
         }
 
         // Flush log entries
         engine_logger.FlushLog();
 
+        TimeManager::GetInstance().EndFrame();
         // Finalize FPS calculations for the current frame
         m_fpsController.EndFrame();
     }
