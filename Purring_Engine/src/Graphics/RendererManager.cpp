@@ -308,7 +308,7 @@ namespace PE
             newRenderer.transform.width = width;
             newRenderer.transform.height = height;
             newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = r_position;
+            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
 
             newRenderer.color = r_color;
 
@@ -326,7 +326,7 @@ namespace PE
             newRenderer.transform.width = width;
             newRenderer.transform.height = height;
             newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = r_position;
+            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
 
             newRenderer.p_texture = ResourceManager::GetInstance()->GetTexture(r_texture);
             newRenderer.color = r_color;
@@ -343,7 +343,7 @@ namespace PE
             newRenderer.transform.width = width;
             newRenderer.transform.height = height;
             newRenderer.transform.orientation = 0.f;
-            newRenderer.transform.position = glm::vec2{ 0.f, 0.f };
+            newRenderer.transform.position = vec2{ 0.f, 0.f };
 
             newRenderer.color = r_color;
 
@@ -360,7 +360,7 @@ namespace PE
             newRenderer.transform.width = width;
             newRenderer.transform.height = height;
             newRenderer.transform.orientation = 0.f;
-            newRenderer.transform.position = glm::vec2{ 0.f, 0.f };
+            newRenderer.transform.position = vec2{ 0.f, 0.f };
 
             newRenderer.p_texture = ResourceManager::GetInstance()->GetTexture(r_texture);
             newRenderer.color = r_color;
@@ -379,7 +379,7 @@ namespace PE
             newRenderer.transform.width = width;
             newRenderer.transform.height = height;
             newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = r_centerPosition;
+            newRenderer.transform.position = vec2{ r_centerPosition.x, r_centerPosition.y };
 
             newRenderer.color = r_color;
 
@@ -412,7 +412,7 @@ namespace PE
             // to the radius is what we want
             newRenderer.transform.width = radius; 
             newRenderer.transform.height = radius;
-            newRenderer.transform.position = r_centerPosition;
+            newRenderer.transform.position = vec2{ r_centerPosition.x, r_centerPosition.y };
 
             newRenderer.color = r_color;
 
@@ -430,7 +430,8 @@ namespace PE
             float angleRadians = glm::atan2(r_position2.y - r_position1.y, r_position2.x - r_position1.x);
             newRenderer.transform.orientation = glm::degrees(angleRadians);
             newRenderer.transform.width = glm::distance(r_position1, r_position2);
-            newRenderer.transform.position = (r_position1 + r_position2) * 0.5f;
+            glm::vec2 linePos = (r_position1 + r_position2) * 0.5f;
+            newRenderer.transform.position = vec2{ linePos.x, linePos.y };
 
             newRenderer.color = r_color;
 
@@ -445,7 +446,7 @@ namespace PE
             newRenderer.meshType = EnumMeshType::DEBUG_LINE;
 
             newRenderer.transform.width = 0.f;
-            newRenderer.transform.position = r_position;
+            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
 
             newRenderer.color = r_color;
 

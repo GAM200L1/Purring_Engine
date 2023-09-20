@@ -12,9 +12,9 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 *******************************************************************************/
 #include "prpch.h"
 #include "PhysicsManager.h"
-#include "FrameRateTargetControl.h"
 #include "ECS/Entity.h"
 #include "ECS/SceneView.h"
+#include "Math/Transform.h"
 #include "RigidBody.h"
 
 namespace PE
@@ -84,8 +84,8 @@ namespace PE
 			{
 				rb.m_prevPosition = transform.position;
 				transform.position += rb.m_velocity * deltaTime;
-				transform.angle += rb.m_rotationVelocity * deltaTime;
-				//Wrap(transform.angle, -PE_PI, PE_PI);
+				transform.orientation += rb.m_rotationVelocity * deltaTime;
+				//Wrap(transform.orientation, -PE_PI, PE_PI);
 			}
 			rb.ZeroForce();
 			rb.m_rotationVelocity = 0.f;

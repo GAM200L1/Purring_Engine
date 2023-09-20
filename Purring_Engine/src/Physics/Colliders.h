@@ -13,7 +13,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #pragma once
 
 #include "Math/MathCustom.h"
-#include "ECS/Components.h"
+#include "Math/Transform.h"
 #include "RigidBody.h"
 #include <variant>
 

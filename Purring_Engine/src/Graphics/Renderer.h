@@ -27,6 +27,7 @@
 
 #include "VertexData.h"
 #include "Texture.h"
+#include "Math/Transform.h"
 
 // This namespace contains classes made to store the data
 // that should be found in the gameobject / transform components
@@ -104,7 +105,7 @@ namespace PE
             bool enabled{ true }; // Set to true to render the object, false not to.
             glm::vec4 color{ 1.f, 0.f, 0.f, 0.5f }; // RGBA values of a color in a range of 0 to 1
             Graphics::EnumMeshType meshType{ EnumMeshType::QUAD }; // Type of mesh
-            temp::Transform transform{};
+            PE::Transform transform{};
             std::shared_ptr<Graphics::Texture> p_texture{ nullptr }; // Will move the texture object out later
             // obj factory will set a hidden layer value
         };

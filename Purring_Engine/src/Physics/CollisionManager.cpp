@@ -45,7 +45,7 @@ namespace PE
 			
 			std::visit([&](auto& col)
 			{
-				Update(col, transform.position, transform.scale);
+					Update(col, transform.position, vec2{ transform.width, transform.height });
 			
 			}, collider.colliderVariant);
 		}
@@ -255,7 +255,7 @@ namespace PE
 			float radiusSquare = r_circle.radius * r_circle.radius;
 			return (p0centerLength <= radiusSquare) + (p1centerLength <= radiusSquare);
 
-			vec2 normalScaleRadius = (check <= -r_circle.radius) ? -(r_lineSeg.normal * r_circle.radius) : (r_lineSeg.normal * r_circle.radius);
+			/*vec2 normalScaleRadius = (check <= -r_circle.radius) ? -(r_lineSeg.normal * r_circle.radius) : (r_lineSeg.normal * r_circle.radius);
 
 			vec2 _p0 = r_lineSeg.point0 + normalScaleRadius;
 			vec2 _p1 = r_lineSeg.point1 + normalScaleRadius;
@@ -290,13 +290,13 @@ namespace PE
 			else
 			{
 				return false; // call check line edges function here with false
-			}
+			}*/
 		}
 		else
 		{
 			return false; // call check line edges function here with true
 		}
-		return false;
+		//return false;
 	}
 }
 
