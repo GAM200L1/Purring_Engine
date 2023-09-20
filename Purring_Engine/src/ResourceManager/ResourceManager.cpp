@@ -56,6 +56,15 @@ namespace PE
         return p_instance;
     }
 
+    void ResourceManager::DeleteInstance()
+    {
+        if (p_instance) 
+        {
+            delete p_instance;
+            p_instance = nullptr;
+        }
+    }
+
     // 
     void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderPath,
                              std::string const& r_fragmentShaderPath)

@@ -164,6 +164,7 @@ void PE::CoreApplication::Run()
 
     // Cleanup (if needed)
     m_windowManager.Cleanup();
+    ResourceManager::DeleteInstance();
     PE::ResourceManager::UnloadResources();
 }
 

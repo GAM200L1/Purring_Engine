@@ -74,6 +74,7 @@ namespace PE
 
         // Gets the instance of this class (i need to check why i need this;;)
         static ResourceManager* GetInstance();
+        static void DeleteInstance();
 
         // Unloads all resources that were previously loaded
         static void UnloadResources();
@@ -121,6 +122,7 @@ namespace PE
         static ResourceManager* p_instance;
         // constructor
         ResourceManager() {}
+        ~ResourceManager() {}
     };
 }
 
