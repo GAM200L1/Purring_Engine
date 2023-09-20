@@ -19,6 +19,11 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
+//single static instance of imguiwindow 
+std::unique_ptr<AudioManager> AudioManager::s_Instance = nullptr;
+
+
+
 /*-----------------------------------------------------------------------------
 /// <summary>
 /// Default constructor for the AudioManager class.
@@ -166,4 +171,13 @@ void AudioManager::StopSound()
 {
     if (channel1) channel1->stop();
     if (channel2) channel2->stop();
+}
+
+AudioManager* AudioManager::GetInstance()
+{
+    //may need to make another function to manually allocate memory for this 
+    if (!s_Instance)
+        s_Instance = std::make_unique<AudioManager>();
+
+    return s_Instance.get();
 }
