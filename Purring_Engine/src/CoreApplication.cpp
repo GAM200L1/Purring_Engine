@@ -173,13 +173,14 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
-
         //-----System profiling to be moved to IMGUI
         std::cout << "Percentage %: " << TimeManager::GetInstance().GetSystemFrameTime(0) << ", " 
                   << TimeManager::GetInstance().GetFrameTime() << " | "
-                  << ((TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime()) * 100.f) << "%" << '\n';
+                  << ((TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime()) * 100.f) << "%" << '\n';
         //-----------------------
-        
+        TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime();
+
+
         engine_logger.FlushLog();
 
         TimeManager::GetInstance().EndFrame();
