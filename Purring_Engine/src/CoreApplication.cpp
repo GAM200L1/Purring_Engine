@@ -35,6 +35,9 @@ Logger engine_logger = Logger("ENGINE");
 PE::EntityManager entityManager;
 PE::EntityFactory entityFactory;
 
+// delete this once time is fixed
+bool applyForceR1;
+
 PE::CoreApplication::CoreApplication()
 {
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
@@ -45,22 +48,37 @@ PE::CoreApplication::CoreApplication()
     PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform" });
     PE::g_entityFactory->Assign(id2, { "RigidBody", "Collider", "Transform" });
     Collider tmp, tmp2;
-    tmp.colliderVariant = AABBCollider();
+    tmp.colliderVariant = CircleCollider();
     tmp2.colliderVariant = CircleCollider();
     PE::g_entityFactory->Copy(id, tmp);
     PE::g_entityFactory->Copy(id2, tmp2);
-    PE::g_entityManager->Get<Transform>(id).position = vec2{ 40.f, 84.f };
-    PE::g_entityManager->Get<Transform>(id2).position = vec2{ 130.f, 50.f };
+    PE::g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+    PE::g_entityManager->Get<Transform>(id2).position = vec2{ 10.f, 10.f };
     PE::g_entityManager->Get<Transform>(id).angle = 0.f;
+    PE::g_entityManager->Get<Transform>(id2).angle = 0.f;
     PE::g_entityManager->Get<Transform>(id).scale = vec2{ 100.f, 100.f };
     PE::g_entityManager->Get<Transform>(id2).scale = vec2{ 100.f, 100.f };
+    PE::g_entityManager->Get<RigidBody>(id) = RigidBody{};
+    PE::g_entityManager->Get<RigidBody>(id2) = RigidBody{};
     PE::g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
     PE::g_entityManager->Get<RigidBody>(id).m_velocity = vec2{ 0.f, 0.f };
     PE::g_entityManager->Get<RigidBody>(id).m_force = vec2{ 0.f, 0.f };
     PE::g_entityManager->Get<RigidBody>(id).SetMass(10.f);
+    PE::g_entityManager->Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
+    PE::g_entityManager->Get<RigidBody>(id2).m_velocity = vec2{ 0.f, 0.f };
+    PE::g_entityManager->Get<RigidBody>(id2).m_force = vec2{ 0.f, 0.f };
+    PE::g_entityManager->Get<RigidBody>(id2).SetMass(10.f);
+
+
+    // temp boundaries
+    EntityID id3 = g_entityFactory->CreateEntity();
+    EntityID id4 = g_entityFactory->CreateEntity();
+    PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform" });
+    PE::g_entityFactory->Assign(id2, { "RigidBody", "Collider", "Transform" });
 
 
 
+    applyForceR1 = false;
     m_Running = true;
     m_lastFrameTime = 0;
     m_Running = true;
@@ -109,6 +127,7 @@ void PE::CoreApplication::Run()
         // List of keys to check
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
         RigidBody& rb = g_entityManager->Get<RigidBody>(0);
+        RigidBody& rb1 = g_entityManager->Get<RigidBody>(1);
         for (int key : keys)
         {
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
@@ -118,7 +137,7 @@ void PE::CoreApplication::Run()
         }
         if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
         {
-            m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            applyForceR1 = !applyForceR1;
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
@@ -132,6 +151,11 @@ void PE::CoreApplication::Run()
             (PhysicsManager::applyStepPhysics) ? engine_logger.AddLog(false, "Step Physics Active!\n", __FUNCTION__) : engine_logger.AddLog(false, "Step Physics Inactive!\n", __FUNCTION__);
         }
 
+        if (applyForceR1)
+        {
+            rb1.ApplyForce(vec2{ 0.f, 1.f }*2500.f);
+        }
+
         if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
         {
             //m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
@@ -140,6 +164,7 @@ void PE::CoreApplication::Run()
             rb.ApplyLinearImpulse(rb.m_velocity.GetNormalized() * 1000.f);
         }
         float force = 5000.f;
+        
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
             //m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
@@ -175,7 +200,8 @@ void PE::CoreApplication::Run()
             //else
                 //rb.m_velocity += vec2{ 50.f, 0.f };
         }
-        
+        //std::cout << "0: " << g_entityManager->Get<Transform>(0).position.x << '\n';
+        //std::cout << "1: " << g_entityManager->Get<Transform>(1).position.x << '\n';
         PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
         CollisionManager::TestColliders();
@@ -231,13 +257,16 @@ void PE::CoreApplication::Run()
     }
 
     // Clean up of imgui functions
-    /*ImGui_ImplOpenGL3_Shutdown();
+    ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
 
+    PhysicsManager::DeleteInstance();
+    CollisionManager::DeleteInstance();
+
     // Cleanup (if needed)
     m_windowManager.Cleanup();
-    PE::ResourceManager::UnloadResources();*/
+    //PE::ResourceManager::UnloadResources();
 }
 
 void PE::CoreApplication::InitSystems()

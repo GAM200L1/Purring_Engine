@@ -128,10 +128,10 @@ namespace PE
             AddRendererObject(EnumMeshType::TRIANGLE, 200.f, 200.f, -10.f,
                 glm::vec2{ -100.f, -100.f }, glm::vec4{ 0.f, 1.f, 1.f, 0.5f});*/
 
-            AddDebugSquare(100.f, 100.f, 0.f, glm::vec2{40.f, 84.f}, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
+            AddDebugCircle(50.f, glm::vec2{ 0.f, 0.f }, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
             //AddDebugSquare(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
             //AddDebugLine(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
-            AddDebugCircle(50.f, glm::vec2{ 130.f, 50.f }, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
+            AddDebugCircle(50.f, glm::vec2{ 0.f, 0.f }, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
             //AddDebugPoint(glm::vec2{ 10.f, 0.f }, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
@@ -286,6 +286,7 @@ namespace PE
             glLineWidth(3.f);
 
             // Make draw call for each debug object
+            int i { 0 };
             for (auto& debugShape : m_lineObjects) {
                 auto shaderProgram{ m_shaderPrograms.find(debugShape.shaderProgramName) };
 
@@ -311,8 +312,11 @@ namespace PE
 
                 m_meshes[meshIndex].BindMesh();
 
-                if (debugShape.meshType == Graphics::EnumMeshType::DEBUG_SQUARE)
+                if (i == 0)
                     debugShape.transform.position = glm::vec2{ g_entityManager->Get<Transform>(0).position.x, g_entityManager->Get<Transform>(0).position.y };
+                else if (i == 1)
+                    debugShape.transform.position = glm::vec2{ g_entityManager->Get<Transform>(1).position.x, g_entityManager->Get<Transform>(1).position.y };
+                
 
                 // Pass the model to NDC transform matrix as a uniform variable
                 m_shaderPrograms[debugShape.shaderProgramName]->SetUniform("uModelToNdc",
@@ -341,6 +345,7 @@ namespace PE
                 m_meshes[meshIndex].UnbindMesh();
                 m_shaderPrograms[debugShape.shaderProgramName]->UnUse();
                 debugShape.texture.UnbindTextureObject();
+                ++i;
             }
 
             glPointSize(10.f);
