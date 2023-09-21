@@ -113,6 +113,7 @@ PE::CoreApplication::CoreApplication()
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
     }
     g_entityManager->Get<Transform>(0).position.x = 100;
+    g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
     //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
     //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
 
