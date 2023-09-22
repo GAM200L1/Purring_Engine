@@ -19,7 +19,7 @@
 #include <vector>
 #include <memory>
 // CONSTANT VARIABLES
-constexpr size_t max_size = 1024;
+constexpr size_t max_size = 1000000;
 
 namespace PE {
 	/*!***********************************************************************************
