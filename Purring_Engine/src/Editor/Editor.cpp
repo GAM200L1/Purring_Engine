@@ -459,8 +459,8 @@ namespace PE {
 				buffertester = true;
 				char* buffertest = (char*)MemoryManager::GetInstance()->AllocateMemory("buffertest", 7);
 				//writing 8 bytes into the 7 i allocated
-				strcpy_s(buffertest,8, "testtest");
-				AddWarningLog("writing \"testtest\" 8byte into buffertest of 7 byte + 4 buffer bytes");
+				strcpy_s(buffertest,9, "testtest");
+				AddWarningLog("writing \"testtest\" 9 byte into buffertest of 7 byte + 4 buffer bytes");
 				AddConsole(buffertest);
 				allocated++;
 			}
@@ -905,25 +905,26 @@ namespace PE {
 		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 		m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
 
-		if (ImGui::IsMouseClicked(0))
-		{
-			//where i need to start doing the screen picking
-			//get the mouse position relative to the top - left corner of the ImGui window.
-			ImVec2 cursorToMainWindow = ImGui::GetCursorScreenPos(); // get current window position (top left corner)
-			ImVec2 CurrentWindowPosition = ImGui::GetWindowPos(); // seems to get the same thing
-			ImVec2 CursorToImGuiWindow = ImGui::GetMousePos();  // get mouse position but relative to your screen
-			ImVec2 windowSize = ImGui::GetWindowSize();
+		//Screen picking testing code
+		//if (ImGui::IsMouseClicked(0))
+		//{
+		//	//where i need to start doing the screen picking
+		//	//get the mouse position relative to the top - left corner of the ImGui window.
+		//	ImVec2 cursorToMainWindow = ImGui::GetCursorScreenPos(); // get current window position (top left corner)
+		//	ImVec2 CurrentWindowPosition = ImGui::GetWindowPos(); // seems to get the same thing
+		//	ImVec2 CursorToImGuiWindow = ImGui::GetMousePos();  // get mouse position but relative to your screen
+		//	ImVec2 windowSize = ImGui::GetWindowSize();
 
-			double glfwMouseX, glfwMouseY;
-			glfwGetCursorPos(p_window, &glfwMouseX, &glfwMouseY); //glfw position
+		//	double glfwMouseX, glfwMouseY;
+		//	glfwGetCursorPos(p_window, &glfwMouseX, &glfwMouseY); //glfw position
 
-			std::cout << "[Get current window top left position w title] x screen: " << cursorToMainWindow[0] << " y screen: " << cursorToMainWindow[1] << std::endl;
-			std::cout << "[Get Mouse Pos] x : " << CursorToImGuiWindow[0] << " y : " << CursorToImGuiWindow[1] << std::endl;
-			std::cout << "[Get Current Window View Top left position] x : " << CurrentWindowPosition[0] << " y i: " << CurrentWindowPosition[1] << std::endl;
-			//this tells you mouse position relative to imgui window seems the most useful for now
-			std::cout << "[Gui mouse pos - cursorscreen pos] x:" << CursorToImGuiWindow[0] - cursorToMainWindow[0] << " y: " << CursorToImGuiWindow[1] - cursorToMainWindow[1] << std::endl;
-			std::cout << "[GLFW] x:" << glfwMouseX << " y: " << glfwMouseY << std::endl;	
-		}
+		//	std::cout << "[Get current window top left position w title] x screen: " << cursorToMainWindow[0] << " y screen: " << cursorToMainWindow[1] << std::endl;
+		//	std::cout << "[Get Mouse Pos] x : " << CursorToImGuiWindow[0] << " y : " << CursorToImGuiWindow[1] << std::endl;
+		//	std::cout << "[Get Current Window View Top left position] x : " << CurrentWindowPosition[0] << " y i: " << CurrentWindowPosition[1] << std::endl;
+		//	//this tells you mouse position relative to imgui window seems the most useful for now
+		//	std::cout << "[Gui mouse pos - cursorscreen pos] x:" << CursorToImGuiWindow[0] - cursorToMainWindow[0] << " y: " << CursorToImGuiWindow[1] - cursorToMainWindow[1] << std::endl;
+		//	std::cout << "[GLFW] x:" << glfwMouseX << " y: " << glfwMouseY << std::endl;	
+		//}
 
 		//the graphics rendered onto an image on the imgui window
 		ImGui::Image(
