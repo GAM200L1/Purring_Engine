@@ -28,7 +28,7 @@ namespace PE {
 		//initializing variables 
 		//m_firstLaunch needs to be serialized 
 		m_firstLaunch = true;
-		//if firstlaunch, everything is true and needs to be serialized to true, otherwise let imgui do it
+		//serialize based on what was deserialized
 		m_showConsole = true;
 		m_showLogs = true;
 		m_showObjectList = true;
@@ -39,13 +39,16 @@ namespace PE {
 		m_showPerformanceWindow = false;
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
-
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedIndex = 0;
 		m_items = {};
+
+		//mapping commands to function calls
+		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("test", &PE::Editor::test));
+		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
 	}
 
 	Editor::~Editor()
@@ -69,6 +72,16 @@ namespace PE {
 	bool Editor::IsEditorActive()
 	{
 		return m_showSceneView;
+	}
+
+	void Editor::ping()
+	{
+		AddConsole("pong");
+	}
+
+	void Editor::test()
+	{
+		m_showTestWindows = true;
 	}
 
 	void Editor::Init(GLFWwindow* m_window)
@@ -184,7 +197,7 @@ namespace PE {
 			if (ImGui::Button("Clear Logs")) // button
 			{
 				AddLog("Logs Cleared");
-				startPrint = m_logOutput.size() - 1;
+				startPrint = static_cast<int>(m_logOutput.size()) - 1;
 			}
 			ImGui::SameLine();
 
@@ -279,10 +292,19 @@ namespace PE {
 			ImGui::End(); //imgui syntax if inactive
 		}
 		else {
-			if (ImGui::Button("clear console")) //button
+			if (ImGui::Button("Clear Console")) //button
 			{
 				ClearConsole();
-				AddConsole("console Cleared");
+				AddConsole("Console Cleared");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Help"))
+			{
+					AddConsole("///////////////////////////");
+					AddConsole("        Command List       ");
+					AddConsole("ping: pong");
+					AddConsole("test: to show test window");
+					AddConsole("///////////////////////////");
 			}
 			ImGui::Separator(); // draw a line
 
@@ -304,9 +326,24 @@ namespace PE {
 			bool reclaim_focus = false;
 			//flags for pressing enter, refocus, clearing textbox
 			ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll;
-			if (ImGui::InputText("Type stuff", &m_input, input_text_flags)) //inpux box
+			if (ImGui::InputText("Enter", &m_input, input_text_flags)) //inpux box
 			{
+
 				AddConsole(m_input);
+				//can serialize these command into an array
+				 
+				if (m_commands.find(m_input)!= m_commands.end())
+				{
+					(this->*(m_commands[m_input]))();
+				}
+				//if (m_input == "ping")
+				//{
+				//	AddConsole("pong");
+				//}
+				//if (m_input == "test")
+				//{
+				//	m_showTestWindows = true;
+				//}
 				m_input = "";
 				reclaim_focus = true;
 			}
@@ -405,12 +442,14 @@ namespace PE {
 				ss << "AllocationTest" << allocated;
 				char* allocationtest = (char*)MemoryManager::GetInstance()->AllocateMemory(ss.str(), 30);
 				allocated++;
+				allocationtest;
 			}
 			ImGui::SameLine();
 			//test 2
 			if (ImGui::Button("Create Out of Index Object on Stack"))
 			{
 				char* outofmemorytest = (char*)MemoryManager::GetInstance()->AllocateMemory("out of index test", 1000);
+				outofmemorytest;
 			}
 			//test 3
 			static bool buffertester = false;
@@ -420,7 +459,7 @@ namespace PE {
 				buffertester = true;
 				char* buffertest = (char*)MemoryManager::GetInstance()->AllocateMemory("buffertest", 7);
 				//writing 8 bytes into the 7 i allocated
-				strcpy(buffertest, "testtest");
+				strcpy_s(buffertest,8, "testtest");
 				AddWarningLog("writing \"testtest\" 8byte into buffertest of 7 byte + 4 buffer bytes");
 				AddConsole(buffertest);
 				allocated++;
@@ -674,7 +713,7 @@ namespace PE {
 				//TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
 			};
 			char* names[] = { /*"Logics",*/ "Physics", "Collision", "Graphics" };
-			ImGui::PlotHistogram("##Test",values.data(), values.size(), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
+			ImGui::PlotHistogram("##Test",values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
 			
 			if (ImGui::IsItemHovered())
 			{

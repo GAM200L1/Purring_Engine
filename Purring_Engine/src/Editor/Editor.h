@@ -197,6 +197,16 @@ namespace PE {
 		 \return bool whether editor is active so we know we need to transfer the buffer
 		*************************************************************************************/
 		bool IsEditorActive();
+		// ----- ImGui Command Functions ----- // 
+	private:
+		/*!***********************************************************************************
+		 \brief command line ping that replies pong
+		*************************************************************************************/
+		void ping();
+		/*!***********************************************************************************
+		 \brief command line test that opens the test window
+		*************************************************************************************/
+		void test();
 		// ----- Private Variables ----- // 
 	private:
 		bool m_showLogs;
@@ -220,6 +230,7 @@ namespace PE {
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
+		std::map<std::string, void (PE::Editor::*)()> m_commands;
 	};
 }
 
