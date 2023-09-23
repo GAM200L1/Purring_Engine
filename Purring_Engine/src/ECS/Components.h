@@ -131,12 +131,16 @@ namespace PE
 
         bool resize(size_t numEntity)
         {
-            T* p_tmp = new T[numEntity];
+            T* p_tmp = new T[numEntity]();
             // allocation failed!!
             if (!p_tmp)
             {
                 // @TODO add log message, error, not enough memory
                 return false;
+            }
+            for (size_t i{}; i < m_capacity; ++i)
+            {
+                p_tmp[i] = p_data[i];
             }
             std::swap(p_tmp, p_data);
             m_capacity = numEntity;
