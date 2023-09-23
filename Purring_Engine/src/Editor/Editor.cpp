@@ -628,18 +628,19 @@ namespace PE {
 							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Text("Transform: ");
 								ImGui::Text("Position: ");
-								ImGui::InputFloat("x", &g_entityManager->Get<Transform>(m_currentSelectedObject).position.x, 1.0f, 100.f, "%.3f");
-								ImGui::InputFloat("y", &g_entityManager->Get<Transform>(m_currentSelectedObject).position.y, 1.0f, 100.f, "%.3f");
+								ImGui::Text("x: "); ImGui::SameLine(); ImGui::InputFloat("##x", &g_entityManager->Get<Transform>(m_currentSelectedObject).position.x, 1.0f, 100.f, "%.3f");
+								ImGui::Text("y: "); ImGui::SameLine(); ImGui::InputFloat("##y", &g_entityManager->Get<Transform>(m_currentSelectedObject).position.y, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Scale: ");
-								ImGui::InputFloat("Width", &g_entityManager->Get<Transform>(m_currentSelectedObject).width, 1.0f, 100.f, "%.3f");
-								ImGui::InputFloat("Height", &g_entityManager->Get<Transform>(m_currentSelectedObject).height, 1.0f, 100.f, "%.3f");
+								ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##Width", &g_entityManager->Get<Transform>(m_currentSelectedObject).width, 1.0f, 100.f, "%.3f");
+								ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##Height", &g_entityManager->Get<Transform>(m_currentSelectedObject).height, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Rotation: ");
 								float rotation = g_entityManager->Get<Transform>(m_currentSelectedObject).orientation * (180 / M_PI);
-								ImGui::SliderFloat("Orientation", &rotation, -180, 180, "%.3f");
+								ImGui::Text("Orientation: "); ImGui::SameLine(); 
+								ImGui::SetNextItemWidth(200.f); ImGui::SliderFloat("##Orientation", &rotation, -180, 180, "%.3f");
+								ImGui::Text("             "); ImGui::SameLine();  ImGui::SetNextItemWidth(200.f); ImGui::InputFloat("##Orientation2", &rotation, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_CharsDecimal);
 								ImGui::SetItemTooltip("In Radians");
 								g_entityManager->Get<Transform>(m_currentSelectedObject).orientation = rotation * (M_PI/180);								
 							}
@@ -654,8 +655,9 @@ namespace PE {
 								int index = static_cast<int>(bt);
 								//hard coded for now untill reflection
 								const char* types[] = { "STATIC","DYNAMIC","KINEMATIC" };
+								ImGui::Text("Rigidbody Type: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
-								if (ImGui::Combo("Rigidbody Type", &index, types, IM_ARRAYSIZE(types)))
+								if (ImGui::Combo("##Rigidbody Type", &index, types, IM_ARRAYSIZE(types)))
 								{
 									bt = static_cast<EnumRigidBodyType>(index);
 									g_entityManager->Get<RigidBody>(m_currentSelectedObject).SetType(bt);
@@ -666,7 +668,7 @@ namespace PE {
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								float mass = g_entityManager->Get<RigidBody>(m_currentSelectedObject).GetMass();
-								ImGui::InputFloat("Mass", &mass, 1.0f, 100.f, "%.3f");
+								ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
 								g_entityManager->Get<RigidBody>(m_currentSelectedObject).SetMass(mass);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
@@ -679,8 +681,9 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								int index = static_cast<int>(g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant.index());
 								const char* types[] = { "AABB","CIRCLE" };
+								ImGui::Text("Collider Type: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
-								if (ImGui::Combo("Collider Types", &index, types, IM_ARRAYSIZE(types)))
+								if (ImGui::Combo("##Collider Types", &index, types, IM_ARRAYSIZE(types)))
 								{
 									if (index)
 									{
@@ -719,8 +722,9 @@ namespace PE {
 								ImGui::SetNextItemWidth(200.0f);
 								if (!key.empty()) 
 								{
+									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									if (ImGui::Combo("Textures", &index, key.data(), static_cast<int>(key.size())))
+									if (ImGui::Combo("##Textures", &index, key.data(), static_cast<int>(key.size())))
 									{
 										g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).SetTextureKey(key[index]);
 									}
@@ -734,8 +738,9 @@ namespace PE {
 								color.y = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().g;
 								color.z = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().b;
 								color.w = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().a;
-
-								ImGui::ColorEdit4("Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+								
+								ImGui::Text("Change Color: "); ImGui::SameLine();
+								ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
 
 								g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).SetColor(color.x,color.y,color.z,color.w);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
