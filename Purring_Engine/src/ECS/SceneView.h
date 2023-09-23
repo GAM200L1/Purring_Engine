@@ -74,6 +74,10 @@ namespace PE
 			Iterator(EntityID index, const std::set<ComponentID>& components, bool all) :
 				p_entityManager(PE::g_entityManager), m_index(index), m_components(components), m_all(all)
 			{
+				if (m_components.size() == 1)
+				{
+					p_componentPool = p_entityManager->GetComponentPoolPointer(*(m_components.begin()));
+				}
 			}
 
 			/*!***********************************************************************************
@@ -148,15 +152,26 @@ namespace PE
 			*************************************************************************************/
 			Iterator& operator++()
 			{
-				do
+				if (p_componentPool)
 				{
-					++m_index;
-				} while (m_index < p_entityManager->Size() && !ValidIndex());
+					do
+					{
+						++m_index;
+					} while (!p_componentPool->HasEntity(m_index) && m_index < p_componentPool->m_idxMap.size());
+				}
+				else
+				{
+					do
+					{
+						++m_index;
+					} while (m_index < p_entityManager->Size() && !ValidIndex());
+				}
 				return *this;
 			}
 			
 			// ptr to the entity manager
 			PE::EntityManager* p_entityManager;
+			PE::ComponentPool* p_componentPool{ nullptr };
 			// the current index/entity
 			EntityID m_index;
 			// the set of components in this scope

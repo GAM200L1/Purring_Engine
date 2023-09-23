@@ -130,6 +130,9 @@ namespace PE
 		*************************************************************************************/
 		const ComponentPool* GetComponentPoolPointer(const ComponentID& component) const;
 
+		ComponentPool* GetComponentPoolPointer(const ComponentID& component);
+
+
 		/*!***********************************************************************************
 		 \brief Get a reference to a component pool
 		 
@@ -289,10 +292,7 @@ namespace PE
 		}
 	// ----- Private Functions ----- //
 	private:
-		void DeletePools();
-		bool DestructRigidBody();
-		bool DestructCollider();
-		bool DestructTransform();
+
 	// ----- Private Variables ----- //
 	private:
 		// set of entities picked over vector to increase the speed of searches for specific entites
@@ -405,6 +405,7 @@ namespace PE
 	{
 		return m_componentPools[GetComponentID<T>()];
 	}
+
 
 	template<typename T>
 	ComponentPool& EntityManager::GetComponentPool()

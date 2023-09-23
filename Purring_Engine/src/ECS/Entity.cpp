@@ -163,6 +163,11 @@ namespace PE
 		return m_componentPools.at(component);
 	}
 
+	ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& component) 
+	{
+		return m_componentPools.at(component);
+	}
+
 	void EntityManager::CopyComponent(EntityID src, EntityID dest, const ComponentID& component)
 	{
 		if (!Has(src, component))
