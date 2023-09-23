@@ -85,9 +85,6 @@ namespace PE
 
             // Load a shader program
             ResourceManager::GetInstance()->LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
-            
-            // Load a texture
-            ResourceManager::GetInstance()->LoadTextureFromFile(m_defaultTextureName, "../Assets/Textures/Cat1_128x128.png");
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
