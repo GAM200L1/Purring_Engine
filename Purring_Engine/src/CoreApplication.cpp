@@ -65,6 +65,7 @@ SerializationManager sm;
 
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
+
 std::queue<EntityID> lastEnt{};
 
 
@@ -81,56 +82,7 @@ PE::CoreApplication::CoreApplication()
     REGISTERCOMPONENT(Collider);
     REGISTERCOMPONENT(Transform);
     REGISTERCOMPONENT(Graphics::Renderer);
-    //REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
-    //EntityID id = g_entityFactory->CreateEntity();
-    //EntityID id2 = g_entityFactory->CreateEntity();
-    //PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
-    //PE::g_entityFactory->Assign(id2, { "RigidBody", "Transform"});
-    //Collider tmp;
-    //tmp.colliderVariant = CircleCollider();
-    //PE::g_entityFactory->Copy(id, tmp);
-    //PE::g_entityFactory->Copy(id, RigidBody());
-    //PE::g_entityFactory->Copy(id2, RigidBody());
-    //PE::g_entityFactory->Copy(id, Transform());
-    //PE::g_entityFactory->Copy(id2, Transform());
-    ////PE::g_entityFactory->Copy(id2, tmp2);
 
-    //PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
-    //PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
-
-
-    //EntityID id3 = PE::g_entityFactory->CreateFromPrefab("GameObject");
-    //Collider col;
-    //col.colliderVariant = AABBCollider();
-    //col.objectsCollided.emplace(1);
-    //PE::g_entityFactory->LoadComponent(id3, "Collider", static_cast<void*>(&col));
-
-    //std::cout << PE::g_entityManager->Get<Transform>(id3).position.x << std::endl;
-    //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
-
-
-    for (size_t i{}; i < 3; ++i)
-    {
-        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
-        g_entityManager->Get<Transform>(id).height = 100.f;
-        g_entityManager->Get<Transform>(id).width = 100.f;
-        g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-        g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
-    }
-    g_entityManager->Get<Transform>(0).position.x = 100;
-    g_entityManager->Get<Transform>(0).width = 100;
-    g_entityManager->Get<Transform>(0).height = 100;
-    g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
-
-    g_entityManager->Get<Transform>(1).position.x = -100;
-    g_entityManager->Get<Transform>(1).width = 100;
-    g_entityManager->Get<Transform>(1).height = 100;
-    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
-    //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
-    //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
 
 	m_Running = true;
 	m_lastFrameTime = 0;
@@ -194,8 +146,8 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(1).orientation = 0.f;
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
-    //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
-    //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
+
+
 }
 
 /*-----------------------------------------------------------------------------
