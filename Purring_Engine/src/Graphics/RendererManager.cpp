@@ -192,10 +192,18 @@ namespace PE
             // Make draw call for each game object with a renderer component
             for (EntityID id : SceneView<Renderer, Transform>())
             {
-                Renderer const& renderer{ g_entityManager->Get<Renderer>(id) };
-                Transform const& transform{ g_entityManager->Get<Transform>(id) };
+                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
+
+                glm::mat4 glmObjectTransform
+                {
+                    GenerateTransformMatrix(transform.width, // width
+                        transform.height, transform.orientation, // height, orientation
+                        transform.position.x, transform.position.y) // x, y position
+                };
+
                 Draw(renderer, *(shaderProgramIterator->second), GL_TRIANGLES,
-                    r_worldToNdc * transform.GetTransformMatrix());
+                    r_worldToNdc * glmObjectTransform);
             }
         }
 
@@ -232,8 +240,8 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (EntityID id : SceneView<RigidBody, Transform>())
             {
-                RigidBody const& rigidbody{ g_entityManager->Get<RigidBody>(id) };
-                Transform const& transform{ g_entityManager->Get<Transform>(id) };
+                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
 
                 glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
@@ -300,9 +308,7 @@ namespace PE
             m_meshes[meshIndex].BindMesh();
 
             // Pass the model to NDC transform matrix as a uniform variable
-            r_shaderProgram.SetUniform("uModelToNdc",
-                r_modelToNdc
-            );
+            r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
 
             // Pass the color of the quad as a uniform variable
             r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
