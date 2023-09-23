@@ -41,7 +41,9 @@ namespace PE
             TRIANGLE,
             DEBUG_SQUARE,
             DEBUG_CIRCLE,
-            DEBUG_LINE
+            DEBUG_LINE,
+            DEBUG_POINT,
+            MESH_COUNT
         };
 
         // Renderer component. Attach one to each gameobject to be drawn.
@@ -85,7 +87,7 @@ namespace PE
 
         private:
             bool m_enabled{ true }; // Set to true to render the object, false not to.
-            glm::vec4 m_color{ 1.f, 0.f, 0.f, 0.5f }; // RGBA values of a color in a range of 0 to 1
+            glm::vec4 m_color{ 0.5f, 0.5f, 0.5f, 0.5f }; // RGBA values of a color in a range of 0 to 1
             Graphics::EnumMeshType m_meshType{ EnumMeshType::QUAD }; // Type of mesh
             std::string m_textureKey{ "" }; // Key for the corresponding texture in the resource manager
             // obj factory will set a hidden layer value

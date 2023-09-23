@@ -117,7 +117,16 @@ PE::CoreApplication::CoreApplication()
         g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
     }
     g_entityManager->Get<Transform>(0).position.x = 100;
+    g_entityManager->Get<Transform>(0).width = 100;
+    g_entityManager->Get<Transform>(0).height = 100;
     g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
+
+    g_entityManager->Get<Transform>(1).position.x = -100;
+    g_entityManager->Get<Transform>(1).width = 100;
+    g_entityManager->Get<Transform>(1).height = 100;
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
     //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
     //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
 

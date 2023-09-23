@@ -27,8 +27,10 @@
 #include "Camera.h"
 #include "MeshData.h"
 #include "Renderer.h"
+#include "FrameBuffer.h"
 #include "ShaderProgram.h"
 #include "System.h"
+#include "Physics/Colliders.h"
 
 
 namespace PE
@@ -75,17 +77,17 @@ namespace PE
             /*!***********************************************************************************
              \brief Calls DrawRenderer() on all renderable objects in [m_renderableObjects].
 
-             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
-            void DrawScene(glm::mat4 const& r_viewToNdc);
+            void DrawScene(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
              \brief Calls DrawRenderer() on all debug objects in [m_lineObjects] and 
                     [m_pointObjects].
 
-             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
-            void DrawDebug(glm::mat4 const& r_viewToNdc);
+            void DrawDebug(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
              \brief Binds the shader program, vertex array object and texture and makes the
@@ -103,19 +105,72 @@ namespace PE
              \brief Binds the shader program, vertex array object and texture and makes the
                     draw call for the [r_renderer] passed in.
 
-             \param[in] r_renderer Renderer object with all the information to draw with.
+             \param[in] meshType Type of mesh.
+             \param[in] r_color Color to draw the mesh.
              \param[in] r_shaderProgram Shader program to use.
              \param[in] primitiveType GL Primitive type to make the draw call with.
              \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
             *************************************************************************************/
-            void Draw(EnumMeshType meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
+            void Draw(EnumMeshType const meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
                 GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
 
-            Graphics::Camera m_mainCamera{}; //! Camera object
+            /*!***********************************************************************************
+             \brief Makes a draw call for a square to represent the AABB collider passed in.
+
+             \param[in] r_aabbCollider Information about the AABB collider to render.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawCollider(AABBCollider const& r_aabbCollider,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 1.f, 0.f, 0.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Makes a draw call for a circle to represent the circle collider passed in.
+
+             \param[in] r_circleCollider Information about the circle collider to render.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawCollider(CircleCollider const& r_circleCollider,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.f, 1.f, 0.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Makes a draw call for a line to represent the vector passed in.
+
+             \param[in] r_vector Length and direction of the vector.
+             \param[in] r_startPosition Position (in world space) the vector should start at.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugLine(
+                glm::vec2 const& r_vector, glm::vec2 const& r_startPosition,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.f, 0.f, 1.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Makes a draw call for a point to represent the position passed in.
+
+             \param[in] r_position Position to draw the point at.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugPoint(glm::vec2 const& r_position,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.f, 0.f, 1.f, 1.f });
 
             // ----- Private variables ----- //
         private:
             GLFWwindow* p_windowRef{}; //! Pointer to the GLFW window to render to
+
+            Graphics::Camera m_mainCamera{}; //! Camera object
+
+            Graphics::FrameBuffer m_imguiFrameBuffer{}; //! Framebuffer object for rendering to ImGui window
 
             std::string m_systemName{ "Graphics" }; //! Name of system
 
@@ -128,20 +183,15 @@ namespace PE
             //! Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
 
-
-            // ----- For rendering to ImGui window ----- //
-            GLuint m_frameBufferObjectIndex{}; //! Frame buffer object to draw to render to ImGui window
-            GLuint m_imguiTextureId{}; //! Texture ID of the texture generated to render to the ImGui window
-            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
+            //! Width and height of the ImGui window the last time the framebuffer was resized
+            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
 
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************
              \brief Sets the vertex positions and indices of the object passed in to that of
                     a circle (generated with [segments] number of points along its edges) 
-                    centered at the origin and creates a VAO.
-
-                    This function has not been implemented fully.
+                    centered at the origin with a diamter of 1 and creates a VAO.
 
              \param[in] segments Number of edges that should make up the circle.
              \param[in,out] r_mesh Object containing the mesh data generated.
@@ -179,64 +229,45 @@ namespace PE
              \param[in,out] r_mesh Object containing the mesh data generated.
             *************************************************************************************/
             void InitializeLineMesh(MeshData& r_mesh);
-            
 
             /*!***********************************************************************************
-             \brief 
+             \brief Creates a VAO with a single vertex at the origin (0, 0).
 
-             \param[in] orientation (in radians)
+             \param[in,out] r_mesh Object containing the mesh data generated.
+            *************************************************************************************/
+            void InitializePointMesh(MeshData& r_mesh);
+
+            /*!***********************************************************************************
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
+
+            \param[in] width Width of the object.
+            \param[in] height Height of the object.
+            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
+            \param[in] positionX X position of the object (in world space).
+            \param[in] positionY Y position of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
             *************************************************************************************/
             glm::mat4 GenerateTransformMatrix(float const width, float const height, 
                 float const orientation, float const positionX, float const positionY);
 
 
             /*!***********************************************************************************
-             \brief 
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
 
-             \param[in] 
+            \param[in] rightVector Right vector of the object.
+            \param[in] upVector Up vector of the object.
+            \param[in] centerPosition Position of the center of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
             *************************************************************************************/
-            glm::mat4 GenerateTransformMatrix(glm::vec2 const& horizontalVector, 
-                glm::vec2 const& verticalVector, glm::vec2 const& centerPosition);
+            glm::mat4 GenerateTransformMatrix(glm::vec2 const& rightVector,
+                glm::vec2 const& upVector, glm::vec2 const& centerPosition);
 
             /*!***********************************************************************************
              \brief Prints the graphics specifications of the device.
             *************************************************************************************/
             void PrintSpecifications();
-
-
-            // ----- For rendering to ImGui window ----- //
-
-            /*!***********************************************************************************
-             \brief Creates a frame buffer object with a texture bound to the color buffer so that
-                    the texture can be read back and rendered to an ImGui window.                    
-                    Throws if the frame buffer object was not created successfully.
-
-             \param[in] bufferWidth Width the buffer should be set to. Should match that of 
-                                    the ImGui window.
-             \param[in] bufferHeight Height the buffer should be set to. Should match that of 
-                                     the ImGui window.
-            *************************************************************************************/
-            void CreateFrameBuffer(int const bufferWidth, int const bufferHeight);
-
-            /*!***********************************************************************************
-             \brief Binds the framebuffer.
-            *************************************************************************************/
-            void BindFrameBuffer();
-
-            /*!***********************************************************************************
-             \brief Unbinds the framebuffer.
-            *************************************************************************************/
-            void UnbindFrameBuffer();
-
-            /*!***********************************************************************************
-             \brief Resizes the texture object to match the size passed in.
-
-             \param[in] width Width the texture object should be set to. 
-                              Should match that of the ImGui window.
-             \param[in] height Height the buffer should be set to.
-                               Should match that of the ImGui window.
-            *************************************************************************************/
-            void ResizeFrameBuffer(GLsizei const width, GLsizei const height);
         };
 
 
