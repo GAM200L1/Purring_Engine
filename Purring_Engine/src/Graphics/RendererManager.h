@@ -174,9 +174,6 @@ namespace PE
 
             std::string m_systemName{ "Graphics" }; //! Name of system
 
-            //! Default texture to use
-            std::string m_defaultTextureName{ "Cat" };
-
             //! Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};
 
