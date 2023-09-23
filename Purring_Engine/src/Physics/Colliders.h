@@ -24,6 +24,7 @@ namespace PE
 	struct AABBCollider
 	{
 		// ----- Public Variables ----- //
+		vec2 center;
 		vec2 min;
 		vec2 max;
 	};

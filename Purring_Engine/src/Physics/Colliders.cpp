@@ -19,6 +19,7 @@ namespace PE
 	
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
+		r_AABB.center = r_position;
 		r_AABB.min = r_position - (r_scale * 0.5f);
 		r_AABB.max = r_position + (r_scale * 0.5f);
 	}
