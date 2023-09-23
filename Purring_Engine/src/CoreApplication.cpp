@@ -108,9 +108,10 @@ PE::CoreApplication::CoreApplication()
     //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
 
 
-    for (size_t i{}; i < 1; ++i)
+    for (size_t i{}; i < 50; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
     }
     g_entityManager->Get<Transform>(0).position.x = 100;
     g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
