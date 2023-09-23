@@ -27,6 +27,7 @@
 #include "Camera.h"
 #include "MeshData.h"
 #include "Renderer.h"
+#include "FrameBuffer.h"
 #include "ShaderProgram.h"
 #include "System.h"
 #include "Physics/Colliders.h"
@@ -169,10 +170,9 @@ namespace PE
 
             Graphics::Camera m_mainCamera{}; //! Camera object
 
-            std::string m_systemName{ "Graphics" }; //! Name of system
+            Graphics::FrameBuffer m_imguiFrameBuffer{}; //! Framebuffer object for rendering to ImGui window
 
-            //! Default texture to use
-            std::string m_defaultTextureName{ "Cat" };
+            std::string m_systemName{ "Graphics" }; //! Name of system
 
             //! Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};
@@ -180,18 +180,15 @@ namespace PE
             //! Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
 
-
-            // ----- For rendering to ImGui window ----- //
-            GLuint m_frameBufferObjectIndex{}; //! Frame buffer object to draw to render to ImGui window
-            GLuint m_imguiTextureId{}; //! Texture ID of the texture generated to render to the ImGui window
-            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; //! Width and height of the ImGui window the last time the framebuffer was resized
+            //! Width and height of the ImGui window the last time the framebuffer was resized
+            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
 
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************
              \brief Sets the vertex positions and indices of the object passed in to that of
                     a circle (generated with [segments] number of points along its edges) 
-                    centered at the origin and creates a VAO.
+                    centered at the origin with a diamter of 1 and creates a VAO.
 
              \param[in] segments Number of edges that should make up the circle.
              \param[in,out] r_mesh Object containing the mesh data generated.
@@ -236,64 +233,38 @@ namespace PE
              \param[in,out] r_mesh Object containing the mesh data generated.
             *************************************************************************************/
             void InitializePointMesh(MeshData& r_mesh);
-            
 
             /*!***********************************************************************************
-             \brief 
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
 
-             \param[in] orientation (in radians)
+            \param[in] width Width of the object.
+            \param[in] height Height of the object.
+            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
+            \param[in] positionX X position of the object (in world space).
+            \param[in] positionY Y position of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
             *************************************************************************************/
             glm::mat4 GenerateTransformMatrix(float const width, float const height, 
                 float const orientation, float const positionX, float const positionY);
 
 
             /*!***********************************************************************************
-             \brief 
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
 
-             \param[in] 
+            \param[in] rightVector Right vector of the object.
+            \param[in] upVector Up vector of the object.
+            \param[in] centerPosition Position of the center of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
             *************************************************************************************/
-            glm::mat4 GenerateTransformMatrix(glm::vec2 const& horizontalVector, 
-                glm::vec2 const& verticalVector, glm::vec2 const& centerPosition);
+            glm::mat4 GenerateTransformMatrix(glm::vec2 const& rightVector,
+                glm::vec2 const& upVector, glm::vec2 const& centerPosition);
 
             /*!***********************************************************************************
              \brief Prints the graphics specifications of the device.
             *************************************************************************************/
             void PrintSpecifications();
-
-
-            // ----- For rendering to ImGui window ----- //
-
-            /*!***********************************************************************************
-             \brief Creates a frame buffer object with a texture bound to the color buffer so that
-                    the texture can be read back and rendered to an ImGui window.                    
-                    Throws if the frame buffer object was not created successfully.
-
-             \param[in] bufferWidth Width the buffer should be set to. Should match that of 
-                                    the ImGui window.
-             \param[in] bufferHeight Height the buffer should be set to. Should match that of 
-                                     the ImGui window.
-            *************************************************************************************/
-            void CreateFrameBuffer(int const bufferWidth, int const bufferHeight);
-
-            /*!***********************************************************************************
-             \brief Binds the framebuffer.
-            *************************************************************************************/
-            void BindFrameBuffer();
-
-            /*!***********************************************************************************
-             \brief Unbinds the framebuffer.
-            *************************************************************************************/
-            void UnbindFrameBuffer();
-
-            /*!***********************************************************************************
-             \brief Resizes the texture object to match the size passed in.
-
-             \param[in] width Width the texture object should be set to. 
-                              Should match that of the ImGui window.
-             \param[in] height Height the buffer should be set to.
-                               Should match that of the ImGui window.
-            *************************************************************************************/
-            void ResizeFrameBuffer(GLsizei const width, GLsizei const height);
         };
 
 
