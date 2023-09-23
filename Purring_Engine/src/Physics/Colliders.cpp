@@ -38,9 +38,8 @@ namespace PE
 	{
 		point0 = r_startPt;
 		point1 = r_endPt;
-		normal = point1 - point0;
-		normal = vec2{ normal.y, -normal.x };
-		normal.Normalize();
+		lineVec = point1 - point0;
+		normal = vec2{ lineVec.y, -lineVec.x }.GetNormalized();
 	}
 
 	Manifold::Manifold(Contact const& r_contData,

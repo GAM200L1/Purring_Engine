@@ -89,10 +89,7 @@ namespace PE
 										   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
 										   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
 							}
-							else // else send message to trigger respective event?
-							{
-								std::cout << "collided\n";
-							}
+							// else send message to trigger respective event?
 						}
 						//else
 							//engine_logger.AddLog(false, "Not Collided!\n", __FUNCTION__);
@@ -213,7 +210,11 @@ namespace PE
 		float interTime{ 1.f };
 		int collided = 0;
 
-		if (r_circle.center.x < r_AABB.min.x) // left side
+		if (r_circle.center.x >= r_AABB.min.x && r_circle.center.x <= r_AABB.max.x) // if circle center is within the AABB's x range
+		{
+			collided += 1;
+		}
+		else if (r_circle.center.x < r_AABB.min.x) // left side
 		{
 			LineSegment lineSeg{ r_AABB.min, vec2{r_AABB.min.x, r_AABB.max.y} };
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
@@ -225,11 +226,12 @@ namespace PE
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
 			//std::cout << "Right\n";
 		}
-		else // if circle center is within the AABB's x range
+
+		if (r_circle.center.y >= r_AABB.min.y && r_circle.center.y <= r_AABB.max.y) // if circle center is within the AABB's y range
 		{
 			collided += 1;
 		}
-		if (r_circle.center.y < r_AABB.min.y) // bottom side
+		else if (r_circle.center.y < r_AABB.min.y) // bottom side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.max.x, r_AABB.min.y}, r_AABB.min };
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
@@ -241,11 +243,7 @@ namespace PE
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
 			//std::cout << "top\n";
 		}
-		else // if circle center is within the AABB's y range
-		{
-			collided += 1;
-		}
-
+		std::cout << collided << '\n';
 		return (collided >= 2);
 	}
 
@@ -253,14 +251,21 @@ namespace PE
 	int CircleLineIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1, float& r_interTime, Contact& r_contactPt)
 	{
 		// Static Collision
-		float const check = Dot(r_lineSeg.normal, r_circle.center - r_lineSeg.point0);
+		float const check = Dot(r_lineSeg.normal, r_lineSeg.point0 - r_circle.center);
 		if (check <= r_circle.radius)
 		{
-			float p0centerLengthSqr = (r_circle.center - r_lineSeg.point0).LengthSquared();
-			float p1centerLengthSqr = (r_circle.center - r_lineSeg.point1).LengthSquared();
-			//std::cout << "p0->center: " << p0centerLengthSqr << "\n";
-			float radiusSquare = r_circle.radius * r_circle.radius;
-			return (p0centerLengthSqr <= radiusSquare) + (p1centerLengthSqr <= radiusSquare);
+			float innerProduct = ((r_circle.center.x - r_lineSeg.point0.x) * r_lineSeg.lineVec.x) + ((r_circle.center.y - r_lineSeg.point0.y) * r_lineSeg.lineVec.y);
+			if (0 <= innerProduct && innerProduct <= r_lineSeg.lineVec.LengthSquared()) // check if the circle's centre, if projected onto the line segment, would be within it
+			{
+				return 1;
+			}
+			else // checks for edges
+			{
+				float p0CenterLengthSqr = (r_lineSeg.point0 - r_circle.center).LengthSquared();
+				float p1CenterLengthSqr = (r_lineSeg.point1 - r_circle.center).LengthSquared();
+				float radiusSqr = r_circle.radius * r_circle.radius;
+				return ((p0CenterLengthSqr <= radiusSqr) + (p1CenterLengthSqr <= radiusSqr));
+			}
 
 			/*vec2 normalScaleRadius = (check <= -r_circle.radius) ? -(r_lineSeg.normal * r_circle.radius) : (r_lineSeg.normal * r_circle.radius);
 
@@ -299,11 +304,11 @@ namespace PE
 				return false; // call check line edges function here with false
 			}*/
 		}
-		else
-		{
-			return false; // call check line edges function here with true
-		}
-		//return false;
+		//else
+		//{
+		//	return false; // call check line edges function here with true
+		//}
+		return false;
 	}
 }
 

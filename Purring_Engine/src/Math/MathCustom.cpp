@@ -124,31 +124,37 @@ namespace PE
 		return ((x * r_rhs.x) + (y * r_rhs.y));
 	}
 
+	// for vectors
 	float vec2::LengthSquared() const
 	{
 		return (x * x) + (y * y);
 	}
 
+	// for vectors
 	float vec2::Length() const
 	{
 		return sqrtf(this->LengthSquared());
 	}
 
+	// for point to point
 	float vec2::DistanceSquared(vec2 const& r_rhs) const
 	{
 		return (((this->x - r_rhs.x) * (this->x - r_rhs.x)) * ((this->y - r_rhs.y) * (this->y - r_rhs.y)));
 	}
 
+	// for point to point
 	float vec2::Distance(vec2 const& r_rhs) const
 	{
 		return sqrtf(this->DistanceSquared(r_rhs));
 	}
 
+	// return the normalized form of the vector
 	vec2 vec2::GetNormalized() const
 	{
 		return vec2{ *this / this->Length() };
 	}
 
+	// normalizes the vector itself
 	void vec2::Normalize()
 	{
 		*this /= this->Length();
