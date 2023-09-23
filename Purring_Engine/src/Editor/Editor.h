@@ -215,6 +215,10 @@ namespace PE {
 		 \brief toggle rendering of debug lines
 		*************************************************************************************/
 		void ToggleDebugRender();
+		/*!***********************************************************************************
+		 \brief update the saved object list with the scene view list
+		*************************************************************************************/
+		void UpdateObjectList();
 
 		// ----- ImGui Command Functions ----- // 
 	private:
@@ -231,7 +235,6 @@ namespace PE {
 
 		//single instance of editor
 		static std::unique_ptr<Editor> s_Instance;
-
 
 		//boolean for windows
 		bool m_showLogs;

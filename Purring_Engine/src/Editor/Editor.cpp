@@ -19,8 +19,7 @@
 #include "MemoryManager.h"
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
-
-
+# define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE {
 	//single static instance of imguiwindow 
@@ -51,6 +50,7 @@ namespace PE {
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
+
 	}
 
 	Editor::~Editor()
@@ -92,6 +92,15 @@ namespace PE {
 			AddInfoLog("Turning Debug lines on");
 		}
 		m_renderDebug = !m_renderDebug;
+	}
+
+	void Editor::UpdateObjectList()
+	{
+		m_objects.clear();
+		for (EntityID id : SceneView())
+		{
+			m_objects.emplace_back(id);
+		}
 	}
 
 	void Editor::ping()
@@ -140,6 +149,7 @@ namespace PE {
 		ImGui_ImplGlfw_InitForOpenGL(m_window, true);
 
 		ImGui_ImplOpenGL3_Init("#version 460");
+
 	}
 	
 	void Editor::Render(GLuint texture_id)
@@ -399,11 +409,7 @@ namespace PE {
 				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
 				g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
 
-				m_objects.clear();
-				for (EntityID id : SceneView())
-				{
-					m_objects.emplace_back(id);
-				}
+				UpdateObjectList();
 			}
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
@@ -426,11 +432,7 @@ namespace PE {
 						
 					count--;
 
-					m_objects.clear();
-					for (EntityID id : SceneView())
-					{
-						m_objects.emplace_back(id);
-					}
+					UpdateObjectList();
 				}
 			}
 
@@ -616,53 +618,73 @@ namespace PE {
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				if (m_objectIsSelected)
 				{
-					//get index with m_currentSelectedIndex
-					//loop through selected object's component
-					//testing 3 components
-						//maybe for renderer component checkbox to render or not
-					for (int n = 0; n < 4; n++)
+					std::vector<ComponentID> components = g_entityManager->GetComponentIDs(m_currentSelectedIndex);
+					for (const ComponentID& name : components)
 					{
-						std::stringstream ss;
-						ss << "headertest" << n;
-						//testing ui
-						if (ImGui::CollapsingHeader(ss.str().c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-						{ 	
-						//need a switch case here to check what type of component
-
-						//in each component need to confirm what are the different variables that i can reference and change
-
-						//such as transform, i can change x, y, scale, rotation
-						
-										//////////////
-										//testing ui//
-										//////////////
-							ImGui::Dummy(ImVec2(0.0f, 10.0f));
-							static float f1 = 0.123f, f2 = 0.0f;
-							ImGui::SliderFloat("slider float", &f1, 0.0f, 1.0f, "ratio = %.3f");
-							ImGui::SliderFloat("slider float (log)", &f2, -10.0f, 10.0f, "%.4f", ImGuiSliderFlags_Logarithmic);
-							ImGui::Separator();
-
-							static int i0 = 123;
-							ImGui::InputInt("input int" , &i0);
-							ImGui::Separator();
-
-							static float f0 = 0.001f;
-							ImGui::InputFloat("input float", &f0, 0.01f, 1.0f, "%.3f");
-							ImGui::Separator();
-
-							static int i1 = 50, i2 = 42;
-							ImGui::DragInt("drag int" , &i1, 1);
-							ImGui::DragInt("drag int 0..100", &i2, 1, 0, 100, "%d%%", ImGuiSliderFlags_AlwaysClamp);
-
-							static float f3 = 1.00f, f4 = 0.0067f;
-							ImGui::DragFloat("drag float" , &f3, 0.005f);
-							ImGui::DragFloat("drag small float", &f4, 0.0001f, 0.0f, 0.0f, "%.06f ns");
-
-
-							ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
+						if (name == "Transform")
+						{
+							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
+								ImGui::Text("Transform: ");
+								ImGui::Text("Position: ");
+								ImGui::InputFloat("x", &g_entityManager->Get<Transform>(m_currentSelectedIndex).position.x, 1.0f, 100.f, "%.3f");
+								ImGui::InputFloat("y", &g_entityManager->Get<Transform>(m_currentSelectedIndex).position.y, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
+								ImGui::Text("Scale: ");
+								ImGui::InputFloat("Width", &g_entityManager->Get<Transform>(m_currentSelectedIndex).width, 1.0f, 100.f, "%.3f");
+								ImGui::InputFloat("Height", &g_entityManager->Get<Transform>(m_currentSelectedIndex).height, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
+								ImGui::Text("Rotation: ");
+								float rotation = g_entityManager->Get<Transform>(m_currentSelectedIndex).orientation * (180 / M_PI);
+								ImGui::SliderFloat("Orientation", &rotation, -180, 180, "%.3f");
+								ImGui::SetItemTooltip("In Radians");
+								g_entityManager->Get<Transform>(m_currentSelectedIndex).orientation = rotation * (M_PI/180);								
+							}
 						}
-					}
 
+						if (name == "RigidBody")
+						{
+							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								EnumRigidBodyType bt = g_entityManager->Get<RigidBody>(m_currentSelectedIndex).GetType();
+								int index = static_cast<int>(bt);
+								//hard coded for now untill reflection
+								const char* types[] = { "STATIC","DYNAMIC","KINEMATIC" };
+								ImGui::SetNextItemWidth(200.0f);
+								if (ImGui::Combo("Rigidbody Type", &index, types, IM_ARRAYSIZE(types)))
+								{
+									bt = static_cast<EnumRigidBodyType>(index);
+									g_entityManager->Get<RigidBody>(m_currentSelectedIndex).SetType(bt);
+								}
+								//temp here untill yeni confirms it is getting used
+								//ImGui::Checkbox("Is Awake", &g_entityManager->Get<RigidBody>(m_currentSelectedIndex).m_awake);
+							}
+						}
+
+						if (name == "Collider")
+						{
+							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								int index = static_cast<int>(g_entityManager->Get<Collider>(m_currentSelectedIndex).colliderVariant.index());
+								const char* types[] = { "AABB","CIRCLE" };
+								ImGui::SetNextItemWidth(200.0f);
+								if (ImGui::Combo("Collider Types", &index, types, IM_ARRAYSIZE(types)))
+								{
+									if (index)
+									{
+										g_entityManager->Get<Collider>(m_currentSelectedIndex).colliderVariant = CircleCollider();
+									}
+									else
+									{
+										g_entityManager->Get<Collider>(m_currentSelectedIndex).colliderVariant = AABBCollider();
+									}
+								}
+							}
+						}
+
+
+					}
 				}
 			}
 			ImGui::EndChild();
