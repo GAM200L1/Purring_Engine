@@ -20,6 +20,8 @@
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
 
+
+
 namespace PE {
 	//single static instance of imguiwindow 
 	std::unique_ptr<Editor> Editor::s_Instance = nullptr;
@@ -45,7 +47,6 @@ namespace PE {
 		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedIndex = 0;
-		m_items = {};
 
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("test", &PE::Editor::test));
@@ -391,17 +392,29 @@ namespace PE {
 				AddInfoLog("Object Created");
 				std::stringstream ss;
 				ss << "new object " << count++;
-				m_items.push_back(ss.str().c_str());
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				g_entityManager->Get<Transform>(id).height = 100.f;
+				g_entityManager->Get<Transform>(id).width = 100.f;
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+
+				m_objects.clear();
+				for (EntityID id : SceneView())
+				{
+					m_objects.emplace_back(id);
+				}
 			}
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
 			{
-				if (m_currentSelectedIndex <= m_items.size() && !m_items.empty())  // if vector not empty and item selected not over index
+				if (m_currentSelectedIndex > 0)  // if vector not empty and item selected not over index
 				{
 					AddInfoLog("Object Deleted");
 					std::stringstream ss;
 					ss << "deleted object " << m_currentSelectedIndex;
-					m_items.erase(m_items.begin() + m_currentSelectedIndex);
+					//m_items.erase(m_items.begin() + m_currentSelectedIndex);
+					g_entityManager->RemoveEntity(m_objects[m_currentSelectedIndex]);
 
 					//if not first index
 					m_currentSelectedIndex != 1 ? m_currentSelectedIndex -= 1 : m_currentSelectedIndex = 0;
@@ -409,9 +422,15 @@ namespace PE {
 					//if object selected
 					m_currentSelectedIndex > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 					
-					if (m_items.empty()) m_currentSelectedIndex = -1;//if nothing selected
+					if (m_objects.empty()) m_currentSelectedIndex = -1;//if nothing selected
 						
 					count--;
+
+					m_objects.clear();
+					for (EntityID id : SceneView())
+					{
+						m_objects.emplace_back(id);
+					}
 				}
 			}
 
@@ -424,11 +443,14 @@ namespace PE {
 
 			//loop to show all the items ins the vector
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-				for (int n = 0; n < m_items.size(); n++)
+				for (int n = 0; n < m_objects.size(); n++)
 				{
 					const bool is_selected = (m_currentSelectedIndex == n);
 
-					if (ImGui::Selectable(m_items[n].c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+					std::string name = "GameObject" ;
+					name += std::to_string(n);
+
+					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedIndex = n; //seteting current index to check for selection
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
