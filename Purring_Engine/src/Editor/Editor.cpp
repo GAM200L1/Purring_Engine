@@ -19,6 +19,7 @@
 #include "MemoryManager.h"
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
+#include "ResourceManager/ResourceManager.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE {
@@ -45,7 +46,7 @@ namespace PE {
 		ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
-		m_currentSelectedIndex = 0;
+		m_currentSelectedObject = 0;
 
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("test", &PE::Editor::test));
@@ -414,21 +415,21 @@ namespace PE {
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
 			{
-				if (m_currentSelectedIndex > 0)  // if vector not empty and item selected not over index
+				if (m_currentSelectedObject > 0)  // if vector not empty and item selected not over index
 				{
 					AddInfoLog("Object Deleted");
 					std::stringstream ss;
-					ss << "deleted object " << m_currentSelectedIndex;
+					ss << "deleted object " << m_currentSelectedObject;
 					//m_items.erase(m_items.begin() + m_currentSelectedIndex);
-					g_entityManager->RemoveEntity(m_objects[m_currentSelectedIndex]);
+					g_entityManager->RemoveEntity(m_objects[m_currentSelectedObject]);
 
 					//if not first index
-					m_currentSelectedIndex != 1 ? m_currentSelectedIndex -= 1 : m_currentSelectedIndex = 0;
+					m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 
 					//if object selected
-					m_currentSelectedIndex > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 					
-					if (m_objects.empty()) m_currentSelectedIndex = -1;//if nothing selected
+					if (m_objects.empty()) m_currentSelectedObject = -1;//if nothing selected
 						
 					count--;
 
@@ -436,10 +437,11 @@ namespace PE {
 				}
 			}
 
-			//disabled for now
-			ImGui::BeginDisabled(true);
-			if (ImGui::Button("Clone Object")){}
-			ImGui::EndDisabled();
+			if (ImGui::Button("Clone Object"))
+			{
+				g_entityFactory->Clone(m_currentSelectedObject);
+				UpdateObjectList();			
+			}
 
 			ImGui::Separator();
 
@@ -447,18 +449,18 @@ namespace PE {
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				for (int n = 0; n < m_objects.size(); n++)
 				{
-					const bool is_selected = (m_currentSelectedIndex == n);
+					const bool is_selected = (m_currentSelectedObject == n);
 
 					std::string name = "GameObject" ;
 					name += std::to_string(n);
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedIndex = n; //seteting current index to check for selection
+						m_currentSelectedObject = n; //seteting current index to check for selection
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
 
-					m_currentSelectedIndex > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 				}
 			}
 			ImGui::EndChild();
@@ -618,7 +620,7 @@ namespace PE {
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				if (m_objectIsSelected)
 				{
-					std::vector<ComponentID> components = g_entityManager->GetComponentIDs(m_currentSelectedIndex);
+					std::vector<ComponentID> components = g_entityManager->GetComponentIDs(m_currentSelectedObject);
 					for (const ComponentID& name : components)
 					{
 						if (name == "Transform")
@@ -628,18 +630,18 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 								ImGui::Text("Transform: ");
 								ImGui::Text("Position: ");
-								ImGui::InputFloat("x", &g_entityManager->Get<Transform>(m_currentSelectedIndex).position.x, 1.0f, 100.f, "%.3f");
-								ImGui::InputFloat("y", &g_entityManager->Get<Transform>(m_currentSelectedIndex).position.y, 1.0f, 100.f, "%.3f");
+								ImGui::InputFloat("x", &g_entityManager->Get<Transform>(m_currentSelectedObject).position.x, 1.0f, 100.f, "%.3f");
+								ImGui::InputFloat("y", &g_entityManager->Get<Transform>(m_currentSelectedObject).position.y, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 								ImGui::Text("Scale: ");
-								ImGui::InputFloat("Width", &g_entityManager->Get<Transform>(m_currentSelectedIndex).width, 1.0f, 100.f, "%.3f");
-								ImGui::InputFloat("Height", &g_entityManager->Get<Transform>(m_currentSelectedIndex).height, 1.0f, 100.f, "%.3f");
+								ImGui::InputFloat("Width", &g_entityManager->Get<Transform>(m_currentSelectedObject).width, 1.0f, 100.f, "%.3f");
+								ImGui::InputFloat("Height", &g_entityManager->Get<Transform>(m_currentSelectedObject).height, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 								ImGui::Text("Rotation: ");
-								float rotation = g_entityManager->Get<Transform>(m_currentSelectedIndex).orientation * (180 / M_PI);
+								float rotation = g_entityManager->Get<Transform>(m_currentSelectedObject).orientation * (180 / M_PI);
 								ImGui::SliderFloat("Orientation", &rotation, -180, 180, "%.3f");
 								ImGui::SetItemTooltip("In Radians");
-								g_entityManager->Get<Transform>(m_currentSelectedIndex).orientation = rotation * (M_PI/180);								
+								g_entityManager->Get<Transform>(m_currentSelectedObject).orientation = rotation * (M_PI/180);								
 							}
 						}
 
@@ -647,7 +649,7 @@ namespace PE {
 						{
 							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
-								EnumRigidBodyType bt = g_entityManager->Get<RigidBody>(m_currentSelectedIndex).GetType();
+								EnumRigidBodyType bt = g_entityManager->Get<RigidBody>(m_currentSelectedObject).GetType();
 								int index = static_cast<int>(bt);
 								//hard coded for now untill reflection
 								const char* types[] = { "STATIC","DYNAMIC","KINEMATIC" };
@@ -655,7 +657,7 @@ namespace PE {
 								if (ImGui::Combo("Rigidbody Type", &index, types, IM_ARRAYSIZE(types)))
 								{
 									bt = static_cast<EnumRigidBodyType>(index);
-									g_entityManager->Get<RigidBody>(m_currentSelectedIndex).SetType(bt);
+									g_entityManager->Get<RigidBody>(m_currentSelectedObject).SetType(bt);
 								}
 								//temp here untill yeni confirms it is getting used
 								//ImGui::Checkbox("Is Awake", &g_entityManager->Get<RigidBody>(m_currentSelectedIndex).m_awake);
@@ -666,24 +668,65 @@ namespace PE {
 						{
 							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
-								int index = static_cast<int>(g_entityManager->Get<Collider>(m_currentSelectedIndex).colliderVariant.index());
+								int index = static_cast<int>(g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant.index());
 								const char* types[] = { "AABB","CIRCLE" };
 								ImGui::SetNextItemWidth(200.0f);
 								if (ImGui::Combo("Collider Types", &index, types, IM_ARRAYSIZE(types)))
 								{
 									if (index)
 									{
-										g_entityManager->Get<Collider>(m_currentSelectedIndex).colliderVariant = CircleCollider();
+										g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant = CircleCollider();
 									}
 									else
 									{
-										g_entityManager->Get<Collider>(m_currentSelectedIndex).colliderVariant = AABBCollider();
+										g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant = AABBCollider();
 									}
 								}
 							}
 						}
 
+						if (name == "Renderer")
+						{
+							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting textures
+								std::vector<const char*> key;
+								key.push_back("");
+								//to get all the keys
+								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance()->Textures.begin(); it != ResourceManager::GetInstance()->Textures.end(); ++it) 
+								{
+									key.push_back(it->first.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetTextureKey())
+										break;
+									index++;
+								}
 
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty()) 
+								{
+									if (ImGui::Combo("Textures", &index, key.data(), static_cast<int>(key.size())))
+									{
+										g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).SetTextureKey(key[index]);
+									}
+								}
+
+								//setting colors
+								ImVec4 color;
+								color.x  = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().r;
+								color.y = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().g;
+								color.z = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().b;
+								color.w = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().a;
+
+								ImGui::ColorEdit3("Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).SetColor(color.x,color.y,color.z,color.w);
+
+							}
+						}
 					}
 				}
 			}

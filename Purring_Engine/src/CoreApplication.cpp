@@ -113,7 +113,7 @@ PE::CoreApplication::CoreApplication()
     // Load a texture
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
-
+    ResourceManager::GetInstance()->LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
     for (size_t i{}; i < 5; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");

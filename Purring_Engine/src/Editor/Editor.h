@@ -260,7 +260,7 @@ namespace PE {
 
 		//variable for objects
 		bool m_objectIsSelected;
-		int m_currentSelectedIndex;
+		int m_currentSelectedObject;
 		std::vector<EntityID> m_objects;
 
 		//variable for the windows
