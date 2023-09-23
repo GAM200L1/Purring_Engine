@@ -219,7 +219,7 @@ namespace PE
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
 			//std::cout << "Right\n";
 		}
-		else
+		else // if circle center is within the AABB's x range
 		{
 			collided += 1;
 		}
@@ -235,7 +235,7 @@ namespace PE
 			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, r_contactPt);
 			//std::cout << "top\n";
 		}
-		else
+		else // if circle center is within the AABB's y range
 		{
 			collided += 1;
 		}
@@ -250,10 +250,11 @@ namespace PE
 		float const check = Dot(r_lineSeg.normal, r_circle.center - r_lineSeg.point0);
 		if (check <= r_circle.radius)
 		{
-			float p0centerLength = (r_circle.center - r_lineSeg.point0).LengthSquared();
-			float p1centerLength = (r_circle.center - r_lineSeg.point1).LengthSquared();
+			float p0centerLengthSqr = (r_circle.center - r_lineSeg.point0).LengthSquared();
+			float p1centerLengthSqr = (r_circle.center - r_lineSeg.point1).LengthSquared();
+			std::cout << "p0->center: " << p0centerLengthSqr << "\n";
 			float radiusSquare = r_circle.radius * r_circle.radius;
-			return (p0centerLength <= radiusSquare) + (p1centerLength <= radiusSquare);
+			return (p0centerLengthSqr <= radiusSquare) + (p1centerLengthSqr <= radiusSquare);
 
 			/*vec2 normalScaleRadius = (check <= -r_circle.radius) ? -(r_lineSeg.normal * r_circle.radius) : (r_lineSeg.normal * r_circle.radius);
 
