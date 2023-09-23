@@ -60,6 +60,7 @@ SerializationManager sm;
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "Graphics/Renderer.h"
 
 
 PE::EntityManager entManager;
@@ -78,6 +79,7 @@ PE::CoreApplication::CoreApplication()
     REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
     REGISTERCOMPONENT(Collider, sizeof(Collider));
     REGISTERCOMPONENT(Transform, sizeof(Transform));
+    REGISTERCOMPONENT(Graphics::Renderer, sizeof(Graphics::Renderer));
     //REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
     //EntityID id = g_entityFactory->CreateEntity();
     //EntityID id2 = g_entityFactory->CreateEntity();
@@ -106,14 +108,6 @@ PE::CoreApplication::CoreApplication()
     //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
 
 
-    for (size_t i{}; i < 10; ++i)
-    {
-        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-    }
-
-    //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
-    //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
-
 	m_Running = true;
 	m_lastFrameTime = 0;
 
@@ -139,6 +133,45 @@ PE::CoreApplication::CoreApplication()
     Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
     AddSystem(rendererManager);
 
+
+    // Load a texture
+    std::string catTextureName{ "cat" };
+    ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
+
+    for (size_t i{}; i < 5; ++i)
+    {
+        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+
+        // Make overlapping circle colliders at the origin
+        g_entityManager->Get<Transform>(id).position.x = 0.f;
+        g_entityManager->Get<Transform>(id).position.y = 0.f;
+        g_entityManager->Get<Transform>(id).width = 50;
+        g_entityManager->Get<Transform>(id).height = 50;
+        g_entityManager->Get<Transform>(id).orientation = 0.f;
+        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+    }
+
+    // Make the first gameobject with a collider circle at world pos (100, 100)
+    g_entityManager->Get<Transform>(0).position.x = 100.f;
+    g_entityManager->Get<Transform>(0).position.y = 100.f;
+    g_entityManager->Get<Transform>(0).width = 100.f;
+    g_entityManager->Get<Transform>(0).height = 100.f;
+    g_entityManager->Get<Transform>(0).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
+    g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
+    g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
+
+    // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
+    g_entityManager->Get<Transform>(1).position.x = -100.f;
+    g_entityManager->Get<Transform>(1).position.y = -100.f;
+    g_entityManager->Get<Transform>(1).width = 50.f;
+    g_entityManager->Get<Transform>(1).height = 200.f;
+    g_entityManager->Get<Transform>(1).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
+    //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
 }
 
 /*-----------------------------------------------------------------------------
@@ -194,43 +227,45 @@ void PE::CoreApplication::Run()
 
         }
 
+        
+
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();
 
-        //if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustMagnification(-0.1f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        {
+           
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustMagnification(0.1f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        {
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustPosition(0.f, 10.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustPosition(0.f, -10.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustPosition(-10.f, 0.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+        }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-        //{
-        //    m_rendererManager->m_mainCamera.AdjustPosition(10.f, 0.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+        }
 
         // Physics test
-        //PhysicsManager::UpdateDynamics(60.f);
-        CollisionManager::TestColliders();
+        PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
+        CollisionManager::TestColliders();
+        CollisionManager::ResolveCollision(TimeManager::GetInstance().GetDeltaTime());
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)
@@ -266,6 +301,8 @@ void PE::CoreApplication::Run()
     m_windowManager.Cleanup();
     ResourceManager::UnloadResources();
     ResourceManager::DeleteInstance();
+    PhysicsManager::DeleteInstance();
+    CollisionManager::DeleteInstance();
 }
 
 

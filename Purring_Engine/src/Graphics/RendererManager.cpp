@@ -25,7 +25,16 @@
 #include "RendererManager.h"
 #include "ResourceManager/ResourceManager.h"
 
+// ECS Components
+#include "ECS/Entity.h"
+#include "ECS/EntityFactory.h"
+#include "ECS/SceneView.h"
+
+// ImGui
 #include "Editor/Editor.h"
+
+// Physics and collision
+#include "Physics/Colliders.h"
 
 extern Logger engine_logger;
 
@@ -48,7 +57,7 @@ namespace PE
 
             int width, height;
             glfwGetWindowSize(p_windowRef, &width, &height);
-            CreateFrameBuffer(width, height);
+            m_imguiFrameBuffer.CreateFrameBuffer(width, height);
 
             Editor::GetInstance()->Init(p_window);
         }
@@ -61,43 +70,21 @@ namespace PE
             // Create the framebuffer to render to ImGui window
             int width, height;
             glfwGetWindowSize(p_windowRef, &width, &height);
-            CreateFrameBuffer(width, height);
-            m_cachedWindowWidth = width, m_cachedWindowHeight = height;
+            m_imguiFrameBuffer.CreateFrameBuffer(width, height);
+            m_cachedWindowWidth = static_cast<float>(width), 
+                m_cachedWindowHeight = static_cast<float>(height);
 
             // Initialize the base meshes to use
-            m_meshes.resize(5);
+            m_meshes.resize(static_cast<size_t>(EnumMeshType::MESH_COUNT));
             InitializeTriangleMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::TRIANGLE)]);
             InitializeQuadMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::QUAD)]);
             InitializeCircleMesh(32, m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_CIRCLE)]);
             InitializeSquareMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_SQUARE)]);
             InitializeLineMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_LINE)]);
+            InitializePointMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_POINT)]);
 
             // Load a shader program
             ResourceManager::GetInstance()->LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
-            
-            // Load a texture
-            ResourceManager::GetInstance()->LoadTextureFromFile(m_defaultTextureName, "../Textures/Cat1_128x128.png");
-
-            // Add background objects
-            AddBackgroundObject(width, height, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
-            AddBackgroundObject(width, height, m_defaultTextureName, glm::vec4{ 1.f, 1.f, 0.f, 0.5f });
-
-            // Add a triangle and quad as renderable objects
-            AddRendererObject(EnumMeshType::QUAD, 400.f, 400.f, 0.f,
-                glm::vec2{ 0.f, 0.f }, m_defaultTextureName, glm::vec4{ 1.f, 0.f, 0.f, 0.5f });
-            AddRendererObject(EnumMeshType::TRIANGLE, 100.f, 400.f, 45.f,
-                glm::vec2{ 200.f, 400.f }, m_defaultTextureName, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
-
-            AddRendererObject(EnumMeshType::QUAD, 100.f, 100.f, 20.f,
-                glm::vec2{ -300.f, -300.f }, glm::vec4{ 1.f, 1.f, 0.f, 1.f});
-            AddRendererObject(EnumMeshType::TRIANGLE, 200.f, 200.f, -10.f,
-                glm::vec2{ -100.f, -100.f }, glm::vec4{ 0.f, 1.f, 1.f, 0.5f});
-
-            AddDebugSquare(400.f, 200.f, 30.f, glm::vec2{10.f, 30.f}, glm::vec4{ 1.f, 0.f, 1.f, 0.5f });
-            AddDebugSquare(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
-            AddDebugLine(glm::vec2{-50.f, -50.f}, glm::vec2{50.f, 50.f}, glm::vec4{ 0.f, 0.f, 1.f, 0.5f });
-            AddDebugCircle(250.f, glm::vec2{ -200.f, 200.f }, glm::vec4{ 0.f, 1.f, 0.f, 0.5f });
-            AddDebugPoint(glm::vec2{ 10.f, 0.f }, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -116,8 +103,6 @@ namespace PE
             // Get the size of the ImGui window to render in
             float windowWidth{}, windowHeight{};
             Editor::GetInstance()->GetWindowSize(windowWidth, windowHeight);
-            ResizeFrameBuffer(windowWidth, windowHeight);
-            glViewport(0, 0, windowWidth, windowHeight);
 
             // If the window size has changed
             if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight) 
@@ -127,14 +112,8 @@ namespace PE
                 // Update the frame buffer
                 GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
-                ResizeFrameBuffer(windowWidthInt, windowHeightInt);
+                m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
-
-                // Update size of background objects
-                for (auto& backgroundObject : m_backgroundObjects) {
-                    backgroundObject.transform.width = windowWidth;
-                    backgroundObject.transform.height = windowHeight;
-                }
             }
 
             // Set background color to black
@@ -146,7 +125,7 @@ namespace PE
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             // Bind the RBO for rendering to the ImGui window
-            BindFrameBuffer();
+            m_imguiFrameBuffer.Bind();
 
             // Set the background color of the ImGui window to white
             glClearColor(1.f, 1.f, 1.f, 1.f);
@@ -155,18 +134,19 @@ namespace PE
             // Compute the view to NDC matrix
             float halfWidth{ windowWidth * 0.5f };
             float halfHeight{ windowHeight * 0.5f };
-            glm::mat4 viewToNdc{
-                glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
+            glm::mat4 worldToNdc{
+                glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f) 
+                * m_mainCamera.GetWorldToViewMatrix()
             };
 
 
-
-            DrawDebug(viewToNdc); // Draw debug gizmos in the scene
+            DrawScene(worldToNdc); // Draw objects in the scene
+            DrawDebug(worldToNdc); // Draw debug gizmos in the scene
 
             // Unbind the RBO for rendering to the ImGui window
-            UnbindFrameBuffer();
+            m_imguiFrameBuffer.Unbind();
 
-            Editor::GetInstance()->Render(m_imguiTextureId);
+            Editor::GetInstance()->Render(m_imguiFrameBuffer.GetTextureId());
 
             // Disable alpha blending
             glDisable(GL_BLEND);
@@ -188,12 +168,11 @@ namespace PE
             m_meshes.clear();
 
             // Delete the framebuffer object
-            glDeleteTextures(1, &m_imguiTextureId);
-            glDeleteFramebuffers(1, &m_frameBufferObjectIndex);
+            m_imguiFrameBuffer.Cleanup();
         }
 
 
-        void RendererManager::DrawScene(glm::mat4 const& r_viewToNdc)
+        void RendererManager::DrawScene(glm::mat4 const& r_worldToNdc)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
 
@@ -206,22 +185,26 @@ namespace PE
                 return;
             }
 
-            // Make draw call for each background object
-            for (auto& backgroundObject : m_backgroundObjects) {
-                DrawRenderer(backgroundObject, *(shaderProgramIterator->second), GL_TRIANGLES,
-                    r_viewToNdc * backgroundObject.transform.GetTransformMatrix());
-            }
+            // Make draw call for each game object with a renderer component
+            for (EntityID id : SceneView<Renderer, Transform>())
+            {
+                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
 
-            // Call glDrawElements for each renderable object
-            for (auto& renderable : m_triangleObjects) {
+                glm::mat4 glmObjectTransform
+                {
+                    GenerateTransformMatrix(transform.width, // width
+                        transform.height, transform.orientation, // height, orientation
+                        transform.position.x, transform.position.y) // x, y position
+                };
 
-                DrawRenderer(renderable, *(shaderProgramIterator->second), GL_TRIANGLES,
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * renderable.transform.GetTransformMatrix());
+                Draw(renderer, *(shaderProgramIterator->second), GL_TRIANGLES,
+                    r_worldToNdc * glmObjectTransform);
             }
         }
 
 
-        void RendererManager::DrawDebug(glm::mat4 const& r_viewToNdc)
+        void RendererManager::DrawDebug(glm::mat4 const& r_worldToNdc)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
 
@@ -234,20 +217,36 @@ namespace PE
                 return;
             }
 
+            // Set the width and size of lines and points
             glLineWidth(3.f);
-
-            // Make draw call for each debug object
-            for (auto& debugShape : m_lineObjects) {
-                DrawRenderer(debugShape, *(shaderProgramIterator->second), GL_LINES, 
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * debugShape.transform.GetTransformMatrix());
-            }
-
             glPointSize(10.f);
 
-            // Make draw call for each point
-            for (auto& point : m_pointObjects) {
-                DrawRenderer(point, *(shaderProgramIterator->second), GL_POINTS, 
-                    r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() * point.transform.GetTransformMatrix());
+            // Draw each of the colliders
+            for (EntityID id : SceneView<Collider>()) 
+            {
+                Collider& collider{ g_entityManager->Get<Collider>(id) };
+
+                std::visit([&](auto& col)
+                    {
+                        DrawCollider(col, r_worldToNdc, 
+                            *(shaderProgramIterator->second));
+                    }, collider.colliderVariant);
+            }
+
+            // Draw a point and line for each rigidbody representing the position and velocity
+            for (EntityID id : SceneView<RigidBody, Transform>())
+            {
+                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
+
+                glm::vec2 glmPosition{ transform.position.x, transform.position.y };
+
+                // Draw a line that represents the velocity
+                DrawDebugLine(glm::vec2{ rigidbody.m_velocity.x, rigidbody.m_velocity.y }, 
+                    glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
+
+                // Draw a point at the center of the object
+                DrawDebugPoint(glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
             }
 
             glPointSize(1.f);
@@ -255,12 +254,13 @@ namespace PE
         }
 
 
-        void RendererManager::DrawRenderer(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
+        void RendererManager::Draw(EnumMeshType meshType, glm::vec4 const& r_color, 
+            ShaderProgram& r_shaderProgram, GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
         {
             r_shaderProgram.Use();
 
             // Check if mesh index is valid
-            unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.meshType) };
+            unsigned char meshIndex{ static_cast<unsigned char>(meshType) };
             if (meshIndex >= m_meshes.size())
             {
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
@@ -269,197 +269,156 @@ namespace PE
                 return;
             }
 
-            m_meshes[meshIndex].BindMesh();
+            m_meshes[meshIndex].Bind();
 
             // Pass the model to NDC transform matrix as a uniform variable
-            r_shaderProgram.SetUniform("uModelToNdc",
-                r_modelToNdc
-            );
+            r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
 
             // Pass the color of the quad as a uniform variable
-            r_shaderProgram.SetUniform("uColor", r_renderer.color);
+            r_shaderProgram.SetUniform("uColor", r_color);
 
-            // Bind the texture object
-            if (r_renderer.p_texture != nullptr)
+            glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL);
+
+            // Unbind everything
+            m_meshes[meshIndex].Unbind();
+            r_shaderProgram.UnUse();
+        }
+
+
+        void RendererManager::Draw(Renderer const& r_renderer, ShaderProgram& r_shaderProgram,
+            GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
+        {
+            r_shaderProgram.Use();
+
+            // Check if mesh index is valid
+            unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.GetMeshType()) };
+            if (meshIndex >= m_meshes.size())
             {
-                unsigned int textureUnit{ 0 };
-                r_renderer.p_texture->Bind(textureUnit);
-                r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
-                r_shaderProgram.SetUniform("uIsTextured", true);
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+                return;
             }
-            else {
+
+            m_meshes[meshIndex].Bind();
+
+            // Pass the model to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
+
+            // Pass the color of the quad as a uniform variable
+            r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
+
+            // Attempt to retrieve and bind the texture
+            std::shared_ptr<Graphics::Texture> p_texture{};
+
+            if (r_renderer.GetTextureKey().empty()) 
+            {
                 r_shaderProgram.SetUniform("uIsTextured", false);
+            }
+            else 
+            {
+                auto textureIterator{ ResourceManager::GetInstance()->Textures.find(r_renderer.GetTextureKey()) };
+
+                // Check if shader program is valid
+                if (textureIterator == ResourceManager::GetInstance()->Textures.end())
+                {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(false, "Texture " + r_renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
+
+                    r_shaderProgram.SetUniform("uIsTextured", false);
+                }
+                else 
+                {
+                    p_texture = textureIterator->second;
+                    unsigned int textureUnit{ 0 };
+                    p_texture->Bind(textureUnit);
+                    r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+                    r_shaderProgram.SetUniform("uIsTextured", true);
+                }
             }
 
             glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
                 GL_UNSIGNED_SHORT, NULL);
 
             // Unbind everything
-            m_meshes[meshIndex].UnbindMesh();
+            m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
 
-            if (r_renderer.p_texture != nullptr)
+            if (p_texture != nullptr)
             {
-                r_renderer.p_texture->Unbind();
+                p_texture->Unbind();
             }
-        }
+        }   
 
 
-        void RendererManager::AddRendererObject(EnumMeshType meshType,
-            float const width, float const height, float const orientation, 
-            glm::vec2 const& r_position, glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = meshType;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
-
-            newRenderer.color = r_color;
-
-            m_triangleObjects.emplace_back(newRenderer);
-        }
-
-        void RendererManager::AddRendererObject(EnumMeshType meshType,
-            float const width, float const height,
-            float const orientation, glm::vec2 const& r_position,
-            std::string const& r_texture, glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = meshType;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
-
-            newRenderer.p_texture = ResourceManager::GetInstance()->GetTexture(r_texture);
-            newRenderer.color = r_color;
-
-            m_triangleObjects.emplace_back(newRenderer);
-        }
-
-        void RendererManager::AddBackgroundObject(
-            float const width, float const height, glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::QUAD;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = 0.f;
-            newRenderer.transform.position = vec2{ 0.f, 0.f };
-
-            newRenderer.color = r_color;
-
-            m_backgroundObjects.emplace_back(newRenderer);
-        }
-
-        void RendererManager::AddBackgroundObject(
-            float const width, float const height,
-            std::string const& r_texture, glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::QUAD;
-
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = 0.f;
-            newRenderer.transform.position = vec2{ 0.f, 0.f };
-
-            newRenderer.p_texture = ResourceManager::GetInstance()->GetTexture(r_texture);
-            newRenderer.color = r_color;
-
-            m_backgroundObjects.emplace_back(newRenderer);
-        }
-
-        void RendererManager::AddDebugSquare(
-            float const width, float const height,
-            float const orientation, glm::vec2 const& r_centerPosition,
+        void RendererManager::DrawCollider(AABBCollider const& r_aabbCollider,
+            glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
             glm::vec4 const& r_color)
         {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::DEBUG_SQUARE;
+            glm::mat4 modelToWorld
+            {
+                GenerateTransformMatrix(r_aabbCollider.max.x - r_aabbCollider.min.x, // width
+                    r_aabbCollider.max.y - r_aabbCollider.min.y, // height
+                    0.f, // orientation
+                    (r_aabbCollider.min.x + r_aabbCollider.max.x) * 0.5f, // x position
+                    (r_aabbCollider.min.y + r_aabbCollider.max.y) * 0.5f) // y position
+            };
 
-            newRenderer.transform.width = width;
-            newRenderer.transform.height = height;
-            newRenderer.transform.orientation = orientation;
-            newRenderer.transform.position = vec2{ r_centerPosition.x, r_centerPosition.y };
-
-            newRenderer.color = r_color;
-
-            m_lineObjects.emplace_back(newRenderer);
+            Draw(EnumMeshType::DEBUG_SQUARE, r_color,
+                r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);                
         }
 
 
-        void RendererManager::AddDebugSquare(
-            glm::vec2 const& r_bottomLeft, glm::vec2 const& r_topRight,
+        void RendererManager::DrawCollider(CircleCollider const& r_circleCollider,
+            glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
             glm::vec4 const& r_color)
         {
-            // Assumes that this is a axis - aligned
-            AddDebugSquare(
-                r_topRight.x - r_bottomLeft.x,
-                r_topRight.y - r_bottomLeft.y,
-                0.f, (r_bottomLeft + r_topRight) * 0.5f,
-                r_color
-            );
+            float const diameter{ r_circleCollider.radius * 2.f };
+
+            glm::mat4 modelToWorld
+            {
+                GenerateTransformMatrix(diameter, diameter, 0.f, // width, height, orientation
+                    r_circleCollider.center.x, r_circleCollider.center.y) // x, y position
+            };
+
+            Draw(EnumMeshType::DEBUG_CIRCLE, r_color,
+                r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);
         }
 
 
-        void RendererManager::AddDebugCircle(
-            float const radius, glm::vec2 const& r_centerPosition,
+        void RendererManager::DrawDebugLine(
+            glm::vec2 const& r_vector, glm::vec2 const& r_startPosition,
+            glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
             glm::vec4 const& r_color)
         {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::DEBUG_CIRCLE;
-            
-            // circle mesh has a radius of two, so setting the width and height
-            // to the radius is what we want
-            newRenderer.transform.width = radius; 
-            newRenderer.transform.height = radius;
-            newRenderer.transform.position = vec2{ r_centerPosition.x, r_centerPosition.y };
+            glm::mat4 modelToWorld
+            {
+                GenerateTransformMatrix(r_vector,           // right direction of line
+                    glm::vec2{ -r_vector.y, r_vector.x },   // up direction of line (does not affect the line)
+                    r_startPosition + (r_vector * 0.5f))    // position
+            };
 
-            newRenderer.color = r_color;
-
-            m_lineObjects.emplace_back(newRenderer);
+            Draw(EnumMeshType::DEBUG_LINE, r_color,
+                r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);
         }
 
 
-        void RendererManager::AddDebugLine(
-            glm::vec2 const& r_position1, glm::vec2 const& r_position2,
+        void RendererManager::DrawDebugPoint(glm::vec2 const& r_position,
+            glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
             glm::vec4 const& r_color)
         {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::DEBUG_LINE;
+            glm::vec4 ndcPosition{ r_position, 0.f, 1.f };
+            ndcPosition = r_worldToNdc * ndcPosition;
 
-            float angleRadians = glm::atan2(r_position2.y - r_position1.y, r_position2.x - r_position1.x);
-            newRenderer.transform.orientation = glm::degrees(angleRadians);
-            newRenderer.transform.width = glm::distance(r_position1, r_position2);
-            glm::vec2 linePos = (r_position1 + r_position2) * 0.5f;
-            newRenderer.transform.position = vec2{ linePos.x, linePos.y };
-
-            newRenderer.color = r_color;
-
-            m_lineObjects.emplace_back(newRenderer);
+            Draw(EnumMeshType::DEBUG_POINT, r_color,
+                r_shaderProgram, GL_POINTS, glm::mat4{
+                    glm::vec4{ 0.f, 0.f, 0.f, 0.f },
+                    glm::vec4{ 0.f, 1.f, 0.f, 0.f },
+                    glm::vec4{ 0.f, 0.f, 1.f, 0.f },
+                    ndcPosition });
         }
-
-
-        void RendererManager::AddDebugPoint(glm::vec2 const& r_position,
-            glm::vec4 const& r_color)
-        {
-            Renderer newRenderer{};
-            newRenderer.meshType = EnumMeshType::DEBUG_LINE;
-
-            newRenderer.transform.width = 0.f;
-            newRenderer.transform.position = vec2{ r_position.x, r_position.y };
-
-            newRenderer.color = r_color;
-
-            m_pointObjects.emplace_back(newRenderer);
-        }
-
 
         void RendererManager::InitializeCircleMesh(std::size_t const segments, MeshData& r_mesh)
         { 
@@ -474,11 +433,8 @@ namespace PE
             for (int i{ 0 }; i < (int)segments; ++i) {
                 float const totalAngle{ static_cast<float>(i) * angle };
                 r_mesh.vertices.emplace_back(
-                    VertexData{
-                        glm::vec2{glm::cos(totalAngle), glm::sin(totalAngle)},
-                        //glm::vec3{glm::cos(totalAngle), glm::sin(totalAngle), 1.f},
-                        glm::vec2{0.f, 0.f}
-                    });
+                    glm::vec2{glm::cos(totalAngle) * 0.5f, glm::sin(totalAngle) * 0.5f},
+                    glm::vec2{0.f, 0.f});
 
                 r_mesh.indices.emplace_back(((i - 1) < 0 ? (short)segments - 1 : (short)i - 1));
                 r_mesh.indices.emplace_back((short)i);
@@ -496,11 +452,11 @@ namespace PE
             r_mesh.vertices.reserve(3);
 
             // bottom-left
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f});
             // bottom-right
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f});
             // top-center
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.f, 0.5f}, glm::vec2{0.5f, 1.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{0.f, 0.5f}, glm::vec2{0.5f, 1.f});
 
 
             // Add indices
@@ -523,13 +479,13 @@ namespace PE
             r_mesh.vertices.reserve(4);
 
             // bottom-left
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f});
             // bottom-right
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f});
             // top-right
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, 0.5f}, glm::vec2{1.f, 1.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{0.5f, 0.5f}, glm::vec2{1.f, 1.f});
             // top-left
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, 0.5f}, glm::vec2{0.f, 1.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, 0.5f}, glm::vec2{0.f, 1.f});
 
 
             // Add indices
@@ -555,13 +511,13 @@ namespace PE
             r_mesh.vertices.reserve(4);
 
             // bottom-left
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, -0.5f}, glm::vec2{0.f, 0.f});
             // bottom-right
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{0.5f, -0.5f}, glm::vec2{1.f, 0.f});
             // top-right
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{0.5f, 0.5f}, glm::vec2{1.f, 1.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{0.5f, 0.5f}, glm::vec2{1.f, 1.f});
             // top-left
-            r_mesh.vertices.emplace_back(VertexData{ glm::vec2{-0.5f, 0.5f}, glm::vec2{0.f, 1.f} });
+            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, 0.5f}, glm::vec2{0.f, 1.f});
 
             // Add indices
             r_mesh.indices.clear();
@@ -587,8 +543,8 @@ namespace PE
             r_mesh.vertices.clear();
             r_mesh.vertices.reserve(2);
 
-            r_mesh.vertices.emplace_back( VertexData{ glm::vec2{-0.5f, 0.f}, glm::vec2{0.f, 0.f} } );
-            r_mesh.vertices.emplace_back( VertexData{ glm::vec2{0.5f, 0.f}, glm::vec2{1.f, 0.f} } );
+            r_mesh.vertices.emplace_back(glm::vec2{-0.5f, 0.f}, glm::vec2{0.f, 0.f});
+            r_mesh.vertices.emplace_back(glm::vec2{0.5f, 0.f}, glm::vec2{1.f, 0.f});
 
             // Add indices
             r_mesh.indices.clear();
@@ -601,6 +557,67 @@ namespace PE
             r_mesh.CreateVertexArrayObject();
         }
 
+
+        void RendererManager::InitializePointMesh(MeshData& r_mesh)
+        {
+            // Add vertex positions, colors and tex coords
+            r_mesh.vertices.clear();
+            r_mesh.vertices.reserve(1);
+
+            r_mesh.vertices.emplace_back( glm::vec2{0.f, 0.f}, glm::vec2{0.f, 0.f} );
+
+            // Add indices
+            r_mesh.indices.clear();
+            r_mesh.indices.resize(1);
+
+            // Generate VAO
+            r_mesh.CreateVertexArrayObject();
+        }
+
+
+        glm::mat4 RendererManager::GenerateTransformMatrix(float const width, float const height,
+            float const orientation, float const positionX, float const positionY) 
+        {
+            // Get scale matrix
+            glm::mat4 scale_matrix{
+                width,  0.f,    0.f, 0.f,
+                0.f,    height, 0.f, 0.f,
+                0.f,    0.f,    1.f, 0.f,
+                0.f,    0.f,    0.f, 1.f
+            };
+
+            // Get rotation matrix
+            GLfloat sin_angle{ glm::sin(orientation) };
+            GLfloat cos_angle{ glm::cos(orientation) };
+            glm::mat4 rotation_matrix{
+                cos_angle,  sin_angle, 0.f, 0.f,
+                -sin_angle, cos_angle, 0.f, 0.f,
+                0.f,        0.f,       1.f, 0.f,
+                0.f,        0.f,       0.f, 1.f
+            };
+
+            // Get translation matrix
+            glm::mat4 translation_matrix{
+                1.f,    0.f,    0.f,    0.f,
+                0.f,    1.f,    0.f,    0.f,
+                0.f,    0.f,    1.f,    0.f,
+                positionX, positionY, 0.f, 1.f
+            };
+
+            return translation_matrix * rotation_matrix * scale_matrix;
+        }
+
+
+        glm::mat4 RendererManager::GenerateTransformMatrix(glm::vec2 const& rightVector,
+            glm::vec2 const& upVector, glm::vec2 const& centerPosition)
+        {
+            return glm::mat4{
+                rightVector.x, rightVector.y, 0.f,    0.f,
+                upVector.x,   upVector.y,   0.f,    0.f,
+                0.f,    0.f,    1.f,    0.f,
+                centerPosition.x, centerPosition.y,     0.f,    1.f
+            };
+        }
 
         void RendererManager::PrintSpecifications()
         {
@@ -629,63 +646,6 @@ namespace PE
                 << "\nMaximum Indices Count: " << maxIndicesCount
                 << "\nGL Maximum texture size: " << maxTextureSize
                 << "\nMaximum Viewport Dimensions: " << maxViewportDims[0] << " x " << maxViewportDims[1] << "\n" << std::endl;
-        }
-
-
-        void RendererManager::CreateFrameBuffer(int const bufferWidth, int const bufferHeight)
-        {
-            // Create a frame buffer
-            glGenFramebuffers(1, &m_frameBufferObjectIndex);
-            glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
-
-            // Attach a texture to the framebuffer
-            glGenTextures(1, &m_imguiTextureId);
-            glBindTexture(GL_TEXTURE_2D, m_imguiTextureId);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_imguiTextureId, 0);
-
-            // Check if the framebuffer was created successfully
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(true, "Framebuffer is not complete.", __FUNCTION__);
-                throw;
-            }
-
-            // Unbind all the buffers created
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
-
-
-        void RendererManager::BindFrameBuffer()
-        {
-            glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
-        }
-
-
-        void RendererManager::UnbindFrameBuffer()
-        {
-            GLint currentFrameBuffer{};
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
-
-            // Unbind the framebuffer object (if it is currently bound)
-            if (m_frameBufferObjectIndex == static_cast<GLuint>(currentFrameBuffer)) 
-            {
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            }
-        }
-
-
-        void RendererManager::ResizeFrameBuffer(GLsizei const newWidth, GLsizei const newHeight)
-        {
-            glBindTexture(GL_TEXTURE_2D, m_imguiTextureId);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newWidth, newHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_imguiTextureId, 0);
         }
 
     } // End of Graphics namespace

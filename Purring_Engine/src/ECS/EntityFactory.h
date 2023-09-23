@@ -25,6 +25,7 @@
 #include "Data/SerializationManager.h"
 #include "Physics/Colliders.h"
 #include "Physics/RigidBody.h"
+#include "Graphics/Renderer.h"
 #include "Prefabs.h"
 
 
@@ -81,7 +82,7 @@ namespace PE
 		template <typename T>
 		void AddComponentCreator(const ComponentID& name, const size_t& creator)
 		{
-			m_componentMap[name] = creator;
+			m_componentMap[g_entityManager->GetComponentID<T>()] = creator;
 			g_entityManager->AddToPool<T>();
 		}
 		/*!***********************************************************************************
@@ -164,6 +165,7 @@ namespace PE
 		bool InitializeCollider(const EntityID& id, void* data);
 		bool InitializeTransform(const EntityID& id, void* data);
 		bool InitializePlayerStats(const EntityID& id, void* data);
+		bool InitializeRenderer(const EntityID& id, void* data);
 
 		void LoadComponents();
 
