@@ -260,8 +260,8 @@ namespace PE
                 Draw(EnumMeshType::DEBUG_LINE, glm::vec4{ 0.f, 0.f, 1.f, 1.f },
                     *(shaderProgramIterator->second), GL_LINES,
                     r_viewToNdc * m_mainCamera.GetWorldToViewMatrix() *
-                    GenerateTransformMatrix(glm::vec2{ rigidbody.m_velocity.x, 0.f }, 
-                        glm::vec2{ 0.f, rigidbody.m_velocity.y },
+                    GenerateTransformMatrix(glm::vec2{ rigidbody.m_velocity.x, rigidbody.m_velocity.y },
+                        glm::vec2{ -rigidbody.m_velocity.y, rigidbody.m_velocity.x }, // up direction does not affect line rotation
                         glm::vec2{ rigidbody.m_velocity.x, rigidbody.m_velocity.y } * 0.5f 
                         + glm::vec2{ transform.position.x, transform.position.y }));
             }
