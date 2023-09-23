@@ -318,7 +318,7 @@ namespace PE
 		// map of to store pointers to individual componnet pools
 		std::map<ComponentID, ComponentPool*> m_componentPools;
 		// a queue of entity IDs to handle removed entities
-		std::queue<EntityID> m_removed;
+		std::set<EntityID> m_removed;
 		
 		// fns ptr to functions for handling the destruction of component pool
 	};

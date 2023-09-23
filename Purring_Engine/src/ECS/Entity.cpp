@@ -48,9 +48,9 @@ namespace PE
 
 	EntityID EntityManager::NewEntity()
 	{
-		size_t id = (m_removed.empty()) ? m_entities.size() : m_removed.front();
+		size_t id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin());
 		if (!m_removed.empty())
-			m_removed.pop();
+			m_removed.erase(id);
 		m_entities.emplace(id);
 		return id;
 	}
