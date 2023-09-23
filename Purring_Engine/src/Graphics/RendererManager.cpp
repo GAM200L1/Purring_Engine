@@ -105,8 +105,6 @@ namespace PE
             // Get the size of the ImGui window to render in
             float windowWidth{}, windowHeight{};
             Editor::GetInstance()->GetWindowSize(windowWidth, windowHeight);
-            ResizeFrameBuffer(windowWidth, windowHeight);
-            glViewport(0, 0, windowWidth, windowHeight);
 
             // If the window size has changed
             if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight) 
