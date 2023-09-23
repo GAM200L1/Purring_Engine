@@ -80,13 +80,19 @@ namespace PE
 							// adds collided objects so that it won't be checked again
 							collider1.objectsCollided.emplace(ColliderID_2);
 							collider2.objectsCollided.emplace(ColliderID_1);
-
-							m_manifolds.emplace_back
-							(Manifold{ contactPt,
-									   g_entityManager->Get<Transform>(ColliderID_1),
-									   g_entityManager->Get<Transform>(ColliderID_2),
-									   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
-									   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
+							if (!collider1.isTrigger && !collider2.isTrigger)
+							{
+								m_manifolds.emplace_back
+								(Manifold{ contactPt,
+										   g_entityManager->Get<Transform>(ColliderID_1),
+										   g_entityManager->Get<Transform>(ColliderID_2),
+										   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
+										   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
+							}
+							else // else send message to trigger respective event?
+							{
+								std::cout << "collided\n";
+							}
 						}
 						//else
 							//engine_logger.AddLog(false, "Not Collided!\n", __FUNCTION__);
@@ -252,7 +258,7 @@ namespace PE
 		{
 			float p0centerLengthSqr = (r_circle.center - r_lineSeg.point0).LengthSquared();
 			float p1centerLengthSqr = (r_circle.center - r_lineSeg.point1).LengthSquared();
-			std::cout << "p0->center: " << p0centerLengthSqr << "\n";
+			//std::cout << "p0->center: " << p0centerLengthSqr << "\n";
 			float radiusSquare = r_circle.radius * r_circle.radius;
 			return (p0centerLengthSqr <= radiusSquare) + (p1centerLengthSqr <= radiusSquare);
 

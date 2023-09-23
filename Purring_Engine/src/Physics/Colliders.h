@@ -41,6 +41,7 @@ namespace PE
 	{
 		std::variant<AABBCollider, CircleCollider> colliderVariant;
 		std::set<size_t> objectsCollided;
+		bool isTrigger;
 	};
 
 	struct LineSegment

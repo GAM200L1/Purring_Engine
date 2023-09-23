@@ -114,22 +114,22 @@ PE::CoreApplication::CoreApplication()
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
 
-    for (size_t i{}; i < 5; ++i)
+    for (size_t i{}; i < 2; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
 
         // Make overlapping circle colliders at the origin
-        g_entityManager->Get<Transform>(id).position.x = 0.f;
-        g_entityManager->Get<Transform>(id).position.y = 0.f;
-        g_entityManager->Get<Transform>(id).width = 50;
-        g_entityManager->Get<Transform>(id).height = 50;
-        g_entityManager->Get<Transform>(id).orientation = 0.f;
-        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+        //g_entityManager->Get<Transform>(id).position.x = 0.f;
+        //g_entityManager->Get<Transform>(id).position.y = 0.f;
+        //g_entityManager->Get<Transform>(id).width = 50;
+        //g_entityManager->Get<Transform>(id).height = 50;
+        //g_entityManager->Get<Transform>(id).orientation = 0.f;
+        //g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
     }
 
     // Make the first gameobject with a collider circle at world pos (100, 100)
     g_entityManager->Get<Transform>(0).position.x = 100.f;
-    g_entityManager->Get<Transform>(0).position.y = 100.f;
+    g_entityManager->Get<Transform>(0).position.y = 0.f;
     g_entityManager->Get<Transform>(0).width = 100.f;
     g_entityManager->Get<Transform>(0).height = 100.f;
     g_entityManager->Get<Transform>(0).orientation = 0.f;
@@ -140,12 +140,12 @@ PE::CoreApplication::CoreApplication()
 
     // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
     g_entityManager->Get<Transform>(1).position.x = -100.f;
-    g_entityManager->Get<Transform>(1).position.y = -100.f;
-    g_entityManager->Get<Transform>(1).width = 50.f;
-    g_entityManager->Get<Transform>(1).height = 200.f;
+    g_entityManager->Get<Transform>(1).position.y = 0.f;
+    g_entityManager->Get<Transform>(1).width = 100.f;
+    g_entityManager->Get<Transform>(1).height = 100.f;
     g_entityManager->Get<Transform>(1).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
 
 
 }
