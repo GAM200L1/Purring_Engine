@@ -25,63 +25,10 @@
 #include <fstream>
 #include <iostream>
 
+#include "ECS/Components.h"
 #include "VertexData.h"
 #include "Texture.h"
 #include "Math/Transform.h"
-
-// This namespace contains classes made to store the data
-// that should be found in the gameobject / transform components
-// that have yet to be implemented
-namespace temp
-{
-    class Transform
-    {
-    public:
-        float width{400.f}, height{400.f};  //! Width and height of the object
-        float orientation{0.f};         //! Counterclockwise angle (in degrees) about z
-        glm::vec2 position{};           //! Position of the center in world space
-
-    public:
-        /*!***********************************************************************************
-        \brief  Gets the matrix to transform coordinates in model space to world space as
-                a 4x4 matrix.
-
-        \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
-        *************************************************************************************/
-        glm::mat4 GetTransformMatrix() const
-        {
-            // Get scale matrix
-            glm::mat4 scale_matrix{
-                width,  0.f,    0.f, 0.f,
-                0.f,    height, 0.f, 0.f,
-                0.f,    0.f,    1.f, 0.f,
-                0.f,    0.f,    0.f, 1.f
-            };
-
-            // Get rotation matrix
-            GLfloat angle_rad{ glm::radians(orientation) };
-            GLfloat sin_angle{ glm::sin(angle_rad) };
-            GLfloat cos_angle{ glm::cos(angle_rad) };
-            glm::mat4 rotation_matrix{
-                cos_angle,  sin_angle, 0.f, 0.f,
-                -sin_angle, cos_angle, 0.f, 0.f,
-                0.f,        0.f,       1.f, 0.f,
-                0.f,        0.f,       0.f, 1.f
-            };
-
-            // Get translation matrix
-            glm::mat4 translation_matrix{
-                1.f,    0.f,    0.f,    0.f,
-                0.f,    1.f,    0.f,    0.f,
-                0.f,    0.f,    1.f,    0.f,
-                position.x, position.y, 0.f, 1.f
-            };
-
-            return translation_matrix * rotation_matrix * scale_matrix;
-        }
-    };
-}
-
 
 namespace PE
 {
@@ -94,19 +41,55 @@ namespace PE
             TRIANGLE,
             DEBUG_SQUARE,
             DEBUG_CIRCLE,
-            DEBUG_LINE
+            DEBUG_LINE,
+            DEBUG_POINT,
+            MESH_COUNT
         };
 
         // Renderer component. Attach one to each gameobject to be drawn.
         class Renderer
         {
-            // ----- Public variables ----- //
+            // ----- Public functions ----- //
         public:
-            bool enabled{ true }; // Set to true to render the object, false not to.
-            glm::vec4 color{ 1.f, 0.f, 0.f, 0.5f }; // RGBA values of a color in a range of 0 to 1
-            Graphics::EnumMeshType meshType{ EnumMeshType::QUAD }; // Type of mesh
-            PE::Transform transform{};
-            std::shared_ptr<Graphics::Texture> p_texture{ nullptr }; // Will move the texture object out later
+            inline glm::vec4 const& GetColor() const { return m_color; }
+            inline Graphics::EnumMeshType GetMeshType() const { return m_meshType; }
+            inline bool GetEnabled() const { return m_enabled; }
+            inline std::string const& GetTextureKey() const { return m_textureKey; }
+
+            void Renderer::SetColor(glm::vec4 const& newColor)
+            {
+                m_color.r = glm::clamp(newColor.r, 0.f, 1.f);
+                m_color.g = glm::clamp(newColor.g, 0.f, 1.f);
+                m_color.b = glm::clamp(newColor.b, 0.f, 1.f);
+                m_color.a = glm::clamp(newColor.a, 0.f, 1.f);
+            }
+
+
+            void Renderer::SetColor(float const r = 1.f, float const g = 1.f, float const b = 1.f, float const a = 1.f)
+            {
+                m_color.r = glm::clamp(r, 0.f, 1.f);
+                m_color.g = glm::clamp(g, 0.f, 1.f);
+                m_color.b = glm::clamp(b, 0.f, 1.f);
+                m_color.a = glm::clamp(a, 0.f, 1.f);
+            }
+
+
+            void Renderer::SetEnabled(bool const newEnabled)
+            {
+                m_enabled = newEnabled;
+            }
+
+
+            void Renderer::SetTextureKey(std::string const& r_newKey)
+            {
+                m_textureKey = r_newKey;
+            }
+
+        private:
+            bool m_enabled{ true }; // Set to true to render the object, false not to.
+            glm::vec4 m_color{ 0.5f, 0.5f, 0.5f, 0.5f }; // RGBA values of a color in a range of 0 to 1
+            Graphics::EnumMeshType m_meshType{ EnumMeshType::QUAD }; // Type of mesh
+            std::string m_textureKey{ "" }; // Key for the corresponding texture in the resource manager
             // obj factory will set a hidden layer value
         };
     } // End of Graphics namespace

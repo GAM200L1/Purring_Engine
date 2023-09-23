@@ -20,7 +20,7 @@ namespace PE
 	RigidBody::RigidBody() :
 		m_velocity{ vec2{ 0.f, 0.f } }, m_rotationVelocity{ 0.f },
 		m_force{ vec2{ 0.f, 0.f } }, m_torque{ 0.f }, m_awake{ false },
-		m_mass{ 0.f }, m_inverseMass{ 0.f }, m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
+		m_mass{ 10.f }, m_inverseMass{ 1/10.f }, m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
 		m_prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
 
 	RigidBody::RigidBody(RigidBody const& r_cpy) :
