@@ -66,25 +66,25 @@ namespace PE {
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowLogs(bool* Active);
+		void ShowLogsWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the console window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowConsole(bool* Active);
+		void ShowConsoleWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the object list window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowObject(bool* Active);
+		void ShowObjectWindow(bool* Active);
 		/*!***********************************************************************************
-		 \brief render the test windows
+		 \brief render the test windows (Temp for milestone 1 for elie to test)
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowDebugTests(bool* Active);
+		void ShowDemoWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the object component window
 
@@ -135,7 +135,27 @@ namespace PE {
 
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void AddError(std::string text);
+		void AddErrorLog(std::string text);
+
+		/*!***********************************************************************************
+		\brief add text appeneded with info to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddInfoLog(std::string text);
+		/*!***********************************************************************************
+		\brief add text appeneded with event to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddEventLog(std::string text);
+
+		/*!***********************************************************************************
+		\brief add text appeneded with warning to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddWarningLog(std::string text);
 	private:
 		/*!***********************************************************************************
 		 \brief empty the log vector
@@ -146,6 +166,11 @@ namespace PE {
 		*************************************************************************************/
 		void ClearConsole();
 
+		/*!***********************************************************************************
+		 \brief print the logs onto a txt file, to be implemented later
+		*************************************************************************************/
+		//void PrintLogs();
+
 		// -----Event Callbacks ----- // 
 	public:
 		/*!***********************************************************************************
@@ -153,7 +178,6 @@ namespace PE {
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
 		void OnKeyPressedEvent(const temp::Event<temp::KeyEvents>& e);
-		void OnMousePressedEvent(const temp::Event<temp::MouseEvents>& e);
 
 		// ----- Getters ----- // 
 	public:
@@ -174,9 +198,28 @@ namespace PE {
 		*************************************************************************************/
 		bool IsEditorActive();
 		/*!***********************************************************************************
-		 \brief set the editor on or off
+		 \brief get the boolean to know if we need to render debug lines
+		 \return bool return whether debug drawing is on or off
 		*************************************************************************************/
-		void ToggleEditor();
+		bool IsRenderingDebug();
+
+		// ----- Private Methods ----- //
+	private:
+		/*!***********************************************************************************
+		 \brief toggle rendering of debug lines
+		*************************************************************************************/
+		void ToggleDebugRender();
+
+		// ----- ImGui Command Functions ----- // 
+	private:
+		/*!***********************************************************************************
+		 \brief command line ping that replies pong
+		*************************************************************************************/
+		void ping();
+		/*!***********************************************************************************
+		 \brief command line test that opens the test window
+		*************************************************************************************/
+		void test();
 		// ----- Private Variables ----- // 
 	private:
 		bool m_showLogs;
@@ -189,16 +232,19 @@ namespace PE {
 		bool m_showResourceWindow;
 		bool m_showPerformanceWindow;
 		bool m_firstLaunch;
+		bool m_renderDebug;
 		static std::unique_ptr<Editor> s_Instance;
 		std::vector<std::string> m_logOutput;
 		std::vector<std::string> m_consoleOutput;
 		std::string m_input;
+		std::string m_findText;
 		bool m_objectIsSelected;
 		int m_currentSelectedIndex;
 		std::vector<std::string> m_items;
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
+		std::map<std::string, void (PE::Editor::*)()> m_commands;
 	};
 }
 

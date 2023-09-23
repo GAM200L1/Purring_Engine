@@ -28,25 +28,28 @@ namespace PE {
 		//initializing variables 
 		//m_firstLaunch needs to be serialized 
 		m_firstLaunch = true;
-		//if firstlaunch, everything is true and needs to be serialized to true, otherwise let imgui do it
+		//serialize based on what was deserialized
 		m_showConsole = true;
 		m_showLogs = true;
 		m_showObjectList = true;
 		m_showSceneView = true;
 		m_showTestWindows = true;
 		m_showComponentWindow = true;
-		m_showResourceWindow = true;
+		m_showResourceWindow = false;
 		m_showPerformanceWindow = false;
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
-
+		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
-		ADD_MOUSE_EVENT_LISTENER(temp::MouseEvents::MouseButtonPressed, Editor::OnMousePressedEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedIndex = 0;
 		m_items = {};
+
+		//mapping commands to function calls
+		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("test", &PE::Editor::test));
+		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
 	}
 
 	Editor::~Editor()
@@ -72,24 +75,32 @@ namespace PE {
 		return m_showSceneView;
 	}
 
-	void Editor::ToggleEditor()
+	bool Editor::IsRenderingDebug()
 	{
-		if (m_showEditor) {
-			m_showEditor = !m_showEditor;
-			m_showConsole = false;
-			m_showLogs = false;
-			m_showObjectList = false;
-			m_showSceneView = false;
-			m_showTestWindows = false;
+		return m_renderDebug;
+	}
+
+	void Editor::ToggleDebugRender()
+	{
+		if (m_renderDebug)
+		{
+			AddInfoLog("Turning Debug lines off");
 		}
-		else {
-			m_showEditor = !m_showEditor;
-			m_showConsole = true;
-			m_showLogs = true;
-			m_showObjectList = true;
-			m_showSceneView = true;
-			m_showTestWindows = true;
+		else
+		{
+			AddInfoLog("Turning Debug lines on");
 		}
+		m_renderDebug = !m_renderDebug;
+	}
+
+	void Editor::ping()
+	{
+		AddConsole("pong");
+	}
+
+	void Editor::test()
+	{
+		m_showTestWindows = true;
 	}
 
 	void Editor::Init(GLFWwindow* m_window)
@@ -137,30 +148,36 @@ namespace PE {
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 
-		//show docking port
-		if (m_showEditor) SetDockingPort(&m_showEditor);
+		//hide the entire editor
+		if (m_showEditor)
+		{
+			//show docking port
+			SetDockingPort(&m_showEditor);
 
-		//render logs
-		if (m_showLogs) ShowLogs(&m_showLogs);
+			//render logs
+			if (m_showLogs) ShowLogsWindow(&m_showLogs);
 
-		//render object list
-		if (m_showObjectList) ShowObject(&m_showObjectList);
+			//render object list
+			if (m_showObjectList) ShowObjectWindow(&m_showObjectList);
 
-		//the components on the object
-		if (m_showComponentWindow) ShowComponentWindow(&m_showComponentWindow);
+			//the components on the object
+			if (m_showComponentWindow) ShowComponentWindow(&m_showComponentWindow);
 
-		//render console
-		if (m_showConsole) ShowConsole(&m_showConsole);
+			//render console
+			if (m_showConsole) ShowConsoleWindow(&m_showConsole);
 
-		//draw scene view
-		if (m_showSceneView) ShowSceneView(texture_id, &m_showSceneView);
+			//draw scene view
+			if (m_showSceneView) ShowSceneView(texture_id, &m_showSceneView);
 
-		//draw the stuff for ellie to test
-		if (m_showTestWindows) ShowDebugTests(&m_showTestWindows);
+			//draw the stuff for ellie to test
+			if (m_showTestWindows) ShowDemoWindow(&m_showTestWindows);
 
-		if (m_showResourceWindow) ShowResourceWindow(&m_showResourceWindow);
+			//resource window for drag n drop
+			if (m_showResourceWindow) ShowResourceWindow(&m_showResourceWindow);
 
-		if (m_showPerformanceWindow) ShowPerformanceWindow(&m_showPerformanceWindow);
+			//performance window showing time used per system
+			if (m_showPerformanceWindow) ShowPerformanceWindow(&m_showPerformanceWindow);
+		}
 
 		//imgui end frame render functions
 		ImGui::Render();
@@ -172,6 +189,7 @@ namespace PE {
 		m_time = time;
 
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
 		{
 			GLFWwindow* backup_current_context = glfwGetCurrentContext();
@@ -182,30 +200,99 @@ namespace PE {
 
 	}
 
-	void Editor::ShowLogs(bool* Active)
+	void Editor::ShowLogsWindow(bool* Active)
 	{
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
 		//if active
-		if (!ImGui::Begin("debugwindow", Active))
+		if (!ImGui::Begin("logwindow", Active))
 		{
 			ImGui::End();			//imgui syntax
 		}
 		else
 		{
-			if (ImGui::Button("clear log")) // button
+			//temp for now dk where to save this later
+			static int startPrint = 0;
+			if (ImGui::Button("Clear Logs")) // button
 			{
-				ClearLog();
-				AddLog("Log Cleared");
+				AddLog("Logs Cleared");
+				startPrint = static_cast<int>(m_logOutput.size()) - 1;
 			}
+			ImGui::SameLine();
+
+			//temp for now, i really dk how i shld store this
+			static bool warningfilter;
+			static bool eventfilter;
+			static bool infofilter;
+			static bool errorfilter;
+			static bool otherfilter;
+
+			if (ImGui::BeginPopup("Filters"))
+			{
+				ImGui::Checkbox("Warning", &warningfilter);
+				ImGui::Checkbox("Event", &eventfilter);
+				ImGui::Checkbox("Info", &infofilter);
+				ImGui::Checkbox("Error", &errorfilter);
+				ImGui::Checkbox("Others", &otherfilter);
+				ImGui::EndPopup();
+			}
+
+			if (ImGui::Button("Filters"))
+				ImGui::OpenPopup("Filters");
+
+			ImGui::SameLine();
+			ImGui::PushItemWidth(200); // set a fixed width
+			ImGui::InputText("Text Finder ", &m_findText); //inpux box
+			ImGui::SetItemTooltip("(Case Sensitive)");
+			ImGui::PopItemWidth();
 			ImGui::Separator(); // line
+			
 
 			//show the text in logs
 			if (ImGui::BeginChild("log scroll area", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
 			{
 
 				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x); //set text wrap
-				for (std::string i : m_logOutput){ ImGui::Text(i.c_str());} // loop all the text
+				for (std::vector<std::string>::iterator i = m_logOutput.begin()+startPrint;i != m_logOutput.end();i++)
+				{ 
+					if (m_findText != "")
+					{
+						//can make this case insensitive but i dont know how expensive it will be
+						//also since max vector size hasnt been implemented itll definitely cause lag
+						if (i->find(m_findText) == std::string::npos) continue;
+					}
+					ImVec4 color;
+					bool has_color = false;
+					if (i->find("[ERROR]") != std::string::npos) 
+					{ 
+						if (errorfilter)
+							continue;
+						color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true; 
+					}
+					else if (i->find("[INFO]") != std::string::npos) 
+					{ 
+						if (infofilter)
+							continue;
+						color = ImVec4(0.4f, 1.f, 1.f, 1.0f); has_color = true; 
+					}
+					else if (i->find("[WARNING]") != std::string::npos)
+					{ 
+						if (warningfilter)
+							continue;
+						color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); has_color = true; 
+					}
+					else if (i->find("[EVENT]") != std::string::npos)
+					{ 
+						if (eventfilter)
+							continue;
+						color = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); has_color = true; 
+					}
+					else if (otherfilter)
+						continue;
+					if (has_color) ImGui::PushStyleColor(ImGuiCol_Text, color); // set color style
+					ImGui::TextUnformatted(i->c_str()); //draw text
+					if (has_color) ImGui::PopStyleColor(); //reset style for next text
+				} // loop all the text
 				ImGui::PopTextWrapPos(); // close text wrap
 				if ((ImGui::GetScrollY() >= ImGui::GetScrollMaxY())) ImGui::SetScrollHereY(1.0f); //set auto scroll when at bottom
 			}
@@ -214,7 +301,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowConsole(bool* Active)
+	void Editor::ShowConsoleWindow(bool* Active)
 	{
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
@@ -224,10 +311,19 @@ namespace PE {
 			ImGui::End(); //imgui syntax if inactive
 		}
 		else {
-			if (ImGui::Button("clear console")) //button
+			if (ImGui::Button("Clear Console")) //button
 			{
 				ClearConsole();
-				AddConsole("console Cleared");
+				AddConsole("Console Cleared");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Help"))
+			{
+					AddConsole("///////////////////////////");
+					AddConsole("        Command List       ");
+					AddConsole("ping: pong");
+					AddConsole("test: to show test window");
+					AddConsole("///////////////////////////");
 			}
 			ImGui::Separator(); // draw a line
 
@@ -236,18 +332,9 @@ namespace PE {
 			
 			if (ImGui::BeginChild("console scroll area", ImVec2(0, -spacing), true, ImGuiWindowFlags_HorizontalScrollbar)) //start drawing child
 			{
-				for (std::string i : m_consoleOutput)
-				{
-					ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x); //text wrap
-					ImVec4 color;
-					bool has_color = false;
-					if (i.find("[ERROR]") != std::string::npos) { color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true; }
-					if (has_color) ImGui::PushStyleColor(ImGuiCol_Text, color); // set color style
-					ImGui::TextUnformatted(i.c_str()); //draw text
-					if (has_color) ImGui::PopStyleColor(); //reset style for next text
-					ImGui::PopTextWrapPos(); //reset text wrap settings
-
-				}
+				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x); //text wrap
+				for (std::string i : m_consoleOutput){ImGui::Text(i.c_str());}
+				ImGui::PopTextWrapPos(); //reset text wrap settings
 				if ((ImGui::GetScrollY() >= ImGui::GetScrollMaxY())) ImGui::SetScrollHereY(1.0f); //setting auto scroll when at the bottom
 			}
 			ImGui::EndChild();
@@ -258,9 +345,24 @@ namespace PE {
 			bool reclaim_focus = false;
 			//flags for pressing enter, refocus, clearing textbox
 			ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll;
-			if (ImGui::InputText("Type stuff", &m_input, input_text_flags)) //inpux box
+			if (ImGui::InputText("Enter", &m_input, input_text_flags)) //inpux box
 			{
+
 				AddConsole(m_input);
+				//can serialize these command into an array
+				 
+				if (m_commands.find(m_input)!= m_commands.end())
+				{
+					(this->*(m_commands[m_input]))();
+				}
+				//if (m_input == "ping")
+				//{
+				//	AddConsole("pong");
+				//}
+				//if (m_input == "test")
+				//{
+				//	m_showTestWindows = true;
+				//}
 				m_input = "";
 				reclaim_focus = true;
 			}
@@ -272,7 +374,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowObject(bool* Active)
+	void Editor::ShowObjectWindow(bool* Active)
 	{
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
@@ -286,7 +388,7 @@ namespace PE {
 			static int count = 0;
 			if (ImGui::Button("Create Object")) // add a string into vector
 			{
-				AddConsole("Object Created");
+				AddInfoLog("Object Created");
 				std::stringstream ss;
 				ss << "new object " << count++;
 				m_items.push_back(ss.str().c_str());
@@ -296,7 +398,7 @@ namespace PE {
 			{
 				if (m_currentSelectedIndex <= m_items.size() && !m_items.empty())  // if vector not empty and item selected not over index
 				{
-					AddConsole("Object Deleted");
+					AddInfoLog("Object Deleted");
 					std::stringstream ss;
 					ss << "deleted object " << m_currentSelectedIndex;
 					m_items.erase(m_items.begin() + m_currentSelectedIndex);
@@ -340,7 +442,8 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowDebugTests(bool* Active)
+	//temporary for milestone 1
+	void Editor::ShowDemoWindow(bool* Active)
 	{
 		if (!ImGui::Begin("debugTests", Active, ImGuiWindowFlags_AlwaysAutoResize))
 		{
@@ -358,12 +461,14 @@ namespace PE {
 				ss << "AllocationTest" << allocated;
 				char* allocationtest = (char*)MemoryManager::GetInstance()->AllocateMemory(ss.str(), 30);
 				allocated++;
+				allocationtest;
 			}
 			ImGui::SameLine();
 			//test 2
 			if (ImGui::Button("Create Out of Index Object on Stack"))
 			{
 				char* outofmemorytest = (char*)MemoryManager::GetInstance()->AllocateMemory("out of index test", 1000);
+				outofmemorytest;
 			}
 			//test 3
 			static bool buffertester = false;
@@ -373,8 +478,8 @@ namespace PE {
 				buffertester = true;
 				char* buffertest = (char*)MemoryManager::GetInstance()->AllocateMemory("buffertest", 7);
 				//writing 8 bytes into the 7 i allocated
-				strcpy(buffertest, "testtest");
-				AddConsole("writing \"testtest\" 8byte into buffertest of 7 byte + 4 buffer bytes");
+				strcpy_s(buffertest,9, "testtest");
+				AddWarningLog("writing \"testtest\" 9 byte into buffertest of 7 byte + 4 buffer bytes");
 				AddConsole(buffertest);
 				allocated++;
 			}
@@ -386,7 +491,7 @@ namespace PE {
 			{
 				buffertester = false;
 				MemoryManager::GetInstance()->Pop_BackMemory();
-				AddConsole("delete and popping back previously allocated object");
+				AddInfoLog("delete and popping back previously allocated object");
 				allocated--;
 			}
 			ImGui::EndDisabled();
@@ -418,17 +523,17 @@ namespace PE {
 
 			ImGui::Separator();
 			ImGui::Text("Physics Test");
-			if (ImGui::Button("Physics Scene 1"))
+			if (ImGui::Button("Player Controller"))
 			{
 
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Physics Scene 2"))
+			if (ImGui::Button("Static Dynamic Collision"))
 			{
 
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Physics Scene 3"))
+			if (ImGui::Button("Dynamic Dynamic Collision"))
 			{
 
 			}
@@ -436,17 +541,17 @@ namespace PE {
 
 			ImGui::Separator();
 			ImGui::Text("Object Test");
-			if (ImGui::Button("Object Scene 1"))
+			if (ImGui::Button("Draw 2500 objects"))
 			{
 
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Object Scene 2"))
+			if (ImGui::Button("Render Debug Lines"))
 			{
-
+				ToggleDebugRender();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Object Scene 3"))
+			if (ImGui::Button("Object Test 3"))
 			{
 
 			}
@@ -463,9 +568,13 @@ namespace PE {
 				m_showPerformanceWindow = !m_showPerformanceWindow;
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Object Scene 3"))
+			if (ImGui::Button("Add Debug Text"))
 			{
-
+				AddErrorLog("Debug text");
+				AddInfoLog("Debug text");
+				AddWarningLog("Debug text");
+				AddEventLog("Debug text");
+				AddLog("Debug text");
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
@@ -574,6 +683,7 @@ namespace PE {
 			}
 			ImGui::EndChild();
 
+			//if player is still holding the mouse down
 			if (isDragging) 
 			{
 				if (draggedItemIndex >= 0)
@@ -614,7 +724,7 @@ namespace PE {
 		}
 		else
 		{
-			// HARD CODED
+			// TEMPORARY HARD CODED
 			std::vector<float> values{
 				TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime(),
 				TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime(),
@@ -622,7 +732,7 @@ namespace PE {
 				//TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
 			};
 			char* names[] = { /*"Logics",*/ "Physics", "Collision", "Graphics" };
-			ImGui::PlotHistogram("##Test",values.data(), values.size(), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
+			ImGui::PlotHistogram("##Test",values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
 			
 			if (ImGui::IsItemHovered())
 			{
@@ -645,7 +755,6 @@ namespace PE {
 
 
 	}
-
 
 	void Editor::SetDockingPort(bool* Active)
 	{
@@ -713,15 +822,17 @@ namespace PE {
 					ImGui::DockBuilderDockWindow("objectlistwindow", dock_id_right);
 
 					//set on the save location to dock ontop of eachother
+					ImGui::DockBuilderDockWindow("resourcewindow", dock_id_down);
 					ImGui::DockBuilderDockWindow("consolewindow", dock_id_down);
-					
+
+
 					//set on the save location to dock ontop of eachother
 					ImGui::DockBuilderDockWindow("componentwindow", dock_id_left);
 
 					//split the bottom into 2
 					ImGuiID dock_id_down2 = ImGui::DockBuilderSplitNode(dock_id_down, ImGuiDir_Right, 0.5f, nullptr, &dock_id_down);
 
-					ImGui::DockBuilderDockWindow("debugwindow", dock_id_down2);
+					ImGui::DockBuilderDockWindow("logwindow", dock_id_down2);
 
 					//end dock
 					ImGui::DockBuilderFinish(dockspace_id);
@@ -774,18 +885,22 @@ namespace PE {
 					{
 						m_showSceneView = !m_showSceneView;
 					}
-					if (ImGui::MenuItem("Rubrics Test", "f5", m_showTestWindows, !m_showTestWindows))
-					{
-						m_showTestWindows = !m_showTestWindows;
-					}
-					if (ImGui::MenuItem("ResourceList", "f6", m_showResourceWindow, !m_showResourceWindow))
+					if (ImGui::MenuItem("ResourceList", "f5", m_showResourceWindow, !m_showResourceWindow))
 					{
 						m_showResourceWindow = !m_showResourceWindow;
+					}
+					if (ImGui::MenuItem("PerformanceWindow", "f6", m_showPerformanceWindow, !m_showPerformanceWindow))
+					{
+						m_showPerformanceWindow = !m_showPerformanceWindow;
 					}
 					ImGui::Separator();
 					if (ImGui::MenuItem("Close Editor", "esc", m_showEditor, true))
 					{
-						ToggleEditor();
+						m_showEditor = !m_showEditor;
+					}
+					if (ImGui::MenuItem("Rubrics Test", "f7", m_showTestWindows, !m_showTestWindows))
+					{
+						m_showTestWindows = !m_showTestWindows;
 					}
 					ImGui::EndMenu();
 				}
@@ -809,25 +924,26 @@ namespace PE {
 		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 		m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
 
-		if (ImGui::IsMouseClicked(0))
-		{
-			//where i need to start doing the screen picking
-			//get the mouse position relative to the top - left corner of the ImGui window.
-			ImVec2 cursorToMainWindow = ImGui::GetCursorScreenPos(); // get current window position (top left corner)
-			ImVec2 CurrentWindowPosition = ImGui::GetWindowPos(); // seems to get the same thing
-			ImVec2 CursorToImGuiWindow = ImGui::GetMousePos();  // get mouse position but relative to your screen
-			ImVec2 windowSize = ImGui::GetWindowSize();
+		//Screen picking testing code
+		//if (ImGui::IsMouseClicked(0))
+		//{
+		//	//where i need to start doing the screen picking
+		//	//get the mouse position relative to the top - left corner of the ImGui window.
+		//	ImVec2 cursorToMainWindow = ImGui::GetCursorScreenPos(); // get current window position (top left corner)
+		//	ImVec2 CurrentWindowPosition = ImGui::GetWindowPos(); // seems to get the same thing
+		//	ImVec2 CursorToImGuiWindow = ImGui::GetMousePos();  // get mouse position but relative to your screen
+		//	ImVec2 windowSize = ImGui::GetWindowSize();
 
-			double glfwMouseX, glfwMouseY;
-			glfwGetCursorPos(p_window, &glfwMouseX, &glfwMouseY); //glfw position
+		//	double glfwMouseX, glfwMouseY;
+		//	glfwGetCursorPos(p_window, &glfwMouseX, &glfwMouseY); //glfw position
 
-			std::cout << "[Get current window top left position w title] x screen: " << cursorToMainWindow[0] << " y screen: " << cursorToMainWindow[1] << std::endl;
-			std::cout << "[Get Mouse Pos] x : " << CursorToImGuiWindow[0] << " y : " << CursorToImGuiWindow[1] << std::endl;
-			std::cout << "[Get Current Window View Top left position] x : " << CurrentWindowPosition[0] << " y i: " << CurrentWindowPosition[1] << std::endl;
-			//this tells you mouse position relative to imgui window seems the most useful for now
-			std::cout << "[Gui mouse pos - cursorscreen pos] x:" << CursorToImGuiWindow[0] - cursorToMainWindow[0] << " y: " << CursorToImGuiWindow[1] - cursorToMainWindow[1] << std::endl;
-			std::cout << "[GLFW] x:" << glfwMouseX << " y: " << glfwMouseY << std::endl;	
-		}
+		//	std::cout << "[Get current window top left position w title] x screen: " << cursorToMainWindow[0] << " y screen: " << cursorToMainWindow[1] << std::endl;
+		//	std::cout << "[Get Mouse Pos] x : " << CursorToImGuiWindow[0] << " y : " << CursorToImGuiWindow[1] << std::endl;
+		//	std::cout << "[Get Current Window View Top left position] x : " << CurrentWindowPosition[0] << " y i: " << CurrentWindowPosition[1] << std::endl;
+		//	//this tells you mouse position relative to imgui window seems the most useful for now
+		//	std::cout << "[Gui mouse pos - cursorscreen pos] x:" << CursorToImGuiWindow[0] - cursorToMainWindow[0] << " y: " << CursorToImGuiWindow[1] - cursorToMainWindow[1] << std::endl;
+		//	std::cout << "[GLFW] x:" << glfwMouseX << " y: " << glfwMouseY << std::endl;	
+		//}
 
 		//the graphics rendered onto an image on the imgui window
 		ImGui::Image(
@@ -844,24 +960,47 @@ namespace PE {
 
 	void Editor::AddLog(std::string text)
 	{
-		m_logOutput.push_back(text);
+		m_logOutput.emplace_back(text);
+		//might want to check a certain size on the vector if too much need to clear
 	}
 
 	void Editor::AddConsole(std::string text)
 	{
-		m_consoleOutput.push_back(text);
+		m_consoleOutput.emplace_back(text);
 	}
 
-	void Editor::AddError(std::string text)
+	void Editor::AddErrorLog(std::string text)
 	{
 		std::stringstream ss;
 		ss << "[ERROR] " << text;
-		m_consoleOutput.push_back(ss.str());
+		AddLog(ss.str());
 
+	}
+
+	void Editor::AddInfoLog(std::string text)
+	{
+		std::stringstream ss;
+		ss << "[INFO] " << text;
+		AddLog(ss.str());
+	}
+
+	void Editor::AddEventLog(std::string text)
+	{
+		std::stringstream ss;
+		ss << "[EVENT] " << text;
+		AddLog(ss.str());
+	}
+
+	void Editor::AddWarningLog(std::string text)
+	{
+		std::stringstream ss;
+		ss << "[WARNING] " << text;
+		AddLog(ss.str());
 	}
 
 	void Editor::ClearLog()
 	{
+		//not being used rn
 		m_logOutput.clear();
 	}
 
@@ -894,29 +1033,20 @@ namespace PE {
 		if (KPE.keycode == GLFW_KEY_F4)
 			m_showSceneView = !m_showSceneView;
 
-		if (KPE.keycode == GLFW_KEY_F5)
+		if (KPE.keycode == GLFW_KEY_F7)
 			m_showTestWindows = !m_showTestWindows;
 
-		if (KPE.keycode == GLFW_KEY_ESCAPE)
-			ToggleEditor();
-
 		if (KPE.keycode == GLFW_KEY_F6)
+			m_showPerformanceWindow = !m_showPerformanceWindow;
+
+		if (KPE.keycode == GLFW_KEY_ESCAPE)
+			m_showEditor = !m_showEditor;
+
+		if (KPE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;
-	}
 
-	void Editor::OnMousePressedEvent(const temp::Event<temp::MouseEvents>& e)
-	{
-		temp::MouseButtonPressedEvent MBPE;
-		if (e.GetType() == temp::MouseEvents::MouseButtonPressed)
-		{
-			MBPE = dynamic_cast<const temp::MouseButtonPressedEvent&>(e);
-		}
-
-		//oops i named the window the same as theirs
-		//::Editor* currentWindow = ImGui::GetCurrentWindow();
-		
-
-		
+		if (KPE.keycode == GLFW_KEY_F10)
+			ToggleDebugRender();
 	}
 
 }
