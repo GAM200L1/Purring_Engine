@@ -197,6 +197,19 @@ namespace PE {
 		 \return bool whether editor is active so we know we need to transfer the buffer
 		*************************************************************************************/
 		bool IsEditorActive();
+		/*!***********************************************************************************
+		 \brief get the boolean to know if we need to render debug lines
+		 \return bool return whether debug drawing is on or off
+		*************************************************************************************/
+		bool IsRenderingDebug();
+
+		// ----- Private Methods ----- //
+	private:
+		/*!***********************************************************************************
+		 \brief toggle rendering of debug lines
+		*************************************************************************************/
+		void ToggleDebugRender();
+
 		// ----- ImGui Command Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -219,6 +232,7 @@ namespace PE {
 		bool m_showResourceWindow;
 		bool m_showPerformanceWindow;
 		bool m_firstLaunch;
+		bool m_renderDebug;
 		static std::unique_ptr<Editor> s_Instance;
 		std::vector<std::string> m_logOutput;
 		std::vector<std::string> m_consoleOutput;

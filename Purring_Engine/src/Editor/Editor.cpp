@@ -39,6 +39,7 @@ namespace PE {
 		m_showPerformanceWindow = false;
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
+		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
 		//for the object list
@@ -72,6 +73,24 @@ namespace PE {
 	bool Editor::IsEditorActive()
 	{
 		return m_showSceneView;
+	}
+
+	bool Editor::IsRenderingDebug()
+	{
+		return m_renderDebug;
+	}
+
+	void Editor::ToggleDebugRender()
+	{
+		if (m_renderDebug)
+		{
+			AddInfoLog("Turning Debug lines off");
+		}
+		else
+		{
+			AddInfoLog("Turning Debug lines on");
+		}
+		m_renderDebug = !m_renderDebug;
 	}
 
 	void Editor::ping()
@@ -527,9 +546,9 @@ namespace PE {
 
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Object Test 2"))
+			if (ImGui::Button("Render Debug Lines"))
 			{
-
+				ToggleDebugRender();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Object Test 3"))
@@ -1025,6 +1044,9 @@ namespace PE {
 
 		if (KPE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;
+
+		if (KPE.keycode == GLFW_KEY_F10)
+			ToggleDebugRender();
 	}
 
 }
