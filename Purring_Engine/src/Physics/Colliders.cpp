@@ -77,7 +77,7 @@ namespace PE
 	void Manifold::ResolveVelocity()
 	{
 		float p = (2.f * (Dot(r_rigidBodyA->m_velocity, contactData.normal) - Dot(r_rigidBodyB->m_velocity, contactData.normal))) / (r_rigidBodyA->GetMass() + r_rigidBodyB->GetMass());
-		std::cout << p << '\n';
+		//std::cout << p << '\n';
 		if (r_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
 			r_rigidBodyA->m_velocity = r_rigidBodyA->m_velocity - (contactData.normal * r_rigidBodyA->GetMass() * p);
