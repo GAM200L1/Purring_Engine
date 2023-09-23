@@ -126,13 +126,13 @@ namespace PE
         }
 
 
-        void MeshData::BindMesh()
+        void MeshData::Bind() const
         {
             glBindVertexArray(m_vertexArrayObject);
         }
 
 
-        void MeshData::UnbindMesh()
+        void MeshData::Unbind() const
         {
             // Check if this mesh's VAO is currently bound
             GLint out{};

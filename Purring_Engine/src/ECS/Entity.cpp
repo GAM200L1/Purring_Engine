@@ -18,6 +18,10 @@
 #include "Entity.h"
 #include "SceneView.h"
 #include "Physics/Colliders.h"
+#include "Logging/Logger.h"
+
+extern Logger engine_logger;
+
 
 namespace PE
 {
@@ -44,15 +48,15 @@ namespace PE
 
 	EntityID EntityManager::NewEntity()
 	{
-		size_t id = (m_removed.empty()) ? m_entities.size() : m_removed.front();
-		if (m_removed.size())
-			m_removed.pop();
+		size_t id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin());
+		if (!m_removed.empty())
+			m_removed.erase(id);
 		m_entities.emplace(id);
 		return id;
 	}
 
 
-	void EntityManager::Assign(const EntityID& id, const char* componentID, const size_t& creator)
+	void EntityManager::Assign(const EntityID& id, const char* componentID)
 	{
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
@@ -83,43 +87,6 @@ namespace PE
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		//void* ret = new (m_componentPools[componentID]->Get(id)) char[creator->GetSize()]();
-		++(m_componentPools[componentID]->m_size);
-	}
-
-	void EntityManager::Assign(const EntityID& id, const ComponentID& componentID, const size_t& creator)
-	{
-		// if component is not found
-		if (m_componentPools.find(componentID) == m_componentPools.end())
-		{
-			// add to map
-			//m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(creator)));
-			throw;
-		}
-		if (m_componentPools[componentID]->HasEntity(id))
-		{
-			return;
-		}
-		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
-		// initialize that region of memory
-		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
-		{
-			m_componentPools[componentID]->resize(m_componentPools[componentID]->m_capacity * 2);
-		}
-
-		// if you new at an existing region of allocated memory, and you specify where, like in this case
-		// it will call the constructor at this position instead  of allocating more memory
-		//void* ret = new (m_componentPools[componentID]->Get(id)) char[creator->GetSize()]();
 		++(m_componentPools[componentID]->m_size);
 	}
 
@@ -154,11 +121,15 @@ namespace PE
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		//void* ret = new (m_componentPools[componentID]->Get(id)) char[creator->GetSize()]();
 		++(m_componentPools[componentID]->m_size);
 	}
 
 	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& component) const
+	{
+		return m_componentPools.at(component);
+	}
+
+	ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& component) 
 	{
 		return m_componentPools.at(component);
 	}
@@ -183,15 +154,20 @@ namespace PE
 
 	void EntityManager::RemoveEntity(EntityID id)
 	{
-		for (std::pair<const ComponentID, ComponentPool*>& pool : m_componentPools)
+		if (m_entities.count(id))
 		{
-			if (pool.second->HasEntity(id))
+			for (std::pair<const ComponentID, ComponentPool*>& pool : m_componentPools)
 			{
-				pool.second->remove(id);
+				if (pool.second->HasEntity(id))
+				{
+					pool.second->remove(id);
+				}
 			}
-			m_removed.emplace(id);
 			m_entities.erase(id);
+			m_removed.emplace(id);
+			std::string str = "Removed Entity-";
+			str += std::to_string(id);
+			engine_logger.AddLog(false, str, __FUNCTION__);
 		}
 	}
-	
 }

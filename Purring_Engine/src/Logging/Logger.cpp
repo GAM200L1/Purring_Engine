@@ -19,6 +19,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 Logger::LoggerFlag Logger::m_flags;
 std::stringstream Logger::m_logBuffer;
 std::string Logger::m_currTime;
+bool LOG = true;
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -80,7 +81,7 @@ void Logger::AddLog(const bool& is_error, const std::string& msg, const char fn_
 void Logger::FlushLog()
 {
 	// if log buffer is empty, return
-	if (m_logBuffer.str().empty())
+	if (m_logBuffer.str().empty() || !LOG)
 		return;
 	std::string buf;
 	// do stuff
