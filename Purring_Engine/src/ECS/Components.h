@@ -19,7 +19,7 @@
 #include <queue>
 #include "Math/MathCustom.h"
 // CONSTANT VARIABLES
-constexpr size_t DEFAULT_ENTITY_CNT = 5;		// default bytes allocated to components pool
+constexpr size_t DEFAULT_ENTITY_CNT = 50;		// default bytes allocated to components pool
 
 namespace PE
 {
@@ -170,7 +170,8 @@ namespace PE
         {
             if (!m_idxMap.count(index))
                 throw; // log in the future
-            p_data[index] = T();
+            //p_data[index] = T();
+            m_removed.emplace(m_idxMap[index]);
             m_idxMap.erase(index);
         }
     private:

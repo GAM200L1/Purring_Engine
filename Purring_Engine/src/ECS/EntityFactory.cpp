@@ -14,7 +14,8 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "EntityFactory.h"
-
+#include "Logging/Logger.h"
+extern Logger engine_logger;
 
 
 namespace PE
@@ -143,6 +144,9 @@ namespace PE
 				LoadComponent(id, componentID.c_str(), nullptr);
 			}
 		}
+		std::string str = "Created Entity-";
+		str += std::to_string(id);
+		engine_logger.AddLog(false, str, __FUNCTION__);
 		return id;
 	}
 

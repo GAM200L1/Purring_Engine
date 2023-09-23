@@ -18,6 +18,10 @@
 #include "Entity.h"
 #include "SceneView.h"
 #include "Physics/Colliders.h"
+#include "Logging/Logger.h"
+
+extern Logger engine_logger;
+
 
 namespace PE
 {
@@ -45,7 +49,7 @@ namespace PE
 	EntityID EntityManager::NewEntity()
 	{
 		size_t id = (m_removed.empty()) ? m_entities.size() : m_removed.front();
-		if (m_removed.size())
+		if (!m_removed.empty())
 			m_removed.pop();
 		m_entities.emplace(id);
 		return id;
@@ -150,15 +154,20 @@ namespace PE
 
 	void EntityManager::RemoveEntity(EntityID id)
 	{
-		for (std::pair<const ComponentID, ComponentPool*>& pool : m_componentPools)
+		if (m_entities.count(id))
 		{
-			if (pool.second->HasEntity(id))
+			for (std::pair<const ComponentID, ComponentPool*>& pool : m_componentPools)
 			{
-				pool.second->remove(id);
+				if (pool.second->HasEntity(id))
+				{
+					pool.second->remove(id);
+				}
 			}
-			m_removed.emplace(id);
 			m_entities.erase(id);
+			m_removed.emplace(id);
+			std::string str = "Removed Entity-";
+			str += std::to_string(id);
+			engine_logger.AddLog(false, str, __FUNCTION__);
 		}
 	}
-	
 }

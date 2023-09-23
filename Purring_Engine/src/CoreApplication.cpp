@@ -65,6 +65,7 @@ SerializationManager sm;
 
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
+std::queue<EntityID> lastEnt{};
 
 
 /*-----------------------------------------------------------------------------
@@ -108,12 +109,13 @@ PE::CoreApplication::CoreApplication()
     //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
 
 
-    for (size_t i{}; i < 10; ++i)
+    for (size_t i{}; i < 3; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
         g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
-        g_entityManager->Get<Transform>(id).height = 5.f;
-        g_entityManager->Get<Transform>(id).width = 5.f;
+        g_entityManager->Get<Transform>(id).height = 100.f;
+        g_entityManager->Get<Transform>(id).width = 100.f;
+        g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
         g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
     }
     g_entityManager->Get<Transform>(0).position.x = 100;
@@ -217,11 +219,22 @@ void PE::CoreApplication::Run()
 
         if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
         {
-           
+            EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+            g_entityManager->Get<Transform>(id).height = 100.f;
+            g_entityManager->Get<Transform>(id).width = 100.f;
+            g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+            g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+            lastEnt.emplace(id);
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
         {
+            if (lastEnt.size())
+            {
+                g_entityManager->RemoveEntity(lastEnt.front());
+                lastEnt.pop();
+            }
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)

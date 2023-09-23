@@ -278,6 +278,7 @@ namespace PE
 			return m_entities.size();
 		}
 
+
 		/*!***********************************************************************************
 		 \brief Adds a component to the component pool
 		 
