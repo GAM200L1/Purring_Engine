@@ -83,7 +83,6 @@ namespace PE
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		//void* ret = new (m_componentPools[componentID]->Get(id)) char[creator->GetSize()]();
 		++(m_componentPools[componentID]->m_size);
 	}
 
@@ -118,7 +117,6 @@ namespace PE
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		//void* ret = new (m_componentPools[componentID]->Get(id)) char[creator->GetSize()]();
 		++(m_componentPools[componentID]->m_size);
 	}
 

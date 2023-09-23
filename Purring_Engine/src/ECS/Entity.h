@@ -18,10 +18,6 @@
 *************************************************************************************/
 #pragma once
 
-// Helpful links:
-// https://www.david-colson.com/2020/02/09/making-a-simple-ecs.html
-// https://stackoverflow.com/questions/1554774/create-new-c-object-at-specific-memory-address
-
 // INCLUDES
 #include "prpch.h"
 #include "Components.h"
@@ -40,6 +36,7 @@ namespace PE
 	*************************************************************************************/
 	class EntityManager
 	{
+
 	// ----- Constructors ----- //
 	public:
 		/*!***********************************************************************************
@@ -55,7 +52,105 @@ namespace PE
 		 
 		*************************************************************************************/
 		~EntityManager();
-	// ----- Public Methods -----//
+
+
+	// ----- Public Getters ----- //
+	public:
+
+		/*!***********************************************************************************
+		 \brief Get the Component ID
+
+		 \tparam T 				The component to Get the ID of
+		 \return ComponentID 	The component's id
+		*************************************************************************************/
+		template<typename T>
+		ComponentID GetComponentID() const;
+
+		/*!***********************************************************************************
+		 \brief Get a pointer to a specific component pool
+
+		 \tparam T 				The pool to Get
+		 \return ComponentPool* The pointer to the pool
+		*************************************************************************************/
+		template<typename T>
+		ComponentPool* GetComponentPoolPointer();
+
+		/*!***********************************************************************************
+		 \brief Get a pointer to a specific component pool (const)
+
+		 \param[in] component 			The pool to Get
+		 \return const ComponentPool* 	The pointer to the pool
+		*************************************************************************************/
+		const ComponentPool* GetComponentPoolPointer(const ComponentID& component) const;
+
+		/*!***********************************************************************************
+		 \brief Get a pointer to a specific component pool
+
+		 \param[in] component 			The pool to Get
+		 \return const ComponentPool* 	The pointer to the pool
+		*************************************************************************************/
+		ComponentPool* GetComponentPoolPointer(const ComponentID& component);
+
+
+		/*!***********************************************************************************
+		 \brief Get a reference to a component pool
+
+		 \tparam T 				The pool to Get
+		 \return ComponentPool& The component pool
+		*************************************************************************************/
+		template<typename T>
+		ComponentPool& GetComponentPool();
+
+		/*!***********************************************************************************
+		 \brief Get a reference to a component pool (const)
+
+		 \tparam T 						The pool to Get
+		 \return const ComponentPool& 	The component pool
+		*************************************************************************************/
+		template<typename T>
+		const ComponentPool& GetComponentPool() const;
+
+		/*!***********************************************************************************
+		 \brief Get a pointer to the entity's component
+
+		 \tparam T 		Component to Get
+		 \param[in] id 	Entity to Get the component from
+		 \return T* 	Pointer to the component (nullptr if not found)
+		*************************************************************************************/
+		template<typename T>
+		T* GetPointer(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Get a pointer to the entity's component (const)
+
+		 \tparam T 			Component to Get
+		 \param[in] id 		Entity to Get the component from
+		 \return const T* 	Pointer to the component (nullptr if not found)
+		*************************************************************************************/
+		template<typename T>
+		const T* GetPointer(EntityID id) const;
+
+		/*!***********************************************************************************
+		 \brief Get a reference to the entity's component
+
+		 \tparam T 		Component to Get
+		 \param[in] id 	Entity to Get the component from
+		 \return T& 	Reference to the component
+		*************************************************************************************/
+		template<typename T>
+		T& Get(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Get a reference to the entity's component (const)
+
+		 \tparam T 			Component to Get
+		 \param[in] id 		Entity to Get the component from
+		 \return const T& 	Const reference to the component
+		*************************************************************************************/
+		template<typename T>
+		const T& Get(EntityID id) const;
+
+	// ----- Public Methods ----- //
 	public:
 		/*!***********************************************************************************
 		 \brief Creates a new entity and returns its' ID
@@ -102,99 +197,6 @@ namespace PE
 		 \param[in] componentID 	The component to assign
 		*************************************************************************************/
 		void Assign(const EntityID& id, const ComponentID& componentID);
-
-		/*!***********************************************************************************
-		 \brief Get the Component ID
-		 
-		 \tparam T 				The component to Get the ID of
-		 \return ComponentID 	The component's id
-		*************************************************************************************/
-		template<typename T>
-		ComponentID GetComponentID() const;
-		
-		/*!***********************************************************************************
-		 \brief Get a pointer to a specific component pool
-		 
-		 \tparam T 				The pool to Get
-		 \return ComponentPool* The pointer to the pool
-		*************************************************************************************/
-		template<typename T>
-		ComponentPool* GetComponentPoolPointer();
-
-		/*!***********************************************************************************
-		 \brief Get a pointer to a specific component pool (const)
-		 
-		 \param[in] component 			The pool to Get
-		 \return const ComponentPool* 	The pointer to the pool
-		*************************************************************************************/
-		const ComponentPool* GetComponentPoolPointer(const ComponentID& component) const;
-		
-		/*!***********************************************************************************
-		 \brief Get a pointer to a specific component pool
-		 
-		 \param[in] component 			The pool to Get
-		 \return const ComponentPool* 	The pointer to the pool
-		*************************************************************************************/
-		ComponentPool* GetComponentPoolPointer(const ComponentID& component);
-
-
-		/*!***********************************************************************************
-		 \brief Get a reference to a component pool
-		 
-		 \tparam T 				The pool to Get
-		 \return ComponentPool& The component pool
-		*************************************************************************************/
-		template<typename T>
-		ComponentPool& GetComponentPool();
-
-		/*!***********************************************************************************
-		 \brief Get a reference to a component pool (const)
-		 
-		 \tparam T 						The pool to Get
-		 \return const ComponentPool& 	The component pool
-		*************************************************************************************/
-		template<typename T>
-		const ComponentPool& GetComponentPool() const;
-
-		/*!***********************************************************************************
-		 \brief Get a pointer to the entity's component
-		 
-		 \tparam T 		Component to Get
-		 \param[in] id 	Entity to Get the component from
-		 \return T* 	Pointer to the component (nullptr if not found)
-		*************************************************************************************/
-		template<typename T>
-		T* GetPointer(EntityID id);
-
-		/*!***********************************************************************************
-		 \brief Get a pointer to the entity's component (const)
-
-		 \tparam T 			Component to Get
-		 \param[in] id 		Entity to Get the component from
-		 \return const T* 	Pointer to the component (nullptr if not found)
-		*************************************************************************************/
-		template<typename T>
-		const T* GetPointer(EntityID id) const;
-
-		/*!***********************************************************************************
-		 \brief Get a reference to the entity's component
-		 
-		 \tparam T 		Component to Get
-		 \param[in] id 	Entity to Get the component from
-		 \return T& 	Reference to the component
-		*************************************************************************************/
-		template<typename T>
-		T& Get(EntityID id);
-
-		/*!***********************************************************************************
-		 \brief Get a reference to the entity's component (const)
-		 
-		 \tparam T 			Component to Get
-		 \param[in] id 		Entity to Get the component from
-		 \return const T& 	Const reference to the component
-		*************************************************************************************/
-		template<typename T>
-		const T& Get(EntityID id) const;
 
 		/*!***********************************************************************************
 		 \brief Copies a component from src entity into dest entity
@@ -358,7 +360,6 @@ namespace PE
 		m_componentPools[componentID]->Get(id) =  T();
 		++(m_componentPools[componentID]->m_size);
 
-		//m_entities[id].mask.set(componentID);
 		return p_component;
 	}
 
@@ -398,7 +399,6 @@ namespace PE
 		m_componentPools[componentID]->Get(id) = T(val);
 		++(m_componentPools[componentID]->size);
 
-		//m_entities[id].mask.set(componentID);
 		return p_component;
 	}
 
