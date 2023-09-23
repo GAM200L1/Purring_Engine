@@ -379,10 +379,11 @@ namespace PE
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
             glm::vec4 const& r_color)
         {
+            float const diameter{ r_circleCollider.radius * 2.f };
+
             glm::mat4 modelToWorld
             {
-                GenerateTransformMatrix(r_circleCollider.radius, // width
-                    r_circleCollider.radius, 0.f, // height, orientation
+                GenerateTransformMatrix(diameter, diameter, 0.f, // width, height, orientation
                     r_circleCollider.center.x, r_circleCollider.center.y) // x, y position
             };
 
@@ -436,7 +437,7 @@ namespace PE
             for (int i{ 0 }; i < (int)segments; ++i) {
                 float const totalAngle{ static_cast<float>(i) * angle };
                 r_mesh.vertices.emplace_back(
-                    glm::vec2{glm::cos(totalAngle), glm::sin(totalAngle)},
+                    glm::vec2{glm::cos(totalAngle) * 0.5f, glm::sin(totalAngle) * 0.5f},
                     glm::vec2{0.f, 0.f});
 
                 r_mesh.indices.emplace_back(((i - 1) < 0 ? (short)segments - 1 : (short)i - 1));
@@ -611,12 +612,12 @@ namespace PE
         }
 
 
-        glm::mat4 RendererManager::GenerateTransformMatrix(glm::vec2 const& horizontalVector,
-            glm::vec2 const& verticalVector, glm::vec2 const& centerPosition)
+        glm::mat4 RendererManager::GenerateTransformMatrix(glm::vec2 const& rightVector,
+            glm::vec2 const& upVector, glm::vec2 const& centerPosition)
         {
             return glm::mat4{
-                horizontalVector.x, horizontalVector.y, 0.f,    0.f,
-                verticalVector.x,   verticalVector.y,   0.f,    0.f,
+                rightVector.x, rightVector.y, 0.f,    0.f,
+                upVector.x,   upVector.y,   0.f,    0.f,
                 0.f,    0.f,    1.f,    0.f,
                 centerPosition.x, centerPosition.y,     0.f,    1.f
             };

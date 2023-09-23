@@ -191,7 +191,7 @@ namespace PE
             /*!***********************************************************************************
              \brief Sets the vertex positions and indices of the object passed in to that of
                     a circle (generated with [segments] number of points along its edges) 
-                    centered at the origin and creates a VAO.
+                    centered at the origin with a diamter of 1 and creates a VAO.
 
              \param[in] segments Number of edges that should make up the circle.
              \param[in,out] r_mesh Object containing the mesh data generated.
@@ -236,24 +236,33 @@ namespace PE
              \param[in,out] r_mesh Object containing the mesh data generated.
             *************************************************************************************/
             void InitializePointMesh(MeshData& r_mesh);
-            
 
             /*!***********************************************************************************
-             \brief 
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
 
-             \param[in] orientation (in radians)
+            \param[in] width Width of the object.
+            \param[in] height Height of the object.
+            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
+            \param[in] positionX X position of the object (in world space).
+            \param[in] positionY Y position of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
             *************************************************************************************/
             glm::mat4 GenerateTransformMatrix(float const width, float const height, 
                 float const orientation, float const positionX, float const positionY);
 
 
             /*!***********************************************************************************
-             \brief 
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
 
-             \param[in] 
+            \param[in] rightVector Right vector of the object.
+            \param[in] upVector Up vector of the object.
+            \param[in] centerPosition Position of the center of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
             *************************************************************************************/
-            glm::mat4 GenerateTransformMatrix(glm::vec2 const& horizontalVector, 
-                glm::vec2 const& verticalVector, glm::vec2 const& centerPosition);
+            glm::mat4 GenerateTransformMatrix(glm::vec2 const& rightVector,
+                glm::vec2 const& upVector, glm::vec2 const& centerPosition);
 
             /*!***********************************************************************************
              \brief Prints the graphics specifications of the device.
