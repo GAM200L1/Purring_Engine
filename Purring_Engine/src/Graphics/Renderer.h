@@ -41,7 +41,9 @@ namespace PE
             TRIANGLE,
             DEBUG_SQUARE,
             DEBUG_CIRCLE,
-            DEBUG_LINE
+            DEBUG_LINE,
+            DEBUG_POINT,
+            MESH_COUNT
         };
 
         // Renderer component. Attach one to each gameobject to be drawn.

@@ -29,6 +29,7 @@
 #include "Renderer.h"
 #include "ShaderProgram.h"
 #include "System.h"
+#include "Physics/Colliders.h"
 
 
 namespace PE
@@ -75,17 +76,17 @@ namespace PE
             /*!***********************************************************************************
              \brief Calls DrawRenderer() on all renderable objects in [m_renderableObjects].
 
-             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
-            void DrawScene(glm::mat4 const& r_viewToNdc);
+            void DrawScene(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
              \brief Calls DrawRenderer() on all debug objects in [m_lineObjects] and 
                     [m_pointObjects].
 
-             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
-            void DrawDebug(glm::mat4 const& r_viewToNdc);
+            void DrawDebug(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
              \brief Binds the shader program, vertex array object and texture and makes the
@@ -103,19 +104,70 @@ namespace PE
              \brief Binds the shader program, vertex array object and texture and makes the
                     draw call for the [r_renderer] passed in.
 
-             \param[in] r_renderer Renderer object with all the information to draw with.
+             \param[in] meshType Type of mesh.
+             \param[in] r_color Color to draw the mesh.
              \param[in] r_shaderProgram Shader program to use.
              \param[in] primitiveType GL Primitive type to make the draw call with.
              \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
             *************************************************************************************/
-            void Draw(EnumMeshType meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
+            void Draw(EnumMeshType const meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
                 GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
 
-            Graphics::Camera m_mainCamera{}; //! Camera object
+            /*!***********************************************************************************
+             \brief Makes a draw call for a square to represent the AABB collider passed in.
+
+             \param[in] r_aabbCollider Information about the AABB collider to render.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawCollider(AABBCollider const& r_aabbCollider,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 1.f, 0.f, 0.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Makes a draw call for a circle to represent the circle collider passed in.
+
+             \param[in] r_circleCollider Information about the circle collider to render.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawCollider(CircleCollider const& r_circleCollider,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.f, 1.f, 0.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Makes a draw call for a line to represent the vector passed in.
+
+             \param[in] r_vector Length and direction of the vector.
+             \param[in] r_startPosition Position (in world space) the vector should start at.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugLine(
+                glm::vec2 const& r_vector, glm::vec2 const& r_startPosition,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.f, 0.f, 1.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Makes a draw call for a point to represent the position passed in.
+
+             \param[in] r_position Position to draw the point at.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugPoint(glm::vec2 const& r_position,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.f, 0.f, 1.f, 1.f });
 
             // ----- Private variables ----- //
         private:
             GLFWwindow* p_windowRef{}; //! Pointer to the GLFW window to render to
+
+            Graphics::Camera m_mainCamera{}; //! Camera object
 
             std::string m_systemName{ "Graphics" }; //! Name of system
 
@@ -132,7 +184,7 @@ namespace PE
             // ----- For rendering to ImGui window ----- //
             GLuint m_frameBufferObjectIndex{}; //! Frame buffer object to draw to render to ImGui window
             GLuint m_imguiTextureId{}; //! Texture ID of the texture generated to render to the ImGui window
-            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
+            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; //! Width and height of the ImGui window the last time the framebuffer was resized
 
             // ----- Private methods ----- //
         private:
@@ -140,8 +192,6 @@ namespace PE
              \brief Sets the vertex positions and indices of the object passed in to that of
                     a circle (generated with [segments] number of points along its edges) 
                     centered at the origin and creates a VAO.
-
-                    This function has not been implemented fully.
 
              \param[in] segments Number of edges that should make up the circle.
              \param[in,out] r_mesh Object containing the mesh data generated.
@@ -179,6 +229,13 @@ namespace PE
              \param[in,out] r_mesh Object containing the mesh data generated.
             *************************************************************************************/
             void InitializeLineMesh(MeshData& r_mesh);
+
+            /*!***********************************************************************************
+             \brief Creates a VAO with a single vertex at the origin (0, 0).
+
+             \param[in,out] r_mesh Object containing the mesh data generated.
+            *************************************************************************************/
+            void InitializePointMesh(MeshData& r_mesh);
             
 
             /*!***********************************************************************************

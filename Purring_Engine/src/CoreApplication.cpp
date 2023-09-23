@@ -108,12 +108,21 @@ PE::CoreApplication::CoreApplication()
     //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
 
 
-    for (size_t i{}; i < 1; ++i)
+    for (size_t i{}; i < 2; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
     }
     g_entityManager->Get<Transform>(0).position.x = 100;
+    g_entityManager->Get<Transform>(0).width = 100;
+    g_entityManager->Get<Transform>(0).height = 100;
     g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
+
+    g_entityManager->Get<Transform>(1).position.x = -100;
+    g_entityManager->Get<Transform>(1).width = 100;
+    g_entityManager->Get<Transform>(1).height = 100;
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
     //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
     //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
 

@@ -25,9 +25,7 @@ namespace PE
     {
         glm::mat4 Camera::GetWorldToViewMatrix()
         {
-            if (m_cachedPosition != m_position || 
-                m_cachedOrientation != m_orientation || 
-                m_cachedMagnification != m_magnification)
+            if (GetHasChanged())
             {
                 glm::vec2 up{ -glm::sin(m_orientation), glm::cos(m_orientation) };
                 glm::vec2 right{ up.y, -up.x };
@@ -59,6 +57,13 @@ namespace PE
             }
 
             return m_cachedViewMatrix;
+        }
+
+        bool Camera::GetHasChanged() const
+        {
+            return (m_cachedPosition != m_position ||
+                m_cachedOrientation != m_orientation ||
+                m_cachedMagnification != m_magnification);
         }
 
         void Camera::SetMagnification(float const value)
