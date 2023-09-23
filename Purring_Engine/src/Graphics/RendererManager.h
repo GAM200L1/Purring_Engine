@@ -27,6 +27,7 @@
 #include "Camera.h"
 #include "MeshData.h"
 #include "Renderer.h"
+#include "FrameBuffer.h"
 #include "ShaderProgram.h"
 #include "System.h"
 #include "Physics/Colliders.h"
@@ -169,6 +170,8 @@ namespace PE
 
             Graphics::Camera m_mainCamera{}; //! Camera object
 
+            Graphics::FrameBuffer m_imguiFrameBuffer{}; //! Framebuffer object for rendering to ImGui window
+
             std::string m_systemName{ "Graphics" }; //! Name of system
 
             //! Default texture to use
@@ -180,11 +183,8 @@ namespace PE
             //! Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
 
-
-            // ----- For rendering to ImGui window ----- //
-            GLuint m_frameBufferObjectIndex{}; //! Frame buffer object to draw to render to ImGui window
-            GLuint m_imguiTextureId{}; //! Texture ID of the texture generated to render to the ImGui window
-            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; //! Width and height of the ImGui window the last time the framebuffer was resized
+            //! Width and height of the ImGui window the last time the framebuffer was resized
+            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
 
             // ----- Private methods ----- //
         private:
@@ -268,41 +268,6 @@ namespace PE
              \brief Prints the graphics specifications of the device.
             *************************************************************************************/
             void PrintSpecifications();
-
-
-            // ----- For rendering to ImGui window ----- //
-
-            /*!***********************************************************************************
-             \brief Creates a frame buffer object with a texture bound to the color buffer so that
-                    the texture can be read back and rendered to an ImGui window.                    
-                    Throws if the frame buffer object was not created successfully.
-
-             \param[in] bufferWidth Width the buffer should be set to. Should match that of 
-                                    the ImGui window.
-             \param[in] bufferHeight Height the buffer should be set to. Should match that of 
-                                     the ImGui window.
-            *************************************************************************************/
-            void CreateFrameBuffer(int const bufferWidth, int const bufferHeight);
-
-            /*!***********************************************************************************
-             \brief Binds the framebuffer.
-            *************************************************************************************/
-            void BindFrameBuffer();
-
-            /*!***********************************************************************************
-             \brief Unbinds the framebuffer.
-            *************************************************************************************/
-            void UnbindFrameBuffer();
-
-            /*!***********************************************************************************
-             \brief Resizes the texture object to match the size passed in.
-
-             \param[in] width Width the texture object should be set to. 
-                              Should match that of the ImGui window.
-             \param[in] height Height the buffer should be set to.
-                               Should match that of the ImGui window.
-            *************************************************************************************/
-            void ResizeFrameBuffer(GLsizei const width, GLsizei const height);
         };
 
 

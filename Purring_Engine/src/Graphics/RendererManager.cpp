@@ -57,7 +57,7 @@ namespace PE
 
             int width, height;
             glfwGetWindowSize(p_windowRef, &width, &height);
-            CreateFrameBuffer(width, height);
+            m_imguiFrameBuffer.CreateFrameBuffer(width, height);
 
             Editor::GetInstance()->Init(p_window);
         }
@@ -70,7 +70,7 @@ namespace PE
             // Create the framebuffer to render to ImGui window
             int width, height;
             glfwGetWindowSize(p_windowRef, &width, &height);
-            CreateFrameBuffer(width, height);
+            m_imguiFrameBuffer.CreateFrameBuffer(width, height);
             m_cachedWindowWidth = static_cast<float>(width), 
                 m_cachedWindowHeight = static_cast<float>(height);
 
@@ -115,7 +115,7 @@ namespace PE
                 // Update the frame buffer
                 GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
-                ResizeFrameBuffer(windowWidthInt, windowHeightInt);
+                m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
             }
 
@@ -128,7 +128,7 @@ namespace PE
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
             // Bind the RBO for rendering to the ImGui window
-            BindFrameBuffer();
+            m_imguiFrameBuffer.Bind();
 
             // Set the background color of the ImGui window to white
             glClearColor(1.f, 1.f, 1.f, 1.f);
@@ -147,9 +147,9 @@ namespace PE
             DrawDebug(worldToNdc); // Draw debug gizmos in the scene
 
             // Unbind the RBO for rendering to the ImGui window
-            UnbindFrameBuffer();
+            m_imguiFrameBuffer.Unbind();
 
-            Editor::GetInstance()->Render(m_imguiTextureId);
+            Editor::GetInstance()->Render(m_imguiFrameBuffer.GetTextureId());
 
             // Disable alpha blending
             glDisable(GL_BLEND);
@@ -171,8 +171,7 @@ namespace PE
             m_meshes.clear();
 
             // Delete the framebuffer object
-            glDeleteTextures(1, &m_imguiTextureId);
-            glDeleteFramebuffers(1, &m_frameBufferObjectIndex);
+            m_imguiFrameBuffer.Cleanup();
         }
 
 
@@ -273,7 +272,7 @@ namespace PE
                 return;
             }
 
-            m_meshes[meshIndex].BindMesh();
+            m_meshes[meshIndex].Bind();
 
             // Pass the model to NDC transform matrix as a uniform variable
             r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
@@ -285,7 +284,7 @@ namespace PE
                 GL_UNSIGNED_SHORT, NULL);
 
             // Unbind everything
-            m_meshes[meshIndex].UnbindMesh();
+            m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
         }
 
@@ -305,7 +304,7 @@ namespace PE
                 return;
             }
 
-            m_meshes[meshIndex].BindMesh();
+            m_meshes[meshIndex].Bind();
 
             // Pass the model to NDC transform matrix as a uniform variable
             r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
@@ -347,7 +346,7 @@ namespace PE
                 GL_UNSIGNED_SHORT, NULL);
 
             // Unbind everything
-            m_meshes[meshIndex].UnbindMesh();
+            m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
 
             if (p_texture != nullptr)
@@ -650,63 +649,6 @@ namespace PE
                 << "\nMaximum Indices Count: " << maxIndicesCount
                 << "\nGL Maximum texture size: " << maxTextureSize
                 << "\nMaximum Viewport Dimensions: " << maxViewportDims[0] << " x " << maxViewportDims[1] << "\n" << std::endl;
-        }
-
-
-        void RendererManager::CreateFrameBuffer(int const bufferWidth, int const bufferHeight)
-        {
-            // Create a frame buffer
-            glGenFramebuffers(1, &m_frameBufferObjectIndex);
-            glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
-
-            // Attach a texture to the framebuffer
-            glGenTextures(1, &m_imguiTextureId);
-            glBindTexture(GL_TEXTURE_2D, m_imguiTextureId);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_imguiTextureId, 0);
-
-            // Check if the framebuffer was created successfully
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(true, "Framebuffer is not complete.", __FUNCTION__);
-                throw;
-            }
-
-            // Unbind all the buffers created
-            glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            glBindTexture(GL_TEXTURE_2D, 0);
-        }
-
-
-        void RendererManager::BindFrameBuffer()
-        {
-            glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
-        }
-
-
-        void RendererManager::UnbindFrameBuffer()
-        {
-            GLint currentFrameBuffer{};
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
-
-            // Unbind the framebuffer object (if it is currently bound)
-            if (m_frameBufferObjectIndex == static_cast<GLuint>(currentFrameBuffer)) 
-            {
-                glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            }
-        }
-
-
-        void RendererManager::ResizeFrameBuffer(GLsizei const newWidth, GLsizei const newHeight)
-        {
-            glBindTexture(GL_TEXTURE_2D, m_imguiTextureId);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newWidth, newHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_imguiTextureId, 0);
         }
 
     } // End of Graphics namespace
