@@ -70,10 +70,9 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Adds a component to be used in the factory and the ECS as a whole
 		 		This function is not to be called directly, and is to be called using the
-				REGISTERCOMPONENT() macro, where the first param is the class/struct, and
-				the second is the size of that struct/class.
+				REGISTERCOMPONENT() macro, where the first param is the class/struct
 
-				e.g. REGISTERCOMPONENT(Position, sizeof(Position));
+				e.g. REGISTERCOMPONENT(Position);
 		 
 		 \param[in] name 	The ID for the component
 		 \param[in] creator Component creator class that is only used for the size of the
@@ -82,6 +81,7 @@ namespace PE
 		template <typename T>
 		void AddComponentCreator(const ComponentID& name, const size_t& creator)
 		{
+			name;
 			m_componentMap[g_entityManager->GetComponentID<T>()] = creator;
 			g_entityManager->AddToPool<T>();
 		}
@@ -155,25 +155,54 @@ namespace PE
 		// Hans
 		void AssignComponent(EntityID id, const std::string& name, int componentData);
 
-
+		/*!***********************************************************************************
+		 \brief Create an enity from Prefab object
+		 
+		 \param[in] prefab 	The name of the prefab to load from
+		 \return EntityID 	The created entity's ID
+		*************************************************************************************/
 		EntityID CreateFromPrefab(const char* prefab);
+
+		/*!***********************************************************************************
+		 \brief 	Loads a component including data into an entity, if the entity doesn't
+		 			have this component added, it will assign it before copying the data over.
+		 
+		 \param[in] id 			The ID of the entity to load the component into
+		 \param[in] component 	The name of the component to load into the entity
+		 \param[in] data 		The data to load into the entity
+		 \return true 			Successfully copied the component
+		 \return false 			Failed to copy the component
+		*************************************************************************************/
 		bool LoadComponent(EntityID id, const char* component, void* data);
 
-
+// ----- Private Methods ----- //
+private:
 		// Components Handling
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeRigidBody(const EntityID& id, void* data);
 		bool InitializeCollider(const EntityID& id, void* data);
 		bool InitializeTransform(const EntityID& id, void* data);
 		bool InitializePlayerStats(const EntityID& id, void* data);
 		bool InitializeRenderer(const EntityID& id, void* data);
 
+		/*!***********************************************************************************
+		 \brief Loads all the component initializers into m_componentMap
+		 
+		*************************************************************************************/
 		void LoadComponents();
 
 	// ----- Private Variables ----- //
 	private:
-		// hide it
 		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& id, void* data);
-
 		typedef std::map<ComponentID, size_t> ComponentMapType; // component map typedef
 		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
 		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
@@ -191,7 +220,6 @@ namespace PE
 	EntityID EntityFactory::CreateEntity()
 	{
 		EntityID ret = p_entityManager->NewEntity();
-		// credit https://stackoverflow.com/questions/7230621/how-can-i-iterate-over-a-packed-variadic-template-argument-list
 		if constexpr (sizeof...(CT))
 		{
 			([&]
@@ -220,24 +248,6 @@ namespace PE
 		return ret;
 	}
 
-	/*template<typename... T>
-	void EntityFactory::Assign(EntityID id, T ... var)
-	{
-		if constexpr (sizeof...(T))
-		{
-			([&]
-				{
-					if (typeid(T) != typeid(ComponentID) && typeid(T) != typeid(const char*))
-						throw;
-					if (m_componentMap.contains(var))
-					{
-						p_entityManager->Assign(id, var, m_componentMap[var]);
-					}
-				}
-			(), ...);
-		}
-	}*/
-
 	template<typename T>
 	void EntityFactory::Assign(EntityID id, std::initializer_list<T> var)
 	{
@@ -247,7 +257,7 @@ namespace PE
 		{
 			if (m_componentMap.find(type) != m_componentMap.end())
 			{
-				p_entityManager->Assign(id, type, m_componentMap[type]);
+				p_entityManager->Assign(id, type);
 			}
 		}
 	}
@@ -261,7 +271,7 @@ namespace PE
 		{
 			if (m_componentMap.find(type) != m_componentMap.end())
 			{
-				p_entityManager->Assign(id, type, m_componentMap[type]);
+				p_entityManager->Assign(id, type);
 			}
 		}
 	}

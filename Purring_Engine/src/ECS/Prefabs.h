@@ -16,24 +16,37 @@
 
 // INCLUDES
 #include "prpch.h"
-#include "Entity.h"
-#include "Components.h"
-#include "EntityFactory.h"
-#include "Data/SerializationManager.h"
+
 
 
 namespace PE
 {
+	/*!***********************************************************************************
+	 \brief Contains the prefabs of the game
+	 
+	*************************************************************************************/
 	namespace Prefabs
 	{
 		constexpr std::initializer_list<const char*> GameObject = { "RigidBody", "Collider", "Transform", "Renderer"};
 	}
+
+	/*!***********************************************************************************
+	 \brief Prefab class handled by the entity factory
+	 
+	*************************************************************************************/
 	class Prefab
 	{
+	// ----- Public variables ----- // 
 	public:
 		std::map<std::string, std::initializer_list<const char*>> m_map;
-
-		void LoadPrefabs()
+		
+	// ----- Constructors ----- //
+	public:
+		/*!***********************************************************************************
+		 \brief Loads all prefabs with it's attatched name into m_map
+		 
+		*************************************************************************************/
+		Prefab()
 		{
 			//LoadComponents();
 			m_map.emplace("GameObject", Prefabs::GameObject);

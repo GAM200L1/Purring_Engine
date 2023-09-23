@@ -29,7 +29,6 @@ namespace PE
 			throw;
 		g_entityFactory = this;
 		LoadComponents();
-		m_prefabs.LoadPrefabs();
 	};
 
 
@@ -64,6 +63,7 @@ namespace PE
 	// Hans
 	void EntityFactory::AssignComponent(EntityID id, const std::string& name, int componentData)
 	{
+		id; name; componentData;
 		// Here you will assign and initialize the component to the entity
 		// For now, I'll leave this as a placeholder.
 		// This might call something like:

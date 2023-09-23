@@ -91,10 +91,9 @@ namespace PE
 		 
 		 \param[in] id 				ID of the entity to assign components to
 		 \param[in] componentID 	The ID of the component to assign 
-		 \param[in] creator 		The ComponentCreator for the component
 		*************************************************************************************/
-		void Assign(const EntityID& id, const char* componentID, const size_t& creator);
-		void Assign(const EntityID& id, const ComponentID& componentID, const size_t& creator);
+		void Assign(const EntityID& id, const char* componentID);
+
 
 		/*!***********************************************************************************
 		 \brief Assign an entity with a component specified by the componentID 
@@ -129,7 +128,13 @@ namespace PE
 		 \return const ComponentPool* 	The pointer to the pool
 		*************************************************************************************/
 		const ComponentPool* GetComponentPoolPointer(const ComponentID& component) const;
-
+		
+		/*!***********************************************************************************
+		 \brief Get a pointer to a specific component pool
+		 
+		 \param[in] component 			The pool to Get
+		 \return const ComponentPool* 	The pointer to the pool
+		*************************************************************************************/
 		ComponentPool* GetComponentPoolPointer(const ComponentID& component);
 
 
@@ -271,13 +276,23 @@ namespace PE
 			return m_entities.size();
 		}
 
+		/*!***********************************************************************************
+		 \brief Adds a component to the component pool
+		 
+		 \tparam T The component to add
+		*************************************************************************************/
 		template<typename T>
 		void AddToPool()
 		{
 			m_componentPools.emplace(GetComponentID<T>(), new PoolData<T>());
 		}
 
-
+		/*!***********************************************************************************
+		 \brief Get the entity's component list
+		 
+		 \param[in] id 						Entity to get all components of
+		 \return std::vector<ComponentID> 	vector of all the components this entity has
+		*************************************************************************************/
 		std::vector<ComponentID> GetComponentIDs(EntityID id)
 		{
 			std::vector<ComponentID> ret;

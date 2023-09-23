@@ -76,10 +76,10 @@ PE::EntityFactory entFactory;
 ----------------------------------------------------------------------------- */
 PE::CoreApplication::CoreApplication()
 {
-    REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
-    REGISTERCOMPONENT(Collider, sizeof(Collider));
-    REGISTERCOMPONENT(Transform, sizeof(Transform));
-    REGISTERCOMPONENT(Graphics::Renderer, sizeof(Graphics::Renderer));
+    REGISTERCOMPONENT(RigidBody);
+    REGISTERCOMPONENT(Collider);
+    REGISTERCOMPONENT(Transform);
+    REGISTERCOMPONENT(Graphics::Renderer);
     //REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
     //EntityID id = g_entityFactory->CreateEntity();
     //EntityID id2 = g_entityFactory->CreateEntity();
@@ -197,7 +197,7 @@ void PE::CoreApplication::Run()
         if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
         {
             //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
 
         }
 
