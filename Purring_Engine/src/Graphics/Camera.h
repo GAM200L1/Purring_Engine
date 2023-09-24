@@ -27,6 +27,7 @@ namespace PE
         {
         public:
             // ----- Public getters ----- // 
+            glm::vec2 GetPosition() { return m_position; }
         public:
 
             /*!***********************************************************************************

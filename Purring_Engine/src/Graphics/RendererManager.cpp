@@ -27,6 +27,9 @@
 
 #include "Editor/Editor.h"
 
+// text
+#include "Text.h"
+
 extern Logger engine_logger;
 
 namespace PE
@@ -77,6 +80,10 @@ namespace PE
             
             // Load a texture
             ResourceManager::GetInstance()->LoadTextureFromFile(m_defaultTextureName, "../Textures/Cat1_128x128.png");
+
+            // Load a font
+            ResourceManager::GetInstance()->LoadShadersFromFile("text", "../Shaders/Text.vert", "../Shaders/Text.frag");
+            m_font.Init(ResourceManager::ShaderPrograms["text"]);
 
             // Add background objects
             AddBackgroundObject(width, height, glm::vec4{ 0.f, 0.f, 0.f, 1.f });
@@ -162,6 +169,9 @@ namespace PE
 
 
             DrawDebug(viewToNdc); // Draw debug gizmos in the scene
+
+            m_font.RenderText("TEST: ", { m_mainCamera.GetPosition().x + 0.2f, m_mainCamera.GetPosition().y + 0.2f },
+                0.0008f, m_mainCamera, { 0.87f, 0.92f, 0.8f });
 
             // Unbind the RBO for rendering to the ImGui window
             UnbindFrameBuffer();

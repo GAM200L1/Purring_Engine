@@ -141,13 +141,15 @@ project "Purring_Engine"
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.GLEW}",
-        "%{IncludeDir.FMOD}"
+        "%{IncludeDir.FMOD}",
+        "vendor/freetype/include"
     }
 
     libdirs
     {
         "vendor/GLEW/lib/Release/x64",
-        "vendor/FMOD/core/lib/x64"
+        "vendor/FMOD/core/lib/x64",
+        "vendor/freetype/libs"
     }
 
     links
@@ -157,6 +159,7 @@ project "Purring_Engine"
         "ImGui",
         "opengl32.lib",  -- not sure if needed
         "fmod_vc",
+        "freetyped"
     }
 
     filter "system:windows"

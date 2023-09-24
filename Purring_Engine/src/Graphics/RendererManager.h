@@ -30,6 +30,7 @@
 #include "ShaderProgram.h"
 #include "System.h"
 
+#include "Text.h"
 
 namespace PE
 {
@@ -246,6 +247,9 @@ namespace PE
 
             //! Container of debug points to draw
             std::vector<Graphics::Renderer> m_pointObjects{};
+
+            // font
+            Font m_font;
 
 
             // ----- For rendering to ImGui window ----- //
