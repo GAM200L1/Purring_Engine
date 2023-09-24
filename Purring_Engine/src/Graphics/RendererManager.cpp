@@ -158,7 +158,11 @@ namespace PE
 
 
             DrawScene(worldToNdc); // Draw objects in the scene
-            DrawDebug(worldToNdc); // Draw debug gizmos in the scene
+
+            if (Editor::GetInstance()->IsRenderingDebug()) 
+            {
+                DrawDebug(worldToNdc); // Draw debug gizmos in the scene
+            }
 
             if (renderInEditor)
             {
