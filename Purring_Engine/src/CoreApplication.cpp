@@ -114,7 +114,7 @@ PE::CoreApplication::CoreApplication()
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
 
-    for (size_t i{}; i < 5; ++i)
+    for (size_t i{}; i < 6; ++i)
     {
         g_entityFactory->CreateFromPrefab("GameObject");
 
@@ -147,7 +147,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
 
-    // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
+    
     g_entityManager->Get<Transform>(2).position.x = 100.f;
     g_entityManager->Get<Transform>(2).position.y = -200.f;
     g_entityManager->Get<Transform>(2).width = 100.f;
@@ -158,8 +158,8 @@ PE::CoreApplication::CoreApplication()
 
     g_entityManager->Get<Transform>(3).position.x = -100.f;
     g_entityManager->Get<Transform>(3).position.y = 100.f;
-    g_entityManager->Get<Transform>(3).width = 100.f;
-    g_entityManager->Get<Transform>(3).height = 100.f;
+    g_entityManager->Get<Transform>(3).width = 50.f;
+    g_entityManager->Get<Transform>(3).height = 20.f;
     g_entityManager->Get<Transform>(3).orientation = 0.f;
     g_entityManager->Get<RigidBody>(3).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(3).colliderVariant = AABBCollider();
@@ -171,6 +171,16 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(4).orientation = 0.f;
     g_entityManager->Get<RigidBody>(4).SetType(EnumRigidBodyType::STATIC);
     g_entityManager->Get<Collider>(4).colliderVariant = AABBCollider();
+
+    g_entityManager->Get<Transform>(5).position.x = 400.f;
+    g_entityManager->Get<Transform>(5).position.y = 0.f;
+    g_entityManager->Get<Transform>(5).width = 100.f;
+    g_entityManager->Get<Transform>(5).height = 700.f;
+    g_entityManager->Get<Transform>(5).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(5).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(5).colliderVariant = AABBCollider();
+
+    
 }
 
 /*-----------------------------------------------------------------------------
@@ -249,6 +259,11 @@ void PE::CoreApplication::Run()
                 g_entityManager->RemoveEntity(lastEnt.front());
                 lastEnt.pop();
             }
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity.GetNormalized() * 1000.f);
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)

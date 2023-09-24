@@ -24,8 +24,8 @@ namespace PE
 	struct AABBCollider
 	{
 		// ----- Public Variables ----- //
-		vec2 center;
 		vec2 offsetFromObj{ 0.f, 0.f };
+		vec2 center{ offsetFromObj };
 		vec2 min;
 		vec2 max;
 	};
@@ -35,8 +35,8 @@ namespace PE
 	struct CircleCollider
 	{
 		// ----- Public Variables ----- //
-		vec2 center;
 		vec2 offsetFromObj{ 0.f, 0.f };
+		vec2 center{ offsetFromObj };
 		float radius;
 	};
 

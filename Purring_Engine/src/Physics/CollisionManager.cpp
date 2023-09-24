@@ -42,7 +42,6 @@ namespace PE
 			
 			// remove objects that were checked for collision from previous frame
 			collider.objectsCollided.clear();
-			
 			std::visit([&](auto& col)
 			{
 					Update(col, transform.position, vec2{ transform.width, transform.height });
@@ -75,7 +74,7 @@ namespace PE
 						Contact contactPt;
 						if (CollisionIntersection(col1, col2, contactPt))
 						{						
-							engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
+							//engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
 
 							// adds collided objects so that it won't be checked again
 							collider1.objectsCollided.emplace(ColliderID_2);
@@ -146,7 +145,7 @@ namespace PE
 			r_contactPt.intersectionPoint = r_AABB1.center;
 			Clamp(r_contactPt.intersectionPoint.x, r_AABB2.min.x, r_AABB2.max.x);
 			Clamp(r_contactPt.intersectionPoint.y, r_AABB2.min.y, r_AABB2.max.y);
-			r_contactPt.normal = (r_AABB1.center - r_AABB2.center).GetNormalized();
+			r_contactPt.normal = (r_AABB1.center - r_contactPt.intersectionPoint).GetNormalized();
 
 			// Penetration Depth to take the axis that is intersecting less
 			float xIntersectLength = abs(r_AABB1.max.x - r_AABB1.center.x) - abs(r_contactPt.intersectionPoint.x - r_AABB1.center.x);
@@ -275,7 +274,7 @@ namespace PE
 				r_contactPt.intersectionPoint = r_circle.center;
 				Clamp(r_contactPt.intersectionPoint.x, r_AABB.min.x, r_AABB.max.x);
 				Clamp(r_contactPt.intersectionPoint.y, r_AABB.min.y, r_AABB.max.y);
-				r_contactPt.normal = (r_circle.center - r_AABB.center).GetNormalized();
+				r_contactPt.normal = (r_circle.center - r_contactPt.intersectionPoint).GetNormalized();
 				r_contactPt.penetrationDepth = r_circle.radius - (r_circle.center - r_contactPt.intersectionPoint).Length();
 			}
 			return true;

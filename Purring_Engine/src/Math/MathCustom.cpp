@@ -139,7 +139,7 @@ namespace PE
 	// for point to point
 	float vec2::DistanceSquared(vec2 const& r_rhs) const
 	{
-		return (((this->x - r_rhs.x) * (this->x - r_rhs.x)) * ((this->y - r_rhs.y) * (this->y - r_rhs.y)));
+		return (((this->x - r_rhs.x) * (this->x - r_rhs.x)) + ((this->y - r_rhs.y) * (this->y - r_rhs.y)));
 	}
 
 	// for point to point

@@ -69,7 +69,7 @@ namespace PE
 		}
 		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());
+			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());	
 		}
 	}
 
