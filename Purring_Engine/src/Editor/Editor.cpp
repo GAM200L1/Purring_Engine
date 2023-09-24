@@ -326,8 +326,11 @@ namespace PE {
 				{
 					const bool is_selected = (m_currentSelectedIndex == n);
 
-					if (ImGui::Selectable(m_items[n].c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedIndex = n; //seteting current index to check for selection
+					std::string name = "GameObject" ;
+					name += std::to_string(m_objects[n]);
+
+					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+						m_currentSelectedObject = n; //seteting current index to check for selection
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
