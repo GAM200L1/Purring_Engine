@@ -32,7 +32,7 @@ namespace PE
 		// ----- Public Methods ----- //
 		static void UpdateColliders();
 		static void TestColliders();
-		static void ResolveCollision(float deltaTime);
+		static void ResolveCollision();
 		static void DeleteInstance();
 
 	private:

@@ -24,10 +24,11 @@ namespace PE
 	struct AABBCollider
 	{
 		// ----- Public Variables ----- //
-		vec2 offsetFromObj{ 0.f, 0.f };
-		vec2 center{ offsetFromObj };
-		vec2 min;
-		vec2 max;
+		//vec2 offsetFromObj{ 0.f, 0.f };
+		vec2 center{};
+		vec2 min{};
+		vec2 max{};
+		vec2 scale{};
 	};
 	
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale);
@@ -35,9 +36,8 @@ namespace PE
 	struct CircleCollider
 	{
 		// ----- Public Variables ----- //
-		vec2 offsetFromObj{ 0.f, 0.f };
-		vec2 center{ offsetFromObj };
-		float radius;
+		vec2 center{};
+		float radius{};
 	};
 
 	struct Collider
@@ -80,9 +80,9 @@ namespace PE
 
 		Contact contactData;
 
-		void Resolve(float deltaTime);
+		void ResolveCollision();
 		void ResolveVelocity();
-		void ResolvePosition(float deltaTime);
+		void ResolvePosition();
 	};
 
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);

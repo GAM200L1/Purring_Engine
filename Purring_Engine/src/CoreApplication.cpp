@@ -62,12 +62,12 @@ SerializationManager sm;
 #include "ECS/SceneView.h"
 #include "Graphics/Renderer.h"
 
+#include <random>
 
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
 
 std::queue<EntityID> lastEnt{};
-
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -114,22 +114,14 @@ PE::CoreApplication::CoreApplication()
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
 
-    for (size_t i{}; i < 6; ++i)
+    for (size_t i{ 0 }; i < 9; ++i)
     {
         g_entityFactory->CreateFromPrefab("GameObject");
-
-        // Make overlapping circle colliders at the origin
-        //g_entityManager->Get<Transform>(id).position.x = 0.f;
-        //g_entityManager->Get<Transform>(id).position.y = 0.f;
-        //g_entityManager->Get<Transform>(id).width = 50;
-        //g_entityManager->Get<Transform>(id).height = 50;
-        //g_entityManager->Get<Transform>(id).orientation = 0.f;
-        //g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
     }
 
     // Make the first gameobject with a collider circle at world pos (100, 100)
     g_entityManager->Get<Transform>(0).position.x = 0.f;
-    g_entityManager->Get<Transform>(0).position.y = 200.f;
+    g_entityManager->Get<Transform>(0).position.y = 0.f;
     g_entityManager->Get<Transform>(0).width = 100.f;
     g_entityManager->Get<Transform>(0).height = 100.f;
     g_entityManager->Get<Transform>(0).orientation = 0.f;
@@ -138,49 +130,74 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
 
-    // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
-    g_entityManager->Get<Transform>(1).position.x = 50.f;
-    g_entityManager->Get<Transform>(1).position.y = -45.f;
+    // creates AABB map boundaries
+    g_entityManager->Get<Transform>(1).position.x = 700.f;
+    g_entityManager->Get<Transform>(1).position.y = 0.f;
     g_entityManager->Get<Transform>(1).width = 100.f;
-    g_entityManager->Get<Transform>(1).height = 100.f;
+    g_entityManager->Get<Transform>(1).height = 700.f;
     g_entityManager->Get<Transform>(1).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
-
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
     
-    g_entityManager->Get<Transform>(2).position.x = 100.f;
-    g_entityManager->Get<Transform>(2).position.y = -200.f;
+    g_entityManager->Get<Transform>(2).position.x = -700.f;
+    g_entityManager->Get<Transform>(2).position.y = 0.f;
     g_entityManager->Get<Transform>(2).width = 100.f;
-    g_entityManager->Get<Transform>(2).height = 100.f;
+    g_entityManager->Get<Transform>(2).height = 700.f;
     g_entityManager->Get<Transform>(2).orientation = 0.f;
     g_entityManager->Get<RigidBody>(2).SetType(EnumRigidBodyType::STATIC);
-    g_entityManager->Get<Collider>(2).colliderVariant = CircleCollider();
-
-    g_entityManager->Get<Transform>(3).position.x = -100.f;
-    g_entityManager->Get<Transform>(3).position.y = 100.f;
-    g_entityManager->Get<Transform>(3).width = 50.f;
-    g_entityManager->Get<Transform>(3).height = 20.f;
+    g_entityManager->Get<Collider>(2).colliderVariant = AABBCollider();
+    
+    g_entityManager->Get<Transform>(3).position.x = 0.f;
+    g_entityManager->Get<Transform>(3).position.y = 350.f;
+    g_entityManager->Get<Transform>(3).width = 1500.f;
+    g_entityManager->Get<Transform>(3).height = 100.f;
     g_entityManager->Get<Transform>(3).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(3).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<RigidBody>(3).SetType(EnumRigidBodyType::STATIC);
     g_entityManager->Get<Collider>(3).colliderVariant = AABBCollider();
-
-    g_entityManager->Get<Transform>(4).position.x = -100.f;
-    g_entityManager->Get<Transform>(4).position.y = -100.f;
-    g_entityManager->Get<Transform>(4).width = 100.f;
+    
+    g_entityManager->Get<Transform>(4).position.x = 0.f;
+    g_entityManager->Get<Transform>(4).position.y = -350.f;
+    g_entityManager->Get<Transform>(4).width = 1500.f;
     g_entityManager->Get<Transform>(4).height = 100.f;
     g_entityManager->Get<Transform>(4).orientation = 0.f;
     g_entityManager->Get<RigidBody>(4).SetType(EnumRigidBodyType::STATIC);
     g_entityManager->Get<Collider>(4).colliderVariant = AABBCollider();
 
-    g_entityManager->Get<Transform>(5).position.x = 400.f;
-    g_entityManager->Get<Transform>(5).position.y = 0.f;
+    // AABB Static Collider
+    g_entityManager->Get<Transform>(5).position.x = 200.f;
+    g_entityManager->Get<Transform>(5).position.y = 200.f;
     g_entityManager->Get<Transform>(5).width = 100.f;
-    g_entityManager->Get<Transform>(5).height = 700.f;
+    g_entityManager->Get<Transform>(5).height = 100.f;
     g_entityManager->Get<Transform>(5).orientation = 0.f;
     g_entityManager->Get<RigidBody>(5).SetType(EnumRigidBodyType::STATIC);
     g_entityManager->Get<Collider>(5).colliderVariant = AABBCollider();
-
     
+    // AABB Dynamic Collider
+    g_entityManager->Get<Transform>(6).position.x = -200.f;
+    g_entityManager->Get<Transform>(6).position.y = 200.f;
+    g_entityManager->Get<Transform>(6).width = 180.f;
+    g_entityManager->Get<Transform>(6).height = 100.f;
+    g_entityManager->Get<Transform>(6).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(6).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(6).colliderVariant = AABBCollider();
+
+    // Circle Static Collider
+    g_entityManager->Get<Transform>(7).position.x = -200.f;
+    g_entityManager->Get<Transform>(7).position.y = -200.f;
+    g_entityManager->Get<Transform>(7).width = 100.f;
+    g_entityManager->Get<Transform>(7).height = 100.f;
+    g_entityManager->Get<Transform>(7).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(7).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(7).colliderVariant = CircleCollider();
+
+    // Circle Dynamic Collider
+    g_entityManager->Get<Transform>(8).position.x = 200.f;
+    g_entityManager->Get<Transform>(8).position.y = -200.f;
+    g_entityManager->Get<Transform>(8).width = 100.f;
+    g_entityManager->Get<Transform>(8).height = 100.f;
+    g_entityManager->Get<Transform>(8).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(8).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(8).colliderVariant = CircleCollider();
 }
 
 /*-----------------------------------------------------------------------------
@@ -244,7 +261,10 @@ void PE::CoreApplication::Run()
         if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
         {
             EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-            g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+            if (std::rand() % 2)
+                g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+            else
+                g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
             g_entityManager->Get<Transform>(id).height = 100.f;
             g_entityManager->Get<Transform>(id).width = 100.f;
             g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
@@ -263,6 +283,8 @@ void PE::CoreApplication::Run()
 
         if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
         {
+            if (g_entityManager->Get<RigidBody>(0).m_velocity.Dot(g_entityManager->Get<RigidBody>(0).m_velocity) == 0.f)
+                g_entityManager->Get<RigidBody>(0).m_velocity = vec2{ 1.f, 0.f };
             g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity.GetNormalized() * 1000.f);
         }
 
@@ -290,7 +312,7 @@ void PE::CoreApplication::Run()
         PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
         CollisionManager::TestColliders();
-        CollisionManager::ResolveCollision(TimeManager::GetInstance().GetDeltaTime());
+        CollisionManager::ResolveCollision();
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)

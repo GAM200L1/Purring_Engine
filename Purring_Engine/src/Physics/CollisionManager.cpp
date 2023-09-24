@@ -39,14 +39,14 @@ namespace PE
 		{
 			Transform const& transform = g_entityManager->Get<Transform>(ColliderID);
 			Collider& collider = g_entityManager->Get<Collider>(ColliderID);
-			
+
 			// remove objects that were checked for collision from previous frame
 			collider.objectsCollided.clear();
 			std::visit([&](auto& col)
-			{
+				{
 					Update(col, transform.position, vec2{ transform.width, transform.height });
-			
-			}, collider.colliderVariant);
+
+				}, collider.colliderVariant);
 		}
 	}
 
@@ -56,61 +56,59 @@ namespace PE
 		{
 
 			Collider& collider1 = g_entityManager->Get<Collider>(ColliderID_1);
-			
+
 			for (EntityID ColliderID_2 : SceneView<Collider>())
 			{
 
 				Collider& collider2 = g_entityManager->Get<Collider>(ColliderID_2);
-				
+
 				// if its the same don't check
 				if (ColliderID_1 == ColliderID_2) { continue; }
 				// if they have been checked before don't check again
 				if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
 
 				std::visit([&](auto& col1)
-				{
-					std::visit([&](auto& col2)
 					{
-						Contact contactPt;
-						if (CollisionIntersection(col1, col2, contactPt))
-						{						
-							//engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
-
-							// adds collided objects so that it won't be checked again
-							collider1.objectsCollided.emplace(ColliderID_2);
-							collider2.objectsCollided.emplace(ColliderID_1);
-							if (!collider1.isTrigger && !collider2.isTrigger)
+						std::visit([&](auto& col2)
 							{
-								if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
+								Contact contactPt;
+								if (CollisionIntersection(col1, col2, contactPt))
 								{
-									std::swap(ColliderID_1, ColliderID_2);
+									//engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
+
+									// adds collided objects so that it won't be checked again
+									collider1.objectsCollided.emplace(ColliderID_2);
+									collider2.objectsCollided.emplace(ColliderID_1);
+									if (!collider1.isTrigger && !collider2.isTrigger)
+									{
+										if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
+										{
+											std::swap(ColliderID_1, ColliderID_2);
+										}
+
+										m_manifolds.emplace_back
+										(Manifold{ contactPt,
+												   g_entityManager->Get<Transform>(ColliderID_1),
+												   g_entityManager->Get<Transform>(ColliderID_2),
+												   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
+												   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
+									}
+									// else send message to trigger respective event?
 								}
 
-								m_manifolds.emplace_back
-								(Manifold{ contactPt,
-										   g_entityManager->Get<Transform>(ColliderID_1),
-										   g_entityManager->Get<Transform>(ColliderID_2),
-										   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
-										   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
-							}
-							// else send message to trigger respective event?
-						}
-						//else
-							//engine_logger.AddLog(false, "Not Collided!\n", __FUNCTION__);
+							}, collider2.colliderVariant);
 
-					}, collider2.colliderVariant);
-
-				}, collider1.colliderVariant);
+					}, collider1.colliderVariant);
 
 			}
 		}
 	}
 
-	void CollisionManager::ResolveCollision(float deltaTime)
+	void CollisionManager::ResolveCollision()
 	{
 		for (Manifold& r_manifold : m_manifolds)
 		{
-			r_manifold.Resolve(deltaTime);
+			r_manifold.ResolveCollision();
 		}
 		m_manifolds.clear();
 	}
@@ -128,34 +126,79 @@ namespace PE
 	{
 		// Static Collision
 		if (r_AABB1.max.x < r_AABB2.min.x || r_AABB1.min.x > r_AABB2.max.x)
-		{ return false; }
+		{
+			return false;
+		}
 		if (r_AABB1.max.y < r_AABB2.min.y || r_AABB1.min.y > r_AABB2.max.y)
-		{ return false; }
-		
-		vec2 c1c2 = r_AABB2.center - r_AABB1.center; // vector from center of AABB2 to AABB1 center
+		{
+			return false;
+		}
+
+		// vector from center of AABB2 to AABB1 center
+		vec2 c1c2 = r_AABB2.center - r_AABB1.center; 
 
 		if (c1c2.LengthSquared() == 0.f)
 		{
 			r_contactPt.normal = vec2{ 0.f, 1.f };
 			r_contactPt.intersectionPoint = vec2{ r_AABB2.center.x, r_AABB2.max.y };
-			r_contactPt.penetrationDepth = r_AABB1.center.y - r_AABB1.min.y;
+			r_contactPt.penetrationDepth = r_AABB1.scale.y * 0.5f;
 		}
 		else
 		{
 			r_contactPt.intersectionPoint = r_AABB1.center;
 			Clamp(r_contactPt.intersectionPoint.x, r_AABB2.min.x, r_AABB2.max.x);
 			Clamp(r_contactPt.intersectionPoint.y, r_AABB2.min.y, r_AABB2.max.y);
-			r_contactPt.normal = (r_AABB1.center - r_contactPt.intersectionPoint).GetNormalized();
 
-			// Penetration Depth to take the axis that is intersecting less
-			float xIntersectLength = abs(r_AABB1.max.x - r_AABB1.center.x) - abs(r_contactPt.intersectionPoint.x - r_AABB1.center.x);
-			float yIntersectLength = abs(r_AABB1.max.y - r_AABB1.center.y) - abs(r_contactPt.intersectionPoint.y - r_AABB1.center.y);;
-			r_contactPt.penetrationDepth = (xIntersectLength < yIntersectLength)? xIntersectLength : yIntersectLength;
+			vec2 c1InterPt = r_contactPt.intersectionPoint - r_AABB1.center;
+
+			// checks if the center of the first rectangle is on the edge of the rectangle
+			if (c1InterPt.LengthSquared() != 0.f)
+			{
+				float xIntersectLength = (r_AABB1.scale.x * 0.5f) - abs(c1InterPt.x);
+				float yIntersectLength = (r_AABB1.scale.y * 0.5f) - abs(c1InterPt.y);
+				// if y penetration length is larger, take x penetration length, vice versa
+				r_contactPt.penetrationDepth = (xIntersectLength < yIntersectLength) ? xIntersectLength : yIntersectLength;
+				
+				// checks which axis is intersecting more
+				if (xIntersectLength < yIntersectLength)
+				{
+					// penetraion by x axis is smaller
+					r_contactPt.normal = (r_contactPt.intersectionPoint.x == r_AABB2.min.x)? vec2{ -1.f, 0.f } : vec2{ 1.f,0.f };
+				}
+				else
+				{
+					// penetration by y axis is smaller
+					r_contactPt.normal = (r_contactPt.intersectionPoint.y == r_AABB2.min.y)? vec2{ 0.f, -1.f } : vec2{ 0.f, 1.f };
+				}
+			}
+			else
+			{
+				// penetration depth will be set to the width since its at 
+				if (r_contactPt.intersectionPoint.x == r_AABB2.min.x)
+				{
+					r_contactPt.normal = vec2{ -1.f, 0.f };
+					r_contactPt.penetrationDepth = r_AABB1.scale.x * 0.5f;
+				}
+				else if (r_contactPt.intersectionPoint.x == r_AABB2.max.x)
+				{
+					r_contactPt.normal = vec2{ 1.f,0.f };
+					r_contactPt.penetrationDepth = r_AABB1.scale.x * 0.5f;
+				}
+				else if (r_contactPt.intersectionPoint.y == r_AABB2.min.y)
+				{
+					r_contactPt.normal = vec2{ 0.f, -1.f };
+					r_contactPt.penetrationDepth = r_AABB1.scale.y * 0.5f;
+				}
+				else
+				{
+					r_contactPt.normal = vec2{ 0.f, 1.f };
+					r_contactPt.penetrationDepth = r_AABB1.scale.y * 0.5f;
+				}
+			}
 		}
-		std::cout << r_contactPt.penetrationDepth << '\n';
 		return true;
 	}
-	
+
 	// Circle + Circle
 	bool CollisionIntersection(CircleCollider const& r_circle1, CircleCollider const& r_circle2, Contact& r_contactPt)
 	{
@@ -178,45 +221,8 @@ namespace PE
 				r_contactPt.intersectionPoint = (r_contactPt.normal * r_circle2.radius) + r_circle2.center;
 				r_contactPt.penetrationDepth = totalRadius - sqrtf(deltaLengthSquared);
 			}
-			return true; 
+			return true;
 		}
-		//else
-		//{
-		//	// Dynamic Collision Check
-
-		//	vec2 const& startPos_e1 = g_entityManager->Get<RigidBody>(r_entity1).m_prevPosition;
-		//	vec2 const& endPos_e1 = r_circle1.center;
-		//	//vec2 const& v_e1 = endPos_e1 - startPos_e1;
-
-		//	vec2 const& startPos_e2 = g_entityManager->Get<RigidBody>(r_entity2).m_prevPosition;
-		//	vec2 const& endPos_e2 = r_circle2.center;
-		//	//vec2 const& v_e2 = endPos_e2 - startPos_e2;
-
-		//	vec2 const v = (endPos_e1 - startPos_e1) - (endPos_e2 - startPos_e2); // v = v1 - v2
-		//	vec2 const s = startPos_e1 - startPos_e2;
-		//	
-		//	float eqnC = Dot(s, s) - (totalRadius * totalRadius);
-		//	if (eqnC < 0.f)
-		//	{
-		//		
-		//	}
-
-		//	// quadratic equation to solve for t
-		//	float eqnA = Dot(v, v);
-		//	if (eqnA < std::numeric_limits<float>::epsilon()) 
-		//	{ return false; } // not moving relative to each other
-		//	
-		//	float eqnB = Dot(v, s);
-		//	if (eqnB >= 0.f)
-		//	{ return false; } // not moving towards each other
-
-		//	
-		//	
-		//	// checks if it has root values;
-		//	float discriminant = 
-		//}
-		
-
 		return false;
 	}
 
@@ -260,7 +266,7 @@ namespace PE
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
 			collided += CircleAABBEdgeIntersection(r_circle, lineSeg);
 		}
-		
+
 		if (collided >= 2)
 		{
 			if ((r_AABB.center - r_circle.center).LengthSquared() == 0.f)
@@ -274,8 +280,18 @@ namespace PE
 				r_contactPt.intersectionPoint = r_circle.center;
 				Clamp(r_contactPt.intersectionPoint.x, r_AABB.min.x, r_AABB.max.x);
 				Clamp(r_contactPt.intersectionPoint.y, r_AABB.min.y, r_AABB.max.y);
-				r_contactPt.normal = (r_circle.center - r_contactPt.intersectionPoint).GetNormalized();
-				r_contactPt.penetrationDepth = r_circle.radius - (r_circle.center - r_contactPt.intersectionPoint).Length();
+				vec2 pseudoNormal = r_circle.center - r_contactPt.intersectionPoint;
+				if (Dot(pseudoNormal, pseudoNormal) != 0.f)
+				{
+					r_contactPt.normal = pseudoNormal.GetNormalized();
+					r_contactPt.penetrationDepth = r_circle.radius - (r_circle.center - r_contactPt.intersectionPoint).Length();
+				}
+				else
+				{
+					r_contactPt.normal = (r_circle.center - r_AABB.center).GetNormalized();
+					r_contactPt.penetrationDepth = r_circle.radius;
+				}
+				
 			}
 			return true;
 		}
@@ -302,8 +318,59 @@ namespace PE
 				float radiusSqr = r_circle.radius * r_circle.radius;
 				return ((p0CenterLengthSqr <= radiusSqr) + (p1CenterLengthSqr <= radiusSqr));
 			}
+			return false;
+		}
+	}
+}
 
-			/*vec2 normalScaleRadius = (check <= -r_circle.radius) ? -(r_lineSeg.normal * r_circle.radius) : (r_lineSeg.normal * r_circle.radius);
+/* 
+Physics + Collision Tentative Loop
+Update Dynamics
+TestColliders
+ResolveCollision / Update Position
+Update Colliders
+*/
+
+
+// Circle Circle Extra
+/*else
+		{
+			// Dynamic Collision Check
+
+			vec2 const& startPos_e1 = g_entityManager->Get<RigidBody>(r_entity1).m_prevPosition;
+			vec2 const& endPos_e1 = r_circle1.center;
+			//vec2 const& v_e1 = endPos_e1 - startPos_e1;
+
+			vec2 const& startPos_e2 = g_entityManager->Get<RigidBody>(r_entity2).m_prevPosition;
+			vec2 const& endPos_e2 = r_circle2.center;
+			//vec2 const& v_e2 = endPos_e2 - startPos_e2;
+
+			vec2 const v = (endPos_e1 - startPos_e1) - (endPos_e2 - startPos_e2); // v = v1 - v2
+			vec2 const s = startPos_e1 - startPos_e2;
+			
+			float eqnC = Dot(s, s) - (totalRadius * totalRadius);
+			if (eqnC < 0.f)
+			{
+				
+			}
+
+			// quadratic equation to solve for t
+			float eqnA = Dot(v, v);
+			if (eqnA < std::numeric_limits<float>::epsilon()) 
+			{ return false; } // not moving relative to each other
+			
+			float eqnB = Dot(v, s);
+			if (eqnB >= 0.f)
+			{ return false; } // not moving towards each other
+
+			
+			
+			// checks if it has root values;
+			float discriminant = 
+		}*/
+
+// CircleAABBEdge Extra
+/*vec2 normalScaleRadius = (check <= -r_circle.radius) ? -(r_lineSeg.normal * r_circle.radius) : (r_lineSeg.normal * r_circle.radius);
 
 			vec2 _p0 = r_lineSeg.point0 + normalScaleRadius;
 			vec2 _p1 = r_lineSeg.point1 + normalScaleRadius;
@@ -323,7 +390,7 @@ namespace PE
 
 				interTime += (check <= -r_circle.radius)? - r_circle.radius : r_circle.radius;
 				interTime /= Dot(r_lineSeg.normal, v);
-				
+
 				if (0.f <= interTime && interTime <= 1.f)
 				{
 					if (r_interTime > interTime)
@@ -338,20 +405,8 @@ namespace PE
 			else
 			{
 				return false; // call check line edges function here with false
-			}*/
-		}
-		//else
-		//{
-		//	return false; // call check line edges function here with true
-		//}
-		return false;
-	}
-}
-
-/* 
-Physics + Collision Tentative Loop
-Update Dynamics
-TestColliders
-ResolveCollision / Update Position
-Update Colliders
-*/
+			}
+		else
+		{
+			return false; // call check line edges function here with true
+		}*/

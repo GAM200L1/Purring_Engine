@@ -19,9 +19,10 @@ namespace PE
 	
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
-		r_AABB.center = r_position + r_AABB.offsetFromObj;
+		r_AABB.center = r_position;
 		r_AABB.min = r_position - (r_scale * 0.5f);
 		r_AABB.max = r_position + (r_scale * 0.5f);
+		r_AABB.scale = r_scale;
 	}
 	
 
@@ -29,7 +30,7 @@ namespace PE
 	
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
-		r_circle.center = r_position + r_circle.offsetFromObj;
+		r_circle.center = r_position;
 		r_circle.radius = r_scale.x * 0.5f;
 	}
 
@@ -50,14 +51,14 @@ namespace PE
 					     r_transformA{ r_transA }, r_transformB{ r_transB },
 					     r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
 
-	void Manifold::Resolve(float deltaTime)
+	void Manifold::ResolveCollision()
 	{
 		ResolveVelocity();
-		ResolvePosition(deltaTime);
+		ResolvePosition();
 	}
 
 	// set the objects to where they would be when they just collide
-	void Manifold::ResolvePosition(float deltaTime)
+	void Manifold::ResolvePosition()
 	{
 		float totalInvMass = r_rigidBodyA->GetInverseMass() + r_rigidBodyB->GetInverseMass();
 
