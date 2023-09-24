@@ -45,8 +45,13 @@ public:
     void Update();
     bool LoadAudio(const std::string& id, const std::string& path);
     void PlaySound(const std::string& id);
+    void SetVolume(const std::string& id, float volume);
+    void SetGlobalVolume(float volume);
+    void PauseSound(const std::string& id);
+    void ResumeSound(const std::string& id);
     void StopSound(const std::string& id);
     void StopAllSounds();
+
 
 private:
     AudioManager();                                     // Private constructor for Meyer's Singleton
