@@ -82,6 +82,11 @@ namespace PE
 							collider2.objectsCollided.emplace(ColliderID_1);
 							if (!collider1.isTrigger && !collider2.isTrigger)
 							{
+								if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
+								{
+									std::swap(ColliderID_1, ColliderID_2);
+								}
+
 								m_manifolds.emplace_back
 								(Manifold{ contactPt,
 										   g_entityManager->Get<Transform>(ColliderID_1),
@@ -145,7 +150,7 @@ namespace PE
 
 			// Penetration Depth to take the axis that is intersecting less
 			float xIntersectLength = abs(r_AABB1.max.x - r_AABB1.center.x) - abs(r_contactPt.intersectionPoint.x - r_AABB1.center.x);
-			float yIntersectLength = abs(r_AABB1.max.y - r_AABB1.center.y) - abs(r_contactPt.intersectionPoint.y - r_AABB1.center.y);
+			float yIntersectLength = abs(r_AABB1.max.y - r_AABB1.center.y) - abs(r_contactPt.intersectionPoint.y - r_AABB1.center.y);;
 			r_contactPt.penetrationDepth = (xIntersectLength < yIntersectLength)? xIntersectLength : yIntersectLength;
 		}
 		std::cout << r_contactPt.penetrationDepth << '\n';
