@@ -25,6 +25,7 @@ namespace PE
 	{
 		// ----- Public Variables ----- //
 		vec2 center;
+		vec2 offsetFromObj{ 0.f, 0.f };
 		vec2 min;
 		vec2 max;
 	};
@@ -35,6 +36,7 @@ namespace PE
 	{
 		// ----- Public Variables ----- //
 		vec2 center;
+		vec2 offsetFromObj{ 0.f, 0.f };
 		float radius;
 	};
 

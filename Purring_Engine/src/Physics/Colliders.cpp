@@ -19,7 +19,7 @@ namespace PE
 	
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
-		r_AABB.center = r_position;
+		r_AABB.center = r_position + r_AABB.offsetFromObj;
 		r_AABB.min = r_position - (r_scale * 0.5f);
 		r_AABB.max = r_position + (r_scale * 0.5f);
 	}
@@ -29,7 +29,7 @@ namespace PE
 	
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
-		r_circle.center = r_position;
+		r_circle.center = r_position + r_circle.offsetFromObj;
 		r_circle.radius = r_scale.x * 0.5f;
 	}
 
