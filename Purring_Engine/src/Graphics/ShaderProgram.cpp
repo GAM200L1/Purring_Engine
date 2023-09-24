@@ -37,14 +37,14 @@ namespace PE
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(true, "Creating shader program", __FUNCTION__);
+            engine_logger.AddLog(false, "Creating shader program", __FUNCTION__);
         }
 
         ShaderProgram::~ShaderProgram()
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(true, "Destroying shader program", __FUNCTION__);
+            engine_logger.AddLog(false, "Destroying shader program", __FUNCTION__);
             DeleteProgram();
         }
 

@@ -27,7 +27,11 @@ namespace PE
 	EntityFactory::EntityFactory() : p_entityManager(PE::g_entityManager)
 	{ 
 		if (g_entityFactory != nullptr)
+		{
+			engine_logger.AddLog(true, "Another instance of Entity Factory was created!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
+		}
 		g_entityFactory = this;
 		LoadComponents();
 	};
