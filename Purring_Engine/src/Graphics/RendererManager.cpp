@@ -103,7 +103,7 @@ namespace PE
             // Retrieve whether to render in the editor or the full window
             bool renderInEditor{ Editor::GetInstance()->IsEditorActive() };
 
-            // Get the size of the ImGui window to render in
+            // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
 
             if (renderInEditor)
@@ -296,6 +296,9 @@ namespace PE
 
             // Pass the color of the quad as a uniform variable
             r_shaderProgram.SetUniform("uColor", r_color);
+
+            // Tell the program that we're not using textures
+            r_shaderProgram.SetUniform("uIsTextured", false);
 
             glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
                 GL_UNSIGNED_SHORT, NULL);
@@ -639,7 +642,7 @@ namespace PE
             };
         }
 
-        void RendererManager::PrintSpecifications()
+        void RendererManager::PrintSpecifications() const
         {
             // Declare variables to store specs info
             GLint majorVersion, minorVersion, maxVertexCount, maxIndicesCount, maxTextureSize, maxViewportDims[2];

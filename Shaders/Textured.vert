@@ -14,22 +14,12 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*!
-@file    basic.vert
-@author  krystal.y\@digipen.edu
-@date    21 Aug 2023
-
-This file implements a minimal vertex shader that takes in a position, color 
-and texture coordinates. These parameters are passed to the next hardware 
-stage unchanged.
-*//*__________________________________________________________________________*/
-
 #version 460 core
 
 layout (location = 0) in vec2 aVertexPosition; // IN vertex position
 layout (location = 2) in vec2 aTextureCoord;   // IN texture coordinate
 
-layout (location = 0) out vec2 vTextureCoord;     // OUT texture coordinate
+layout (location = 0) out vec2 vTextureCoord;  // OUT texture coordinate
 
 uniform mat4 uModelToNdc;
 
