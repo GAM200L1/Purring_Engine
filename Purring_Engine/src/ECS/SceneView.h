@@ -206,7 +206,7 @@ namespace PE
 		const Iterator begin() const
 		{
 			if (!p_entityManager->Size())
-				throw; // update to error log
+				Iterator(0, m_components, m_all); // update to error log
 			size_t firstIndex{};
 			while ((firstIndex < p_entityManager->Size()) &&
 				(!HasComponents(firstIndex) ||
