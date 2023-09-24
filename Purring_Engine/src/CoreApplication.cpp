@@ -128,8 +128,8 @@ PE::CoreApplication::CoreApplication()
     }
 
     // Make the first gameobject with a collider circle at world pos (100, 100)
-    g_entityManager->Get<Transform>(0).position.x = 100.f;
-    g_entityManager->Get<Transform>(0).position.y = 100.f;
+    g_entityManager->Get<Transform>(0).position.x = 0.f;
+    g_entityManager->Get<Transform>(0).position.y = 0.f;
     g_entityManager->Get<Transform>(0).width = 100.f;
     g_entityManager->Get<Transform>(0).height = 100.f;
     g_entityManager->Get<Transform>(0).orientation = 0.f;

@@ -128,7 +128,11 @@ namespace PE
 		if (r_AABB1.max.y < r_AABB2.min.y || r_AABB1.min.y > r_AABB2.max.y)
 		{ return false; }
 
-		// Dynamic Collision
+		r_contactPt.intersectionPoint = r_AABB2.center;
+		Clamp(r_contactPt.intersectionPoint.x, r_AABB1.min.x, r_AABB1.max.x);
+		Clamp(r_contactPt.intersectionPoint.y, r_AABB1.min.y, r_AABB1.max.y);
+		r_contactPt.normal = (r_AABB2.center - r_contactPt.intersectionPoint).GetNormalized();
+		
 		
 		
 		return true;
@@ -217,13 +221,11 @@ namespace PE
 		{
 			LineSegment lineSeg{ r_AABB.min, vec2{r_AABB.min.x, r_AABB.max.y} };
 			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
-			//std::cout << "Left\n";
 		}
 		else if (r_circle.center.x > r_AABB.max.x) // right side
 		{
 			LineSegment lineSeg{ r_AABB.max, vec2{r_AABB.max.x, r_AABB.min.y} };
 			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
-			//std::cout << "Right\n";
 		}
 
 		if (r_circle.center.y >= r_AABB.min.y && r_circle.center.y <= r_AABB.max.y) // if circle center is within the AABB's y range
@@ -234,22 +236,29 @@ namespace PE
 		{
 			LineSegment lineSeg{ vec2{r_AABB.max.x, r_AABB.min.y}, r_AABB.min };
 			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
-			//std::cout << "bottom\n";
 		}
 		else if (r_circle.center.y > r_AABB.max.y) // top side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
 			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
-			//std::cout << "top\n";
 		}
-		std::cout << collided << '\n';
+		std::cout << r_circle.center.y << '\n';
 		if (collided >= 2)
 		{
-			r_contactPt.intersectionPoint = r_circle.center;
-			Clamp(r_contactPt.intersectionPoint.x, r_AABB.min.x, r_AABB.max.x);
-			Clamp(r_contactPt.intersectionPoint.y, r_AABB.min.y, r_AABB.max.y);
-			r_contactPt.normal = (r_circle.center - r_contactPt.intersectionPoint).GetNormalized();
-			r_contactPt.penetrationDepth = r_circle.radius - (r_circle.center - r_contactPt.intersectionPoint).Length();
+			if ((r_AABB.center - r_circle.center).LengthSquared() <= 0.f)
+			{
+				r_contactPt.normal = vec2{ 0.f, 1.f };
+				r_contactPt.intersectionPoint = vec2{ r_AABB.center.x, r_AABB.max.y };
+				r_contactPt.penetrationDepth = r_circle.radius;
+			}
+			else
+			{
+				r_contactPt.intersectionPoint = r_circle.center;
+				Clamp(r_contactPt.intersectionPoint.x, r_AABB.min.x, r_AABB.max.x);
+				Clamp(r_contactPt.intersectionPoint.y, r_AABB.min.y, r_AABB.max.y);
+				r_contactPt.normal = (r_circle.center - r_AABB.center).GetNormalized();
+				r_contactPt.penetrationDepth = r_circle.radius - (r_circle.center - r_contactPt.intersectionPoint).Length();
+			}
 			return true;
 		}
 		return false;
