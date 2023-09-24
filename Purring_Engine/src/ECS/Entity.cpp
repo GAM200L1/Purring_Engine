@@ -31,7 +31,11 @@ namespace PE
 	EntityManager::EntityManager()
 	{
 		if (g_entityManager != nullptr)
+		{
+			engine_logger.AddLog(true, "Another instance of Entity Manager was created!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
+		}
 		g_entityManager = this;
 
 	}
@@ -61,7 +65,7 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			// add to map
+			
 			throw;
 		}
 		if (m_componentPools[componentID]->HasEntity(id))

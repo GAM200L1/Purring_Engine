@@ -17,9 +17,22 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 // static variables decleration
 Logger::LoggerFlag Logger::m_flags;
-std::stringstream Logger::m_logBuffer;
-std::string Logger::m_currTime;
 bool LOG = true;
+
+
+Logger::Logger(const char inst_name[]) :
+	m_instanceName{ inst_name }
+{
+	SetTime();
+	std::string filepath = "../Logs/";
+	filepath += m_instanceName;
+	filepath += "-";
+	filepath += m_currTime;
+	filepath += ".log";
+	std::replace(filepath.begin(), filepath.end(), ':', '-');
+	std::replace(filepath.begin(), filepath.end(), ' ', '_');
+	m_outFile.open(filepath);
+}
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -71,6 +84,11 @@ void Logger::AddLog(const bool& is_error, const std::string& msg, const char fn_
 				<< "<" << type << ">"
 				<< "<" << fn_name << ">"
 				<< "<" << msg << ">\n";
+	if (is_error)
+	{
+		FlushLog();
+		m_outFile.close();
+	}
 }
 
 /*-----------------------------------------------------------------------------
@@ -91,9 +109,9 @@ void Logger::FlushLog()
 		if (m_flags & EnumLoggerFlags::WRITE_TO_CONSOLE)
 			std::cout << buf << "\n";
 		// if write to file
-
+		if (m_flags & EnumLoggerFlags::WRITE_TO_FILE)
+			m_outFile << buf << "\n";
 	}
-
 	// this clear is required as techincally eof is a error flag, this clears it
 	m_logBuffer.clear();
 }

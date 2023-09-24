@@ -19,6 +19,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include <string>
 #include <iostream>
 #include <chrono>
+#include <fstream>
 
 
 /*!******************************************************************************************************************
@@ -67,10 +68,11 @@ public:
 /* ----- Constructors ----- */
 public:
     // Methods/Functions
-    Logger(const char inst_name[]) : 
-    m_instanceName{ inst_name }
-    { 
-        // empty by design 
+    Logger(const char inst_name[]);
+    ~Logger()
+    {
+        if (m_outFile.is_open())
+            m_outFile.close();
     }
     
 /* ----- Public setters ----- */
@@ -85,11 +87,12 @@ public:
 
 /* ----- Private variables----- */
 private:
-    static std::stringstream m_logBuffer;       // all instances will share the same buffer? or sperate them
+    std::stringstream m_logBuffer;       // all instances will share the same buffer? or sperate them
                                                 // the buffer will hold all lines until it is flushed to console/file?
                                                 // after which it is cleared. (e.g. wait till end of each frame before flushing?)
     static LoggerFlag m_flags;                  // mode singleton (all instances should share the same mode)
-    static std::string m_currTime;
+    std::string m_currTime;
+    std::ofstream m_outFile;
 };
 
 #endif // !LOGGER_H
