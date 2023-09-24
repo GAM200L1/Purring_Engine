@@ -25,6 +25,9 @@
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
 
+#include "ECS/Entity.h"
+#include "Physics/RigidBody.h"
+
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -164,6 +167,33 @@ namespace PE
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
+
+		temp::KeyPressedEvent KPE;
+
+		//dynamic cast
+		if (e.GetType() == temp::KeyEvents::KeyPressed)
+		{
+			KPE = dynamic_cast<const temp::KeyPressedEvent&>(e);
+		}
+
+		//may want to change this to switch case to look cleaner
+
+		if (KPE.keycode == GLFW_KEY_W)
+		{
+			g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } *5000.f);
+		}
+		if (KPE.keycode == GLFW_KEY_A)
+		{
+			g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+		}
+		if (KPE.keycode == GLFW_KEY_S)
+		{
+			g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+		}
+		if (KPE.keycode == GLFW_KEY_D)
+		{
+			g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+		}
 	}
 
 

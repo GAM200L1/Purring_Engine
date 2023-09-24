@@ -228,25 +228,25 @@ void PE::CoreApplication::Run()
             }
         }
 
-        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
-        }
-
-        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-        }
-
-        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-        }
-
-        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        //{
+        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
+        //}
+        //
+        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        //{
+        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+        //}
+        //
+        //if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+        //{
+        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+        //}
+        //
+        //if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+        //{
+        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+        //}
 
         // Physics test
         PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
