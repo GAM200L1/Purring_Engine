@@ -247,7 +247,7 @@ void PE::CoreApplication::Run()
         {
             g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
         }
-        float dt = TimeManager::GetInstance().GetDeltaTime();
+
         // Physics test
         PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
@@ -266,7 +266,7 @@ void PE::CoreApplication::Run()
         // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            TimeManager::GetInstance().SystemStartFrame(i);
+            TimeManager::GetInstance().SystemStartFrame();
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
