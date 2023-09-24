@@ -97,12 +97,14 @@ PE::CoreApplication::CoreApplication()
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
 
-    // Audio Stuff - HANS
-    
-    AudioManager::GetInstance()->Init();
+    // Audio Initalization & Loading Audio - HANS
+    AudioManager::GetInstance().Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
     }
+    AudioManager::GetInstance().LoadAudio("sound1", "../Assets/Audio/sound1.mp3");
+    AudioManager::GetInstance().LoadAudio("sound2", "../Assets/Audio/sound2.mp3");
+
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();
     //assignning memory manually to renderer manager
@@ -206,7 +208,7 @@ void PE::CoreApplication::Run()
         
 
         //Audio Stuff - HANS
-        AudioManager::GetInstance()->Update();
+        AudioManager::GetInstance().Update();
 
         if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
         {

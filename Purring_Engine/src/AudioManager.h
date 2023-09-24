@@ -3,6 +3,7 @@
  \module   CSD2401-A
  \file     AudioManager.h
  \date     16-09-2023
+ \last updated 24-09-2023
 
  \author               You Yang ONG
  \par      email:      youyang.o@digipen.edu
@@ -13,32 +14,45 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
+#include "prpch.h"
 #include "fmod.hpp"
 #include "fmod_errors.h"
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
+
 class AudioManager
 {
 public:
-    // Constructor - Destructor
-    AudioManager();
-    ~AudioManager();
+    // Nested Audio class
+    class Audio
+    {
+    public:
+        bool LoadSound(const std::string& path, FMOD::System* system);
+        FMOD::Sound* GetSound() const { return m_sound; }
+        void SetChannel(FMOD::Channel* channel) { m_channel = channel; }
+        FMOD::Channel* GetChannel() const { return m_channel; }
+
+    private:
+        FMOD::Sound* m_sound = nullptr;
+        FMOD::Channel* m_channel = nullptr;
+    };
+
+    static AudioManager& GetInstance();                 // Singleton accessor
+    AudioManager(const AudioManager&) = delete;
+    AudioManager& operator=(const AudioManager&) = delete;
 
     bool Init();
     void Update();
-    void PlaySound(const char* filePath);
-    void StopSound();
-    static AudioManager* GetInstance();
+    bool LoadAudio(const std::string& id, const std::string& path);
+    void PlaySound(const std::string& id);
+    void StopSound(const std::string& id);
+    void StopAllSounds();
+
 private:
-    // FMOD system object for managing audio resources
-    FMOD::System* system;
+    AudioManager();                                     // Private constructor for Meyer's Singleton
+    ~AudioManager();
 
-    // FMOD sound objects to hold audio data
-    FMOD::Sound* sound1;
-    FMOD::Sound* sound2;
-
-    // FMOD channel objects to control playback
-    FMOD::Channel* channel1;
-    FMOD::Channel* channel2;
-
-    static std::unique_ptr<AudioManager> s_Instance;
-
+    FMOD::System* m_system;
+    std::unordered_map<std::string, Audio> m_audioMap;
 };
+

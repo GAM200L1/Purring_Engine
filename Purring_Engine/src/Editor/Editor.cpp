@@ -402,17 +402,17 @@ namespace PE {
 			ImGui::Text("Audio Test");
 			if (ImGui::Button("Play Audio 1"))
 			{
-				AudioManager::GetInstance()->PlaySound("../Assets/Audio/sound2.wav");
+				AudioManager::GetInstance().PlaySound("sound1");
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Play Audio 2"))
 			{
-				AudioManager::GetInstance()->PlaySound("../Assets/Audio/sound1.wav");
+				AudioManager::GetInstance().PlaySound("sound2");
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Stop Audio"))
 			{
-				//to be implemented
+				AudioManager::GetInstance().StopAllSounds();
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 
