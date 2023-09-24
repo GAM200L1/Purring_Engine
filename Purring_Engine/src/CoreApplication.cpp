@@ -134,7 +134,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(0).height = 100.f;
     g_entityManager->Get<Transform>(0).orientation = 0.f;
     g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
+    g_entityManager->Get<Collider>(0).colliderVariant = AABBCollider();
     g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
 
@@ -144,7 +144,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(1).width = 100.f;
     g_entityManager->Get<Transform>(1).height = 100.f;
     g_entityManager->Get<Transform>(1).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::STATIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
 

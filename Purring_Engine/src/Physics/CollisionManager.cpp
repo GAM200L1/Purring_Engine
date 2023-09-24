@@ -75,7 +75,7 @@ namespace PE
 						Contact contactPt;
 						if (CollisionIntersection(col1, col2, ColliderID_1, ColliderID_2, contactPt))
 						{						
-							//engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
+							engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
 
 							// adds collided objects so that it won't be checked again
 							collider1.objectsCollided.emplace(ColliderID_2);
@@ -127,14 +127,28 @@ namespace PE
 		{ return false; }
 		if (r_AABB1.max.y < r_AABB2.min.y || r_AABB1.min.y > r_AABB2.max.y)
 		{ return false; }
+		
+		vec2 c1c2 = r_AABB2.center - r_AABB1.center; // vector from center of AABB2 to AABB1 center
 
-		r_contactPt.intersectionPoint = r_AABB2.center;
-		Clamp(r_contactPt.intersectionPoint.x, r_AABB1.min.x, r_AABB1.max.x);
-		Clamp(r_contactPt.intersectionPoint.y, r_AABB1.min.y, r_AABB1.max.y);
-		r_contactPt.normal = (r_AABB2.center - r_contactPt.intersectionPoint).GetNormalized();
-		
-		
-		
+		if (c1c2.LengthSquared() <= 0.f)
+		{
+			r_contactPt.normal = vec2{ 0.f, 1.f };
+			r_contactPt.intersectionPoint = vec2{ r_AABB2.center.x, r_AABB2.max.y };
+			r_contactPt.penetrationDepth = r_AABB1.center.y - r_AABB1.min.y;
+		}
+		else
+		{
+			r_contactPt.intersectionPoint = r_AABB1.center;
+			Clamp(r_contactPt.intersectionPoint.x, r_AABB2.min.x, r_AABB2.max.x);
+			Clamp(r_contactPt.intersectionPoint.y, r_AABB2.min.y, r_AABB2.max.y);
+			r_contactPt.normal = (r_AABB1.center - r_AABB2.center).GetNormalized();
+
+			// Penetration Depth to take the axis that is intersecting less
+			float xIntersectLength = abs(r_AABB1.max.x - r_AABB1.center.x) - abs(r_contactPt.intersectionPoint.x - r_AABB1.center.x);
+			float yIntersectLength = abs(r_AABB1.max.y - r_AABB1.center.y) - abs(r_contactPt.intersectionPoint.y - r_AABB1.center.y);
+			r_contactPt.penetrationDepth = (xIntersectLength < yIntersectLength)? xIntersectLength : yIntersectLength;
+		}
+		std::cout << r_contactPt.penetrationDepth << '\n';
 		return true;
 	}
 	
