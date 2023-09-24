@@ -55,7 +55,16 @@ namespace PE
 
             if (!vertexFileStream)
             {
-                // error
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, "Vertex shader file " + vertexFile + " could not be opened", __FUNCTION__);
+                return false;
+            }
+            else if (!fragmentFileStream) 
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, "Fragment shader file " + fragmentFile + " could not be opened", __FUNCTION__);
                 return false;
             }
 
@@ -68,9 +77,7 @@ namespace PE
             vertexFileStream.close();
             fragmentFileStream.close();
 
-            CompileLinkValidateProgram(vertexStream.str(), fragmentStream.str());
-
-            return true;
+            return CompileLinkValidateProgram(vertexStream.str(), fragmentStream.str());
         }
 
 

@@ -49,7 +49,8 @@ namespace PE
         
         if (!ShaderPrograms[r_key]->LoadAndCompileShadersFromFile(r_vertexShaderPath, r_fragmentShaderPath))
         {
-            // fail to compile, throw?
+            // fail to compile, delete key
+            ShaderPrograms.erase(r_key);
         }
     }
 
@@ -74,8 +75,9 @@ namespace PE
         Textures[r_name] = std::make_shared<Graphics::Texture>();
         if (!Textures[r_name]->CreateTexture(r_filePath))
         {
-            // fail to create texture, throw?
+            // fail to create texture, delete key
             std::cout << "Couldn't create texture " << r_filePath << std::endl;
+            Textures.erase(r_name);
         }
     }
 
