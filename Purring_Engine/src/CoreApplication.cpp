@@ -92,7 +92,7 @@ PE::CoreApplication::CoreApplication()
 
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
     // set flags
-    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
@@ -238,6 +238,11 @@ void PE::CoreApplication::Run()
                 g_entityManager->RemoveEntity(lastEnt.front());
                 lastEnt.pop();
             }
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            EntityManager ent;
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)

@@ -336,7 +336,6 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			// add to map
 			throw;
 		}
 		if (m_componentPools[componentID]->HasEntity(id))
@@ -377,8 +376,7 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			// add to map
-			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(sizeof(T))));
+			throw;
 		}
 		if (m_componentPools[componentID]->HasEntity(id))
 		{
@@ -461,7 +459,9 @@ namespace PE
 	{
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
+		{
 			throw;	// to add error
+		}
 		return *p_comp;
 	}
 
@@ -470,7 +470,9 @@ namespace PE
 	{
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
+		{
 			throw;	// to add error
+		}
 		return *p_comp;
 	}
 

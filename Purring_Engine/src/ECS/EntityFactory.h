@@ -253,7 +253,11 @@ namespace PE
 	void EntityFactory::Assign(EntityID id, std::initializer_list<T> var)
 	{
 		if (typeid(T) != typeid(ComponentID) && typeid(T) != typeid(const char*))
+		{
+			engine_logger.AddLog(true, "T was not a string!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
+		}
 		for (const T& type : var)
 		{
 			if (m_componentMap.find(type) != m_componentMap.end())
@@ -267,7 +271,11 @@ namespace PE
 	void EntityFactory::Assign(EntityID id, const std::vector<T>& var)
 	{
 		if (typeid(T) != typeid(ComponentID) && typeid(T) != typeid(const char*))
+		{
+			engine_logger.AddLog(true, "T was not a string!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
+		}
 		for (const T& type : var)
 		{
 			if (m_componentMap.find(type) != m_componentMap.end())
@@ -282,7 +290,11 @@ namespace PE
 	void EntityFactory::Copy(EntityID id, T ... component)
 	{
 		if (!p_entityManager->IsEntityValid(id))
+		{
+			engine_logger.AddLog(true, "Entity was not valid!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
+		}
 		if constexpr (sizeof...(T))
 		{
 			([&]
