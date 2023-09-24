@@ -38,6 +38,16 @@ namespace PE
             *************************************************************************************/
             glm::mat4 GetWorldToViewMatrix();
 
+            /*!***********************************************************************************
+            \brief  Returns true if the camera's transform has been updated and its matrix 
+                    needs to be recalculated; false otherwise.
+
+            \return true - If the camera's transform has been updated and its matrix needs to be 
+                            recalculated
+            \return false - Camera's transform has not changed, cached camera matrix can be used.
+            *************************************************************************************/
+            bool GetHasChanged() const;
+
 
             // ----- Public setters ----- // 
         public:

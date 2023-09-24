@@ -50,13 +50,13 @@ namespace PE
              \brief Binds the vertex array object associated with this mesh from
                     the OpenGL context.
             *************************************************************************************/
-            void BindMesh();
+            void Bind() const;
 
             /*!***********************************************************************************
              \brief Unbinds the vertex array object associated with this mesh from
                     the OpenGL context.
             *************************************************************************************/
-            void UnbindMesh();
+            void Unbind() const;
 
             /*!***********************************************************************************
              \brief Returns the buffers used by this mesh back to the GPU.
