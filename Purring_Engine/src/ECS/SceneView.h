@@ -208,9 +208,9 @@ namespace PE
 			if (!p_entityManager->Size())
 				throw; // update to error log
 			size_t firstIndex{};
-			while (firstIndex < p_entityManager->Size() &&
-				(!HasComponents(firstIndex)) ||
-				(!p_entityManager->IsEntityValid(firstIndex))
+			while ((firstIndex < p_entityManager->Size()) &&
+				(!HasComponents(firstIndex) ||
+				!p_entityManager->IsEntityValid(firstIndex))
 				)
 			{
 				++firstIndex;
