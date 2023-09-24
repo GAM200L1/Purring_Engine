@@ -147,6 +147,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
+    // Render 50x50 purple sprites in a grid
     for (size_t i{}; i < 200; ++i)
     {
         EntityID id = g_entityFactory->CreateEntity();
