@@ -207,67 +207,56 @@ namespace PE
 	// Circle + Rect
 	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
 	{
-		float interTime{ 1.f };
 		int collided = 0;
-		Contact x, y;
 
 		if (r_circle.center.x >= r_AABB.min.x && r_circle.center.x <= r_AABB.max.x) // if circle center is within the AABB's x range
 		{
 			collided += 1;
-			x.normal = vec2{ 0.f, 1.f };
-			x.intersectionPoint = (r_contactPt.normal * r_AABB.max.y) + r_AABB.center;
-			x.penetrationDepth = r_circle.radius;
 		}
 		else if (r_circle.center.x < r_AABB.min.x) // left side
 		{
 			LineSegment lineSeg{ r_AABB.min, vec2{r_AABB.min.x, r_AABB.max.y} };
-			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, x);
+			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
 			//std::cout << "Left\n";
 		}
 		else if (r_circle.center.x > r_AABB.max.x) // right side
 		{
 			LineSegment lineSeg{ r_AABB.max, vec2{r_AABB.max.x, r_AABB.min.y} };
-			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, x);
+			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
 			//std::cout << "Right\n";
 		}
 
 		if (r_circle.center.y >= r_AABB.min.y && r_circle.center.y <= r_AABB.max.y) // if circle center is within the AABB's y range
 		{
 			collided += 1;
-			y.normal = vec2{ 0.f, 1.f };
-			y.intersectionPoint = (r_contactPt.normal * r_AABB.max.y) + r_AABB.center;
-			y.penetrationDepth = r_circle.radius;
 		}
 		else if (r_circle.center.y < r_AABB.min.y) // bottom side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.max.x, r_AABB.min.y}, r_AABB.min };
-			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, y);
+			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
 			//std::cout << "bottom\n";
 		}
 		else if (r_circle.center.y > r_AABB.max.y) // top side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
-			collided += CircleLineIntersection(r_circle, lineSeg, r_entity1, interTime, y);
+			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
 			//std::cout << "top\n";
 		}
 		std::cout << collided << '\n';
 		if (collided >= 2)
 		{
-			if (x.penetrationDepth < y.penetrationDepth)
-			{
-				r_contactPt = x;
-			}
-			else
-			{
-				r_contactPt = y;
-			}
+			r_contactPt.intersectionPoint = r_circle.center;
+			Clamp(r_contactPt.intersectionPoint.x, r_AABB.min.x, r_AABB.max.x);
+			Clamp(r_contactPt.intersectionPoint.y, r_AABB.min.y, r_AABB.max.y);
+			r_contactPt.normal = (r_circle.center - r_contactPt.intersectionPoint).GetNormalized();
+			r_contactPt.penetrationDepth = r_circle.radius - (r_circle.center - r_contactPt.intersectionPoint).Length();
 			return true;
 		}
 		return false;
 	}
 
-	// Circle + Line
-	int CircleLineIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1, float& r_interTime, Contact& r_contactPt)
+	// Circle + AABB Edge
+	int CircleAABBEdgeIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1)
 	{
 		// Static Collision
 		float const check = Dot(r_lineSeg.normal, r_lineSeg.point0 - r_circle.center);
@@ -276,10 +265,6 @@ namespace PE
 			float innerProduct = ((r_circle.center.x - r_lineSeg.point0.x) * r_lineSeg.lineVec.x) + ((r_circle.center.y - r_lineSeg.point0.y) * r_lineSeg.lineVec.y);
 			if (0 <= innerProduct && innerProduct <= r_lineSeg.lineVec.LengthSquared()) // check if the circle's centre, if projected onto the line segment, would be within it
 			{
-				r_contactPt.normal = r_lineSeg.normal;
-				vec2 proj = r_lineSeg.lineVec * Dot(r_circle.center - r_lineSeg.point0, r_lineSeg.lineVec) / Dot(r_lineSeg.lineVec, r_lineSeg.lineVec);
-				r_contactPt.intersectionPoint = proj + r_lineSeg.point0;
-				r_contactPt.penetrationDepth = (r_circle.center - r_contactPt.intersectionPoint).Length() - r_circle.radius;
 				return 1;
 			}
 			else // checks for edges
@@ -287,10 +272,6 @@ namespace PE
 				float p0CenterLengthSqr = (r_lineSeg.point0 - r_circle.center).LengthSquared();
 				float p1CenterLengthSqr = (r_lineSeg.point1 - r_circle.center).LengthSquared();
 				float radiusSqr = r_circle.radius * r_circle.radius;
-				r_contactPt.normal = r_lineSeg.normal;
-				vec2 proj = r_lineSeg.lineVec * Dot(r_circle.center - r_lineSeg.point0, r_lineSeg.lineVec) / Dot(r_lineSeg.lineVec, r_lineSeg.lineVec);
-				r_contactPt.intersectionPoint = proj + r_lineSeg.point0;
-				r_contactPt.penetrationDepth = (r_circle.center - r_contactPt.intersectionPoint).Length() - r_circle.radius;
 				return ((p0CenterLengthSqr <= radiusSqr) + (p1CenterLengthSqr <= radiusSqr));
 			}
 
