@@ -262,9 +262,9 @@ namespace PE
                 glm::vec2 const& upVector, glm::vec2 const& centerPosition);
 
             /*!***********************************************************************************
-             \brief Prints the graphics specifications of the device.
+             \brief Prints the hardware specifications of the device related to graphics.
             *************************************************************************************/
-            void PrintSpecifications();
+            void PrintSpecifications() const;
         };
 
 
