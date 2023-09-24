@@ -43,14 +43,14 @@ namespace PE
 
 	// Static + Dynamic Collision Checks
 	// Rect + Rect
-	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt);
+	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, Contact& r_contactPt);
 	// Circle + Circle
-	bool CollisionIntersection(CircleCollider const& r_circle1, CircleCollider const& r_circle2, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt);
+	bool CollisionIntersection(CircleCollider const& r_circle1, CircleCollider const& r_circle2, Contact& r_contactPt);
 	// Rect + Circle
-	bool CollisionIntersection(AABBCollider const& r_AABB, CircleCollider const& r_circle, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt);
+	bool CollisionIntersection(AABBCollider const& r_AABB, CircleCollider const& r_circle, Contact& r_contactPt);
 	// Circle + Rect
-	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt);
+	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB, Contact& r_contactPt);
 	// Circle + Line
-	int CircleAABBEdgeIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1); //, float& r_interTime, Contact& r_contactPt
+	int CircleAABBEdgeIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg); //, float& r_interTime, Contact& r_contactPt
 	
 }

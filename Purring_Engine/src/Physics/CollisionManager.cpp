@@ -73,7 +73,7 @@ namespace PE
 					std::visit([&](auto& col2)
 					{
 						Contact contactPt;
-						if (CollisionIntersection(col1, col2, ColliderID_1, ColliderID_2, contactPt))
+						if (CollisionIntersection(col1, col2, contactPt))
 						{						
 							engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
 
@@ -120,7 +120,7 @@ namespace PE
 
 
 	// Rect + Rect
-	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
+	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, Contact& r_contactPt)
 	{
 		// Static Collision
 		if (r_AABB1.max.x < r_AABB2.min.x || r_AABB1.min.x > r_AABB2.max.x)
@@ -130,7 +130,7 @@ namespace PE
 		
 		vec2 c1c2 = r_AABB2.center - r_AABB1.center; // vector from center of AABB2 to AABB1 center
 
-		if (c1c2.LengthSquared() <= 0.f)
+		if (c1c2.LengthSquared() == 0.f)
 		{
 			r_contactPt.normal = vec2{ 0.f, 1.f };
 			r_contactPt.intersectionPoint = vec2{ r_AABB2.center.x, r_AABB2.max.y };
@@ -153,7 +153,7 @@ namespace PE
 	}
 	
 	// Circle + Circle
-	bool CollisionIntersection(CircleCollider const& r_circle1, CircleCollider const& r_circle2, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
+	bool CollisionIntersection(CircleCollider const& r_circle1, CircleCollider const& r_circle2, Contact& r_contactPt)
 	{
 		vec2 const deltaPosition{ r_circle1.center - r_circle2.center };
 		float const deltaLengthSquared = deltaPosition.LengthSquared();
@@ -217,13 +217,13 @@ namespace PE
 	}
 
 	// Rect + Circle
-	bool CollisionIntersection(AABBCollider const& r_AABB, CircleCollider const& r_circle, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
+	bool CollisionIntersection(AABBCollider const& r_AABB, CircleCollider const& r_circle, Contact& r_contactPt)
 	{
-		return CollisionIntersection(r_circle, r_AABB, r_entity2, r_entity1, r_contactPt);
+		return (CollisionIntersection(r_circle, r_AABB, r_contactPt));
 	}
 
 	// Circle + Rect
-	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB, EntityID const& r_entity1, EntityID const& r_entity2, Contact& r_contactPt)
+	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB, Contact& r_contactPt)
 	{
 		int collided = 0;
 
@@ -234,12 +234,12 @@ namespace PE
 		else if (r_circle.center.x < r_AABB.min.x) // left side
 		{
 			LineSegment lineSeg{ r_AABB.min, vec2{r_AABB.min.x, r_AABB.max.y} };
-			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
+			collided += CircleAABBEdgeIntersection(r_circle, lineSeg);
 		}
 		else if (r_circle.center.x > r_AABB.max.x) // right side
 		{
 			LineSegment lineSeg{ r_AABB.max, vec2{r_AABB.max.x, r_AABB.min.y} };
-			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
+			collided += CircleAABBEdgeIntersection(r_circle, lineSeg);
 		}
 
 		if (r_circle.center.y >= r_AABB.min.y && r_circle.center.y <= r_AABB.max.y) // if circle center is within the AABB's y range
@@ -249,14 +249,14 @@ namespace PE
 		else if (r_circle.center.y < r_AABB.min.y) // bottom side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.max.x, r_AABB.min.y}, r_AABB.min };
-			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
+			collided += CircleAABBEdgeIntersection(r_circle, lineSeg);
 		}
 		else if (r_circle.center.y > r_AABB.max.y) // top side
 		{
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
-			collided += CircleAABBEdgeIntersection(r_circle, lineSeg, r_entity1);
+			collided += CircleAABBEdgeIntersection(r_circle, lineSeg);
 		}
-		std::cout << r_circle.center.y << '\n';
+		
 		if (collided >= 2)
 		{
 			if ((r_AABB.center - r_circle.center).LengthSquared() <= 0.f)
@@ -275,11 +275,12 @@ namespace PE
 			}
 			return true;
 		}
+
 		return false;
 	}
 
 	// Circle + AABB Edge
-	int CircleAABBEdgeIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg, EntityID const& r_entity1)
+	int CircleAABBEdgeIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg)
 	{
 		// Static Collision
 		float const check = Dot(r_lineSeg.normal, r_lineSeg.point0 - r_circle.center);
