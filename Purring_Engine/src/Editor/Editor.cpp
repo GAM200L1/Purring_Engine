@@ -482,7 +482,7 @@ namespace PE {
 			//test 2
 			if (ImGui::Button("Create Out of Index Object on Stack"))
 			{
-				char* outofmemorytest = (char*)MemoryManager::GetInstance().AllocateMemory("out of index test", 1000);
+				char* outofmemorytest = (char*)MemoryManager::GetInstance().AllocateMemory("out of index test", 1000000);
 				outofmemorytest;
 			}
 			//test 3
