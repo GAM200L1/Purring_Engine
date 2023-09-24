@@ -286,8 +286,7 @@ void PE::CoreApplication::Run()
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();
-    ResourceManager::UnloadResources();
-    ResourceManager::DeleteInstance();
+    ResourceManager::GetInstance().UnloadResources();
     PhysicsManager::DeleteInstance();
     CollisionManager::DeleteInstance();
 }
