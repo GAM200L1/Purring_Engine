@@ -66,6 +66,8 @@ SerializationManager sm;
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
 
+std::queue<EntityID> lastEnt{};
+
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -76,36 +78,10 @@ PE::EntityFactory entFactory;
 ----------------------------------------------------------------------------- */
 PE::CoreApplication::CoreApplication()
 {
-    REGISTERCOMPONENT(RigidBody, sizeof(RigidBody));
-    REGISTERCOMPONENT(Collider, sizeof(Collider));
-    REGISTERCOMPONENT(Transform, sizeof(Transform));
-    REGISTERCOMPONENT(Graphics::Renderer, sizeof(Graphics::Renderer));
-    //REGISTERCOMPONENT(PlayerStats, sizeof(PlayerStats));
-    //EntityID id = g_entityFactory->CreateEntity();
-    //EntityID id2 = g_entityFactory->CreateEntity();
-    //PE::g_entityFactory->Assign(id, { "RigidBody", "Collider", "Transform"});
-    //PE::g_entityFactory->Assign(id2, { "RigidBody", "Transform"});
-    //Collider tmp;
-    //tmp.colliderVariant = CircleCollider();
-    //PE::g_entityFactory->Copy(id, tmp);
-    //PE::g_entityFactory->Copy(id, RigidBody());
-    //PE::g_entityFactory->Copy(id2, RigidBody());
-    //PE::g_entityFactory->Copy(id, Transform());
-    //PE::g_entityFactory->Copy(id2, Transform());
-    ////PE::g_entityFactory->Copy(id2, tmp2);
-
-    //PE::g_entityManager->Get<Transform>(id).position = vec2{ 50.f, 50.f };
-    //PE::g_entityManager->Get<Transform>(id2).position = vec2{ 50.f, 50.f };
-
-
-    //EntityID id3 = PE::g_entityFactory->CreateFromPrefab("GameObject");
-    //Collider col;
-    //col.colliderVariant = AABBCollider();
-    //col.objectsCollided.emplace(1);
-    //PE::g_entityFactory->LoadComponent(id3, "Collider", static_cast<void*>(&col));
-
-    //std::cout << PE::g_entityManager->Get<Transform>(id3).position.x << std::endl;
-    //std::cout << PE::g_entityManager->Get<Collider>(id3).objectsCollided.size() << std::endl;
+    REGISTERCOMPONENT(RigidBody);
+    REGISTERCOMPONENT(Collider);
+    REGISTERCOMPONENT(Transform);
+    REGISTERCOMPONENT(Graphics::Renderer);
 
 
 	m_Running = true;
@@ -137,7 +113,7 @@ PE::CoreApplication::CoreApplication()
     // Load a texture
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
-
+    ResourceManager::GetInstance()->LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
     for (size_t i{}; i < 5; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
@@ -170,8 +146,8 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(1).orientation = 0.f;
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
-    //PE::g_entityManager->Get<Collider>(5002).objectsCollided.emplace(1);
-    //PE::g_entityManager->Get<Collider>(5002).colliderVariant = AABBCollider();
+
+
 }
 
 /*-----------------------------------------------------------------------------
@@ -223,7 +199,7 @@ void PE::CoreApplication::Run()
         if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
         {
             //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
 
         }
 
@@ -234,11 +210,22 @@ void PE::CoreApplication::Run()
 
         if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
         {
-           
+            EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+            g_entityManager->Get<Transform>(id).height = 100.f;
+            g_entityManager->Get<Transform>(id).width = 100.f;
+            g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+            g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+            lastEnt.emplace(id);
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
         {
+            if (lastEnt.size())
+            {
+                g_entityManager->RemoveEntity(lastEnt.front());
+                lastEnt.pop();
+            }
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)

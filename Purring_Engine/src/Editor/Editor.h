@@ -29,6 +29,12 @@
 
 #include "Graphics/GLHeaders.h"
 
+#include "ECS//EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
+#include "ECS/Prefabs.h"
+#include "ECS/SceneView.h"
+
 namespace PE {
 
 	class Editor
@@ -209,6 +215,10 @@ namespace PE {
 		 \brief toggle rendering of debug lines
 		*************************************************************************************/
 		void ToggleDebugRender();
+		/*!***********************************************************************************
+		 \brief update the saved object list with the scene view list
+		*************************************************************************************/
+		void UpdateObjectList();
 
 		// ----- ImGui Command Functions ----- // 
 	private:
@@ -222,6 +232,11 @@ namespace PE {
 		void test();
 		// ----- Private Variables ----- // 
 	private:
+
+		//single instance of editor
+		static std::unique_ptr<Editor> s_Instance;
+
+		//boolean for windows
 		bool m_showLogs;
 		bool m_showObjectList;
 		bool m_showConsole;
@@ -232,19 +247,27 @@ namespace PE {
 		bool m_showResourceWindow;
 		bool m_showPerformanceWindow;
 		bool m_firstLaunch;
+
+		//boolean for rendering
 		bool m_renderDebug;
-		static std::unique_ptr<Editor> s_Instance;
+
+		//variables for logging
 		std::vector<std::string> m_logOutput;
 		std::vector<std::string> m_consoleOutput;
 		std::string m_input;
 		std::string m_findText;
+		std::map<std::string, void (PE::Editor::*)()> m_commands;
+
+		//variable for objects
 		bool m_objectIsSelected;
-		int m_currentSelectedIndex;
-		std::vector<std::string> m_items;
+		int m_currentSelectedObject;
+		std::vector<EntityID> m_objects;
+
+		//variable for the windows
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
-		std::map<std::string, void (PE::Editor::*)()> m_commands;
+
 	};
 }
 

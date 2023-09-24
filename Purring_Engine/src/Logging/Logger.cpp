@@ -19,7 +19,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 Logger::LoggerFlag Logger::m_flags;
 std::stringstream Logger::m_logBuffer;
 std::string Logger::m_currTime;
-bool LOG = false;
+bool LOG = true;
 
 /*-----------------------------------------------------------------------------
 /// <summary>

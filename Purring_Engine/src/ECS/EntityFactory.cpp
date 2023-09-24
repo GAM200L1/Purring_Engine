@@ -14,7 +14,8 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "EntityFactory.h"
-
+#include "Logging/Logger.h"
+extern Logger engine_logger;
 
 
 namespace PE
@@ -29,7 +30,6 @@ namespace PE
 			throw;
 		g_entityFactory = this;
 		LoadComponents();
-		m_prefabs.LoadPrefabs();
 	};
 
 
@@ -64,6 +64,7 @@ namespace PE
 	// Hans
 	void EntityFactory::AssignComponent(EntityID id, const std::string& name, int componentData)
 	{
+		id; name; componentData;
 		// Here you will assign and initialize the component to the entity
 		// For now, I'll leave this as a placeholder.
 		// This might call something like:
@@ -143,6 +144,9 @@ namespace PE
 				LoadComponent(id, componentID.c_str(), nullptr);
 			}
 		}
+		std::string str = "Created Entity-";
+		str += std::to_string(id);
+		engine_logger.AddLog(false, str, __FUNCTION__);
 		return id;
 	}
 
