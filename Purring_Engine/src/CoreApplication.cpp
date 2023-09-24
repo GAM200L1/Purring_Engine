@@ -247,7 +247,7 @@ void PE::CoreApplication::Run()
         {
             g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
         }
-
+        float dt = TimeManager::GetInstance().GetDeltaTime();
         // Physics test
         PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
