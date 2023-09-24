@@ -339,6 +339,10 @@ namespace PE
 			// add to map
 			throw;
 		}
+		if (m_componentPools[componentID]->HasEntity(id))
+		{
+			return;
+		}
 
 		// add to component pool's map keeping track of index
 		if (m_componentPools[componentID]->m_removed.empty())
@@ -376,7 +380,10 @@ namespace PE
 			// add to map
 			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(sizeof(T))));
 		}
-
+		if (m_componentPools[componentID]->HasEntity(id))
+		{
+			return;
+		}
 		// add to component pool's map keeping track of index
 		if (m_componentPools[componentID]->m_removed.empty())
 		{
@@ -416,6 +423,7 @@ namespace PE
 			   (tmp[0] == 'c') ? tmp.substr(6) : tmp;
 	}
 
+
 	template<typename T>
 	ComponentPool* EntityManager::GetComponentPoolPointer()
 	{
@@ -428,6 +436,7 @@ namespace PE
 	{
 		return *GetComponentPoolPointer<T>();
 	}
+
 
 	template<typename T>
 	const ComponentPool& EntityManager::GetComponentPool() const
