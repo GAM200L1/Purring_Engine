@@ -48,10 +48,10 @@ namespace PE
 		if (p_entityManager->IsEntityValid(id))
 		{
 			EntityID clone = CreateEntity();
-			for (std::pair<const ComponentID, size_t>& componentCreator : m_componentMap)
-			{	
-				LoadComponent(clone, componentCreator.first.c_str(),
-				static_cast<void*>(p_entityManager->GetComponentPoolPointer(componentCreator.first)->Get(id)));
+			for (const ComponentID& componentCreator : p_entityManager->GetComponentIDs(id))
+			{
+				LoadComponent(clone, componentCreator.c_str(),
+					static_cast<void*>(p_entityManager->GetComponentPoolPointer(componentCreator)->Get(id)));
 			}
 			return clone;
 		}
