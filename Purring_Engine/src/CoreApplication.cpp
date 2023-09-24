@@ -112,7 +112,7 @@ PE::CoreApplication::CoreApplication()
 
     // Load a texture
     std::string catTextureName{ "cat" };
-    ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
 
     for (size_t i{}; i < 5; ++i)
     {
@@ -286,8 +286,7 @@ void PE::CoreApplication::Run()
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();
-    ResourceManager::UnloadResources();
-    ResourceManager::DeleteInstance();
+    ResourceManager::GetInstance().UnloadResources();
     PhysicsManager::DeleteInstance();
     CollisionManager::DeleteInstance();
 }

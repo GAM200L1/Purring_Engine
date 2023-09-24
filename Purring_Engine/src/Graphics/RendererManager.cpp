@@ -84,7 +84,7 @@ namespace PE
             InitializePointMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_POINT)]);
 
             // Load a shader program
-            ResourceManager::GetInstance()->LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
+            ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -174,10 +174,10 @@ namespace PE
 
         void RendererManager::DrawScene(glm::mat4 const& r_worldToNdc)
         {
-            auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
             // Check if shader program is valid
-            if (shaderProgramIterator == ResourceManager::GetInstance()->ShaderPrograms.end())
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
             {
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
@@ -206,10 +206,10 @@ namespace PE
 
         void RendererManager::DrawDebug(glm::mat4 const& r_worldToNdc)
         {
-            auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
             // Check if shader program is valid
-            if (shaderProgramIterator == ResourceManager::GetInstance()->ShaderPrograms.end())
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
             {
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
@@ -318,10 +318,10 @@ namespace PE
             }
             else 
             {
-                auto textureIterator{ ResourceManager::GetInstance()->Textures.find(r_renderer.GetTextureKey()) };
+                auto textureIterator{ ResourceManager::GetInstance().Textures.find(r_renderer.GetTextureKey()) };
 
                 // Check if shader program is valid
-                if (textureIterator == ResourceManager::GetInstance()->Textures.end())
+                if (textureIterator == ResourceManager::GetInstance().Textures.end())
                 {
                     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                     engine_logger.SetTime();
