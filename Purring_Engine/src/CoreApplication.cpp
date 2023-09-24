@@ -147,7 +147,6 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-
 }
 
 /*-----------------------------------------------------------------------------

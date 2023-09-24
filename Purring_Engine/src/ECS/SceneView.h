@@ -152,26 +152,27 @@ namespace PE
 			*************************************************************************************/
 			Iterator& operator++()
 			{
-				if (p_componentPool)
-				{
-					do
-					{
-						++m_index;
-					} while (!p_componentPool->HasEntity(m_index) && m_index < p_componentPool->m_idxMap.size());
-				}
-				else
-				{
+				//if (p_componentPool)
+				//{
+				//	do
+				//	{
+				//		++m_index;
+				//	} while (!p_componentPool->HasEntity(m_index) && !ValidIndex() && m_index < p_componentPool->m_idxMap.size());
+				//}
+				//else
+				//{
 					do
 					{
 						++m_index;
 					} while (m_index < p_entityManager->Size() && !ValidIndex());
-				}
+				//}
 				return *this;
 			}
 			
 			// ptr to the entity manager
 			PE::EntityManager* p_entityManager;
 			PE::ComponentPool* p_componentPool{ nullptr };
+			size_t poolIdx{};
 			// the current index/entity
 			EntityID m_index;
 			// the set of components in this scope
