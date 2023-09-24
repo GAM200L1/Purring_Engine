@@ -23,9 +23,6 @@
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE {
-	//single static instance of imguiwindow 
-	std::unique_ptr<Editor> Editor::s_Instance = nullptr;
-
 	Editor::Editor() {
 		//initializing variables 
 		//m_firstLaunch needs to be serialized 
@@ -43,7 +40,7 @@ namespace PE {
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
-		ADD_KEY_EVENT_LISTENER(temp::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
+		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
@@ -56,14 +53,6 @@ namespace PE {
 
 	Editor::~Editor()
 	{
-	}
-
-	Editor* Editor::GetInstance()
-	{
-		if (!s_Instance)
-			s_Instance = std::make_unique<Editor>();
-
-		return s_Instance.get();
 	}
 
 	void Editor::GetWindowSize(float& width, float& height)
@@ -485,7 +474,7 @@ namespace PE {
 			{
 				std::stringstream ss;
 				ss << "AllocationTest" << allocated;
-				char* allocationtest = (char*)MemoryManager::GetInstance()->AllocateMemory(ss.str(), 30);
+				char* allocationtest = (char*)MemoryManager::GetInstance().AllocateMemory(ss.str(), 30);
 				allocated++;
 				allocationtest;
 			}
@@ -493,7 +482,7 @@ namespace PE {
 			//test 2
 			if (ImGui::Button("Create Out of Index Object on Stack"))
 			{
-				char* outofmemorytest = (char*)MemoryManager::GetInstance()->AllocateMemory("out of index test", 1000);
+				char* outofmemorytest = (char*)MemoryManager::GetInstance().AllocateMemory("out of index test", 1000);
 				outofmemorytest;
 			}
 			//test 3
@@ -502,7 +491,7 @@ namespace PE {
 			if (ImGui::Button("Written over Buffer Tests"))
 			{
 				buffertester = true;
-				char* buffertest = (char*)MemoryManager::GetInstance()->AllocateMemory("buffertest", 7);
+				char* buffertest = (char*)MemoryManager::GetInstance().AllocateMemory("buffertest", 7);
 				//writing 8 bytes into the 7 i allocated
 				strcpy_s(buffertest,9, "testtest");
 				AddWarningLog("writing \"testtest\" 9 byte into buffertest of 7 byte + 4 buffer bytes");
@@ -516,7 +505,7 @@ namespace PE {
 			if (ImGui::Button("popback previous allocation"))
 			{
 				buffertester = false;
-				MemoryManager::GetInstance()->Pop_BackMemory();
+				MemoryManager::GetInstance().Pop_BackMemory();
 				AddInfoLog("delete and popping back previously allocated object");
 				allocated--;
 			}
@@ -524,7 +513,7 @@ namespace PE {
 			//print memory stuff
 			if (ImGui::Button("Print Memory Data"))
 			{
-				MemoryManager::GetInstance()->PrintData();
+				MemoryManager::GetInstance().PrintData();
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 
@@ -637,7 +626,7 @@ namespace PE {
 								ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##Height", &g_entityManager->Get<Transform>(m_currentSelectedObject).height, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Rotation: ");
-								float rotation = g_entityManager->Get<Transform>(m_currentSelectedObject).orientation * (180 / M_PI);
+								float rotation = static_cast<float>(g_entityManager->Get<Transform>(m_currentSelectedObject).orientation * (180 / M_PI));
 								ImGui::Text("Orientation: "); ImGui::SameLine(); 
 								ImGui::SetNextItemWidth(200.f); ImGui::SliderFloat("##Orientation", &rotation, -180, 180, "%.3f");
 								ImGui::Text("             "); ImGui::SameLine();  ImGui::SetNextItemWidth(200.f); ImGui::InputFloat("##Orientation2", &rotation, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_CharsDecimal);
@@ -707,7 +696,7 @@ namespace PE {
 								std::vector<const char*> key;
 								key.push_back("");
 								//to get all the keys
-								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance()->Textures.begin(); it != ResourceManager::GetInstance()->Textures.end(); ++it) 
+								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
 								{
 									key.push_back(it->first.c_str());
 								}
@@ -1115,14 +1104,14 @@ namespace PE {
 		m_consoleOutput.clear();
 	}
 
-	void Editor::OnKeyPressedEvent(const temp::Event<temp::KeyEvents>& e)
+	void Editor::OnKeyPressedEvent(const PE::Event<PE::KeyEvents>& e)
 	{
-		temp::KeyPressedEvent KPE;
+		PE::KeyPressedEvent KPE;
 
 		//dynamic cast
-		if (e.GetType() == temp::KeyEvents::KeyPressed)
+		if (e.GetType() == PE::KeyEvents::KeyPressed)
 		{
-			KPE = dynamic_cast<const temp::KeyPressedEvent&>(e);
+			KPE = dynamic_cast<const PE::KeyPressedEvent&>(e);
 		}
 
 		//may want to change this to switch case to look cleaner

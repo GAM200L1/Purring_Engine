@@ -124,9 +124,9 @@ namespace PE
 	/// </summary>
 	/// <param name="e">The event to be processed.</param>
 	----------------------------------------------------------------------------- */
-	void WindowManager::OnWindowEvent(const temp::Event<temp::WindowEvents>& e)
+	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& e)
 	{
-		Editor::GetInstance()->AddEventLog(e.ToString());
+		Editor::GetInstance().AddEventLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -141,9 +141,9 @@ namespace PE
 	/// </summary>
 	/// <param name="e">The mouse event to be processed.</param>
 	----------------------------------------------------------------------------- */
-	void WindowManager::OnMouseEvent(const temp::Event<temp::MouseEvents>& e)
+	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& e)
 	{
-		Editor::GetInstance()->AddEventLog(e.ToString());
+		Editor::GetInstance().AddEventLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -158,9 +158,9 @@ namespace PE
 	/// </summary>
 	/// <param name="e">The keyboard event to be processed.</param>
 	----------------------------------------------------------------------------- */
-	void WindowManager::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
+	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& e)
 	{
-		Editor::GetInstance()->AddEventLog(e.ToString());
+		Editor::GetInstance().AddEventLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -207,11 +207,11 @@ namespace PE
 	void WindowManager::window_resize_callback(GLFWwindow* window, int width, int height)
 	{
 		window;
-		temp::WindowResizeEvent WRE;
+		PE::WindowResizeEvent WRE;
 		WRE.width = width;
 		WRE.height = height;
 
-		temp::SEND_WINDOW_EVENT(WRE)
+		PE::SEND_WINDOW_EVENT(WRE)
 	}
 
 
@@ -225,8 +225,8 @@ namespace PE
 	void WindowManager::window_close_callback(GLFWwindow* window)
 	{
 		window;
-		temp::WindowCloseEvent WCE;
-		temp::SEND_WINDOW_EVENT(WCE)
+		PE::WindowCloseEvent WCE;
+		PE::SEND_WINDOW_EVENT(WCE)
 	}
 
 
@@ -242,13 +242,13 @@ namespace PE
 	{
 		window;
 		if (focus) {
-			temp::WindowFocusEvent WFE;
-			temp::SEND_WINDOW_EVENT(WFE)
+			PE::WindowFocusEvent WFE;
+			PE::SEND_WINDOW_EVENT(WFE)
 		}
 		else
 		{
-			temp::WindowLostFocusEvent WLFE;
-			temp::SEND_WINDOW_EVENT(WLFE)
+			PE::WindowLostFocusEvent WLFE;
+			PE::SEND_WINDOW_EVENT(WLFE)
 		}
 	}
 
@@ -265,10 +265,10 @@ namespace PE
 	void WindowManager::window_pos_callback(GLFWwindow* window, int xpos, int ypos)
 	{
 		window;
-		temp::WindowMovedEvent WME;
+		PE::WindowMovedEvent WME;
 		WME.xpos = xpos;
 		WME.ypos = ypos;
 
-		temp::SEND_WINDOW_EVENT(WME)
+		PE::SEND_WINDOW_EVENT(WME)
 	}
 }

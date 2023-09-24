@@ -59,7 +59,7 @@ namespace PE
             glfwGetWindowSize(p_windowRef, &width, &height);
             m_imguiFrameBuffer.CreateFrameBuffer(width, height);
 
-            Editor::GetInstance()->Init(p_window);
+            Editor::GetInstance().Init(p_window);
         }
         
         void RendererManager::InitializeSystem()
@@ -84,7 +84,7 @@ namespace PE
             InitializePointMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_POINT)]);
 
             // Load a shader program
-            ResourceManager::GetInstance()->LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
+            ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -101,14 +101,15 @@ namespace PE
             deltaTime; // Prevent warnings
 
             // Retrieve whether to render in the editor or the full window
-            bool renderInEditor{ Editor::GetInstance()->IsEditorActive() };
+            bool renderInEditor{ Editor::GetInstance().IsEditorActive() };
 
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
 
+
             if (renderInEditor)
             {
-                Editor::GetInstance()->GetWindowSize(windowWidth, windowHeight);
+                Editor::GetInstance().GetWindowSize(windowWidth, windowHeight);
             }
             else 
             {
@@ -159,17 +160,18 @@ namespace PE
 
             DrawScene(worldToNdc); // Draw objects in the scene
 
-            if (Editor::GetInstance()->IsRenderingDebug()) 
+            if (Editor::GetInstance().IsRenderingDebug()) 
             {
                 DrawDebug(worldToNdc); // Draw debug gizmos in the scene
             }
+
 
             if (renderInEditor)
             {
                 // Unbind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Unbind();
 
-                Editor::GetInstance()->Render(m_imguiFrameBuffer.GetTextureId());
+                Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
             }
 
             // Disable alpha blending
@@ -198,10 +200,10 @@ namespace PE
 
         void RendererManager::DrawScene(glm::mat4 const& r_worldToNdc)
         {
-            auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
             // Check if shader program is valid
-            if (shaderProgramIterator == ResourceManager::GetInstance()->ShaderPrograms.end())
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
             {
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
@@ -230,10 +232,10 @@ namespace PE
 
         void RendererManager::DrawDebug(glm::mat4 const& r_worldToNdc)
         {
-            auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
             // Check if shader program is valid
-            if (shaderProgramIterator == ResourceManager::GetInstance()->ShaderPrograms.end())
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
             {
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
@@ -345,10 +347,10 @@ namespace PE
             }
             else 
             {
-                auto textureIterator{ ResourceManager::GetInstance()->Textures.find(r_renderer.GetTextureKey()) };
+                auto textureIterator{ ResourceManager::GetInstance().Textures.find(r_renderer.GetTextureKey()) };
 
                 // Check if shader program is valid
-                if (textureIterator == ResourceManager::GetInstance()->Textures.end())
+                if (textureIterator == ResourceManager::GetInstance().Textures.end())
                 {
                     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                     engine_logger.SetTime();

@@ -27,6 +27,8 @@
 #include <misc/cpp/imgui_stdlib.h>
 #include <iostream>
 
+#include "Singleton.h"
+
 #include "Graphics/GLHeaders.h"
 
 #include "ECS//EntityFactory.h"
@@ -35,10 +37,12 @@
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 
+
 namespace PE {
 
-	class Editor
+	class Editor : public Singleton<Editor>
 	{
+		friend class Singleton<Editor>;
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************
@@ -183,15 +187,10 @@ namespace PE {
 		 \brief the callback function for an onkeyevent
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
-		void OnKeyPressedEvent(const temp::Event<temp::KeyEvents>& e);
+		void OnKeyPressedEvent(const PE::Event<PE::KeyEvents>& e);
 
 		// ----- Getters ----- // 
 	public:
-		/*!***********************************************************************************
-		 \brief Get the instance of imguiwindow, if it does not exist, create it.
-		 \return Editor* 	 pointer to Editor
-		*************************************************************************************/
-		static Editor* GetInstance();
 		/*!***********************************************************************************
 		 \brief Return the size of the imgui window
 		 \param[out] float x value
@@ -232,10 +231,6 @@ namespace PE {
 		void test();
 		// ----- Private Variables ----- // 
 	private:
-
-		//single instance of editor
-		static std::unique_ptr<Editor> s_Instance;
-
 		//boolean for windows
 		bool m_showLogs;
 		bool m_showObjectList;
