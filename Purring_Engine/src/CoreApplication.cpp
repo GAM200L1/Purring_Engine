@@ -106,14 +106,14 @@ PE::CoreApplication::CoreApplication()
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();
     //assignning memory manually to renderer manager
-    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
     AddSystem(rendererManager);
 
 
     // Load a texture
     std::string catTextureName{ "cat" };
-    ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
-    ResourceManager::GetInstance()->LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
     for (size_t i{}; i < 5; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
@@ -180,7 +180,7 @@ void PE::CoreApplication::Run()
         // Time start
         TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
-        MemoryManager::GetInstance()->CheckMemoryOver();
+        MemoryManager::GetInstance().CheckMemoryOver();
         // UPDATE -----------------------------------------------------
         
 

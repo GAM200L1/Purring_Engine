@@ -59,7 +59,7 @@ namespace PE
             glfwGetWindowSize(p_windowRef, &width, &height);
             m_imguiFrameBuffer.CreateFrameBuffer(width, height);
 
-            Editor::GetInstance()->Init(p_window);
+            Editor::GetInstance().Init(p_window);
         }
         
         void RendererManager::InitializeSystem()
@@ -102,7 +102,7 @@ namespace PE
 
             // Get the size of the ImGui window to render in
             float windowWidth{}, windowHeight{};
-            Editor::GetInstance()->GetWindowSize(windowWidth, windowHeight);
+            Editor::GetInstance().GetWindowSize(windowWidth, windowHeight);
 
             // If the window size has changed
             if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight) 
@@ -146,7 +146,7 @@ namespace PE
             // Unbind the RBO for rendering to the ImGui window
             m_imguiFrameBuffer.Unbind();
 
-            Editor::GetInstance()->Render(m_imguiFrameBuffer.GetTextureId());
+            Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
 
             // Disable alpha blending
             glDisable(GL_BLEND);
