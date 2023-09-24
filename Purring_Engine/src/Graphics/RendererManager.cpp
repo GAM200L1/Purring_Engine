@@ -101,7 +101,7 @@ namespace PE
             deltaTime; // Prevent warnings
 
             // Retrieve whether to render in the editor or the full window
-            bool renderInEditor{ Editor::GetInstance()->IsEditorActive() };
+            bool renderInEditor{ Editor::GetInstance().IsEditorActive() };
 
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
@@ -160,7 +160,7 @@ namespace PE
 
             DrawScene(worldToNdc); // Draw objects in the scene
 
-            if (Editor::GetInstance()->IsRenderingDebug()) 
+            if (Editor::GetInstance().IsRenderingDebug()) 
             {
                 DrawDebug(worldToNdc); // Draw debug gizmos in the scene
             }
