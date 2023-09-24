@@ -162,7 +162,7 @@ namespace PE
 		if (deltaLengthSquared < totalRadius * totalRadius)
 		{
 			// get contact point data etc.
-			if (deltaLengthSquared <= 0.f)
+			if (deltaLengthSquared == 0.f)
 			{
 				r_contactPt.normal = vec2{ 0.f, 1.f };
 				r_contactPt.intersectionPoint = (r_contactPt.normal * r_circle2.radius) + r_circle2.center;
@@ -259,7 +259,7 @@ namespace PE
 		
 		if (collided >= 2)
 		{
-			if ((r_AABB.center - r_circle.center).LengthSquared() <= 0.f)
+			if ((r_AABB.center - r_circle.center).LengthSquared() == 0.f)
 			{
 				r_contactPt.normal = vec2{ 0.f, 1.f };
 				r_contactPt.intersectionPoint = vec2{ r_AABB.center.x, r_AABB.max.y };
