@@ -37,7 +37,6 @@ namespace PE
 			throw;
 		}
 		g_entityManager = this;
-
 	}
 
 	EntityManager::~EntityManager()

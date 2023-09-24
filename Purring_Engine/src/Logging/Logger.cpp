@@ -25,13 +25,21 @@ Logger::Logger(const char inst_name[]) :
 {
 	SetTime();
 	std::string filepath = "../Logs/";
-	filepath += m_instanceName;
-	filepath += "-";
-	filepath += m_currTime;
-	filepath += ".log";
-	std::replace(filepath.begin(), filepath.end(), ':', '-');
-	std::replace(filepath.begin(), filepath.end(), ' ', '_');
-	m_outFile.open(filepath);
+	if (CreateDirectoryA(filepath.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
+	{
+		filepath += m_instanceName;
+		filepath += "-";
+		filepath += m_currTime;
+		filepath += ".log";
+		std::replace(filepath.begin(), filepath.end(), ':', '-');
+		std::replace(filepath.begin(), filepath.end(), ' ', '_');
+
+		m_outFile.open(filepath);
+	}
+	else
+	{
+		throw;
+	}
 }
 
 /*-----------------------------------------------------------------------------

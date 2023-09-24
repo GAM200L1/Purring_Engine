@@ -71,6 +71,7 @@ public:
     Logger(const char inst_name[]);
     ~Logger()
     {
+        FlushLog();
         if (m_outFile.is_open())
             m_outFile.close();
     }
