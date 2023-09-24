@@ -336,8 +336,6 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
-			engine_logger.FlushLog();
 			throw;
 		}
 		if (m_componentPools[componentID]->HasEntity(id))
@@ -378,8 +376,6 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
-			engine_logger.FlushLog();
 			throw;
 		}
 		if (m_componentPools[componentID]->HasEntity(id))
@@ -464,8 +460,6 @@ namespace PE
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
 		{
-			engine_logger.AddLog(true, "Entity was not found in the pool!!", __FUNCTION__);
-			engine_logger.FlushLog();
 			throw;	// to add error
 		}
 		return *p_comp;
@@ -477,8 +471,6 @@ namespace PE
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
 		{
-			engine_logger.AddLog(true, "Entity was not found in the pool!!", __FUNCTION__);
-			engine_logger.FlushLog();
 			throw;	// to add error
 		}
 		return *p_comp;
