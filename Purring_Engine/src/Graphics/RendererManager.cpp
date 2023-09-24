@@ -59,7 +59,7 @@ namespace PE
             glfwGetWindowSize(p_windowRef, &width, &height);
             m_imguiFrameBuffer.CreateFrameBuffer(width, height);
 
-            Editor::GetInstance()->Init(p_window);
+            Editor::GetInstance().Init(p_window);
         }
         
         void RendererManager::InitializeSystem()
@@ -84,7 +84,7 @@ namespace PE
             InitializePointMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_POINT)]);
 
             // Load a shader program
-            ResourceManager::GetInstance()->LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
+            ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -100,9 +100,24 @@ namespace PE
             }
             deltaTime; // Prevent warnings
 
-            // Get the size of the ImGui window to render in
+            // Retrieve whether to render in the editor or the full window
+            bool renderInEditor{ Editor::GetInstance().IsEditorActive() };
+
+            // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
-            Editor::GetInstance()->GetWindowSize(windowWidth, windowHeight);
+
+
+            if (renderInEditor)
+            {
+                Editor::GetInstance().GetWindowSize(windowWidth, windowHeight);
+            }
+            else 
+            {
+                int width, height;
+                glfwGetWindowSize(p_windowRef, &width, &height);
+                windowWidth = static_cast<float>(width);
+                windowHeight = static_cast<float>(height);
+            }
 
             // If the window size has changed
             if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight) 
@@ -117,19 +132,22 @@ namespace PE
             }
 
             // Set background color to black
-            glClearColor(0.f, 0.f, 0.f, 1.f);
+            glClearColor(1.f, 1.f, 1.f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
             // Enable alpha blending
             glEnable(GL_BLEND);
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            
+            if(renderInEditor)
+            {
+                // Bind the RBO for rendering to the ImGui window
+                m_imguiFrameBuffer.Bind();
 
-            // Bind the RBO for rendering to the ImGui window
-            m_imguiFrameBuffer.Bind();
-
-            // Set the background color of the ImGui window to white
-            glClearColor(1.f, 1.f, 1.f, 1.f);
-            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+                // Set the background color of the ImGui window to white
+                glClearColor(1.f, 1.f, 1.f, 1.f);
+                glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+            }
 
             // Compute the view to NDC matrix
             float halfWidth{ windowWidth * 0.5f };
@@ -141,12 +159,20 @@ namespace PE
 
 
             DrawScene(worldToNdc); // Draw objects in the scene
-            DrawDebug(worldToNdc); // Draw debug gizmos in the scene
 
-            // Unbind the RBO for rendering to the ImGui window
-            m_imguiFrameBuffer.Unbind();
+            if (Editor::GetInstance().IsRenderingDebug()) 
+            {
+                DrawDebug(worldToNdc); // Draw debug gizmos in the scene
+            }
 
-            Editor::GetInstance()->Render(m_imguiFrameBuffer.GetTextureId());
+
+            if (renderInEditor)
+            {
+                // Unbind the RBO for rendering to the ImGui window
+                m_imguiFrameBuffer.Unbind();
+
+                Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
+            }
 
             // Disable alpha blending
             glDisable(GL_BLEND);
@@ -174,10 +200,10 @@ namespace PE
 
         void RendererManager::DrawScene(glm::mat4 const& r_worldToNdc)
         {
-            auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
             // Check if shader program is valid
-            if (shaderProgramIterator == ResourceManager::GetInstance()->ShaderPrograms.end())
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
             {
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
@@ -206,10 +232,10 @@ namespace PE
 
         void RendererManager::DrawDebug(glm::mat4 const& r_worldToNdc)
         {
-            auto shaderProgramIterator{ ResourceManager::GetInstance()->ShaderPrograms.find(m_defaultShaderProgramKey) };
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
             // Check if shader program is valid
-            if (shaderProgramIterator == ResourceManager::GetInstance()->ShaderPrograms.end())
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
             {
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
@@ -277,6 +303,9 @@ namespace PE
             // Pass the color of the quad as a uniform variable
             r_shaderProgram.SetUniform("uColor", r_color);
 
+            // Tell the program that we're not using textures
+            r_shaderProgram.SetUniform("uIsTextured", false);
+
             glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
                 GL_UNSIGNED_SHORT, NULL);
 
@@ -318,10 +347,10 @@ namespace PE
             }
             else 
             {
-                auto textureIterator{ ResourceManager::GetInstance()->Textures.find(r_renderer.GetTextureKey()) };
+                auto textureIterator{ ResourceManager::GetInstance().Textures.find(r_renderer.GetTextureKey()) };
 
                 // Check if shader program is valid
-                if (textureIterator == ResourceManager::GetInstance()->Textures.end())
+                if (textureIterator == ResourceManager::GetInstance().Textures.end())
                 {
                     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                     engine_logger.SetTime();
@@ -619,7 +648,7 @@ namespace PE
             };
         }
 
-        void RendererManager::PrintSpecifications()
+        void RendererManager::PrintSpecifications() const
         {
             // Declare variables to store specs info
             GLint majorVersion, minorVersion, maxVertexCount, maxIndicesCount, maxTextureSize, maxViewportDims[2];

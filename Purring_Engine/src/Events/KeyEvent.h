@@ -21,7 +21,7 @@
 #include "Event.h"
 #include <sstream>
 
-namespace temp
+namespace PE
 {
 
 	//Key Event Types
