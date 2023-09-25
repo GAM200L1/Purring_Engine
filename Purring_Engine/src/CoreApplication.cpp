@@ -128,9 +128,9 @@ PE::CoreApplication::CoreApplication()
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
 
         std::uniform_int_distribution<>distr0(-550, 550);
-        g_entityManager->Get<Transform>(id).position.x = distr0(gen);
-        std::uniform_int_distribution<>distr1(-200, 200);
-        g_entityManager->Get<Transform>(id).position.y = distr0(gen);
+        g_entityManager->Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
+        std::uniform_int_distribution<>distr1(-250, 250);
+        g_entityManager->Get<Transform>(id).position.y = distr1(gen);
         std::uniform_int_distribution<>distr2(10, 200);
         g_entityManager->Get<Transform>(id).width = distr2(gen);
         g_entityManager->Get<Transform>(id).height = distr2(gen);
