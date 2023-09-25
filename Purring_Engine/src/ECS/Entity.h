@@ -288,6 +288,7 @@ namespace PE
 		void AddToPool()
 		{
 			m_componentPools.emplace(GetComponentID<T>(), new PoolData<T>());
+			m_poolsEntity[GetComponentID<T>()];
 		}
 
 		/*!***********************************************************************************
@@ -308,19 +309,43 @@ namespace PE
 			}
 			return ret;
 		}
-		const std::vector<EntityID>& GetEntityInPool(const ComponentID& pool)
+
+		const std::vector<EntityID>& GetEntitiesInPool(const ComponentID& pool)
 		{
 			return m_poolsEntity[pool];
 		}
 
-		void UpdateVectors()
+		void UpdateVectors(EntityID id, bool add = true)
 		{
-			for (const auto& p : m_componentPools)
-			{
-				m_poolsEntity[p.first].clear();
-				for (const auto& id : p.second->m_idxMap)
+			if (add) 
+			{			
+				if (std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) == m_poolsEntity["All"].end())
 				{
-					m_poolsEntity[p.first].emplace_back(id.first);
+					m_poolsEntity["All"].emplace_back(id);
+				}
+				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				{
+					if (pool.second->HasEntity(id) && 
+					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
+					{
+						m_poolsEntity[pool.first].emplace_back(id);
+					}
+				}
+			}
+			else
+			{
+				if (!m_entities.count(id) &&
+					(std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) != m_poolsEntity["All"].end()))
+				{
+					m_poolsEntity["All"].erase(std::remove(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id), m_poolsEntity["All"].end());
+				}
+				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				{
+					if (!pool.second->HasEntity(id) &&
+					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					{
+						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
+					}
 				}
 			}
 		}
@@ -334,7 +359,7 @@ namespace PE
 		// map of to store pointers to individual componnet pools
 		std::map<ComponentID, ComponentPool*> m_componentPools;
 		// a queue of entity IDs to handle removed entities
-		std::set<EntityID> m_removed;
+		std::queue<EntityID> m_removed;
 		
 		std::map<ComponentID, std::vector<EntityID>> m_poolsEntity;
 	};
@@ -360,16 +385,8 @@ namespace PE
 		}
 
 		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
+		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		
 		// initialize that region of memory
 		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
 		{
@@ -379,7 +396,7 @@ namespace PE
 		// it will call the constructor at this position instead of allocating more memory
 		m_componentPools[componentID]->Get(id) =  T();
 		++(m_componentPools[componentID]->m_size);
-		UpdateVectors();
+		Update
 		return p_component;
 	}
 
@@ -399,16 +416,8 @@ namespace PE
 			return;
 		}
 		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
+		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+
 		// initialize that region of memory
 		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->capacity - 1)
 		{
@@ -420,7 +429,6 @@ namespace PE
 		// it will call the constructor at this position instead of allocating more memory
 		m_componentPools[componentID]->Get(id) = T(val);
 		++(m_componentPools[componentID]->size);
-		UpdateVectors();
 		return p_component;
 	}
 
@@ -526,6 +534,6 @@ namespace PE
 		// re-empalce the "last" entity inplace to the existing id's position
 		m_componentPools[componentID]->m_idxMap.emplace(lastEntID, poolID);
 		--(m_componentPools[componentID]->m_size);
-		UpdateVectors();
+		UpdateVectors(id, false);
 	}
 }

@@ -229,7 +229,7 @@ namespace PE
 				}
 			(), ...);
 		}
-
+		p_entityManager->UpdateVectors(ret);
 		return ret;
 	}
 
@@ -245,7 +245,7 @@ namespace PE
 				}
 			(), ...);
 		}
-
+		p_entityManager->UpdateVectors(ret);
 		return ret;
 	}
 
@@ -254,8 +254,6 @@ namespace PE
 	{
 		if (typeid(T) != typeid(ComponentID) && typeid(T) != typeid(const char*))
 		{
-			engine_logger.AddLog(true, "T was not a string!!", __FUNCTION__);
-			engine_logger.FlushLog();
 			throw;
 		}
 		for (const T& type : var)
@@ -265,6 +263,7 @@ namespace PE
 				p_entityManager->Assign(id, type);
 			}
 		}
+		p_entityManager->UpdateVectors(id);
 	}
 
 	template<typename T>
@@ -283,6 +282,7 @@ namespace PE
 				p_entityManager->Assign(id, type);
 			}
 		}
+		p_entityManager->UpdateVectors(id);
 	}
 
 
@@ -303,6 +303,7 @@ namespace PE
 				}
 			(), ...);
 		}
+		p_entityManager->UpdateVectors(id);
 	}
 
 }

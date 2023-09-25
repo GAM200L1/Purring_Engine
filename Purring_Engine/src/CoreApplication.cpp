@@ -61,7 +61,7 @@ SerializationManager sm;
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 #include "Graphics/Renderer.h"
-
+#include "InputSystem.h"
 
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
@@ -110,7 +110,8 @@ PE::CoreApplication::CoreApplication()
     //assignning memory manually to renderer manager
     Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
     AddSystem(rendererManager);
-
+    InputSystem* ip = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(ip);
 
     // Load a texture
     std::string catTextureName{ "cat" };
@@ -149,7 +150,7 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-    for (size_t i{}; i < 2500; ++i) {
+    for (size_t i{}; i < 25; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
         g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
@@ -279,6 +280,11 @@ void PE::CoreApplication::Run()
                 g_entityManager->RemoveEntity(lastEnt.front());
                 lastEnt.pop();
             }
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            EntityManager ent;
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)

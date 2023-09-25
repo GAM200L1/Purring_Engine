@@ -37,6 +37,7 @@ namespace PE
 			throw;
 		}
 		g_entityManager = this;
+		m_poolsEntity["All"];
 	}
 
 	EntityManager::~EntityManager()
@@ -51,9 +52,9 @@ namespace PE
 
 	EntityID EntityManager::NewEntity()
 	{
-		size_t id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin());
+		size_t id = (m_removed.empty()) ? m_entities.size() : (m_removed.front());
 		if (!m_removed.empty())
-			m_removed.erase(id);
+			m_removed.pop();
 		m_entities.emplace(id);
 		return id;
 	}
@@ -73,16 +74,7 @@ namespace PE
 			return;
 		}
 		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
+		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
 		// initialize that region of memory
 		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
 		{
@@ -92,7 +84,6 @@ namespace PE
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[componentID]->m_size);
-		UpdateVectors();
 	}
 
 	void EntityManager::Assign(const EntityID& id, const ComponentID& componentID)
@@ -110,16 +101,8 @@ namespace PE
 			return;
 		}
 		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
+		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+
 		// initialize that region of memory
 		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
 		{
@@ -129,7 +112,6 @@ namespace PE
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[componentID]->m_size);
-		UpdateVectors();
 	}
 
 	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& component) const
@@ -176,7 +158,7 @@ namespace PE
 			std::string str = "Removed Entity-";
 			str += std::to_string(id);
 			engine_logger.AddLog(false, str, __FUNCTION__);
+			UpdateVectors(id, false);
 		}
-		UpdateVectors();
 	}
 }

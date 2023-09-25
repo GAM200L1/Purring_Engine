@@ -51,7 +51,7 @@ namespace PE
 			for (const ComponentID& componentCreator : p_entityManager->GetComponentIDs(id))
 			{
 				LoadComponent(clone, componentCreator.c_str(),
-					static_cast<void*>(p_entityManager->GetComponentPoolPointer(componentCreator)->Get(id)));
+					p_entityManager->GetComponentPoolPointer(componentCreator)->Get(id));
 			}
 			return clone;
 		}
