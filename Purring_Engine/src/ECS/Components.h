@@ -129,7 +129,7 @@ namespace PE
         *************************************************************************************/
         void* Get(size_t index)
         {
-            return reinterpret_cast<void*>(p_data + index);
+            return reinterpret_cast<void*>(p_data + m_idxMap.at(index));
         }
         
     // ----- Public methods ----- // 
@@ -170,9 +170,21 @@ namespace PE
         {
             if (!m_idxMap.count(index))
                 throw; // log in the future
-            //p_data[index] = T();
-            m_removed.emplace(m_idxMap[index]);
+            p_data[m_idxMap.at(index)] = T();
+            EntityID lastIdx{ (*std::prev(m_idxMap.end())).second };
+            if (lastIdx != index)
+            {
+                std::swap(p_data[m_idxMap.at(index)], p_data[lastIdx]);
+                for (auto& map : m_idxMap)
+                {
+                    if (map.second == lastIdx)
+                        map.second = m_idxMap.at(index);
+                }
+               
+            }
+            //m_removed.emplace(m_idxMap[index]);
             m_idxMap.erase(index);
+            --m_size;
         }
     private:
         T* p_data{ nullptr };

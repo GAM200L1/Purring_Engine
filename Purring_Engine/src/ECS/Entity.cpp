@@ -31,9 +31,13 @@ namespace PE
 	EntityManager::EntityManager()
 	{
 		if (g_entityManager != nullptr)
+		{
+			engine_logger.AddLog(true, "Another instance of Entity Manager was created!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
+		}
 		g_entityManager = this;
-
+		m_poolsEntity["All"];
 	}
 
 	EntityManager::~EntityManager()
@@ -61,7 +65,8 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			// add to map
+			engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
 		}
 		if (m_componentPools[componentID]->HasEntity(id))
@@ -95,6 +100,8 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
+			engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
 		}
 
@@ -156,18 +163,19 @@ namespace PE
 	{
 		if (m_entities.count(id))
 		{
-			for (std::pair<const ComponentID, ComponentPool*>& pool : m_componentPools)
+			for (const ComponentID& pool : GetComponentIDs(id))
 			{
-				if (pool.second->HasEntity(id))
-				{
-					pool.second->remove(id);
-				}
+				m_componentPools[pool]->remove(id);
+				std::string str = "Removed Component-";
+				str += pool;
+				engine_logger.AddLog(false, str, __FUNCTION__);
 			}
 			m_entities.erase(id);
 			m_removed.emplace(id);
 			std::string str = "Removed Entity-";
 			str += std::to_string(id);
 			engine_logger.AddLog(false, str, __FUNCTION__);
+			UpdateVectors(id, false);
 		}
 	}
 }

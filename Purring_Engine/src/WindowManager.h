@@ -20,7 +20,7 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Graphics/GLHeaders.h"
 #include "FrameRateTargetControl.h"
-#include "InputHandler.h"
+#include "InputSystem.h"
 #include "Events/EventHandler.h"
 #include "System.h"
 
@@ -44,8 +44,8 @@ namespace PE
         void static window_focus_callback(GLFWwindow* window, int focus);
 
 
-        void OnWindowEvent(const temp::Event<temp::WindowEvents>& e);
-        void OnMouseEvent(const temp::Event<temp::MouseEvents>& e);
-        void OnKeyEvent(const temp::Event<temp::KeyEvents>& e);
+        void OnWindowEvent(const PE::Event<PE::WindowEvents>& e);
+        void OnMouseEvent(const PE::Event<PE::MouseEvents>& e);
+        void OnKeyEvent(const PE::Event<PE::KeyEvents>& e);
     };
 }

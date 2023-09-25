@@ -24,10 +24,7 @@
 #include <sstream>
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
-
-#include "ECS/Entity.h"
-#include "Physics/RigidBody.h"
-
+#include "InputSystem.h"
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -94,14 +91,14 @@ namespace PE
 		// Make the newly created window the current OpenGL context
 		glfwMakeContextCurrent(window);
 
-		// Set GLFW input callbacks
-		glfwSetCursorPosCallback(window, mouse_callback);				// For mouse movement
-		glfwSetMouseButtonCallback(window, check_mouse_buttons);		// For mouse button presses
-		glfwSetScrollCallback(window, scroll_callback);					// For scroll wheel events
-		glfwSetKeyCallback(window, key_callback);						// For keyboard events
-
 		// Required to set window user pointer for accessing callback methods in this class
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
+
+		// Set GLFW input callbacks
+		glfwSetCursorPosCallback(window, InputSystem::mouse_callback);				// For mouse movement
+		glfwSetMouseButtonCallback(window, InputSystem::check_mouse_buttons);		// For mouse button presses
+		glfwSetScrollCallback(window, InputSystem::scroll_callback);					// For scroll wheel events
+		glfwSetKeyCallback(window, InputSystem::key_callback);						// For keyboard events
 
 		// Set GLFW window callbacks
 		glfwSetWindowSizeCallback(window, window_resize_callback);		// For window resizing
@@ -127,9 +124,9 @@ namespace PE
 	/// </summary>
 	/// <param name="e">The event to be processed.</param>
 	----------------------------------------------------------------------------- */
-	void WindowManager::OnWindowEvent(const temp::Event<temp::WindowEvents>& e)
+	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& e)
 	{
-		Editor::GetInstance()->AddLog(e.ToString());
+		Editor::GetInstance().AddEventLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -144,9 +141,9 @@ namespace PE
 	/// </summary>
 	/// <param name="e">The mouse event to be processed.</param>
 	----------------------------------------------------------------------------- */
-	void WindowManager::OnMouseEvent(const temp::Event<temp::MouseEvents>& e)
+	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& e)
 	{
-		Editor::GetInstance()->AddLog(e.ToString());
+		Editor::GetInstance().AddEventLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -161,9 +158,9 @@ namespace PE
 	/// </summary>
 	/// <param name="e">The keyboard event to be processed.</param>
 	----------------------------------------------------------------------------- */
-	void WindowManager::OnKeyEvent(const temp::Event<temp::KeyEvents>& e)
+	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& e)
 	{
-		Editor::GetInstance()->AddLog(e.ToString());
+		Editor::GetInstance().AddEventLog(e.ToString());
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, e.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -237,11 +234,11 @@ namespace PE
 	void WindowManager::window_resize_callback(GLFWwindow* window, int width, int height)
 	{
 		window;
-		temp::WindowResizeEvent WRE;
+		PE::WindowResizeEvent WRE;
 		WRE.width = width;
 		WRE.height = height;
 
-		temp::SEND_WINDOW_EVENT(WRE)
+		PE::SEND_WINDOW_EVENT(WRE)
 	}
 
 
@@ -255,8 +252,8 @@ namespace PE
 	void WindowManager::window_close_callback(GLFWwindow* window)
 	{
 		window;
-		temp::WindowCloseEvent WCE;
-		temp::SEND_WINDOW_EVENT(WCE)
+		PE::WindowCloseEvent WCE;
+		PE::SEND_WINDOW_EVENT(WCE)
 	}
 
 
@@ -272,13 +269,13 @@ namespace PE
 	{
 		window;
 		if (focus) {
-			temp::WindowFocusEvent WFE;
-			temp::SEND_WINDOW_EVENT(WFE)
+			PE::WindowFocusEvent WFE;
+			PE::SEND_WINDOW_EVENT(WFE)
 		}
 		else
 		{
-			temp::WindowLostFocusEvent WLFE;
-			temp::SEND_WINDOW_EVENT(WLFE)
+			PE::WindowLostFocusEvent WLFE;
+			PE::SEND_WINDOW_EVENT(WLFE)
 		}
 	}
 
@@ -295,10 +292,10 @@ namespace PE
 	void WindowManager::window_pos_callback(GLFWwindow* window, int xpos, int ypos)
 	{
 		window;
-		temp::WindowMovedEvent WME;
+		PE::WindowMovedEvent WME;
 		WME.xpos = xpos;
 		WME.ypos = ypos;
 
-		temp::SEND_WINDOW_EVENT(WME)
+		PE::SEND_WINDOW_EVENT(WME)
 	}
 }

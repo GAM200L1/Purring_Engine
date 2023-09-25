@@ -14,6 +14,7 @@
 *************************************************************************************/
 #pragma once
 
+#include "Singleton.h"
 #include <chrono>
 #include <set>
 #include <array>
@@ -30,9 +31,9 @@ namespace PE
 		SYSTEMCOUNT
 	};
 
-	class TimeManager {
+	class TimeManager : public Singleton<TimeManager> {
 	public:
-
+		friend class Singleton<TimeManager>;
 		// system
 		void SystemStartFrame(int system);
 		void SystemEndFrame(int system);
@@ -50,19 +51,13 @@ namespace PE
 
 		float GetSystemFrameTime(int system) const { return m_systemFrameTime[system]; }
 
-
-		// singleton class
-		static TimeManager& GetInstance()
-		{
-			static TimeManager instance;
-			return instance;
-		}
-
 	private:
-		TimeManager();
-		~TimeManager() = default;
-
-		// delete copy and assignment?
+		TimeManager()
+		{
+			// might need to init the other variables
+			m_frameTime = 1.0 / 60.0; // default fps
+			m_deltaTime = 1.0 / 60.0;
+		}
 
 	private:
 		// system time

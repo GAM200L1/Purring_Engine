@@ -288,6 +288,7 @@ namespace PE
 		void AddToPool()
 		{
 			m_componentPools.emplace(GetComponentID<T>(), new PoolData<T>());
+			m_poolsEntity[GetComponentID<T>()];
 		}
 
 		/*!***********************************************************************************
@@ -308,6 +309,46 @@ namespace PE
 			}
 			return ret;
 		}
+
+		const std::vector<EntityID>& GetEntitiesInPool(const ComponentID& pool)
+		{
+			return m_poolsEntity[pool];
+		}
+
+		void UpdateVectors(EntityID id, bool add = true)
+		{
+			if (add) 
+			{			
+				if (std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) == m_poolsEntity["All"].end())
+				{
+					m_poolsEntity["All"].emplace_back(id);
+				}
+				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				{
+					if (pool.second->HasEntity(id) && 
+					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
+					{
+						m_poolsEntity[pool.first].emplace_back(id);
+					}
+				}
+			}
+			else
+			{
+				if (!m_entities.count(id) &&
+					(std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) != m_poolsEntity["All"].end()))
+				{
+					m_poolsEntity["All"].erase(std::remove(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id), m_poolsEntity["All"].end());
+				}
+				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				{
+					if (!pool.second->HasEntity(id) &&
+							(std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					{
+						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
+					}
+				}
+			}
+		}
 	// ----- Private Functions ----- //
 	private:
 
@@ -320,7 +361,7 @@ namespace PE
 		// a queue of entity IDs to handle removed entities
 		std::set<EntityID> m_removed;
 		
-		// fns ptr to functions for handling the destruction of component pool
+		std::map<ComponentID, std::vector<EntityID>> m_poolsEntity;
 	};
 
 	// extern to allow the access to the entity manager instance
@@ -336,8 +377,11 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			// add to map
 			throw;
+		}
+		if (m_componentPools[componentID]->HasEntity(id))
+		{
+			return;
 		}
 
 		// add to component pool's map keeping track of index
@@ -360,7 +404,7 @@ namespace PE
 		// it will call the constructor at this position instead of allocating more memory
 		m_componentPools[componentID]->Get(id) =  T();
 		++(m_componentPools[componentID]->m_size);
-
+		Update
 		return p_component;
 	}
 
@@ -373,10 +417,12 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			// add to map
-			m_componentPools.emplace(std::make_pair(componentID, new ComponentPool(sizeof(T))));
+			throw;
 		}
-
+		if (m_componentPools[componentID]->HasEntity(id))
+		{
+			return;
+		}
 		// add to component pool's map keeping track of index
 		if (m_componentPools[componentID]->m_removed.empty())
 		{
@@ -399,7 +445,6 @@ namespace PE
 		// it will call the constructor at this position instead of allocating more memory
 		m_componentPools[componentID]->Get(id) = T(val);
 		++(m_componentPools[componentID]->size);
-
 		return p_component;
 	}
 
@@ -416,6 +461,7 @@ namespace PE
 			   (tmp[0] == 'c') ? tmp.substr(6) : tmp;
 	}
 
+
 	template<typename T>
 	ComponentPool* EntityManager::GetComponentPoolPointer()
 	{
@@ -428,6 +474,7 @@ namespace PE
 	{
 		return *GetComponentPoolPointer<T>();
 	}
+
 
 	template<typename T>
 	const ComponentPool& EntityManager::GetComponentPool() const
@@ -452,7 +499,9 @@ namespace PE
 	{
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
+		{
 			throw;	// to add error
+		}
 		return *p_comp;
 	}
 
@@ -461,7 +510,9 @@ namespace PE
 	{
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
+		{
 			throw;	// to add error
+		}
 		return *p_comp;
 	}
 
@@ -480,6 +531,7 @@ namespace PE
 		// if the return is not a nullptr, it has the component
 		return (GetPointer<T>(id) != nullptr);
 	}
+
 	template<typename T>
 	void EntityManager::Remove(EntityID id)
 	{
@@ -498,5 +550,6 @@ namespace PE
 		// re-empalce the "last" entity inplace to the existing id's position
 		m_componentPools[componentID]->m_idxMap.emplace(lastEntID, poolID);
 		--(m_componentPools[componentID]->m_size);
+		UpdateVectors(id, false);
 	}
 }

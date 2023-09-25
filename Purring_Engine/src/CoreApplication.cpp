@@ -61,12 +61,14 @@ SerializationManager sm;
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 #include "Graphics/Renderer.h"
-
+#include "InputSystem.h"
 
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
 
 std::queue<EntityID> lastEnt{};
+
+std::vector<EntityID> testVector;
 
 
 /*-----------------------------------------------------------------------------
@@ -92,7 +94,7 @@ PE::CoreApplication::CoreApplication()
 
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
     // set flags
-    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
@@ -106,15 +108,16 @@ PE::CoreApplication::CoreApplication()
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();
     //assignning memory manually to renderer manager
-    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
     AddSystem(rendererManager);
-
+    InputSystem* ip = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(ip);
 
     // Load a texture
     std::string catTextureName{ "cat" };
-    ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
-
-    for (size_t i{}; i < 5; ++i)
+    ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
+    for (size_t i{}; i < 1; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
 
@@ -138,16 +141,30 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
 
-    // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
-    g_entityManager->Get<Transform>(1).position.x = -100.f;
-    g_entityManager->Get<Transform>(1).position.y = -100.f;
-    g_entityManager->Get<Transform>(1).width = 50.f;
-    g_entityManager->Get<Transform>(1).height = 200.f;
-    g_entityManager->Get<Transform>(1).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    //// Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
+    //g_entityManager->Get<Transform>(1).position.x = -100.f;
+    //g_entityManager->Get<Transform>(1).position.y = -100.f;
+    //g_entityManager->Get<Transform>(1).width = 50.f;
+    //g_entityManager->Get<Transform>(1).height = 200.f;
+    //g_entityManager->Get<Transform>(1).orientation = 0.f;
+    //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-
+    for (size_t i{}; i < 2500; ++i) {
+        EntityID id2 = g_entityFactory->CreateEntity();
+        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+        g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
+        g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+        g_entityManager->Get<Transform>(id2).width = 50.f;
+        g_entityManager->Get<Transform>(id2).height = 50.f;
+        g_entityManager->Get<Transform>(id2).orientation = 0.f;
+        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+    }
+    for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
+    {
+        testVector.emplace_back(id);
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -180,7 +197,7 @@ void PE::CoreApplication::Run()
         // Time start
         TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
-        MemoryManager::GetInstance()->CheckMemoryOver();
+        MemoryManager::GetInstance().CheckMemoryOver();
         // UPDATE -----------------------------------------------------
         
 
@@ -200,10 +217,47 @@ void PE::CoreApplication::Run()
         {
             //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
             // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "SceneView<Renderer, Transform>() took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
         }
-
-        
+        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : SceneView<Graphics::Renderer>())
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "SceneView<Renderer>() took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : testVector)
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "Stored vector took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
 
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();
@@ -228,25 +282,15 @@ void PE::CoreApplication::Run()
             }
         }
 
-        //if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        //{
-        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
-        //}
-        //
-        //if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        //{
-        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-        //}
-        //
-        //if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-        //{
-        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-        //}
-        //
-        //if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-        //{
-        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-        //}
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            EntityManager ent;
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
+        }
 
         // Physics test
         PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
@@ -286,8 +330,7 @@ void PE::CoreApplication::Run()
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();
-    ResourceManager::UnloadResources();
-    ResourceManager::DeleteInstance();
+    ResourceManager::GetInstance().UnloadResources();
     PhysicsManager::DeleteInstance();
     CollisionManager::DeleteInstance();
 }
