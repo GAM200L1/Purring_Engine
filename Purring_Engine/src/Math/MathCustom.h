@@ -662,7 +662,7 @@ namespace PE
 
 	void Clamp(float& r_varToClamp, float min, float max);
 
-	//void Wrap(float& r_varToWrap, float min, float max);
+	void Wrap(float& r_varToWrap, float min, float max);
 }
 
 

@@ -307,13 +307,15 @@ void PE::CoreApplication::Run()
             }
         }
 
-        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        // dash
+        if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
         {
             if (g_entityManager->Get<RigidBody>(0).m_velocity.Dot(g_entityManager->Get<RigidBody>(0).m_velocity) == 0.f)
                 g_entityManager->Get<RigidBody>(0).m_velocity = vec2{ 1.f, 0.f };
             g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity.GetNormalized() * 1000.f);
         }
 
+        // movement
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
             g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
@@ -332,6 +334,17 @@ void PE::CoreApplication::Run()
         if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
         {
             g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+        }
+
+        // rotation
+        if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).m_rotationVelocity = -PE_PI;
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).m_rotationVelocity = PE_PI;
         }
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
