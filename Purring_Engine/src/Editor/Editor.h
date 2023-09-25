@@ -214,10 +214,6 @@ namespace PE {
 		 \brief toggle rendering of debug lines
 		*************************************************************************************/
 		void ToggleDebugRender();
-		/*!***********************************************************************************
-		 \brief update the saved object list with the scene view list
-		*************************************************************************************/
-		void UpdateObjectList();
 
 		// ----- ImGui Command Functions ----- // 
 	private:
@@ -256,7 +252,6 @@ namespace PE {
 		//variable for objects
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
-		std::vector<EntityID> m_objects;
 
 		//variable for the windows
 		float m_time;
