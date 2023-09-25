@@ -68,6 +68,8 @@ PE::EntityFactory entFactory;
 
 std::queue<EntityID> lastEnt{};
 
+std::vector<EntityID> testVector;
+
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -115,7 +117,7 @@ PE::CoreApplication::CoreApplication()
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
     ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
-    for (size_t i{}; i < 5; ++i)
+    for (size_t i{}; i < 1; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
 
@@ -139,27 +141,29 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
 
-    // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
-    g_entityManager->Get<Transform>(1).position.x = -100.f;
-    g_entityManager->Get<Transform>(1).position.y = -100.f;
-    g_entityManager->Get<Transform>(1).width = 50.f;
-    g_entityManager->Get<Transform>(1).height = 200.f;
-    g_entityManager->Get<Transform>(1).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    //// Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
+    //g_entityManager->Get<Transform>(1).position.x = -100.f;
+    //g_entityManager->Get<Transform>(1).position.y = -100.f;
+    //g_entityManager->Get<Transform>(1).width = 50.f;
+    //g_entityManager->Get<Transform>(1).height = 200.f;
+    //g_entityManager->Get<Transform>(1).orientation = 0.f;
+    //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-    // Render 50x50 purple sprites in a grid
-    for (size_t i{}; i < 200; ++i)
+    for (size_t i{}; i < 2500; ++i) {
+        EntityID id2 = g_entityFactory->CreateEntity();
+        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+        g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
+        g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+        g_entityManager->Get<Transform>(id2).width = 50.f;
+        g_entityManager->Get<Transform>(id2).height = 50.f;
+        g_entityManager->Get<Transform>(id2).orientation = 0.f;
+        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+    }
+    for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
     {
-        EntityID id = g_entityFactory->CreateEntity();
-        g_entityFactory->Assign(id, { "Transform", "Renderer" });
-        g_entityManager->Get<Transform>(id).position.x = 25.f * (i % 20) - 250.f;
-        g_entityManager->Get<Transform>(id).position.y = 25.f * (i / 20) - 250.f;
-        g_entityManager->Get<Transform>(id).width = 50.f;
-        g_entityManager->Get<Transform>(id).height = 50.f;
-        g_entityManager->Get<Transform>(id).orientation = 0.f;
-        g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
-        g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 0.f, 1.f, 0.1f);
+        testVector.emplace_back(id);
     }
 }
 
@@ -213,10 +217,47 @@ void PE::CoreApplication::Run()
         {
             //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
             // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "SceneView<Renderer, Transform>() took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
         }
-
-        
+        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : SceneView<Graphics::Renderer>())
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "SceneView<Renderer>() took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : testVector)
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "Stored vector took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
 
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();

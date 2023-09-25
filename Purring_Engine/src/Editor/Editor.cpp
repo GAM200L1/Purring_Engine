@@ -48,7 +48,6 @@ namespace PE {
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
-
 	}
 
 	Editor::~Editor()
@@ -127,6 +126,8 @@ namespace PE {
 		int width, height;
 		glfwGetWindowSize(m_window, &width, &height);
 		io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
+		m_renderWindowWidth = static_cast<float>(width) * 0.1f;
+		m_renderWindowHeight = static_cast<float>(height) * 0.1f;
 
 		//looks nicer 
 		ImGuiStyle& style = ImGui::GetStyle();
@@ -348,7 +349,6 @@ namespace PE {
 			ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll;
 			if (ImGui::InputText("Enter", &m_input, input_text_flags)) //inpux box
 			{
-
 				AddConsole(m_input);
 				//can serialize these command into an array
 
@@ -443,8 +443,8 @@ namespace PE {
 				{
 					const bool is_selected = (m_currentSelectedObject == n);
 
-					std::string name = "GameObject";
-					name += std::to_string(n);
+					std::string name = "GameObject" ;
+					name += std::to_string(m_objects[n]);
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
