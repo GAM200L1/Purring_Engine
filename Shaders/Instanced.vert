@@ -1,0 +1,34 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     Textured.vert
+ \date     16-09-2023
+ 
+ \author               Krystal YAMIN
+ \par      email:      krystal.y@digipen.edu
+ 
+ \brief     This file implements a minimal vertex shader that takes in a position, 
+            color and texture coordinates. These parameters are passed to the next 
+            hardware stage unchanged.
+  
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
+
+#version 460 core
+
+layout (location = 0) in vec2 aVertexPosition; // IN vertex position
+layout (location = 2) in vec2 aTextureCoord;   // IN texture coordinate
+
+layout (location = 0) out vec4 vColor;         // OUT color
+layout (location = 1) out vec2 vTextureCoord;  // OUT texture coordinate
+
+uniform vec4 uColor[100];	// RGBA color to tint the texture
+uniform mat4 uModelToNdc[100];
+
+void main(void) {
+    vec4 color = uColor[gl_InstanceID];
+    mat4 matrix = uModelToNdc[gl_InstanceID];
+    gl_Position = matrix * vec4(aVertexPosition, 0.0, 1.0);
+    vColor = color;
+	vTextureCoord = aTextureCoord;
+}

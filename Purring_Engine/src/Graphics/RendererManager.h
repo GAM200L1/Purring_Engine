@@ -82,6 +82,13 @@ namespace PE
             void DrawScene(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
+             \brief  
+
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+            *************************************************************************************/
+            void DrawSceneInstanced(glm::mat4 const& r_worldToNdc);
+
+            /*!***********************************************************************************
              \brief Calls DrawRenderer() on all debug objects in [m_lineObjects] and 
                     [m_pointObjects].
 
@@ -176,6 +183,7 @@ namespace PE
 
             //! Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};
+            std::string m_instancedShaderProgramKey{"Instanced"};
 
             //! Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
