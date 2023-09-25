@@ -229,7 +229,7 @@ namespace PE
             }
 
             // Make draw call for each game object with a renderer component
-            for (const EntityID& id : g_entityManager->GetEntitiesInPool("Renderer"))
+            for (const EntityID& id : SceneView<Renderer>())
             {
                 Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
                 Transform& transform{ g_entityManager->Get<Transform>(id) };
@@ -273,7 +273,7 @@ namespace PE
             colors.clear();
 
             // Make draw call for each game object with a renderer component
-            for (const EntityID& id : g_entityManager->GetEntitiesInPool("Renderer"))
+            for (const EntityID& id : SceneView<Renderer>())
             {
                 Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
                 Transform& transform{ g_entityManager->Get<Transform>(id) };
@@ -428,7 +428,7 @@ namespace PE
             glPointSize(10.f);
 
             // Draw each of the colliders
-            for (const EntityID& id : g_entityManager->GetEntitiesInPool("Collider"))
+            for (const EntityID& id : SceneView<Collider>())
             {
                 Collider& collider{ g_entityManager->Get<Collider>(id) };
 
@@ -440,7 +440,7 @@ namespace PE
             }
 
             // Draw a point and line for each rigidbody representing the position and velocity
-            for (const EntityID& id : g_entityManager->GetEntitiesInPool("RigidBody"))
+            for (const EntityID& id : SceneView<RigidBody>())
             {
                 RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
                 Transform& transform{ g_entityManager->Get<Transform>(id) };

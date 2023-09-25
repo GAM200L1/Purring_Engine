@@ -318,18 +318,15 @@ namespace PE
 		void UpdateVectors(EntityID id, bool add = true)
 		{
 			if (add) 
-			{				
+			{			
+				if (std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) == m_poolsEntity["All"].end())
+				{
+					m_poolsEntity["All"].emplace_back(id);
+				}
 				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
 				{
-					if (pool.first == "All")
-					{
-						if (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end())
-						{
-							m_poolsEntity[pool.first].emplace_back(id);
-						}
-					}
-					else if (pool.second->HasEntity(id) && 
-							(std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
+					if (pool.second->HasEntity(id) && 
+					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
 					{
 						m_poolsEntity[pool.first].emplace_back(id);
 					}
@@ -337,38 +334,20 @@ namespace PE
 			}
 			else
 			{
-
+				if (!m_entities.count(id) &&
+					(std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) == m_poolsEntity["All"].end()))
+				{
+					m_poolsEntity["All"].erase(std::remove(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id), m_poolsEntity["All"].end());
+				}
 				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
 				{
-					if (pool.first == "All")
-					{
-						if (!m_entities.count(id) && 
-							(std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
-						{
-							m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
-						}
-					}
-					else if (!pool.second->HasEntity(id) &&
+					if (!pool.second->HasEntity(id) &&
 							(std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
 					{
 						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
 					}
 				}
 			}
-			
-			/*m_poolsEntity["All"].clear();
-			for (const EntityID& id : m_entities)
-			{
-				m_poolsEntity["All"].emplace_back(id);
-			}
-			for (const auto& p : m_componentPools)
-			{
-				m_poolsEntity[p.first].clear();
-				for (const auto& id : p.second->m_idxMap)
-				{
-					m_poolsEntity[p.first].emplace_back(id.first);
-				}
-			}*/
 		}
 	// ----- Private Functions ----- //
 	private:
