@@ -150,7 +150,7 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-    for (size_t i{}; i < 2500; ++i) {
+    for (size_t i{}; i < 2; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
         g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
@@ -287,10 +287,10 @@ void PE::CoreApplication::Run()
             EntityManager ent;
         }
 
-        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        //{
+        //    g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
+        //}
 
         // Physics test
         PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
