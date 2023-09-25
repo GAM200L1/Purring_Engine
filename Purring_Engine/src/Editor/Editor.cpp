@@ -48,7 +48,6 @@ namespace PE {
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
-
 	}
 
 	Editor::~Editor()
@@ -350,7 +349,6 @@ namespace PE {
 			ImGuiInputTextFlags input_text_flags = ImGuiInputTextFlags_EnterReturnsTrue | ImGuiInputTextFlags_EscapeClearsAll;
 			if (ImGui::InputText("Enter", &m_input, input_text_flags)) //inpux box
 			{
-
 				AddConsole(m_input);
 				//can serialize these command into an array
 				 
