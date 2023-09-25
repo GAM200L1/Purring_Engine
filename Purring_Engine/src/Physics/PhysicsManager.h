@@ -18,35 +18,42 @@ namespace PE
 	class PhysicsManager : public System
 	{
 	public:
-
-		
-
-		// ----- Removed Copy Ctors/Assignments ----- //
-		PhysicsManager(PhysicsManager const& r_cpyPhysicsManager) = delete;
-		PhysicsManager& operator=(PhysicsManager const& r_cpyPhysicsManager) = delete;
-
-		// ----- Public Getters and Setters ----- //
+		// ----- Constructor ----- //
 		PhysicsManager();
-
-		void InitializeSystem();
-
+		
+		// ----- Public Getters and Setters ----- //
 		float GetLinearDragCoefficient();
 		void SetLinearDragCoefficient(float newCoefficient);
 
-		// ----- Public Methods ----- //
-		void UpdateSystem(float deltaTime);
-		void UpdateDynamics(float deltaTime); // update forces, acceleration and velocity here
-		void DestroySystem();
+		float GetVelocityNegligence();
+		void SetVelocityNegligence(float negligence);
+
+		float GetFixedDt();
+		void SetFixedDt(float fixDt);
+
+		bool GetStepPhysics();
+		void SetStepPhysics(bool isStepState);
+
+		bool GetAdvanceStep();
+		void SetAdvanceStep(bool advance);
 
 		std::string GetName() { return m_systemName; }
+
+		// ----- Public Methods ----- //
+		void InitializeSystem();
+		void UpdateSystem(float deltaTime);
+		void DestroySystem();
+
+		// ----- Physics Methods ----- //
+		void UpdateDynamics(float deltaTime);
 
 	private:
 		// ----- Private Variables ----- //
 		float m_linearDragCoefficient;
 		float m_velocityNegligence;
+		float m_fixedDt;
 		bool m_applyStepPhysics;
 		bool m_advanceStep;
-		float m_fixedDt;
 		std::string m_systemName{ "Physics" };
 	};
 }

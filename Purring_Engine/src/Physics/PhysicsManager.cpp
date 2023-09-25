@@ -16,17 +16,16 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "ECS/SceneView.h"
 #include "Math/Transform.h"
 #include "RigidBody.h"
+#include "Logging/Logger.h"
+
+extern Logger engine_logger;
 
 namespace PE
 {
-	void PhysicsManager::InitializeSystem()
-	{
-		m_linearDragCoefficient = -2.f;
-		m_velocityNegligence = 2.f;
-		m_applyStepPhysics = false;
-		m_advanceStep = false;
-		m_fixedDt = 1.f / 60.f;
-	}
+	// ----- Constructor ----- //
+	PhysicsManager::PhysicsManager() :
+		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f },
+		m_applyStepPhysics{ false }, m_advanceStep{ false }, m_fixedDt{ 1.f / 60.f } {}
 
 	// ----- Public Getters ----- //
 	float PhysicsManager::GetLinearDragCoefficient()
@@ -39,13 +38,60 @@ namespace PE
 		m_linearDragCoefficient = (newCoefficient < 0.f) ? newCoefficient : -newCoefficient;
 	}
 
-	// ----- Public Methods ----- //
+	float PhysicsManager::GetVelocityNegligence()
+	{
+		return m_velocityNegligence;
+	}
+	void PhysicsManager::SetVelocityNegligence(float negligence)
+	{
+		m_velocityNegligence = negligence;
+	}
+
+	float PhysicsManager::GetFixedDt()
+	{
+		return m_fixedDt;
+	}
+	void PhysicsManager::SetFixedDt(float fixDt)
+	{
+		m_fixedDt = fixDt;
+	}
+
+	bool PhysicsManager::GetStepPhysics()
+	{
+		return m_applyStepPhysics;
+	}
+	void PhysicsManager::SetStepPhysics(bool isStepState)
+	{
+		m_applyStepPhysics = isStepState;
+	}
+
+	bool PhysicsManager::GetAdvanceStep()
+	{
+		return m_advanceStep;
+	}
+	void PhysicsManager::SetAdvanceStep(bool advance)
+	{
+		m_advanceStep = m_applyStepPhysics;
+	}
+
+	// ----- System Methods ----- //
+	void PhysicsManager::InitializeSystem()
+	{
+		// Check if Initialization was successful
+		engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+		engine_logger.SetTime();
+		engine_logger.AddLog(false, "PhysicsManager initialized!", __FUNCTION__);
+	}
+
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
 		if (!m_applyStepPhysics)
+		{
 			UpdateDynamics(deltaTime);
+		}
 		else
 		{
+			// Applies Step Physics
 			if (m_advanceStep)
 			{
 				UpdateDynamics(deltaTime);
@@ -54,7 +100,14 @@ namespace PE
 		}
 	}
 
-	void PhysicsManager::UpdateDynamics(float deltaTime) // update forces, acceleration and velocity here
+	void PhysicsManager::DestroySystem()
+	{
+		// empty by design
+	}
+
+	// ----- Physics Methods ----- //
+
+	void PhysicsManager::UpdateDynamics(float deltaTime)
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
@@ -84,10 +137,5 @@ namespace PE
 			rb.ZeroForce();
 			rb.m_rotationVelocity = 0.f;
 		}
-	}
-
-	void PhysicsManager::DestroySystem()
-	{
-		// empty by design
 	}
 }
