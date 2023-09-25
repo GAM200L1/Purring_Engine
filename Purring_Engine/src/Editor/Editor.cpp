@@ -443,7 +443,7 @@ namespace PE {
 					const bool is_selected = (m_currentSelectedObject == n);
 
 					std::string name = "GameObject" ;
-					name += std::to_string(n);
+					name += std::to_string(m_objects[n]);
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection

@@ -308,6 +308,22 @@ namespace PE
 			}
 			return ret;
 		}
+		const std::vector<EntityID>& GetEntityInPool(const ComponentID& pool)
+		{
+			return m_poolsEntity[pool];
+		}
+
+		void UpdateVectors()
+		{
+			for (const auto& p : m_componentPools)
+			{
+				m_poolsEntity[p.first].clear();
+				for (const auto& id : p.second->m_idxMap)
+				{
+					m_poolsEntity[p.first].emplace_back(id.first);
+				}
+			}
+		}
 	// ----- Private Functions ----- //
 	private:
 
@@ -320,7 +336,7 @@ namespace PE
 		// a queue of entity IDs to handle removed entities
 		std::set<EntityID> m_removed;
 		
-		// fns ptr to functions for handling the destruction of component pool
+		std::map<ComponentID, std::vector<EntityID>> m_poolsEntity;
 	};
 
 	// extern to allow the access to the entity manager instance
@@ -363,7 +379,7 @@ namespace PE
 		// it will call the constructor at this position instead of allocating more memory
 		m_componentPools[componentID]->Get(id) =  T();
 		++(m_componentPools[componentID]->m_size);
-
+		UpdateVectors();
 		return p_component;
 	}
 
@@ -404,7 +420,7 @@ namespace PE
 		// it will call the constructor at this position instead of allocating more memory
 		m_componentPools[componentID]->Get(id) = T(val);
 		++(m_componentPools[componentID]->size);
-
+		UpdateVectors();
 		return p_component;
 	}
 
@@ -491,6 +507,7 @@ namespace PE
 		// if the return is not a nullptr, it has the component
 		return (GetPointer<T>(id) != nullptr);
 	}
+
 	template<typename T>
 	void EntityManager::Remove(EntityID id)
 	{
@@ -509,5 +526,6 @@ namespace PE
 		// re-empalce the "last" entity inplace to the existing id's position
 		m_componentPools[componentID]->m_idxMap.emplace(lastEntID, poolID);
 		--(m_componentPools[componentID]->m_size);
+		UpdateVectors();
 	}
 }

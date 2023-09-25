@@ -220,7 +220,7 @@ namespace PE
             }
 
             // Make draw call for each game object with a renderer component
-            for (EntityID id : SceneView<Renderer, Transform>())
+            for (const EntityID& id : SceneView<Renderer, Transform>())
             {
                 Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
                 Transform& transform{ g_entityManager->Get<Transform>(id) };
@@ -266,7 +266,7 @@ namespace PE
             colors.reserve(2500);
 
             // Make draw call for each game object with a renderer component
-            for (EntityID id : SceneView<Renderer, Transform>())
+            for (const EntityID& id : SceneView<Renderer, Transform>())
             {
                 Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
                 Transform& transform{ g_entityManager->Get<Transform>(id) };
@@ -421,7 +421,7 @@ namespace PE
             glPointSize(10.f);
 
             // Draw each of the colliders
-            for (EntityID id : SceneView<Collider>()) 
+            for (const EntityID& id : SceneView<Collider>()) 
             {
                 Collider& collider{ g_entityManager->Get<Collider>(id) };
 

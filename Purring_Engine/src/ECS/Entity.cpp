@@ -92,6 +92,7 @@ namespace PE
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[componentID]->m_size);
+		UpdateVectors();
 	}
 
 	void EntityManager::Assign(const EntityID& id, const ComponentID& componentID)
@@ -128,6 +129,7 @@ namespace PE
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[componentID]->m_size);
+		UpdateVectors();
 	}
 
 	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& component) const
@@ -162,12 +164,12 @@ namespace PE
 	{
 		if (m_entities.count(id))
 		{
-			for (std::pair<const ComponentID, ComponentPool*>& pool : m_componentPools)
+			for (const ComponentID& pool : GetComponentIDs(id))
 			{
-				if (pool.second->HasEntity(id))
-				{
-					pool.second->remove(id);
-				}
+				m_componentPools[pool]->remove(id);
+				std::string str = "Removed Component-";
+				str += pool;
+				engine_logger.AddLog(false, str, __FUNCTION__);
 			}
 			m_entities.erase(id);
 			m_removed.emplace(id);
@@ -175,5 +177,6 @@ namespace PE
 			str += std::to_string(id);
 			engine_logger.AddLog(false, str, __FUNCTION__);
 		}
+		UpdateVectors();
 	}
 }
