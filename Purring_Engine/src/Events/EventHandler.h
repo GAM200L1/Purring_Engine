@@ -22,23 +22,14 @@
 #include "KeyEvent.h"
 #include "WindowEvent.h"
 #include <memory>
-
-namespace temp
+#include "Singleton.h"
+namespace PE
 {
-	class EventHandler
+	class EventHandler : public Singleton <EventHandler>
 	{
 		// ----- Constructors ----- // 
 	public:
 		EventHandler() : WindowEventDispatcher(), MouseEventDispatcher(), KeyEventDispatcher() {}
-
-		// ----- Public getters ----- // 
-	public:
-		/*!***********************************************************************************
-		 \brief     returns the current instance of event handler
-
-		 \return EventHandler* pointer to the single instance of event handler
-		*************************************************************************************/
-		static EventHandler* GetInstance();
 
 		// ----- Public variables ----- // 
 	public:
@@ -48,36 +39,33 @@ namespace temp
 
 		EventDispatcher<KeyEvents> KeyEventDispatcher;
 
-		// ----- Private variables ----- // 
-	private:
-		static std::unique_ptr<EventHandler> s_Instance;
 	};
 
-#define ADD_WINDOW_EVENT_LISTENER(eventType,func,arg) temp::EventHandler::GetInstance()->WindowEventDispatcher.AddListener(eventType, std::bind(&func,arg,std::placeholders::_1));
-#define ADD_MOUSE_EVENT_LISTENER(eventType,func,arg) temp::EventHandler::GetInstance()->MouseEventDispatcher.AddListener(eventType, std::bind(&func,arg,std::placeholders::_1));
-#define ADD_KEY_EVENT_LISTENER(eventType,func,arg) temp::EventHandler::GetInstance()->KeyEventDispatcher.AddListener(eventType, std::bind(&func,arg,std::placeholders::_1));
+#define ADD_WINDOW_EVENT_LISTENER(eventType,func,arg) PE::EventHandler::GetInstance().WindowEventDispatcher.AddListener(eventType, std::bind(&func,arg,std::placeholders::_1));
+#define ADD_MOUSE_EVENT_LISTENER(eventType,func,arg) PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(eventType, std::bind(&func,arg,std::placeholders::_1));
+#define ADD_KEY_EVENT_LISTENER(eventType,func,arg) PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(eventType, std::bind(&func,arg,std::placeholders::_1));
 
-#define ADD_ALL_WINDOW_EVENT_LISTENER(func,arg) temp::EventHandler::GetInstance()->WindowEventDispatcher.AddListener(temp::WindowEvents::WindowClose, std::bind(&func,arg,std::placeholders::_1));\
-											    temp::EventHandler::GetInstance()->WindowEventDispatcher.AddListener(temp::WindowEvents::WindowFocus, std::bind(&func,arg,std::placeholders::_1));\
-												temp::EventHandler::GetInstance()->WindowEventDispatcher.AddListener(temp::WindowEvents::WindowLostFocus, std::bind(&func,arg,std::placeholders::_1));\
-												temp::EventHandler::GetInstance()->WindowEventDispatcher.AddListener(temp::WindowEvents::WindowMoved, std::bind(&func,arg,std::placeholders::_1));\
-												temp::EventHandler::GetInstance()->WindowEventDispatcher.AddListener(temp::WindowEvents::WindowResize, std::bind(&func,arg,std::placeholders::_1));
+#define ADD_ALL_WINDOW_EVENT_LISTENER(func,arg) PE::EventHandler::GetInstance().WindowEventDispatcher.AddListener(PE::WindowEvents::WindowClose, std::bind(&func,arg,std::placeholders::_1));\
+											    PE::EventHandler::GetInstance().WindowEventDispatcher.AddListener(PE::WindowEvents::WindowFocus, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().WindowEventDispatcher.AddListener(PE::WindowEvents::WindowLostFocus, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().WindowEventDispatcher.AddListener(PE::WindowEvents::WindowMoved, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().WindowEventDispatcher.AddListener(PE::WindowEvents::WindowResize, std::bind(&func,arg,std::placeholders::_1));
 
-#define ADD_ALL_MOUSE_EVENT_LISTENER(func,arg) temp::EventHandler::GetInstance()->MouseEventDispatcher.AddListener(temp::MouseEvents::MouseMoved, std::bind(&func,arg,std::placeholders::_1));\
-											    temp::EventHandler::GetInstance()->MouseEventDispatcher.AddListener(temp::MouseEvents::MouseButtonPressed, std::bind(&func,arg,std::placeholders::_1));\
-												temp::EventHandler::GetInstance()->MouseEventDispatcher.AddListener(temp::MouseEvents::MouseButtonReleased, std::bind(&func,arg,std::placeholders::_1));\
-												temp::EventHandler::GetInstance()->MouseEventDispatcher.AddListener(temp::MouseEvents::MouseScrolled, std::bind(&func,arg,std::placeholders::_1));
+#define ADD_ALL_MOUSE_EVENT_LISTENER(func,arg) PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(PE::MouseEvents::MouseMoved, std::bind(&func,arg,std::placeholders::_1));\
+											    PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(PE::MouseEvents::MouseButtonPressed, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(PE::MouseEvents::MouseButtonReleased, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(PE::MouseEvents::MouseScrolled, std::bind(&func,arg,std::placeholders::_1));
 
-#define ADD_ALL_KEY_EVENT_LISTENER(func,arg) temp::EventHandler::GetInstance()->KeyEventDispatcher.AddListener(temp::KeyEvents::KeyPressed, std::bind(&func,arg,std::placeholders::_1));\
-												temp::EventHandler::GetInstance()->KeyEventDispatcher.AddListener(temp::KeyEvents::KeyRelease, std::bind(&func,arg,std::placeholders::_1));
+#define ADD_ALL_KEY_EVENT_LISTENER(func,arg) PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyPressed, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyRelease, std::bind(&func,arg,std::placeholders::_1));
 
 
 
 
 	//if engine but we not doing this yet
-#define SEND_WINDOW_EVENT(_event) EventHandler::GetInstance()->WindowEventDispatcher.SendEvent(_event);
-#define SEND_MOUSE_EVENT(_event) EventHandler::GetInstance()->MouseEventDispatcher.SendEvent(_event);
-#define SEND_KEY_EVENT(_event) EventHandler::GetInstance()->KeyEventDispatcher.SendEvent(_event);
+#define SEND_WINDOW_EVENT(_event) EventHandler::GetInstance().WindowEventDispatcher.SendEvent(_event);
+#define SEND_MOUSE_EVENT(_event) EventHandler::GetInstance().MouseEventDispatcher.SendEvent(_event);
+#define SEND_KEY_EVENT(_event) EventHandler::GetInstance().KeyEventDispatcher.SendEvent(_event);
 }
 
 #endif

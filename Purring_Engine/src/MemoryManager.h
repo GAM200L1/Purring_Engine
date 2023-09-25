@@ -15,11 +15,12 @@
 
 *************************************************************************************/
 #pragma once
+#include "Singleton.h"
 #include <string>
 #include <vector>
 #include <memory>
 // CONSTANT VARIABLES
-constexpr size_t max_size = 1024;
+constexpr size_t max_size = 1000000;
 
 namespace PE {
 	/*!***********************************************************************************
@@ -39,7 +40,7 @@ namespace PE {
 	};
 
 	//a stack allocating system
-	class StackAllocator
+	class StackAllocator 
 	{
 		// ----- Constructors ----- // 
 	public:
@@ -84,8 +85,9 @@ namespace PE {
 		//hold a shared pointer to ECS pool allocator
 	};
 
-	class MemoryManager
+	class MemoryManager : public Singleton <MemoryManager>
 	{
+		friend class Singleton<MemoryManager>;
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************
@@ -118,16 +120,9 @@ namespace PE {
 		*************************************************************************************/
 		void PrintData();
 		// ----- Public getters ----- // 
-	public:
-		/*!***********************************************************************************
-		 \brief					returns the top of the stack
-		 \return				char* returns a pointer to the top of the stack
-		*************************************************************************************/
-		static MemoryManager* GetInstance();
 	private:
 		std::vector<MemoryData> m_memoryAllocationData;		//for storing what memory allocated to where
 		StackAllocator m_stackAllocator; //the stack allocator
-		static std::unique_ptr<MemoryManager> s_Instance; // single instance of the memory manager
 	};
 
 

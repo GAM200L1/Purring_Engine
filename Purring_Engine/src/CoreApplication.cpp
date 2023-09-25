@@ -92,7 +92,7 @@ PE::CoreApplication::CoreApplication()
 
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
     // set flags
-    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
@@ -106,14 +106,14 @@ PE::CoreApplication::CoreApplication()
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();
     //assignning memory manually to renderer manager
-    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
     AddSystem(rendererManager);
 
 
     // Load a texture
     std::string catTextureName{ "cat" };
-    ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
-
+    ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
     for (size_t i{}; i < 5; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
@@ -147,7 +147,19 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-
+    // Render 50x50 purple sprites in a grid
+    for (size_t i{}; i < 200; ++i)
+    {
+        EntityID id = g_entityFactory->CreateEntity();
+        g_entityFactory->Assign(id, { "Transform", "Renderer" });
+        g_entityManager->Get<Transform>(id).position.x = 25.f * (i % 20) - 250.f;
+        g_entityManager->Get<Transform>(id).position.y = 25.f * (i / 20) - 250.f;
+        g_entityManager->Get<Transform>(id).width = 50.f;
+        g_entityManager->Get<Transform>(id).height = 50.f;
+        g_entityManager->Get<Transform>(id).orientation = 0.f;
+        g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
+        g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 0.f, 1.f, 0.1f);
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -180,7 +192,7 @@ void PE::CoreApplication::Run()
         // Time start
         TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
-        MemoryManager::GetInstance()->CheckMemoryOver();
+        MemoryManager::GetInstance().CheckMemoryOver();
         // UPDATE -----------------------------------------------------
         
 
@@ -226,6 +238,11 @@ void PE::CoreApplication::Run()
                 g_entityManager->RemoveEntity(lastEnt.front());
                 lastEnt.pop();
             }
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            EntityManager ent;
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
@@ -286,8 +303,7 @@ void PE::CoreApplication::Run()
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();
-    ResourceManager::UnloadResources();
-    ResourceManager::DeleteInstance();
+    ResourceManager::GetInstance().UnloadResources();
     PhysicsManager::DeleteInstance();
     CollisionManager::DeleteInstance();
 }

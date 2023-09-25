@@ -23,7 +23,7 @@
 #include <sstream>
 #include <utility>
 
-namespace temp
+namespace PE
 {
 	enum class MouseEvents
 	{
