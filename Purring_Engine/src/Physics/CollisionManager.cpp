@@ -271,7 +271,7 @@ namespace PE
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
 			collided += CircleAABBEdgeIntersection(r_circle, lineSeg);
 		}
-
+		
 		if (collided >= 2)
 		{
 			if ((r_AABB.center - r_circle.center).LengthSquared() == 0.f)
@@ -300,8 +300,7 @@ namespace PE
 			}
 			return true;
 		}
-
-		return false;
+		return collided >= 2;
 	}
 
 	// Circle + AABB Edge
