@@ -176,21 +176,25 @@ namespace PE
 				// penetration depth will be set to the width since its at 
 				if (r_contactPt.intersectionPoint.x == r_AABB2.min.x)
 				{
+					// if colliding left
 					r_contactPt.normal = vec2{ -1.f, 0.f };
 					r_contactPt.penetrationDepth = r_AABB1.scale.x * 0.5f;
 				}
 				else if (r_contactPt.intersectionPoint.x == r_AABB2.max.x)
 				{
+					// if colliding right
 					r_contactPt.normal = vec2{ 1.f,0.f };
 					r_contactPt.penetrationDepth = r_AABB1.scale.x * 0.5f;
 				}
 				else if (r_contactPt.intersectionPoint.y == r_AABB2.min.y)
 				{
+					// if colliding bottom
 					r_contactPt.normal = vec2{ 0.f, -1.f };
 					r_contactPt.penetrationDepth = r_AABB1.scale.y * 0.5f;
 				}
 				else
 				{
+					// if colliding top
 					r_contactPt.normal = vec2{ 0.f, 1.f };
 					r_contactPt.penetrationDepth = r_AABB1.scale.y * 0.5f;
 				}
@@ -211,6 +215,7 @@ namespace PE
 			// get contact point data etc.
 			if (deltaLengthSquared == 0.f)
 			{
+				// if the circles are overlapping exactly
 				r_contactPt.normal = vec2{ 0.f, 1.f };
 				r_contactPt.intersectionPoint = (r_contactPt.normal * r_circle2.radius) + r_circle2.center;
 				r_contactPt.penetrationDepth = r_circle1.radius;
