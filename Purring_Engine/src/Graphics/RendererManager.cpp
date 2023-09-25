@@ -760,33 +760,16 @@ namespace PE
         glm::mat4 RendererManager::GenerateTransformMatrix(float const width, float const height,
             float const orientation, float const positionX, float const positionY) 
         {
-            // Get scale matrix
-            glm::mat4 scale_matrix{
-                width,  0.f,    0.f, 0.f,
-                0.f,    height, 0.f, 0.f,
-                0.f,    0.f,    1.f, 0.f,
-                0.f,    0.f,    0.f, 1.f
-            };
-
             // Get rotation matrix
             GLfloat sin_angle{ glm::sin(orientation) };
             GLfloat cos_angle{ glm::cos(orientation) };
-            glm::mat4 rotation_matrix{
-                cos_angle,  sin_angle, 0.f, 0.f,
-                -sin_angle, cos_angle, 0.f, 0.f,
-                0.f,        0.f,       1.f, 0.f,
-                0.f,        0.f,       0.f, 1.f
-            };
 
-            // Get translation matrix
-            glm::mat4 translation_matrix{
-                1.f,    0.f,    0.f,    0.f,
-                0.f,    1.f,    0.f,    0.f,
-                0.f,    0.f,    1.f,    0.f,
+            return glm::mat4{
+                width * cos_angle, width * sin_angle, 0.f, 0.f,
+                height * -sin_angle, height * cos_angle, 0.f, 0.f,
+                0.f,        0.f,       1.f, 0.f,
                 positionX, positionY, 0.f, 1.f
             };
-
-            return translation_matrix * rotation_matrix * scale_matrix;
         }
 
 
@@ -797,7 +780,7 @@ namespace PE
                 rightVector.x, rightVector.y, 0.f,    0.f,
                 upVector.x,   upVector.y,   0.f,    0.f,
                 0.f,    0.f,    1.f,    0.f,
-                centerPosition.x, centerPosition.y,     0.f,    1.f
+                centerPosition.x, centerPosition.y, 0.f, 1.f
             };
         }
 
