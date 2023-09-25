@@ -606,16 +606,38 @@ namespace PE {
 		}
 		else
 		{
-			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
+			{
 				if (m_objectIsSelected)
 				{
 					std::vector<ComponentID> components = g_entityManager->GetComponentIDs(m_currentSelectedObject);
+					int componentCount = 0; //unique id for imgui objects
 					for (const ComponentID& name : components)
 					{
+						++componentCount;//increment unique id
+						ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
+
+						//search through each component, create a collapsible header if the component exist
+
+						//transform component
 						if (name == "Transform")
 						{
 							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##",o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								//each variable in the component
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Position: ");
 								ImGui::Text("x: "); ImGui::SameLine(); ImGui::InputFloat("##x", &g_entityManager->Get<Transform>(m_currentSelectedObject).position.x, 1.0f, 100.f, "%.3f");
@@ -631,31 +653,51 @@ namespace PE {
 								ImGui::SetNextItemWidth(200.f); ImGui::SliderFloat("##Orientation", &rotation, -180, 180, "%.3f");
 								ImGui::Text("             "); ImGui::SameLine();  ImGui::SetNextItemWidth(200.f); ImGui::InputFloat("##Orientation2", &rotation, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_CharsDecimal);
 								ImGui::SetItemTooltip("In Radians");
-								g_entityManager->Get<Transform>(m_currentSelectedObject).orientation = rotation * (M_PI/180);								
+								g_entityManager->Get<Transform>(m_currentSelectedObject).orientation = static_cast<float>(rotation * (M_PI/180));								
 							}
 						}
 
+						//rigidbody component
 						if (name == "RigidBody")
 						{
 							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								EnumRigidBodyType bt = g_entityManager->Get<RigidBody>(m_currentSelectedObject).GetType();
 								int index = static_cast<int>(bt);
-								//hard coded for now untill reflection
+								//hard coded rigidbody types
 								const char* types[] = { "STATIC","DYNAMIC","KINEMATIC" };
 								ImGui::Text("Rigidbody Type: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
+								//combo box of the different rigidbody types
 								if (ImGui::Combo("##Rigidbody Type", &index, types, IM_ARRAYSIZE(types)))
 								{
+									//setting the rigidbody type when selected
 									bt = static_cast<EnumRigidBodyType>(index);
 									g_entityManager->Get<RigidBody>(m_currentSelectedObject).SetType(bt);
 								}
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator(); // add line to make it neater
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
 								//temp here untill yeni confirms it is getting used
 								//ImGui::Checkbox("Is Awake", &g_entityManager->Get<RigidBody>(m_currentSelectedIndex).m_awake);
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Separator();
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//mass variable of the rigidbody component
+
 								float mass = g_entityManager->Get<RigidBody>(m_currentSelectedObject).GetMass();
 								ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
 								g_entityManager->Get<RigidBody>(m_currentSelectedObject).SetMass(mass);
@@ -663,17 +705,36 @@ namespace PE {
 							}
 						}
 
+						//collider component
 						if (name == "Collider")
 						{
 							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								int index = static_cast<int>(g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant.index());
+
+								//get the current collider type using the variant
+								int index = static_cast<int>(g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant.index());								
+								//hardcoded collider types
 								const char* types[] = { "AABB","CIRCLE" };
 								ImGui::Text("Collider Type: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
+								//set combo box for the different collider types
 								if (ImGui::Combo("##Collider Types", &index, types, IM_ARRAYSIZE(types)))
 								{
+									//hardcode setting of variant using the current gotten index
 									if (index)
 									{
 										g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant = CircleCollider();
@@ -687,14 +748,29 @@ namespace PE {
 							}
 						}
 
+						//renderer component
 						if (name == "Renderer")
 						{
 							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								//setting textures
 								std::vector<const char*> key;
 								key.push_back("");
+
 								//to get all the keys
 								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
 								{
@@ -708,11 +784,13 @@ namespace PE {
 									index++;
 								}
 
+								//create a combo box of texture ids
 								ImGui::SetNextItemWidth(200.0f);
 								if (!key.empty()) 
 								{
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
 									if (ImGui::Combo("##Textures", &index, key.data(), static_cast<int>(key.size())))
 									{
 										g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).SetTextureKey(key[index]);
@@ -722,6 +800,8 @@ namespace PE {
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								//setting colors
+								
+								//get and set color variable of the renderer component
 								ImVec4 color;
 								color.x  = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().r;
 								color.y = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().g;
@@ -735,6 +815,8 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
+
+
 					}
 				}
 			}
