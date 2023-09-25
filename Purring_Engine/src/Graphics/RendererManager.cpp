@@ -38,6 +38,11 @@
 
 extern Logger engine_logger;
 
+std::vector<glm::mat4> worldToNdcMatrices{};
+std::vector<glm::mat4> modelToWorldMatrices{};
+std::vector<glm::vec4> colors{};
+
+
 namespace PE
 {
     namespace Graphics
@@ -86,6 +91,10 @@ namespace PE
             // Load a shader program
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
+
+            worldToNdcMatrices.reserve(3000);
+            modelToWorldMatrices.reserve(3000);
+            colors.reserve(3000);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -258,15 +267,13 @@ namespace PE
             m_meshes[meshIndex].Bind();
             std::shared_ptr<Graphics::Texture> p_texture{};
 
-            std::vector<glm::mat4> worldToNdcMatrices{};
-            std::vector<glm::mat4> modelToWorldMatrices{};
-            std::vector<glm::vec4> colors{};
-            worldToNdcMatrices.reserve(2500);
-            modelToWorldMatrices.reserve(2500);
-            colors.reserve(2500);
+            
+            worldToNdcMatrices.clear();
+            modelToWorldMatrices.clear();
+            colors.clear();
 
             // Make draw call for each game object with a renderer component
-            for (const EntityID& id : SceneView<Renderer, Transform>())
+            for (const EntityID& id : g_entityManager->GetEntityInPool("Renderer"))
             {
                 Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
                 Transform& transform{ g_entityManager->Get<Transform>(id) };
