@@ -119,7 +119,7 @@ PE::CoreApplication::CoreApplication()
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
 
-    for (size_t i{ 0 }; i < 2; ++i)
+    for (size_t i{ 0 }; i < 9; ++i)
     {
         g_entityFactory->CreateFromPrefab("GameObject");
     }
@@ -131,78 +131,78 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(0).height = 100.f;
     g_entityManager->Get<Transform>(0).orientation = 0.f;
     g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(0).colliderVariant = AABBCollider();
+    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
     g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
 
-    //// creates AABB map boundaries
-    //g_entityManager->Get<Transform>(1).position.x = 700.f;
-    //g_entityManager->Get<Transform>(1).position.y = 0.f;
-    //g_entityManager->Get<Transform>(1).width = 100.f;
-    //g_entityManager->Get<Transform>(1).height = 700.f;
-    //g_entityManager->Get<Transform>(1).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
-    //
-    //g_entityManager->Get<Transform>(2).position.x = -700.f;
-    //g_entityManager->Get<Transform>(2).position.y = 0.f;
-    //g_entityManager->Get<Transform>(2).width = 100.f;
-    //g_entityManager->Get<Transform>(2).height = 700.f;
-    //g_entityManager->Get<Transform>(2).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(2).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(2).colliderVariant = AABBCollider();
-    //
-    //g_entityManager->Get<Transform>(3).position.x = 0.f;
-    //g_entityManager->Get<Transform>(3).position.y = 350.f;
-    //g_entityManager->Get<Transform>(3).width = 1500.f;
-    //g_entityManager->Get<Transform>(3).height = 100.f;
-    //g_entityManager->Get<Transform>(3).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(3).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(3).colliderVariant = AABBCollider();
-    //
-    //g_entityManager->Get<Transform>(4).position.x = 0.f;
-    //g_entityManager->Get<Transform>(4).position.y = -350.f;
-    //g_entityManager->Get<Transform>(4).width = 1500.f;
-    //g_entityManager->Get<Transform>(4).height = 100.f;
-    //g_entityManager->Get<Transform>(4).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(4).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(4).colliderVariant = AABBCollider();
+    // creates AABB map boundaries
+    g_entityManager->Get<Transform>(1).position.x = 700.f;
+    g_entityManager->Get<Transform>(1).position.y = 0.f;
+    g_entityManager->Get<Transform>(1).width = 100.f;
+    g_entityManager->Get<Transform>(1).height = 700.f;
+    g_entityManager->Get<Transform>(1).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    
+    g_entityManager->Get<Transform>(2).position.x = -700.f;
+    g_entityManager->Get<Transform>(2).position.y = 0.f;
+    g_entityManager->Get<Transform>(2).width = 100.f;
+    g_entityManager->Get<Transform>(2).height = 700.f;
+    g_entityManager->Get<Transform>(2).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(2).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(2).colliderVariant = AABBCollider();
+    
+    g_entityManager->Get<Transform>(3).position.x = 0.f;
+    g_entityManager->Get<Transform>(3).position.y = 350.f;
+    g_entityManager->Get<Transform>(3).width = 1500.f;
+    g_entityManager->Get<Transform>(3).height = 100.f;
+    g_entityManager->Get<Transform>(3).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(3).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(3).colliderVariant = AABBCollider();
+    
+    g_entityManager->Get<Transform>(4).position.x = 0.f;
+    g_entityManager->Get<Transform>(4).position.y = -350.f;
+    g_entityManager->Get<Transform>(4).width = 1500.f;
+    g_entityManager->Get<Transform>(4).height = 100.f;
+    g_entityManager->Get<Transform>(4).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(4).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(4).colliderVariant = AABBCollider();
 
-    //// AABB Static Collider
-    //g_entityManager->Get<Transform>(5).position.x = 200.f;
-    //g_entityManager->Get<Transform>(5).position.y = 200.f;
-    //g_entityManager->Get<Transform>(5).width = 100.f;
-    //g_entityManager->Get<Transform>(5).height = 100.f;
-    //g_entityManager->Get<Transform>(5).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(5).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(5).colliderVariant = AABBCollider();
-    //
-    //// AABB Dynamic Collider
-    //g_entityManager->Get<Transform>(6).position.x = -200.f;
-    //g_entityManager->Get<Transform>(6).position.y = 200.f;
-    //g_entityManager->Get<Transform>(6).width = 180.f;
-    //g_entityManager->Get<Transform>(6).height = 100.f;
-    //g_entityManager->Get<Transform>(6).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(6).SetType(EnumRigidBodyType::DYNAMIC);
-    //g_entityManager->Get<Collider>(6).colliderVariant = AABBCollider();
+    // AABB Static Collider
+    g_entityManager->Get<Transform>(5).position.x = 200.f;
+    g_entityManager->Get<Transform>(5).position.y = 200.f;
+    g_entityManager->Get<Transform>(5).width = 100.f;
+    g_entityManager->Get<Transform>(5).height = 100.f;
+    g_entityManager->Get<Transform>(5).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(5).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(5).colliderVariant = AABBCollider();
+    
+    // AABB Dynamic Collider
+    g_entityManager->Get<Transform>(6).position.x = -200.f;
+    g_entityManager->Get<Transform>(6).position.y = 200.f;
+    g_entityManager->Get<Transform>(6).width = 180.f;
+    g_entityManager->Get<Transform>(6).height = 100.f;
+    g_entityManager->Get<Transform>(6).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(6).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(6).colliderVariant = AABBCollider();
 
-    //// Circle Static Collider
-    //g_entityManager->Get<Transform>(7).position.x = -200.f;
-    //g_entityManager->Get<Transform>(7).position.y = -200.f;
-    //g_entityManager->Get<Transform>(7).width = 100.f;
-    //g_entityManager->Get<Transform>(7).height = 100.f;
-    //g_entityManager->Get<Transform>(7).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(7).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(7).colliderVariant = CircleCollider();
+    // Circle Static Collider
+    g_entityManager->Get<Transform>(7).position.x = -200.f;
+    g_entityManager->Get<Transform>(7).position.y = -200.f;
+    g_entityManager->Get<Transform>(7).width = 100.f;
+    g_entityManager->Get<Transform>(7).height = 100.f;
+    g_entityManager->Get<Transform>(7).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(7).SetType(EnumRigidBodyType::STATIC);
+    g_entityManager->Get<Collider>(7).colliderVariant = CircleCollider();
 
     // Circle Dynamic Collider
-    g_entityManager->Get<Transform>(1).position.x = 200.f;
-    g_entityManager->Get<Transform>(1).position.y = -200.f;
-    g_entityManager->Get<Transform>(1).width = 100.f;
-    g_entityManager->Get<Transform>(1).height = 100.f;
-    g_entityManager->Get<Transform>(1).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
+    g_entityManager->Get<Transform>(8).position.x = 200.f;
+    g_entityManager->Get<Transform>(8).position.y = -200.f;
+    g_entityManager->Get<Transform>(8).width = 100.f;
+    g_entityManager->Get<Transform>(8).height = 100.f;
+    g_entityManager->Get<Transform>(8).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(8).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(8).colliderVariant = CircleCollider();
 }
 
 /*-----------------------------------------------------------------------------
@@ -257,8 +257,6 @@ void PE::CoreApplication::Run()
             // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
 
         }
-
-        
 
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();

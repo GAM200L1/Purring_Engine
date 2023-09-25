@@ -49,8 +49,13 @@ namespace PE
 
 	void CollisionManager::UpdateSystem(float deltaTime)
 	{
+		// prevent warnings
+		deltaTime;
+		// Update the Collider's specs
 		UpdateColliders();
+		// Test for Collisions in the scene
 		TestColliders();
+		// Resolve the positions and velocities of the entities
 		ResolveCollision();
 	}
 
@@ -109,15 +114,22 @@ namespace PE
 									{
 										if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
 										{
-											std::swap(ColliderID_1, ColliderID_2);
+											m_manifolds.emplace_back
+											(Manifold{ contactPt,
+													   g_entityManager->Get<Transform>(ColliderID_2),
+													   g_entityManager->Get<Transform>(ColliderID_1),
+													   g_entityManager->GetPointer<RigidBody>(ColliderID_2),
+													   g_entityManager->GetPointer<RigidBody>(ColliderID_1) });
 										}
-
-										m_manifolds.emplace_back
-										(Manifold{ contactPt,
-												   g_entityManager->Get<Transform>(ColliderID_1),
-												   g_entityManager->Get<Transform>(ColliderID_2),
-												   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
-												   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
+										else
+										{
+											m_manifolds.emplace_back
+											(Manifold{ contactPt,
+													   g_entityManager->Get<Transform>(ColliderID_1),
+													   g_entityManager->Get<Transform>(ColliderID_2),
+													   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
+													   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
+										}
 									}
 									// else send message to trigger respective event?
 								}
@@ -260,7 +272,7 @@ namespace PE
 	// Circle + Rect
 	bool CollisionIntersection(CircleCollider const& r_circle, AABBCollider const& r_AABB, Contact& r_contactPt)
 	{
-		int collided = 0;
+		int collided{ 0 };
 
 		if (r_circle.center.x >= r_AABB.min.x && r_circle.center.x <= r_AABB.max.x) // if circle center is within the AABB's x range
 		{
@@ -276,6 +288,10 @@ namespace PE
 			LineSegment lineSeg{ r_AABB.max, vec2{r_AABB.max.x, r_AABB.min.y} };
 			collided += CircleAABBEdgeIntersection(r_circle, lineSeg);
 		}
+		else
+		{
+			collided = 0;
+		}
 
 		if (r_circle.center.y >= r_AABB.min.y && r_circle.center.y <= r_AABB.max.y) // if circle center is within the AABB's y range
 		{
@@ -290,6 +306,10 @@ namespace PE
 		{
 			LineSegment lineSeg{ vec2{r_AABB.min.x, r_AABB.max.y}, r_AABB.max };
 			collided += CircleAABBEdgeIntersection(r_circle, lineSeg);
+		}
+		else
+		{
+			collided = collided;
 		}
 		
 		if (collided >= 2)
@@ -318,9 +338,8 @@ namespace PE
 				}
 				
 			}
-			return true;
 		}
-		return collided >= 2;
+		return (collided >= 2);
 	}
 
 	// Circle + AABB Edge
@@ -342,8 +361,8 @@ namespace PE
 				float radiusSqr = r_circle.radius * r_circle.radius;
 				return ((p0CenterLengthSqr <= radiusSqr) + (p1CenterLengthSqr <= radiusSqr));
 			}
-			return false;
 		}
+		return 0;
 	}
 }
 
