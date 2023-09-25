@@ -83,15 +83,6 @@ namespace PE {
 		m_renderDebug = !m_renderDebug;
 	}
 
-	void Editor::UpdateObjectList()
-	{
-		m_objects.clear();
-		for (EntityID id : SceneView())
-		{
-			m_objects.emplace_back(id);
-		}
-	}
-
 	void Editor::ping()
 	{
 		AddConsole("pong");
@@ -402,7 +393,7 @@ namespace PE {
 				g_entityFactory->Assign(id, { "Transform", "Renderer" });
 				g_entityManager->Get<Transform>(id).height = 100.f;
 				g_entityManager->Get<Transform>(id).width = 100.f;
-				UpdateObjectList();
+				//UpdateObjectList();
 			}
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
@@ -412,8 +403,8 @@ namespace PE {
 					AddInfoLog("Object Deleted");
 					std::stringstream ss;
 					ss << "deleted object " << m_currentSelectedObject;
-					//m_items.erase(m_items.begin() + m_currentSelectedIndex);
-					g_entityManager->RemoveEntity(m_objects[m_currentSelectedObject]);
+					
+					g_entityManager->RemoveEntity(g_entityManager->GetEntitiesInPool("All")[m_currentSelectedObject]);
 
 					//if not first index
 					m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
@@ -421,30 +412,29 @@ namespace PE {
 					//if object selected
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
-					if (m_objects.empty()) m_currentSelectedObject = -1;//if nothing selected
+					if (g_entityManager->GetEntitiesInPool("All").empty()) m_currentSelectedObject = -1;//if nothing selected
 
 					count--;
 
-					UpdateObjectList();
 				}
 			}
 
 			if (ImGui::Button("Clone Object"))
 			{
 				g_entityFactory->Clone(m_currentSelectedObject);
-				UpdateObjectList();
+				//UpdateObjectList();
 			}
 
 			ImGui::Separator();
 
 			//loop to show all the items ins the vector
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-				for (int n = 0; n < m_objects.size(); n++)
+				for (int n = 0; n < g_entityManager->GetEntitiesInPool("All").size(); n++)
 				{
 					const bool is_selected = (m_currentSelectedObject == n);
 
 					std::string name = "GameObject" ;
-					name += std::to_string(m_objects[n]);
+					name += std::to_string(g_entityManager->GetEntitiesInPool("All")[n]);
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
