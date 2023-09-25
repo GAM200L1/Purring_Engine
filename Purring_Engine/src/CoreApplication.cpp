@@ -61,7 +61,7 @@ SerializationManager sm;
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 #include "Graphics/Renderer.h"
-
+#include "InputSystem.h"
 
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
@@ -108,7 +108,8 @@ PE::CoreApplication::CoreApplication()
     //assignning memory manually to renderer manager
     Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
     AddSystem(rendererManager);
-
+    InputSystem* ip = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(ip);
 
     // Load a texture
     std::string catTextureName{ "cat" };
