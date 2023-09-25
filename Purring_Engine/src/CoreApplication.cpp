@@ -68,6 +68,8 @@ PE::EntityFactory entFactory;
 
 std::queue<EntityID> lastEnt{};
 
+std::vector<EntityID> testVector;
+
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -148,7 +150,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
     // Render 50x50 purple sprites in a grid
-    for (size_t i{}; i < 200; ++i)
+    for (size_t i{}; i < 2500; ++i)
     {
         EntityID id = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id, { "Transform", "Renderer" });
@@ -159,6 +161,10 @@ PE::CoreApplication::CoreApplication()
         g_entityManager->Get<Transform>(id).orientation = 0.f;
         g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
         g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 0.f, 1.f, 0.1f);
+    }
+    for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
+    {
+        testVector.emplace_back(id);
     }
 }
 
@@ -212,10 +218,47 @@ void PE::CoreApplication::Run()
         {
             //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
             // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "SceneView<Renderer, Transform>() took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
         }
-
-        
+        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : SceneView<Graphics::Renderer>())
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "SceneView<Renderer>() took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : testVector)
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "Stored vector took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
 
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();
