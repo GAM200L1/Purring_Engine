@@ -278,15 +278,10 @@ namespace PE
                 Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
                 Transform& transform{ g_entityManager->Get<Transform>(id) };
 
-                glm::mat4 glmObjectTransform
-                {
-                    GenerateTransformMatrix(transform.width, // width
-                        transform.height, transform.orientation, // height, orientation
-                        transform.position.x, transform.position.y) // x, y position
-                };
-
                 worldToNdcMatrices.emplace_back(r_worldToNdc);
-                modelToWorldMatrices.emplace_back(glmObjectTransform);
+                modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
+                    transform.height, transform.orientation, // height, orientation
+                    transform.position.x, transform.position.y)); // x, y position
                 colors.emplace_back(renderer.GetColor());
 
                 // Attempt to retrieve and bind the texture
