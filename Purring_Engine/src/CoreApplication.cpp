@@ -108,9 +108,10 @@ PE::CoreApplication::CoreApplication()
     //assignning memory manually to renderer manager
     Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
     PhysicsManager* physicsManager = new (MemoryManager::GetInstance()->AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
+    CollisionManager* collisionManager = new (MemoryManager::GetInstance()->AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     AddSystem(physicsManager);
+    AddSystem(collisionManager);
     AddSystem(rendererManager);
-    // Collision
     
 
 
@@ -312,11 +313,6 @@ void PE::CoreApplication::Run()
             g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
         }
 
-        // Physics test
-        CollisionManager::UpdateColliders();
-        CollisionManager::TestColliders();
-        CollisionManager::ResolveCollision();
-
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)
         double currentTime = glfwGetTime();
@@ -351,7 +347,6 @@ void PE::CoreApplication::Run()
     m_windowManager.Cleanup();
     ResourceManager::UnloadResources();
     ResourceManager::DeleteInstance();
-    CollisionManager::DeleteInstance();
 }
 
 

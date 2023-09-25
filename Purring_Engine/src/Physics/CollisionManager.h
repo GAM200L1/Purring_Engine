@@ -12,36 +12,40 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 *******************************************************************************/
 #pragma once
 #include "prpch.h"
+#include "System.h"
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
 #include "Colliders.h"
 
 namespace PE
 {
-	class CollisionManager
+	class CollisionManager : public System
 	{
 	public:
-		
-		// ----- Removed Copy Ctors/Assignments ----- //
-		CollisionManager(CollisionManager const& r_cpyCollisionManager) = delete;
-		CollisionManager& operator=(CollisionManager const& r_cpyCollisionManager) = delete;
+		// ----- Constructors ----- //
+		CollisionManager();
 
 		// ----- Public Getters ----- //
-		static CollisionManager* GetInstance();
+		Manifold* GetManifoldVector();
+		
+		std::string GetName();
 
-		// ----- Public Methods ----- //
-		static void UpdateColliders();
-		static void TestColliders();
-		static void ResolveCollision();
-		static void DeleteInstance();
+		// ----- System Methods ----- //
+		void InitializeSystem();
+		void UpdateSystem(float deltaTime);
+		void DestroySystem();
+
+		// ----- Collision Methods ----- //
+		void UpdateColliders();
+		void TestColliders();
+		void ResolveCollision();
 
 	private:
-		CollisionManager() {}
-		static std::vector<Manifold> m_manifolds;
-		static CollisionManager* p_instance;
+		std::vector<Manifold> m_manifolds;
+		std::string m_systemName{ "Collision" };
 	};
 
-	// Static + Dynamic Collision Checks
+	// ----- Collision Helper Functions ----- //
 	// Rect + Rect
 	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, Contact& r_contactPt);
 	// Circle + Circle

@@ -18,20 +18,48 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "Logging/Logger.h"
 
 extern Logger engine_logger;
-std::vector<PE::Manifold> PE::CollisionManager::m_manifolds;
-PE::CollisionManager* PE::CollisionManager::p_instance;
 
 namespace PE
 {
-	// ----- Public Getters ----- //
-	CollisionManager* CollisionManager::GetInstance()
+	// ----- Constructor ----- //
+	CollisionManager::CollisionManager() 
 	{
-		if (!p_instance)
-		{
-			p_instance = new CollisionManager();
-		}
-		return p_instance;
+		// empty by design
 	}
+
+	// ----- Public Getters ----- //
+	Manifold* CollisionManager::GetManifoldVector()
+	{
+		return m_manifolds.data();
+	}
+
+	std::string CollisionManager::GetName()
+	{
+		return m_systemName;
+	}
+
+	// ----- System Methods ----- //
+	void CollisionManager::InitializeSystem()
+	{
+		// Check if Initialization was successful
+		engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+		engine_logger.SetTime();
+		engine_logger.AddLog(false, "CollisionManager initialized!", __FUNCTION__);
+	}
+
+	void CollisionManager::UpdateSystem(float deltaTime)
+	{
+		UpdateColliders();
+		TestColliders();
+		ResolveCollision();
+	}
+
+	void CollisionManager::DestroySystem()
+	{
+		m_manifolds.clear();
+	}
+
+	// ----- Collision Methods ----- //
 
 	void CollisionManager::UpdateColliders()
 	{
@@ -54,12 +82,10 @@ namespace PE
 	{
 		for (EntityID ColliderID_1 : SceneView<Collider, Transform>())
 		{
-
 			Collider& collider1 = g_entityManager->Get<Collider>(ColliderID_1);
 
 			for (EntityID ColliderID_2 : SceneView<Collider>())
 			{
-
 				Collider& collider2 = g_entityManager->Get<Collider>(ColliderID_2);
 
 				// if its the same don't check
@@ -113,13 +139,7 @@ namespace PE
 		m_manifolds.clear();
 	}
 
-
-	void CollisionManager::DeleteInstance()
-	{
-		delete p_instance;
-		p_instance = nullptr;
-	}
-
+	// ----- Collision Helper Functions ----- //
 
 	// Rect + Rect
 	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, Contact& r_contactPt)
