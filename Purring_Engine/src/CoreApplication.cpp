@@ -150,7 +150,7 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-    for (size_t i{}; i < 2500; ++i) {
+    for (size_t i{}; i < 25; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
         g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
