@@ -276,10 +276,6 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
-        if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_RELEASE)
-        {
-            
-        }
 
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();
@@ -305,6 +301,17 @@ void PE::CoreApplication::Run()
                 g_entityManager->RemoveEntity(lastEnt.front());
                 lastEnt.pop();
             }
+        }
+
+        // set step physics
+        if (glfwGetKey(m_window, GLFW_KEY_P) == GLFW_RELEASE)
+        {
+
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_N) == GLFW_RELEASE)
+        {
+
         }
 
         // dash
