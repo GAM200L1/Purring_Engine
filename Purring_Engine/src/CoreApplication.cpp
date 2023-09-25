@@ -92,7 +92,7 @@ PE::CoreApplication::CoreApplication()
 
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
     // set flags
-    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
@@ -148,7 +148,19 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-
+    // Render 50x50 purple sprites in a grid
+    for (size_t i{}; i < 200; ++i)
+    {
+        EntityID id = g_entityFactory->CreateEntity();
+        g_entityFactory->Assign(id, { "Transform", "Renderer" });
+        g_entityManager->Get<Transform>(id).position.x = 25.f * (i % 20) - 250.f;
+        g_entityManager->Get<Transform>(id).position.y = 25.f * (i / 20) - 250.f;
+        g_entityManager->Get<Transform>(id).width = 50.f;
+        g_entityManager->Get<Transform>(id).height = 50.f;
+        g_entityManager->Get<Transform>(id).orientation = 0.f;
+        g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
+        g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 0.f, 1.f, 0.1f);
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -227,6 +239,11 @@ void PE::CoreApplication::Run()
                 g_entityManager->RemoveEntity(lastEnt.front());
                 lastEnt.pop();
             }
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            EntityManager ent;
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)

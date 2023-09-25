@@ -63,7 +63,7 @@ namespace PE {
 
 	bool Editor::IsEditorActive()
 	{
-		return m_showSceneView;
+		return m_showEditor;
 	}
 
 	bool Editor::IsRenderingDebug()

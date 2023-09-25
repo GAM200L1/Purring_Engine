@@ -129,7 +129,7 @@ namespace PE
         *************************************************************************************/
         void* Get(size_t index)
         {
-            return reinterpret_cast<void*>(p_data + index);
+            return reinterpret_cast<void*>(p_data + m_idxMap.at(index));
         }
         
     // ----- Public methods ----- // 
