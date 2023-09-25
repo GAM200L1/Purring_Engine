@@ -41,8 +41,8 @@ namespace PE {
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
-		//for the object list
-		m_objectIsSelected = false;
+			//for the object list
+			m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
 
 		//mapping commands to function calls
@@ -141,7 +141,7 @@ namespace PE {
 		ImGui_ImplOpenGL3_Init("#version 460");
 
 	}
-	
+
 	void Editor::Render(GLuint texture_id)
 	{
 		//imgui start frame
@@ -247,15 +247,15 @@ namespace PE {
 			ImGui::SetItemTooltip("(Case Sensitive)");
 			ImGui::PopItemWidth();
 			ImGui::Separator(); // line
-			
+
 
 			//show the text in logs
-			if (ImGui::BeginChild("log scroll area", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
+			if (ImGui::BeginChild("log scroll area", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar))
 			{
 
 				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x); //set text wrap
-				for (std::vector<std::string>::iterator i = m_logOutput.begin()+startPrint;i != m_logOutput.end();i++)
-				{ 
+				for (std::vector<std::string>::iterator i = m_logOutput.begin() + startPrint; i != m_logOutput.end(); i++)
+				{
 					if (m_findText != "")
 					{
 						//can make this case insensitive but i dont know how expensive it will be
@@ -264,29 +264,29 @@ namespace PE {
 					}
 					ImVec4 color;
 					bool has_color = false;
-					if (i->find("[ERROR]") != std::string::npos) 
-					{ 
+					if (i->find("[ERROR]") != std::string::npos)
+					{
 						if (errorfilter)
 							continue;
-						color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true; 
+						color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true;
 					}
-					else if (i->find("[INFO]") != std::string::npos) 
-					{ 
+					else if (i->find("[INFO]") != std::string::npos)
+					{
 						if (infofilter)
 							continue;
-						color = ImVec4(0.4f, 1.f, 1.f, 1.0f); has_color = true; 
+						color = ImVec4(0.4f, 1.f, 1.f, 1.0f); has_color = true;
 					}
 					else if (i->find("[WARNING]") != std::string::npos)
-					{ 
+					{
 						if (warningfilter)
 							continue;
-						color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); has_color = true; 
+						color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); has_color = true;
 					}
 					else if (i->find("[EVENT]") != std::string::npos)
-					{ 
+					{
 						if (eventfilter)
 							continue;
-						color = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); has_color = true; 
+						color = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); has_color = true;
 					}
 					else if (otherfilter)
 						continue;
@@ -320,21 +320,21 @@ namespace PE {
 			ImGui::SameLine();
 			if (ImGui::Button("Help"))
 			{
-					AddConsole("///////////////////////////");
-					AddConsole("        Command List       ");
-					AddConsole("ping: pong");
-					AddConsole("test: to show test window");
-					AddConsole("///////////////////////////");
+				AddConsole("///////////////////////////");
+				AddConsole("        Command List       ");
+				AddConsole("ping: pong");
+				AddConsole("test: to show test window");
+				AddConsole("///////////////////////////");
 			}
 			ImGui::Separator(); // draw a line
 
 			//frame height w spacing is the size of an element, item spacing is the spacing between objects
 			float const spacing = ImGui::GetStyle().ItemSpacing.y + ImGui::GetFrameHeightWithSpacing(); //get enough spacing for a text bar at the bottom
-			
+
 			if (ImGui::BeginChild("console scroll area", ImVec2(0, -spacing), true, ImGuiWindowFlags_HorizontalScrollbar)) //start drawing child
 			{
 				ImGui::PushTextWrapPos(ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x); //text wrap
-				for (std::string i : m_consoleOutput){ImGui::Text(i.c_str());}
+				for (std::string i : m_consoleOutput) { ImGui::Text(i.c_str()); }
 				ImGui::PopTextWrapPos(); //reset text wrap settings
 				if ((ImGui::GetScrollY() >= ImGui::GetScrollMaxY())) ImGui::SetScrollHereY(1.0f); //setting auto scroll when at the bottom
 			}
@@ -351,8 +351,8 @@ namespace PE {
 
 				AddConsole(m_input);
 				//can serialize these command into an array
-				 
-				if (m_commands.find(m_input)!= m_commands.end())
+
+				if (m_commands.find(m_input) != m_commands.end())
 				{
 					(this->*(m_commands[m_input]))();
 				}
@@ -392,13 +392,16 @@ namespace PE {
 				AddInfoLog("Object Created");
 				std::stringstream ss;
 				ss << "new object " << count++;
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				//EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				//g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				//g_entityManager->Get<Transform>(id).height = 100.f;
+				//g_entityManager->Get<Transform>(id).width = 100.f;
+				//g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				//g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+				EntityID id = g_entityFactory->CreateEntity();
+				g_entityFactory->Assign(id, { "Transform", "Renderer" });
 				g_entityManager->Get<Transform>(id).height = 100.f;
 				g_entityManager->Get<Transform>(id).width = 100.f;
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
-
 				UpdateObjectList();
 			}
 			ImGui::SameLine(); // set the buttons on the same line
@@ -417,9 +420,9 @@ namespace PE {
 
 					//if object selected
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
-					
+
 					if (m_objects.empty()) m_currentSelectedObject = -1;//if nothing selected
-						
+
 					count--;
 
 					UpdateObjectList();
@@ -429,7 +432,7 @@ namespace PE {
 			if (ImGui::Button("Clone Object"))
 			{
 				g_entityFactory->Clone(m_currentSelectedObject);
-				UpdateObjectList();			
+				UpdateObjectList();
 			}
 
 			ImGui::Separator();
@@ -440,7 +443,7 @@ namespace PE {
 				{
 					const bool is_selected = (m_currentSelectedObject == n);
 
-					std::string name = "GameObject" ;
+					std::string name = "GameObject";
 					name += std::to_string(n);
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
@@ -493,7 +496,7 @@ namespace PE {
 				buffertester = true;
 				char* buffertest = (char*)MemoryManager::GetInstance().AllocateMemory("buffertest", 7);
 				//writing 8 bytes into the 7 i allocated
-				strcpy_s(buffertest,9, "testtest");
+				strcpy_s(buffertest, 9, "testtest");
 				AddWarningLog("writing \"testtest\" 9 byte into buffertest of 7 byte + 4 buffer bytes");
 				AddConsole(buffertest);
 				allocated++;
@@ -606,7 +609,7 @@ namespace PE {
 		}
 		else
 		{
-			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
+			if (ImGui::BeginChild("GameComponentList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar))
 			{
 				if (m_objectIsSelected)
 				{
@@ -626,7 +629,7 @@ namespace PE {
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
-								std::string id = "options##",o = "o##";
+								std::string id = "options##", o = "o##";
 								id += std::to_string(componentCount);
 								o += std::to_string(componentCount);
 								if (ImGui::BeginPopup(id.c_str()))
@@ -649,11 +652,11 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Rotation: ");
 								float rotation = static_cast<float>(g_entityManager->Get<Transform>(m_currentSelectedObject).orientation * (180 / M_PI));
-								ImGui::Text("Orientation: "); ImGui::SameLine(); 
+								ImGui::Text("Orientation: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.f); ImGui::SliderFloat("##Orientation", &rotation, -180, 180, "%.3f");
 								ImGui::Text("             "); ImGui::SameLine();  ImGui::SetNextItemWidth(200.f); ImGui::InputFloat("##Orientation2", &rotation, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_CharsDecimal);
 								ImGui::SetItemTooltip("In Radians");
-								g_entityManager->Get<Transform>(m_currentSelectedObject).orientation = static_cast<float>(rotation * (M_PI/180));								
+								g_entityManager->Get<Transform>(m_currentSelectedObject).orientation = static_cast<float>(rotation * (M_PI / 180));
 							}
 						}
 
@@ -726,7 +729,7 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
 								//get the current collider type using the variant
-								int index = static_cast<int>(g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant.index());								
+								int index = static_cast<int>(g_entityManager->Get<Collider>(m_currentSelectedObject).colliderVariant.index());
 								//hardcoded collider types
 								const char* types[] = { "AABB","CIRCLE" };
 								ImGui::Text("Collider Type: "); ImGui::SameLine();
@@ -786,7 +789,7 @@ namespace PE {
 
 								//create a combo box of texture ids
 								ImGui::SetNextItemWidth(200.0f);
-								if (!key.empty()) 
+								if (!key.empty())
 								{
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
@@ -800,23 +803,53 @@ namespace PE {
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								//setting colors
-								
+
 								//get and set color variable of the renderer component
 								ImVec4 color;
-								color.x  = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().r;
+								color.x = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().r;
 								color.y = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().g;
 								color.z = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().b;
 								color.w = g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).GetColor().a;
-								
+
 								ImGui::Text("Change Color: "); ImGui::SameLine();
 								ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
 
-								g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).SetColor(color.x,color.y,color.z,color.w);
+								g_entityManager->Get<Graphics::Renderer>(m_currentSelectedObject).SetColor(color.x, color.y, color.z, color.w);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
 
 
+					}
+
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
+					ImGui::Separator();
+					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
+
+					static bool isModalOpen;
+					// Set the cursor position to the center of the window
+					//the closest i can get to setting center the button x(
+					//shld look fine
+					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x/3.f, ImGui::GetCursorPosY()));
+					if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0))) {
+						isModalOpen = true;
+						ImGui::OpenPopup("Components");
+					}
+
+					if (isModalOpen) {
+						ImGui::SetNextWindowSize(ImVec2(300, 100));
+						if (ImGui::BeginPopupModal("Components", &isModalOpen, ImGuiWindowFlags_NoResize)) {
+							ImGui::Text("This is a modal window.");
+							if(ImGui::Selectable("Add Collision"))
+							{
+								g_entityFactory->Assign(m_currentSelectedObject, { "Collider" });
+							}
+							if (ImGui::Button("Close")) {
+								ImGui::CloseCurrentPopup(); // Close the modal window
+								isModalOpen = false;
+							}
+							ImGui::EndPopup();
+						}
 					}
 				}
 			}
@@ -834,7 +867,7 @@ namespace PE {
 		{
 			ImGui::End(); //imgui close
 		}
-		else 
+		else
 		{
 			static int draggedItemIndex = -1;
 			static bool isDragging = false;
@@ -842,26 +875,26 @@ namespace PE {
 				for (int n = 0; n < 9; n++) // loop through resource list here
 				{//resource list needs a list of icons for the texture for the image if possible
 					//else just give a standard object icon here
-						if (n % 3) // to keep it in rows where 3 is max 3 colums
-						ImGui::SameLine();				
-						ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)n), ImVec2(30, 20)); //child to hold image n text
-						//ImGui::Image(itemTextures[i], ImVec2(20, 20)); image of resource
-						ImGui::Text("test"); // text
-						// Check if the mouse is over the content item
-						if (ImGui::IsItemHovered()) {
-							// Handle item clicks and drags
-							if (ImGui::IsMouseClicked(0)) {
-								draggedItemIndex = n; // Start dragging
-								isDragging = true;
-							}
+					if (n % 3) // to keep it in rows where 3 is max 3 colums
+						ImGui::SameLine();
+					ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)n), ImVec2(30, 20)); //child to hold image n text
+					//ImGui::Image(itemTextures[i], ImVec2(20, 20)); image of resource
+					ImGui::Text("test"); // text
+					// Check if the mouse is over the content item
+					if (ImGui::IsItemHovered()) {
+						// Handle item clicks and drags
+						if (ImGui::IsMouseClicked(0)) {
+							draggedItemIndex = n; // Start dragging
+							isDragging = true;
 						}
-						ImGui::EndChild();
+					}
+					ImGui::EndChild();
 				}
 			}
 			ImGui::EndChild();
 
 			//if player is still holding the mouse down
-			if (isDragging) 
+			if (isDragging)
 			{
 				if (draggedItemIndex >= 0)
 				{
@@ -869,7 +902,7 @@ namespace PE {
 					ImGui::SetNextWindowPos(ImGui::GetMousePos());
 					ImGui::SetNextWindowSize(ImVec2(50, 50));
 					std::string test = std::to_string(draggedItemIndex);
-					ImGui::Begin(test.c_str(), nullptr,ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+					ImGui::Begin(test.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 					//put image here
 					ImGui::End();
 
@@ -909,8 +942,8 @@ namespace PE {
 				//TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
 			};
 			char* names[] = { /*"Logics",*/ "Physics", "Collision", "Graphics" };
-			ImGui::PlotHistogram("##Test",values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
-			
+			ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
+
 			if (ImGui::IsItemHovered())
 			{
 				//current mouse position - the top left position of the rect to get your actual mouse
@@ -921,12 +954,12 @@ namespace PE {
 				if (hoveredIndex > -1 && hoveredIndex < values.size())
 				{
 					ImGui::BeginTooltip();
-					ImGui::Text("%s: %.2f%%",names[hoveredIndex],values[hoveredIndex] * 100);
+					ImGui::Text("%s: %.2f%%", names[hoveredIndex], values[hoveredIndex] * 100);
 					ImGui::EndTooltip();
 				}
 			}
-			
-			
+
+
 			ImGui::End(); //imgui close
 		}
 
@@ -994,7 +1027,7 @@ namespace PE {
 					ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.3f, nullptr, &dockspace_id);
 					ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.25f, &dockspace_id, &dockspace_id);
 					ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
-					
+
 					//setting the other dock locations
 					ImGui::DockBuilderDockWindow("objectlistwindow", dock_id_right);
 
@@ -1035,7 +1068,7 @@ namespace PE {
 					}
 					ImGui::Separator();
 					//remove the false,false if using
-					if (ImGui::MenuItem("Scene 1", "", false , false)) {}
+					if (ImGui::MenuItem("Scene 1", "", false, false)) {}
 					if (ImGui::MenuItem("Scene 2", "", false, false)) {}
 					if (ImGui::MenuItem("Scene 3", "", false, false)) {}
 					ImGui::EndMenu();
@@ -1101,7 +1134,7 @@ namespace PE {
 		//set default size of the window
 		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
-		
+
 		//start the window
 		ImGui::Begin("sceneview", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
