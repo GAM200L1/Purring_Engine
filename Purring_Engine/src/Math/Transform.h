@@ -12,11 +12,10 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-
 #pragma once
-
 #include "Math/MathCustom.h"
 #include "ECS/Components.h"
+#include "Data/json.hpp"
 
 namespace PE
 {
@@ -41,6 +40,26 @@ namespace PE
         mat4x4 GetTransformMatrix4x4() const
         {
             return GetTransformMatrix3x3().ConvertTo4x4();
+        }
+
+        nlohmann::json ToJson() const {
+            nlohmann::json j;
+            j["width"] = width;
+            j["height"] = height;
+            j["orientation"] = orientation;
+            j["position"]["x"] = position.x;
+            j["position"]["y"] = position.y;
+            return j;
+        }
+
+        static Transform FromJson(const nlohmann::json& j) {
+            Transform t;
+            t.width = j["width"];
+            t.height = j["height"];
+            t.orientation = j["orientation"];
+            t.position.x = j["position"]["x"];
+            t.position.y = j["position"]["y"];
+            return t;
         }
     };
 }

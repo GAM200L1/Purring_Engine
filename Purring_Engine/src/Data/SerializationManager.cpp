@@ -63,6 +63,12 @@ nlohmann::json PlayerStats::to_json(int entityId, SerializationManager& sm) cons
 ----------------------------------------------------------------------------- */
 nlohmann::json SerializationManager::serializeEntity(int entityID)
 {
+    // Get a reference or pointer to your EntityManager
+    PE::EntityManager* entityManager = PE::g_entityManager;
+
+    // Convert your entityID to your EntityID type
+    EntityID eID = static_cast<EntityID>(entityID);
+
     nlohmann::json j;                           // Create a JSON object to store the serialized data.
     Entity& entity = entities[entityID];        // Get a reference to the entity with the specified ID.
 
@@ -100,26 +106,38 @@ nlohmann::json SerializationManager::serializeEntity(int entityID)
         // To add similar blocks for other data types in the future..... -hans
     }
 
+    {
+        PE::Transform* transform = static_cast<PE::Transform*>(entityManager->GetComponentPoolPointer("Transform")->Get(eID));
+
+        nlohmann::json jTransform = transform->ToJson();
+
+        j["Entity"]["components"]["Transform"] = jTransform;
+    }
+
     return j; // Return the JSON object containing the serialized entity.
 }
 
 
 
-
 /*-----------------------------------------------------------------------------
 /// <summary>
-/// Deserialize a JSON object into an Entity and an associated entity ID.
-/// This function takes a JSON object and extracts information to create an
-/// Entity object and its associated entity ID. It then parses the entity's name to
-/// determine the ID and processes data fields.
+/// Deserialize an entity's data from a JSON object.
+/// This function takes a JSON object as input and deserializes the entity's data
+/// from it, including its name, various data fields, and components if available.
 /// </summary>
 /// <param name="j">The JSON object containing the serialized entity data.</param>
-/// <returns>A pair containing the deserialized Entity and its associated entity ID.</returns>
+/// <returns>
+/// A pair containing the deserialized entity and its entity ID.
+/// If deserialization fails, the entity ID will be set to -1.
+/// </returns>
 ----------------------------------------------------------------------------- */
 std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::json& j)
 {
     Entity entity;                              // Create an empty Entity object to store the deserialized data.
     int entityID = -1;                          // Initialize entityID with a failure code.
+
+    // Get a reference or pointer to your EntityManager
+    PE::EntityManager* entityManager = PE::g_entityManager;
 
     if (j.contains("Entity"))
     {
@@ -166,11 +184,27 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
             }
             // To add similar blocks for other data types in the future..... -hans
         }
+
+        // Deserialize Transform component IFFF it exists in JSON.
+        if (j["Entity"]["components"].contains("Transform")) {
+            PE::Transform t = PE::Transform::FromJson(j["Entity"]["components"]["Transform"]);
+
+            // Add Transform component to this entity
+            entityManager->Assign(entityID, "Transform");
+
+            // Get the Transform component
+            PE::Transform* transform = static_cast<PE::Transform*>(entityManager->GetComponentPoolPointer("Transform")->Get(entityID));
+
+            // Update the component data
+            *transform = t;
+        }
+
     }
 
     // Return a pair containing the deserialized entity and its entityID.
     return std::make_pair(entity, entityID);
 }
+
 
 
 

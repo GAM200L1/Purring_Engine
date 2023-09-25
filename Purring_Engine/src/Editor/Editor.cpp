@@ -21,6 +21,7 @@
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
+SerializationManager serializationManager;  // Create an instance
 
 namespace PE {
 	Editor::Editor() {
@@ -1018,6 +1019,8 @@ namespace PE {
 
 			}
 
+			nlohmann::json serializedEntity;  // Declare at higher scope
+
 			//docking port menu bar
 			if (ImGui::BeginMainMenuBar())
 			{
@@ -1026,12 +1029,29 @@ namespace PE {
 				{
 					if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						//save code goes here
+						int testEntityID = m_currentSelectedObject;
+						nlohmann::json serializedEntity = serializationManager.serializeEntity(testEntityID);  // Call the method
+
+						// Print or save the serialized JSON
+						std::cout << "Serialized Entity: " << serializedEntity.dump(4) << std::endl;
+
+						// Save the JSON to a file
+						std::ofstream jsonFile("saved_transform.json");
+						jsonFile << serializedEntity.dump(4);  // 4 is for indentation
+						jsonFile.close();
 					}
 					if (ImGui::MenuItem("Load"))
 					{
-						//if youre capable loading from different scene you can add more menu item like below
-						//otherwise just use this
+						// Load the JSON from a file
+						std::ifstream jsonFile("saved_transform.json");
+						nlohmann::json loadedEntity;
+						jsonFile >> loadedEntity;
+						jsonFile.close();
+
+						// Deserialize the entity
+						std::pair<Entity, int> deserializedData = serializationManager.deserializeEntity(loadedEntity);
+						int deserializedEntityID = deserializedData.second;
+
 					}
 					ImGui::Separator();
 					//remove the false,false if using
@@ -1233,6 +1253,5 @@ namespace PE {
 		if (KPE.keycode == GLFW_KEY_F10)
 			ToggleDebugRender();
 	}
-
 }
 

@@ -1,12 +1,9 @@
-#ifndef SERIALIZATION_MANAGER_H
-#define SERIALIZATION_MANAGER_H
-#include <unordered_map>
-#include <utility>
-#include <string>
+#pragma once
+#include "prpch.h"
 #include "json.hpp"
-#include <any>
-#include <unordered_map>
 #include "ECS/Components.h"
+#include "ECS/Entity.h"
+#include "Math/Transform.h"
 
 struct PlayerStats
 {
@@ -112,5 +109,3 @@ private:
     std::unordered_map<int, Entity> entities; // Store entities with integer IDs
     std::string structName = "Entity"; // Default struct name for serialization
 };
-
-#endif // SERIALIZATION_MANAGER_H

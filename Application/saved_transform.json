@@ -1,0 +1,16 @@
+{
+    "Entity": {
+        "components": {
+            "Transform": {
+                "height": 100.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 2222.0,
+                    "y": 69.19432830810547
+                },
+                "width": 100.0
+            }
+        },
+        "name": ""
+    }
+}
