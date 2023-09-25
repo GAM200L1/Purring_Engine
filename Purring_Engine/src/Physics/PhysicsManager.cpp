@@ -85,7 +85,7 @@ namespace PE
 				rb.m_prevPosition = transform.position;
 				transform.position += rb.m_velocity * deltaTime;
 				transform.orientation += rb.m_rotationVelocity * deltaTime;
-				//Wrap(transform.orientation, -PE_PI, PE_PI);
+				Wrap(transform.orientation, 0.f, 2.f*PE_PI);
 			}
 			rb.ZeroForce();
 			rb.m_rotationVelocity = 0.f;
