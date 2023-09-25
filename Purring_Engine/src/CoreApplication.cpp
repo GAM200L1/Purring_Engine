@@ -116,29 +116,29 @@ PE::CoreApplication::CoreApplication()
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
     ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
-    //for (size_t i{}; i < 5; ++i)
-    //{
-    //    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+    for (size_t i{}; i < 1; ++i)
+    {
+        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
 
-    //    // Make overlapping circle colliders at the origin
-    //    g_entityManager->Get<Transform>(id).position.x = 0.f;
-    //    g_entityManager->Get<Transform>(id).position.y = 0.f;
-    //    g_entityManager->Get<Transform>(id).width = 50;
-    //    g_entityManager->Get<Transform>(id).height = 50;
-    //    g_entityManager->Get<Transform>(id).orientation = 0.f;
-    //    g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
-    //}
+        // Make overlapping circle colliders at the origin
+        g_entityManager->Get<Transform>(id).position.x = 0.f;
+        g_entityManager->Get<Transform>(id).position.y = 0.f;
+        g_entityManager->Get<Transform>(id).width = 50;
+        g_entityManager->Get<Transform>(id).height = 50;
+        g_entityManager->Get<Transform>(id).orientation = 0.f;
+        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+    }
 
-    //// Make the first gameobject with a collider circle at world pos (100, 100)
-    //g_entityManager->Get<Transform>(0).position.x = 100.f;
-    //g_entityManager->Get<Transform>(0).position.y = 100.f;
-    //g_entityManager->Get<Transform>(0).width = 100.f;
-    //g_entityManager->Get<Transform>(0).height = 100.f;
-    //g_entityManager->Get<Transform>(0).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    //g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
-    //g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
-    //g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
+    // Make the first gameobject with a collider circle at world pos (100, 100)
+    g_entityManager->Get<Transform>(0).position.x = 100.f;
+    g_entityManager->Get<Transform>(0).position.y = 100.f;
+    g_entityManager->Get<Transform>(0).width = 100.f;
+    g_entityManager->Get<Transform>(0).height = 100.f;
+    g_entityManager->Get<Transform>(0).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
+    g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
+    g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
 
     //// Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
     //g_entityManager->Get<Transform>(1).position.x = -100.f;
@@ -152,8 +152,8 @@ PE::CoreApplication::CoreApplication()
     for (size_t i{}; i < 2500; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
-        g_entityManager->Get<Transform>(id2).position.x = 10.f * (i % 50) - 200.f;
-        g_entityManager->Get<Transform>(id2).position.y = 10.f * (i / 50) - 300.f;
+        g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
+        g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
         g_entityManager->Get<Transform>(id2).width = 50.f;
         g_entityManager->Get<Transform>(id2).height = 50.f;
         g_entityManager->Get<Transform>(id2).orientation = 0.f;
