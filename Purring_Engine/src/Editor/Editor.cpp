@@ -403,7 +403,7 @@ namespace PE {
 					AddInfoLog("Object Deleted");
 					std::stringstream ss;
 					ss << "deleted object " << m_currentSelectedObject;
-					
+
 					g_entityManager->RemoveEntity(g_entityManager->GetEntitiesInPool("All")[m_currentSelectedObject]);
 
 					//if not first index
@@ -433,7 +433,7 @@ namespace PE {
 				{
 					const bool is_selected = (m_currentSelectedObject == n);
 
-					std::string name = "GameObject" ;
+					std::string name = "GameObject";
 					name += std::to_string(g_entityManager->GetEntitiesInPool("All")[n]);
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
@@ -820,27 +820,87 @@ namespace PE {
 					// Set the cursor position to the center of the window
 					//the closest i can get to setting center the button x(
 					//shld look fine
-					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x/3.f, ImGui::GetCursorPosY()));
-					if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0))) {
+					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
+					if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0))) 
+					{
 						isModalOpen = true;
 						ImGui::OpenPopup("Components");
 					}
 
-					if (isModalOpen) {
-						ImGui::SetNextWindowSize(ImVec2(300, 100));
-						if (ImGui::BeginPopupModal("Components", &isModalOpen, ImGuiWindowFlags_NoResize)) {
-							ImGui::Text("This is a modal window.");
-							if(ImGui::Selectable("Add Collision"))
+					if (ImGui::BeginPopup("Components"))
+					{
+						if (ImGui::Selectable("Add Collision"))
+						{
+							if (g_entityManager->Has(m_currentSelectedObject, "RigidBody"))
 							{
-								g_entityFactory->Assign(m_currentSelectedObject, { "Collider" });
+								if(!g_entityManager->Has(m_currentSelectedObject, "Collider"))
+									g_entityFactory->Assign(m_currentSelectedObject, { "Collider" });
+								else
+									AddErrorLog("ALREADY HAS A COLLIDER");
 							}
-							if (ImGui::Button("Close")) {
-								ImGui::CloseCurrentPopup(); // Close the modal window
-								isModalOpen = false;
+							else
+							{
+								AddErrorLog("ADD RIGIDBODY FIRST");
+							}
+						}
+						if (ImGui::Selectable("Add Transform"))
+						{
+							if (!g_entityManager->Has(m_currentSelectedObject, "Transform"))
+								g_entityFactory->Assign(m_currentSelectedObject, { "Transform" });
+							else
+								AddErrorLog("ALREADY HAS A TRANSFORM");
+						}
+						if (ImGui::Selectable("Add RigidBody"))
+						{
+							if (!g_entityManager->Has(m_currentSelectedObject, "RigidBody"))
+								g_entityFactory->Assign(m_currentSelectedObject, { "RigidBody" });
+							else
+								AddErrorLog("ALREADY HAS A TRANSFORM");
+						}
+						if (ImGui::Selectable("Add Renderer"))
+						{
+							if (!g_entityManager->Has(m_currentSelectedObject, "Renderer"))
+								g_entityFactory->Assign(m_currentSelectedObject, { "Renderer" });
+							else
+								AddErrorLog("ALREADY HAS A RENDERER");
+						}
+						ImGui::EndPopup();
+					}
+
+
+					/*if (isModalOpen)
+					{
+						ImGui::SetNextWindowSize(ImVec2(300, 100));
+						if (ImGui::BeginPopupModal("Components", &isModalOpen, ImGuiWindowFlags_NoResize))
+						{
+							ImGui::Text("Add Components");
+							if (ImGui::Selectable("Add Collision"))
+							{
+								if (g_entityManager->Has(m_currentSelectedObject, "RigidBody"))
+								{
+									g_entityFactory->Assign(m_currentSelectedObject, { "Collider" });
+								}
+								else
+								{
+									isModalOpen = true;
+									ImGui::OpenPopup("rwarn");
+								}
+							}
+							if (ImGui::Selectable("Add Transform"))
+							{
+								g_entityFactory->Assign(m_currentSelectedObject, { "Transform" });
+							}
+							if (ImGui::Selectable("Add RigidBody"))
+							{
+								g_entityFactory->Assign(m_currentSelectedObject, { "RigidBody" });
+							}
+							if (ImGui::Selectable("Add Renderer"))
+							{
+								g_entityFactory->Assign(m_currentSelectedObject, { "Renderer" });
 							}
 							ImGui::EndPopup();
 						}
-					}
+					}*/
 				}
 			}
 			ImGui::EndChild();
