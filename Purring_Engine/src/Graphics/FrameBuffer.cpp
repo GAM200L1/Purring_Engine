@@ -34,8 +34,7 @@ namespace PE
             glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
 
             // Attach a texture to the framebuffer
-            glGenTextures(1, &m_textureIndex);
-            glBindTexture(GL_TEXTURE_2D, m_textureIndex);
+            glCreateTextures(GL_TEXTURE_2D, 1, &m_textureIndex);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);

@@ -85,6 +85,7 @@ namespace PE
 
             // Load a shader program
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
+            ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -158,7 +159,7 @@ namespace PE
             };
 
 
-            DrawScene(worldToNdc); // Draw objects in the scene
+            DrawSceneInstanced(worldToNdc); // Draw objects in the scene
 
             if (Editor::GetInstance().IsRenderingDebug()) 
             {
@@ -226,6 +227,101 @@ namespace PE
 
                 Draw(renderer, *(shaderProgramIterator->second), GL_TRIANGLES,
                     r_worldToNdc * glmObjectTransform);
+            }
+        }
+
+        void RendererManager::DrawSceneInstanced(glm::mat4 const& r_worldToNdc)
+        {
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
+
+            // Check if shader program is valid
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + m_instancedShaderProgramKey + " does not exist.", __FUNCTION__);
+                return;
+            }
+
+            ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
+            r_shaderProgram.Use();
+
+            int i{};
+            size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
+            m_meshes[meshIndex].Bind();
+            std::shared_ptr<Graphics::Texture> p_texture{};
+
+            // Make draw call for each game object with a renderer component
+            for (EntityID id : SceneView<Renderer, Transform>())
+            {
+                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
+
+                glm::mat4 glmObjectTransform
+                {
+                    GenerateTransformMatrix(transform.width, // width
+                        transform.height, transform.orientation, // height, orientation
+                        transform.position.x, transform.position.y) // x, y position
+                };
+
+                // Pass the model to NDC transform matrix as a uniform variable
+                r_shaderProgram.SetUniform("uModelToNdc[" + std::to_string(i) + "]", r_worldToNdc * glmObjectTransform);
+
+                // Pass the color of the quad as a uniform variable
+                r_shaderProgram.SetUniform("uColor[" + std::to_string(i) + "]", renderer.GetColor());
+
+                // Attempt to retrieve and bind the texture
+                if (renderer.GetTextureKey().empty())
+                {
+                    if (!p_texture) 
+                    {
+                        r_shaderProgram.SetUniform("uIsTextured", false);
+                    }
+                }
+                else if(!p_texture)
+                {
+                    auto textureIterator{ ResourceManager::GetInstance().Textures.find(renderer.GetTextureKey()) };
+
+                    // Check if shader program is valid
+                    if (textureIterator == ResourceManager::GetInstance().Textures.end())
+                    {
+                        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                        engine_logger.SetTime();
+                        engine_logger.AddLog(false, "Texture " + renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
+
+                        r_shaderProgram.SetUniform("uIsTextured", false);
+                    }
+                    else
+                    {
+                        p_texture = textureIterator->second;
+                        unsigned int textureUnit{ 0 };
+                        p_texture->Bind(textureUnit);
+                        r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+                        r_shaderProgram.SetUniform("uIsTextured", true);
+                    }
+                }
+
+                ++i;
+
+                if (i >= 100) 
+                {
+                    glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                        GL_UNSIGNED_SHORT, NULL, i);
+
+                    i = 0;
+                }
+            }
+
+            glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL, i);
+
+            // Unbind everything
+            m_meshes[meshIndex].Unbind();
+            r_shaderProgram.UnUse();
+
+            if (p_texture != nullptr)
+            {
+                p_texture->Unbind();
             }
         }
 

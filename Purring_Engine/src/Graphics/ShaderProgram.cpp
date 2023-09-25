@@ -122,6 +122,8 @@ namespace PE
                     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                     engine_logger.SetTime();
                     engine_logger.AddLog(true, logString, __FUNCTION__);
+
+                    std::cout << logString << "\n";
                 }
 
                 return false;
@@ -134,6 +136,8 @@ namespace PE
             {
                 return false;
             }
+
+            std::cout << "Shader compiled!" << "\n";
             return true;
         }
 
@@ -225,6 +229,8 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
+
+                std::cout << errorLog << "\n";
             }
         }
 
@@ -250,6 +256,8 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
+
+                std::cout << errorLog << "\n";
             }
         }
 
@@ -272,6 +280,8 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
+
+                std::cout << errorLog << "\n";
             }
         }
 
@@ -294,6 +304,8 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
+
+                std::cout << errorLog << "\n";
             }
         }
 
