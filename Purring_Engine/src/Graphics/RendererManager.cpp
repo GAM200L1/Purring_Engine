@@ -258,9 +258,11 @@ namespace PE
             m_meshes[meshIndex].Bind();
             std::shared_ptr<Graphics::Texture> p_texture{};
 
-            std::vector<glm::mat4> matrices{};
+            std::vector<glm::mat4> worldToNdcMatrices{};
+            std::vector<glm::mat4> modelToWorldMatrices{};
             std::vector<glm::vec4> colors{};
-            matrices.reserve(2500);
+            worldToNdcMatrices.reserve(2500);
+            modelToWorldMatrices.reserve(2500);
             colors.reserve(2500);
 
             // Make draw call for each game object with a renderer component
@@ -276,13 +278,9 @@ namespace PE
                         transform.position.x, transform.position.y) // x, y position
                 };
 
-                matrices.emplace_back(r_worldToNdc * glmObjectTransform);
+                worldToNdcMatrices.emplace_back(r_worldToNdc);
+                modelToWorldMatrices.emplace_back(glmObjectTransform);
                 colors.emplace_back(renderer.GetColor());
-                //// Pass the model to NDC transform matrix as a uniform variable
-                //r_shaderProgram.SetUniform("uModelToNdc[" + std::to_string(i) + "]", r_worldToNdc * glmObjectTransform);
-
-                //// Pass the color of the quad as a uniform variable
-                //r_shaderProgram.SetUniform("uColor[" + std::to_string(i) + "]", renderer.GetColor());
 
                 // Attempt to retrieve and bind the texture
                 if (renderer.GetTextureKey().empty())
@@ -316,38 +314,35 @@ namespace PE
                 }
 
                 ++count;
-
-                //if (i >= 100) 
-                //{
-                //    glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-                //        GL_UNSIGNED_SHORT, NULL, i);
-
-                //    i = 0;
-                //}
             }
 
             // Create buffer object for additional vertex data
             GLuint vbo_hdl;
             glCreateBuffers(1, &vbo_hdl);
             glNamedBufferStorage(vbo_hdl,
-                static_cast<GLsizeiptr>(matrices.size() * sizeof(glm::mat4)
-                    + colors.size() * sizeof(glm::vec4)),
+                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)
+                    + worldToNdcMatrices.size() * sizeof(glm::mat4) * 2.f),
                 nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 
-            // Store vertex positions in VBO
+            // Store colors in VBO
             glNamedBufferSubData(vbo_hdl, 0,
                 static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)),
                 reinterpret_cast<GLvoid*>(colors.data()));
 
-
-            // Store colors in VBO
+            // Store world to NDC matrix in VBO
             glNamedBufferSubData(vbo_hdl,
                 static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)),
-                static_cast<GLintptr>(matrices.size() * sizeof(glm::mat4)),
-                reinterpret_cast<GLvoid*>(matrices.data()));
+                static_cast<GLintptr>(worldToNdcMatrices.size() * sizeof(glm::mat4)),
+                reinterpret_cast<GLvoid*>(worldToNdcMatrices.data()));
 
-            // Bind the vertex coordinates
+            // Store model to world matrix in VBO
+            glNamedBufferSubData(vbo_hdl,
+                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4) + worldToNdcMatrices.size() * sizeof(glm::mat4)),
+                static_cast<GLintptr>(modelToWorldMatrices.size() * sizeof(glm::mat4)),
+                reinterpret_cast<GLvoid*>(modelToWorldMatrices.data()));
+
+            // Bind the colors
             GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
             glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex);
             glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl, 0,
@@ -355,11 +350,28 @@ namespace PE
             glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
             glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, bindingIndex);
 
-            // Bind the colors
+            // Bind the world to NDC matrices
             attributeIndex = 3, bindingIndex = 3;
 
             glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
                 static_cast<GLintptr>(colors.size() * sizeof(glm::vec4)),
+                static_cast<GLsizei>(sizeof(glm::mat4)));
+
+            for (int i{}; i < 4; ++i) 
+            {
+                glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i);
+
+                glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
+                glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, bindingIndex);
+            }
+
+            glVertexArrayBindingDivisor(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, 1);
+
+            // Bind the model to world matrices
+            attributeIndex = 7, bindingIndex = 4;
+
+            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
+                static_cast<GLintptr>(colors.size() * sizeof(glm::vec4) + worldToNdcMatrices.size() * sizeof(glm::mat4)),
                 static_cast<GLsizei>(sizeof(glm::mat4)));
 
             for (int i{}; i < 4; ++i) 
@@ -387,6 +399,7 @@ namespace PE
             glDeleteBuffers(1, &vbo_hdl); 
             glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 2);
             glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 3);
+            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 7);
         }
 
 
