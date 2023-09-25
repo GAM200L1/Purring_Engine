@@ -356,6 +356,7 @@ namespace PE
                 static_cast<GLsizei>(sizeof(glm::vec4)));
             glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
             glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, bindingIndex);
+            glVertexAttribDivisor(attributeIndex, 1);
 
             // Bind the world to NDC matrices
             attributeIndex = 3, bindingIndex = 3;
