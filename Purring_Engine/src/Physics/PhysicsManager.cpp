@@ -22,12 +22,16 @@ extern Logger engine_logger;
 
 namespace PE
 {
+
 	// ----- Constructor ----- //
+
 	PhysicsManager::PhysicsManager() :
 		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f },
-		m_applyStepPhysics{ false }, m_advanceStep{ false }, m_fixedDt{ 1.f / 60.f } {}
-
+		m_applyStepPhysics{ false }, m_advanceStep{ false }, m_fixedDt{ 1.f / 60.f }, 
+		m_accumulator{ 0.f }, m_accumulatorLimit{ 1.f } {}
+	
 	// ----- Public Getters ----- //
+
 	float PhysicsManager::GetLinearDragCoefficient()
 	{
 		return m_linearDragCoefficient;
@@ -74,7 +78,9 @@ namespace PE
 		m_advanceStep = advance;
 	}
 
+
 	// ----- System Methods ----- //
+
 	void PhysicsManager::InitializeSystem()
 	{
 		// Check if Initialization was successful
@@ -85,18 +91,26 @@ namespace PE
 
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
-		if (!m_applyStepPhysics)
+		m_accumulator += deltaTime;
+
+		m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
+
+		while (m_accumulator >= m_fixedDt)
 		{
-			UpdateDynamics(deltaTime);
-		}
-		else
-		{
-			// Applies Step Physics
-			if (m_advanceStep)
+			if (!m_applyStepPhysics)
 			{
-				UpdateDynamics(deltaTime);
-				m_advanceStep = false;
+				UpdateDynamics(m_fixedDt);
 			}
+			else
+			{
+				// Applies Step Physics
+				if (m_advanceStep)
+				{
+					UpdateDynamics(m_fixedDt);
+					m_advanceStep = false;
+				}
+			}
+			m_accumulator -= m_fixedDt;
 		}
 	}
 
@@ -104,6 +118,7 @@ namespace PE
 	{
 		// empty by design
 	}
+
 
 	// ----- Physics Methods ----- //
 

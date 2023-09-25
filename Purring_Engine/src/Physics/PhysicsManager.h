@@ -52,6 +52,8 @@ namespace PE
 		float m_linearDragCoefficient;
 		float m_velocityNegligence;
 		float m_fixedDt;
+		float m_accumulator;
+		float m_accumulatorLimit;
 		bool m_applyStepPhysics;
 		bool m_advanceStep;
 		std::string m_systemName{ "Physics" };

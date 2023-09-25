@@ -73,13 +73,13 @@ namespace PE
 			Transform const& transform = g_entityManager->Get<Transform>(ColliderID);
 			Collider& collider = g_entityManager->Get<Collider>(ColliderID);
 
-			// remove objects that were checked for collision from previous frame
+			// clear the vector that contains the collided objects
 			collider.objectsCollided.clear();
 			std::visit([&](auto& col)
-				{
-					Update(col, transform.position, vec2{ transform.width, transform.height });
+			{
+				Update(col, transform.position, vec2{ transform.width, transform.height });
 
-				}, collider.colliderVariant);
+			}, collider.colliderVariant);
 		}
 	}
 
@@ -99,44 +99,44 @@ namespace PE
 				if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
 
 				std::visit([&](auto& col1)
+				{
+					std::visit([&](auto& col2)
 					{
-						std::visit([&](auto& col2)
+						Contact contactPt;
+						if (CollisionIntersection(col1, col2, contactPt))
+						{
+							//engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
+
+							// adds collided objects so that it won't be checked again
+							collider1.objectsCollided.emplace(ColliderID_2);
+							collider2.objectsCollided.emplace(ColliderID_1);
+							if (!collider1.isTrigger && !collider2.isTrigger)
 							{
-								Contact contactPt;
-								if (CollisionIntersection(col1, col2, contactPt))
+								if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
 								{
-									//engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
-
-									// adds collided objects so that it won't be checked again
-									collider1.objectsCollided.emplace(ColliderID_2);
-									collider2.objectsCollided.emplace(ColliderID_1);
-									if (!collider1.isTrigger && !collider2.isTrigger)
-									{
-										if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
-										{
-											m_manifolds.emplace_back
-											(Manifold{ contactPt,
-													   g_entityManager->Get<Transform>(ColliderID_2),
-													   g_entityManager->Get<Transform>(ColliderID_1),
-													   g_entityManager->GetPointer<RigidBody>(ColliderID_2),
-													   g_entityManager->GetPointer<RigidBody>(ColliderID_1) });
-										}
-										else
-										{
-											m_manifolds.emplace_back
-											(Manifold{ contactPt,
-													   g_entityManager->Get<Transform>(ColliderID_1),
-													   g_entityManager->Get<Transform>(ColliderID_2),
-													   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
-													   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
-										}
-									}
-									// else send message to trigger respective event?
+									m_manifolds.emplace_back
+									(Manifold{ contactPt,
+											   g_entityManager->Get<Transform>(ColliderID_2),
+											   g_entityManager->Get<Transform>(ColliderID_1),
+											   g_entityManager->GetPointer<RigidBody>(ColliderID_2),
+											   g_entityManager->GetPointer<RigidBody>(ColliderID_1) });
 								}
+								else
+								{
+									m_manifolds.emplace_back
+									(Manifold{ contactPt,
+											   g_entityManager->Get<Transform>(ColliderID_1),
+											   g_entityManager->Get<Transform>(ColliderID_2),
+											   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
+											   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
+								}
+							}
+							// else send message to trigger respective event?
+						}
 
-							}, collider2.colliderVariant);
+					}, collider2.colliderVariant);
 
-					}, collider1.colliderVariant);
+				}, collider1.colliderVariant);
 
 			}
 		}
@@ -156,15 +156,9 @@ namespace PE
 	// Rect + Rect
 	bool CollisionIntersection(AABBCollider const& r_AABB1, AABBCollider const& r_AABB2, Contact& r_contactPt)
 	{
-		// Static Collision
-		if (r_AABB1.max.x < r_AABB2.min.x || r_AABB1.min.x > r_AABB2.max.x)
-		{
-			return false;
-		}
-		if (r_AABB1.max.y < r_AABB2.min.y || r_AABB1.min.y > r_AABB2.max.y)
-		{
-			return false;
-		}
+		// If AABB1 bounds are outside AABB2 bounds - not colliding
+		if (r_AABB1.max.x < r_AABB2.min.x || r_AABB1.min.x > r_AABB2.max.x) { return false; }
+		if (r_AABB1.max.y < r_AABB2.min.y || r_AABB1.min.y > r_AABB2.max.y) { return false; }
 
 		// vector from center of AABB2 to AABB1 center
 		vec2 c1c2 = r_AABB2.center - r_AABB1.center; 
@@ -336,7 +330,6 @@ namespace PE
 					r_contactPt.normal = (r_circle.center - r_AABB.center).GetNormalized();
 					r_contactPt.penetrationDepth = r_circle.radius;
 				}
-				
 			}
 		}
 		return (collided >= 2);

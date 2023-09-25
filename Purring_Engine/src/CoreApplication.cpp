@@ -156,18 +156,18 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(0).height = 100.f;
     g_entityManager->Get<Transform>(0).orientation = 0.f;
     g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(0).colliderVariant = AABBCollider();
+    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
     g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
-    //
+    
     //// creates AABB map boundaries
-    //g_entityManager->Get<Transform>(1).position.x = 700.f;
+    //g_entityManager->Get<Transform>(1).position.x = 0.f;
     //g_entityManager->Get<Transform>(1).position.y = 0.f;
     //g_entityManager->Get<Transform>(1).width = 100.f;
-    //g_entityManager->Get<Transform>(1).height = 700.f;
+    //g_entityManager->Get<Transform>(1).height = 100.f;
     //g_entityManager->Get<Transform>(1).orientation = 0.f;
     //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    //g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
     //
     //g_entityManager->Get<Transform>(2).position.x = -700.f;
     //g_entityManager->Get<Transform>(2).position.y = 0.f;
@@ -276,11 +276,9 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
-        if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
+        if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_RELEASE)
         {
-            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-
+            
         }
 
         //Audio Stuff - HANS
