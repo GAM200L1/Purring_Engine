@@ -71,7 +71,7 @@ namespace PE
 	}
 	void PhysicsManager::SetAdvanceStep(bool advance)
 	{
-		m_advanceStep = m_applyStepPhysics;
+		m_advanceStep = advance;
 	}
 
 	// ----- System Methods ----- //

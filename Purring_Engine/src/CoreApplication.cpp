@@ -47,21 +47,28 @@
 // Time
 #include "Time/TimeManager.h"
 
-#include "Data/SerializationManager.h"
-// testing
-Logger engine_logger = Logger("ENGINE");
-SerializationManager sm;
+// Physics and Collision
 #include "Physics/RigidBody.h"
 #include "Physics/Colliders.h"
 #include "Physics/CollisionManager.h"
 #include "Physics/PhysicsManager.h"
+
+// Serialization
+#include "Data/SerializationManager.h"
+
+// ECS
 #include "ECS//EntityFactory.h"
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+
+// Graphics
 #include "Graphics/Renderer.h"
 
+// testing
+Logger engine_logger = Logger("ENGINE");
+SerializationManager sm;
 #include <random>
 
 PE::EntityManager entManager;
@@ -83,7 +90,6 @@ PE::CoreApplication::CoreApplication()
     REGISTERCOMPONENT(Transform);
     REGISTERCOMPONENT(Graphics::Renderer);
 
-
 	m_Running = true;
 	m_lastFrameTime = 0;
 
@@ -91,11 +97,11 @@ PE::CoreApplication::CoreApplication()
     m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
 
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
+    
     // set flags
     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
-
 
     // Audio Stuff - HANS
     
@@ -113,8 +119,6 @@ PE::CoreApplication::CoreApplication()
     AddSystem(collisionManager);
     AddSystem(rendererManager);
     
-
-
     // Load a texture
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
@@ -130,10 +134,10 @@ PE::CoreApplication::CoreApplication()
         std::uniform_int_distribution<>distr0(-550, 550);
         g_entityManager->Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
         std::uniform_int_distribution<>distr1(-250, 250);
-        g_entityManager->Get<Transform>(id).position.y = distr1(gen);
+        g_entityManager->Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
         std::uniform_int_distribution<>distr2(10, 200);
-        g_entityManager->Get<Transform>(id).width = distr2(gen);
-        g_entityManager->Get<Transform>(id).height = distr2(gen);
+        g_entityManager->Get<Transform>(id).width = static_cast<float>(distr2(gen));
+        g_entityManager->Get<Transform>(id).height = static_cast<float>(distr2(gen));
         g_entityManager->Get<Transform>(id).orientation = 0.f;
 
         if (i%3)
@@ -152,7 +156,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(0).height = 100.f;
     g_entityManager->Get<Transform>(0).orientation = 0.f;
     g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
+    g_entityManager->Get<Collider>(0).colliderVariant = AABBCollider();
     g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
     //
