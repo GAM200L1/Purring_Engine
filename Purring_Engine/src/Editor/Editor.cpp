@@ -20,6 +20,11 @@
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
+
+// test for file exploer -hans
+#include <Windows.h>
+#include <Commdlg.h>
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
 
@@ -701,6 +706,13 @@ namespace PE {
 
 								float mass = g_entityManager->Get<RigidBody>(m_currentSelectedObject).GetMass();
 								ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
+
+								//// For future, need to update your editor state to reflect the new values of the Rigidbody. - HANS
+								//if (mass != g_entityManager->Get<RigidBody>(m_currentSelectedObject).GetMass()) {
+								//	// Update the Rigidbody component with the new mass
+								//	g_entityManager->Get<RigidBody>(m_currentSelectedObject).SetMass(mass);
+								//}
+
 								g_entityManager->Get<RigidBody>(m_currentSelectedObject).SetMass(mass);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
@@ -1019,7 +1031,7 @@ namespace PE {
 
 			}
 
-			nlohmann::json serializedEntity;  // Declare at higher scope
+			nlohmann::json serializedEntity;  // Declaring at higher scope-hans
 
 			//docking port menu bar
 			if (ImGui::BeginMainMenuBar())
@@ -1030,28 +1042,40 @@ namespace PE {
 					if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						int testEntityID = m_currentSelectedObject;
-						nlohmann::json serializedEntity = serializationManager.serializeEntity(testEntityID);  // Call the method
 
-						// Print or save the serialized JSON
-						std::cout << "Serialized Entity: " << serializedEntity.dump(4) << std::endl;
+						// debugging print onto consle
+						nlohmann::json serializedEntity = serializationManager.serializeEntity(testEntityID);
+						std::cout << "Serialized Entity: " << serializedEntity.dump(4) << std::endl;  // 4 is for indentation
 
-						// Save the JSON to a file
-						std::ofstream jsonFile("saved_transform.json");
-						jsonFile << serializedEntity.dump(4);  // 4 is for indentation
-						jsonFile.close();
+						serializationManager.saveToFile("Saved_Data.json", testEntityID);
 					}
 					if (ImGui::MenuItem("Load"))
 					{
-						// Load the JSON from a file
-						std::ifstream jsonFile("saved_transform.json");
-						nlohmann::json loadedEntity;
-						jsonFile >> loadedEntity;
-						jsonFile.close();
-
-						// Deserialize the entity
-						std::pair<Entity, int> deserializedData = serializationManager.deserializeEntity(loadedEntity);
+						// Call the method to load the serialized entity from a file and deserialize it.
+						std::pair<Entity, int> deserializedData = serializationManager.loadFromFile("saved_transform.json");
 						int deserializedEntityID = deserializedData.second;
 
+						//// Still need to integrate the deserialized entity into JW ECS via file exploer + the logic.
+						//OPENFILENAME ofn;
+						//wchar_t szFile[260];
+						//ZeroMemory(&ofn, sizeof(ofn));
+						//ofn.lStructSize = sizeof(ofn);
+						//ofn.hwndOwner = NULL;
+						//ofn.lpstrFile = szFile;
+						//ofn.lpstrFile[0] = '\0';
+						//ofn.nMaxFile = sizeof(szFile);
+						//ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
+						//ofn.nFilterIndex = 1;
+						//ofn.lpstrFileTitle = NULL;
+						//ofn.nMaxFileTitle = 0;
+						//ofn.lpstrInitialDir = NULL;
+						//ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+						//if (GetOpenFileNameW(&ofn) == TRUE)
+						//{
+						//	std::pair<Entity, int> deserializedData = serializationManager.loadFromFile("saved_transform.json");
+						//	int deserializedEntityID = deserializedData.second;
+						//}
 					}
 					ImGui::Separator();
 					//remove the false,false if using

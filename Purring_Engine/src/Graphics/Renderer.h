@@ -29,6 +29,7 @@
 #include "VertexData.h"
 #include "Texture.h"
 #include "Math/Transform.h"
+#include "Data/json.hpp"
 
 namespace PE
 {
@@ -83,6 +84,27 @@ namespace PE
             void Renderer::SetTextureKey(std::string const& r_newKey)
             {
                 m_textureKey = r_newKey;
+            }
+
+            // Serialization
+            nlohmann::json ToJson() const
+            {
+                nlohmann::json j;
+                j["TextureKey"] = GetTextureKey();
+                j["Color"]["r"] = GetColor().r;
+                j["Color"]["g"] = GetColor().g;
+                j["Color"]["b"] = GetColor().b;
+                j["Color"]["a"] = GetColor().a;
+                return j;
+            }
+
+            // Deserialization
+            static Renderer FromJson(const nlohmann::json& j)
+            {
+                Renderer r;
+                r.SetTextureKey(j["TextureKey"]);
+                r.SetColor(j["Color"]["r"], j["Color"]["g"], j["Color"]["b"], j["Color"]["a"]);
+                return r;
             }
 
         private:

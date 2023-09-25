@@ -113,24 +113,32 @@ nlohmann::json SerializationManager::serializeEntity(int entityID)
 
         j["Entity"]["components"]["Transform"] = jTransform;
     }
+    {
+        PE::RigidBody* rigidBody = static_cast<PE::RigidBody*>(entityManager->GetComponentPoolPointer("RigidBody")->Get(eID));
+        if (rigidBody != nullptr)
+        {
+            nlohmann::json jRigidBody = rigidBody->ToJson(); // Make sure your RigidBody class has a ToJson function
+            j["Entity"]["components"]["RigidBody"] = jRigidBody;
+        }
+    }
+    {
+        PE::Collider* collider = static_cast<PE::Collider*>(entityManager->GetComponentPoolPointer("Collider")->Get(eID));
+        if (collider != nullptr) {
+            nlohmann::json jCollider = collider->ToJson();
+            j["Entity"]["components"]["Collider"] = jCollider;
+        }
+    }
+    {
+        PE::Graphics::Renderer* renderer = static_cast<PE::Graphics::Renderer*>(entityManager->GetComponentPoolPointer("Renderer")->Get(eID));
+        if (renderer != nullptr) {
+            nlohmann::json jRenderer = renderer->ToJson();
+            j["Entity"]["components"]["Renderer"] = jRenderer;
+        }
+    }
 
     return j; // Return the JSON object containing the serialized entity.
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Deserialize an entity's data from a JSON object.
-/// This function takes a JSON object as input and deserializes the entity's data
-/// from it, including its name, various data fields, and components if available.
-/// </summary>
-/// <param name="j">The JSON object containing the serialized entity data.</param>
-/// <returns>
-/// A pair containing the deserialized entity and its entity ID.
-/// If deserialization fails, the entity ID will be set to -1.
-/// </returns>
------------------------------------------------------------------------------ */
 std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::json& j)
 {
     Entity entity;                              // Create an empty Entity object to store the deserialized data.
@@ -185,7 +193,7 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
             // To add similar blocks for other data types in the future..... -hans
         }
 
-        // Deserialize Transform component IFFF it exists in JSON.
+        // Deserialize Transform component IF it exists in JSON.
         if (j["Entity"]["components"].contains("Transform")) {
             PE::Transform t = PE::Transform::FromJson(j["Entity"]["components"]["Transform"]);
 
@@ -198,6 +206,43 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
             // Update the component data
             *transform = t;
         }
+        if (j["Entity"]["components"].contains("RigidBody")) {
+            PE::RigidBody rb = PE::RigidBody::FromJson(j["Entity"]["components"]["RigidBody"]); // Assuming you implement a FromJson function
+
+            // Assign a Rigidbody component to this entity
+            entityManager->Assign(entityID, "RigidBody");
+
+            // Get the Rigidbody component
+            PE::RigidBody* rigidBody = static_cast<PE::RigidBody*>(entityManager->GetComponentPoolPointer("RigidBody")->Get(entityID));
+
+            // Update the component data
+            *rigidBody = rb;
+        }
+        if (j["Entity"]["components"].contains("Collider")) {
+            PE::Collider col = PE::Collider::FromJson(j["Entity"]["components"]["Collider"]);
+
+            // Assign a Collider component to this entity
+            entityManager->Assign(entityID, "Collider");
+
+            // Get the Collider component
+            PE::Collider* collider = static_cast<PE::Collider*>(entityManager->GetComponentPoolPointer("Collider")->Get(entityID));
+
+            // Update the component data
+            *collider = col;
+        }
+        if (j["Entity"]["components"].contains("Renderer")) {
+            PE::Graphics::Renderer r = PE::Graphics::Renderer::FromJson(j["Entity"]["components"]["Renderer"]);
+
+            // Assign a Renderer component to this entity
+            entityManager->Assign(entityID, "Renderer");
+
+            // Get the Renderer component
+            PE::Graphics::Renderer* renderer = static_cast<PE::Graphics::Renderer*>(entityManager->GetComponentPoolPointer("Renderer")->Get(entityID));
+
+            // Update the component data
+            *renderer = r;
+        }
+
 
     }
 

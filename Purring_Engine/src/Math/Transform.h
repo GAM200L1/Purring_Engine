@@ -42,7 +42,9 @@ namespace PE
             return GetTransformMatrix3x3().ConvertTo4x4();
         }
 
-        nlohmann::json ToJson() const {
+        // Serialization
+        nlohmann::json ToJson() const
+        {
             nlohmann::json j;
             j["width"] = width;
             j["height"] = height;
@@ -52,7 +54,9 @@ namespace PE
             return j;
         }
 
-        static Transform FromJson(const nlohmann::json& j) {
+        // Deserialization
+        static Transform FromJson(const nlohmann::json& j)
+        {
             Transform t;
             t.width = j["width"];
             t.height = j["height"];

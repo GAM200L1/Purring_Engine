@@ -1,6 +1,18 @@
 {
     "Entity": {
         "components": {
+            "Collider": {
+                "type": "CircleCollider"
+            },
+            "Renderer": {
+                "Color": {
+                    "a": 1.0,
+                    "b": 0.6029411554336548,
+                    "g": 0.75,
+                    "r": 0.75
+                },
+                "TextureKey": "cat"
+            },
             "RigidBody": {
                 "mass": 10.0,
                 "type": 1
@@ -9,7 +21,7 @@
                 "height": 100.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 100.0,
+                    "x": 63.465293884277344,
                     "y": 100.0
                 },
                 "width": 100.0
