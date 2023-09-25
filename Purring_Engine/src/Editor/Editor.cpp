@@ -942,12 +942,20 @@ namespace PE {
 				//mennu 1
 				if (ImGui::BeginMenu("Scenes"))
 				{
-					if (ImGui::MenuItem("Scene 1", "")) {} // have different graphical test here
-					if (ImGui::MenuItem("Scene 2", "")) {} // set different booleans to controls as well
-					if (ImGui::MenuItem("Scene 3", "")) {} // like maybe 1 for player controller
-					// 1 for rendering 2500 objects
-					// 1 for creation and deletion of objects
-					//depending on different type of scene, i can activated and deactivate specific window so he cant break stuff as well
+					if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						//save code goes here
+					}
+					if (ImGui::MenuItem("Load"))
+					{
+						//if youre capable loading from different scene you can add more menu item like below
+						//otherwise just use this
+					}
+					ImGui::Separator();
+					//remove the false,false if using
+					if (ImGui::MenuItem("Scene 1", "", false , false)) {}
+					if (ImGui::MenuItem("Scene 2", "", false, false)) {}
+					if (ImGui::MenuItem("Scene 3", "", false, false)) {}
 					ImGui::EndMenu();
 				}
 				//menu 2
