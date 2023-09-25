@@ -107,7 +107,11 @@ PE::CoreApplication::CoreApplication()
     MemoryManager::GetInstance();
     //assignning memory manually to renderer manager
     Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    PhysicsManager* physicsManager = new (MemoryManager::GetInstance()->AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
+    AddSystem(physicsManager);
     AddSystem(rendererManager);
+    // Collision
+    
 
 
     // Load a texture
@@ -309,7 +313,6 @@ void PE::CoreApplication::Run()
         }
 
         // Physics test
-        PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
         CollisionManager::UpdateColliders();
         CollisionManager::TestColliders();
         CollisionManager::ResolveCollision();
@@ -348,7 +351,6 @@ void PE::CoreApplication::Run()
     m_windowManager.Cleanup();
     ResourceManager::UnloadResources();
     ResourceManager::DeleteInstance();
-    PhysicsManager::DeleteInstance();
     CollisionManager::DeleteInstance();
 }
 

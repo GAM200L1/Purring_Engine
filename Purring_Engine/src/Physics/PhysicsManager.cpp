@@ -19,22 +19,16 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 namespace PE
 {
-	PhysicsManager* PhysicsManager::p_instance;
-	float PhysicsManager::m_linearDragCoefficient = -2.f;
-	float PhysicsManager::m_velocityNegligence = 2.f;
-	bool PhysicsManager::applyStepPhysics = false;
-	bool PhysicsManager::advanceStep = false;
-
-	// ----- Public Getters ----- //
-	PhysicsManager* PhysicsManager::GetInstance()
+	void PhysicsManager::InitializeSystem()
 	{
-		if (!p_instance)
-		{
-			p_instance = new PhysicsManager();
-		}
-		return p_instance;
+		m_linearDragCoefficient = -2.f;
+		m_velocityNegligence = 2.f;
+		m_applyStepPhysics = false;
+		m_advanceStep = false;
+		m_fixedDt = 1.f / 60.f;
 	}
 
+	// ----- Public Getters ----- //
 	float PhysicsManager::GetLinearDragCoefficient()
 	{
 		return m_linearDragCoefficient;
@@ -46,16 +40,16 @@ namespace PE
 	}
 
 	// ----- Public Methods ----- //
-	void PhysicsManager::Step(float deltaTime)
+	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
-		if (!applyStepPhysics)
+		if (!m_applyStepPhysics)
 			UpdateDynamics(deltaTime);
 		else
 		{
-			if (advanceStep)
+			if (m_advanceStep)
 			{
 				UpdateDynamics(deltaTime);
-				advanceStep = false;
+				m_advanceStep = false;
 			}
 		}
 	}
@@ -92,9 +86,8 @@ namespace PE
 		}
 	}
 
-	void PhysicsManager::DeleteInstance()
+	void PhysicsManager::DestroySystem()
 	{
-		delete p_instance;
-		p_instance = nullptr;
+		// empty by design
 	}
 }
