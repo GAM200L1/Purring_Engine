@@ -246,10 +246,15 @@ namespace PE
             ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
             r_shaderProgram.Use();
 
-            int i{};
+            int count{};
             size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
             m_meshes[meshIndex].Bind();
             std::shared_ptr<Graphics::Texture> p_texture{};
+
+            std::vector<glm::mat4> matrices{};
+            std::vector<glm::vec4> colors{};
+            matrices.reserve(2500);
+            colors.reserve(2500);
 
             // Make draw call for each game object with a renderer component
             for (EntityID id : SceneView<Renderer, Transform>())
@@ -264,11 +269,13 @@ namespace PE
                         transform.position.x, transform.position.y) // x, y position
                 };
 
-                // Pass the model to NDC transform matrix as a uniform variable
-                r_shaderProgram.SetUniform("uModelToNdc[" + std::to_string(i) + "]", r_worldToNdc * glmObjectTransform);
+                matrices.emplace_back(r_worldToNdc * glmObjectTransform);
+                colors.emplace_back(renderer.GetColor());
+                //// Pass the model to NDC transform matrix as a uniform variable
+                //r_shaderProgram.SetUniform("uModelToNdc[" + std::to_string(i) + "]", r_worldToNdc * glmObjectTransform);
 
-                // Pass the color of the quad as a uniform variable
-                r_shaderProgram.SetUniform("uColor[" + std::to_string(i) + "]", renderer.GetColor());
+                //// Pass the color of the quad as a uniform variable
+                //r_shaderProgram.SetUniform("uColor[" + std::to_string(i) + "]", renderer.GetColor());
 
                 // Attempt to retrieve and bind the texture
                 if (renderer.GetTextureKey().empty())
@@ -301,19 +308,65 @@ namespace PE
                     }
                 }
 
-                ++i;
+                ++count;
 
-                if (i >= 100) 
-                {
-                    glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-                        GL_UNSIGNED_SHORT, NULL, i);
+                //if (i >= 100) 
+                //{
+                //    glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                //        GL_UNSIGNED_SHORT, NULL, i);
 
-                    i = 0;
-                }
+                //    i = 0;
+                //}
             }
 
+            // Create buffer object for additional vertex data
+            GLuint vbo_hdl;
+            glCreateBuffers(1, &vbo_hdl);
+            glNamedBufferStorage(vbo_hdl,
+                static_cast<GLsizeiptr>(matrices.size() * sizeof(glm::mat4)
+                    + colors.size() * sizeof(glm::vec4)),
+                nullptr, GL_DYNAMIC_STORAGE_BIT);
+
+
+            // Store vertex positions in VBO
+            glNamedBufferSubData(vbo_hdl, 0,
+                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)),
+                reinterpret_cast<GLvoid*>(colors.data()));
+
+
+            // Store colors in VBO
+            glNamedBufferSubData(vbo_hdl,
+                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)),
+                static_cast<GLintptr>(matrices.size() * sizeof(glm::mat4)),
+                reinterpret_cast<GLvoid*>(matrices.data()));
+
+            // Bind the vertex coordinates
+            GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
+            glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex);
+            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl, 0,
+                static_cast<GLsizei>(sizeof(glm::vec4)));
+            glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, bindingIndex);
+
+            // Bind the colors
+            attributeIndex = 3, bindingIndex = 3;
+
+            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
+                static_cast<GLintptr>(colors.size() * sizeof(glm::vec4)),
+                static_cast<GLsizei>(sizeof(glm::mat4)));
+
+            for (int i{}; i < 4; ++i) 
+            {
+                glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i);
+
+                glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
+                glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, bindingIndex);
+            }
+
+            glVertexArrayBindingDivisor(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, 1);
+
             glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-                GL_UNSIGNED_SHORT, NULL, i);
+                GL_UNSIGNED_SHORT, NULL, count);
 
             // Unbind everything
             m_meshes[meshIndex].Unbind();
@@ -323,6 +376,10 @@ namespace PE
             {
                 p_texture->Unbind();
             }
+
+            glDeleteBuffers(1, &vbo_hdl); 
+            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 2);
+            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 3);
         }
 
 
