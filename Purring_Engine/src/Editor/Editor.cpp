@@ -127,6 +127,8 @@ namespace PE {
 		int width, height;
 		glfwGetWindowSize(m_window, &width, &height);
 		io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
+		m_renderWindowWidth = static_cast<float>(width) * 0.1f;
+		m_renderWindowHeight = static_cast<float>(height) * 0.1f;
 
 		//looks nicer 
 		ImGuiStyle& style = ImGui::GetStyle();

@@ -17,7 +17,7 @@
 #version 460 core
 
 layout (location = 0) in vec2 aVertexPosition; // IN vertex position
-layout (location = 2) in vec2 aTextureCoord;   // IN texture coordinate
+layout (location = 1) in vec2 aTextureCoord;   // IN texture coordinate
 
 layout (location = 0) out vec2 vTextureCoord;  // OUT texture coordinate
 

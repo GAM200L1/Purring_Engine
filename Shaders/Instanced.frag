@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     Textured.frag
+ \file     Instanced.frag
  \date     16-09-2023
  
  \author               Krystal YAMIN
