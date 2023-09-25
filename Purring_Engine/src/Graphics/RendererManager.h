@@ -191,6 +191,9 @@ namespace PE
             //! Width and height of the ImGui window the last time the framebuffer was resized
             float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
 
+            //! 4x4 world to NDC matrix. Updated when window is resized or camera has been repositioned
+            glm::mat4 m_cachedWorldToNdcMatrix{}; 
+
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************

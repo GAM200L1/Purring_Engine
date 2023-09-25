@@ -130,6 +130,22 @@ namespace PE
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
                 m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
+
+                // Compute the view to NDC matrix
+                float halfWidth{ windowWidth * 0.5f };
+                float halfHeight{ windowHeight * 0.5f };
+                m_cachedWorldToNdcMatrix = 
+                    glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
+                    * m_mainCamera.GetWorldToViewMatrix();
+            } 
+            else if (m_mainCamera.GetHasChanged()) 
+            {
+                // Compute the view to NDC matrix
+                float halfWidth{ windowWidth * 0.5f };
+                float halfHeight{ windowHeight * 0.5f };
+                m_cachedWorldToNdcMatrix =
+                    glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
+                    * m_mainCamera.GetWorldToViewMatrix();
             }
 
             // Set background color to black
@@ -150,20 +166,11 @@ namespace PE
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
 
-            // Compute the view to NDC matrix
-            float halfWidth{ windowWidth * 0.5f };
-            float halfHeight{ windowHeight * 0.5f };
-            glm::mat4 worldToNdc{
-                glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f) 
-                * m_mainCamera.GetWorldToViewMatrix()
-            };
-
-
-            DrawSceneInstanced(worldToNdc); // Draw objects in the scene
+            DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
 
             if (Editor::GetInstance().IsRenderingDebug()) 
             {
-                DrawDebug(worldToNdc); // Draw debug gizmos in the scene
+                DrawDebug(m_cachedWorldToNdcMatrix); // Draw debug gizmos in the scene
             }
 
 
