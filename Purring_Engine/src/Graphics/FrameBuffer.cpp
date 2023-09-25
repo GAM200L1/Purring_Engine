@@ -34,19 +34,45 @@ namespace PE
             glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
 
             // Attach a texture to the framebuffer
-            glCreateTextures(GL_TEXTURE_2D, 1, &m_textureIndex);
+            glGenTextures(1, &m_textureIndex);
+            glBindTexture(GL_TEXTURE_2D, m_textureIndex);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
 
             // Check if the framebuffer was created successfully
-            if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
+            GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+            if (status != GL_FRAMEBUFFER_COMPLETE) {
                 glDeleteTextures(1, &m_textureIndex);
 
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(true, "Framebuffer is not complete.", __FUNCTION__);
+                switch (status) {
+                case GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT: {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(true, "Framebuffer is incomplete: One or more attachments are not complete.", __FUNCTION__);
+                    break;
+                }
+                case GL_FRAMEBUFFER_INCOMPLETE_MISSING_ATTACHMENT: {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(true, "Framebuffer is incomplete: No images are attached.", __FUNCTION__);
+                    break;
+                }
+                case GL_FRAMEBUFFER_UNSUPPORTED: {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(true, "Framebuffer configuration is not supported.", __FUNCTION__);
+                    break;
+                }
+                default: {
+                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                    engine_logger.SetTime();
+                    engine_logger.AddLog(true, "Framebuffer is incomplete with unknown status code.", __FUNCTION__);
+                    break;
+                }
+                }
+
                 return false;
             }
 
