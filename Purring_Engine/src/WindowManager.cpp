@@ -25,6 +25,7 @@
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
 #include "InputSystem.h"
+#include "Math/Transform.h"
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -193,14 +194,15 @@ namespace PE
 			g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
 		}
 
+		// dash
 		if (KPE.keycode == GLFW_KEY_LEFT_SHIFT)
 		{
-			// dash action
 			if (g_entityManager->Get<RigidBody>(0).m_velocity.Dot(g_entityManager->Get<RigidBody>(0).m_velocity) == 0.f)
 				g_entityManager->Get<RigidBody>(0).m_velocity = vec2{ 1.f, 0.f };
 			g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity * 1000.f);
 		}
 
+		// rotation
 		if (KPE.keycode == GLFW_KEY_RIGHT)
 		{
 			g_entityManager->Get<RigidBody>(0).m_rotationVelocity = PE_PI;
@@ -208,6 +210,18 @@ namespace PE
 		if (KPE.keycode == GLFW_KEY_LEFT)
 		{
 			g_entityManager->Get<RigidBody>(0).m_rotationVelocity = -PE_PI;
+		}
+
+		// scale
+		if (KPE.keycode == GLFW_KEY_EQUAL)
+		{
+			g_entityManager->Get<Transform>(0).width *= 1.01f;
+			g_entityManager->Get<Transform>(0).height *= 1.01f;
+		}
+		if (KPE.keycode == GLFW_KEY_MINUS)
+		{
+			g_entityManager->Get<Transform>(0).width *= 0.99f;
+			g_entityManager->Get<Transform>(0).height *= 0.99f;
 		}
 	}
 
