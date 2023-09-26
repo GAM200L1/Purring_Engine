@@ -37,6 +37,7 @@ namespace PE
 			throw;
 		}
 		g_entityManager = this;
+		m_poolsEntity["All"];
 	}
 
 	EntityManager::~EntityManager()
@@ -51,10 +52,11 @@ namespace PE
 
 	EntityID EntityManager::NewEntity()
 	{
-		size_t id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin());
+		size_t id = (m_removed.empty()) ? m_entities.size() : (m_removed.front());
 		if (!m_removed.empty())
-			m_removed.erase(id);
+			m_removed.pop();
 		m_entities.emplace(id);
+		++m_entityCounter;
 		return id;
 	}
 
@@ -73,16 +75,7 @@ namespace PE
 			return;
 		}
 		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
+		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
 		// initialize that region of memory
 		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
 		{
@@ -109,16 +102,8 @@ namespace PE
 			return;
 		}
 		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
+		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+
 		// initialize that region of memory
 		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
 		{
@@ -162,18 +147,19 @@ namespace PE
 	{
 		if (m_entities.count(id))
 		{
-			for (std::pair<const ComponentID, ComponentPool*>& pool : m_componentPools)
+			for (const ComponentID& pool : GetComponentIDs(id))
 			{
-				if (pool.second->HasEntity(id))
-				{
-					pool.second->remove(id);
-				}
+				m_componentPools[pool]->remove(id);
+				std::string str = "Removed Component-";
+				str += pool;
+				engine_logger.AddLog(false, str, __FUNCTION__);
 			}
 			m_entities.erase(id);
 			m_removed.emplace(id);
 			std::string str = "Removed Entity-";
 			str += std::to_string(id);
 			engine_logger.AddLog(false, str, __FUNCTION__);
+			UpdateVectors(id, false);
 		}
 	}
 }

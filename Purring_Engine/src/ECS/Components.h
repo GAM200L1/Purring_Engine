@@ -19,7 +19,7 @@
 #include <queue>
 #include "Math/MathCustom.h"
 // CONSTANT VARIABLES
-constexpr size_t DEFAULT_ENTITY_CNT = 50;		// default bytes allocated to components pool
+constexpr size_t DEFAULT_ENTITY_CNT = 3000;		// default bytes allocated to components pool
 
 namespace PE
 {
@@ -88,7 +88,6 @@ namespace PE
         }
 
         std::map<size_t, size_t> m_idxMap;  // map to decouple the entity ID from the internal index
-        std::queue<size_t> m_removed;       // keep track of removed indexes
         size_t m_elementSize{};             // the size of each element in the pool
         size_t m_size{};                    // the current size of the pool (entity count, should lineup to m_idxMap)
         size_t m_capacity{};                // the actual capacity of the pool
@@ -129,7 +128,7 @@ namespace PE
         *************************************************************************************/
         void* Get(size_t index)
         {
-            return reinterpret_cast<void*>(p_data + m_idxMap.at(index));
+            return reinterpret_cast<void*>(&(p_data[m_idxMap[index]]));
         }
         
     // ----- Public methods ----- // 
@@ -170,9 +169,26 @@ namespace PE
         {
             if (!m_idxMap.count(index))
                 throw; // log in the future
-            //p_data[index] = T();
-            m_removed.emplace(m_idxMap[index]);
+            
+            EntityID key{}, lastIdx{};
+            for (const auto& pair : m_idxMap)
+            {
+                if (lastIdx <= pair.second)
+                {
+                    lastIdx = pair.second;
+                    key = pair.first;
+                }
+            }
+            // if index is not the last as well...
+            if (key != index)
+            {
+                T tmp = p_data[lastIdx];
+                p_data[m_idxMap[index]] = p_data[lastIdx];
+                m_idxMap[key] = m_idxMap[index];
+            }
+            p_data[lastIdx] = T();
             m_idxMap.erase(index);
+            --m_size;
         }
     private:
         T* p_data{ nullptr };
