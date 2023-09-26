@@ -37,10 +37,5 @@ namespace PE
 
             return transMat * rotMat * scaleMat;
         }
-
-        mat4x4 GetTransformMatrix4x4() const
-        {
-            return GetTransformMatrix3x3().ConvertTo4x4();
-        }
     };
 }

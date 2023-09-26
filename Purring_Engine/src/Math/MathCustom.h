@@ -579,8 +579,6 @@ namespace PE
 		mat3x3 Adjoint() const;
 		// Inverse
 		mat3x3 Inverse() const;
-		// conversion for glm
-		mat4x4 ConvertTo4x4() const;
 	};
 
 

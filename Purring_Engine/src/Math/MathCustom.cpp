@@ -639,16 +639,6 @@ namespace PE
 		return dotProduct;
 	}
 
-	mat4x4 mat3x3::ConvertTo4x4() const
-	{
-		mat4x4 ret{};
-		ret.Identity();				 // c3
-		ret[0] = m[0]; ret[4] = m[3];	ret[12] = m[6];
-		ret[1] = m[1]; ret[5] = m[4];	ret[13] = m[7];
-		return ret;
-	}
-
-
 	/*                                                                               mat4x4 struct member implementations
 	--------------------------------------------------------------------------------------------------------------------- */
 	mat4x4::mat4x4()
