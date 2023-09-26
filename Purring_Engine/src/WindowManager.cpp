@@ -26,6 +26,7 @@
 #include "Editor/Editor.h"
 #include "InputSystem.h"
 #include "Math/Transform.h"
+#include "Physics/PhysicsManager.h"
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -172,7 +173,21 @@ namespace PE
 			KeyTriggeredEvent ev;
 			ev = dynamic_cast<const KeyTriggeredEvent&>(e);
 			//do step by step here
+			if (ev.keycode == GLFW_KEY_P)
+			{
+				// PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
 
+				// if (PhysicsManager::GetStepPhysics())
+				Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned On.\n");
+				// else
+					// Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned Off.\n");
+				
+			}
+			if (ev.keycode == GLFW_KEY_N)
+			{
+				// PhysicsManager::GetAdvanceStep() = true;
+				Editor::GetInstance().AddEventLog("Advanced Step.\n");
+			}
 
 			////repeated here if not there is a delay before movement
 			//// ----- M1 Movement ----- //
