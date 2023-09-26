@@ -131,7 +131,12 @@ namespace PE
 											   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
 								}
 							}
-							// else send message to trigger respective event?
+							else
+							{
+								// else send message to trigger event associated with this entity?
+								engine_logger.AddLog(false, "Collided with Trigger!\n", __FUNCTION__);
+							}
+							
 						}
 
 					}, collider2.colliderVariant);

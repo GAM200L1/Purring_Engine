@@ -125,30 +125,32 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
 
     g_entityFactory->CreateFromPrefab("GameObject");
+    g_entityFactory->CreateFromPrefab("GameObject");
 
-    std::random_device rd;
-    std::mt19937 gen(rd());
-    for (size_t i{ 1 }; i < 20; ++i)
-    {
-        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-
-        std::uniform_int_distribution<>distr0(-550, 550);
-        g_entityManager->Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
-        std::uniform_int_distribution<>distr1(-250, 250);
-        g_entityManager->Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
-        std::uniform_int_distribution<>distr2(10, 200);
-        g_entityManager->Get<Transform>(id).width = static_cast<float>(distr2(gen));
-        g_entityManager->Get<Transform>(id).height = static_cast<float>(distr2(gen));
-        g_entityManager->Get<Transform>(id).orientation = 0.f;
-
-        if (i%3)
-            g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-        
-        if (i%2)
-            g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
-        else
-            g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
-    }
+    // ----- Limit Test for Physics ----- //
+    //std::random_device rd;
+    //std::mt19937 gen(rd());
+    //for (size_t i{ 2 }; i < 20; ++i)
+    //{
+    //    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+    //
+    //    std::uniform_int_distribution<>distr0(-550, 550);
+    //    g_entityManager->Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
+    //    std::uniform_int_distribution<>distr1(-250, 250);
+    //    g_entityManager->Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
+    //    std::uniform_int_distribution<>distr2(10, 200);
+    //    g_entityManager->Get<Transform>(id).width = static_cast<float>(distr2(gen));
+    //    g_entityManager->Get<Transform>(id).height = static_cast<float>(distr2(gen));
+    //    g_entityManager->Get<Transform>(id).orientation = 0.f;
+    //
+    //    if (i%3)
+    //        g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+    //    
+    //    if (i%2)
+    //        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+    //    else
+    //        g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+    //}
 
     // Make the first gameobject with a collider circle at world pos (100, 100)
     g_entityManager->Get<Transform>(0).position.x = 0.f;
@@ -160,39 +162,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
     g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
-    
-    //// creates AABB map boundaries
-    //g_entityManager->Get<Transform>(1).position.x = 0.f;
-    //g_entityManager->Get<Transform>(1).position.y = 0.f;
-    //g_entityManager->Get<Transform>(1).width = 100.f;
-    //g_entityManager->Get<Transform>(1).height = 100.f;
-    //g_entityManager->Get<Transform>(1).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
-    //
-    //g_entityManager->Get<Transform>(2).position.x = -700.f;
-    //g_entityManager->Get<Transform>(2).position.y = 0.f;
-    //g_entityManager->Get<Transform>(2).width = 100.f;
-    //g_entityManager->Get<Transform>(2).height = 700.f;
-    //g_entityManager->Get<Transform>(2).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(2).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(2).colliderVariant = AABBCollider();
-    //
-    //g_entityManager->Get<Transform>(3).position.x = 0.f;
-    //g_entityManager->Get<Transform>(3).position.y = 350.f;
-    //g_entityManager->Get<Transform>(3).width = 1500.f;
-    //g_entityManager->Get<Transform>(3).height = 100.f;
-    //g_entityManager->Get<Transform>(3).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(3).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(3).colliderVariant = AABBCollider();
-    //
-    //g_entityManager->Get<Transform>(4).position.x = 0.f;
-    //g_entityManager->Get<Transform>(4).position.y = -350.f;
-    //g_entityManager->Get<Transform>(4).width = 1500.f;
-    //g_entityManager->Get<Transform>(4).height = 100.f;
-    //g_entityManager->Get<Transform>(4).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(4).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(4).colliderVariant = AABBCollider();
+    g_entityManager->Get<RigidBody>(0).SetMass(10.f);
 
     // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
     g_entityManager->Get<Transform>(1).position.x = -100.f;
@@ -202,6 +172,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(1).orientation = 0.f;
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    g_entityManager->Get<Collider>(1).isTrigger = true;
 
     // Render 50x50 purple sprites in a grid
     //for (size_t i{}; i < 200; ++i)
@@ -296,18 +267,33 @@ void PE::CoreApplication::Run()
             EntityManager ent;
         }
 
-        // set step physics
+        // Set step physics
         if (glfwGetKey(m_window, GLFW_KEY_P) == GLFW_PRESS)
         {
             PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
         }
-
         if (glfwGetKey(m_window, GLFW_KEY_N) == GLFW_PRESS)
         {
             PhysicsManager::GetAdvanceStep() = !PhysicsManager::GetAdvanceStep();
         }
 
-        std::cout << PhysicsManager::GetStepPhysics();
+        // Character movement
+        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+        }
 
         // dash
         if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
@@ -317,33 +303,11 @@ void PE::CoreApplication::Run()
             g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity.GetNormalized() * 1000.f);
         }
 
-        // movement
-        if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
-        }
-
-        if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-        }
-
-        if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-        }
-
-        if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
-        {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-        }
-
-        // rotation
+        // Character Rotation
         if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
             g_entityManager->Get<RigidBody>(0).m_rotationVelocity = -PE_PI;
         }
-
         if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
         {
             g_entityManager->Get<RigidBody>(0).m_rotationVelocity = PE_PI;

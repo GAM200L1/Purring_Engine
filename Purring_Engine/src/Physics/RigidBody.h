@@ -59,14 +59,6 @@ namespace PE
 		float GetInverseMass() const;
 		void SetMass(float mass);
 
-		vec2 GetVelocity() const;
-		void SetVelocity(vec2 const& r_linearVelocity);
-
-		float GetRotationVelocity() const;
-		void SetRotationVelocity(float angularVelocity);
-
-		vec2 GetForce() const;
-		void SetForce(vec2 const& r_force);
 		void ZeroForce();
 
 		EnumRigidBodyType GetType() const;
