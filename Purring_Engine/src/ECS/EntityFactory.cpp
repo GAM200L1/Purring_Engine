@@ -27,7 +27,11 @@ namespace PE
 	EntityFactory::EntityFactory() : p_entityManager(PE::g_entityManager)
 	{ 
 		if (g_entityFactory != nullptr)
+		{
+			engine_logger.AddLog(true, "Another instance of Entity Factory was created!!", __FUNCTION__);
+			engine_logger.FlushLog();
 			throw;
+		}
 		g_entityFactory = this;
 		LoadComponents();
 	};
@@ -44,12 +48,10 @@ namespace PE
 		if (p_entityManager->IsEntityValid(id))
 		{
 			EntityID clone = CreateEntity();
-			for (std::pair<const ComponentID, size_t>& componentCreator : m_componentMap)
+			for (const ComponentID& componentCreator : p_entityManager->GetComponentIDs(id))
 			{
-				if (p_entityManager->Has(id, componentCreator.first))
-				{
-					p_entityManager->CopyComponent(id, clone, componentCreator.first);
-				}
+				LoadComponent(clone, componentCreator.c_str(),
+					static_cast<void*>(p_entityManager->GetComponentPoolPointer(componentCreator)->Get(id)));
 			}
 			return clone;
 		}

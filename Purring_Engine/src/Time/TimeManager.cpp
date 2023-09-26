@@ -17,20 +17,6 @@
 
 namespace PE
 {
-	TimeManager::TimeManager()
-		: m_systemFrameTime{},
-		  m_systemStartFrame{},
-		  m_systemEndFrame{},
-		  m_startFrame{},
-		  m_endFrame{},
-		  m_previousStartFrame{},
-		  m_engineStartTime{},
-		  m_engineRunTime{},
-		  m_frameTime { 1.0 / 60.0 }, // default fps
-		  m_deltaTime{ 1.0 / 60.0 },
-		  m_durationInSeconds {}
-	{}
-
 	void TimeManager::SystemStartFrame(int system)
 	{
 		m_systemStartFrame = std::chrono::high_resolution_clock::now();

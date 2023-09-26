@@ -23,7 +23,7 @@
 #include <map>				// To map functions to event typer
 #include <functional>		// To bind functions
 
-namespace temp {
+namespace PE {
 
 	/*!***********************************************************************************
 	 \brief				Base event class for the other events to inherhit

@@ -42,30 +42,6 @@
 
 namespace PE
 {
-    std::map<std::string, std::shared_ptr<Graphics::ShaderProgram>> ResourceManager::ShaderPrograms;
-    std::map<std::string, std::shared_ptr<Graphics::Texture>> ResourceManager::Textures;
-
-    ResourceManager* ResourceManager::p_instance;
-
-    ResourceManager* ResourceManager::GetInstance()
-    {
-        if (!p_instance)
-        {
-            p_instance = new ResourceManager();
-        }
-        return p_instance;
-    }
-
-    void ResourceManager::DeleteInstance()
-    {
-        if (p_instance) 
-        {
-            delete p_instance;
-            p_instance = nullptr;
-        }
-    }
-
-    // 
     void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderPath,
                              std::string const& r_fragmentShaderPath)
     {

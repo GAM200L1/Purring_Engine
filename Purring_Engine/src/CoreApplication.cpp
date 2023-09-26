@@ -99,7 +99,7 @@ PE::CoreApplication::CoreApplication()
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
     
     // set flags
-    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
@@ -121,7 +121,8 @@ PE::CoreApplication::CoreApplication()
     
     // Load a texture
     std::string catTextureName{ "cat" };
-    ResourceManager::GetInstance()->LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
 
     g_entityFactory->CreateFromPrefab("GameObject");
 
@@ -193,41 +194,28 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<RigidBody>(4).SetType(EnumRigidBodyType::STATIC);
     //g_entityManager->Get<Collider>(4).colliderVariant = AABBCollider();
 
-    // AABB Static Collider
-    //g_entityManager->Get<Transform>(5).position.x = 200.f;
-    //g_entityManager->Get<Transform>(5).position.y = 200.f;
-    //g_entityManager->Get<Transform>(5).width = 100.f;
-    //g_entityManager->Get<Transform>(5).height = 100.f;
-    //g_entityManager->Get<Transform>(5).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(5).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(5).colliderVariant = AABBCollider();
-    //
-    //// AABB Dynamic Collider
-    //g_entityManager->Get<Transform>(6).position.x = -200.f;
-    //g_entityManager->Get<Transform>(6).position.y = 200.f;
-    //g_entityManager->Get<Transform>(6).width = 180.f;
-    //g_entityManager->Get<Transform>(6).height = 100.f;
-    //g_entityManager->Get<Transform>(6).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(6).SetType(EnumRigidBodyType::DYNAMIC);
-    //g_entityManager->Get<Collider>(6).colliderVariant = AABBCollider();
-    //
-    //// Circle Static Collider
-    //g_entityManager->Get<Transform>(7).position.x = -200.f;
-    //g_entityManager->Get<Transform>(7).position.y = -200.f;
-    //g_entityManager->Get<Transform>(7).width = 100.f;
-    //g_entityManager->Get<Transform>(7).height = 100.f;
-    //g_entityManager->Get<Transform>(7).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(7).SetType(EnumRigidBodyType::STATIC);
-    //g_entityManager->Get<Collider>(7).colliderVariant = CircleCollider();
-    //
-    //// Circle Dynamic Collider
-    //g_entityManager->Get<Transform>(8).position.x = 200.f;
-    //g_entityManager->Get<Transform>(8).position.y = -200.f;
-    //g_entityManager->Get<Transform>(8).width = 100.f;
-    //g_entityManager->Get<Transform>(8).height = 100.f;
-    //g_entityManager->Get<Transform>(8).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(8).SetType(EnumRigidBodyType::DYNAMIC);
-    //g_entityManager->Get<Collider>(8).colliderVariant = CircleCollider();
+    // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
+    g_entityManager->Get<Transform>(1).position.x = -100.f;
+    g_entityManager->Get<Transform>(1).position.y = -100.f;
+    g_entityManager->Get<Transform>(1).width = 50.f;
+    g_entityManager->Get<Transform>(1).height = 200.f;
+    g_entityManager->Get<Transform>(1).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+
+    // Render 50x50 purple sprites in a grid
+    for (size_t i{}; i < 200; ++i)
+    {
+        EntityID id = g_entityFactory->CreateEntity();
+        g_entityFactory->Assign(id, { "Transform", "Renderer" });
+        g_entityManager->Get<Transform>(id).position.x = 25.f * (i % 20) - 250.f;
+        g_entityManager->Get<Transform>(id).position.y = 25.f * (i / 20) - 250.f;
+        g_entityManager->Get<Transform>(id).width = 50.f;
+        g_entityManager->Get<Transform>(id).height = 50.f;
+        g_entityManager->Get<Transform>(id).orientation = 0.f;
+        g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
+        g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 0.f, 1.f, 0.1f);
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -260,7 +248,7 @@ void PE::CoreApplication::Run()
         // Time start
         TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
-        MemoryManager::GetInstance()->CheckMemoryOver();
+        MemoryManager::GetInstance().CheckMemoryOver();
         // UPDATE -----------------------------------------------------
         
 
@@ -301,6 +289,11 @@ void PE::CoreApplication::Run()
                 g_entityManager->RemoveEntity(lastEnt.front());
                 lastEnt.pop();
             }
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            EntityManager ent;
         }
 
         // set step physics
