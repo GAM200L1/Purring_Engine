@@ -361,7 +361,7 @@ void PE::CoreApplication::Run()
         // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            TimeManager::GetInstance().SystemStartFrame(i);
+            TimeManager::GetInstance().SystemStartFrame();
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
@@ -381,8 +381,7 @@ void PE::CoreApplication::Run()
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();
-    ResourceManager::UnloadResources();
-    ResourceManager::DeleteInstance();
+    ResourceManager::GetInstance().UnloadResources();
 }
 
 
