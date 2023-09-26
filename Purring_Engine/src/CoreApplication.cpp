@@ -114,9 +114,12 @@ PE::CoreApplication::CoreApplication()
     AddSystem(ip);
 
     // Load a texture
-    std::string catTextureName{ "cat" };
+    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "cat2" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat2.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
+
+
     for (size_t i{}; i < 1; ++i)
     {
         EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
@@ -129,6 +132,19 @@ PE::CoreApplication::CoreApplication()
         g_entityManager->Get<Transform>(id).orientation = 0.f;
         g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
     }
+
+    int width{ 1000 }, height{ 1000 };
+    glfwGetWindowSize(m_window, &width, &height);
+
+    EntityID id = g_entityFactory->CreateEntity();
+    g_entityFactory->Assign(id, { "Transform", "Renderer" });
+    g_entityManager->Get<Transform>(id).position.x = 0.f;
+    g_entityManager->Get<Transform>(id).position.y = 0.f;
+    g_entityManager->Get<Transform>(id).width = static_cast<float>(width);
+    g_entityManager->Get<Transform>(id).height = static_cast<float>(height);
+    g_entityManager->Get<Transform>(id).orientation = 0.f;
+    g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
+    g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
 
     // Make the first gameobject with a collider circle at world pos (100, 100)
     g_entityManager->Get<Transform>(0).position.x = 100.f;
@@ -150,17 +166,39 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-    for (size_t i{}; i < 25; ++i) {
+    for (size_t i{}; i < 500; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
-        g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
-        g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
-        g_entityManager->Get<Transform>(id2).width = 50.f;
-        g_entityManager->Get<Transform>(id2).height = 50.f;
+        g_entityManager->Get<Transform>(id2).position.x = 20.f * (i % 40) - 300.f;
+        g_entityManager->Get<Transform>(id2).position.y = 20.f * (i / 40) - 300.f;
+        g_entityManager->Get<Transform>(id2).width = 20.f;
+        g_entityManager->Get<Transform>(id2).height = 20.f;
         g_entityManager->Get<Transform>(id2).orientation = 0.f;
-        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(cat2TextureName);
         g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
     }
+    for (size_t i{}; i < 2000; ++i) {
+        EntityID id2 = g_entityFactory->CreateEntity();
+        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+        g_entityManager->Get<Transform>(id2).position.x = 10.f * (i % 45) - 100.f;
+        g_entityManager->Get<Transform>(id2).position.y = 10.f * (i / 45) - 100.f;
+        g_entityManager->Get<Transform>(id2).width = 10.f;
+        g_entityManager->Get<Transform>(id2).height = 10.f;
+        g_entityManager->Get<Transform>(id2).orientation = 0.f;
+        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(0.f, 1.f, 1.f, 0.5f);
+    }
+    for (size_t i{}; i < 100; ++i) {
+        EntityID id2 = g_entityFactory->CreateEntity();
+        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+        g_entityManager->Get<Transform>(id2).position.x = 10.f * (i % 20) - 300.f;
+        g_entityManager->Get<Transform>(id2).position.y = 10.f * (i / 20);
+        g_entityManager->Get<Transform>(id2).width = 10.f;
+        g_entityManager->Get<Transform>(id2).height = 10.f;
+        g_entityManager->Get<Transform>(id2).orientation = 0.f;
+        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 0.f, 0.5f);
+    }
+
     for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
     {
         testVector.emplace_back(id);
