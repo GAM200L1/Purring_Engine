@@ -22,7 +22,7 @@
 #include <sstream>
 #include <utility>
 
-namespace temp
+namespace PE
 {
 	// Enumeration representing different window event types
 	enum class WindowEvents

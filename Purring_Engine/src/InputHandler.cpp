@@ -35,12 +35,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos)
 {
     window;
 
-    temp::MouseMovedEvent mme;
+    PE::MouseMovedEvent mme;
 
     mme.x = static_cast<int>(xpos);
     mme.y = static_cast<int>(ypos);
 
-    temp::SEND_MOUSE_EVENT(mme)
+    PE::SEND_MOUSE_EVENT(mme)
 }
 
 
@@ -58,16 +58,16 @@ void check_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
     {
     case GLFW_PRESS:
     {
-        temp::MouseButtonPressedEvent mbpe;
+        PE::MouseButtonPressedEvent mbpe;
         mbpe.button = (int)button;
-        temp::SEND_MOUSE_EVENT(mbpe)
+        PE::SEND_MOUSE_EVENT(mbpe)
         break;
     }
     case GLFW_RELEASE:
     {
-        temp::MouseButtonReleaseEvent mbre;
+        PE::MouseButtonReleaseEvent mbre;
         mbre.button = (int)button;
-        temp::SEND_MOUSE_EVENT(mbre)
+        PE::SEND_MOUSE_EVENT(mbre)
         break;
     }
 
@@ -84,10 +84,10 @@ void check_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
     window;
-    temp::MouseScrolledEvent mse;
+    PE::MouseScrolledEvent mse;
     mse.xOffset = static_cast<int>(xoffset);
     mse.yOffset = static_cast<int>(yoffset);
-    temp::SEND_MOUSE_EVENT(mse)
+    PE::SEND_MOUSE_EVENT(mse)
 }
 
 
@@ -104,25 +104,25 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     {
      case GLFW_PRESS:
       {
-         temp::KeyPressedEvent kpe;
+         PE::KeyPressedEvent kpe;
          kpe.keycode = key;
          kpe.repeat = false;
-         temp::SEND_KEY_EVENT(kpe)
+         PE::SEND_KEY_EVENT(kpe)
          break;
       }
      case GLFW_RELEASE:
      {
-         temp::KeyReleaseEvent kre;
+         PE::KeyReleaseEvent kre;
          kre.keycode = key;
-         temp::SEND_KEY_EVENT(kre)
+         PE::SEND_KEY_EVENT(kre)
          break;
      }
      case GLFW_REPEAT:
      {
-         temp::KeyPressedEvent kpe;
+         PE::KeyPressedEvent kpe;
          kpe.keycode = key;
          kpe.repeat = true;
-         temp::SEND_KEY_EVENT(kpe)
+         PE::SEND_KEY_EVENT(kpe)
          break;
      }
     }
