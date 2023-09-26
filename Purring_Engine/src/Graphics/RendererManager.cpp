@@ -283,11 +283,6 @@ namespace PE
                 Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
                 Transform& transform{ g_entityManager->Get<Transform>(id) };
 
-                modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
-                    transform.height, transform.orientation, // height, orientation
-                    transform.position.x, transform.position.y)); // x, y position
-                colors.emplace_back(renderer.GetColor());
-
                 // Attempt to retrieve and bind the texture
                 if (renderer.GetTextureKey().empty())
                 {
@@ -328,6 +323,11 @@ namespace PE
                 {
                     isTextured.emplace_back(1);
                 }
+
+                modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
+                    transform.height, transform.orientation, // height, orientation
+                    transform.position.x, transform.position.y)); // x, y position
+                colors.emplace_back(renderer.GetColor());
 
                 ++count;
             }
