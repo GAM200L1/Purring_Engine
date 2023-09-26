@@ -90,7 +90,7 @@ PE::CoreApplication::CoreApplication()
 	m_lastFrameTime = 0;
 
     // Create and set up the window using WindowManager
-    m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
+    m_window = m_windowManager.InitWindow(1000, 1000, "Purring Engine");
 
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
     // set flags
