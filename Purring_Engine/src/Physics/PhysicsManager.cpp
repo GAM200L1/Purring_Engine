@@ -22,13 +22,16 @@ extern Logger engine_logger;
 
 namespace PE
 {
+	// ----- Static Declarations ----- //
+
+	bool PhysicsManager::m_applyStepPhysics{ false };
+	bool PhysicsManager::m_advanceStep{ false };
 
 	// ----- Constructor ----- //
 
 	PhysicsManager::PhysicsManager() :
 		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f },
-		m_applyStepPhysics{ false }, m_advanceStep{ false }, m_fixedDt{ 1.f / 60.f }, 
-		m_accumulator{ 0.f }, m_accumulatorLimit{ 1.f } {}
+		m_fixedDt{ 1.f / 60.f }, m_accumulator{ 0.f }, m_accumulatorLimit{ 1.f } {}
 	
 	// ----- Public Getters ----- //
 
@@ -60,22 +63,14 @@ namespace PE
 		m_fixedDt = fixDt;
 	}
 
-	bool PhysicsManager::GetStepPhysics()
+	bool& PhysicsManager::GetStepPhysics()
 	{
 		return m_applyStepPhysics;
 	}
-	void PhysicsManager::SetStepPhysics(bool isStepState)
-	{
-		m_applyStepPhysics = isStepState;
-	}
 
-	bool PhysicsManager::GetAdvanceStep()
+	bool& PhysicsManager::GetAdvanceStep()
 	{
 		return m_advanceStep;
-	}
-	void PhysicsManager::SetAdvanceStep(bool advance)
-	{
-		m_advanceStep = advance;
 	}
 
 

@@ -304,15 +304,17 @@ void PE::CoreApplication::Run()
         }
 
         // set step physics
-        if (glfwGetKey(m_window, GLFW_KEY_P) == GLFW_RELEASE)
+        if (glfwGetKey(m_window, GLFW_KEY_P) == GLFW_PRESS)
         {
-
+            PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
         }
 
-        if (glfwGetKey(m_window, GLFW_KEY_N) == GLFW_RELEASE)
+        if (glfwGetKey(m_window, GLFW_KEY_N) == GLFW_PRESS)
         {
-
+            PhysicsManager::GetAdvanceStep() = !PhysicsManager::GetAdvanceStep();
         }
+
+        std::cout << PhysicsManager::GetStepPhysics();
 
         // dash
         if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)

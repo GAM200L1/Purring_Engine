@@ -31,11 +31,8 @@ namespace PE
 		float GetFixedDt();
 		void SetFixedDt(float fixDt);
 
-		bool GetStepPhysics();
-		void SetStepPhysics(bool isStepState);
-
-		bool GetAdvanceStep();
-		void SetAdvanceStep(bool advance);
+		static bool& GetStepPhysics();
+		static bool& GetAdvanceStep();
 
 		std::string GetName() { return m_systemName; }
 
@@ -54,8 +51,8 @@ namespace PE
 		float m_fixedDt;
 		float m_accumulator;
 		float m_accumulatorLimit;
-		bool m_applyStepPhysics;
-		bool m_advanceStep;
+		static bool m_applyStepPhysics;
+		static bool m_advanceStep;
 		std::string m_systemName{ "Physics" };
 	};
 }
