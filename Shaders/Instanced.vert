@@ -14,7 +14,7 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-#version 460 core
+#version 450 core
 
 layout (location = 0) in vec2 aVertexPosition; // IN vertex position
 layout (location = 1) in vec2 aTextureCoord;   // IN texture coordinate
