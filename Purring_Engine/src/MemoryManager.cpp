@@ -30,9 +30,9 @@ namespace PE
 		try
 		{
 			//printing total allocated memory
-			std::stringstream ss1;
-			ss1 << "Currently allocated: " << m_stackAllocator.GetStackTop();
-			Editor::GetInstance().AddInfoLog(ss1.str());
+			std::string s("Currently allocated: ");
+			s += std::to_string(m_stackAllocator.GetStackTop());
+			Editor::GetInstance().AddInfoLog(s);
 			Editor::GetInstance().AddInfoLog("trying to allocate more memory now");
 
 			//determine buffer size incase of writing over
@@ -52,9 +52,9 @@ namespace PE
 		}
 		catch (int i) {
 			//sending error to logs
-			std::stringstream ss;
-			ss << "memory cannot be allocated to " << name;
-			Editor::GetInstance().AddErrorLog(ss.str());
+			std::string ss("memory cannot be allocated to ");
+			ss += name;
+			Editor::GetInstance().AddErrorLog(ss);
 			return nullptr;
 		}
 	}
@@ -83,9 +83,9 @@ namespace PE
 			//if written over buffer
 			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].s_size + totalMemory) != '\0')
 			{
-				std::stringstream ss;
-				ss << m_memoryAllocationData[i].s_name << " Writing into more than allocated spaces!" << std::endl;
-				Editor::GetInstance().AddErrorLog(ss.str());
+				std::string s(m_memoryAllocationData[i].s_name);
+				s += " Writing into more than allocated spaces!";
+				Editor::GetInstance().AddErrorLog(s);
 			}
 
 			//go to next object
@@ -96,9 +96,9 @@ namespace PE
 	void MemoryManager::PrintData()
 	{
 		//print total allocated memory
-		std::stringstream ss;
-		ss << "currently allocated: " << m_stackAllocator.GetStackTop();
-		Editor::GetInstance().AddInfoLog(ss.str());
+		std::string s("Currently allocated: ");
+		s += std::to_string(m_stackAllocator.GetStackTop());
+		Editor::GetInstance().AddInfoLog(s);
 
 		//print structure data
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) {

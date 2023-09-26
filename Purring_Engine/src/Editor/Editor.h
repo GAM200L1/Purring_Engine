@@ -133,39 +133,39 @@ namespace PE {
 
 		 \param[in] std::string the string to print on the log window
 		*************************************************************************************/
-		void AddLog(std::string text);
+		void AddLog(std::string_view text);
 		/*!***********************************************************************************
 		 \brief add text to the console vector to print on the console window
 
 		 \param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void AddConsole(std::string text);
+		void AddConsole(std::string_view text);
 		/*!***********************************************************************************
 		\brief add text appeneded with error to the console vector to print on the console window
 
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void AddErrorLog(std::string text);
+		void AddErrorLog(std::string_view text);
 
 		/*!***********************************************************************************
 		\brief add text appeneded with info to the console vector to print on the console window
 
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void AddInfoLog(std::string text);
+		void AddInfoLog(std::string_view text);
 		/*!***********************************************************************************
 		\brief add text appeneded with event to the console vector to print on the console window
 
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void AddEventLog(std::string text);
+		void AddEventLog(std::string_view text);
 
 		/*!***********************************************************************************
 		\brief add text appeneded with warning to the console vector to print on the console window
 
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
-		void AddWarningLog(std::string text);
+		void AddWarningLog(std::string_view text);
 	private:
 		/*!***********************************************************************************
 		 \brief empty the log vector
@@ -247,7 +247,7 @@ namespace PE {
 		std::vector<std::string> m_consoleOutput;
 		std::string m_input;
 		std::string m_findText;
-		std::map<std::string, void (PE::Editor::*)()> m_commands;
+		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
 
 		//variable for objects
 		bool m_objectIsSelected;

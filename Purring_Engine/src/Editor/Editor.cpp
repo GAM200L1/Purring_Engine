@@ -46,8 +46,8 @@ namespace PE {
 		m_currentSelectedObject = 0;
 
 		//mapping commands to function calls
-		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("test", &PE::Editor::test));
-		m_commands.insert(std::pair<std::string, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
+		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
+		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
 	}
 
 	Editor::~Editor()
@@ -381,14 +381,6 @@ namespace PE {
 			if (ImGui::Button("Create Object")) // add a string into vector
 			{
 				AddInfoLog("Object Created");
-				std::stringstream ss;
-				ss << "new object " << count++;
-				//EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				//g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
-				//g_entityManager->Get<Transform>(id).height = 100.f;
-				//g_entityManager->Get<Transform>(id).width = 100.f;
-				//g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				//g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
 				EntityID id = g_entityFactory->CreateEntity();
 				g_entityFactory->Assign(id, { "Transform", "Renderer" });
 				g_entityManager->Get<Transform>(id).height = 100.f;
@@ -401,8 +393,6 @@ namespace PE {
 				if (m_currentSelectedObject > 0)  // if vector not empty and item selected not over index
 				{
 					AddInfoLog("Object Deleted");
-					std::stringstream ss;
-					ss << "deleted object " << m_currentSelectedObject;
 
 					g_entityManager->RemoveEntity(g_entityManager->GetEntitiesInPool("All")[m_currentSelectedObject]);
 
@@ -467,9 +457,9 @@ namespace PE {
 			ImGui::Spacing();
 			if (ImGui::Button("Allocating Memory"))
 			{
-				std::stringstream ss;
-				ss << "AllocationTest" << allocated;
-				char* allocationtest = (char*)MemoryManager::GetInstance().AllocateMemory(ss.str(), 30);
+				std::string ss("AllocationTest");
+				ss += std::to_string(allocated);
+				char* allocationtest = (char*)MemoryManager::GetInstance().AllocateMemory(ss, 30);
 				allocated++;
 				allocationtest;
 			}
@@ -1229,44 +1219,44 @@ namespace PE {
 		ImGui::End();
 	}
 
-	void Editor::AddLog(std::string text)
+	void Editor::AddLog(std::string_view text)
 	{
 		m_logOutput.emplace_back(text);
 		//might want to check a certain size on the vector if too much need to clear
 	}
 
-	void Editor::AddConsole(std::string text)
+	void Editor::AddConsole(std::string_view text)
 	{
 		m_consoleOutput.emplace_back(text);
 	}
 
-	void Editor::AddErrorLog(std::string text)
+	void Editor::AddErrorLog(std::string_view text)
 	{
-		std::stringstream ss;
-		ss << "[ERROR] " << text;
-		AddLog(ss.str());
+		std::string ss("[ERROR] ");
+		ss += text;
+		AddLog(ss);
 
 	}
 
-	void Editor::AddInfoLog(std::string text)
+	void Editor::AddInfoLog(std::string_view text)
 	{
-		std::stringstream ss;
-		ss << "[INFO] " << text;
-		AddLog(ss.str());
+		std::string ss("[INFO] ");
+		ss += text;
+		AddLog(ss);
 	}
 
-	void Editor::AddEventLog(std::string text)
+	void Editor::AddEventLog(std::string_view text)
 	{
-		std::stringstream ss;
-		ss << "[EVENT] " << text;
-		AddLog(ss.str());
+		std::string ss("[EVENT] ");
+		ss += text;
+		AddLog(ss);
 	}
 
-	void Editor::AddWarningLog(std::string text)
+	void Editor::AddWarningLog(std::string_view text)
 	{
-		std::stringstream ss;
-		ss << "[WARNING] " << text;
-		AddLog(ss.str());
+		std::string ss("[WARNING] ");
+		ss += text;
+		AddLog(ss);
 	}
 
 	void Editor::ClearLog()
