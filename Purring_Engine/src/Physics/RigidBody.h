@@ -85,8 +85,8 @@ namespace PE
 
 		float m_mass;
 		float m_inverseMass;
-		float m_drag;
-		float m_rotationDrag;
+		//float m_drag;
+		//float m_rotationDrag;
 	};
 
 }
