@@ -27,10 +27,43 @@ namespace PE
 	//Key Event Types
 	enum class KeyEvents
 	{
+		KeyTriggered,
 		KeyPressed,
 		KeyRelease
 	};
 
+
+	class KeyTriggeredEvent : public Event<KeyEvents>
+	{
+		// ----- Constructors ----- // 
+	public:
+		KeyTriggeredEvent() : Event<KeyEvents>(KeyEvents::KeyTriggered, "KeyTriggered") {}
+		virtual ~KeyTriggeredEvent() {}
+
+		// ----- Public methods ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief					implicit conversion to a std::string, used for output streams
+
+		 \return std::string	Returns information about the event
+		*************************************************************************************/
+		inline std::string ToString() const override
+		{
+			std::stringstream ss;
+			if (keycode >= 32 && keycode <= 96)
+				ss << "Key Triggered: " << (char)keycode;
+			else
+			{
+				ss << "GLFW KeyCode of Key Triggered: " << keycode;
+			}
+			return ss.str();
+		}
+
+		// ----- Public variables ----- // 
+	public:
+		int keycode = -1; // ascii keycode
+		float repeat = 0; //is the key on repeat
+	};
 
 	class KeyPressedEvent : public Event<KeyEvents>
 	{
@@ -55,9 +88,6 @@ namespace PE
 			{
 				ss << "GLFW KeyCode of Key Pressed: " << keycode;
 			}
-
-			if (repeat < 0)
-				ss << " (Key is being held)";
 
 			return ss.str();
 		}

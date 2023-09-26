@@ -56,9 +56,9 @@ namespace PE
 												PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(PE::MouseEvents::MouseButtonReleased, std::bind(&func,arg,std::placeholders::_1));\
 												PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(PE::MouseEvents::MouseScrolled, std::bind(&func,arg,std::placeholders::_1));
 
-#define ADD_ALL_KEY_EVENT_LISTENER(func,arg) PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyPressed, std::bind(&func,arg,std::placeholders::_1));\
-												PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyRelease, std::bind(&func,arg,std::placeholders::_1));
-
+#define ADD_ALL_KEY_EVENT_LISTENER(func,arg) PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyTriggered, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyRelease, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyPressed, std::bind(&func,arg,std::placeholders::_1));
 
 
 

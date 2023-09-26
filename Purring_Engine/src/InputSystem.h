@@ -100,7 +100,7 @@ namespace PE
 
         // ----- Private Variables ----- // 
     private:
-        static std::vector<KeyPressedEvent> m_KeyPressed;
+        static std::vector<KeyPressedEvent> m_KeyDown;
         static float m_bufferTime; // has to be static to be used by the callbacks
     };
 }
