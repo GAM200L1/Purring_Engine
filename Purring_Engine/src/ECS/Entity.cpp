@@ -37,6 +37,7 @@ namespace PE
 			throw;
 		}
 		g_entityManager = this;
+		m_poolsEntity["All"];
 	}
 
 	EntityManager::~EntityManager()
@@ -162,18 +163,19 @@ namespace PE
 	{
 		if (m_entities.count(id))
 		{
-			for (std::pair<const ComponentID, ComponentPool*>& pool : m_componentPools)
+			for (const ComponentID& pool : GetComponentIDs(id))
 			{
-				if (pool.second->HasEntity(id))
-				{
-					pool.second->remove(id);
-				}
+				m_componentPools[pool]->remove(id);
+				std::string str = "Removed Component-";
+				str += pool;
+				engine_logger.AddLog(false, str, __FUNCTION__);
 			}
 			m_entities.erase(id);
 			m_removed.emplace(id);
 			std::string str = "Removed Entity-";
 			str += std::to_string(id);
 			engine_logger.AddLog(false, str, __FUNCTION__);
+			UpdateVectors(id, false);
 		}
 	}
 }

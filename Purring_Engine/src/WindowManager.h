@@ -20,7 +20,7 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Graphics/GLHeaders.h"
 #include "FrameRateTargetControl.h"
-#include "InputHandler.h"
+#include "InputSystem.h"
 #include "Events/EventHandler.h"
 #include "System.h"
 

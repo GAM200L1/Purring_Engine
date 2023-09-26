@@ -108,7 +108,7 @@ namespace PE
             //glVertexArrayAttribBinding(m_vertexArrayObject, attributeIndex, bindingIndex);
 
             // Bind the texture coordinate to attrib 2
-            attributeIndex = 2, bindingIndex = 2;
+            attributeIndex = 1, bindingIndex = 1;
             glEnableVertexArrayAttrib(m_vertexArrayObject, attributeIndex);
             glVertexArrayVertexBuffer(m_vertexArrayObject, bindingIndex, m_vertexBufferObject, 0,
                 static_cast<GLsizei>(sizeof(VertexData)));
