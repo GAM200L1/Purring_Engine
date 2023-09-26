@@ -21,15 +21,15 @@
 
 namespace PE
 {
-    void Font::Init(std::shared_ptr<Graphics::ShaderProgram> shader)
+    void Font::Init(std::shared_ptr<Graphics::ShaderProgram> shaderProgram)
     {
-        TextShader = shader;
-        Load("../Assets/fonts/KernlGrotesk.otf");
+        TextShader = shaderProgram;
+        Load("../Assets/fonts/Kalam/Kalam-Regular.ttf");
 
-        glGenVertexArrays(1, &mVao);
-        glGenBuffers(1, &mVbo);
-        glBindVertexArray(mVao);
-        glBindBuffer(GL_ARRAY_BUFFER, mVbo);
+        glGenVertexArrays(1, &m_vertexArrayObject);
+        glGenBuffers(1, &m_vertexBufferObject);
+        glBindVertexArray(m_vertexArrayObject);
+        glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObject);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
@@ -37,7 +37,7 @@ namespace PE
         glBindVertexArray(0);
     }
 
-    void Font::Load(const std::string& fontpath, unsigned int fontsize)
+    void Font::Load(const std::string& r_fontPath, unsigned int fontSize)
     {
         Characters.clear();
         
@@ -50,13 +50,13 @@ namespace PE
 
         // Load font as face
         FT_Face face;
-        if (FT_New_Face(ft, fontpath.c_str(), 0, &face))
+        if (FT_New_Face(ft, r_fontPath.c_str(), 0, &face))
         {
             std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
         }
         
         // Define pixel font size to extract
-        FT_Set_Pixel_Sizes(face, 0, fontsize);
+        FT_Set_Pixel_Sizes(face, 0, fontSize);
 
         // disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
@@ -105,23 +105,23 @@ namespace PE
         }
         glBindTexture(GL_TEXTURE_2D, 0);
 
-        // destroy FreeType once we're finished
+        // Clear freetype resource
         FT_Done_Face(face);
         FT_Done_FreeType(ft);
     }
 
-    void Font::RenderText(const std::string& text, glm::vec2 position, float scale, Graphics::Camera& camera, glm::vec3 color)
+    void Font::RenderText(std::string const& r_text, glm::vec2 position, float scale, glm::mat4 const& r_worldToNdc, glm::vec3 const& r_color)
     {
         // activate corresponding render state	
         TextShader->Use();
-        TextShader->SetUniform("u_ViewProjection", camera.GetWorldToViewMatrix());
-        TextShader->SetUniform("textColor", color);
+        TextShader->SetUniform("u_ViewProjection", r_worldToNdc);
+        TextShader->SetUniform("textColor", r_color);
         glActiveTexture(GL_TEXTURE0);
-        glBindVertexArray(mVao);
+        glBindVertexArray(m_vertexArrayObject);
 
         // iterate through all characters
         std::string::const_iterator c;
-        for (c = text.begin(); c != text.end(); c++)
+        for (c = r_text.begin(); c != r_text.end(); c++)
         {
             Character ch = Characters[*c];
             float w = ch.Size.x * scale;
@@ -136,20 +136,22 @@ namespace PE
                 { position.x + w, position.y ,      1.0f, 1.0f },
                 { position.x + w, position.y + h,   1.0f, 0.0f }
             };
+
             // render glyph texture over quad
             glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+
             // update content of VBO memory
-            glBindBuffer(GL_ARRAY_BUFFER, mVbo);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices); // be sure to use glBufferSubData and not glBufferData
+            glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObject);
+            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
             glBindBuffer(GL_ARRAY_BUFFER, 0);
 
             // render quad
             glDrawArrays(GL_TRIANGLES, 0, 6);
+
             // now advance cursors for next glyph
             position.x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
         }
         glBindTexture(GL_TEXTURE_2D, 0);
         glBindVertexArray(0);
-
     }
 }

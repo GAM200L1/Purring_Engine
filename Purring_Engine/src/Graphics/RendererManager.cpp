@@ -38,6 +38,7 @@
 
 // text
 #include "Text.h"
+#include "Time/TimeManager.h"
 
 extern Logger engine_logger;
 
@@ -146,12 +147,16 @@ namespace PE
                 * m_mainCamera.GetWorldToViewMatrix()
             };
 
-
             DrawScene(worldToNdc); // Draw objects in the scene
             DrawDebug(worldToNdc); // Draw debug gizmos in the scene
 
-            m_font.RenderText("TEST: ", { m_mainCamera.GetPosition().x + 0.2f, m_mainCamera.GetPosition().y + 0.2f },
-                0.0008f, m_mainCamera, { 0.87f, 0.92f, 0.8f });
+            // Render Text
+            // text object 1
+            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, worldToNdc, { 0.2f, 0.8f, 0.8f });
+
+           // text object 2
+            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, worldToNdc, { 0.2f, 0.8f, 0.8f });
+
             // Unbind the RBO for rendering to the ImGui window
             m_imguiFrameBuffer.Unbind();
 

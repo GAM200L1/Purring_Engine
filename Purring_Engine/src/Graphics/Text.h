@@ -30,24 +30,46 @@ namespace PE
 		unsigned int Advance;	// Horizontal offset to next glyph
 	};
 
-	// A renderer class for rendering text displayed by a font loaded using the 
-	// FreeType library. A single font is loaded, processed into a list of Character
-	// items for later rendering.
 	class Font
 	{
 	public:
 		std::map<char, Character> Characters;
 
+		/*!***********************************************************************************
+			\brief default constructor of the font class
+		*************************************************************************************/
 		Font() = default;
-		void Init(std::shared_ptr<Graphics::ShaderProgram>); // load the path of the font we taking
 
-		void Load(const std::string& fontpath, unsigned int fontsize = 50);
+		/*!***********************************************************************************
+			\brief 
 
-		void RenderText(const std::string& text, glm::vec2 position, float scale, Graphics::Camera& camera, glm::vec3 color = glm::vec3(1.0f));
+			\param[in shaderProgram Shader program for rendering text.
+		*************************************************************************************/
+		void Init(std::shared_ptr<Graphics::ShaderProgram> shaderProgram);
+
+		/*!***********************************************************************************
+			\brief Loads character glyph from font into map of characters.
+
+			\param[in] r_fontPath File path of font.
+			\param[in] fontSize Size of pixel to extract.
+		*************************************************************************************/
+		void Load(std::string const& r_fontPath, unsigned int fontSize = 45);
+
+		/*!***********************************************************************************
+			\brief Renders text from r_text parameter. Retrieves glyph information from map
+				   and renders a quad with the data.
+
+			\param[in] r_text String to render.
+			\param[in] position Position of text to render onto the screen.
+			\param[in] scale Amount to scale text size.
+			\param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
+			\param[in] r_color Color to render text as.
+		*************************************************************************************/
+		void RenderText(std::string const& r_text, glm::vec2 position, float scale, glm::mat4 const& r_worldToNdc, glm::vec3 const& r_color = glm::vec3(0.f));
 
 	private:
 		std::shared_ptr<Graphics::ShaderProgram> TextShader;
-		unsigned int mVao{ 0 }, mVbo{ 0 };
+		unsigned int m_vertexArrayObject{ 0 }, m_vertexBufferObject{ 0 };
 
 	};
 }

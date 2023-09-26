@@ -8,15 +8,15 @@
  \par      email:      brandonjunjie.ho@digipen.edu
  
  \brief     This file implements a minimal vertex shader that takes in a position, 
-            color and texture coordinates. These parameters are passed to the next 
-            hardware stage unchanged.
+            multiplies it with a uniform view projection matrix. It also passes the
+            texture coordinates stored in zw of the vertex input to the next stage.
   
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-#version 460 core
+#version 450 core
 
-layout (location = 0) in vec4 vertex; // <vec2 pos, vec2 tex>
+layout (location = 0) in vec4 vertex; // Position stored in xy, Texture stored in zw
 
 out vec2 TexCoords;
 
@@ -24,6 +24,6 @@ uniform mat4  u_ViewProjection;
 
 void main()
 {
-    gl_Position = u_ViewProjection * vec4(vertex.xy, 0.1, 1.0);
+    gl_Position = u_ViewProjection * vec4(vertex.xy, 0.0, 1.0);
     TexCoords = vertex.zw;
 }

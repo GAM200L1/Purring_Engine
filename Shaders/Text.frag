@@ -13,7 +13,7 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-#version 460 core
+#version 450 core
 
 in vec2 TexCoords;
 
