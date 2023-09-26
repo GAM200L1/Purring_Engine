@@ -295,7 +295,7 @@ struct SceneView
 			{
 				poolIdx = p_entityManager->GetEntitiesInPool((*m_components.begin()));
 			}
-			poolIdx.emplace_back(p_entityManager->Size());
+			poolIdx.emplace_back(p_entityManager->OnePast());
 		}
 
 		/*!***********************************************************************************
@@ -317,7 +317,7 @@ struct SceneView
 		*************************************************************************************/
 		bool operator== (const Iterator& rhs) const
 		{
-			return (m_index == rhs.m_index) || (m_index == p_entityManager->Size());
+			return (m_index == rhs.m_index) || (m_index == p_entityManager->OnePast());
 		}
 
 		/*!***********************************************************************************
@@ -329,7 +329,7 @@ struct SceneView
 		*************************************************************************************/
 		bool operator!= (const Iterator& rhs) const
 		{
-			return (m_index != rhs.m_index) || (m_index != p_entityManager->Size());
+			return (m_index != rhs.m_index) || (m_index != p_entityManager->OnePast());
 		}
 
 
@@ -341,7 +341,7 @@ struct SceneView
 		*************************************************************************************/
 		Iterator& operator++()
 		{
-			if ((poolIdx[idxIterator] != p_entityManager->Size()))
+			if ((poolIdx[idxIterator] != p_entityManager->OnePast()))
 				++idxIterator;
 
 			m_index = poolIdx[idxIterator];
@@ -387,7 +387,7 @@ struct SceneView
 		if (!p_entityManager->Size())
 			Iterator(0, m_components, m_all); // update to error log
 		size_t firstIndex{};
-		while ((firstIndex < p_entityManager->Size()) &&
+		while ((firstIndex < p_entityManager->OnePast()) &&
 			(!HasComponents(firstIndex) ||
 				!p_entityManager->IsEntityValid(firstIndex))
 			)
@@ -404,7 +404,7 @@ struct SceneView
 	*************************************************************************************/
 	const Iterator end() const
 	{
-		return Iterator(p_entityManager->Size(), m_components, m_all);
+		return Iterator(p_entityManager->OnePast(), m_components, m_all);
 	}
 
 	// ptr to the entity manager

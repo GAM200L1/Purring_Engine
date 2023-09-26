@@ -153,7 +153,7 @@ PE::CoreApplication::CoreApplication()
     for (size_t i{}; i < 25; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
-        g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
+        g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 600.f;
         g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
         g_entityManager->Get<Transform>(id2).width = 50.f;
         g_entityManager->Get<Transform>(id2).height = 50.f;

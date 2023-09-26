@@ -24,6 +24,7 @@
 #include "Data/SerializationManager.h"
 
 
+
 // Typedefs
 typedef unsigned long long EntityID;				// typedef for storing the unique ID of the entity, same as size_t
 typedef std::string ComponentID;					// ComponentID type, internally it is a std::string
@@ -278,6 +279,16 @@ namespace PE
 			return m_entities.size();
 		}
 
+		/*!***********************************************************************************
+		 \brief Gets one past the larges entity id (for looping)
+
+		 \return size_t The number of entities
+		*************************************************************************************/
+		inline size_t OnePast() const
+		{
+			return m_entityCounter;
+		}
+		
 
 		/*!***********************************************************************************
 		 \brief Adds a component to the component pool
@@ -362,6 +373,7 @@ namespace PE
 		std::queue<EntityID> m_removed;
 		
 		std::map<ComponentID, std::vector<EntityID>> m_poolsEntity;
+		size_t m_entityCounter{1};
 	};
 
 	// extern to allow the access to the entity manager instance
@@ -469,13 +481,13 @@ namespace PE
 	template<typename T>
 	T* EntityManager::GetPointer(EntityID id)
 	{
-		return static_cast<T*>(m_componentPools[GetComponentID<T>()]->Get(id));
+		return reinterpret_cast<T*>(m_componentPools[GetComponentID<T>()]->Get(id));
 	}
 
 	template<typename T>
 	const T* EntityManager::GetPointer(EntityID id) const
 	{
-		return static_cast<T*>(m_componentPools.at(GetComponentID<T>())->Get(id));
+		return reinterpret_cast<T*>(m_componentPools.at(GetComponentID<T>())->Get(id));
 	}
 
 	template<typename T>

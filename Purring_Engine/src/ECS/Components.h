@@ -19,7 +19,7 @@
 #include <queue>
 #include "Math/MathCustom.h"
 // CONSTANT VARIABLES
-constexpr size_t DEFAULT_ENTITY_CNT = 50;		// default bytes allocated to components pool
+constexpr size_t DEFAULT_ENTITY_CNT = 3000;		// default bytes allocated to components pool
 
 namespace PE
 {
@@ -128,7 +128,7 @@ namespace PE
         *************************************************************************************/
         void* Get(size_t index)
         {
-            return reinterpret_cast<void*>(p_data + m_idxMap.at(index));
+            return reinterpret_cast<void*>(&(p_data[m_idxMap[index]]));
         }
         
     // ----- Public methods ----- // 
@@ -182,6 +182,7 @@ namespace PE
             // if index is not the last as well...
             if (key != index)
             {
+                T tmp = p_data[lastIdx];
                 p_data[m_idxMap[index]] = p_data[lastIdx];
                 m_idxMap[key] = m_idxMap[index];
             }

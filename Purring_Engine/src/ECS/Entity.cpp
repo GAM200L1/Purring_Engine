@@ -56,6 +56,7 @@ namespace PE
 		if (!m_removed.empty())
 			m_removed.pop();
 		m_entities.emplace(id);
+		++m_entityCounter;
 		return id;
 	}
 
