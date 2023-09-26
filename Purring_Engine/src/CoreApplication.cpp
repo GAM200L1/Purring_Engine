@@ -112,9 +112,9 @@ PE::CoreApplication::CoreApplication()
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();
     //assignning memory manually to renderer manager
-    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
-    PhysicsManager* physicsManager = new (MemoryManager::GetInstance()->AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
-    CollisionManager* collisionManager = new (MemoryManager::GetInstance()->AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
+    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    PhysicsManager* physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
+    CollisionManager* collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     AddSystem(physicsManager);
     AddSystem(collisionManager);
     AddSystem(rendererManager);
@@ -204,18 +204,18 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
     // Render 50x50 purple sprites in a grid
-    for (size_t i{}; i < 200; ++i)
-    {
-        EntityID id = g_entityFactory->CreateEntity();
-        g_entityFactory->Assign(id, { "Transform", "Renderer" });
-        g_entityManager->Get<Transform>(id).position.x = 25.f * (i % 20) - 250.f;
-        g_entityManager->Get<Transform>(id).position.y = 25.f * (i / 20) - 250.f;
-        g_entityManager->Get<Transform>(id).width = 50.f;
-        g_entityManager->Get<Transform>(id).height = 50.f;
-        g_entityManager->Get<Transform>(id).orientation = 0.f;
-        g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
-        g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 0.f, 1.f, 0.1f);
-    }
+    //for (size_t i{}; i < 200; ++i)
+    //{
+    //    EntityID id = g_entityFactory->CreateEntity();
+    //    g_entityFactory->Assign(id, { "Transform", "Renderer" });
+    //    g_entityManager->Get<Transform>(id).position.x = 25.f * (i % 20) - 250.f;
+    //    g_entityManager->Get<Transform>(id).position.y = 25.f * (i / 20) - 250.f;
+    //    g_entityManager->Get<Transform>(id).width = 50.f;
+    //    g_entityManager->Get<Transform>(id).height = 50.f;
+    //    g_entityManager->Get<Transform>(id).orientation = 0.f;
+    //    g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
+    //    g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 0.f, 1.f, 0.1f);
+    //}
 }
 
 /*-----------------------------------------------------------------------------

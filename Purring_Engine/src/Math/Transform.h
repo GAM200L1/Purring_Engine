@@ -22,9 +22,9 @@ namespace PE
 {
     struct Transform
     {
-        float width, height;
-        float orientation; // in radians
-        vec2 position;
+        float width{}, height{};
+        float orientation{}; // in radians
+        vec2 position{};
 
         mat3x3 GetTransformMatrix3x3() const
         {
