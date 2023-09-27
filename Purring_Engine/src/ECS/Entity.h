@@ -342,7 +342,7 @@ namespace PE
 				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
 				{
 					if (!pool.second->HasEntity(id) &&
-							(std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
 					{
 						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
 					}
@@ -359,7 +359,7 @@ namespace PE
 		// map of to store pointers to individual componnet pools
 		std::map<ComponentID, ComponentPool*> m_componentPools;
 		// a queue of entity IDs to handle removed entities
-		std::set<EntityID> m_removed;
+		std::queue<EntityID> m_removed;
 		
 		std::map<ComponentID, std::vector<EntityID>> m_poolsEntity;
 	};
@@ -385,16 +385,8 @@ namespace PE
 		}
 
 		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
+		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		
 		// initialize that region of memory
 		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
 		{
@@ -424,16 +416,8 @@ namespace PE
 			return;
 		}
 		// add to component pool's map keeping track of index
-		if (m_componentPools[componentID]->m_removed.empty())
-		{
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
-		}
-		else
-		{
-			// reuse old slot if exists
-			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
-			m_componentPools[componentID]->m_removed.pop();
-		}
+		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+
 		// initialize that region of memory
 		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->capacity - 1)
 		{
@@ -485,13 +469,13 @@ namespace PE
 	template<typename T>
 	T* EntityManager::GetPointer(EntityID id)
 	{
-		return static_cast<T*>(m_componentPools[GetComponentID<T>()]->Get(id));
+		return reinterpret_cast<T*>(m_componentPools[GetComponentID<T>()]->Get(id));
 	}
 
 	template<typename T>
 	const T* EntityManager::GetPointer(EntityID id) const
 	{
-		return static_cast<T*>(m_componentPools.at(GetComponentID<T>())->Get(id));
+		return reinterpret_cast<T*>(m_componentPools.at(GetComponentID<T>())->Get(id));
 	}
 
 	template<typename T>

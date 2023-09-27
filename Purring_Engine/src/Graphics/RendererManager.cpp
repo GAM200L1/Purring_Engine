@@ -38,10 +38,9 @@
 
 extern Logger engine_logger;
 
-std::vector<glm::mat4> worldToNdcMatrices{};
+std::vector<float> isTextured{};
 std::vector<glm::mat4> modelToWorldMatrices{};
 std::vector<glm::vec4> colors{};
-
 
 namespace PE
 {
@@ -94,7 +93,7 @@ namespace PE
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
 
-            worldToNdcMatrices.reserve(3000);
+            isTextured.reserve(3000);
             modelToWorldMatrices.reserve(3000);
             colors.reserve(3000);
 
@@ -264,43 +263,43 @@ namespace PE
             ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
             r_shaderProgram.Use();
 
+            // Pass the world to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uWorldToNdc", r_worldToNdc);
+
             int count{};
             size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
             m_meshes[meshIndex].Bind();
+
+            std::string currentTexture{};
             std::shared_ptr<Graphics::Texture> p_texture{};
 
             
-            worldToNdcMatrices.clear();
+            isTextured.clear();
             modelToWorldMatrices.clear();
             colors.clear();
 
             // Make draw call for each game object with a renderer component
+
             for (const EntityID& id : SceneView<Renderer>())
             {
-                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
-
-                glm::mat4 glmObjectTransform
-                {
-                    GenerateTransformMatrix(transform.width, // width
-                        transform.height, transform.orientation, // height, orientation
-                        transform.position.x, transform.position.y) // x, y position
-                };
-
-                worldToNdcMatrices.emplace_back(r_worldToNdc);
-                modelToWorldMatrices.emplace_back(glmObjectTransform);
-                colors.emplace_back(renderer.GetColor());
+                const Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
+                const Transform& transform{ g_entityManager->Get<Transform>(id) };
 
                 // Attempt to retrieve and bind the texture
                 if (renderer.GetTextureKey().empty())
                 {
-                    if (!p_texture) 
-                    {
-                        r_shaderProgram.SetUniform("uIsTextured", false);
-                    }
+                    isTextured.emplace_back(0);
                 }
-                else if(!p_texture)
+                else if(currentTexture != renderer.GetTextureKey())
                 {
+                    // Check if we were already 
+                    if (!currentTexture.empty()) 
+                    {
+                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                        currentTexture.clear();
+                        count = 0;
+                    }
+
                     auto textureIterator{ ResourceManager::GetInstance().Textures.find(renderer.GetTextureKey()) };
 
                     // Check if shader program is valid
@@ -310,91 +309,32 @@ namespace PE
                         engine_logger.SetTime();
                         engine_logger.AddLog(false, "Texture " + renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
 
-                        r_shaderProgram.SetUniform("uIsTextured", false);
+                        isTextured.emplace_back(0);
                     }
                     else
                     {
+                        currentTexture = renderer.GetTextureKey();
                         p_texture = textureIterator->second;
                         unsigned int textureUnit{ 0 };
                         p_texture->Bind(textureUnit);
                         r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
-                        r_shaderProgram.SetUniform("uIsTextured", true);
+                        isTextured.emplace_back(1);
                     }
                 }
+                else 
+                {
+                    isTextured.emplace_back(1);
+                }
+
+                modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
+                    transform.height, transform.orientation, // height, orientation
+                    transform.position.x, transform.position.y)); // x, y position
+                colors.emplace_back(renderer.GetColor());
 
                 ++count;
             }
 
-            // Create buffer object for additional vertex data
-            GLuint vbo_hdl;
-            glCreateBuffers(1, &vbo_hdl);
-            glNamedBufferStorage(vbo_hdl,
-                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)
-                    + worldToNdcMatrices.size() * sizeof(glm::mat4) * 2.f),
-                nullptr, GL_DYNAMIC_STORAGE_BIT);
-
-
-            // Store colors in VBO
-            glNamedBufferSubData(vbo_hdl, 0,
-                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)),
-                reinterpret_cast<GLvoid*>(colors.data()));
-
-            // Store world to NDC matrix in VBO
-            glNamedBufferSubData(vbo_hdl,
-                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)),
-                static_cast<GLintptr>(worldToNdcMatrices.size() * sizeof(glm::mat4)),
-                reinterpret_cast<GLvoid*>(worldToNdcMatrices.data()));
-
-            // Store model to world matrix in VBO
-            glNamedBufferSubData(vbo_hdl,
-                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4) + worldToNdcMatrices.size() * sizeof(glm::mat4)),
-                static_cast<GLintptr>(modelToWorldMatrices.size() * sizeof(glm::mat4)),
-                reinterpret_cast<GLvoid*>(modelToWorldMatrices.data()));
-
-            // Bind the colors
-            GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
-            glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex);
-            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl, 0,
-                static_cast<GLsizei>(sizeof(glm::vec4)));
-            glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
-            glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, bindingIndex);
-
-            // Bind the world to NDC matrices
-            attributeIndex = 3, bindingIndex = 3;
-
-            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
-                static_cast<GLintptr>(colors.size() * sizeof(glm::vec4)),
-                static_cast<GLsizei>(sizeof(glm::mat4)));
-
-            for (int i{}; i < 4; ++i) 
-            {
-                glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i);
-
-                glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
-                glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, bindingIndex);
-            }
-
-            glVertexArrayBindingDivisor(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, 1);
-
-            // Bind the model to world matrices
-            attributeIndex = 7, bindingIndex = 4;
-
-            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
-                static_cast<GLintptr>(colors.size() * sizeof(glm::vec4) + worldToNdcMatrices.size() * sizeof(glm::mat4)),
-                static_cast<GLsizei>(sizeof(glm::mat4)));
-
-            for (int i{}; i < 4; ++i) 
-            {
-                glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i);
-
-                glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
-                glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, bindingIndex);
-            }
-
-            glVertexArrayBindingDivisor(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, 1);
-
-            glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-                GL_UNSIGNED_SHORT, NULL, count);
+            DrawInstanced(count, meshIndex, GL_TRIANGLES);
 
             // Unbind everything
             m_meshes[meshIndex].Unbind();
@@ -404,11 +344,62 @@ namespace PE
             {
                 p_texture->Unbind();
             }
+        }
 
-            glDeleteBuffers(1, &vbo_hdl); 
-            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 2);
-            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 3);
-            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 7);
+
+        void RendererManager::DrawDebugInstanced(glm::mat4 const& r_worldToNdc)
+        {
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
+
+            // Check if shader program is valid
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + m_instancedShaderProgramKey + " does not exist.", __FUNCTION__);
+                return;
+            }
+
+            // Set the width and size of lines and points
+            glLineWidth(3.f);
+            glPointSize(10.f);
+
+            ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
+            r_shaderProgram.Use();
+
+            // Pass the world to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uWorldToNdc", r_worldToNdc);
+
+            // Draw each of the colliders
+            for (const EntityID& id : SceneView<Collider>())
+            {
+                Collider& collider{ g_entityManager->Get<Collider>(id) };
+
+                std::visit([&](auto& col)
+                    {
+                        DrawCollider(col, r_worldToNdc, 
+                            *(shaderProgramIterator->second));
+                    }, collider.colliderVariant);
+            }
+
+            // Draw a point and line for each rigidbody representing the position and velocity
+            for (const EntityID& id : SceneView<RigidBody>())
+            {
+                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
+
+                glm::vec2 glmPosition{ transform.position.x, transform.position.y };
+
+                // Draw a line that represents the velocity
+                DrawDebugLine(glm::vec2{ rigidbody.m_velocity.x, rigidbody.m_velocity.y }, 
+                    glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
+
+                // Draw a point at the center of the object
+                DrawDebugPoint(glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
+            }
+
+            glPointSize(1.f);
+            glLineWidth(1.f);
         }
 
 
@@ -563,6 +554,95 @@ namespace PE
             }
         }   
 
+        void RendererManager::DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType)
+        {
+            if (!count) { return; }
+
+            size_t sizeOfTexturedVector{ isTextured.size() * sizeof(float) };
+            size_t sizeOfColorVector{ colors.size() * sizeof(glm::vec4) };
+            size_t sizeOfMatrixVector{ modelToWorldMatrices.size() * sizeof(glm::mat4) };
+
+
+            // Create buffer object for additional vertex data
+            GLuint vbo_hdl;
+            glCreateBuffers(1, &vbo_hdl);
+            glNamedBufferStorage(vbo_hdl,
+                static_cast<GLsizeiptr>(sizeOfTexturedVector + sizeOfColorVector + sizeOfMatrixVector),
+                nullptr, GL_DYNAMIC_STORAGE_BIT);
+
+
+            // Store textured bools in VBO
+            glNamedBufferSubData(vbo_hdl, 0,
+                static_cast<GLsizeiptr>(sizeOfTexturedVector),
+                reinterpret_cast<GLvoid*>(isTextured.data())); 
+
+            // Bind the textured bools
+            GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
+            glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex);
+            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl, 0,
+                static_cast<GLsizei>(sizeof(float)));
+            glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, 1, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, bindingIndex);
+            glVertexAttribDivisor(attributeIndex, 1);
+
+
+            // Store colors in VBO
+            glNamedBufferSubData(vbo_hdl,
+                static_cast<GLintptr>(sizeOfTexturedVector),
+                static_cast<GLsizeiptr>(sizeOfColorVector),
+                reinterpret_cast<GLvoid*>(colors.data()));
+
+            // Bind the colors
+            ++attributeIndex, ++bindingIndex;
+            glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex);
+            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
+                static_cast<GLintptr>(sizeOfTexturedVector), static_cast<GLsizei>(sizeof(glm::vec4)));
+            glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, bindingIndex);
+            glVertexAttribDivisor(attributeIndex, 1);
+
+            // Store model to NDC matrix in VBO
+            glNamedBufferSubData(vbo_hdl,
+                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLsizeiptr>(sizeOfMatrixVector),
+                reinterpret_cast<GLvoid*>(modelToWorldMatrices.data()));
+
+            // Bind the model to NDC matrices
+            ++attributeIndex, ++bindingIndex;
+
+            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
+                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLsizei>(sizeof(glm::mat4)));
+
+            for (int i{}; i < 4; ++i)
+            {
+                glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex);
+
+                glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
+                glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, bindingIndex);
+                ++attributeIndex;
+            }
+
+            glVertexArrayBindingDivisor(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, 1);
+
+
+            glDrawElementsInstanced(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL, count);
+
+            // Delete the buffer
+            glDeleteBuffers(1, &vbo_hdl);
+
+            --attributeIndex;
+            while (attributeIndex >= 2) 
+            {
+                glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex--);
+            }
+
+            // Clear the vectors
+            isTextured.clear();
+            colors.clear();
+            modelToWorldMatrices.clear();
+        }
 
         void RendererManager::DrawCollider(AABBCollider const& r_aabbCollider,
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
