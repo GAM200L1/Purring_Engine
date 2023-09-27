@@ -134,8 +134,7 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/image2.png");
     ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
 
-    EntityID id = g_entityFactory->CreateEntity();
-    
+    EntityID id = g_entityFactory->CreateEntity();    
 
     int width{ 1980 }, height{ 720 };
     glfwGetWindowSize(m_window, &width, &height);
@@ -280,7 +279,7 @@ void PE::CoreApplication::Run()
             TimeManager::GetInstance().SystemEndFrame(i);
         }
 
-        Graphics::RendererManager::m_mainCamera.SetPosition(g_entityManager->Get<Transform>(0).position.x, g_entityManager->Get<Transform>(0).position.y);
+        Graphics::RendererManager::m_mainCamera.SetPosition(g_entityManager->Get<Transform>(1).position.x, g_entityManager->Get<Transform>(1).position.y);
 
         // Flush log entries
         engine_logger.FlushLog();
