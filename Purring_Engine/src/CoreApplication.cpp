@@ -89,8 +89,17 @@ PE::CoreApplication::CoreApplication()
 	m_Running = true;
 	m_lastFrameTime = 0;
 
+    // parse the JSON file
+    std::ifstream configFile("config.json");
+    nlohmann::json configJson;
+    configFile >> configJson;
+
+    // Access width and height from the parsed JSON.
+    int width = configJson["window"]["width"];
+    int height = configJson["window"]["height"];
+
     // Create and set up the window using WindowManager
-    m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
+    m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
 
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
     // set flags

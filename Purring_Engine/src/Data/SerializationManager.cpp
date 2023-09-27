@@ -2,66 +2,6 @@
 #include "SerializationManager.h"
 #include "ECS/EntityFactory.h"
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Deserialize a JSON object into an entity's data.
-
-/// </summary>
-/// <param name="j">The JSON object containing the serialized entity data.</param>
-/// <param name="entityId">Reference to the entity ID that will be updated with the deserialized value.</param>
-/// <param name="sm">Reference to the SerializationManager used for deserialization.</param>
------------------------------------------------------------------------------ */
-void PlayerStats::from_json(const nlohmann::json& j, int& entityId, SerializationManager& sm)
-{
-    entityId = j.at("entityId").get<int>();                                // Deserialize entityId from JSON
-
-    sm.setEntityName(entityId, j.at("entityName").get<std::string>());     // Deserialize entityName from JSON
-
-    // Deserialize data from JSON
-    health = j.at("health").get<int>();
-    level = j.at("level").get<int>();   
-    experience = j.at("experience").get<float>();
-    playerName = j.at("playerName").get<std::string>();
-}
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Serialize an entity's data into a JSON object.
-/// This function takes an entity ID as input and serializes the entity's data
-/// into a JSON format, including its name and various data fields.
-/// </summary>
-/// <param name="entityId">The ID of the entity to serialize.</param>
-/// <param name="sm">Reference to the SerializationManager for additional data.</param>
-/// <returns>A JSON object containing the serialized entity data.</returns>
------------------------------------------------------------------------------ */
-nlohmann::json PlayerStats::to_json(int entityId, SerializationManager& sm) const
-{
-    nlohmann::json j;                               // Create a JSON object
-
-    j["entityId"] = entityId;                       // Serialize entityId to JSON
-    j["entityName"] = sm.getEntityName(entityId);   // Serialize entityName to JSON
-
-    // serialize thhe data from JSON
-    j["health"] = health;
-    j["level"] = level;
-    j["experience"] = experience;
-    j["playerName"] = playerName;
-    return j;                                       // Return the JSON object
-}
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Serialize an entity's data into a JSON object.
-/// This function takes an entity ID as input and serializes the entity's data
-/// into a JSON format, including its name and various data fields.
-/// </summary>
-/// <param name="entityID">The ID of the entity to serialize.</param>
-/// <returns>A JSON object containing the serialized entity data.</returns>
------------------------------------------------------------------------------ */
 nlohmann::json SerializationManager::serializeEntity(int entityID)
 {
     // Get a reference or pointer to your EntityManager
@@ -266,20 +206,6 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
     return std::make_pair(entity, entityID);
 }
 
-
-
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Save a serialized Entity to a JSON file.
-/// This function takes a serialized Entity in JSON format and writes it to a
-/// specified file. It includes the entity's data and structure.
-/// </summary>
-/// <param name="filename">The name of the file to save the JSON data to.</param>
-/// <param name="entityID">The ID of the entity to serialize and save.</param>
------------------------------------------------------------------------------ */
 void SerializationManager::saveToFile(const std::string& filename, int entityID)
 {
     // Serialize the entity with the given entityID into a JSON object.
@@ -303,19 +229,6 @@ void SerializationManager::saveToFile(const std::string& filename, int entityID)
     }
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Load and deserialize an Entity from a JSON file.
-/// This function reads a JSON file containing serialized entity data and
-/// deserializes it into an Entity object. It returns a pair containing the
-/// deserialized Entity and an associated entity ID.
-/// </summary>
-/// <param name="filename">The name of the JSON file to load data from.</param>
-/// <returns>A pair containing the deserialized Entity and its associated entity ID,
-///          or an empty Entity and a failure code if the file cannot be opened.</returns>
------------------------------------------------------------------------------ */
 std::pair<Entity, int> SerializationManager::loadFromFile(const std::string& filename)
 {
     // Open the specified file for reading.
@@ -339,77 +252,3 @@ std::pair<Entity, int> SerializationManager::loadFromFile(const std::string& fil
     // Call the deserializeEntity function to convert the JSON into an Entity and entityID.
     return deserializeEntity(j);
 }
-
-
-/*------------------------------------------------ OLD STUFF -----------------------------------------------------*/
-
-
-//nlohmann::json SerializationManager::serializeEntity(int entityID)
-//{
-//    nlohmann::json j;
-//
-//    // Serializing Entity
-//    j["Entity"]["id"] = entities[entityID].id;
-//    j["Entity"]["someInt"] = entities[entityID].someInt;
-//    j["Entity"]["someFloat"] = entities[entityID].someFloat;
-//    j["Entity"]["someDouble"] = entities[entityID].someDouble;
-//    j["Entity"]["someChar"] = std::string(1, entities[entityID].someChar);  // Convert char to string for JSON
-//    j["Entity"]["someBool"] = entities[entityID].someBool;
-//    j["Entity"]["someString"] = entities[entityID].someString;
-//
-//    return j;
-//}
-
-//std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::json& j)
-//{
-//    Entity e;
-//    e.id = j["Entity"]["id"];
-//    e.someInt = j["Entity"]["someInt"];
-//    e.someFloat = j["Entity"]["someFloat"];
-//    e.someDouble = j["Entity"]["someDouble"];
-//    e.someChar = j["Entity"]["someChar"].get<std::string>()[0];  // Convert string to char
-//    e.someBool = j["Entity"]["someBool"];
-//    e.someString = j["Entity"]["someString"];
-//
-//    return { e, e.id };
-//}
-
-//void SerializationManager::saveToFile(const std::string& filename, int entityID)
-//{
-//    std::ofstream output_file(filename);
-//    if (output_file.is_open())
-//    {
-//        std::cout << "Direct entity ID from entities map: " << entities[5].id << std::endl;
-//
-//        nlohmann::json j = serializeEntity(entityID);
-//        std::cout << "Saving entity with ID: " << entityID << " to file: " << filename << std::endl;
-//
-//        // Use dump(4) for pretty-printing with 4-space indentation
-//        output_file << j.dump(4);
-//        output_file.close();
-//    }
-//    else
-//    {
-//        // Error handling
-//        std::cerr << "Failed to open the file for writing: " << filename << std::endl;
-//    }
-//}
-//
-//
-//std::pair<Entity, int> SerializationManager::loadFromFile(const std::string& filename)
-//{
-//    std::ifstream input_file(filename);
-//    nlohmann::json j;
-//    if (input_file.is_open())
-//    {
-//        input_file >> j;
-//        input_file.close();
-//        return deserializeEntity(j);
-//    }
-//    else
-//    {
-//        // Error handlin
-//        std::cerr << "Failed to open the file for reading: " << filename << std::endl;
-//        return { Entity{}, -1 };                            // Return an 'invalid' entity and ID
-//    }
-//}

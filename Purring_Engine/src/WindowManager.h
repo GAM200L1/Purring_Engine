@@ -47,5 +47,6 @@ namespace PE
         void OnWindowEvent(const PE::Event<PE::WindowEvents>& e);
         void OnMouseEvent(const PE::Event<PE::MouseEvents>& e);
         void OnKeyEvent(const PE::Event<PE::KeyEvents>& e);
+
     };
 }
