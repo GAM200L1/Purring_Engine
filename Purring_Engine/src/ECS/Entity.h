@@ -469,13 +469,13 @@ namespace PE
 	template<typename T>
 	T* EntityManager::GetPointer(EntityID id)
 	{
-		return static_cast<T*>(m_componentPools[GetComponentID<T>()]->Get(id));
+		return reinterpret_cast<T*>(m_componentPools[GetComponentID<T>()]->Get(id));
 	}
 
 	template<typename T>
 	const T* EntityManager::GetPointer(EntityID id) const
 	{
-		return static_cast<T*>(m_componentPools.at(GetComponentID<T>())->Get(id));
+		return reinterpret_cast<T*>(m_componentPools.at(GetComponentID<T>())->Get(id));
 	}
 
 	template<typename T>
