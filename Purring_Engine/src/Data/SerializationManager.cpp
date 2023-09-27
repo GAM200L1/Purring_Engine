@@ -1,5 +1,6 @@
 #include "prpch.h"
 #include "SerializationManager.h"
+#include "ECS/EntityFactory.h"
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -169,29 +170,44 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
         entityID = (idString.empty()) ? -1 : std::stoi(idString);
 
         // Loop through the data items in the JSON and deserialize them based on their types.
-        for (const auto& [key, val] : j["Entity"]["data"].items())
+        EntityID id = PE::g_entityFactory->CreateEntity();
+        for (const auto& t : j["Entity"].items())
         {
-            std::string type = val["type"];
-
-            // Deserialize and store data based on their types.
-            if (type == "int")
+            for (const auto& data : j["Entity"][t.key()].items())
             {
-                entity.data[key] = std::any(val["value"].get<int>());
+                std::string k = data.key();
+                // example inside function
+                PE::Collider col;
+                PE::g_entityFactory->LoadComponent(id, k.c_str(), nullptr);
+                auto dat = data.value();
+                std::string type = dat["type"];
+                //entity.data[k] = std::any(dat["value"].get<float>());
             }
-            else if (type == "float")
-            {
-                entity.data[key] = std::any(val["value"].get<float>());
-            }
-            else if (type == "string")
-            {
-                entity.data[key] = std::any(val["value"].get<std::string>());
-            }
-            else if (type == "vector<int>")
-            {
-                entity.data[key] = std::any(val["value"].get<std::vector<int>>());
-            }
-            // To add similar blocks for other data types in the future..... -hans
+            // Deseria
         }
+        //for (const auto& [key, val] : j["Entity"]["data"].items())
+        //{
+        //    std::string type = val["type"];
+
+        //    // Deserialize and store data based on their types.
+        //    if (type == "int")
+        //    {
+        //        entity.data[key] = std::any(val["value"].get<int>());
+        //    }
+        //    else if (type == "float")
+        //    {
+        //        entity.data[key] = std::any(val["value"].get<float>());
+        //    }
+        //    else if (type == "string")
+        //    {
+        //        entity.data[key] = std::any(val["value"].get<std::string>());
+        //    }
+        //    else if (type == "vector<int>")
+        //    {
+        //        entity.data[key] = std::any(val["value"].get<std::vector<int>>());
+        //    }
+        //    // To add similar blocks for other data types in the future..... -hans
+        //}
 
         // Deserialize Transform component IF it exists in JSON.
         if (j["Entity"]["components"].contains("Transform")) {

@@ -1131,7 +1131,7 @@ namespace PE {
 					if (ImGui::MenuItem("Load"))
 					{
 						// Call the method to load the serialized entity from a file and deserialize it.
-						std::pair<Entity, int> deserializedData = serializationManager.loadFromFile("saved_transform.json");
+						std::pair<Entity, int> deserializedData = serializationManager.loadFromFile("Saved_Data.json");
 						int deserializedEntityID = deserializedData.second;
 
 						//// Still need to integrate the deserialized entity into JW ECS via file exploer + the logic.
