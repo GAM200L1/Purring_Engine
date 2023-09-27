@@ -25,6 +25,13 @@ namespace PE
 {
     struct ComponentPool
     {
+        // ----- Public Variables ----- //
+        std::map<size_t, size_t> idxMap;  // map to decouple the entity ID from the internal index
+        size_t elementSize{};             // the size of each element in the pool
+        size_t size{};                    // the current size of the pool (entity count, should lineup to idxMap)
+        size_t capacity{};                // the actual capacity of the pool
+
+        // ----- Constructors ----- //
         /*!***********************************************************************************
          \brief Construct a new Component Pool object
                 The size of the buffer allocated will be (elementsize * entcnt) bytes large
@@ -36,8 +43,8 @@ namespace PE
         *************************************************************************************/
         ComponentPool(size_t elementsize, size_t entcnt = DEFAULT_ENTITY_CNT)
         {
-            m_elementSize = elementsize;
-            m_capacity = entcnt;            
+            elementSize = elementsize;
+            capacity = entcnt;            
         }
 
         /*!***********************************************************************************
@@ -46,16 +53,7 @@ namespace PE
         *************************************************************************************/
         virtual ~ComponentPool() { };
 
-        /*!***********************************************************************************
-         \brief Takes in param numEntity to be the new number of elements to support within
-                the pool
-
-         \param[in] numEntity   The number of entities to resize to
-         \return true           Sucessflly resized
-         \return false          Failed to resize
-        *************************************************************************************/
-        virtual bool resize(size_t numEntity) = 0;
-
+        // ----- Public Getters ----- //
         /*!***********************************************************************************
          \brief Gets a void pointer to the specified entity's component in the pool
 
@@ -66,6 +64,16 @@ namespace PE
         *************************************************************************************/
         virtual void* Get(size_t index) = 0;
 
+        // ----- Public Methods ----- //
+        /*!***********************************************************************************
+         \brief Takes in param numEntity to be the new number of elements to support within
+                the pool
+
+         \param[in] numEntity   The number of entities to resize to
+         \return true           Sucessflly resized
+         \return false          Failed to resize
+        *************************************************************************************/
+        virtual bool resize(size_t numEntity) = 0;
 
         /*!***********************************************************************************
          \brief Removes an entity from this pool
@@ -84,15 +92,15 @@ namespace PE
         *************************************************************************************/
         bool HasEntity(size_t id) const
         {
-            return (this) ? m_idxMap.count(id) : false;
+            return (this) ? idxMap.count(id) : false;
         }
-
-        std::map<size_t, size_t> m_idxMap;  // map to decouple the entity ID from the internal index
-        size_t m_elementSize{};             // the size of each element in the pool
-        size_t m_size{};                    // the current size of the pool (entity count, should lineup to m_idxMap)
-        size_t m_capacity{};                // the actual capacity of the pool
     };
 
+    /*!***********************************************************************************
+     \brief Child class of component, specifies the behavior for individual pool types.
+     
+     \tparam T The type for the pool
+    *************************************************************************************/
     template <typename T>
     class PoolData : public ComponentPool
     {
@@ -128,7 +136,7 @@ namespace PE
         *************************************************************************************/
         void* Get(size_t index)
         {
-            return reinterpret_cast<void*>(&(p_data[m_idxMap[index]]));
+            return reinterpret_cast<void*>(&(p_data[idxMap[index]]));
         }
         
     // ----- Public methods ----- // 
@@ -150,12 +158,12 @@ namespace PE
                 // @TODO add log message, error, not enough memory
                 return false;
             }
-            for (size_t i{}; i < m_capacity; ++i)
+            for (size_t i{}; i < capacity; ++i)
             {
                 p_tmp[i] = p_data[i];
             }
             std::swap(p_tmp, p_data);
-            m_capacity = numEntity;
+            capacity = numEntity;
             delete[] p_tmp;
             return true;
         }
@@ -167,11 +175,11 @@ namespace PE
         *************************************************************************************/
         void remove(size_t index)
         {
-            if (!m_idxMap.count(index))
+            if (!idxMap.count(index))
                 throw; // log in the future
             
             EntityID key{}, lastIdx{};
-            for (const auto& pair : m_idxMap)
+            for (const auto& pair : idxMap)
             {
                 if (lastIdx <= pair.second)
                 {
@@ -183,13 +191,14 @@ namespace PE
             if (key != index)
             {
                 T tmp = p_data[lastIdx];
-                p_data[m_idxMap[index]] = p_data[lastIdx];
-                m_idxMap[key] = m_idxMap[index];
+                p_data[idxMap[index]] = p_data[lastIdx];
+                idxMap[key] = idxMap[index];
             }
             p_data[lastIdx] = T();
-            m_idxMap.erase(index);
-            --m_size;
+            idxMap.erase(index);
+            --size;
         }
+    // ----- Private Variables ----- //
     private:
         T* p_data{ nullptr };
     };

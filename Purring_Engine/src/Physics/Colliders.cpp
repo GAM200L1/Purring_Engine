@@ -25,7 +25,7 @@ namespace PE
 	
 
 	// ---- Circle Collider ----- //
-	
+
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_circle.center = r_position;

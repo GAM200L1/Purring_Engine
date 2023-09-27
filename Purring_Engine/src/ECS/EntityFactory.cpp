@@ -48,10 +48,10 @@ namespace PE
 		if (p_entityManager->IsEntityValid(id))
 		{
 			EntityID clone = CreateEntity();
-			for (const ComponentID& componentCreator : p_entityManager->GetComponentIDs(id))
+			for (const ComponentID& r_componentCreator : p_entityManager->GetComponentIDs(id))
 			{
-				LoadComponent(clone, componentCreator.c_str(),
-					p_entityManager->GetComponentPoolPointer(componentCreator)->Get(id));
+				LoadComponent(clone, r_componentCreator.c_str(),
+					p_entityManager->GetComponentPoolPointer(r_componentCreator)->Get(id));
 			}
 			return clone;
 		}
@@ -75,11 +75,11 @@ namespace PE
 	
 	void EntityFactory::LoadComponents()
 	{
-		g_initializeComponent.emplace("RigidBody", &EntityFactory::InitializeRigidBody);
-		g_initializeComponent.emplace("Collider", &EntityFactory::InitializeCollider);
-		g_initializeComponent.emplace("Transform", &EntityFactory::InitializeTransform);
-		g_initializeComponent.emplace("PlayerStats", &EntityFactory::InitializePlayerStats);
-		g_initializeComponent.emplace("Renderer", &EntityFactory::InitializeRenderer);
+		m_initializeComponent.emplace("RigidBody", &EntityFactory::InitializeRigidBody);
+		m_initializeComponent.emplace("Collider", &EntityFactory::InitializeCollider);
+		m_initializeComponent.emplace("Transform", &EntityFactory::InitializeTransform);
+		m_initializeComponent.emplace("PlayerStats", &EntityFactory::InitializePlayerStats);
+		m_initializeComponent.emplace("Renderer", &EntityFactory::InitializeRenderer);
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* data)
@@ -158,6 +158,6 @@ namespace PE
 			return false;
 		// if the prefab exists in the current list
 		Assign(id, { r_component });
-		return std::invoke(g_initializeComponent[r_component], this, id, data);
+		return std::invoke(m_initializeComponent[r_component], this, id, data);
 	}
 }

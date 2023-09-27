@@ -50,7 +50,6 @@ namespace PE
 		{
 			prefabs.emplace("GameObject", Prefabs::GameObject);
 		}
-	
 	};
 
 }

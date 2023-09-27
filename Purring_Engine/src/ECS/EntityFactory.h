@@ -166,9 +166,20 @@ namespace PE
 		*************************************************************************************/
 		bool LoadComponent(EntityID id, const char* component, void* data);
 
+
+		// ----- Private Variables ----- //
+	private:
+		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& r_id, void* data);
+		typedef std::map<ComponentID, size_t> ComponentMapType; // component map typedef
+		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
+		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
+		std::map<std::string, fnptrVoidptrConstruct> m_initializeComponent;
+		Prefab m_prefabs;
+
 	// ----- Private Methods ----- //
 	private:
-		// Components Handling
+
+	// ----- Components Handling ----- //
 
 		/*!***********************************************************************************
 		 \brief Initializes/copy the component of the specified entity
@@ -190,15 +201,6 @@ namespace PE
 		 
 		*************************************************************************************/
 		void LoadComponents();
-
-	// ----- Private Variables ----- //
-	private:
-		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& r_id, void* data);
-		typedef std::map<ComponentID, size_t> ComponentMapType; // component map typedef
-		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
-		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
-		std::map<std::string, fnptrVoidptrConstruct> g_initializeComponent;
-		Prefab m_prefabs;
 	};
 
 	// extern for those including the .h to access the factory instance
@@ -246,11 +248,11 @@ namespace PE
 		{
 			throw;
 		}
-		for (const T& type : var)
+		for (const T& r_type : var)
 		{
-			if (m_componentMap.find(type) != m_componentMap.end())
+			if (m_componentMap.find(r_type) != m_componentMap.end())
 			{
-				p_entityManager->Assign(id, type);
+				p_entityManager->Assign(id, r_type);
 			}
 		}
 		p_entityManager->UpdateVectors(id);
@@ -265,11 +267,11 @@ namespace PE
 			engine_logger.FlushLog();
 			throw;
 		}
-		for (const T& type : r_var)
+		for (const T& r_type : r_var)
 		{
-			if (m_componentMap.find(type) != m_componentMap.end())
+			if (m_componentMap.find(r_type) != m_componentMap.end())
 			{
-				p_entityManager->Assign(id, type);
+				p_entityManager->Assign(id, r_type);
 			}
 		}
 		p_entityManager->UpdateVectors(id);

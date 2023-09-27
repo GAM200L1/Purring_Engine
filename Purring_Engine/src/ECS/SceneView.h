@@ -54,201 +54,205 @@ TIter Duplicates(TIter begin, TIter end) {
 *************************************************************************************/
 int compare(const void* p_lhs, const void* p_rhs);
 
-/*!***********************************************************************************
- \brief
-
- \tparam ComponentTypes 	This variadic template, this allows the input of multiple
-							components to give the ability to scope an iterator to
-							the input component types
-*************************************************************************************/
-template<typename... ComponentTypes>
-struct SceneView
-{
 	/*!***********************************************************************************
-	 \brief Construct a new Scene View object
+	\brief
 
+	\tparam ComponentTypes 	This variadic template, this allows the input of multiple
+								components to give the ability to scope an iterator to
+								the input component types
 	*************************************************************************************/
-	SceneView() : p_entityManager(PE::g_entityManager)
+	template<typename... ComponentTypes>
+	struct SceneView
 	{
-		// checks if the number of components is zero
-		if constexpr (sizeof...(ComponentTypes))
-		{
-			//unpacks all the component IDs provided by the user into a initializer list
-			std::initializer_list<ComponentID> componentIDs = { p_entityManager->GetComponentID<ComponentTypes>() ... };
-			for (const ComponentID& c : componentIDs)
-			{
-				components.emplace(c);
-			}
-		}
-		else // if no components are provided, it assume the user wants to scope to all components
-		{
-			all = true;
-		}
-	}
+		// ----- Public Variables ----- // 
+		// ptr to the entity manager
+		PE::EntityManager* p_entityManager{ nullptr };
+		// the components for this scope
+		std::set<ComponentID> components;
+		// flag for toggling whether all components are in scope
+		bool all{ false };
 
-	/*!***********************************************************************************
-	 \brief		This iterator struct is a required interface to allow the use of foreach
-				loops.
-
-	*************************************************************************************/
-	struct Iterator
-	{
 		/*!***********************************************************************************
-		 \brief Construct a new Iterator object
+		\brief		This iterator struct is a required interface to allow the use of foreach
+					loops.
 
-		 \param[in] index 		The index to start from
-		 \param[in] components 	The components to scope to
-		 \param[in] all 		Whether or not the scope is to all copmonents
 		*************************************************************************************/
-		Iterator(EntityID index, const std::set<ComponentID>& components, bool all) :
-			p_entityManager(PE::g_entityManager), index(index), all(all)
+		struct Iterator
 		{
-			poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*components.begin()));
-			/*
-			if (all)
+			/*!***********************************************************************************
+			\brief Construct a new Iterator object
+
+			\param[in] index 		The index to start from
+			\param[in] components 	The components to scope to
+			\param[in] all 		Whether or not the scope is to all copmonents
+			*************************************************************************************/
+			Iterator(EntityID index, const std::set<ComponentID>& components, bool all) :
+				p_entityManager(PE::g_entityManager), index(index), all(all)
 			{
-				poolIdx = p_entityManager->GetEntitiesInPool("All");
-			}
-			else
-			{
-				if (components.size() == 1)
+				poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*components.begin()));
+				/*
+				if (all)
 				{
-					poolIdx = p_entityManager->GetEntitiesInPool((*components.begin()));
+					poolIdx = p_entityManager->GetEntitiesInPool("All");
 				}
 				else
 				{
-					for (const auto& component : components)
+					if (components.size() == 1)
 					{
-						for (const auto& id : p_entityManager->GetEntitiesInPool(component))
-							poolIdx.emplace_back(id);
+						poolIdx = p_entityManager->GetEntitiesInPool((*components.begin()));
 					}
-					std::qsort(poolIdx.data(), poolIdx.size(), sizeof(EntityID), PE::compare);
-					const std::vector<EntityID>::iterator iter = Duplicates(poolIdx.begin(), poolIdx.end());
-					for (auto it{ std::prev(poolIdx.end()) }; it != iter; )
+					else
 					{
-						auto copy = it--;
-						poolIdx.erase(copy);
+						for (const auto& component : components)
+						{
+							for (const auto& id : p_entityManager->GetEntitiesInPool(component))
+								poolIdx.emplace_back(id);
+						}
+						std::qsort(poolIdx.data(), poolIdx.size(), sizeof(EntityID), PE::compare);
+						const std::vector<EntityID>::iterator iter = Duplicates(poolIdx.begin(), poolIdx.end());
+						for (auto it{ std::prev(poolIdx.end()) }; it != iter; )
+						{
+							auto copy = it--;
+							poolIdx.erase(copy);
+						}
 					}
 				}
+				*/
+				poolIdx.emplace_back(p_entityManager->OnePast());
 			}
-			*/
-			poolIdx.emplace_back(p_entityManager->OnePast());
+
+			/*!***********************************************************************************
+			\brief Returns the Entity ID at the current iterator position.
+
+			\return EntityID ID of the entity
+			*************************************************************************************/
+			EntityID operator* () const
+			{
+				return index;
+			}
+
+			/*!***********************************************************************************
+			\brief operator== overload, checks if the two iterators are the same.
+
+			\param[in] rhs the iterator to compare to this iterator
+			\return true 	iterators are the same
+			\return false 	iterators are different
+			*************************************************************************************/
+			bool operator== (const Iterator& r_rhs) const
+			{
+				return (index == r_rhs.index) || (index == p_entityManager->OnePast());
+			}
+
+			/*!***********************************************************************************
+			\brief operator!= overload, checks if the two iterators are different
+
+			\param[in] rhs the iterators to comapre to this iterator
+			\return true 	the iterators are different
+			\return false  the iterators are the same
+			*************************************************************************************/
+			bool operator!= (const Iterator& r_rhs) const
+			{
+				return (index != r_rhs.index) || (index != p_entityManager->OnePast());
+			}
+
+
+			/*!***********************************************************************************
+			\brief operator++ overload, it increments the iterator until it reaches a valid
+					entity, or it reaches the limits of the iterator
+
+			\return Iterator& reference to this, emulating normal operator++ behaviour
+			*************************************************************************************/
+			Iterator& operator++()
+			{
+				if ((poolIdx[idxIterator] != p_entityManager->OnePast()))
+					++idxIterator;
+				
+				index = poolIdx[idxIterator];
+				return *this;
+			}
+
+			// ptr to the entity manager
+			PE::EntityManager* p_entityManager;
+			// The stored vector of entities for this iterator
+			std::vector<EntityID> poolIdx;
+			// The current iteration inside poolIdx
+			size_t idxIterator{};
+			// the current index/entity
+			EntityID index{};
+			// flag for toggling whether all components are in scope
+			bool all{ false };
+		};
+		
+		// ----- Constructors ------ //
+
+		/*!***********************************************************************************
+		\brief Construct a new Scene View object
+
+		*************************************************************************************/
+		SceneView() : p_entityManager(PE::g_entityManager)
+		{
+			// checks if the number of components is zero
+			if constexpr (sizeof...(ComponentTypes))
+			{
+				//unpacks all the component IDs provided by the user into a initializer list
+				std::initializer_list<ComponentID> componentIDs = { p_entityManager->GetComponentID<ComponentTypes>() ... };
+				for (const ComponentID& c : componentIDs)
+				{
+					components.emplace(c);
+				}
+			}
+			else // if no components are provided, it assume the user wants to scope to all components
+			{
+				all = true;
+			}
+		}
+		// ----- Public Methods ----- //
+
+		/*!***********************************************************************************
+		\brief Checks if entity at index has all the components within this scope
+
+		\param[in] index index of the entity to check
+		\return true 	  the entity has all the components in this scope
+		\return false 	  the entity does not have all the components in this scope
+		*************************************************************************************/
+		bool HasComponents(size_t index) const
+		{
+			for (const ComponentID& r_component : components)
+			{
+				if (!p_entityManager->GetComponentPoolPointer(r_component)->HasEntity(index))
+					return false;
+			}
+			return true;
 		}
 
 		/*!***********************************************************************************
-		 \brief Returns the Entity ID at the current iterator position.
+		\brief Generates a begin iterator to the first entity that matches the scope
 
-		 \return EntityID ID of the entity
+		\return const Iterator the iterator for the first "legal" entity
 		*************************************************************************************/
-		EntityID operator* () const
+		const Iterator begin() const
 		{
-			return index;
+			if (!p_entityManager->Size())
+				Iterator(0, components, all); // update to error log
+			size_t firstIndex{};
+			while ((firstIndex < p_entityManager->OnePast()) &&
+				(!HasComponents(firstIndex) ||
+					!p_entityManager->IsEntityValid(firstIndex))
+				)
+			{
+				++firstIndex;
+			}
+			return Iterator(firstIndex, components, all);
 		}
 
 		/*!***********************************************************************************
-		 \brief operator== overload, checks if the two iterators are the same.
+		\brief Generates the last entity
 
-		 \param[in] rhs the iterator to compare to this iterator
-		 \return true 	iterators are the same
-		 \return false 	iterators are different
+		\return const Iterator the iterator for the last "legal" entity
 		*************************************************************************************/
-		bool operator== (const Iterator& rhs) const
+		const Iterator end() const
 		{
-			return (index == rhs.index) || (index == p_entityManager->OnePast());
+			return Iterator(p_entityManager->OnePast(), components, all);
 		}
-
-		/*!***********************************************************************************
-		 \brief operator!= overload, checks if the two iterators are different
-
-		 \param[in] rhs the iterators to comapre to this iterator
-		 \return true 	the iterators are different
-		 \return false  the iterators are the same
-		*************************************************************************************/
-		bool operator!= (const Iterator& rhs) const
-		{
-			return (index != rhs.index) || (index != p_entityManager->OnePast());
-		}
-
-
-		/*!***********************************************************************************
-		 \brief operator++ overload, it increments the iterator until it reaches a valid
-				entity, or it reaches the limits of the iterator
-
-		 \return Iterator& reference to this, emulating normal operator++ behaviour
-		*************************************************************************************/
-		Iterator& operator++()
-		{
-			if ((poolIdx[idxIterator] != p_entityManager->OnePast()))
-				++idxIterator;
-			
-			index = poolIdx[idxIterator];
-			return *this;
-		}
-
-		// ptr to the entity manager
-		PE::EntityManager* p_entityManager;
-		// The stored vector of entities for this iterator
-		std::vector<EntityID> poolIdx;
-		// The current iteration inside poolIdx
-		size_t idxIterator{};
-		// the current index/entity
-		EntityID index{};
-		// flag for toggling whether all components are in scope
-		bool all{ false };
 	};
-
-	/*!***********************************************************************************
-	 \brief Checks if entity at index has all the components within this scope
-
-	 \param[in] index index of the entity to check
-	 \return true 	  the entity has all the components in this scope
-	 \return false 	  the entity does not have all the components in this scope
-	*************************************************************************************/
-	bool HasComponents(size_t index) const
-	{
-		for (const ComponentID& component : components)
-		{
-			if (!p_entityManager->GetComponentPoolPointer(component)->HasEntity(index))
-				return false;
-		}
-		return true;
-	}
-
-	/*!***********************************************************************************
-	 \brief Generates a begin iterator to the first entity that matches the scope
-
-	 \return const Iterator the iterator for the first "legal" entity
-	*************************************************************************************/
-	const Iterator begin() const
-	{
-		if (!p_entityManager->Size())
-			Iterator(0, components, all); // update to error log
-		size_t firstIndex{};
-		while ((firstIndex < p_entityManager->OnePast()) &&
-			(!HasComponents(firstIndex) ||
-				!p_entityManager->IsEntityValid(firstIndex))
-			)
-		{
-			++firstIndex;
-		}
-		return Iterator(firstIndex, components, all);
-	}
-
-	/*!***********************************************************************************
-	 \brief Generates the last entity
-
-	 \return const Iterator the iterator for the last "legal" entity
-	*************************************************************************************/
-	const Iterator end() const
-	{
-		return Iterator(p_entityManager->OnePast(), components, all);
-	}
-
-	// ptr to the entity manager
-	PE::EntityManager* p_entityManager{ nullptr };
-	// the components for this scope
-	std::set<ComponentID> components;
-	// flag for toggling whether all components are in scope
-	bool all{ false };
-};
 }
