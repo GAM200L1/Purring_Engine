@@ -225,11 +225,11 @@ namespace PE
 			// rotation
 			if (ev.keycode == GLFW_KEY_RIGHT)
 			{
-				g_entityManager->Get<RigidBody>(1).m_rotationVelocity = PE_PI;
+				g_entityManager->Get<RigidBody>(1).m_rotationVelocity = -PE_PI;
 			}
 			if (ev.keycode == GLFW_KEY_LEFT)
 			{
-				g_entityManager->Get<RigidBody>(1).m_rotationVelocity = -PE_PI;
+				g_entityManager->Get<RigidBody>(1).m_rotationVelocity = PE_PI;
 			}
 
 			// scale
