@@ -24,37 +24,42 @@ namespace PE
 	struct AABBCollider
 	{
 		// ----- Public Variables ----- //
-		//vec2 offsetFromObj{ 0.f, 0.f };
+		vec2 positionOffset{ 0.f, 0.f };
 		vec2 center{};
 		vec2 min{};
 		vec2 max{};
-		vec2 scale{};
+		vec2 scale{50.f, 50.f};
 	};
-	
-	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale);
+
+	void Initialize(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale);
+	void Update(AABBCollider& r_AABB, vec2 const& r_position);
 
 	struct CircleCollider
 	{
 		// ----- Public Variables ----- //
+		vec2 positionOffset{ 0.f, 0.f };
 		vec2 center{};
-		float radius{};
+		float radius{50.f};
 	};
+
+	void Initialize(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
+	void Update(CircleCollider& r_circle, vec2 const& r_position);
 
 	struct Collider
 	{
-		std::variant<AABBCollider, CircleCollider> colliderVariant;
+		std::variant<AABBCollider, CircleCollider> colliderVariant{ CircleCollider() };
 		std::set<size_t> objectsCollided;
-		bool isTrigger;
+		bool isTrigger{ false };
 	};
 
 	struct LineSegment
 	{
 		LineSegment() = default;
 		LineSegment(vec2 const& r_startPt, vec2 const& r_endPt);
-		vec2 point0;
-		vec2 point1;
-		vec2 lineVec;
-		vec2 normal;
+		vec2 point0{};
+		vec2 point1{};
+		vec2 lineVec{};
+		vec2 normal{};
 	};
 
 
@@ -85,5 +90,4 @@ namespace PE
 		void ResolvePosition();
 	};
 
-	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
 }
