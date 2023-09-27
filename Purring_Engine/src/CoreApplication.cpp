@@ -129,24 +129,39 @@ PE::CoreApplication::CoreApplication()
 
 
     // Load a texture
-    std::string catTextureName{ "cat" };
+    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/image2.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
 
-    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+    EntityID id = g_entityFactory->CreateEntity();
+    
 
-    // Make the first gameobject with a collider circle at world pos (100, 100)
+    int width{ 1980 }, height{ 720 };
+    glfwGetWindowSize(m_window, &width, &height);
+    g_entityFactory->Assign(id, { "Transform", "Renderer" });
     g_entityManager->Get<Transform>(id).position.x = 0.f;
     g_entityManager->Get<Transform>(id).position.y = 0.f;
-    g_entityManager->Get<Transform>(id).width = 100.f;
-    g_entityManager->Get<Transform>(id).height = 100.f;
+    g_entityManager->Get<Transform>(id).width = static_cast<float>(width);
+    g_entityManager->Get<Transform>(id).height = static_cast<float>(height);
     g_entityManager->Get<Transform>(id).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
-    g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
-    g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 0.f);
-    g_entityManager->Get<RigidBody>(id).SetMass(10.f);
+    g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
+    g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
+    
+    EntityID id2 = g_entityFactory->CreateFromPrefab("GameObject");
 
+    // Make the second gameObject the character controller
+    g_entityManager->Get<Transform>(id2).position.x = 0.f;
+    g_entityManager->Get<Transform>(id2).position.y = 0.f;
+    g_entityManager->Get<Transform>(id2).width = 100.f;
+    g_entityManager->Get<Transform>(id2).height = 100.f;
+    g_entityManager->Get<Transform>(id2).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(id2).colliderVariant = CircleCollider();
+    g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+    g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
+    g_entityManager->Get<RigidBody>(id2).SetMass(10.f);
+    
     for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
     {
         testVector.emplace_back(id);
