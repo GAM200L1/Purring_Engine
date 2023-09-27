@@ -281,7 +281,7 @@ namespace PE
 
             for (const EntityID& id : SceneView<Renderer>())
             {
-                const Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
+                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
                 const Transform& transform{ g_entityManager->Get<Transform>(id) };
 
                 // Attempt to retrieve and bind the texture
@@ -301,12 +301,16 @@ namespace PE
 
                     auto textureIterator{ ResourceManager::GetInstance().Textures.find(renderer.GetTextureKey()) };
 
-                    // Check if shader program is valid
+                    // Check if texture program is valid
                     if (textureIterator == ResourceManager::GetInstance().Textures.end())
                     {
                         engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                         engine_logger.SetTime();
                         engine_logger.AddLog(false, "Texture " + renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
+
+                        // Remove the texture and set the object to neon pink
+                        renderer.SetTextureKey("");
+                        renderer.SetColor(1.f, 0.f, 1.f, 1.f);
 
                         m_isTextured.emplace_back(0.f);
                     }
