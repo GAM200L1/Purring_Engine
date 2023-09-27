@@ -38,7 +38,7 @@ namespace PE
 	{
 	// ----- Public variables ----- // 
 	public:
-		std::map<std::string, std::initializer_list<const char*>> m_map;
+		std::map<std::string, std::initializer_list<const char*>> prefabs;
 		
 	// ----- Constructors ----- //
 	public:
@@ -48,8 +48,7 @@ namespace PE
 		*************************************************************************************/
 		Prefab()
 		{
-			//LoadComponents();
-			m_map.emplace("GameObject", Prefabs::GameObject);
+			prefabs.emplace("GameObject", Prefabs::GameObject);
 		}
 	
 	};

@@ -43,7 +43,16 @@ TIter Duplicates(TIter begin, TIter end) {
 	return dup;
 }
 
-int compare(const void*, const void*);
+/*!***********************************************************************************
+ \brief A compare function (ascending order) for use inside qsort. (follows the 
+ 		requirements of it as well, hence the void ptr inputs)
+		Compares p_lhs and p_rhs. 
+ 
+ \param[in] p_lhs 	Left hand value
+ \param[in] p_rhs 	Right hand value
+ \return int 		1 = p_lhs > p_rhs, -1 = p_lhs < p_rhs, 0 otherwise
+*************************************************************************************/
+int compare(const void* p_lhs, const void* p_rhs);
 
 /*!***********************************************************************************
  \brief
@@ -68,12 +77,12 @@ struct SceneView
 			std::initializer_list<ComponentID> componentIDs = { p_entityManager->GetComponentID<ComponentTypes>() ... };
 			for (const ComponentID& c : componentIDs)
 			{
-				m_components.emplace(c);
+				components.emplace(c);
 			}
 		}
 		else // if no components are provided, it assume the user wants to scope to all components
 		{
-			m_all = true;
+			all = true;
 		}
 	}
 
@@ -92,8 +101,9 @@ struct SceneView
 		 \param[in] all 		Whether or not the scope is to all copmonents
 		*************************************************************************************/
 		Iterator(EntityID index, const std::set<ComponentID>& components, bool all) :
-			p_entityManager(PE::g_entityManager), m_index(index), m_components(components), m_all(all)
+			p_entityManager(PE::g_entityManager), index(index), all(all)
 		{
+			poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*components.begin()));
 			/*
 			if (all)
 			{
@@ -101,13 +111,13 @@ struct SceneView
 			}
 			else
 			{
-				if (m_components.size() == 1)
+				if (components.size() == 1)
 				{
-					poolIdx = p_entityManager->GetEntitiesInPool((*m_components.begin()));
+					poolIdx = p_entityManager->GetEntitiesInPool((*components.begin()));
 				}
 				else
 				{
-					for (const auto& component : m_components)
+					for (const auto& component : components)
 					{
 						for (const auto& id : p_entityManager->GetEntitiesInPool(component))
 							poolIdx.emplace_back(id);
@@ -132,7 +142,7 @@ struct SceneView
 		*************************************************************************************/
 		EntityID operator* () const
 		{
-			return m_index;
+			return index;
 		}
 
 		/*!***********************************************************************************
@@ -144,7 +154,7 @@ struct SceneView
 		*************************************************************************************/
 		bool operator== (const Iterator& rhs) const
 		{
-			return (m_index == rhs.m_index) || (m_index == p_entityManager->OnePast());
+			return (index == rhs.index) || (index == p_entityManager->OnePast());
 		}
 
 		/*!***********************************************************************************
@@ -156,7 +166,7 @@ struct SceneView
 		*************************************************************************************/
 		bool operator!= (const Iterator& rhs) const
 		{
-			return (m_index != rhs.m_index) || (m_index != p_entityManager->OnePast());
+			return (index != rhs.index) || (index != p_entityManager->OnePast());
 		}
 
 
@@ -170,21 +180,21 @@ struct SceneView
 		{
 			if ((poolIdx[idxIterator] != p_entityManager->OnePast()))
 				++idxIterator;
-
-			m_index = poolIdx[idxIterator];
+			
+			index = poolIdx[idxIterator];
 			return *this;
 		}
 
 		// ptr to the entity manager
 		PE::EntityManager* p_entityManager;
-		const std::vector<EntityID>& poolIdx;
+		// The stored vector of entities for this iterator
+		std::vector<EntityID> poolIdx;
+		// The current iteration inside poolIdx
 		size_t idxIterator{};
 		// the current index/entity
-		EntityID m_index{};
-		// the set of components in this scope
-		const std::set<ComponentID>& m_components;
+		EntityID index{};
 		// flag for toggling whether all components are in scope
-		bool m_all{ false };
+		bool all{ false };
 	};
 
 	/*!***********************************************************************************
@@ -196,9 +206,9 @@ struct SceneView
 	*************************************************************************************/
 	bool HasComponents(size_t index) const
 	{
-		for (const ComponentID& components : m_components)
+		for (const ComponentID& component : components)
 		{
-			if (!p_entityManager->GetComponentPoolPointer(components)->HasEntity(index))
+			if (!p_entityManager->GetComponentPoolPointer(component)->HasEntity(index))
 				return false;
 		}
 		return true;
@@ -212,7 +222,7 @@ struct SceneView
 	const Iterator begin() const
 	{
 		if (!p_entityManager->Size())
-			Iterator(0, m_components, m_all); // update to error log
+			Iterator(0, components, all); // update to error log
 		size_t firstIndex{};
 		while ((firstIndex < p_entityManager->OnePast()) &&
 			(!HasComponents(firstIndex) ||
@@ -221,7 +231,7 @@ struct SceneView
 		{
 			++firstIndex;
 		}
-		return Iterator(firstIndex, m_components, m_all);
+		return Iterator(firstIndex, components, all);
 	}
 
 	/*!***********************************************************************************
@@ -231,14 +241,14 @@ struct SceneView
 	*************************************************************************************/
 	const Iterator end() const
 	{
-		return Iterator(p_entityManager->OnePast(), m_components, m_all);
+		return Iterator(p_entityManager->OnePast(), components, all);
 	}
 
 	// ptr to the entity manager
 	PE::EntityManager* p_entityManager{ nullptr };
 	// the components for this scope
-	std::set<ComponentID> m_components;
+	std::set<ComponentID> components;
 	// flag for toggling whether all components are in scope
-	bool m_all{ false };
+	bool all{ false };
 };
 }
