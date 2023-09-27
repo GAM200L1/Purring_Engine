@@ -12,36 +12,47 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 *******************************************************************************/
 #pragma once
 #include "prpch.h"
-
+#include "System.h"
 namespace PE
 {
-	class PhysicsManager
+	class PhysicsManager : public System
 	{
 	public:
-
-		static bool applyStepPhysics;
-		static bool advanceStep;
-
-		// ----- Removed Copy Ctors/Assignments ----- //
-		PhysicsManager(PhysicsManager const& r_cpyPhysicsManager) = delete;
-		PhysicsManager& operator=(PhysicsManager const& r_cpyPhysicsManager) = delete;
-
+		// ----- Constructor ----- //
+		PhysicsManager();
+		
 		// ----- Public Getters and Setters ----- //
-		PhysicsManager() = default;
-		static PhysicsManager* GetInstance();
+		float GetLinearDragCoefficient();
+		void SetLinearDragCoefficient(float newCoefficient);
 
-		static float GetLinearDragCoefficient();
-		static void SetLinearDragCoefficient(float newCoefficient);
+		float GetVelocityNegligence();
+		void SetVelocityNegligence(float negligence);
+
+		float GetFixedDt();
+		void SetFixedDt(float fixDt);
+
+		static bool& GetStepPhysics();
+		static bool& GetAdvanceStep();
+
+		std::string GetName() { return m_systemName; }
 
 		// ----- Public Methods ----- //
-		static void Step(float deltaTime);
-		static void UpdateDynamics(float deltaTime); // update forces, acceleration and velocity here
-		static void DeleteInstance();
+		void InitializeSystem();
+		void UpdateSystem(float deltaTime);
+		void DestroySystem();
+
+		// ----- Physics Methods ----- //
+		void UpdateDynamics(float deltaTime);
 
 	private:
 		// ----- Private Variables ----- //
-		static PhysicsManager* p_instance;
-		static float m_linearDragCoefficient;
-		static float m_velocityNegligence;
+		float m_linearDragCoefficient;
+		float m_velocityNegligence;
+		float m_fixedDt;
+		float m_accumulator;
+		float m_accumulatorLimit;
+		static bool m_applyStepPhysics;
+		static bool m_advanceStep;
+		std::string m_systemName{ "Physics" };
 	};
 }
