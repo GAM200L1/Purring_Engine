@@ -20,6 +20,7 @@
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
+#include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE {
@@ -91,6 +92,14 @@ namespace PE {
 	void Editor::test()
 	{
 		m_showTestWindows = true;
+	}
+
+	void Editor::ClearObjectList()
+	{
+		for (int n = 1; n < g_entityManager->GetEntitiesInPool("All").size();)
+		{
+			g_entityManager->RemoveEntity(g_entityManager->GetEntitiesInPool("All")[n]);
+		}
 	}
 
 	void Editor::Init(GLFWwindow* m_window)
@@ -347,14 +356,6 @@ namespace PE {
 				{
 					(this->*(m_commands[m_input]))();
 				}
-				//if (m_input == "ping")
-				//{
-				//	AddConsole("pong");
-				//}
-				//if (m_input == "test")
-				//{
-				//	m_showTestWindows = true;
-				//}
 				m_input = "";
 				reclaim_focus = true;
 			}
@@ -521,19 +522,42 @@ namespace PE {
 
 			ImGui::Separator();
 			ImGui::Text("Physics Test");
-			if (ImGui::Button("Player Controller"))
+			if (ImGui::Button("Random Object Test"))
 			{
-
+				ClearObjectList();
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				for (size_t i{ 2 }; i < 20; ++i)
+				{
+				    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				
+				    std::uniform_int_distribution<>distr0(-550, 550);
+				    g_entityManager->Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
+				    std::uniform_int_distribution<>distr1(-250, 250);
+				    g_entityManager->Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
+				    std::uniform_int_distribution<>distr2(10, 200);
+				    g_entityManager->Get<Transform>(id).width = static_cast<float>(distr2(gen));
+				    g_entityManager->Get<Transform>(id).height = static_cast<float>(distr2(gen));
+				    g_entityManager->Get<Transform>(id).orientation = 0.f;
+				
+				    if (i%3)
+				        g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				    
+				    if (i%2)
+				        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				    else
+				        g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Static Dynamic Collision"))
 			{
-
+				//8 objects
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Dynamic Dynamic Collision"))
 			{
-
+				//8 objects
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 
@@ -549,9 +573,9 @@ namespace PE {
 				ToggleDebugRender();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Object Test 3"))
+			if (ImGui::Button("Clear Object List"))
 			{
-
+				ClearObjectList();
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::Separator();
@@ -857,40 +881,6 @@ namespace PE {
 						ImGui::EndPopup();
 					}
 
-
-					/*if (isModalOpen)
-					{
-						ImGui::SetNextWindowSize(ImVec2(300, 100));
-						if (ImGui::BeginPopupModal("Components", &isModalOpen, ImGuiWindowFlags_NoResize))
-						{
-							ImGui::Text("Add Components");
-							if (ImGui::Selectable("Add Collision"))
-							{
-								if (g_entityManager->Has(m_currentSelectedObject, "RigidBody"))
-								{
-									g_entityFactory->Assign(m_currentSelectedObject, { "Collider" });
-								}
-								else
-								{
-									isModalOpen = true;
-									ImGui::OpenPopup("rwarn");
-								}
-							}
-							if (ImGui::Selectable("Add Transform"))
-							{
-								g_entityFactory->Assign(m_currentSelectedObject, { "Transform" });
-							}
-							if (ImGui::Selectable("Add RigidBody"))
-							{
-								g_entityFactory->Assign(m_currentSelectedObject, { "RigidBody" });
-							}
-							if (ImGui::Selectable("Add Renderer"))
-							{
-								g_entityFactory->Assign(m_currentSelectedObject, { "Renderer" });
-							}
-							ImGui::EndPopup();
-						}
-					}*/
 				}
 			}
 			ImGui::EndChild();
@@ -1181,27 +1171,6 @@ namespace PE {
 		//setting the current width and height of the window to be drawn on
 		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 		m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
-
-		//Screen picking testing code
-		//if (ImGui::IsMouseClicked(0))
-		//{
-		//	//where i need to start doing the screen picking
-		//	//get the mouse position relative to the top - left corner of the ImGui window.
-		//	ImVec2 cursorToMainWindow = ImGui::GetCursorScreenPos(); // get current window position (top left corner)
-		//	ImVec2 CurrentWindowPosition = ImGui::GetWindowPos(); // seems to get the same thing
-		//	ImVec2 CursorToImGuiWindow = ImGui::GetMousePos();  // get mouse position but relative to your screen
-		//	ImVec2 windowSize = ImGui::GetWindowSize();
-
-		//	double glfwMouseX, glfwMouseY;
-		//	glfwGetCursorPos(p_window, &glfwMouseX, &glfwMouseY); //glfw position
-
-		//	std::cout << "[Get current window top left position w title] x screen: " << cursorToMainWindow[0] << " y screen: " << cursorToMainWindow[1] << std::endl;
-		//	std::cout << "[Get Mouse Pos] x : " << CursorToImGuiWindow[0] << " y : " << CursorToImGuiWindow[1] << std::endl;
-		//	std::cout << "[Get Current Window View Top left position] x : " << CurrentWindowPosition[0] << " y i: " << CurrentWindowPosition[1] << std::endl;
-		//	//this tells you mouse position relative to imgui window seems the most useful for now
-		//	std::cout << "[Gui mouse pos - cursorscreen pos] x:" << CursorToImGuiWindow[0] - cursorToMainWindow[0] << " y: " << CursorToImGuiWindow[1] - cursorToMainWindow[1] << std::endl;
-		//	std::cout << "[GLFW] x:" << glfwMouseX << " y: " << glfwMouseY << std::endl;	
-		//}
 
 		//the graphics rendered onto an image on the imgui window
 		ImGui::Image(

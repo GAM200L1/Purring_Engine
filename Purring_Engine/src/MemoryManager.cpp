@@ -64,7 +64,7 @@ namespace PE
 		try
 		{
 			//freeing the latest allocated memory, have to give the size + buffer
-			m_stackAllocator.Free(m_memoryAllocationData[m_memoryAllocationData.size()-1].s_size + m_memoryAllocationData[m_memoryAllocationData.size() - 1].s_bufferSize);
+			m_stackAllocator.Free(m_memoryAllocationData[m_memoryAllocationData.size()-1].size + m_memoryAllocationData[m_memoryAllocationData.size() - 1].bufferSize);
 			m_memoryAllocationData.pop_back();
 		}
 		catch (int i) {
@@ -81,15 +81,15 @@ namespace PE
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) 
 		{
 			//if written over buffer
-			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].s_size + totalMemory) != '\0')
+			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].size + totalMemory) != '\0')
 			{
-				std::string s(m_memoryAllocationData[i].s_name);
+				std::string s(m_memoryAllocationData[i].name);
 				s += " Writing into more than allocated spaces!";
 				Editor::GetInstance().AddErrorLog(s);
 			}
 
 			//go to next object
-			totalMemory += m_memoryAllocationData[i].s_size + m_memoryAllocationData[i].s_bufferSize;
+			totalMemory += m_memoryAllocationData[i].size + m_memoryAllocationData[i].bufferSize;
 		}
 	}
 
@@ -110,9 +110,9 @@ namespace PE
 	StackAllocator::StackAllocator(int size) : m_totalSize(size), m_stackTop(0)
 	{
 		//allocate memory based on given size
-		m_stack = new char[size]();
+		p_stack = new char[size]();
 		//initialize values just incase
-		memset(m_stack, '\0', size);
+		memset(p_stack, '\0', size);
 	}
 
 	void* StackAllocator::Allocate(int size)
@@ -120,7 +120,7 @@ namespace PE
 		//if trying to allocate over max size
 		if (m_stackTop + size <= m_totalSize)
 		{
-			void* newPtr = (m_stack + m_stackTop);
+			void* newPtr = (p_stack + m_stackTop);
 			m_stackTop += size;
 			return newPtr;
 		}
@@ -146,7 +146,7 @@ namespace PE
 
 	char* StackAllocator::GetStack()
 	{
-		return m_stack;
+		return p_stack;
 	}
 
 	int StackAllocator::GetStackTop()
@@ -158,7 +158,7 @@ namespace PE
 	std::string MemoryData::ToString() const
 	{
 		std::stringstream ss;
-		ss << s_name << " has been allocated: " << s_size << " with a buffer of " << s_bufferSize;
+		ss << name << " has been allocated: " << size << " with a buffer of " << bufferSize;
 		return ss.str();
 	}
 

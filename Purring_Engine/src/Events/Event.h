@@ -14,8 +14,7 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-#ifndef EVENT_H
-#define EVENT_H
+#pragma once
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
@@ -129,4 +128,3 @@ namespace PE {
 
 } // namespace temp
 
-#endif // EVENT_H

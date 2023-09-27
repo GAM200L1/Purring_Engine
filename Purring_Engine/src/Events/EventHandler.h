@@ -13,8 +13,8 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-#ifndef EVENT_HANDLER_H
-#define EVENT_HANDLER_H
+
+#pragma once
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
@@ -67,5 +67,3 @@ namespace PE
 #define SEND_MOUSE_EVENT(_event) EventHandler::GetInstance().MouseEventDispatcher.SendEvent(_event);
 #define SEND_KEY_EVENT(_event) EventHandler::GetInstance().KeyEventDispatcher.SendEvent(_event);
 }
-
-#endif
