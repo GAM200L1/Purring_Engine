@@ -29,6 +29,7 @@ namespace PE
 		vec2 min{};
 		vec2 max{};
 		vec2 scale{};
+		bool isTrigger{ false };
 	};
 	
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale);
@@ -38,13 +39,13 @@ namespace PE
 		// ----- Public Variables ----- //
 		vec2 center{};
 		float radius{};
+		bool isTrigger{ false };
 	};
 
 	struct Collider
 	{
 		std::variant<AABBCollider, CircleCollider> colliderVariant;
 		std::set<size_t> objectsCollided;
-		bool isTrigger;
 	};
 
 	struct LineSegment
