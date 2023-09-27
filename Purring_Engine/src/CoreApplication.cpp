@@ -114,10 +114,11 @@ PE::CoreApplication::CoreApplication()
     AddSystem(ip);
 
     // Load a texture
-    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "cat2" };
+    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
-    ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat2.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/image2.png");
     ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
+
     int width{ 1000 }, height{ 1000 };
     glfwGetWindowSize(m_window, &width, &height);
     EntityID id2 = g_entityFactory->CreateEntity();
@@ -162,6 +163,7 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
+    // Render grid of 500 cat 2
     for (size_t i{}; i < 500; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
@@ -173,6 +175,8 @@ PE::CoreApplication::CoreApplication()
         g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(cat2TextureName);
         g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
     }
+
+    // Render grid of 2000 cat 1
     for (size_t i{}; i < 2000; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
@@ -184,6 +188,8 @@ PE::CoreApplication::CoreApplication()
         g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
         g_entityManager->Get<Graphics::Renderer>(id2).SetColor(0.f, 1.f, 1.f, 0.5f);
     }
+
+    // Render grid of 100 red squares
     for (size_t i{}; i < 100; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
         g_entityFactory->Assign(id2, { "Transform", "Renderer" });
