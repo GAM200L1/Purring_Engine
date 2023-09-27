@@ -178,15 +178,18 @@ namespace PE
 				PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
 
 				if (PhysicsManager::GetStepPhysics())
-				Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned On.\n");
+					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned On.\n");
 				else
 					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned Off.\n");
 				
 			}
-			if (ev.keycode == GLFW_KEY_N)
+			if (PhysicsManager::GetStepPhysics())
 			{
-				PhysicsManager::GetAdvanceStep() = true;
-				Editor::GetInstance().AddEventLog("Advanced Step.\n");
+				if (ev.keycode == GLFW_KEY_N)
+				{
+					PhysicsManager::GetAdvanceStep() = true;
+					Editor::GetInstance().AddEventLog("Advanced Step.\n");
+				}
 			}
 		}
 		else if (e.GetType() == KeyEvents::KeyPressed)
