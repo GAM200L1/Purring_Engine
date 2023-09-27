@@ -97,9 +97,9 @@ namespace PE {
 
 	void Editor::ClearObjectList()
 	{
-		for (int n = 2; n < g_entityManager->GetEntitiesInPool("All").size();)
+		for (int n = 2; n < EntityManager::GetInstance().GetEntitiesInPool("All").size();)
 		{
-			g_entityManager->RemoveEntity(g_entityManager->GetEntitiesInPool("All")[n]);
+			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
 		}
 	}
 
@@ -532,24 +532,24 @@ namespace PE {
 				std::mt19937 gen(rd());
 				for (size_t i{ 2 }; i < 20; ++i)
 				{
-				    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				    EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
 				
 				    std::uniform_int_distribution<>distr0(-550, 550);
-				    g_entityManager->Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
+				    EntityManager::GetInstance().Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
 				    std::uniform_int_distribution<>distr1(-250, 250);
-				    g_entityManager->Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
+				    EntityManager::GetInstance().Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
 				    std::uniform_int_distribution<>distr2(10, 200);
-				    g_entityManager->Get<Transform>(id).width = static_cast<float>(distr2(gen));
-				    g_entityManager->Get<Transform>(id).height = static_cast<float>(distr2(gen));
-				    g_entityManager->Get<Transform>(id).orientation = 0.f;
+				    EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(distr2(gen));
+				    EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(distr2(gen));
+				    EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
 				
 				    if (i%3)
-				        g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				        EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
 				    
 				    if (i%2)
-				        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				        EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 				    else
-				        g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+				        EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
 				}
 			}
 			ImGui::SameLine();
@@ -560,124 +560,124 @@ namespace PE {
 			if (ImGui::Button("AABB AABB DYNAMIC STATIC"))
 			{
 				ClearObjectList();
-				g_entityManager->Get<Transform>(1).position.x = 0;
-				g_entityManager->Get<Transform>(1).position.y = 0;
-				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
+				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-				g_entityManager->Get<Transform>(id).position.x = 100;
-				g_entityManager->Get<Transform>(id).position.y = 100;
-				g_entityManager->Get<Transform>(id).width = 100;
-				g_entityManager->Get<Transform>(id).height = 100;
+				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
+				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100;
+				EntityManager::GetInstance().Get<Transform>(id).height = 100;
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("AABB AABB DYNAMIC DYNAMIC"))
 			{
 				ClearObjectList();
-				g_entityManager->Get<Transform>(1).position.x = 0;
-				g_entityManager->Get<Transform>(1).position.y = 0;
-				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
+				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				g_entityManager->Get<Transform>(id).position.x = 100;
-				g_entityManager->Get<Transform>(id).position.y = 100;
-				g_entityManager->Get<Transform>(id).width = 100;
-				g_entityManager->Get<Transform>(id).height = 100;
+				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
+				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100;
+				EntityManager::GetInstance().Get<Transform>(id).height = 100;
 			}
 			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC STATIC"))
 			{
 				ClearObjectList();
-				g_entityManager->Get<Transform>(1).position.x = 0;
-				g_entityManager->Get<Transform>(1).position.y = 0;
-				g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
+				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
+				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-				g_entityManager->Get<Transform>(id).position.x = 100;
-				g_entityManager->Get<Transform>(id).position.y = 100;
-				g_entityManager->Get<Transform>(id).width = 100;
-				g_entityManager->Get<Transform>(id).height = 100;
-				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
+				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100;
+				EntityManager::GetInstance().Get<Transform>(id).height = 100;
+				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC DYNAMIC"))
 			{
 				ClearObjectList();
-				g_entityManager->Get<Transform>(1).position.x = 0;
-				g_entityManager->Get<Transform>(1).position.y = 0;
-				g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
+				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
+				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				g_entityManager->Get<Transform>(id).position.x = 100;
-				g_entityManager->Get<Transform>(id).position.y = 100;
-				g_entityManager->Get<Transform>(id).width = 100;
-				g_entityManager->Get<Transform>(id).height = 100;
-				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
+				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100;
+				EntityManager::GetInstance().Get<Transform>(id).height = 100;
+				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 			}
 			if (ImGui::Button("AABB CIRCLE DYNAMIC STATIC"))
 			{
 				ClearObjectList();
-				g_entityManager->Get<Transform>(1).position.x = 0;
-				g_entityManager->Get<Transform>(1).position.y = 0;
-				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
+				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-				g_entityManager->Get<Transform>(id).position.x = 100;
-				g_entityManager->Get<Transform>(id).position.y = 100;
-				g_entityManager->Get<Transform>(id).width = 100;
-				g_entityManager->Get<Transform>(id).height = 100;
-				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
+				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100;
+				EntityManager::GetInstance().Get<Transform>(id).height = 100;
+				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("AABB CIRCLE DYNAMIC DYNAMIC"))
 			{
 				ClearObjectList();
-				g_entityManager->Get<Transform>(1).position.x = 0;
-				g_entityManager->Get<Transform>(1).position.y = 0;
-				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
+				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				g_entityManager->Get<Transform>(id).position.x = 100;
-				g_entityManager->Get<Transform>(id).position.y = 100;
-				g_entityManager->Get<Transform>(id).width = 100;
-				g_entityManager->Get<Transform>(id).height = 100;
-				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
+				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100;
+				EntityManager::GetInstance().Get<Transform>(id).height = 100;
+				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 			}
 			if (ImGui::Button("CIRCLE AABB DYNAMIC STATIC"))
 			{
 				ClearObjectList();
-				g_entityManager->Get<Transform>(1).position.x = 0;
-				g_entityManager->Get<Transform>(1).position.y = 0;
-				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
+				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-				g_entityManager->Get<Transform>(id).position.x = 100;
-				g_entityManager->Get<Transform>(id).position.y = 100;
-				g_entityManager->Get<Transform>(id).width = 100;
-				g_entityManager->Get<Transform>(id).height = 100;
-				g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
+				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100;
+				EntityManager::GetInstance().Get<Transform>(id).height = 100;
+				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("CIRCLE AABB DYNAMIC DYNAMIC"))
 			{
 				ClearObjectList();
-				g_entityManager->Get<Transform>(1).position.x = 0;
-				g_entityManager->Get<Transform>(1).position.y = 0;
-				g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
+				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
+				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
-				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				g_entityManager->Get<Transform>(id).position.x = 100;
-				g_entityManager->Get<Transform>(id).position.y = 100;
-				g_entityManager->Get<Transform>(id).width = 100;
-				g_entityManager->Get<Transform>(id).height = 100;
-				g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
+				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100;
+				EntityManager::GetInstance().Get<Transform>(id).height = 100;
+				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
 			}
 			if (ImGui::Button("Toggle Step Physics"))
 			{
@@ -696,15 +696,15 @@ namespace PE {
 			{
 				ClearObjectList();
 				for (size_t i{}; i < 2500; ++i) {
-					EntityID id2 = g_entityFactory->CreateEntity();
-					g_entityFactory->Assign(id2, { "Transform", "Renderer" });
-					g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
-					g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
-					g_entityManager->Get<Transform>(id2).width = 50.f;
-					g_entityManager->Get<Transform>(id2).height = 50.f;
-					g_entityManager->Get<Transform>(id2).orientation = 0.f;
-					g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey("cat");
-					g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
+					EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
+					EntityManager::GetInstance().Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
+					EntityManager::GetInstance().Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+					EntityManager::GetInstance().Get<Transform>(id2).width = 50.f;
+					EntityManager::GetInstance().Get<Transform>(id2).height = 50.f;
+					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey("cat");
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
 				}
 			}
 			ImGui::SameLine();
@@ -898,7 +898,7 @@ namespace PE {
 										}, EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);
 								}
 
-								ImGui::Checkbox("Is Trigger", &g_entityManager->Get<Collider>(m_currentSelectedObject).isTrigger);
+								ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(m_currentSelectedObject).isTrigger);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}

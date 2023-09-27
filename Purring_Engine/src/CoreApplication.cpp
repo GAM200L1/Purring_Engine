@@ -128,28 +128,28 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
     
     // Creates an entity that displays the background image
-    EntityID id = g_entityFactory->CreateEntity();    
-    g_entityFactory->Assign(id, { "Transform", "Renderer" });
-    g_entityManager->Get<Transform>(id).position.x = 0.f;
-    g_entityManager->Get<Transform>(id).position.y = 0.f;
-    g_entityManager->Get<Transform>(id).width = 1000.f;
-    g_entityManager->Get<Transform>(id).height = 1000.f;
-    g_entityManager->Get<Transform>(id).orientation = 0.f;
-    g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
-    g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
+    EntityID id = EntityFactory::GetInstance().CreateEntity();    
+    EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
+    EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id).width = 1000.f;
+    EntityManager::GetInstance().Get<Transform>(id).height = 1000.f;
+    EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
     
     // Creates an entity that is attached to the Character Controller
-    EntityID id2 = g_entityFactory->CreateFromPrefab("GameObject");
-    g_entityManager->Get<Transform>(id2).position.x = 0.f;
-    g_entityManager->Get<Transform>(id2).position.y = 0.f;
-    g_entityManager->Get<Transform>(id2).width = 100.f;
-    g_entityManager->Get<Transform>(id2).height = 100.f;
-    g_entityManager->Get<Transform>(id2).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(id2).colliderVariant = CircleCollider();
-    g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
-    g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
-    g_entityManager->Get<RigidBody>(id2).SetMass(10.f);
+    EntityID id2 = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    EntityManager::GetInstance().Get<Transform>(id2).position.x = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id2).position.y = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id2).width = 100.f;
+    EntityManager::GetInstance().Get<Transform>(id2).height = 100.f;
+    EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
+    EntityManager::GetInstance().Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
+    EntityManager::GetInstance().Get<Collider>(id2).colliderVariant = CircleCollider();
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
+    EntityManager::GetInstance().Get<RigidBody>(id2).SetMass(10.f);
     
 }
 
@@ -222,7 +222,7 @@ void PE::CoreApplication::Run()
             TimeManager::GetInstance().SystemEndFrame(i);
         }
 
-        Graphics::RendererManager::m_mainCamera.SetPosition(g_entityManager->Get<Transform>(1).position.x, g_entityManager->Get<Transform>(1).position.y);
+        Graphics::RendererManager::m_mainCamera.SetPosition(EntityManager::GetInstance().Get<Transform>(1).position.x, EntityManager::GetInstance().Get<Transform>(1).position.y);
 
         // Flush log entries
         engine_logger.FlushLog();

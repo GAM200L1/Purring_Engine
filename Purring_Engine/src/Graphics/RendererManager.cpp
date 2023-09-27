@@ -373,7 +373,7 @@ namespace PE
             // Draw each of the colliders
             for (const EntityID& id : SceneView<Collider>())
             {
-                Collider& collider{ g_entityManager->Get<Collider>(id) };
+                Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
                 std::visit([&](auto& col)
                     {
@@ -385,8 +385,8 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
-                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
+                RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
