@@ -86,6 +86,7 @@ namespace PE
 
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
+		// Simple fixed deltaTime
 		m_accumulator += deltaTime;
 
 		m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
