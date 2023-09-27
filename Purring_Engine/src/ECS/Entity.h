@@ -22,6 +22,7 @@
 #include "prpch.h"
 #include "Components.h"
 #include "Data/SerializationManager.h"
+#include "Singleton.h"
 
 
 
@@ -35,9 +36,10 @@ namespace PE
 	 \brief Entity manager struct
 	 
 	*************************************************************************************/
-	class EntityManager
+	class EntityManager : public Singleton<EntityManager>
 	{
-
+	public:
+		friend class Singleton<EntityManager>;
 	// ----- Constructors ----- //
 	public:
 		/*!***********************************************************************************
@@ -386,9 +388,6 @@ namespace PE
 		// a counter to help keep track of the entities "absolute" count
 		size_t m_entityCounter{1};
 	};
-
-	// extern to allow the access to the entity manager instance
-	extern EntityManager* g_entityManager;
 
 	//-------------------- Templated function implementations --------------------//
 

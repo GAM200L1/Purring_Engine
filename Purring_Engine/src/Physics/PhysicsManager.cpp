@@ -64,8 +64,8 @@ namespace PE
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
-			RigidBody& rb = g_entityManager->Get<RigidBody>(RigidBodyID);
-			Transform& transform = g_entityManager->Get<Transform>(RigidBodyID);
+			RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
+			Transform& transform = EntityManager::GetInstance().Get<Transform>(RigidBodyID);
 
 			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
 			{

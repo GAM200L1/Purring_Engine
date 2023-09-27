@@ -27,6 +27,7 @@
 #include "Physics/RigidBody.h"
 #include "Graphics/Renderer.h"
 #include "Prefabs.h"
+#include "Singleton.h"
 
 
 
@@ -38,8 +39,9 @@ namespace PE
 	 \brief Enity factory struct
 	 
 	*************************************************************************************/
-	class EntityFactory
+	class EntityFactory : public Singleton<EntityFactory>
 	{
+		friend class Singleton<EntityFactory>;
 	// ----- Constructors -----//
 	public:
 	    /*!***********************************************************************************
@@ -83,8 +85,8 @@ namespace PE
 		void AddComponentCreator(const ComponentID& r_name, const size_t& r_creator)
 		{
 			r_name;
-			m_componentMap[g_entityManager->GetComponentID<T>()] = r_creator;
-			g_entityManager->AddToPool<T>();
+			m_componentMap[EntityManager::GetInstance().GetComponentID<T>()] = r_creator;
+			EntityManager::GetInstance().AddToPool<T>();
 		}
 		/*!***********************************************************************************
 		 \brief Create a Entity object with input component types.
@@ -203,8 +205,6 @@ namespace PE
 		void LoadComponents();
 	};
 
-	// extern for those including the .h to access the factory instance
-	extern EntityFactory* g_entityFactory;
 
 	
 	//-------------------- Templated function implementations --------------------//

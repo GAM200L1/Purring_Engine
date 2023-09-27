@@ -63,9 +63,6 @@ SerializationManager sm;
 #include "Graphics/Renderer.h"
 #include "InputSystem.h"
 
-PE::EntityManager entManager;
-PE::EntityFactory entFactory;
-
 std::queue<EntityID> lastEnt{};
 
 std::vector<EntityID> testVector;
@@ -79,7 +76,7 @@ std::vector<EntityID> testVector;
 /// </summary>
 ----------------------------------------------------------------------------- */
 PE::CoreApplication::CoreApplication()
-{
+{          
     REGISTERCOMPONENT(RigidBody);
     REGISTERCOMPONENT(Collider);
     REGISTERCOMPONENT(Transform);
@@ -119,47 +116,47 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
     for (size_t i{}; i < 1; ++i)
     {
-        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+        EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
 
         // Make overlapping circle colliders at the origin
-        g_entityManager->Get<Transform>(id).position.x = 0.f;
-        g_entityManager->Get<Transform>(id).position.y = 0.f;
-        g_entityManager->Get<Transform>(id).width = 50;
-        g_entityManager->Get<Transform>(id).height = 50;
-        g_entityManager->Get<Transform>(id).orientation = 0.f;
-        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+        EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
+        EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
+        EntityManager::GetInstance().Get<Transform>(id).width = 50;
+        EntityManager::GetInstance().Get<Transform>(id).height = 50;
+        EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
+        EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
     }
 
     // Make the first gameobject with a collider circle at world pos (100, 100)
-    g_entityManager->Get<Transform>(0).position.x = 100.f;
-    g_entityManager->Get<Transform>(0).position.y = 100.f;
-    g_entityManager->Get<Transform>(0).width = 100.f;
-    g_entityManager->Get<Transform>(0).height = 100.f;
-    g_entityManager->Get<Transform>(0).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
-    g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
-    g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
+    EntityManager::GetInstance().Get<Transform>(0).position.x = 100.f;
+    EntityManager::GetInstance().Get<Transform>(0).position.y = 100.f;
+    EntityManager::GetInstance().Get<Transform>(0).width = 100.f;
+    EntityManager::GetInstance().Get<Transform>(0).height = 100.f;
+    EntityManager::GetInstance().Get<Transform>(0).orientation = 0.f;
+    EntityManager::GetInstance().Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
+    EntityManager::GetInstance().Get<Collider>(0).colliderVariant = CircleCollider();
+    EntityManager::GetInstance().Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
 
     //// Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
-    //g_entityManager->Get<Transform>(1).position.x = -100.f;
-    //g_entityManager->Get<Transform>(1).position.y = -100.f;
-    //g_entityManager->Get<Transform>(1).width = 50.f;
-    //g_entityManager->Get<Transform>(1).height = 200.f;
-    //g_entityManager->Get<Transform>(1).orientation = 0.f;
-    //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    //EntityManager::GetInstance().Get<Transform>(1).position.x = -100.f;
+    //EntityManager::GetInstance().Get<Transform>(1).position.y = -100.f;
+    //EntityManager::GetInstance().Get<Transform>(1).width = 50.f;
+    //EntityManager::GetInstance().Get<Transform>(1).height = 200.f;
+    //EntityManager::GetInstance().Get<Transform>(1).orientation = 0.f;
+    //EntityManager::GetInstance().Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    //EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
     for (size_t i{}; i < 2500; ++i) {
-        EntityID id2 = g_entityFactory->CreateEntity();
-        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
-        g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 600.f;
-        g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
-        g_entityManager->Get<Transform>(id2).width = 50.f;
-        g_entityManager->Get<Transform>(id2).height = 50.f;
-        g_entityManager->Get<Transform>(id2).orientation = 0.f;
-        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
-        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+        EntityID id2 = EntityFactory::GetInstance().CreateEntity();
+        EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
+        EntityManager::GetInstance().Get<Transform>(id2).position.x = 50.f * (i % 50) - 600.f;
+        EntityManager::GetInstance().Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+        EntityManager::GetInstance().Get<Transform>(id2).width = 50.f;
+        EntityManager::GetInstance().Get<Transform>(id2).height = 50.f;
+        EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
+        EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+        EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
     }
     for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
     {
@@ -216,7 +213,7 @@ void PE::CoreApplication::Run()
         if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
         {
             //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            // EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
             clock_t start, end;
             start = clock();
             for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
@@ -231,7 +228,7 @@ void PE::CoreApplication::Run()
         if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
         {
             //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            // EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
             clock_t start, end;
             start = clock();
             for (const EntityID& id : SceneView<Graphics::Renderer>())
@@ -246,7 +243,7 @@ void PE::CoreApplication::Run()
         if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
         {
             //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            // EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
             clock_t start, end;
             start = clock();
             for (const EntityID& id : testVector)
@@ -264,12 +261,12 @@ void PE::CoreApplication::Run()
 
         if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
         {
-            EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-            g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
-            g_entityManager->Get<Transform>(id).height = 100.f;
-            g_entityManager->Get<Transform>(id).width = 100.f;
-            g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-            g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+            EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+            EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
+            EntityManager::GetInstance().Get<Transform>(id).height = 100.f;
+            EntityManager::GetInstance().Get<Transform>(id).width = 100.f;
+            EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+            EntityManager::GetInstance().Get<Transform>(id).position = vec2{ 0.f, 0.f };
             lastEnt.emplace(id);
         }
 
@@ -277,7 +274,7 @@ void PE::CoreApplication::Run()
         {
             if (lastEnt.size())
             {
-                g_entityManager->RemoveEntity(lastEnt.front());
+                EntityManager::GetInstance().RemoveEntity(lastEnt.front());
                 lastEnt.pop();
             }
         }
@@ -289,22 +286,22 @@ void PE::CoreApplication::Run()
 
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
+            EntityManager::GetInstance().Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
         {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+            EntityManager::GetInstance().Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
         {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+            EntityManager::GetInstance().Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
         }
 
         if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
         {
-            g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+            EntityManager::GetInstance().Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
         }
 
         // Physics test

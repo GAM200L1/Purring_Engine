@@ -21,18 +21,10 @@ extern Logger engine_logger;
 namespace PE
 {
 	// The pointer to the current instance
-	EntityFactory* g_entityFactory{ nullptr };
 
 	
-	EntityFactory::EntityFactory() : p_entityManager(PE::g_entityManager)
+	EntityFactory::EntityFactory() : p_entityManager(&EntityManager::GetInstance())
 	{ 
-		if (g_entityFactory != nullptr)
-		{
-			engine_logger.AddLog(true, "Another instance of Entity Factory was created!!", __FUNCTION__);
-			engine_logger.FlushLog();
-			throw;
-		}
-		g_entityFactory = this;
 		LoadComponents();
 	};
 
@@ -84,7 +76,7 @@ namespace PE
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* data)
 	{
-		g_entityManager->Get<RigidBody>(r_id) =
+		EntityManager::GetInstance().Get<RigidBody>(r_id) =
 			(data == nullptr) ?
 			RigidBody()
 			:
@@ -94,7 +86,7 @@ namespace PE
 
 	bool EntityFactory::InitializeCollider(const EntityID& r_id, void* data)
 	{
-		g_entityManager->Get<Collider>(r_id) =
+		EntityManager::GetInstance().Get<Collider>(r_id) =
 			(data == nullptr) ?
 			Collider()
 			:
@@ -104,7 +96,7 @@ namespace PE
 
 	bool EntityFactory::InitializeTransform(const EntityID& r_id, void* data)
 	{
-		g_entityManager->Get<Transform>(r_id) =
+		EntityManager::GetInstance().Get<Transform>(r_id) =
 			(data == nullptr) ?
 			Transform()
 			:
@@ -114,7 +106,7 @@ namespace PE
 
 	bool EntityFactory::InitializePlayerStats(const EntityID& r_id, void* data)
 	{
-		g_entityManager->Get<PlayerStats>(r_id) = 
+		EntityManager::GetInstance().Get<PlayerStats>(r_id) = 
 		(data == nullptr) ?
 			PlayerStats()
 			:
@@ -124,7 +116,7 @@ namespace PE
 
 	bool EntityFactory::InitializeRenderer(const EntityID& r_id, void* data)
 	{
-		g_entityManager->Get<Graphics::Renderer>(r_id) =
+		EntityManager::GetInstance().Get<Graphics::Renderer>(r_id) =
 			(data == nullptr) ?
 			Graphics::Renderer()
 			:
@@ -154,7 +146,7 @@ namespace PE
 
 	bool EntityFactory::LoadComponent(EntityID id, const char* r_component, void* data)
 	{
-		if (!g_entityManager->IsEntityValid(id))
+		if (!EntityManager::GetInstance().IsEntityValid(id))
 			return false;
 		// if the prefab exists in the current list
 		Assign(id, { r_component });

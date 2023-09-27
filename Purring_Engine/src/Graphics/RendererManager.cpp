@@ -231,8 +231,8 @@ namespace PE
             // Make draw call for each game object with a renderer component
             for (const EntityID& id : SceneView<Renderer>())
             {
-                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
+                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::mat4 glmObjectTransform
                 {
@@ -275,8 +275,8 @@ namespace PE
             // Make draw call for each game object with a renderer component
             for (const EntityID& id : SceneView<Renderer>())
             {
-                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
+                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 worldToNdcMatrices.emplace_back(r_worldToNdc);
                 modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
@@ -426,7 +426,7 @@ namespace PE
             // Draw each of the colliders
             for (const EntityID& id : SceneView<Collider>())
             {
-                Collider& collider{ g_entityManager->Get<Collider>(id) };
+                Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
                 std::visit([&](auto& col)
                     {
@@ -438,8 +438,8 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
-                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
+                RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 

@@ -92,7 +92,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 			\param[in] all 		Whether or not the scope is to all copmonents
 			*************************************************************************************/
 			Iterator(EntityID index, const std::set<ComponentID>& components, bool all) :
-				p_entityManager(PE::g_entityManager), index(index), all(all)
+				p_entityManager(&EntityManager::GetInstance()), index(index), all(all)
 			{
 				poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*components.begin()));
 				// @TO REMOVE FOR SUBMISSION
@@ -195,7 +195,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 		\brief Construct a new Scene View object
 
 		*************************************************************************************/
-		SceneView() : p_entityManager(PE::g_entityManager)
+		SceneView() : p_entityManager(&EntityManager::GetInstance())
 		{
 			// checks if the number of components is zero
 			if constexpr (sizeof...(ComponentTypes))

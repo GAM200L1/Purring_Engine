@@ -26,17 +26,9 @@ extern Logger engine_logger;
 namespace PE
 {
 	// singleton
-	EntityManager* g_entityManager{ nullptr };
 
 	EntityManager::EntityManager()
 	{
-		if (g_entityManager != nullptr)
-		{
-			engine_logger.AddLog(true, "Another instance of Entity Manager was created!!", __FUNCTION__);
-			engine_logger.FlushLog();
-			throw;
-		}
-		g_entityManager = this;
 		m_poolsEntity["All"];
 	}
 
