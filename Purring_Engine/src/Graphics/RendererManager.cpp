@@ -36,11 +36,18 @@
 // Physics and collision
 #include "Physics/Colliders.h"
 
+// Animation
+#include "Animation/Animation.h"
+
 extern Logger engine_logger;
 
 std::vector<float> isTextured{};
 std::vector<glm::mat4> modelToWorldMatrices{};
 std::vector<glm::vec4> colors{};
+
+// temp animation manager
+PE::AnimationManager animationManager;
+int animation1, animation2;
 
 namespace PE
 {
@@ -94,6 +101,18 @@ namespace PE
             isTextured.reserve(3000);
             modelToWorldMatrices.reserve(3000);
             colors.reserve(3000);
+
+            // Create Animation
+            animation1 = animationManager.CreateAnimation();
+            animation2 = animationManager.CreateAnimation();
+
+            // animation 1
+            animationManager.AddFrameToAnimation(animation1, "cat2", 0.2f);
+            animationManager.AddFrameToAnimation(animation1, "cat", 0.2f);
+
+            // animation 2
+            animationManager.AddFrameToAnimation(animation2, "cat2", 1.f);
+            animationManager.AddFrameToAnimation(animation2, "cat", 1.f);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -173,6 +192,10 @@ namespace PE
                 glClearColor(1.f, 1.f, 1.f, 1.f);
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
+
+            // Update Animation here
+            std::string currentTextureKey = animationManager.UpdateAnimation(animation1, deltaTime);
+            g_entityManager->Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
             DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
 

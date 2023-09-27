@@ -163,31 +163,31 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-    // Render grid of 500 cat 2
-    for (size_t i{}; i < 500; ++i) {
-        EntityID id2 = g_entityFactory->CreateEntity();
-        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
-        g_entityManager->Get<Transform>(id2).position.x = 20.f * (i % 40) - 300.f;
-        g_entityManager->Get<Transform>(id2).position.y = 20.f * (i / 40) - 300.f;
-        g_entityManager->Get<Transform>(id2).width = 20.f;
-        g_entityManager->Get<Transform>(id2).height = 20.f;
-        g_entityManager->Get<Transform>(id2).orientation = 0.f;
-        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(cat2TextureName);
-        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
-    }
+    //// Render grid of 500 cat 2
+    //for (size_t i{}; i < 500; ++i) {
+    //    EntityID id2 = g_entityFactory->CreateEntity();
+    //    g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+    //    g_entityManager->Get<Transform>(id2).position.x = 20.f * (i % 40) - 300.f;
+    //    g_entityManager->Get<Transform>(id2).position.y = 20.f * (i / 40) - 300.f;
+    //    g_entityManager->Get<Transform>(id2).width = 20.f;
+    //    g_entityManager->Get<Transform>(id2).height = 20.f;
+    //    g_entityManager->Get<Transform>(id2).orientation = 0.f;
+    //    g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(cat2TextureName);
+    //    g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+    //}
 
-    // Render grid of 2000 cat 1
-    for (size_t i{}; i < 2000; ++i) {
-        EntityID id2 = g_entityFactory->CreateEntity();
-        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
-        g_entityManager->Get<Transform>(id2).position.x = 10.f * (i % 45) - 100.f;
-        g_entityManager->Get<Transform>(id2).position.y = 10.f * (i / 45) - 100.f;
-        g_entityManager->Get<Transform>(id2).width = 10.f;
-        g_entityManager->Get<Transform>(id2).height = 10.f;
-        g_entityManager->Get<Transform>(id2).orientation = 0.f;
-        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
-        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(0.f, 1.f, 1.f, 0.5f);
-    }
+    //// Render grid of 2000 cat 1
+    //for (size_t i{}; i < 2000; ++i) {
+    //    EntityID id2 = g_entityFactory->CreateEntity();
+    //    g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+    //    g_entityManager->Get<Transform>(id2).position.x = 10.f * (i % 45) - 100.f;
+    //    g_entityManager->Get<Transform>(id2).position.y = 10.f * (i / 45) - 100.f;
+    //    g_entityManager->Get<Transform>(id2).width = 10.f;
+    //    g_entityManager->Get<Transform>(id2).height = 10.f;
+    //    g_entityManager->Get<Transform>(id2).orientation = 0.f;
+    //    g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+    //    g_entityManager->Get<Graphics::Renderer>(id2).SetColor(0.f, 1.f, 1.f, 0.5f);
+    //}
 
     // Render grid of 100 red squares
     for (size_t i{}; i < 100; ++i) {
