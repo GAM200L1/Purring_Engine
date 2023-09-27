@@ -175,17 +175,17 @@ namespace PE
 			//do step by step here
 			if (ev.keycode == GLFW_KEY_P)
 			{
-				// PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
+				PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
 
-				// if (PhysicsManager::GetStepPhysics())
+				if (PhysicsManager::GetStepPhysics())
 				Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned On.\n");
-				// else
-					// Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned Off.\n");
+				else
+					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned Off.\n");
 				
 			}
 			if (ev.keycode == GLFW_KEY_N)
 			{
-				// PhysicsManager::GetAdvanceStep() = true;
+				PhysicsManager::GetAdvanceStep() = true;
 				Editor::GetInstance().AddEventLog("Advanced Step.\n");
 			}
 		}
