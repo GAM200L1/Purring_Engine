@@ -303,8 +303,16 @@ void PE::CoreApplication::Run()
 
         if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
         {
-            engine_logger.AddLog(true, "Test exception has occurred!!", __FUNCTION__);
-            throw;
+            try
+            {
+                std::vector testVector = { 1 };
+                testVector.at(1);
+            }
+            catch (const std::out_of_range& r_err)
+            {
+                engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
+                throw r_err;
+            }
         }
 
         // Character Rotation
