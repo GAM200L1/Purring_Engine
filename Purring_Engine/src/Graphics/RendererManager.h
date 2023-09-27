@@ -40,6 +40,10 @@ namespace PE
         // In charge of calling the draw functions in all the renderer components.
         class RendererManager : public System
         {
+            // ----- Public Variables ----- //
+        public:
+            static Graphics::Camera m_mainCamera; //! 9Camera object
+            
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
@@ -174,8 +178,6 @@ namespace PE
             // ----- Private variables ----- //
         private:
             GLFWwindow* p_windowRef{}; //! Pointer to the GLFW window to render to
-
-            Graphics::Camera m_mainCamera{}; //! Camera object
 
             Graphics::FrameBuffer m_imguiFrameBuffer{}; //! Framebuffer object for rendering to ImGui window
 

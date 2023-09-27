@@ -311,6 +311,8 @@ void PE::CoreApplication::Run()
             TimeManager::GetInstance().SystemEndFrame(i);
         }
 
+        Graphics::RendererManager::m_mainCamera.SetPosition(g_entityManager->Get<Transform>(0).position.x, g_entityManager->Get<Transform>(0).position.y);
+
         // Flush log entries
         engine_logger.FlushLog();
 

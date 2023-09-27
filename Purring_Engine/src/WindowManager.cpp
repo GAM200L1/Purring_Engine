@@ -188,55 +188,6 @@ namespace PE
 				// PhysicsManager::GetAdvanceStep() = true;
 				Editor::GetInstance().AddEventLog("Advanced Step.\n");
 			}
-
-			////repeated here if not there is a delay before movement
-			//// ----- M1 Movement ----- //
-			//if (ev.keycode == GLFW_KEY_W)
-			//{
-			//	g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } *5000.f);
-			//}
-			//if (ev.keycode == GLFW_KEY_A)
-			//{
-			//	g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-			//}
-			//if (ev.keycode == GLFW_KEY_S)
-			//{
-			//	g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-			//}
-			//if (ev.keycode == GLFW_KEY_D)
-			//{
-			//	g_entityManager->Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-			//}
-
-			//// dash
-			//if (ev.keycode == GLFW_KEY_LEFT_SHIFT)
-			//{
-			//	if (g_entityManager->Get<RigidBody>(0).m_velocity.Dot(g_entityManager->Get<RigidBody>(0).m_velocity) == 0.f)
-			//		g_entityManager->Get<RigidBody>(0).m_velocity = vec2{ 1.f, 0.f };
-			//	g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity * 1000.f);
-			//}
-
-			//// rotation
-			//if (ev.keycode == GLFW_KEY_RIGHT)
-			//{
-			//	g_entityManager->Get<RigidBody>(0).m_rotationVelocity = PE_PI;
-			//}
-			//if (ev.keycode == GLFW_KEY_LEFT)
-			//{
-			//	g_entityManager->Get<RigidBody>(0).m_rotationVelocity = -PE_PI;
-			//}
-
-			//// scale
-			//if (ev.keycode == GLFW_KEY_EQUAL)
-			//{
-			//	g_entityManager->Get<Transform>(0).width *= 1.01f;
-			//	g_entityManager->Get<Transform>(0).height *= 1.01f;
-			//}
-			//if (ev.keycode == GLFW_KEY_MINUS)
-			//{
-			//	g_entityManager->Get<Transform>(0).width *= 0.99f;
-			//	g_entityManager->Get<Transform>(0).height *= 0.99f;
-			//}
 		}
 		else if (e.GetType() == KeyEvents::KeyPressed)
 		{
@@ -265,7 +216,7 @@ namespace PE
 			{
 				if (g_entityManager->Get<RigidBody>(0).m_velocity.Dot(g_entityManager->Get<RigidBody>(0).m_velocity) == 0.f)
 					g_entityManager->Get<RigidBody>(0).m_velocity = vec2{ 1.f, 0.f };
-				g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity * 1000.f);
+				g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity.GetNormalized() * 1000.f);
 			}
 
 			// rotation
@@ -292,8 +243,6 @@ namespace PE
 		}
 
 		//may want to change this to switch case to look cleaner
-		
-		
 	}
 
 

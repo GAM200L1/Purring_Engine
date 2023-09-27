@@ -47,6 +47,8 @@ namespace PE
 {
     namespace Graphics
     {
+        Camera RendererManager::m_mainCamera{};
+
         RendererManager::RendererManager(GLFWwindow* p_window) 
         {
             // Initialize GLEW
