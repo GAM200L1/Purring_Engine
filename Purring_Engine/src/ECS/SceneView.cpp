@@ -18,3 +18,13 @@
 *                                       Empty file                                              *
 *                                                                                               *
 ************************************************************************************************/
+
+namespace PE
+{
+	int compare(const void* lhs, const void* rhs)
+	{
+		const size_t* x = (size_t*)lhs;
+		const size_t* y = (size_t*)rhs;
+		return (*x > *y) ? 1 : (*x < *y) ? -1 : 0;
+	}
+}
