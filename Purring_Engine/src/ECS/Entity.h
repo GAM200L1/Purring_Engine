@@ -313,11 +313,11 @@ namespace PE
 		std::vector<ComponentID> GetComponentIDs(EntityID id)
 		{
 			std::vector<ComponentID> ret;
-			for (std::pair<const ComponentID, ComponentPool*>& component : m_componentPools)
+			for (std::pair<const ComponentID, ComponentPool*>& r_component : m_componentPools)
 			{
-				if (component.second->HasEntity(id))
+				if (r_component.second->HasEntity(id))
 				{
-					ret.emplace_back(component.first);
+					ret.emplace_back(r_component.first);
 				}
 			}
 			return ret;
@@ -407,18 +407,17 @@ namespace PE
 		}
 
 		// add to component pool's map keeping track of index
-		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
 		
 		// initialize that region of memory
-		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
+		if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
 		{
-			m_componentPools[componentID]->resize(m_componentPools[componentID]->m_capacity * 2);
+			m_componentPools[componentID]->Resize(m_componentPools[componentID]->m_capacity * 2);
 		}
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead of allocating more memory
 		m_componentPools[componentID]->Get(id) =  T();
-		++(m_componentPools[componentID]->m_size);
-		Update
+		++(m_componentPools[componentID]->size);
 		return p_component;
 	}
 
@@ -438,12 +437,12 @@ namespace PE
 			return;
 		}
 		// add to component pool's map keeping track of index
-		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
 
 		// initialize that region of memory
-		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->capacity - 1)
+		if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
 		{
-			m_componentPools[componentID]->resize(m_componentPools[componentID]->capacity * 2);
+			m_componentPools[componentID]->Resize(m_componentPools[componentID]->capacity * 2);
 		}
 
 

@@ -71,7 +71,7 @@ namespace PE
 		// initialize that region of memory
 		if (m_componentPools[r_componentID]->size >= m_componentPools[r_componentID]->capacity - 1)
 		{
-			m_componentPools[r_componentID]->resize(m_componentPools[r_componentID]->capacity * 2);
+			m_componentPools[r_componentID]->Resize(m_componentPools[r_componentID]->capacity * 2);
 		}
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
@@ -99,7 +99,7 @@ namespace PE
 		// initialize that region of memory
 		if (m_componentPools[r_componentID]->size >= m_componentPools[r_componentID]->capacity - 1)
 		{
-			m_componentPools[r_componentID]->resize(m_componentPools[r_componentID]->capacity * 2);
+			m_componentPools[r_componentID]->Resize(m_componentPools[r_componentID]->capacity * 2);
 		}
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
@@ -141,7 +141,7 @@ namespace PE
 		{
 			for (const ComponentID& r_pool : GetComponentIDs(id))
 			{
-				m_componentPools[r_pool]->remove(id);
+				m_componentPools[r_pool]->Remove(id);
 				std::string str = "Removed Component-";
 				str += r_pool;
 				engine_logger.AddLog(false, str, __FUNCTION__);

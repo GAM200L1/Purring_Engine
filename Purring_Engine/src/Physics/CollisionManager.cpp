@@ -77,7 +77,7 @@ namespace PE
 			collider.objectsCollided.clear();
 			std::visit([&](auto& col)
 			{
-				Update(col, transform.position);
+				Update(col, transform.position, vec2(transform.width, transform.height));
 
 			}, collider.colliderVariant);
 		}

@@ -73,14 +73,14 @@ namespace PE
          \return true           Sucessflly resized
          \return false          Failed to resize
         *************************************************************************************/
-        virtual bool resize(size_t numEntity) = 0;
+        virtual bool Resize(size_t numEntity) = 0;
 
         /*!***********************************************************************************
          \brief Removes an entity from this pool
 
          \param[in] index   The entity id
         *************************************************************************************/
-        virtual void remove(size_t index) = 0;
+        virtual void Remove(size_t index) = 0;
 
 
         /*!***********************************************************************************
@@ -149,7 +149,7 @@ namespace PE
          \return true           Successfully resized
          \return false          Failed to resize
         *************************************************************************************/
-        bool resize(size_t numEntity)
+        bool Resize(size_t numEntity)
         {
             T* p_tmp = new T[numEntity]();
             // allocation failed!!
@@ -173,7 +173,7 @@ namespace PE
          
          \param[in] index   The entity to remove
         *************************************************************************************/
-        void remove(size_t index)
+        void Remove(size_t index)
         {
             if (!idxMap.count(index))
                 throw; // log in the future

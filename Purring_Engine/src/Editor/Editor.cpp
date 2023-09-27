@@ -891,11 +891,11 @@ namespace PE {
 									{
 										EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant = AABBCollider();
 									}
-									Transform& transform{ EntityManager::GetInstance().Get<Transform>(entityID) };
+									/*Transform& transform{ EntityManager::GetInstance().Get<Transform>(entityID) };
 									std::visit([&](auto& col)
 										{
 											Initialize(col, transform.position, vec2(transform.width, transform.height));
-										}, EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);
+										}, EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);*/
 								}
 
 								ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(m_currentSelectedObject).isTrigger);

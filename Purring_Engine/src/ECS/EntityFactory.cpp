@@ -74,66 +74,66 @@ namespace PE
 		m_initializeComponent.emplace("Renderer", &EntityFactory::InitializeRenderer);
 	}
 
-	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* data)
+	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* p_data)
 	{
 		EntityManager::GetInstance().Get<RigidBody>(r_id) =
-			(data == nullptr) ?
+			(p_data == nullptr) ?
 			RigidBody()
 			:
-			*reinterpret_cast<RigidBody*>(data);
+			*reinterpret_cast<RigidBody*>(p_data);
 		return true;
 	}
 
-	bool EntityFactory::InitializeCollider(const EntityID& r_id, void* data)
+	bool EntityFactory::InitializeCollider(const EntityID& r_id, void* p_data)
 	{
 		EntityManager::GetInstance().Get<Collider>(r_id) =
-			(data == nullptr) ?
+			(p_data == nullptr) ?
 			Collider()
 			:
-			*reinterpret_cast<Collider*>(data);
+			*reinterpret_cast<Collider*>(p_data);
 		return true;
 	}
 
-	bool EntityFactory::InitializeTransform(const EntityID& r_id, void* data)
+	bool EntityFactory::InitializeTransform(const EntityID& r_id, void* p_data)
 	{
 		EntityManager::GetInstance().Get<Transform>(r_id) =
-			(data == nullptr) ?
+			(p_data == nullptr) ?
 			Transform()
 			:
-			*reinterpret_cast<Transform*>(data);
+			*reinterpret_cast<Transform*>(p_data);
 		return true;
 	}
 
-	bool EntityFactory::InitializePlayerStats(const EntityID& r_id, void* data)
+	bool EntityFactory::InitializePlayerStats(const EntityID& r_id, void* p_data)
 	{
 		EntityManager::GetInstance().Get<PlayerStats>(r_id) = 
-		(data == nullptr) ?
+		(p_data == nullptr) ?
 			PlayerStats()
 			:
-			*reinterpret_cast<PlayerStats*>(data);
+			*reinterpret_cast<PlayerStats*>(p_data);
 		return true;
 	}
 
-	bool EntityFactory::InitializeRenderer(const EntityID& r_id, void* data)
+	bool EntityFactory::InitializeRenderer(const EntityID& r_id, void* p_data)
 	{
 		EntityManager::GetInstance().Get<Graphics::Renderer>(r_id) =
-			(data == nullptr) ?
+			(p_data == nullptr) ?
 			Graphics::Renderer()
 			:
-			*reinterpret_cast<Graphics::Renderer*>(data);
+			*reinterpret_cast<Graphics::Renderer*>(p_data);
 		return true;
 	}
 
 
-	EntityID EntityFactory::CreateFromPrefab(const char* r_prefab)
+	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)
 	{
 		EntityID id = CreateEntity();
 
 		// if the prefab exists in the current list
-		if (m_prefabs.prefabs.count(r_prefab))
+		if (m_prefabs.prefabs.count(p_prefab))
 		{
-			Assign(id, m_prefabs.prefabs.at(r_prefab));
-			for (const ComponentID& componentID : m_prefabs.prefabs[r_prefab])
+			Assign(id, m_prefabs.prefabs.at(p_prefab));
+			for (const ComponentID& componentID : m_prefabs.prefabs[p_prefab])
 			{
 				LoadComponent(id, componentID.c_str(), nullptr);
 			}
@@ -144,12 +144,12 @@ namespace PE
 		return id;
 	}
 
-	bool EntityFactory::LoadComponent(EntityID id, const char* r_component, void* data)
+	bool EntityFactory::LoadComponent(EntityID id, const char* r_component, void* p_data)
 	{
 		if (!EntityManager::GetInstance().IsEntityValid(id))
 			return false;
 		// if the prefab exists in the current list
 		Assign(id, { r_component });
-		return std::invoke(m_initializeComponent[r_component], this, id, data);
+		return std::invoke(m_initializeComponent[r_component], this, id, p_data);
 	}
 }

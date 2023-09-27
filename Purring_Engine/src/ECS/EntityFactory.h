@@ -154,7 +154,7 @@ namespace PE
 		 \param[in] prefab 	The name of the prefab to load from
 		 \return EntityID 	The created entity's ID
 		*************************************************************************************/
-		EntityID CreateFromPrefab(const char* prefab);
+		EntityID CreateFromPrefab(const char* p_prefab);
 
 		/*!***********************************************************************************
 		 \brief 	Loads a component including data into an entity, if the entity doesn't
@@ -166,12 +166,12 @@ namespace PE
 		 \return true 			Successfully copied the component
 		 \return false 			Failed to copy the component
 		*************************************************************************************/
-		bool LoadComponent(EntityID id, const char* component, void* data);
+		bool LoadComponent(EntityID id, const char* p_component, void* p_data);
 
 
 		// ----- Private Variables ----- //
 	private:
-		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& r_id, void* data);
+		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& r_id, void* p_data);
 		typedef std::map<ComponentID, size_t> ComponentMapType; // component map typedef
 		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
 		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
@@ -192,11 +192,11 @@ namespace PE
 		 \return true 	 Successfully copied/initialized
 		 \return false 	 Failed to copy/initialize
 		*************************************************************************************/
-		bool InitializeRigidBody(const EntityID& r_id, void* data);
-		bool InitializeCollider(const EntityID& r_id, void* data);
-		bool InitializeTransform(const EntityID& r_id, void* data);
-		bool InitializePlayerStats(const EntityID& r_id, void* data);
-		bool InitializeRenderer(const EntityID& r_id, void* data);
+		bool InitializeRigidBody(const EntityID& r_id, void* p_data);
+		bool InitializeCollider(const EntityID& r_id, void* p_data);
+		bool InitializeTransform(const EntityID& r_id, void* p_data);
+		bool InitializePlayerStats(const EntityID& r_id, void* p_data);
+		bool InitializeRenderer(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap

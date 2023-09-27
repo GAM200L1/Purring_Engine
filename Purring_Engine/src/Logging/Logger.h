@@ -63,7 +63,7 @@ public:
         WRITE_TO_FILE      = 0b0000000000000100,      // enable/disable write to file
         NUM_FLAGS
     };
-    const std::string m_instanceName;   // name of the current instance
+    const std::string instanceName;   // name of the current instance
 
 /* ----- Constructors ----- */
 public:

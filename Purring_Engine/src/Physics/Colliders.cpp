@@ -15,33 +15,21 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 namespace PE
 {
-	// ----- AABB Collider ----- //
-	void Initialize(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
+	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_AABB.center = r_position;
+		r_AABB.min = r_position - (r_scale * 0.5f);
+		r_AABB.max = r_position + (r_scale * 0.5f);
 		r_AABB.scale = r_scale;
-		r_AABB.center += r_AABB.positionOffset;
-		r_AABB.min = r_AABB.center - (r_AABB.scale * 0.5f); 
-		r_AABB.max = r_AABB.center + (r_AABB.scale * 0.5f);
-	}
-	void Update(AABBCollider& r_AABB, vec2 const& r_position)
-	{
-		r_AABB.center = r_position;
-		r_AABB.center += r_AABB.positionOffset;
-		r_AABB.min = r_AABB.center - (r_AABB.scale * 0.5f);
-		r_AABB.max = r_AABB.center + (r_AABB.scale * 0.5f);
 	}
 
 
 	// ---- Circle Collider ----- //
-	void Initialize(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
+
+	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
-		r_circle.center = r_position + r_circle.positionOffset;
+		r_circle.center = r_position;
 		r_circle.radius = r_scale.x * 0.5f;
-	}
-	void Update(CircleCollider& r_circle, vec2 const& r_position)
-	{
-		r_circle.center = r_position + r_circle.positionOffset;
 	}
 
 
@@ -55,11 +43,11 @@ namespace PE
 	}
 
 	Manifold::Manifold(Contact const& r_contData,
-					   Transform& r_transA, Transform& r_transB,
-					   RigidBody* r_rbA, RigidBody* r_rbB)
-					   : contactData{ r_contData },
-					     r_transformA{ r_transA }, r_transformB{ r_transB },
-					     r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
+		Transform& r_transA, Transform& r_transB,
+		RigidBody* r_rbA, RigidBody* r_rbB)
+		: contactData{ r_contData },
+		r_transformA{ r_transA }, r_transformB{ r_transB },
+		r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
 
 	void Manifold::ResolveCollision()
 	{
@@ -80,7 +68,7 @@ namespace PE
 		}
 		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());	
+			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());
 		}
 	}
 
@@ -94,7 +82,7 @@ namespace PE
 			r_rigidBodyA->m_velocity = r_rigidBodyA->m_velocity - (contactData.normal * r_rigidBodyA->GetMass() * p);
 		}
 		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
-		{	
+		{
 			r_rigidBodyB->m_velocity = r_rigidBodyB->m_velocity + (contactData.normal * r_rigidBodyB->GetMass() * p);
 		}
 	}

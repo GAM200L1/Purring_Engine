@@ -18,17 +18,17 @@
 
 // static variables decleration
 Logger::LoggerFlag Logger::m_flags;
-bool LOG = false;
+bool LOG = true;
 
 
 Logger::Logger(const char inst_name[]) :
-	m_instanceName{ inst_name }
+	instanceName{ inst_name }
 {
 	SetTime();
 	std::string filepath = "../Logs/";
 	if (CreateDirectoryA(filepath.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
 	{
-		filepath += m_instanceName;
+		filepath += instanceName;
 		filepath += "-";
 		filepath += m_currTime;
 		filepath += ".log";
@@ -54,7 +54,7 @@ void Logger::AddLog(const bool& r_isError, const std::string& r_msg, const char 
 {
 	const std::string type = (r_isError) ? "ERROR" : "MESSAGE";
 	m_logBuffer << "[" << m_currTime << "]"
-				<< "<" << m_instanceName << ">"
+				<< "<" << instanceName << ">"
 				<< "<" << type << ">"
 				<< "<" << fnName << ">"
 				<< "<" << r_msg << ">\n";

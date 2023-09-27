@@ -205,7 +205,7 @@ void PE::CoreApplication::Run()
             try
             {
                 std::vector testVector = { 1 };
-                testVector.at(1);
+                testVector[0] = testVector.at(1);
             }
             catch (const std::out_of_range& r_err)
             {

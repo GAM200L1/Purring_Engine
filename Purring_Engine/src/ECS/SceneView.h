@@ -91,10 +91,10 @@ int compare(const void* p_lhs, const void* p_rhs);
 			\param[in] components 	The components to scope to
 			\param[in] all 		Whether or not the scope is to all copmonents
 			*************************************************************************************/
-			Iterator(EntityID index, const std::set<ComponentID>& components, bool all) :
+			Iterator(EntityID index, const std::set<ComponentID>& r_components, bool all) :
 				p_entityManager(&EntityManager::GetInstance()), index(index), all(all)
 			{
-				poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*components.begin()));
+				poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*r_components.begin()));
 				// @TO REMOVE FOR SUBMISSION
 				/*
 				if (all)
@@ -236,7 +236,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 
 		\return const Iterator the iterator for the first "legal" entity
 		*************************************************************************************/
-		const Iterator begin() const
+		const Iterator begin() const	// cannot follow coding conventions due to c++ begin() & end() standards
 		{
 			if (!p_entityManager->Size())
 				Iterator(0, components, all); // update to error log
@@ -256,7 +256,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 
 		\return const Iterator the iterator for the last "legal" entity
 		*************************************************************************************/
-		const Iterator end() const
+		const Iterator end() const		// cannot follow coding conventions due to c++ begin() & end() standards
 		{
 			return Iterator(p_entityManager->OnePast(), components, all);
 		}
