@@ -8,7 +8,7 @@ This file contains the code for the fragment shader.
 
 *//*__________________________________________________________________________*/
 
-#version 460 core
+#version 450 core
 
 layout(location = 0) in vec3 vColor;
 

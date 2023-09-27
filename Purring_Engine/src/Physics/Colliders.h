@@ -56,10 +56,10 @@ namespace PE
 	{
 		LineSegment() = default;
 		LineSegment(vec2 const& r_startPt, vec2 const& r_endPt);
-		vec2 point0;
-		vec2 point1;
-		vec2 lineVec;
-		vec2 normal;
+		vec2 point0{};
+		vec2 point1{};
+		vec2 lineVec{};
+		vec2 normal{};
 	};
 
 

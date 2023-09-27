@@ -20,6 +20,8 @@
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Physics/PhysicsManager.h"
+#include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE {
@@ -40,7 +42,7 @@ namespace PE {
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
-		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
+		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 			//for the object list
 			m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
@@ -93,7 +95,15 @@ namespace PE {
 		m_showTestWindows = true;
 	}
 
-	void Editor::Init(GLFWwindow* m_window)
+	void Editor::ClearObjectList()
+	{
+		for (int n = 2; n < g_entityManager->GetEntitiesInPool("All").size();)
+		{
+			g_entityManager->RemoveEntity(g_entityManager->GetEntitiesInPool("All")[n]);
+		}
+	}
+
+	void Editor::Init(GLFWwindow* p_window)
 	{
 		//check imgui's version 
 		IMGUI_CHECKVERSION();
@@ -112,10 +122,10 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 
-		p_window = m_window;
+		p_window = p_window;
 		//getting the full display size of glfw so that the ui know where to be in
 		int width, height;
-		glfwGetWindowSize(m_window, &width, &height);
+		glfwGetWindowSize(p_window, &width, &height);
 		io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
 		m_renderWindowWidth = static_cast<float>(width) * 0.1f;
 		m_renderWindowHeight = static_cast<float>(height) * 0.1f;
@@ -128,7 +138,7 @@ namespace PE {
 		}
 
 		//init imgui for glfw and opengl 
-		ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
 		ImGui_ImplOpenGL3_Init("#version 460");
 
@@ -347,14 +357,6 @@ namespace PE {
 				{
 					(this->*(m_commands[m_input]))();
 				}
-				//if (m_input == "ping")
-				//{
-				//	AddConsole("pong");
-				//}
-				//if (m_input == "test")
-				//{
-				//	m_showTestWindows = true;
-				//}
 				m_input = "";
 				reclaim_focus = true;
 			}
@@ -523,19 +525,168 @@ namespace PE {
 
 			ImGui::Separator();
 			ImGui::Text("Physics Test");
-			if (ImGui::Button("Player Controller"))
+			if (ImGui::Button("Random Object Test"))
 			{
-
+				ClearObjectList();
+				std::random_device rd;
+				std::mt19937 gen(rd());
+				for (size_t i{ 2 }; i < 20; ++i)
+				{
+				    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				
+				    std::uniform_int_distribution<>distr0(-550, 550);
+				    g_entityManager->Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
+				    std::uniform_int_distribution<>distr1(-250, 250);
+				    g_entityManager->Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
+				    std::uniform_int_distribution<>distr2(10, 200);
+				    g_entityManager->Get<Transform>(id).width = static_cast<float>(distr2(gen));
+				    g_entityManager->Get<Transform>(id).height = static_cast<float>(distr2(gen));
+				    g_entityManager->Get<Transform>(id).orientation = 0.f;
+				
+				    if (i%3)
+				        g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				    
+				    if (i%2)
+				        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+				    else
+				        g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Static Dynamic Collision"))
+			if (ImGui::Button("Clear Object List##1"))
 			{
+				ClearObjectList();
+			}
+			if (ImGui::Button("AABB AABB DYNAMIC STATIC"))
+			{
+				ClearObjectList();
+				g_entityManager->Get<Transform>(1).position.x = 0;
+				g_entityManager->Get<Transform>(1).position.y = 0;
+				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				g_entityManager->Get<Transform>(id).position.x = 100;
+				g_entityManager->Get<Transform>(id).position.y = 100;
+				g_entityManager->Get<Transform>(id).width = 100;
+				g_entityManager->Get<Transform>(id).height = 100;
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Dynamic Dynamic Collision"))
+			if (ImGui::Button("AABB AABB DYNAMIC DYNAMIC"))
 			{
+				ClearObjectList();
+				g_entityManager->Get<Transform>(1).position.x = 0;
+				g_entityManager->Get<Transform>(1).position.y = 0;
+				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				g_entityManager->Get<Transform>(id).position.x = 100;
+				g_entityManager->Get<Transform>(id).position.y = 100;
+				g_entityManager->Get<Transform>(id).width = 100;
+				g_entityManager->Get<Transform>(id).height = 100;
+			}
+			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC STATIC"))
+			{
+				ClearObjectList();
+				g_entityManager->Get<Transform>(1).position.x = 0;
+				g_entityManager->Get<Transform>(1).position.y = 0;
+				g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
+
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				g_entityManager->Get<Transform>(id).position.x = 100;
+				g_entityManager->Get<Transform>(id).position.y = 100;
+				g_entityManager->Get<Transform>(id).width = 100;
+				g_entityManager->Get<Transform>(id).height = 100;
+				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC DYNAMIC"))
+			{
+				ClearObjectList();
+				g_entityManager->Get<Transform>(1).position.x = 0;
+				g_entityManager->Get<Transform>(1).position.y = 0;
+				g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
+
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				g_entityManager->Get<Transform>(id).position.x = 100;
+				g_entityManager->Get<Transform>(id).position.y = 100;
+				g_entityManager->Get<Transform>(id).width = 100;
+				g_entityManager->Get<Transform>(id).height = 100;
+				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+			}
+			if (ImGui::Button("AABB CIRCLE DYNAMIC STATIC"))
+			{
+				ClearObjectList();
+				g_entityManager->Get<Transform>(1).position.x = 0;
+				g_entityManager->Get<Transform>(1).position.y = 0;
+				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				g_entityManager->Get<Transform>(id).position.x = 100;
+				g_entityManager->Get<Transform>(id).position.y = 100;
+				g_entityManager->Get<Transform>(id).width = 100;
+				g_entityManager->Get<Transform>(id).height = 100;
+				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("AABB CIRCLE DYNAMIC DYNAMIC"))
+			{
+				ClearObjectList();
+				g_entityManager->Get<Transform>(1).position.x = 0;
+				g_entityManager->Get<Transform>(1).position.y = 0;
+				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				g_entityManager->Get<Transform>(id).position.x = 100;
+				g_entityManager->Get<Transform>(id).position.y = 100;
+				g_entityManager->Get<Transform>(id).width = 100;
+				g_entityManager->Get<Transform>(id).height = 100;
+				g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+			}
+			if (ImGui::Button("CIRCLE AABB DYNAMIC STATIC"))
+			{
+				ClearObjectList();
+				g_entityManager->Get<Transform>(1).position.x = 0;
+				g_entityManager->Get<Transform>(1).position.y = 0;
+				g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				g_entityManager->Get<Transform>(id).position.x = 100;
+				g_entityManager->Get<Transform>(id).position.y = 100;
+				g_entityManager->Get<Transform>(id).width = 100;
+				g_entityManager->Get<Transform>(id).height = 100;
+				g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("CIRCLE AABB DYNAMIC DYNAMIC"))
+			{
+				ClearObjectList();
+				g_entityManager->Get<Transform>(1).position.x = 0;
+				g_entityManager->Get<Transform>(1).position.y = 0;
+				g_entityManager->Get<Collider>(1).colliderVariant = CircleCollider();
+
+				EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+				g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				g_entityManager->Get<Transform>(id).position.x = 100;
+				g_entityManager->Get<Transform>(id).position.y = 100;
+				g_entityManager->Get<Transform>(id).width = 100;
+				g_entityManager->Get<Transform>(id).height = 100;
+				g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+			}
+			if (ImGui::Button("Toggle Step Physics"))
+			{
+				PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
+
+				if (PhysicsManager::GetStepPhysics())
+					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned On.\n");
+				else
+					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned Off.\n");
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 
@@ -543,17 +694,28 @@ namespace PE {
 			ImGui::Text("Object Test");
 			if (ImGui::Button("Draw 2500 objects"))
 			{
-
+				ClearObjectList();
+				for (size_t i{}; i < 2500; ++i) {
+					EntityID id2 = g_entityFactory->CreateEntity();
+					g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+					g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
+					g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+					g_entityManager->Get<Transform>(id2).width = 50.f;
+					g_entityManager->Get<Transform>(id2).height = 50.f;
+					g_entityManager->Get<Transform>(id2).orientation = 0.f;
+					g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey("cat");
+					g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Render Debug Lines"))
+			if (ImGui::Button("Toggle Debug Lines"))
 			{
 				ToggleDebugRender();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Object Test 3"))
+			if (ImGui::Button("Clear Object List##2"))
 			{
-
+				ClearObjectList();
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::Separator();
@@ -735,6 +897,8 @@ namespace PE {
 											Initialize(col, transform.position, vec2(transform.width, transform.height));
 										}, EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);
 								}
+
+								ImGui::Checkbox("Is Trigger", &g_entityManager->Get<Collider>(m_currentSelectedObject).isTrigger);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
@@ -865,40 +1029,6 @@ namespace PE {
 						ImGui::EndPopup();
 					}
 
-
-					/*if (isModalOpen)
-					{
-						ImGui::SetNextWindowSize(ImVec2(300, 100));
-						if (ImGui::BeginPopupModal("Components", &isModalOpen, ImGuiWindowFlags_NoResize))
-						{
-							ImGui::Text("Add Components");
-							if (ImGui::Selectable("Add Collision"))
-							{
-								if (EntityManager::GetInstance().Has(m_currentSelectedObject, "RigidBody"))
-								{
-									EntityFactory::GetInstance().Assign(m_currentSelectedObject, { "Collider" });
-								}
-								else
-								{
-									isModalOpen = true;
-									ImGui::OpenPopup("rwarn");
-								}
-							}
-							if (ImGui::Selectable("Add Transform"))
-							{
-								EntityFactory::GetInstance().Assign(m_currentSelectedObject, { "Transform" });
-							}
-							if (ImGui::Selectable("Add RigidBody"))
-							{
-								EntityFactory::GetInstance().Assign(m_currentSelectedObject, { "RigidBody" });
-							}
-							if (ImGui::Selectable("Add Renderer"))
-							{
-								EntityFactory::GetInstance().Assign(m_currentSelectedObject, { "Renderer" });
-							}
-							ImGui::EndPopup();
-						}
-					}*/
 				}
 			}
 			ImGui::EndChild();
@@ -1190,27 +1320,6 @@ namespace PE {
 		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 		m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
 
-		//Screen picking testing code
-		//if (ImGui::IsMouseClicked(0))
-		//{
-		//	//where i need to start doing the screen picking
-		//	//get the mouse position relative to the top - left corner of the ImGui window.
-		//	ImVec2 cursorToMainWindow = ImGui::GetCursorScreenPos(); // get current window position (top left corner)
-		//	ImVec2 CurrentWindowPosition = ImGui::GetWindowPos(); // seems to get the same thing
-		//	ImVec2 CursorToImGuiWindow = ImGui::GetMousePos();  // get mouse position but relative to your screen
-		//	ImVec2 windowSize = ImGui::GetWindowSize();
-
-		//	double glfwMouseX, glfwMouseY;
-		//	glfwGetCursorPos(p_window, &glfwMouseX, &glfwMouseY); //glfw position
-
-		//	std::cout << "[Get current window top left position w title] x screen: " << cursorToMainWindow[0] << " y screen: " << cursorToMainWindow[1] << std::endl;
-		//	std::cout << "[Get Mouse Pos] x : " << CursorToImGuiWindow[0] << " y : " << CursorToImGuiWindow[1] << std::endl;
-		//	std::cout << "[Get Current Window View Top left position] x : " << CurrentWindowPosition[0] << " y i: " << CurrentWindowPosition[1] << std::endl;
-		//	//this tells you mouse position relative to imgui window seems the most useful for now
-		//	std::cout << "[Gui mouse pos - cursorscreen pos] x:" << CursorToImGuiWindow[0] - cursorToMainWindow[0] << " y: " << CursorToImGuiWindow[1] - cursorToMainWindow[1] << std::endl;
-		//	std::cout << "[GLFW] x:" << glfwMouseX << " y: " << glfwMouseY << std::endl;	
-		//}
-
 		//the graphics rendered onto an image on the imgui window
 		ImGui::Image(
 			reinterpret_cast<void*>(
@@ -1275,43 +1384,43 @@ namespace PE {
 		m_consoleOutput.clear();
 	}
 
-	void Editor::OnKeyPressedEvent(const PE::Event<PE::KeyEvents>& e)
+	void Editor::OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_event)
 	{
-		PE::KeyPressedEvent KPE;
+		PE::KeyTriggeredEvent KTE;
 
 		//dynamic cast
-		if (e.GetType() == PE::KeyEvents::KeyPressed)
+		if (r_event.GetType() == PE::KeyEvents::KeyTriggered)
 		{
-			KPE = dynamic_cast<const PE::KeyPressedEvent&>(e);
+			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
 		}
 
 		//may want to change this to switch case to look cleaner
 
-		if (KPE.keycode == GLFW_KEY_F1)
+		if (KTE.keycode == GLFW_KEY_F1)
 			m_showConsole = !m_showConsole;
 
-		if (KPE.keycode == GLFW_KEY_F2)
+		if (KTE.keycode == GLFW_KEY_F2)
 			m_showObjectList = !m_showObjectList;
 
-		if (KPE.keycode == GLFW_KEY_F3)
+		if (KTE.keycode == GLFW_KEY_F3)
 			m_showLogs = !m_showLogs;
 
-		if (KPE.keycode == GLFW_KEY_F4)
+		if (KTE.keycode == GLFW_KEY_F4)
 			m_showSceneView = !m_showSceneView;
 
-		if (KPE.keycode == GLFW_KEY_F7)
+		if (KTE.keycode == GLFW_KEY_F7)
 			m_showTestWindows = !m_showTestWindows;
 
-		if (KPE.keycode == GLFW_KEY_F6)
+		if (KTE.keycode == GLFW_KEY_F6)
 			m_showPerformanceWindow = !m_showPerformanceWindow;
 
-		if (KPE.keycode == GLFW_KEY_ESCAPE)
+		if (KTE.keycode == GLFW_KEY_ESCAPE)
 			m_showEditor = !m_showEditor;
 
-		if (KPE.keycode == GLFW_KEY_F5)
+		if (KTE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;
 
-		if (KPE.keycode == GLFW_KEY_F10)
+		if (KTE.keycode == GLFW_KEY_F10)
 			ToggleDebugRender();
 	}
 
