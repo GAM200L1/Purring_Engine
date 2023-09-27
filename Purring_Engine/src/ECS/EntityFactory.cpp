@@ -91,6 +91,16 @@ namespace PE
 			Collider()
 			:
 			*reinterpret_cast<Collider*>(data);
+
+		Transform& transform{ EntityManager::GetInstance().Get<Transform>(r_id) };
+		std::visit([&](auto& col)
+		{
+			Initialize(col, transform.position, vec2(transform.width, transform.height));
+		}
+		, EntityManager::GetInstance().Get<Collider>(r_id).colliderVariant
+		);
+
+
 		return true;
 	}
 

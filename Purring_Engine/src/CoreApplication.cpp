@@ -161,7 +161,6 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(0).height = 100.f;
     EntityManager::GetInstance().Get<Transform>(0).orientation = 0.f;
     EntityManager::GetInstance().Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    EntityManager::GetInstance().Get<Collider>(0).colliderVariant = CircleCollider();
     EntityManager::GetInstance().Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
     EntityManager::GetInstance().Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
     EntityManager::GetInstance().Get<RigidBody>(0).SetMass(10.f);
@@ -173,8 +172,8 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(1).height = 200.f;
     EntityManager::GetInstance().Get<Transform>(1).orientation = 0.f;
     EntityManager::GetInstance().Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
     EntityManager::GetInstance().Get<Collider>(1).isTrigger = true;
+
 
     for (size_t i{}; i < 2500; ++i) {
         EntityID id2 = EntityFactory::GetInstance().CreateEntity();

@@ -729,6 +729,11 @@ namespace PE {
 									{
 										EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant = AABBCollider();
 									}
+									Transform& transform{ EntityManager::GetInstance().Get<Transform>(entityID) };
+									std::visit([&](auto& col)
+										{
+											Initialize(col, transform.position, vec2(transform.width, transform.height));
+										}, EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}

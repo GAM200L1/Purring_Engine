@@ -12,7 +12,6 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-
 #pragma once
 
 #include "Math/MathCustom.h"
@@ -22,7 +21,7 @@ namespace PE
 {
     struct Transform
     {
-        float width{}, height{};
+        float width{100}, height{100};
         float orientation{}; // in radians
         vec2 position{};
 
