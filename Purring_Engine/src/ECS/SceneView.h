@@ -12,8 +12,6 @@
 			while scoped to the user specified Component types.
 
 
- 
- 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
@@ -26,15 +24,22 @@
 namespace PE
 {
 
-template<class TIter>
+/*!***********************************************************************************
+ \brief Helper function to sort all duplicates to the "left" and push all the rest
+		to the "right", will return an iterator to the new "end".
+		Takes in a sorted vector/container.
+ 
+ \tparam Iter Iterator to the new end
+*************************************************************************************/
+template<class Iter>
 /** Moves duplicates to front, returning end of duplicates range.
  *  Use a sorted range as input. */
-TIter Duplicates(TIter begin, TIter end) {
-	TIter dup = begin;
-	for (TIter it = begin; it != end; ++it) {
-		TIter next = it;
+Iter Duplicates(Iter begin, Iter end) {
+	Iter dup = begin;
+	for (Iter it = begin; it != end; ++it) {
+		Iter next = it;
 		++next;
-		TIter const miss = std::mismatch(next, end, it).second;
+		Iter const miss = std::mismatch(next, end, it).second;
 		if (miss != it) {
 			*dup++ = *miss;
 			it = miss;
@@ -90,6 +95,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 				p_entityManager(PE::g_entityManager), index(index), all(all)
 			{
 				poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*components.begin()));
+				// @TO REMOVE FOR SUBMISSION
 				/*
 				if (all)
 				{
