@@ -14,23 +14,22 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-#version 450 core
+#version 460 core
 
 layout (location = 0) in vec2 aVertexPosition; // IN vertex position
 layout (location = 1) in vec2 aTextureCoord;   // IN texture coordinate
-layout (location = 2) in float aIsTextured;    // IN texture boolean
-layout (location = 3) in vec4 aColor; // IN vertex color
-layout (location = 4) in mat4 aModelToWorld;   // IN transformation matrix
+layout (location = 2) in vec4 aColor; // IN vertex color
+layout (location = 3) in mat4 aWorldToNdc;   // IN transformation matrix
+layout (location = 7) in mat4 aModelToWorld;   // IN transformation matrix
 
 layout (location = 0) out vec4 vColor;         // OUT color
 layout (location = 1) out vec2 vTextureCoord;  // OUT texture coordinate
-layout (location = 2) out float vIsTextured;    // OUT texture boolean
 
-uniform mat4 uWorldToNdc;   // World to NDC matrix
+//uniform vec4 uColor[100];	// RGBA color to tint the texture
+//uniform mat4 uModelToNdc[100];
 
 void main(void) {
-    gl_Position = uWorldToNdc * aModelToWorld * vec4(aVertexPosition, 0.0, 1.0);
+    gl_Position = aWorldToNdc * aModelToWorld * vec4(aVertexPosition, 0.0, 1.0);
     vColor = aColor;
 	vTextureCoord = aTextureCoord;
-    vIsTextured = aIsTextured;
 }

@@ -27,8 +27,8 @@
 namespace PE 
 {
     //static declarations
-    float InputSystem::m_bufferTime = 0.12f;
-    std::vector<KeyPressedEvent> InputSystem::m_KeyDown;
+    float InputSystem::m_bufferTime = 0.2f;
+    std::vector<KeyPressedEvent> InputSystem::m_KeyPressed;
 
     //system functions
     void InputSystem::InitializeSystem(){}
@@ -85,8 +85,8 @@ namespace PE
         window;
         //creation of event and sending
         PE::MouseScrolledEvent mse;
-        mse.xOffset = xoffset;
-        mse.yOffset = yoffset;
+        mse.xOffset = static_cast<int>(xoffset);
+        mse.yOffset = static_cast<int>(yoffset);
         PE::SEND_MOUSE_EVENT(mse)
     }
 
@@ -102,15 +102,14 @@ namespace PE
         case GLFW_PRESS:
         {
             //creation of event
-            PE::KeyTriggeredEvent kte;
             PE::KeyPressedEvent kpe;
-            kte.keycode = kpe.keycode = key;
+            kpe.keycode = key;
             //setting a buffer before the keypressed becomes a repeat
             kpe.repeat = m_bufferTime;
             //saving the keypressed event
-            m_KeyDown.push_back(kpe);
+            m_KeyPressed.push_back(kpe);
             //sending of event
-            PE::SEND_KEY_EVENT(kte)
+            PE::SEND_KEY_EVENT(kpe)
                 break;
         }
         case GLFW_RELEASE:
@@ -119,13 +118,13 @@ namespace PE
             PE::KeyReleaseEvent kre;
             kre.keycode = key;
             //remove the keypressed event from the saved vector
-            if (!m_KeyDown.empty())
+            if (!m_KeyPressed.empty())
             {
-                for (std::vector<KeyPressedEvent>::iterator it = std::begin(m_KeyDown); it != std::end(m_KeyDown);)
+                for (std::vector<KeyPressedEvent>::iterator it = std::begin(m_KeyPressed); it != std::end(m_KeyPressed);)
                 {
                     if (it->keycode == kre.keycode)
                     {
-                        it = m_KeyDown.erase(it);
+                        it = m_KeyPressed.erase(it);
                     }
                     else
                         ++it;
@@ -142,7 +141,7 @@ namespace PE
     void InputSystem::UpdateSystem(float deltaTime)
     {
         //every frame reduce the buffer for repeat
-        for (KeyPressedEvent& kpe : m_KeyDown)
+        for (KeyPressedEvent& kpe : m_KeyPressed)
         {
             if (kpe.repeat >= 0)
             {

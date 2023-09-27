@@ -86,7 +86,6 @@ namespace PE
 
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
-		// Simple fixed deltaTime
 		m_accumulator += deltaTime;
 
 		m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
@@ -122,8 +121,8 @@ namespace PE
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
-			RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
-			Transform& transform = EntityManager::GetInstance().Get<Transform>(RigidBodyID);
+			RigidBody& rb = g_entityManager->Get<RigidBody>(RigidBodyID);
+			Transform& transform = g_entityManager->Get<Transform>(RigidBodyID);
 
 			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
 			{

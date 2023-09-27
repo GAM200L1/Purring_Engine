@@ -19,13 +19,13 @@ namespace PE
 {
 	RigidBody::RigidBody() :
 		m_velocity{ vec2{ 0.f, 0.f } }, m_rotationVelocity{ 0.f },
-		m_force{ vec2{ 0.f, 0.f } }, //m_torque{ 0.f }, m_awake{ false },
+		m_force{ vec2{ 0.f, 0.f } }, m_torque{ 0.f }, m_awake{ false },
 		m_mass{ 10.f }, m_inverseMass{ 1/10.f }, // m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
 		m_prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
 
 	RigidBody::RigidBody(RigidBody const& r_cpy) :
 		m_velocity{ r_cpy.m_velocity }, m_rotationVelocity{ r_cpy.m_rotationVelocity },
-		m_force{ r_cpy.m_force }, //m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
+		m_force{ r_cpy.m_force }, m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
 		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, 
 		//m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag },
 		m_prevPosition{ r_cpy.m_prevPosition }, m_type{ r_cpy.m_type } {}
@@ -35,8 +35,8 @@ namespace PE
 		m_velocity = r_cpy.m_velocity;
 		m_rotationVelocity = r_cpy.m_rotationVelocity;
 		m_force = r_cpy.m_force;
-		//m_torque = r_cpy.m_torque;
-		//m_awake = r_cpy.m_awake;
+		m_torque = r_cpy.m_torque;
+		m_awake = r_cpy.m_awake;
 		m_mass = r_cpy.m_mass;
 		m_inverseMass = r_cpy.m_inverseMass;
 		m_prevPosition = r_cpy.m_prevPosition;
@@ -79,14 +79,14 @@ namespace PE
 		m_type = flag;
 	}
 
-	//bool RigidBody::IsAwake() const
-	//{
-	//	return (m_awake) ? true : false;
-	//}
-	//void RigidBody::SetAwake(bool flag)
-	//{
-	//	m_awake = flag;
-	//}
+	bool RigidBody::IsAwake() const
+	{
+		return (m_awake) ? true : false;
+	}
+	void RigidBody::SetAwake(bool flag)
+	{
+		m_awake = flag;
+	}
 
 	// ----- Public Methods ----- //
 	// Adds on to existing force, ultimately affects position
@@ -99,13 +99,13 @@ namespace PE
 	}
 
 	// Adds on to existing torque, ultimately affects rotation
-	//void RigidBody::ApplyTorque(float r_addOnTorque)
-	//{
-	//	if (m_type != EnumRigidBodyType::DYNAMIC)
-	//		return;
-	//
-	//	m_torque += r_addOnTorque;
-	//}
+	void RigidBody::ApplyTorque(float r_addOnTorque)
+	{
+		if (m_type != EnumRigidBodyType::DYNAMIC)
+			return;
+
+		m_torque += r_addOnTorque;
+	}
 
 	void RigidBody::ApplyLinearImpulse(vec2 const& r_impulseForce)
 	{

@@ -16,32 +16,22 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 namespace PE
 {
 	// ----- AABB Collider ----- //
-	void Initialize(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
+	
+	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_AABB.center = r_position;
+		r_AABB.min = r_position - (r_scale * 0.5f);
+		r_AABB.max = r_position + (r_scale * 0.5f);
 		r_AABB.scale = r_scale;
-		r_AABB.center += r_AABB.positionOffset;
-		r_AABB.min = r_AABB.center - (r_AABB.scale * 0.5f); 
-		r_AABB.max = r_AABB.center + (r_AABB.scale * 0.5f);
 	}
-	void Update(AABBCollider& r_AABB, vec2 const& r_position)
-	{
-		r_AABB.center = r_position;
-		r_AABB.center += r_AABB.positionOffset;
-		r_AABB.min = r_AABB.center - (r_AABB.scale * 0.5f);
-		r_AABB.max = r_AABB.center + (r_AABB.scale * 0.5f);
-	}
-
+	
 
 	// ---- Circle Collider ----- //
-	void Initialize(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
+	
+	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
-		r_circle.center = r_position + r_circle.positionOffset;
+		r_circle.center = r_position;
 		r_circle.radius = r_scale.x * 0.5f;
-	}
-	void Update(CircleCollider& r_circle, vec2 const& r_position)
-	{
-		r_circle.center = r_position + r_circle.positionOffset;
 	}
 
 

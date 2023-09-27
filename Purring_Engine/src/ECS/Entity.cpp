@@ -26,112 +26,136 @@ extern Logger engine_logger;
 namespace PE
 {
 	// singleton
+	EntityManager* g_entityManager{ nullptr };
 
 	EntityManager::EntityManager()
 	{
+		if (g_entityManager != nullptr)
+		{
+			engine_logger.AddLog(true, "Another instance of Entity Manager was created!!", __FUNCTION__);
+			engine_logger.FlushLog();
+			throw;
+		}
+		g_entityManager = this;
 		m_poolsEntity["All"];
 	}
 
 	EntityManager::~EntityManager()
 	{
 		m_entities.clear();
-		for (std::pair<const ComponentID, ComponentPool*>& r_compPool : m_componentPools)
+		for (std::pair<const ComponentID, ComponentPool*>& compPool : m_componentPools)
 		{
-			delete r_compPool.second;
+			delete compPool.second;
 		}
 		m_componentPools.clear();
 	}
 
 	EntityID EntityManager::NewEntity()
 	{
-		size_t id = (m_removed.empty()) ? m_entities.size() : (m_removed.front());
+		size_t id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin());
 		if (!m_removed.empty())
-			m_removed.pop();
+			m_removed.erase(id);
 		m_entities.emplace(id);
-		++m_entityCounter;
 		return id;
 	}
 
 
-	void EntityManager::Assign(const EntityID& r_id, const char* r_componentID)
+	void EntityManager::Assign(const EntityID& id, const char* componentID)
 	{
 		// if component is not found
-		if (m_componentPools.find(r_componentID) == m_componentPools.end())
+		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
 			engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
 			engine_logger.FlushLog();
 			throw;
 		}
-		if (m_componentPools[r_componentID]->HasEntity(r_id))
+		if (m_componentPools[componentID]->HasEntity(id))
 		{
 			return;
 		}
 		// add to component pool's map keeping track of index
-		m_componentPools[r_componentID]->idxMap.emplace(r_id, m_componentPools[r_componentID]->idxMap.size());
-		// initialize that region of memory
-		if (m_componentPools[r_componentID]->size >= m_componentPools[r_componentID]->capacity - 1)
+		if (m_componentPools[componentID]->m_removed.empty())
 		{
-			m_componentPools[r_componentID]->resize(m_componentPools[r_componentID]->capacity * 2);
+			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		}
+		else
+		{
+			// reuse old slot if exists
+			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
+			m_componentPools[componentID]->m_removed.pop();
+		}
+		// initialize that region of memory
+		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
+		{
+			m_componentPools[componentID]->resize(m_componentPools[componentID]->m_capacity * 2);
 		}
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		++(m_componentPools[r_componentID]->size);
+		++(m_componentPools[componentID]->m_size);
 	}
 
-	void EntityManager::Assign(const EntityID& r_id, const ComponentID& r_componentID)
+	void EntityManager::Assign(const EntityID& id, const ComponentID& componentID)
 	{
 		// if component is not found
-		if (m_componentPools.find(r_componentID) == m_componentPools.end())
+		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
 			engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
 			engine_logger.FlushLog();
 			throw;
 		}
 
-		if (m_componentPools[r_componentID]->HasEntity(r_id))
+		if (m_componentPools[componentID]->HasEntity(id))
 		{
 			return;
 		}
 		// add to component pool's map keeping track of index
-		m_componentPools[r_componentID]->idxMap.emplace(r_id, m_componentPools[r_componentID]->idxMap.size());
-
-		// initialize that region of memory
-		if (m_componentPools[r_componentID]->size >= m_componentPools[r_componentID]->capacity - 1)
+		if (m_componentPools[componentID]->m_removed.empty())
 		{
-			m_componentPools[r_componentID]->resize(m_componentPools[r_componentID]->capacity * 2);
+			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		}
+		else
+		{
+			// reuse old slot if exists
+			m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_removed.front());
+			m_componentPools[componentID]->m_removed.pop();
+		}
+		// initialize that region of memory
+		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
+		{
+			m_componentPools[componentID]->resize(m_componentPools[componentID]->m_capacity * 2);
 		}
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		++(m_componentPools[r_componentID]->size);
+		++(m_componentPools[componentID]->m_size);
 	}
 
-	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& r_component) const
+	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& component) const
 	{
-		return m_componentPools.at(r_component);
+		return m_componentPools.at(component);
 	}
 
-	ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& r_component) 
+	ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& component) 
 	{
-		return m_componentPools.at(r_component);
+		return m_componentPools.at(component);
 	}
 
-	void EntityManager::CopyComponent(EntityID src, EntityID dest, const ComponentID& r_component)
+	void EntityManager::CopyComponent(EntityID src, EntityID dest, const ComponentID& component)
 	{
-		if (!Has(src, r_component))
+		if (!Has(src, component))
 			return;
-		if (!Has(dest, r_component))
-			Assign(dest, r_component);
+		if (!Has(dest, component))
+			Assign(dest, component);
 
-		memcpy_s(m_componentPools[r_component]->Get(dest), m_componentPools[r_component]->elementSize, m_componentPools[r_component]->Get(src), m_componentPools[r_component]->elementSize);
+		memcpy_s(m_componentPools[component]->Get(dest), m_componentPools[component]->m_elementSize, m_componentPools[component]->Get(src), m_componentPools[component]->m_elementSize);
 	}
 
 	
 
-	bool EntityManager::Has(EntityID id, const ComponentID& r_component) const
+	bool EntityManager::Has(EntityID id, const ComponentID& component) const
 	{
-		return m_componentPools.at(r_component)->HasEntity(id);
+		return m_componentPools.at(component)->HasEntity(id);
 	}
 
 
@@ -139,11 +163,11 @@ namespace PE
 	{
 		if (m_entities.count(id))
 		{
-			for (const ComponentID& r_pool : GetComponentIDs(id))
+			for (const ComponentID& pool : GetComponentIDs(id))
 			{
-				m_componentPools[r_pool]->remove(id);
+				m_componentPools[pool]->remove(id);
 				std::string str = "Removed Component-";
-				str += r_pool;
+				str += pool;
 				engine_logger.AddLog(false, str, __FUNCTION__);
 			}
 			m_entities.erase(id);

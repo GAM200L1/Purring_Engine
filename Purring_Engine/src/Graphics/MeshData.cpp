@@ -19,7 +19,7 @@
 ----------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "MeshData.h"
-#include "Logging/Logger.h"
+#include "../Logging/Logger.h"
 
 extern Logger engine_logger;
 

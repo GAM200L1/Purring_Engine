@@ -8,7 +8,7 @@ This file contains the code for the vertex shader.
 
 *//*__________________________________________________________________________*/
 
-#version 450 core
+#version 460 core
 
 layout (location = 0) in vec2 aVertexPosition;
 layout (location = 1) in vec3 aVertexColor;

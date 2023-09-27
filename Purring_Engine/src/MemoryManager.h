@@ -25,16 +25,16 @@ constexpr size_t max_size = 1000000;
 namespace PE {
 	/*!***********************************************************************************
 	 \brief				Structure to hold the name of the object borrowing memory and amount borrowed
-	 \param				name
-	 \param				size
-	 \param				bufferSize
+	 \param				s_name
+	 \param				s_size
+	 \param				s_bufferSize
 	*************************************************************************************/
 	struct MemoryData
 	{
-		std::string name;
-		int size; // total size;
-		int bufferSize; //the amount of buffer added to ensure safety
-		MemoryData(std::string name, int size, int buffersize) : name(name), size(size) ,bufferSize(buffersize){}
+		std::string s_name;
+		int s_size; // total size;
+		int s_bufferSize; //the amount of buffer added to ensure safety
+		MemoryData(std::string name, int size, int buffersize) : s_name(name), s_size(size) ,s_bufferSize(buffersize){}
 
 		std::string ToString() const;
 	};
@@ -52,7 +52,7 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief					Destructor, deletes the allocated memory
 		*************************************************************************************/
-		~StackAllocator() { delete[] p_stack;}
+		~StackAllocator() { delete[] m_stack;}
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
@@ -79,7 +79,7 @@ namespace PE {
 		*************************************************************************************/
 		int GetStackTop();
 	private:
-		char* p_stack{ nullptr }; //where all the data in the stack will be stored
+		char* m_stack{ nullptr }; //where all the data in the stack will be stored
 		int m_totalSize; // size of the stack
 		int m_stackTop; // current top of the stack
 		//hold a shared pointer to ECS pool allocator

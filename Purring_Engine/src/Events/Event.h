@@ -14,7 +14,8 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-#pragma once
+#ifndef EVENT_H
+#define EVENT_H
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
@@ -31,17 +32,15 @@ namespace PE {
 	template <typename T>
 	class Event
 	{
-		// ----- Public Constructors ----- // 
+		// Member variables
+	protected:
+		T m_Type;
+		std::string m_Name;
+		bool m_Handled = false;
+
+		// Constructors and destructors
 	public:
-		/*!***********************************************************************************
-		 \brief     default constructor for events
-		*************************************************************************************/
 		Event() = default;
-		/*!***********************************************************************************
-		\brief			Implicit conversion to a std::string, used for output streams.
-		\param [in]		T type type of the event
-		\param [in]		std::string name of the event.
-		*************************************************************************************/
 		Event(T type, const std::string& name = "") : m_Type(type), m_Name(name) {}
 		virtual ~Event() {}
 
@@ -72,12 +71,6 @@ namespace PE {
 		 \return    const std::string& - Returns the name of the event.
 		*************************************************************************************/
 		inline const std::string& GetName() const { return m_Name; }
-
-		// ----- Protected variables ----- // 
-	protected:
-		T m_Type;
-		std::string m_Name;
-		bool m_Handled = false;
 	};
 
 	/*!***********************************************************************************
@@ -88,8 +81,11 @@ namespace PE {
 	template<typename T>
 	class EventDispatcher
 	{
-		// ----- Definition ----- // 
+		// ----- Private variables ----- // 
+	private:
 		using Func = std::function<void(const Event<T>&)>;
+		std::map<T, std::vector<Func>> m_Listerners;
+
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
@@ -117,9 +113,6 @@ namespace PE {
 				if (!event.Handled()) listener(event);
 			}
 		}
-		// ----- Private variables ----- // 
-	private:
-		std::map<T, std::vector<Func>> m_Listerners;
 	};
 
 	/*!***********************************************************************************
@@ -136,3 +129,4 @@ namespace PE {
 
 } // namespace temp
 
+#endif // EVENT_H

@@ -19,19 +19,12 @@
 #include <queue>
 #include "Math/MathCustom.h"
 // CONSTANT VARIABLES
-constexpr size_t DEFAULT_ENTITY_CNT = 3000;		// default bytes allocated to components pool
+constexpr size_t DEFAULT_ENTITY_CNT = 50;		// default bytes allocated to components pool
 
 namespace PE
 {
     struct ComponentPool
     {
-        // ----- Public Variables ----- //
-        std::map<size_t, size_t> idxMap;  // map to decouple the entity ID from the internal index
-        size_t elementSize{};             // the size of each element in the pool
-        size_t size{};                    // the current size of the pool (entity count, should lineup to idxMap)
-        size_t capacity{};                // the actual capacity of the pool
-
-        // ----- Constructors ----- //
         /*!***********************************************************************************
          \brief Construct a new Component Pool object
                 The size of the buffer allocated will be (elementsize * entcnt) bytes large
@@ -43,8 +36,8 @@ namespace PE
         *************************************************************************************/
         ComponentPool(size_t elementsize, size_t entcnt = DEFAULT_ENTITY_CNT)
         {
-            elementSize = elementsize;
-            capacity = entcnt;            
+            m_elementSize = elementsize;
+            m_capacity = entcnt;            
         }
 
         /*!***********************************************************************************
@@ -53,7 +46,16 @@ namespace PE
         *************************************************************************************/
         virtual ~ComponentPool() { };
 
-        // ----- Public Getters ----- //
+        /*!***********************************************************************************
+         \brief Takes in param numEntity to be the new number of elements to support within
+                the pool
+
+         \param[in] numEntity   The number of entities to resize to
+         \return true           Sucessflly resized
+         \return false          Failed to resize
+        *************************************************************************************/
+        virtual bool resize(size_t numEntity) = 0;
+
         /*!***********************************************************************************
          \brief Gets a void pointer to the specified entity's component in the pool
 
@@ -64,16 +66,6 @@ namespace PE
         *************************************************************************************/
         virtual void* Get(size_t index) = 0;
 
-        // ----- Public Methods ----- //
-        /*!***********************************************************************************
-         \brief Takes in param numEntity to be the new number of elements to support within
-                the pool
-
-         \param[in] numEntity   The number of entities to resize to
-         \return true           Sucessflly resized
-         \return false          Failed to resize
-        *************************************************************************************/
-        virtual bool resize(size_t numEntity) = 0;
 
         /*!***********************************************************************************
          \brief Removes an entity from this pool
@@ -92,15 +84,16 @@ namespace PE
         *************************************************************************************/
         bool HasEntity(size_t id) const
         {
-            return (this) ? idxMap.count(id) : false;
+            return (this) ? m_idxMap.count(id) : false;
         }
+
+        std::map<size_t, size_t> m_idxMap;  // map to decouple the entity ID from the internal index
+        std::queue<size_t> m_removed;       // keep track of removed indexes
+        size_t m_elementSize{};             // the size of each element in the pool
+        size_t m_size{};                    // the current size of the pool (entity count, should lineup to m_idxMap)
+        size_t m_capacity{};                // the actual capacity of the pool
     };
 
-    /*!***********************************************************************************
-     \brief Child class of component, specifies the behavior for individual pool types.
-     
-     \tparam T The type for the pool
-    *************************************************************************************/
     template <typename T>
     class PoolData : public ComponentPool
     {
@@ -136,7 +129,7 @@ namespace PE
         *************************************************************************************/
         void* Get(size_t index)
         {
-            return reinterpret_cast<void*>(&(p_data[idxMap[index]]));
+            return reinterpret_cast<void*>(p_data + m_idxMap.at(index));
         }
         
     // ----- Public methods ----- // 
@@ -158,12 +151,12 @@ namespace PE
                 // @TODO add log message, error, not enough memory
                 return false;
             }
-            for (size_t i{}; i < capacity; ++i)
+            for (size_t i{}; i < m_capacity; ++i)
             {
                 p_tmp[i] = p_data[i];
             }
             std::swap(p_tmp, p_data);
-            capacity = numEntity;
+            m_capacity = numEntity;
             delete[] p_tmp;
             return true;
         }
@@ -175,30 +168,24 @@ namespace PE
         *************************************************************************************/
         void remove(size_t index)
         {
-            if (!idxMap.count(index))
+            if (!m_idxMap.count(index))
                 throw; // log in the future
-            
-            EntityID key{}, lastIdx{};
-            for (const auto& pair : idxMap)
+            p_data[m_idxMap.at(index)] = T();
+            EntityID lastIdx{ (*std::prev(m_idxMap.end())).second };
+            if (lastIdx != index)
             {
-                if (lastIdx <= pair.second)
+                std::swap(p_data[m_idxMap.at(index)], p_data[lastIdx]);
+                for (auto& map : m_idxMap)
                 {
-                    lastIdx = pair.second;
-                    key = pair.first;
+                    if (map.second == lastIdx)
+                        map.second = m_idxMap.at(index);
                 }
+               
             }
-            // if index is not the last as well...
-            if (key != index)
-            {
-                T tmp = p_data[lastIdx];
-                p_data[idxMap[index]] = p_data[lastIdx];
-                idxMap[key] = idxMap[index];
-            }
-            p_data[lastIdx] = T();
-            idxMap.erase(index);
-            --size;
+            //m_removed.emplace(m_idxMap[index]);
+            m_idxMap.erase(index);
+            --m_size;
         }
-    // ----- Private Variables ----- //
     private:
         T* p_data{ nullptr };
     };
@@ -208,4 +195,4 @@ namespace PE
  \brief Registers a component to the component pools
  
 *************************************************************************************/
-#define REGISTERCOMPONENT(type) EntityFactory::GetInstance().AddComponentCreator<type>( #type, sizeof(type)  );
+#define REGISTERCOMPONENT(type) PE::g_entityFactory->AddComponentCreator<type>( #type, sizeof(type)  );

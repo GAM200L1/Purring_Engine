@@ -13,8 +13,8 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-
-#pragma once
+#ifndef EVENT_HANDLER_H
+#define EVENT_HANDLER_H
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
@@ -23,11 +23,14 @@
 #include "WindowEvent.h"
 #include <memory>
 #include "Singleton.h"
-
 namespace PE
 {
 	class EventHandler : public Singleton <EventHandler>
 	{
+		// ----- Constructors ----- // 
+	public:
+		EventHandler() : WindowEventDispatcher(), MouseEventDispatcher(), KeyEventDispatcher() {}
+
 		// ----- Public variables ----- // 
 	public:
 		EventDispatcher<WindowEvents> WindowEventDispatcher;
@@ -35,12 +38,6 @@ namespace PE
 		EventDispatcher<MouseEvents> MouseEventDispatcher;
 
 		EventDispatcher<KeyEvents> KeyEventDispatcher;
-		// ----- Constructors ----- // 
-	public:
-		/*!***********************************************************************************
-		 \brief     default constructor for event handler
-		*************************************************************************************/
-		EventHandler() : WindowEventDispatcher(), MouseEventDispatcher(), KeyEventDispatcher() {}
 
 	};
 
@@ -59,9 +56,9 @@ namespace PE
 												PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(PE::MouseEvents::MouseButtonReleased, std::bind(&func,arg,std::placeholders::_1));\
 												PE::EventHandler::GetInstance().MouseEventDispatcher.AddListener(PE::MouseEvents::MouseScrolled, std::bind(&func,arg,std::placeholders::_1));
 
-#define ADD_ALL_KEY_EVENT_LISTENER(func,arg) PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyTriggered, std::bind(&func,arg,std::placeholders::_1));\
-												PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyRelease, std::bind(&func,arg,std::placeholders::_1));\
-												PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyPressed, std::bind(&func,arg,std::placeholders::_1));
+#define ADD_ALL_KEY_EVENT_LISTENER(func,arg) PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyPressed, std::bind(&func,arg,std::placeholders::_1));\
+												PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyRelease, std::bind(&func,arg,std::placeholders::_1));
+
 
 
 
@@ -70,3 +67,5 @@ namespace PE
 #define SEND_MOUSE_EVENT(_event) EventHandler::GetInstance().MouseEventDispatcher.SendEvent(_event);
 #define SEND_KEY_EVENT(_event) EventHandler::GetInstance().KeyEventDispatcher.SendEvent(_event);
 }
+
+#endif

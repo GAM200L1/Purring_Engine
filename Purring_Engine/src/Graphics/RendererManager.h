@@ -40,10 +40,6 @@ namespace PE
         // In charge of calling the draw functions in all the renderer components.
         class RendererManager : public System
         {
-            // ----- Public Variables ----- //
-        public:
-            static Graphics::Camera m_mainCamera; //! 9Camera object
-            
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
@@ -100,8 +96,6 @@ namespace PE
             *************************************************************************************/
             void DrawDebug(glm::mat4 const& r_worldToNdc);
 
-            void DrawDebugInstanced(glm::mat4 const& r_worldToNdc);
-
             /*!***********************************************************************************
              \brief Binds the shader program, vertex array object and texture and makes the
                     draw call for the [r_renderer] passed in.
@@ -126,8 +120,6 @@ namespace PE
             *************************************************************************************/
             void Draw(EnumMeshType const meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
                 GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
-
-            void DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType);
 
             /*!***********************************************************************************
              \brief Makes a draw call for a square to represent the AABB collider passed in.
@@ -182,6 +174,8 @@ namespace PE
             // ----- Private variables ----- //
         private:
             GLFWwindow* p_windowRef{}; //! Pointer to the GLFW window to render to
+
+            Graphics::Camera m_mainCamera{}; //! Camera object
 
             Graphics::FrameBuffer m_imguiFrameBuffer{}; //! Framebuffer object for rendering to ImGui window
 
