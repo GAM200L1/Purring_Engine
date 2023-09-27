@@ -18,8 +18,9 @@
 
 layout (location = 0) in vec2 aVertexPosition; // IN vertex position
 layout (location = 1) in vec2 aTextureCoord;   // IN texture coordinate
+
 layout (location = 2) in float aIsTextured;    // IN texture boolean
-layout (location = 3) in vec4 aColor; // IN vertex color
+layout (location = 3) in vec4 aColor;          // IN vertex color
 layout (location = 4) in mat4 aModelToWorld;   // IN transformation matrix
 
 layout (location = 0) out vec4 vColor;         // OUT color
