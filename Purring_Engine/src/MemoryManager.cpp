@@ -38,7 +38,7 @@ namespace PE
 			//determine buffer size incase of writing over
 			int buffer = (size + 1) / 2;
 			//attempt to allocate memory
-			void* newptr = m_stackAllocator.Allocate(size + buffer);
+			void* p_newptr = m_stackAllocator.Allocate(size + buffer);
 
 			//save data of allocated memory
 			m_memoryAllocationData.push_back(MemoryData(name, size, buffer));
@@ -48,7 +48,7 @@ namespace PE
 			ss << "memory allocated of size: " << size << " to: " << name << " along with buffer of: " << buffer;
 			Editor::GetInstance().AddInfoLog(ss.str());
 
-			return newptr;
+			return p_newptr;
 		}
 		catch (int i) {
 			//sending error to logs
@@ -120,9 +120,9 @@ namespace PE
 		//if trying to allocate over max size
 		if (m_stackTop + size <= m_totalSize)
 		{
-			void* newPtr = (p_stack + m_stackTop);
+			void* p_newPtr = (p_stack + m_stackTop);
 			m_stackTop += size;
-			return newPtr;
+			return p_newPtr;
 		}
 		else 
 		{

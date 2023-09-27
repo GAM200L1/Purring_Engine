@@ -23,14 +23,11 @@
 #include "WindowEvent.h"
 #include <memory>
 #include "Singleton.h"
+
 namespace PE
 {
 	class EventHandler : public Singleton <EventHandler>
 	{
-		// ----- Constructors ----- // 
-	public:
-		EventHandler() : WindowEventDispatcher(), MouseEventDispatcher(), KeyEventDispatcher() {}
-
 		// ----- Public variables ----- // 
 	public:
 		EventDispatcher<WindowEvents> WindowEventDispatcher;
@@ -38,6 +35,12 @@ namespace PE
 		EventDispatcher<MouseEvents> MouseEventDispatcher;
 
 		EventDispatcher<KeyEvents> KeyEventDispatcher;
+		// ----- Constructors ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief     default constructor for event handler
+		*************************************************************************************/
+		EventHandler() : WindowEventDispatcher(), MouseEventDispatcher(), KeyEventDispatcher() {}
 
 	};
 

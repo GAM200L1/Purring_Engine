@@ -85,8 +85,8 @@ namespace PE
         window;
         //creation of event and sending
         PE::MouseScrolledEvent mse;
-        mse.xOffset = static_cast<int>(xoffset);
-        mse.yOffset = static_cast<int>(yoffset);
+        mse.xOffset = xoffset;
+        mse.yOffset = yoffset;
         PE::SEND_MOUSE_EVENT(mse)
     }
 

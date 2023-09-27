@@ -36,12 +36,20 @@ namespace PE
 	// Class for handling window resize events
 	class WindowResizeEvent : public Event<WindowEvents>
 	{
+
+		// ----- Public variables ----- // 
+	public:
+		unsigned int width = 0, height = 0;
 		// ----- Constructors ----- // 
 	public:
-		// Default constructor
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		WindowResizeEvent() : Event<WindowEvents>(WindowEvents::WindowResize, "WindowResize") {}
 
-		// Virtual destructor
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
 		virtual ~WindowResizeEvent() {}
 
 		// ----- Public methods ----- // 
@@ -54,16 +62,19 @@ namespace PE
 			return ss.str();
 		}
 
-		// ----- Public variables ----- // 
-	public:
-		unsigned int width = 0, height = 0;
 	};
 
 	class WindowCloseEvent : public Event<WindowEvents>
 	{
 		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		WindowCloseEvent() : Event<WindowEvents>(WindowEvents::WindowClose, "WindowClose") {}
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
 		virtual ~WindowCloseEvent() {}
 
 		// ----- Public methods ----- // 
@@ -85,7 +96,13 @@ namespace PE
 	{
 		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		WindowFocusEvent() : Event<WindowEvents>(WindowEvents::WindowFocus, "WindowFocus") {}
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
 		virtual ~WindowFocusEvent() {}
 
 		// ----- Public methods ----- // 
@@ -108,8 +125,14 @@ namespace PE
 	{
 		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		WindowLostFocusEvent() : Event<WindowEvents>(WindowEvents::WindowLostFocus, "WindowLostFocus") {}
-
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
+		virtual ~WindowLostFocusEvent() {}
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
@@ -123,15 +146,21 @@ namespace PE
 			ss << "Window no longer in focus";
 			return ss.str();
 		}
-
-		virtual ~WindowLostFocusEvent() {}
 	};
 
 	class WindowMovedEvent : public Event<WindowEvents>
 	{
+	public:
+		int xpos = 0, ypos = 0;
 		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		WindowMovedEvent() : Event<WindowEvents>(WindowEvents::WindowMoved, "WindowMoved") {}
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
 		virtual ~WindowMovedEvent() {}
 
 		// ----- Public methods ----- // 
@@ -148,7 +177,6 @@ namespace PE
 			return ss.str();
 		}
 
-		int xpos = 0, ypos = 0;
 	};
 
 };

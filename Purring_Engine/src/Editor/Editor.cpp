@@ -20,6 +20,7 @@
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Physics/PhysicsManager.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
@@ -41,7 +42,7 @@ namespace PE {
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
-		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyPressed, Editor::OnKeyPressedEvent, this)
+		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 			//for the object list
 			m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
@@ -102,7 +103,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::Init(GLFWwindow* m_window)
+	void Editor::Init(GLFWwindow* p_window)
 	{
 		//check imgui's version 
 		IMGUI_CHECKVERSION();
@@ -121,10 +122,10 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 
-		p_window = m_window;
+		p_window = p_window;
 		//getting the full display size of glfw so that the ui know where to be in
 		int width, height;
-		glfwGetWindowSize(m_window, &width, &height);
+		glfwGetWindowSize(p_window, &width, &height);
 		io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
 		m_renderWindowWidth = static_cast<float>(width) * 0.1f;
 		m_renderWindowHeight = static_cast<float>(height) * 0.1f;
@@ -137,7 +138,7 @@ namespace PE {
 		}
 
 		//init imgui for glfw and opengl 
-		ImGui_ImplGlfw_InitForOpenGL(m_window, true);
+		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
 		ImGui_ImplOpenGL3_Init("#version 460");
 
@@ -552,7 +553,7 @@ namespace PE {
 				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Clear Object List"))
+			if (ImGui::Button("Clear Object List##1"))
 			{
 				ClearObjectList();
 			}
@@ -678,21 +679,41 @@ namespace PE {
 				g_entityManager->Get<Transform>(id).height = 100;
 				g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
 			}
+			if (ImGui::Button("Toggle Step Physics"))
+			{
+				PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
+
+				if (PhysicsManager::GetStepPhysics())
+					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned On.\n");
+				else
+					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned Off.\n");
+			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 
 			ImGui::Separator();
 			ImGui::Text("Object Test");
 			if (ImGui::Button("Draw 2500 objects"))
 			{
-
+				ClearObjectList();
+				for (size_t i{}; i < 2500; ++i) {
+					EntityID id2 = g_entityFactory->CreateEntity();
+					g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+					g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
+					g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+					g_entityManager->Get<Transform>(id2).width = 50.f;
+					g_entityManager->Get<Transform>(id2).height = 50.f;
+					g_entityManager->Get<Transform>(id2).orientation = 0.f;
+					g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey("cat");
+					g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+				}
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Render Debug Lines"))
+			if (ImGui::Button("Toggle Debug Lines"))
 			{
 				ToggleDebugRender();
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Clear Object List"))
+			if (ImGui::Button("Clear Object List##2"))
 			{
 				ClearObjectList();
 			}
@@ -1358,43 +1379,43 @@ namespace PE {
 		m_consoleOutput.clear();
 	}
 
-	void Editor::OnKeyPressedEvent(const PE::Event<PE::KeyEvents>& e)
+	void Editor::OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_event)
 	{
-		PE::KeyPressedEvent KPE;
+		PE::KeyTriggeredEvent KTE;
 
 		//dynamic cast
-		if (e.GetType() == PE::KeyEvents::KeyPressed)
+		if (r_event.GetType() == PE::KeyEvents::KeyTriggered)
 		{
-			KPE = dynamic_cast<const PE::KeyPressedEvent&>(e);
+			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
 		}
 
 		//may want to change this to switch case to look cleaner
 
-		if (KPE.keycode == GLFW_KEY_F1)
+		if (KTE.keycode == GLFW_KEY_F1)
 			m_showConsole = !m_showConsole;
 
-		if (KPE.keycode == GLFW_KEY_F2)
+		if (KTE.keycode == GLFW_KEY_F2)
 			m_showObjectList = !m_showObjectList;
 
-		if (KPE.keycode == GLFW_KEY_F3)
+		if (KTE.keycode == GLFW_KEY_F3)
 			m_showLogs = !m_showLogs;
 
-		if (KPE.keycode == GLFW_KEY_F4)
+		if (KTE.keycode == GLFW_KEY_F4)
 			m_showSceneView = !m_showSceneView;
 
-		if (KPE.keycode == GLFW_KEY_F7)
+		if (KTE.keycode == GLFW_KEY_F7)
 			m_showTestWindows = !m_showTestWindows;
 
-		if (KPE.keycode == GLFW_KEY_F6)
+		if (KTE.keycode == GLFW_KEY_F6)
 			m_showPerformanceWindow = !m_showPerformanceWindow;
 
-		if (KPE.keycode == GLFW_KEY_ESCAPE)
+		if (KTE.keycode == GLFW_KEY_ESCAPE)
 			m_showEditor = !m_showEditor;
 
-		if (KPE.keycode == GLFW_KEY_F5)
+		if (KTE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;
 
-		if (KPE.keycode == GLFW_KEY_F10)
+		if (KTE.keycode == GLFW_KEY_F10)
 			ToggleDebugRender();
 	}
 

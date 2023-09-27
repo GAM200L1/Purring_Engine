@@ -42,7 +42,9 @@ namespace PE {
 
 	class Editor : public Singleton<Editor>
 	{
+		// ----- Singleton ----- // 
 		friend class Singleton<Editor>;
+
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************
@@ -61,13 +63,81 @@ namespace PE {
 
 		 \param[in] GLFWwindow 	the glfw window that we are drawing onto
 		*************************************************************************************/
-		void Init(GLFWwindow*);
+		void Init(GLFWwindow* p_window);
 		/*!***********************************************************************************
 		 \brief Render all imgui windows
 
 		 \param[in] GLuint 	the id of the texture to be drawn on the scene view
 		*************************************************************************************/
 		void Render(GLuint texture_id);
+
+		// ----- Public Getters ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief Return the size of the imgui window
+		 \param[out] float x value
+		 \param[out] float y value
+		*************************************************************************************/
+		void GetWindowSize(float&, float&);
+		/*!***********************************************************************************
+		 \brief get the boolean to show if the editor is active
+		 \return bool whether editor is active so we know we need to transfer the buffer
+		*************************************************************************************/
+		bool IsEditorActive();
+		/*!***********************************************************************************
+		 \brief get the boolean to know if we need to render debug lines
+		 \return bool return whether debug drawing is on or off
+		*************************************************************************************/
+		bool IsRenderingDebug();
+
+		// ----- Public Logging Functions ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief add logs to the log vector to print on the log window
+
+		 \param[in] std::string the string to print on the log window
+		*************************************************************************************/
+		void AddLog(std::string_view text);
+		/*!***********************************************************************************
+		 \brief add text to the console vector to print on the console window
+
+		 \param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddConsole(std::string_view text);
+		/*!***********************************************************************************
+		\brief add text appeneded with error to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddErrorLog(std::string_view text);
+
+		/*!***********************************************************************************
+		\brief add text appeneded with info to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddInfoLog(std::string_view text);
+		/*!***********************************************************************************
+		\brief add text appeneded with event to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddEventLog(std::string_view text);
+
+		/*!***********************************************************************************
+		\brief add text appeneded with warning to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddWarningLog(std::string_view text);
+
+		// -----Event Callbacks ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief the callback function for an onkeyevent
+		 \param[in] const temp::Event<temp::KeyEvents>& event called
+		*************************************************************************************/
+		void OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_e);
 
 		// ----- ImGui Window Functions ----- // 
 	private:
@@ -125,47 +195,8 @@ namespace PE {
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowSceneView(GLuint texture_id, bool* active);
-
-		// ----- ImGui Logging Functions ----- // 
-	public:
-		/*!***********************************************************************************
-		 \brief add logs to the log vector to print on the log window
-
-		 \param[in] std::string the string to print on the log window
-		*************************************************************************************/
-		void AddLog(std::string_view text);
-		/*!***********************************************************************************
-		 \brief add text to the console vector to print on the console window
-
-		 \param[in] std::string the string to print on the console window
-		*************************************************************************************/
-		void AddConsole(std::string_view text);
-		/*!***********************************************************************************
-		\brief add text appeneded with error to the console vector to print on the console window
-
-		\param[in] std::string the string to print on the console window
-		*************************************************************************************/
-		void AddErrorLog(std::string_view text);
-
-		/*!***********************************************************************************
-		\brief add text appeneded with info to the console vector to print on the console window
-
-		\param[in] std::string the string to print on the console window
-		*************************************************************************************/
-		void AddInfoLog(std::string_view text);
-		/*!***********************************************************************************
-		\brief add text appeneded with event to the console vector to print on the console window
-
-		\param[in] std::string the string to print on the console window
-		*************************************************************************************/
-		void AddEventLog(std::string_view text);
-
-		/*!***********************************************************************************
-		\brief add text appeneded with warning to the console vector to print on the console window
-
-		\param[in] std::string the string to print on the console window
-		*************************************************************************************/
-		void AddWarningLog(std::string_view text);
+		
+		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
 		 \brief empty the log vector
@@ -175,38 +206,6 @@ namespace PE {
 		 \brief empty the console vector
 		*************************************************************************************/
 		void ClearConsole();
-
-		/*!***********************************************************************************
-		 \brief print the logs onto a txt file, to be implemented later
-		*************************************************************************************/
-		//void PrintLogs();
-
-		// -----Event Callbacks ----- // 
-	public:
-		/*!***********************************************************************************
-		 \brief the callback function for an onkeyevent
-		 \param[in] const temp::Event<temp::KeyEvents>& event called
-		*************************************************************************************/
-		void OnKeyPressedEvent(const PE::Event<PE::KeyEvents>& e);
-
-		// ----- Getters ----- // 
-	public:
-		/*!***********************************************************************************
-		 \brief Return the size of the imgui window
-		 \param[out] float x value
-		 \param[out] float y value
-		*************************************************************************************/
-		void GetWindowSize(float&, float&);
-		/*!***********************************************************************************
-		 \brief get the boolean to show if the editor is active
-		 \return bool whether editor is active so we know we need to transfer the buffer
-		*************************************************************************************/
-		bool IsEditorActive();
-		/*!***********************************************************************************
-		 \brief get the boolean to know if we need to render debug lines
-		 \return bool return whether debug drawing is on or off
-		*************************************************************************************/
-		bool IsRenderingDebug();
 
 		// ----- Private Methods ----- //
 	private:
@@ -226,6 +225,10 @@ namespace PE {
 		*************************************************************************************/
 		void test();
 
+		// ----- Private Functions ----- // 
+		/*!***********************************************************************************
+		 \brief Clear all the objects on the scene
+		*************************************************************************************/
 		void ClearObjectList();
 
 

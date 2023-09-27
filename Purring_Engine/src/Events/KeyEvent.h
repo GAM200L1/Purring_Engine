@@ -23,7 +23,6 @@
 
 namespace PE
 {
-
 	//Key Event Types
 	enum class KeyEvents
 	{
@@ -35,9 +34,21 @@ namespace PE
 
 	class KeyTriggeredEvent : public Event<KeyEvents>
 	{
+		// ----- Public variables ----- // 
+	public:
+		int keycode = -1; // ascii keycode
+		float repeat = 0; //is the key on repeat
+
 		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		KeyTriggeredEvent() : Event<KeyEvents>(KeyEvents::KeyTriggered, "KeyTriggered") {}
+
+		/*!***********************************************************************************
+		\brief			default destructor of events
+		*************************************************************************************/
 		virtual ~KeyTriggeredEvent() {}
 
 		// ----- Public methods ----- // 
@@ -59,17 +70,25 @@ namespace PE
 			return ss.str();
 		}
 
-		// ----- Public variables ----- // 
-	public:
-		int keycode = -1; // ascii keycode
-		float repeat = 0; //is the key on repeat
 	};
 
 	class KeyPressedEvent : public Event<KeyEvents>
 	{
+
+		// ----- Public variables ----- // 
+	public:
+		int keycode = -1; // ascii keycode
+		float repeat = 0; //is the key on repeat
+
 		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		KeyPressedEvent() : Event<KeyEvents>(KeyEvents::KeyPressed, "KeyPressed") {}
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
 		virtual ~KeyPressedEvent() {}
 
 		// ----- Public methods ----- // 
@@ -91,18 +110,23 @@ namespace PE
 
 			return ss.str();
 		}
-
-		// ----- Public variables ----- // 
-	public:
-		int keycode = -1; // ascii keycode
-		float repeat = 0; //is the key on repeat
 	};
 
 	class KeyReleaseEvent : public Event<KeyEvents>
 	{
+		// ----- Public variables ----- // 
+	public:
+		int keycode = -1; // ascii keycode
+
 		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		KeyReleaseEvent() : Event<KeyEvents>(KeyEvents::KeyRelease, "KeyRelease") {}
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
 		virtual ~KeyReleaseEvent() {}
 
 		// ----- Public methods ----- // 
@@ -124,9 +148,6 @@ namespace PE
 			return ss.str();
 		}
 
-		// ----- Public variables ----- // 
-	public:
-		int keycode = -1; // ascii keycode
 	};
 
 
