@@ -19,8 +19,10 @@ namespace PE
 	
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
+		r_AABB.center = r_position;
 		r_AABB.min = r_position - (r_scale * 0.5f);
 		r_AABB.max = r_position + (r_scale * 0.5f);
+		r_AABB.scale = r_scale;
 	}
 	
 
@@ -38,9 +40,8 @@ namespace PE
 	{
 		point0 = r_startPt;
 		point1 = r_endPt;
-		normal = point1 - point0;
-		normal = vec2{ normal.y, -normal.x };
-		normal.Normalize();
+		lineVec = point1 - point0;
+		normal = vec2{ lineVec.y, -lineVec.x }.GetNormalized();
 	}
 
 	Manifold::Manifold(Contact const& r_contData,
@@ -50,14 +51,14 @@ namespace PE
 					     r_transformA{ r_transA }, r_transformB{ r_transB },
 					     r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
 
-	void Manifold::Resolve(float deltaTime)
+	void Manifold::ResolveCollision()
 	{
 		ResolveVelocity();
-		ResolvePosition(deltaTime);
+		ResolvePosition();
 	}
 
 	// set the objects to where they would be when they just collide
-	void Manifold::ResolvePosition(float deltaTime)
+	void Manifold::ResolvePosition()
 	{
 		float totalInvMass = r_rigidBodyA->GetInverseMass() + r_rigidBodyB->GetInverseMass();
 
@@ -69,7 +70,7 @@ namespace PE
 		}
 		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());
+			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());	
 		}
 	}
 

@@ -72,7 +72,7 @@ namespace PE
 	{
 		// ----- Constructors ----- // 
 	public:
-		KeyReleaseEvent() : Event<KeyEvents>(KeyEvents::KeyRelease, "KeyReleaseE") {}
+		KeyReleaseEvent() : Event<KeyEvents>(KeyEvents::KeyRelease, "KeyRelease") {}
 		virtual ~KeyReleaseEvent() {}
 
 		// ----- Public methods ----- // 

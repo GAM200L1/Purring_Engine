@@ -47,25 +47,30 @@
 // Time
 #include "Time/TimeManager.h"
 
-#include "Data/SerializationManager.h"
-// testing
-Logger engine_logger = Logger("ENGINE");
-SerializationManager sm;
+// Physics and Collision
 #include "Physics/RigidBody.h"
 #include "Physics/Colliders.h"
 #include "Physics/CollisionManager.h"
 #include "Physics/PhysicsManager.h"
+
+// Serialization
+#include "Data/SerializationManager.h"
+
+// ECS
 #include "ECS//EntityFactory.h"
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+
+// Graphics
 #include "Graphics/Renderer.h"
 #include "InputSystem.h"
 
-std::queue<EntityID> lastEnt{};
+#include <random>
+SerializationManager sm;
+Logger engine_logger = Logger("ENGINE");
 
-std::vector<EntityID> testVector;
 
 
 /*-----------------------------------------------------------------------------
@@ -82,7 +87,6 @@ PE::CoreApplication::CoreApplication()
     REGISTERCOMPONENT(Transform);
     REGISTERCOMPONENT(Graphics::Renderer);
 
-
 	m_Running = true;
 	m_lastFrameTime = 0;
 
@@ -90,11 +94,11 @@ PE::CoreApplication::CoreApplication()
     m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
 
     m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
+    
     // set flags
     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
-
 
     // Audio Stuff - HANS
     
@@ -105,47 +109,72 @@ PE::CoreApplication::CoreApplication()
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();
     //assignning memory manually to renderer manager
+
+    // Add system to list
     Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
-    AddSystem(rendererManager);
+    PhysicsManager* physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
+    CollisionManager* collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* ip = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     AddSystem(ip);
+    AddSystem(physicsManager);
+    AddSystem(collisionManager);
+    AddSystem(rendererManager);
+
 
     // Load a texture
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
     ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
-    for (size_t i{}; i < 1; ++i)
-    {
-        EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
 
-        // Make overlapping circle colliders at the origin
-        EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
-        EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
-        EntityManager::GetInstance().Get<Transform>(id).width = 50;
-        EntityManager::GetInstance().Get<Transform>(id).height = 50;
-        EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
-        EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
-    }
+    g_entityFactory->CreateFromPrefab("GameObject");
+    g_entityFactory->CreateFromPrefab("GameObject");
+
+    // ----- Limit Test for Physics ----- //
+    //std::random_device rd;
+    //std::mt19937 gen(rd());
+    //for (size_t i{ 2 }; i < 20; ++i)
+    //{
+    //    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+    //
+    //    std::uniform_int_distribution<>distr0(-550, 550);
+    //    g_entityManager->Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
+    //    std::uniform_int_distribution<>distr1(-250, 250);
+    //    g_entityManager->Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
+    //    std::uniform_int_distribution<>distr2(10, 200);
+    //    g_entityManager->Get<Transform>(id).width = static_cast<float>(distr2(gen));
+    //    g_entityManager->Get<Transform>(id).height = static_cast<float>(distr2(gen));
+    //    g_entityManager->Get<Transform>(id).orientation = 0.f;
+    //
+    //    if (i%3)
+    //        g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+    //    
+    //    if (i%2)
+    //        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+    //    else
+    //        g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
+    //}
 
     // Make the first gameobject with a collider circle at world pos (100, 100)
-    EntityManager::GetInstance().Get<Transform>(0).position.x = 100.f;
-    EntityManager::GetInstance().Get<Transform>(0).position.y = 100.f;
-    EntityManager::GetInstance().Get<Transform>(0).width = 100.f;
-    EntityManager::GetInstance().Get<Transform>(0).height = 100.f;
-    EntityManager::GetInstance().Get<Transform>(0).orientation = 0.f;
-    EntityManager::GetInstance().Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    EntityManager::GetInstance().Get<Collider>(0).colliderVariant = CircleCollider();
-    EntityManager::GetInstance().Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
-    EntityManager::GetInstance().Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
+    g_entityManager->Get<Transform>(0).position.x = 0.f;
+    g_entityManager->Get<Transform>(0).position.y = 0.f;
+    g_entityManager->Get<Transform>(0).width = 100.f;
+    g_entityManager->Get<Transform>(0).height = 100.f;
+    g_entityManager->Get<Transform>(0).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
+    g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
+    g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
+    g_entityManager->Get<RigidBody>(0).SetMass(10.f);
 
-    //// Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
-    //EntityManager::GetInstance().Get<Transform>(1).position.x = -100.f;
-    //EntityManager::GetInstance().Get<Transform>(1).position.y = -100.f;
-    //EntityManager::GetInstance().Get<Transform>(1).width = 50.f;
-    //EntityManager::GetInstance().Get<Transform>(1).height = 200.f;
-    //EntityManager::GetInstance().Get<Transform>(1).orientation = 0.f;
-    //EntityManager::GetInstance().Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    //EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
+    // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
+    g_entityManager->Get<Transform>(1).position.x = -100.f;
+    g_entityManager->Get<Transform>(1).position.y = -100.f;
+    g_entityManager->Get<Transform>(1).width = 50.f;
+    g_entityManager->Get<Transform>(1).height = 200.f;
+    g_entityManager->Get<Transform>(1).orientation = 0.f;
+    g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
+    g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    g_entityManager->Get<Collider>(1).isTrigger = true;
 
     for (size_t i{}; i < 2500; ++i) {
         EntityID id2 = EntityFactory::GetInstance().CreateEntity();
@@ -259,56 +288,76 @@ void PE::CoreApplication::Run()
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();
 
-        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        //if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        //{
+        //    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+        //    g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+        //    g_entityManager->Get<Transform>(id).height = 100.f;
+        //    g_entityManager->Get<Transform>(id).width = 100.f;
+        //    g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+        //    g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+        //    lastEnt.emplace(id);
+        //}
+        //
+        //if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        //{
+        //    if (lastEnt.size())
+        //    {
+        //        g_entityManager->RemoveEntity(lastEnt.front());
+        //        lastEnt.pop();
+        //    }
+        //}
+
+        //if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        //{
+        //    EntityManager ent;
+        //}
+
+        // Set step physics
+        if (glfwGetKey(m_window, GLFW_KEY_P) == GLFW_PRESS)
         {
-            EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-            EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
-            EntityManager::GetInstance().Get<Transform>(id).height = 100.f;
-            EntityManager::GetInstance().Get<Transform>(id).width = 100.f;
-            EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-            EntityManager::GetInstance().Get<Transform>(id).position = vec2{ 0.f, 0.f };
-            lastEnt.emplace(id);
+            PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_N) == GLFW_PRESS)
+        {
+            PhysicsManager::GetAdvanceStep() = !PhysicsManager::GetAdvanceStep();
         }
 
-        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
-        {
-            if (lastEnt.size())
-            {
-                EntityManager::GetInstance().RemoveEntity(lastEnt.front());
-                lastEnt.pop();
-            }
-        }
-
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            EntityManager ent;
-        }
-
+        // Character movement
         if (glfwGetKey(m_window, GLFW_KEY_W) == GLFW_PRESS)
         {
             EntityManager::GetInstance().Get<RigidBody>(0).ApplyForce(vec2{ 0.f,1.f } * 5000.f);
         }
-
         if (glfwGetKey(m_window, GLFW_KEY_S) == GLFW_PRESS)
         {
             EntityManager::GetInstance().Get<RigidBody>(0).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
         }
-
         if (glfwGetKey(m_window, GLFW_KEY_A) == GLFW_PRESS)
         {
             EntityManager::GetInstance().Get<RigidBody>(0).ApplyForce(vec2{ -1.f,0.f }*5000.f);
         }
-
         if (glfwGetKey(m_window, GLFW_KEY_D) == GLFW_PRESS)
         {
             EntityManager::GetInstance().Get<RigidBody>(0).ApplyForce(vec2{ 1.f,0.f }*5000.f);
         }
 
-        // Physics test
-        PhysicsManager::Step(TimeManager::GetInstance().GetDeltaTime());
-        CollisionManager::UpdateColliders();
-        CollisionManager::TestColliders();
-        CollisionManager::ResolveCollision(TimeManager::GetInstance().GetDeltaTime());
+        // dash
+        if (glfwGetKey(m_window, GLFW_KEY_LEFT_SHIFT) == GLFW_PRESS)
+        {
+            if (g_entityManager->Get<RigidBody>(0).m_velocity.Dot(g_entityManager->Get<RigidBody>(0).m_velocity) == 0.f)
+                g_entityManager->Get<RigidBody>(0).m_velocity = vec2{ 1.f, 0.f };
+            g_entityManager->Get<RigidBody>(0).ApplyLinearImpulse(g_entityManager->Get<RigidBody>(0).m_velocity.GetNormalized() * 1000.f);
+        }
+
+        // Character Rotation
+        if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).m_rotationVelocity = -PE_PI;
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_LEFT) == GLFW_PRESS)
+        {
+            g_entityManager->Get<RigidBody>(0).m_rotationVelocity = PE_PI;
+        }
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)
@@ -322,7 +371,7 @@ void PE::CoreApplication::Run()
         // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            TimeManager::GetInstance().SystemStartFrame(i);
+            TimeManager::GetInstance().SystemStartFrame();
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
@@ -343,8 +392,6 @@ void PE::CoreApplication::Run()
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();
     ResourceManager::GetInstance().UnloadResources();
-    PhysicsManager::DeleteInstance();
-    CollisionManager::DeleteInstance();
 }
 
 

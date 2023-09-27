@@ -21,10 +21,10 @@
 
 namespace PE
 {
-	constexpr auto TotalSystems = 3; // hardcoded?
+	constexpr auto TotalSystems = 4; // hardcoded?
 	enum SystemType
 	{
-		//LOGIC = 0,
+		INPUT = 0,
 		PHYSICS,
 		COLLISION,
 		GRAPHICS,
@@ -35,7 +35,7 @@ namespace PE
 	public:
 		friend class Singleton<TimeManager>;
 		// system
-		void SystemStartFrame(int system);
+		void SystemStartFrame();
 		void SystemEndFrame(int system);
 
 		// global
@@ -52,12 +52,7 @@ namespace PE
 		float GetSystemFrameTime(int system) const { return m_systemFrameTime[system]; }
 
 	private:
-		TimeManager()
-		{
-			// might need to init the other variables
-			m_frameTime = 1.0 / 60.0; // default fps
-			m_deltaTime = 1.0 / 60.0;
-		}
+		TimeManager();
 
 	private:
 		// system time
