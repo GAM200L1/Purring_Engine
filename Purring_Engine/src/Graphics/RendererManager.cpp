@@ -230,8 +230,8 @@ namespace PE
             // Make draw call for each game object with a renderer component
             for (const EntityID& id : SceneView<Renderer>())
             {
-                Renderer& renderer{ *g_entityManager->GetPointer<Renderer>(id) };
-                Transform& transform{ *g_entityManager->GetPointer<Transform>(id) };
+                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
 
                 glm::mat4 glmObjectTransform
                 {
@@ -266,7 +266,7 @@ namespace PE
 
             int count{};
             size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
-            m_meshes.at(meshIndex).Bind();
+            m_meshes[meshIndex].Bind();
 
             std::string currentTexture{};
             std::shared_ptr<Graphics::Texture> p_texture{};
@@ -280,8 +280,8 @@ namespace PE
 
             for (const EntityID& id : SceneView<Renderer>())
             {
-                const Renderer& renderer{ *g_entityManager->GetPointer<Renderer>(id) };
-                const Transform& transform{ *g_entityManager->GetPointer<Transform>(id) };
+                const Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
+                const Transform& transform{ g_entityManager->Get<Transform>(id) };
 
                 // Attempt to retrieve and bind the texture
                 if (renderer.GetTextureKey().empty())
@@ -335,7 +335,7 @@ namespace PE
             DrawInstanced(count, meshIndex, GL_TRIANGLES);
 
             // Unbind everything
-            m_meshes.at(meshIndex).Unbind();
+            m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
 
             if (p_texture != nullptr)
@@ -383,8 +383,8 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
-                RigidBody& rigidbody{ *g_entityManager->GetPointer<RigidBody>(id) };
-                Transform& transform{ *g_entityManager->GetPointer<Transform>(id) };
+                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
 
                 glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
@@ -433,8 +433,8 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
-                RigidBody& rigidbody{ *g_entityManager->GetPointer<RigidBody>(id) };
-                Transform& transform{ *g_entityManager->GetPointer<Transform>(id) };
+                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
+                Transform& transform{ g_entityManager->Get<Transform>(id) };
 
                 glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
