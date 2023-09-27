@@ -24,7 +24,7 @@
 #include <sstream>
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
-
+#include "InputSystem.h"
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -91,14 +91,14 @@ namespace PE
 		// Make the newly created window the current OpenGL context
 		glfwMakeContextCurrent(window);
 
-		// Set GLFW input callbacks
-		glfwSetCursorPosCallback(window, mouse_callback);				// For mouse movement
-		glfwSetMouseButtonCallback(window, check_mouse_buttons);		// For mouse button presses
-		glfwSetScrollCallback(window, scroll_callback);					// For scroll wheel events
-		glfwSetKeyCallback(window, key_callback);						// For keyboard events
-
 		// Required to set window user pointer for accessing callback methods in this class
 		glfwSetWindowUserPointer(window, reinterpret_cast<void*>(this));
+
+		// Set GLFW input callbacks
+		glfwSetCursorPosCallback(window, InputSystem::mouse_callback);				// For mouse movement
+		glfwSetMouseButtonCallback(window, InputSystem::check_mouse_buttons);		// For mouse button presses
+		glfwSetScrollCallback(window, InputSystem::scroll_callback);					// For scroll wheel events
+		glfwSetKeyCallback(window, InputSystem::key_callback);						// For keyboard events
 
 		// Set GLFW window callbacks
 		glfwSetWindowSizeCallback(window, window_resize_callback);		// For window resizing

@@ -65,6 +65,7 @@
 
 // Graphics
 #include "Graphics/Renderer.h"
+#include "InputSystem.h"
 
 // testing
 Logger engine_logger = Logger("ENGINE");
@@ -75,6 +76,9 @@ PE::EntityManager entManager;
 PE::EntityFactory entFactory;
 
 std::queue<EntityID> lastEnt{};
+
+std::vector<EntityID> testVector;
+
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -112,13 +116,18 @@ PE::CoreApplication::CoreApplication()
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();
     //assignning memory manually to renderer manager
+
+    // Add system to list
     Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
     PhysicsManager* physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
+    InputSystem* ip = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(ip);
     AddSystem(physicsManager);
     AddSystem(collisionManager);
     AddSystem(rendererManager);
-    
+
+
     // Load a texture
     std::string catTextureName{ "cat" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
@@ -174,19 +183,21 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
     g_entityManager->Get<Collider>(1).isTrigger = true;
 
-    // Render 50x50 purple sprites in a grid
-    //for (size_t i{}; i < 200; ++i)
-    //{
-    //    EntityID id = g_entityFactory->CreateEntity();
-    //    g_entityFactory->Assign(id, { "Transform", "Renderer" });
-    //    g_entityManager->Get<Transform>(id).position.x = 25.f * (i % 20) - 250.f;
-    //    g_entityManager->Get<Transform>(id).position.y = 25.f * (i / 20) - 250.f;
-    //    g_entityManager->Get<Transform>(id).width = 50.f;
-    //    g_entityManager->Get<Transform>(id).height = 50.f;
-    //    g_entityManager->Get<Transform>(id).orientation = 0.f;
-    //    g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(catTextureName);
-    //    g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 0.f, 1.f, 0.1f);
-    //}
+    for (size_t i{}; i < 2500; ++i) {
+        EntityID id2 = g_entityFactory->CreateEntity();
+        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+        g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
+        g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+        g_entityManager->Get<Transform>(id2).width = 50.f;
+        g_entityManager->Get<Transform>(id2).height = 50.f;
+        g_entityManager->Get<Transform>(id2).orientation = 0.f;
+        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+    }
+    for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
+    {
+        testVector.emplace_back(id);
+    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -235,37 +246,79 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
+        if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "SceneView<Renderer, Transform>() took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : SceneView<Graphics::Renderer>())
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "SceneView<Renderer>() took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
+        {
+            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
+            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+            clock_t start, end;
+            start = clock();
+            for (const EntityID& id : testVector)
+            {
+                id;
+            }
+            end = clock();
+            double total = double(end - start) / double(CLOCKS_PER_SEC);
+            std::string str = "Stored vector took: " + std::to_string(total) + " sec to run...";
+            engine_logger.AddLog(false, str, __FUNCTION__);
+        }
 
         //Audio Stuff - HANS
         AudioManager::GetInstance()->Update();
 
-        if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
-        {
-            EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-            if (std::rand() % 2)
-                g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
-            else
-                g_entityManager->Get<Collider>(id).colliderVariant = AABBCollider();
-            g_entityManager->Get<Transform>(id).height = 100.f;
-            g_entityManager->Get<Transform>(id).width = 100.f;
-            g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-            g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
-            lastEnt.emplace(id);
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_Q) == GLFW_PRESS)
+        //{
+        //    EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+        //    g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+        //    g_entityManager->Get<Transform>(id).height = 100.f;
+        //    g_entityManager->Get<Transform>(id).width = 100.f;
+        //    g_entityManager->Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+        //    g_entityManager->Get<Transform>(id).position = vec2{ 0.f, 0.f };
+        //    lastEnt.emplace(id);
+        //}
+        //
+        //if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
+        //{
+        //    if (lastEnt.size())
+        //    {
+        //        g_entityManager->RemoveEntity(lastEnt.front());
+        //        lastEnt.pop();
+        //    }
+        //}
 
-        if (glfwGetKey(m_window, GLFW_KEY_E) == GLFW_PRESS)
-        {
-            if (lastEnt.size())
-            {
-                g_entityManager->RemoveEntity(lastEnt.front());
-                lastEnt.pop();
-            }
-        }
-
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            EntityManager ent;
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        //{
+        //    EntityManager ent;
+        //}
 
         // Set step physics
         if (glfwGetKey(m_window, GLFW_KEY_P) == GLFW_PRESS)

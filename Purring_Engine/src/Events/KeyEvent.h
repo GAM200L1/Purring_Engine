@@ -56,7 +56,7 @@ namespace PE
 				ss << "GLFW KeyCode of Key Pressed: " << keycode;
 			}
 
-			if (repeat)
+			if (repeat < 0)
 				ss << " (Key is being held)";
 
 			return ss.str();
@@ -65,14 +65,14 @@ namespace PE
 		// ----- Public variables ----- // 
 	public:
 		int keycode = -1; // ascii keycode
-		bool repeat = 0; //is the key on repeat
+		float repeat = 0; //is the key on repeat
 	};
 
 	class KeyReleaseEvent : public Event<KeyEvents>
 	{
 		// ----- Constructors ----- // 
 	public:
-		KeyReleaseEvent() : Event<KeyEvents>(KeyEvents::KeyRelease, "KeyReleaseE") {}
+		KeyReleaseEvent() : Event<KeyEvents>(KeyEvents::KeyRelease, "KeyRelease") {}
 		virtual ~KeyReleaseEvent() {}
 
 		// ----- Public methods ----- // 

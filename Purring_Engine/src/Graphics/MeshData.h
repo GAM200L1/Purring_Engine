@@ -39,6 +39,15 @@ namespace PE
             // ----- Public methods ----- // 
         public:
             /*!***********************************************************************************
+             \brief Returns the 
+
+             \return GLuint - 
+            *************************************************************************************/
+            inline GLuint GetVertexArrayObjectIndex() const { return m_vertexArrayObject; }
+
+            // ----- Public methods ----- // 
+        public:
+            /*!***********************************************************************************
              \brief Creates a vertex array object from the mesh data.
 
              \return true - If the Vertex Array Object was created successfully.

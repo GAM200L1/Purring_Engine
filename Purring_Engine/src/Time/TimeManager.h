@@ -21,10 +21,10 @@
 
 namespace PE
 {
-	constexpr auto TotalSystems = 3; // hardcoded?
+	constexpr auto TotalSystems = 4; // hardcoded?
 	enum SystemType
 	{
-		//LOGIC = 0,
+		INPUT = 0,
 		PHYSICS,
 		COLLISION,
 		GRAPHICS,

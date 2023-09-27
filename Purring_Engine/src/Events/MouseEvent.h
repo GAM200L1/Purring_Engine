@@ -61,9 +61,13 @@ namespace PE
 			std::stringstream ss;
 			ss << "Button Pressed: " << button;
 			return ss.str();
+			//if (repeat < 0)
+			//	ss << " (Button Being Held)";
+
 		}
 
 		int button = -1; //lmb 1, mmb 2, rmb 3
+		float repeat = 0;
 	};
 
 	class MouseButtonReleaseEvent : public Event<MouseEvents>
