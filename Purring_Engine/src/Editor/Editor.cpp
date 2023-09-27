@@ -886,13 +886,54 @@ namespace PE {
 									if (index)
 									{
 										g_entityManager->Get<Collider>(entityID).colliderVariant = CircleCollider();
-									}
+									
+}
 									else
 									{
 										g_entityManager->Get<Collider>(entityID).colliderVariant = AABBCollider();
 									}
 								}
 
+								if (index)
+								{
+									ImVec2 offset;
+									CircleCollider* p_cc = &std::get<1>(g_entityManager->Get<Collider>(entityID).colliderVariant);
+
+									g_entityManager->Get<Collider>(entityID).colliderVariant = CircleCollider();
+									offset.x = (*p_cc).positionOffset.x;
+									offset.y = (*p_cc).positionOffset.y;
+									ImGui::Text("Collider Position Offset: ");
+									ImGui::Text("x pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##xoffsetcircle", &offset.x, 1.0f, 100.f, "%.3f");
+									ImGui::Text("y pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetcircle", &offset.x, 1.0f, 100.f, "%.3f");
+									(*p_cc).positionOffset.y = offset.y;
+									(*p_cc).positionOffset.x = offset.x;
+									
+									float offset2 = (*p_cc).scaleOffset;
+									ImGui::Text("Collider Scale Offset: ");
+									ImGui::Text("sc x offset: "); ImGui::SameLine(); ImGui::InputFloat("##scaleOffsetcircle", &offset2, 1.0f, 100.f, "%.3f");
+							
+									(*p_cc).scaleOffset = std::abs(offset2);
+								}
+								else
+								{
+									ImVec2 offset;
+									offset.x = g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x;
+									offset.y = g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y;
+									ImGui::Text("Collider Position Offset: ");
+									ImGui::Text("pos x offset: "); ImGui::SameLine(); ImGui::InputFloat("##xoffsetaabb", &offset.x, 1.0f, 100.f, "%.3f");
+									ImGui::Text("pos y offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetaabb", &offset.y, 1.0f, 100.f, "%.3f");
+									g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y = offset.y;
+									g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x = offset.x;
+
+									ImVec2 offset2;
+									offset2.x = g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x;
+									offset2.y = g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y;
+									ImGui::Text("Collider Scale Offset: ");
+									ImGui::Text("x scale offset: "); ImGui::SameLine(); ImGui::InputFloat("##xscaleOffsetaabb", &offset2.x, 1.0f, 100.f, "%.3f");
+									ImGui::Text("y scale offset: "); ImGui::SameLine(); ImGui::InputFloat("##yscaleOffsetaabb", &offset2.y, 1.0f, 100.f, "%.3f");
+									g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y = std::abs(offset2.y);
+									g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x = std::abs(offset2.x);
+								}
 								ImGui::Checkbox("Is Trigger", &g_entityManager->Get<Collider>(m_currentSelectedObject).isTrigger);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}

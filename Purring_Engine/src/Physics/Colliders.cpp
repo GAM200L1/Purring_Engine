@@ -21,8 +21,8 @@ namespace PE
 	{
 		r_AABB.center = r_position + r_AABB.positionOffset;
 		r_AABB.scale = vec2{ r_scale.x * r_AABB.scaleOffset.x, r_scale.y * r_AABB.scaleOffset.y };
-		r_AABB.min = r_AABB.center - (r_scale * 0.5f);
-		r_AABB.max = r_AABB.center + (r_scale * 0.5f);
+		r_AABB.min = r_AABB.center - (r_AABB.scale * 0.5f);
+		r_AABB.max = r_AABB.center + (r_AABB.scale * 0.5f);
 	}
 	
 
