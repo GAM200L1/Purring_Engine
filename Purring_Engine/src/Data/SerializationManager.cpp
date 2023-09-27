@@ -88,26 +88,22 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
     // Get a reference or pointer to your EntityManager
     PE::EntityManager* entityManager = PE::g_entityManager;
 
+    // This is to check if "Entity" key exists in the JSON 
     if (j.contains("Entity"))
     {
-        entity.name = j["Entity"]["name"];      // Extract the entity's name from the JSON.
+        const auto& entityJson = j["Entity"];
 
-        // Find the last underscore in the entity's name to extract the entityID.
-        size_t lastUnderscore = entity.name.find_last_of('_');
-        std::string idString;
-
-        if (lastUnderscore != std::string::npos)
+        // This is to check if "name" key exists under "Entity"
+        if (entityJson.contains("name"))
         {
-            idString = entity.name.substr(lastUnderscore + 1);
+            entity.name = entityJson["name"];
         }
         else
         {
-            // Handle the case when there's no underscore in the name.
-            idString = "1";                      // @jw, you can define some default behavior here if you want to.
+            // if name is missing debuggigin
+            std::cerr << "Error: Missing 'name' key in entity JSON." << std::endl;
+            return std::make_pair(Entity(), -1);
         }
-
-        // Convert the extracted ID string to an integer, or set entityID to -1 if it's empty.
-        entityID = (idString.empty()) ? -1 : std::stoi(idString);
 
         // Loop through the data items in the JSON and deserialize them based on their types.
         EntityID id = PE::g_entityFactory->CreateEntity();
@@ -123,8 +119,20 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
                 std::string type = dat["type"];
                 //entity.data[k] = std::any(dat["value"].get<float>());
             }
-            // Deseria
+            // // Deserialize components
+                   
+            if (entityJson["components"].contains("Transform"))
+            {
+                const auto& transformJson = entityJson["components"]["Transform"];
+
+                if (transformJson.is_object())
+                {
+                    PE::Transform t = PE::Transform::FromJson(transformJson);
+                }
+            }
         }
+
+
         //for (const auto& [key, val] : j["Entity"]["data"].items())
         //{
         //    std::string type = val["type"];
@@ -149,19 +157,21 @@ std::pair<Entity, int> SerializationManager::deserializeEntity(const nlohmann::j
         //    // To add similar blocks for other data types in the future..... -hans
         //}
 
-        // Deserialize Transform component IF it exists in JSON.
-        if (j["Entity"]["components"].contains("Transform")) {
-            PE::Transform t = PE::Transform::FromJson(j["Entity"]["components"]["Transform"]);
 
-            // Add Transform component to this entity
-            entityManager->Assign(entityID, "Transform");
+// @JW i commented this otu to test stufff
+        //// Deserialize Transform component IF it exists in JSON.
+        //if (j["Entity"]["components"].contains("Transform")) {
+        //    PE::Transform t = PE::Transform::FromJson(j["Entity"]["components"]["Transform"]);
 
-            // Get the Transform component
-            PE::Transform* transform = static_cast<PE::Transform*>(entityManager->GetComponentPoolPointer("Transform")->Get(entityID));
+        //    // Add Transform component to this entity
+        //    entityManager->Assign(entityID, "Transform");
 
-            // Update the component data
-            *transform = t;
-        }
+        //    // Get the Transform component
+        //    PE::Transform* transform = static_cast<PE::Transform*>(entityManager->GetComponentPoolPointer("Transform")->Get(entityID));
+
+        //    // Update the component data
+        //    *transform = t;
+        //}
         if (j["Entity"]["components"].contains("RigidBody")) {
             PE::RigidBody rb = PE::RigidBody::FromJson(j["Entity"]["components"]["RigidBody"]); // Assuming you implement a FromJson function
 
