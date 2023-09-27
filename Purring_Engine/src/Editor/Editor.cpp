@@ -381,10 +381,10 @@ namespace PE {
 			if (ImGui::Button("Create Object")) // add a string into vector
 			{
 				AddInfoLog("Object Created");
-				EntityID id = g_entityFactory->CreateEntity();
-				g_entityFactory->Assign(id, { "Transform", "Renderer" });
-				g_entityManager->Get<Transform>(id).height = 100.f;
-				g_entityManager->Get<Transform>(id).width = 100.f;
+				EntityID id = EntityFactory::GetInstance().CreateEntity();
+				EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
+				EntityManager::GetInstance().Get<Transform>(id).height = 100.f;
+				EntityManager::GetInstance().Get<Transform>(id).width = 100.f;
 				//UpdateObjectList();
 			}
 			ImGui::SameLine(); // set the buttons on the same line

@@ -87,16 +87,12 @@ namespace PE
 	{
 		for (EntityID ColliderID_1 : SceneView<Collider, Transform>())
 		{
-			Collider& collider1 = g_entityManager->Get<Collider>(ColliderID_1);
-
 			Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
-			
+
 			for (EntityID ColliderID_2 : SceneView<Collider>())
 			{
-				Collider& collider2 = g_entityManager->Get<Collider>(ColliderID_2);
-
 				Collider& collider2 = EntityManager::GetInstance().Get<Collider>(ColliderID_2);
-				
+
 				// if its the same don't check
 				if (ColliderID_1 == ColliderID_2) { continue; }
 				// if they have been checked before don't check again
@@ -120,19 +116,19 @@ namespace PE
 								{
 									m_manifolds.emplace_back
 									(Manifold{ contactPt,
-											   g_entityManager->Get<Transform>(ColliderID_2),
-											   g_entityManager->Get<Transform>(ColliderID_1),
-											   g_entityManager->GetPointer<RigidBody>(ColliderID_2),
-											   g_entityManager->GetPointer<RigidBody>(ColliderID_1) });
+											   EntityManager::GetInstance().Get<Transform>(ColliderID_2),
+											   EntityManager::GetInstance().Get<Transform>(ColliderID_1),
+											   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2),
+											   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1) });
 								}
 								else
 								{
 									m_manifolds.emplace_back
 									(Manifold{ contactPt,
-											   g_entityManager->Get<Transform>(ColliderID_1),
-											   g_entityManager->Get<Transform>(ColliderID_2),
-											   g_entityManager->GetPointer<RigidBody>(ColliderID_1),
-											   g_entityManager->GetPointer<RigidBody>(ColliderID_2) });
+											   EntityManager::GetInstance().Get<Transform>(ColliderID_1),
+											   EntityManager::GetInstance().Get<Transform>(ColliderID_2),
+											   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1),
+											   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2) });
 								}
 							}
 							else
@@ -382,11 +378,11 @@ Update Colliders
 		{
 			// Dynamic Collision Check
 
-			vec2 const& startPos_e1 = g_entityManager->Get<RigidBody>(r_entity1).m_prevPosition;
+			vec2 const& startPos_e1 = EntityManager::GetInstance().Get<RigidBody>(r_entity1).m_prevPosition;
 			vec2 const& endPos_e1 = r_circle1.center;
 			//vec2 const& v_e1 = endPos_e1 - startPos_e1;
 
-			vec2 const& startPos_e2 = g_entityManager->Get<RigidBody>(r_entity2).m_prevPosition;
+			vec2 const& startPos_e2 = EntityManager::GetInstance().Get<RigidBody>(r_entity2).m_prevPosition;
 			vec2 const& endPos_e2 = r_circle2.center;
 			//vec2 const& v_e2 = endPos_e2 - startPos_e2;
 
