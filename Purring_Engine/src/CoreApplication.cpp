@@ -70,14 +70,9 @@
 // testing
 Logger engine_logger = Logger("ENGINE");
 SerializationManager sm;
-#include <random>
 
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
-
-std::queue<EntityID> lastEnt{};
-
-std::vector<EntityID> testVector;
 
 
 /*-----------------------------------------------------------------------------
@@ -89,6 +84,7 @@ std::vector<EntityID> testVector;
 ----------------------------------------------------------------------------- */
 PE::CoreApplication::CoreApplication()
 {
+    // Registers Components to ECS
     REGISTERCOMPONENT(RigidBody);
     REGISTERCOMPONENT(Collider);
     REGISTERCOMPONENT(Transform);
@@ -100,7 +96,8 @@ PE::CoreApplication::CoreApplication()
     // Create and set up the window using WindowManager
     m_window = m_windowManager.InitWindow(1000, 1000, "Purring Engine");
 
-    m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
+    // Default to 60 FPS
+    m_fpsController.SetTargetFPS(60);
     
     // set flags
     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
@@ -108,48 +105,43 @@ PE::CoreApplication::CoreApplication()
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
     // Audio Stuff - HANS
-    
     AudioManager::GetInstance()->Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
     }
+
     //create instance of memory manager (prob shld bring this out to entry point)
-    MemoryManager::GetInstance();
-    //assignning memory manually to renderer manager
+    MemoryManager::GetInstance();   
 
-    // Add system to list
-    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
-    PhysicsManager* physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
-    CollisionManager* collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
-    InputSystem* ip = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    AddSystem(ip);
-    AddSystem(physicsManager);
-    AddSystem(collisionManager);
-    AddSystem(rendererManager);
-
+    // Add system to list & assigning memory to them
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
+    CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
+    InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(p_inputSystem);
+    AddSystem(p_physicsManager);
+    AddSystem(p_collisionManager);
+    AddSystem(p_rendererManager);
 
     // Load a texture
     std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat1_128x128.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/image2.png");
     ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
-
+    
+    // Creates an entity that displays the background image
     EntityID id = g_entityFactory->CreateEntity();    
-
-    int width{ 1980 }, height{ 720 };
-    glfwGetWindowSize(m_window, &width, &height);
     g_entityFactory->Assign(id, { "Transform", "Renderer" });
     g_entityManager->Get<Transform>(id).position.x = 0.f;
     g_entityManager->Get<Transform>(id).position.y = 0.f;
-    g_entityManager->Get<Transform>(id).width = static_cast<float>(width);
-    g_entityManager->Get<Transform>(id).height = static_cast<float>(height);
+    g_entityManager->Get<Transform>(id).width = 1000.f;
+    g_entityManager->Get<Transform>(id).height = 1000.f;
     g_entityManager->Get<Transform>(id).orientation = 0.f;
     g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
     g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
     
+    // Creates an entity that is attached to the Character Controller
     EntityID id2 = g_entityFactory->CreateFromPrefab("GameObject");
-
-    // Make the second gameObject the character controller
     g_entityManager->Get<Transform>(id2).position.x = 0.f;
     g_entityManager->Get<Transform>(id2).position.y = 0.f;
     g_entityManager->Get<Transform>(id2).width = 100.f;
@@ -161,10 +153,6 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
     g_entityManager->Get<RigidBody>(id2).SetMass(10.f);
     
-    for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
-    {
-        testVector.emplace_back(id);
-    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -192,15 +180,16 @@ void PE::CoreApplication::Run()
     TimeManager::GetInstance().EngineStart();
 
     // Main Application Loop
-    while (!glfwWindowShouldClose(m_window))            // Continue until the GLFW window is flagged to close
+    // Continue until the GLFW window is flagged to close
+    while (!glfwWindowShouldClose(m_window))
     {
         // Time start
         TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
         MemoryManager::GetInstance().CheckMemoryOver();
-        // UPDATE -----------------------------------------------------
         
-
+        // ----- UPDATE ----- //
+        
         // List of keys to check for FPS adjustment
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
 
@@ -212,51 +201,6 @@ void PE::CoreApplication::Run()
             {
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_R) == GLFW_PRESS)
-        {
-            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-            clock_t start, end;
-            start = clock();
-            for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
-            {
-                id;
-            }
-            end = clock();
-            double total = double(end - start) / double(CLOCKS_PER_SEC);
-            std::string str = "SceneView<Renderer, Transform>() took: " + std::to_string(total) + " sec to run...";
-            engine_logger.AddLog(false, str, __FUNCTION__);
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_T) == GLFW_PRESS)
-        {
-            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-            clock_t start, end;
-            start = clock();
-            for (const EntityID& id : SceneView<Graphics::Renderer>())
-            {
-                id;
-            }
-            end = clock();
-            double total = double(end - start) / double(CLOCKS_PER_SEC);
-            std::string str = "SceneView<Renderer>() took: " + std::to_string(total) + " sec to run...";
-            engine_logger.AddLog(false, str, __FUNCTION__);
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_Y) == GLFW_PRESS)
-        {
-            //m_rendererManager->m_mainCamera.AdjustRotationDegrees(1.f);
-            // EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
-            clock_t start, end;
-            start = clock();
-            for (const EntityID& id : testVector)
-            {
-                id;
-            }
-            end = clock();
-            double total = double(end - start) / double(CLOCKS_PER_SEC);
-            std::string str = "Stored vector took: " + std::to_string(total) + " sec to run...";
-            engine_logger.AddLog(false, str, __FUNCTION__);
         }
 
         //Audio Stuff - HANS
