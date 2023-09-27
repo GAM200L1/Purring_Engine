@@ -20,14 +20,14 @@ namespace PE
 	RigidBody::RigidBody() :
 		m_velocity{ vec2{ 0.f, 0.f } }, m_rotationVelocity{ 0.f },
 		m_force{ vec2{ 0.f, 0.f } }, m_torque{ 0.f }, m_awake{ false },
-		m_mass{ 10.f }, m_inverseMass{ 1/10.f }, m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
+		m_mass{ 10.f }, m_inverseMass{ 1/10.f }, // m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
 		m_prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
 
 	RigidBody::RigidBody(RigidBody const& r_cpy) :
 		m_velocity{ r_cpy.m_velocity }, m_rotationVelocity{ r_cpy.m_rotationVelocity },
 		m_force{ r_cpy.m_force }, m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
 		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, 
-		m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag },
+		//m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag },
 		m_prevPosition{ r_cpy.m_prevPosition }, m_type{ r_cpy.m_type } {}
 
 	RigidBody& RigidBody::operator=(RigidBody const& r_cpy)
@@ -40,8 +40,8 @@ namespace PE
 		m_mass = r_cpy.m_mass;
 		m_inverseMass = r_cpy.m_inverseMass;
 		m_prevPosition = r_cpy.m_prevPosition;
-		m_drag = r_cpy.m_drag;
-		m_rotationDrag = r_cpy.m_rotationDrag;
+		// m_drag = r_cpy.m_drag;
+		// m_rotationDrag = r_cpy.m_rotationDrag;
 		m_type = r_cpy.m_type;
 		return *this;
 	}
@@ -62,50 +62,6 @@ namespace PE
 		m_inverseMass = 1.f / mass;
 	}
 
-	vec2 RigidBody::GetVelocity() const
-	{
-		if (m_type == EnumRigidBodyType::STATIC)
-			return vec2{};
-
-		return m_velocity;
-	}
-	void RigidBody::SetVelocity(vec2 const& r_linearVelocity)
-	{
-		if (m_type == EnumRigidBodyType::STATIC)
-			return;
-
-		m_velocity = r_linearVelocity;
-	}
-
-	float RigidBody::GetRotationVelocity() const
-	{
-		if (m_type == EnumRigidBodyType::STATIC)
-			return 0.f;
-
-		return m_rotationVelocity;
-	}
-	void RigidBody::SetRotationVelocity(float angularVelocity)
-	{
-		if (m_type == EnumRigidBodyType::STATIC)
-			return;
-
-		m_rotationVelocity = angularVelocity;
-	}
-
-	vec2 RigidBody::GetForce() const
-	{
-		if (m_type != EnumRigidBodyType::DYNAMIC)
-			return vec2{};
-
-		return m_force;
-	}
-	void RigidBody::SetForce(vec2 const& r_force)
-	{
-		if (m_type != EnumRigidBodyType::DYNAMIC)
-			return; // should change to throw
-
-		m_force = r_force;
-	}
 	void RigidBody::ZeroForce()
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC)

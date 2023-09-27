@@ -16,24 +16,24 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "ECS/SceneView.h"
 #include "Math/Transform.h"
 #include "RigidBody.h"
+#include "Logging/Logger.h"
+
+extern Logger engine_logger;
 
 namespace PE
 {
-	PhysicsManager* PhysicsManager::p_instance;
-	float PhysicsManager::m_linearDragCoefficient = -2.f;
-	float PhysicsManager::m_velocityNegligence = 2.f;
-	bool PhysicsManager::applyStepPhysics = false;
-	bool PhysicsManager::advanceStep = false;
+	// ----- Static Declarations ----- //
 
+	bool PhysicsManager::m_applyStepPhysics{ false };
+	bool PhysicsManager::m_advanceStep{ false };
+
+	// ----- Constructor ----- //
+
+	PhysicsManager::PhysicsManager() :
+		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f },
+		m_fixedDt{ 1.f / 60.f }, m_accumulator{ 0.f }, m_accumulatorLimit{ 1.f } {}
+	
 	// ----- Public Getters ----- //
-	PhysicsManager* PhysicsManager::GetInstance()
-	{
-		if (!p_instance)
-		{
-			p_instance = new PhysicsManager();
-		}
-		return p_instance;
-	}
 
 	float PhysicsManager::GetLinearDragCoefficient()
 	{
@@ -45,22 +45,79 @@ namespace PE
 		m_linearDragCoefficient = (newCoefficient < 0.f) ? newCoefficient : -newCoefficient;
 	}
 
-	// ----- Public Methods ----- //
-	void PhysicsManager::Step(float deltaTime)
+	float PhysicsManager::GetVelocityNegligence()
 	{
-		if (!applyStepPhysics)
-			UpdateDynamics(deltaTime);
-		else
+		return m_velocityNegligence;
+	}
+	void PhysicsManager::SetVelocityNegligence(float negligence)
+	{
+		m_velocityNegligence = negligence;
+	}
+
+	float PhysicsManager::GetFixedDt()
+	{
+		return m_fixedDt;
+	}
+	void PhysicsManager::SetFixedDt(float fixDt)
+	{
+		m_fixedDt = fixDt;
+	}
+
+	bool& PhysicsManager::GetStepPhysics()
+	{
+		return m_applyStepPhysics;
+	}
+
+	bool& PhysicsManager::GetAdvanceStep()
+	{
+		return m_advanceStep;
+	}
+
+
+	// ----- System Methods ----- //
+
+	void PhysicsManager::InitializeSystem()
+	{
+		// Check if Initialization was successful
+		engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+		engine_logger.SetTime();
+		engine_logger.AddLog(false, "PhysicsManager initialized!", __FUNCTION__);
+	}
+
+	void PhysicsManager::UpdateSystem(float deltaTime)
+	{
+		m_accumulator += deltaTime;
+
+		m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
+
+		while (m_accumulator >= m_fixedDt)
 		{
-			if (advanceStep)
+			if (!m_applyStepPhysics)
 			{
-				UpdateDynamics(deltaTime);
-				advanceStep = false;
+				UpdateDynamics(m_fixedDt);
 			}
+			else
+			{
+				// Applies Step Physics
+				if (m_advanceStep)
+				{
+					UpdateDynamics(m_fixedDt);
+					m_advanceStep = false;
+				}
+			}
+			m_accumulator -= m_fixedDt;
 		}
 	}
 
-	void PhysicsManager::UpdateDynamics(float deltaTime) // update forces, acceleration and velocity here
+	void PhysicsManager::DestroySystem()
+	{
+		// empty by design
+	}
+
+
+	// ----- Physics Methods ----- //
+
+	void PhysicsManager::UpdateDynamics(float deltaTime)
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
@@ -85,16 +142,10 @@ namespace PE
 				rb.m_prevPosition = transform.position;
 				transform.position += rb.m_velocity * deltaTime;
 				transform.orientation += rb.m_rotationVelocity * deltaTime;
-				//Wrap(transform.orientation, -PE_PI, PE_PI);
+				Wrap(transform.orientation, 0.f, 2.f * PE_PI);
 			}
 			rb.ZeroForce();
 			rb.m_rotationVelocity = 0.f;
 		}
-	}
-
-	void PhysicsManager::DeleteInstance()
-	{
-		delete p_instance;
-		p_instance = nullptr;
 	}
 }

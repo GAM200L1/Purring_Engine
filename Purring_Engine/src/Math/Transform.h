@@ -22,9 +22,9 @@ namespace PE
 {
     struct Transform
     {
-        float width, height;
-        float orientation; // in radians
-        vec2 position;
+        float width{}, height{};
+        float orientation{}; // in radians
+        vec2 position{};
 
         mat3x3 GetTransformMatrix3x3() const
         {
@@ -36,11 +36,6 @@ namespace PE
             transMat.Translate(position.x, position.y);
 
             return transMat * rotMat * scaleMat;
-        }
-
-        mat4x4 GetTransformMatrix4x4() const
-        {
-            return GetTransformMatrix3x3().ConvertTo4x4();
         }
     };
 }
