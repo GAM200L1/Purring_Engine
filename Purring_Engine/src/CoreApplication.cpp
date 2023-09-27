@@ -181,6 +181,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Transform>(1).orientation = 0.f;
     g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
+    g_entityManager->Get<Collider>(1).isTrigger = true;
 
     /*for (size_t i{}; i < 2; ++i) {
         EntityID id2 = g_entityFactory->CreateEntity();
