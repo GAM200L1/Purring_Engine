@@ -301,6 +301,12 @@ void PE::CoreApplication::Run()
             EntityManager::GetInstance().Get<RigidBody>(0).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(0).m_velocity.GetNormalized() * 1000.f);
         }
 
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            engine_logger.AddLog(true, "Test exception has occurred!!", __FUNCTION__);
+            throw;
+        }
+
         // Character Rotation
         if (glfwGetKey(m_window, GLFW_KEY_RIGHT) == GLFW_PRESS)
         {
