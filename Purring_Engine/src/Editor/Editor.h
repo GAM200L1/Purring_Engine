@@ -225,6 +225,10 @@ namespace PE {
 		 \brief command line test that opens the test window
 		*************************************************************************************/
 		void test();
+
+		void ClearObjectList();
+
+
 		// ----- Private Variables ----- // 
 	private:
 		//boolean for windows

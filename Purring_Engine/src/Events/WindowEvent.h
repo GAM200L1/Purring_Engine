@@ -13,8 +13,7 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-#ifndef WINDOW_EVENTS_H
-#define WINDOW_EVENTS_H
+#pragma once
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
@@ -154,4 +153,3 @@ namespace PE
 
 };
 
-#endif
