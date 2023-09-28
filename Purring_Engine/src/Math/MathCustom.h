@@ -29,21 +29,21 @@
 constexpr float PE_PI = 3.14159265358979323846f;
 namespace PE
 {
-	// forward declaring these structs
+	//! Forward declaration of structs
 	struct vec2;
 	struct vec3;
 	struct mat3x3;
 	struct mat4x4;
 
-	/*!***********************************************************************************
-	 \brief Vector 2 struct, contains x and y coordinates
-	 
-	*************************************************************************************/
+	// Vector 2D struct. Contains 2 floats denoted as x and y.
 	struct vec2
 	{
-		// variables
+		// ----- Public Variables ----- //
+		public:
 		float x, y;
 
+		// ----- Constructors ----- //
+		public:
 		/*!***********************************************************************************
 		 \brief Default construct a new vec2 object
 		 
@@ -75,7 +75,10 @@ namespace PE
 		*************************************************************************************/
 		vec2& operator=(vec2 const& r_cpy);
 
-		// Array subscript
+		// ----- Public Methods ----- //
+		
+		public:
+		// ----- Access Operators ----- //
 		/*!***********************************************************************************
 		 \brief Array subscript overload(const) allow the reading of x & y values using
 		 		array subscript syntax.
@@ -95,7 +98,7 @@ namespace PE
 		*************************************************************************************/
 		float& operator[](unsigned int index);
 
-		// Addition
+		// ----- Addition ----- //
 		/*!***********************************************************************************
 		 \brief Addition operator overload, allows the addition of two vec2 and returns a 
 		 		copy of the result.
@@ -114,7 +117,7 @@ namespace PE
 		*************************************************************************************/
 		vec2& operator+=(vec2 const& r_rhs);
 
-		// subtraction
+		// ----- Subtraction ----- //
 		/*!***********************************************************************************
 		 \brief Subtraction operator overload, allows for the subtraction of two vec2 and
 		 		returns a copy of the result.
@@ -133,7 +136,7 @@ namespace PE
 		*************************************************************************************/
 		vec2& operator-=(vec2 const& r_rhs);
 
-		// scale
+		// ----- Scale ----- //
 		/*!***********************************************************************************
 		 \brief Multiplication operator overload, allows for the scaling (by multiplication) 
 		 		of vec2 by a float value and returns a copy of the result.
@@ -170,15 +173,21 @@ namespace PE
 		*************************************************************************************/
 		vec2& operator/=(float scale);
 
+		/*!***********************************************************************************
+		 \brief Negative operator overload. Negates the vec2 and returns the result.
+		 
+		 \return vec2 Negated version of the vec2
+		*************************************************************************************/
 		vec2 operator-() const;
 
-		// zero the vector
 		/*!***********************************************************************************
 		 \brief Zeroes out the x and y values of the vec2
 		 
 		*************************************************************************************/
 		void Zero();
-		// cross product (zaxis)
+
+
+		// ----- Cross Product ----- //
 		/*!***********************************************************************************
 		 \brief Calculates the cross product of two vec2 (cross product magnitude/z-axis)
 		 
@@ -186,8 +195,8 @@ namespace PE
 		 \return float 		The cross product magnitude
 		*************************************************************************************/
 		float Cross(vec2 const& r_rhs) const;
-		// dot product
 
+		// ----- Dot Product ----- //
 		/*!***********************************************************************************
 		 \brief Calculates the dot product of two vec2
 		 
@@ -196,23 +205,24 @@ namespace PE
 		*************************************************************************************/
 		float Dot(vec2 const& r_rhs) const;
 
-		// Squared Distance betweem two vectors
+		// ----- Distance ----- //
 		/*!***********************************************************************************
-		 \brief Calculates the distance squared between two vec2
+		 \brief Calculates the distance squared between two vec2 points
 		 
 		 \param[in] r_rhs 	The vec2 to get the distance squared from
 		 \return float 		The distance squared
 		*************************************************************************************/
 		float DistanceSquared(vec2 const& r_rhs) const;
-		// Distance between two vectors
+		
 		/*!***********************************************************************************
-		 \brief Calculates the distance between two vec2
+		 \brief Calculates the distance between two vec2 points
 		 
 		 \param[in] r_rhs 	The vec2 to get the distance from
 		 \return float 		The distance
 		*************************************************************************************/
 		float Distance(vec2 const& r_rhs) const;
-		// get normal of vec2
+		
+		// ----- Normalize ----- //
 		/*!***********************************************************************************
 		 \brief Calculates the normalized vector of this vec2, and returns a copy
 		 
@@ -220,44 +230,43 @@ namespace PE
 		*************************************************************************************/
 		vec2 GetNormalized() const;
 
-		// Find length^2
-		/*!***********************************************************************************
-		 \brief Caclulates the magnitude squared of this vec2
-		 
-		 \return float 	The magnitude squared
-		*************************************************************************************/
-		float LengthSquared() const;
-		// Find length/magnitude
-		/*!***********************************************************************************
-		 \brief Caclulates the magnitude of this vec2
-		 
-		 \return float 	The magnitude
-		*************************************************************************************/
-		float Length() const;
-		// normalize
 		/*!***********************************************************************************
 		 \brief Normalizes this vec2
 		 
 		*************************************************************************************/
 		void Normalize();
+
+		// ----- Length ----- //
+		/*!***********************************************************************************
+		 \brief Caclulates the magnitude squared of this vec2 vector
+		 
+		 \return float 	The magnitude squared
+		*************************************************************************************/
+		float LengthSquared() const;
+		
+		/*!***********************************************************************************
+		 \brief Caclulates the magnitude of this vec2 vector
+		 
+		 \return float 	The magnitude
+		*************************************************************************************/
+		float Length() const;
 	};
 
-	/*!***********************************************************************************
-	 \brief Vector 3 struct, contains x, y and z coordinates
-	 
-	*************************************************************************************/
+	// Vector 3 struct, contains x, y and z coordinates
 	struct vec3
 	{
+		// ----- Public Variables ----- //
+		public:
 		float x, y, z;
 
-		// default constructor
+		// ----- Constructors ----- //
+		public:
 		/*!***********************************************************************************
 		 \brief Default construct a new vec3 object
 		 
 		*************************************************************************************/
 		vec3() : x{ 0.f }, y{ 0.f }, z{ 0.f } {}
 
-		// 3 floats constructor
 		/*!***********************************************************************************
 		 \brief Conversion construct a new vec3 object from 3 float values.
 		 
@@ -267,7 +276,6 @@ namespace PE
 		*************************************************************************************/
 		explicit vec3(float ux, float uy, float uz) : x{ ux }, y{ uy }, z{ uz } {}
 
-		// vec2 + float constructor
 		/*!***********************************************************************************
 		 \brief Conversion construct a new vec3 object from a vec2 and a float value.
 		 
@@ -276,7 +284,6 @@ namespace PE
 		*************************************************************************************/
 		explicit vec3(vec2 const& r_v, float uz) : x{ r_v.x }, y{ r_v.y }, z{ uz } {}
 
-		// copy constructor
 		/*!***********************************************************************************
 		 \brief Copy construct a new vec3 object.
 		 
@@ -284,7 +291,9 @@ namespace PE
 		*************************************************************************************/
 		vec3(vec3 const& r_cpy) : x{ r_cpy.x }, y{ r_cpy.y }, z{ r_cpy.z } {}
 		
-		// copy assignment
+
+		// ----- Public Methods ----- //
+		public:
 		/*!***********************************************************************************
 		 \brief Assignment operator overload, allows the copy assignment of a vec3 from a 
 		 		vec3.
@@ -294,7 +303,7 @@ namespace PE
 		*************************************************************************************/
 		vec3& operator=(vec3 const& r_cpy);
 
-		// access operator
+		// ----- Access Operators ----- //
 		/*!***********************************************************************************
 		 \brief Array subscript operator overload, allows the reading of x, y and z values 
 		 		using array subscript syntax.
