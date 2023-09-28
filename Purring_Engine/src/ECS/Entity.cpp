@@ -53,30 +53,30 @@ namespace PE
 	}
 
 
-	void EntityManager::Assign(const EntityID& r_id, const char* r_componentID)
+	void EntityManager::Assign(const EntityID& r_id, const char* p_componentID)
 	{
 		// if component is not found
-		if (m_componentPools.find(r_componentID) == m_componentPools.end())
+		if (m_componentPools.find(p_componentID) == m_componentPools.end())
 		{
 			engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
 			engine_logger.FlushLog();
 			throw;
 		}
-		if (m_componentPools[r_componentID]->HasEntity(r_id))
+		if (m_componentPools[p_componentID]->HasEntity(r_id))
 		{
 			return;
 		}
 		// add to component pool's map keeping track of index
-		m_componentPools[r_componentID]->idxMap.emplace(r_id, m_componentPools[r_componentID]->idxMap.size());
+		m_componentPools[p_componentID]->idxMap.emplace(r_id, m_componentPools[p_componentID]->idxMap.size());
 		// initialize that region of memory
-		if (m_componentPools[r_componentID]->size >= m_componentPools[r_componentID]->capacity - 1)
+		if (m_componentPools[p_componentID]->size >= m_componentPools[p_componentID]->capacity - 1)
 		{
-			m_componentPools[r_componentID]->Resize(m_componentPools[r_componentID]->capacity * 2);
+			m_componentPools[p_componentID]->Resize(m_componentPools[p_componentID]->capacity * 2);
 		}
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
-		++(m_componentPools[r_componentID]->size);
+		++(m_componentPools[p_componentID]->size);
 	}
 
 	void EntityManager::Assign(const EntityID& r_id, const ComponentID& r_componentID)

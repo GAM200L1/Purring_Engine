@@ -185,7 +185,7 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(2).width = 50.f;
     EntityManager::GetInstance().Get<Transform>(2).height = 200.f;
     EntityManager::GetInstance().Get<Transform>(2).orientation = 0.f;
-    EntityManager::GetInstance().Get<RigidBody>(2).SetType(EnumRigidBodyType::DYNAMIC);
+    EntityManager::GetInstance().Get<RigidBody>(2).SetType(EnumRigidBodyType::STATIC);
     EntityManager::GetInstance().Get<Collider>(2).colliderVariant = AABBCollider();
     EntityManager::GetInstance().Get<Collider>(2).isTrigger = true;
 

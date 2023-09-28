@@ -190,7 +190,7 @@ namespace PE
 		 \param[in] id 				ID of the entity to assign components to
 		 \param[in] componentID 	The ID of the component to assign 
 		*************************************************************************************/
-		void Assign(const EntityID& r_id, const char* r_componentID);
+		void Assign(const EntityID& r_id, const char* p_componentID);
 
 
 		/*!***********************************************************************************

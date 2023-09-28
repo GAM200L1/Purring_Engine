@@ -144,12 +144,12 @@ namespace PE
 		return id;
 	}
 
-	bool EntityFactory::LoadComponent(EntityID id, const char* r_component, void* p_data)
+	bool EntityFactory::LoadComponent(EntityID id, const char* p_component, void* p_data)
 	{
 		if (!EntityManager::GetInstance().IsEntityValid(id))
 			return false;
 		// if the prefab exists in the current list
-		Assign(id, { r_component });
-		return std::invoke(m_initializeComponent[r_component], this, id, p_data);
+		Assign(id, { p_component });
+		return std::invoke(m_initializeComponent[p_component], this, id, p_data);
 	}
 }
