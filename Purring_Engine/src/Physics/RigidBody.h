@@ -83,8 +83,8 @@ namespace PE
 		// ----- Private Variables ----- //
 		EnumRigidBodyType m_type = EnumRigidBodyType::STATIC;
 
-		float m_mass;
-		float m_inverseMass;
+		float m_mass{10.f};
+		float m_inverseMass{1.f/10.f};
 		//float m_drag;
 		//float m_rotationDrag;
 	};

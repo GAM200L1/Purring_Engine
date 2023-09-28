@@ -71,8 +71,6 @@
 Logger engine_logger = Logger("ENGINE");
 SerializationManager sm;
 
-PE::EntityManager entManager;
-PE::EntityFactory entFactory;
 
 
 /*-----------------------------------------------------------------------------
@@ -203,6 +201,19 @@ void PE::CoreApplication::Run()
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
             {
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
+            }
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            try
+            {
+                std::vector testVector = { 1 };
+                testVector[0] = testVector.at(1);
+            }
+            catch (const std::out_of_range& r_err)
+            {
+                engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
+                throw r_err;
             }
         }
 
