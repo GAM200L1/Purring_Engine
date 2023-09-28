@@ -395,10 +395,11 @@ namespace PE {
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
 			{
-				if (m_currentSelectedObject > 0)  // if vector not empty and item selected not over index
+				if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
 				{
 					AddInfoLog("Object Deleted");
 
+					
 					EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
 
 					//if not first index
