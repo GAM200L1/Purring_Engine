@@ -51,6 +51,7 @@ namespace PE
 			return p_newptr;
 		}
 		catch (int i) {
+			i;
 			//sending error to logs
 			std::string ss("memory cannot be allocated to ");
 			ss += name;

@@ -106,7 +106,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::Init(GLFWwindow* p_window)
+	void Editor::Init(GLFWwindow* p_window_)
 	{
 		//check imgui's version 
 		IMGUI_CHECKVERSION();
@@ -125,7 +125,7 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 
-		p_window = p_window;
+		p_window = p_window_;
 		//getting the full display size of glfw so that the ui know where to be in
 		int width, height;
 		glfwGetWindowSize(p_window, &width, &height);
@@ -143,7 +143,7 @@ namespace PE {
 		//init imgui for glfw and opengl 
 		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
-		ImGui_ImplOpenGL3_Init("#version 460");
+		ImGui_ImplOpenGL3_Init("#version 450");
 
 	}
 
@@ -395,10 +395,11 @@ namespace PE {
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
 			{
-				if (m_currentSelectedObject > 0)  // if vector not empty and item selected not over index
+				if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
 				{
 					AddInfoLog("Object Deleted");
 
+					
 					EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
 
 					//if not first index
@@ -418,6 +419,7 @@ namespace PE {
 			{
 
 				//EntityFactory::GetInstance().Clone(m_currentSelectedObject);
+				if(m_currentSelectedObject)
 				EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
 				//UpdateObjectList();
 			}
@@ -428,16 +430,25 @@ namespace PE {
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool("All").size(); n++)
 				{
+					std::string name;
 					const bool is_selected = (m_currentSelectedObject == n);
-
-					std::string name = "GameObject";
-					name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
-
+					if (n == 0) //hardcoding
+					{
+						name = "Background";
+					}
+					else if (n == 1)
+					{
+						name = "Player";
+					}
+					else {
+						name = "GameObject";
+						name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
+					}
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
-					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					if (is_selected) // to show the highlight if selected
-						ImGui::SetItemDefaultFocus();
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (is_selected) // to show the highlight if selected
+							ImGui::SetItemDefaultFocus();
 
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 				}
@@ -656,7 +667,7 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
 				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
@@ -701,13 +712,12 @@ namespace PE {
 				for (size_t i{}; i < 2500; ++i) {
 					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
 					EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
-					EntityManager::GetInstance().Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
-					EntityManager::GetInstance().Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
-					EntityManager::GetInstance().Get<Transform>(id2).width = 50.f;
-					EntityManager::GetInstance().Get<Transform>(id2).height = 50.f;
+					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
+					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
+					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
+					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey("cat");
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
 				}
 			}
 			ImGui::SameLine();
@@ -839,7 +849,7 @@ namespace PE {
 								EnumRigidBodyType bt = EntityManager::GetInstance().Get<RigidBody>(entityID).GetType();
 								int index = static_cast<int>(bt);
 								//hard coded rigidbody types
-								const char* types[] = { "STATIC","DYNAMIC","KINEMATIC" };
+								const char* types[] = { "STATIC","DYNAMIC" };
 								ImGui::Text("Rigidbody Type: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
 								//combo box of the different rigidbody types
@@ -910,6 +920,45 @@ namespace PE {
 										}, EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);*/
 								}
 
+								if (index)
+								{
+									ImVec2 offset;
+									CircleCollider& r_cc = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);
+
+									offset.x = r_cc.positionOffset.x;
+									offset.y = r_cc.positionOffset.y;
+									ImGui::Text("Collider Position Offset: ");
+									ImGui::Text("x pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##xoffsetcircle", &offset.x, 1.0f, 100.f, "%.3f");
+									ImGui::Text("y pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetcircle", &offset.y, 1.0f, 100.f, "%.3f");
+									r_cc.positionOffset.y = offset.y;
+									r_cc.positionOffset.x = offset.x;
+									
+									float offset2 = r_cc.scaleOffset;
+									ImGui::Text("Collider Scale Offset: ");
+									ImGui::Text("sc x offset: "); ImGui::SameLine(); ImGui::InputFloat("##scaleOffsetcircle", &offset2, 1.0f, 100.f, "%.3f");
+							
+									r_cc.scaleOffset = std::abs(offset2);
+								}
+								else
+								{
+									ImVec2 offset;
+									offset.x = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x;
+									offset.y = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y;
+									ImGui::Text("Collider Position Offset: ");
+									ImGui::Text("pos x offset: "); ImGui::SameLine(); ImGui::InputFloat("##xoffsetaabb", &offset.x, 1.0f, 100.f, "%.3f");
+									ImGui::Text("pos y offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetaabb", &offset.y, 1.0f, 100.f, "%.3f");
+									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y = offset.y;
+									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x = offset.x;
+
+									ImVec2 offset2;
+									offset2.x = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x;
+									offset2.y = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y;
+									ImGui::Text("Collider Scale Offset: ");
+									ImGui::Text("x scale offset: "); ImGui::SameLine(); ImGui::InputFloat("##xscaleOffsetaabb", &offset2.x, 1.0f, 100.f, "%.3f");
+									ImGui::Text("y scale offset: "); ImGui::SameLine(); ImGui::InputFloat("##yscaleOffsetaabb", &offset2.y, 1.0f, 100.f, "%.3f");
+									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y = std::abs(offset2.y);
+									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x = std::abs(offset2.x);
+								}
 								ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(m_currentSelectedObject).isTrigger);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
@@ -995,6 +1044,8 @@ namespace PE {
 					//the closest i can get to setting center the button x(
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
+
+					if(m_currentSelectedObject)
 					if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0))) 
 					{
 						isModalOpen = true;
