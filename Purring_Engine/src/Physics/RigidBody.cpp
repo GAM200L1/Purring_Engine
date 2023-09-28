@@ -61,10 +61,6 @@ namespace PE
 		m_mass = mass;
 		m_inverseMass = 1.f / mass;
 	}
-	vec2 RigidBody::GetVelocity()
-	{
-		return m_velocity;
-	}
 
 	void RigidBody::ZeroForce()
 	{

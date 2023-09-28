@@ -30,7 +30,7 @@ namespace PE
 	int AnimationManager::CreateAnimation()
 	{
 		m_animations.emplace_back(Animation());
-		return m_animations.size() - 1;
+		return static_cast<int>(m_animations.size() - 1);
 	}
 
 	void AnimationManager::AddFrameToAnimation(int animationID, std::string textureKey, float duration)
@@ -46,5 +46,6 @@ namespace PE
 		if (animationID >= 0 && animationID < m_animations.size()) {
 			return m_animations[animationID].UpdateAnimation(deltaTime);
 		}
+		return std::string();
 	}
 }

@@ -58,7 +58,6 @@ namespace PE
 		float GetMass() const;
 		float GetInverseMass() const;
 		void SetMass(float mass);
-		vec2 GetVelocity();
 
 		void ZeroForce();
 
