@@ -62,6 +62,7 @@ SerializationManager sm;
 #include "ECS/SceneView.h"
 #include "Graphics/Renderer.h"
 #include "InputSystem.h"
+#include "Data/SerializationManager.h"
 
 PE::EntityManager entManager;
 PE::EntityFactory entFactory;
@@ -107,6 +108,7 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
+    SerializationManager serializationManager;  // Create an instance
 
     // Audio Stuff - HANS
     
@@ -128,27 +130,27 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
     for (size_t i{}; i < 1; ++i)
     {
-        EntityID id = g_entityFactory->CreateFromPrefab("GameObject");
+        EntityID id = serializationManager.loadFromFile("../Assets/Prefabs/Player_Prefab.json");
 
         // Make overlapping circle colliders at the origin
-        g_entityManager->Get<Transform>(id).position.x = 0.f;
-        g_entityManager->Get<Transform>(id).position.y = 0.f;
-        g_entityManager->Get<Transform>(id).width = 50;
-        g_entityManager->Get<Transform>(id).height = 50;
-        g_entityManager->Get<Transform>(id).orientation = 0.f;
-        g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
+        //g_entityManager->Get<Transform>(id).position.x = 0.f;
+        //g_entityManager->Get<Transform>(id).position.y = 0.f;
+        //g_entityManager->Get<Transform>(id).width = 50;
+        //g_entityManager->Get<Transform>(id).height = 50;
+        //g_entityManager->Get<Transform>(id).orientation = 0.f;
+        //g_entityManager->Get<Collider>(id).colliderVariant = CircleCollider();
     }
 
     // Make the first gameobject with a collider circle at world pos (100, 100)
-    g_entityManager->Get<Transform>(0).position.x = 100.f;
-    g_entityManager->Get<Transform>(0).position.y = 100.f;
-    g_entityManager->Get<Transform>(0).width = 100.f;
-    g_entityManager->Get<Transform>(0).height = 100.f;
-    g_entityManager->Get<Transform>(0).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
-    g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
-    g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
+    //g_entityManager->Get<Transform>(0).position.x = 100.f;
+    //g_entityManager->Get<Transform>(0).position.y = 100.f;
+    //g_entityManager->Get<Transform>(0).width = 100.f;
+    //g_entityManager->Get<Transform>(0).height = 100.f;
+    //g_entityManager->Get<Transform>(0).orientation = 0.f;
+    //g_entityManager->Get<RigidBody>(0).SetType(EnumRigidBodyType::DYNAMIC);
+    //g_entityManager->Get<Collider>(0).colliderVariant = CircleCollider();
+    //g_entityManager->Get<Graphics::Renderer>(0).SetTextureKey(catTextureName);
+    //g_entityManager->Get<Graphics::Renderer>(0).SetColor(1.f, 1.f, 0.f);
 
     //// Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
     //g_entityManager->Get<Transform>(1).position.x = -100.f;
@@ -159,16 +161,10 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
     //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
-    for (size_t i{}; i < 25; ++i) {
-        EntityID id2 = g_entityFactory->CreateEntity();
-        g_entityFactory->Assign(id2, { "Transform", "Renderer" });
+    for (size_t i{}; i < 2500; ++i) {
+        EntityID id2 = serializationManager.loadFromFile("../Assets/Prefabs/Render_Prefab.json");
         g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 600.f;
         g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
-        g_entityManager->Get<Transform>(id2).width = 50.f;
-        g_entityManager->Get<Transform>(id2).height = 50.f;
-        g_entityManager->Get<Transform>(id2).orientation = 0.f;
-        g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
-        g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
     }
     for (const EntityID& id : SceneView<Graphics::Renderer, Transform>())
     {
