@@ -47,7 +47,7 @@ std::vector<glm::vec4> colors{};
 
 // temp animation manager
 PE::AnimationManager animationManager;
-int animation1, animation2;
+int idleAnimation, walkingAnimation;
 
 namespace PE
 {
@@ -103,16 +103,21 @@ namespace PE
             colors.reserve(3000);
 
             // Create Animation
-            animation1 = animationManager.CreateAnimation();
-            animation2 = animationManager.CreateAnimation();
+            idleAnimation = animationManager.CreateAnimation();
+            walkingAnimation = animationManager.CreateAnimation();
 
             // animation 1
-            animationManager.AddFrameToAnimation(animation1, "cat2", 0.2f);
-            animationManager.AddFrameToAnimation(animation1, "cat", 0.2f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim1", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim2", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim3", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim4", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim5", 0.1f);
 
             // animation 2
-            animationManager.AddFrameToAnimation(animation2, "cat2", 1.f);
-            animationManager.AddFrameToAnimation(animation2, "cat", 1.f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -194,7 +199,17 @@ namespace PE
             }
 
             // Update Animation here
-            std::string currentTextureKey = animationManager.UpdateAnimation(animation1, deltaTime);
+            std::string currentTextureKey;
+            if (g_entityManager->Get<RigidBody>(1).GetVelocity().x == 0.f &&
+                g_entityManager->Get<RigidBody>(1).GetVelocity().y == 0.f)
+            {
+                currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
+            }
+            else
+            {
+                currentTextureKey = animationManager.UpdateAnimation(walkingAnimation, deltaTime);
+            }
+            
             g_entityManager->Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
             DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
