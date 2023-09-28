@@ -2,10 +2,17 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     InputSystem.h
- \date     9/25/2023
+ \date     25-09-2023
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
+
+ \co-author            Brandon HO Jun Jie
+ \par      email:      brandonjunjie.ho@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
 
  \brief    This file contains the implementation details of the mouse input callbacks.
            The functions in this file handle mouse movements and button presses.
