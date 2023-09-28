@@ -151,6 +151,7 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim1", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_2.png");
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
 
+    EntityID id = EntityFactory::GetInstance().CreateEntity();
     int width{ 1000 }, height{ 1000 };
     glfwGetWindowSize(m_window, &width, &height);
     EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
