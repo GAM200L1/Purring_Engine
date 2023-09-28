@@ -1308,13 +1308,11 @@ namespace PE {
 				{
 					if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						int testEntityID = m_currentSelectedObject;
+						if (m_currentSelectedObject)
+						{
+							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
+						}
 
-						// debugging print onto consle
-						nlohmann::json serializedEntity = serializationManager.SerializeEntity(testEntityID);
-						std::cout << "Serialized Entity: " << serializedEntity.dump(4) << std::endl;  // 4 is for indentation
-
-						serializationManager.SaveToFile("Saved_Data.json", testEntityID);
 					}
 					if (ImGui::MenuItem("Load"))
 					{
