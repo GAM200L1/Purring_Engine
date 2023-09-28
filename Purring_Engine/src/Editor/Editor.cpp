@@ -143,7 +143,7 @@ namespace PE {
 		//init imgui for glfw and opengl 
 		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
-		ImGui_ImplOpenGL3_Init("#version 460");
+		ImGui_ImplOpenGL3_Init("#version 450");
 
 	}
 
@@ -418,6 +418,7 @@ namespace PE {
 			{
 
 				//EntityFactory::GetInstance().Clone(m_currentSelectedObject);
+				if(m_currentSelectedObject)
 				EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
 				//UpdateObjectList();
 			}
@@ -430,14 +431,23 @@ namespace PE {
 				{
 					std::string name;
 					const bool is_selected = (m_currentSelectedObject == n);
-					name = "GameObject";
-					name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
-
+					if (n == 0) //hardcoding
+					{
+						name = "Background";
+					}
+					else if (n == 1)
+					{
+						name = "Player";
+					}
+					else {
+						name = "GameObject";
+						name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
+					}
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
-					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					if (is_selected) // to show the highlight if selected
-						ImGui::SetItemDefaultFocus();
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (is_selected) // to show the highlight if selected
+							ImGui::SetItemDefaultFocus();
 
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 				}
