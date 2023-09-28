@@ -36,17 +36,22 @@
 // Physics and collision
 #include "Physics/Colliders.h"
 
+// Animation
+#include "Animation/Animation.h"
+
 extern Logger engine_logger;
 
-std::vector<glm::mat4> worldToNdcMatrices{};
-std::vector<glm::mat4> modelToWorldMatrices{};
-std::vector<glm::vec4> colors{};
 
+// temp animation manager
+PE::AnimationManager animationManager;
+int idleAnimation, walkingAnimation;
 
 namespace PE
 {
     namespace Graphics
     {
+        Camera RendererManager::m_mainCamera{};
+
         RendererManager::RendererManager(GLFWwindow* p_window) 
         {
             // Initialize GLEW
@@ -92,9 +97,26 @@ namespace PE
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
 
-            worldToNdcMatrices.reserve(3000);
-            modelToWorldMatrices.reserve(3000);
-            colors.reserve(3000);
+            m_isTextured.reserve(3000);
+            m_modelToWorldMatrices.reserve(3000);
+            m_colors.reserve(3000);
+
+            // Create Animation
+            idleAnimation = animationManager.CreateAnimation();
+            walkingAnimation = animationManager.CreateAnimation();
+
+            // animation 1
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim1", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim2", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim3", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim4", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim5", 0.1f);
+
+            // animation 2
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -140,16 +162,17 @@ namespace PE
                 m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
 
-                // Compute the view to NDC matrix
+                // Compute the world to NDC matrix
                 float halfWidth{ windowWidth * 0.5f };
                 float halfHeight{ windowHeight * 0.5f };
                 m_cachedWorldToNdcMatrix = 
                     glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
                     * m_mainCamera.GetWorldToViewMatrix();
             } 
+            // Check if the camera has changed
             else if (m_mainCamera.GetHasChanged()) 
             {
-                // Compute the view to NDC matrix
+                // Compute the world to NDC matrix
                 float halfWidth{ windowWidth * 0.5f };
                 float halfHeight{ windowHeight * 0.5f };
                 m_cachedWorldToNdcMatrix =
@@ -157,8 +180,8 @@ namespace PE
                     * m_mainCamera.GetWorldToViewMatrix();
             }
 
-            // Set background color to black
-            glClearColor(1.f, 1.f, 1.f, 1.f);
+            // Set background color of the window
+            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
             // Enable alpha blending
@@ -170,10 +193,24 @@ namespace PE
                 // Bind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Bind();
 
-                // Set the background color of the ImGui window to white
-                glClearColor(1.f, 1.f, 1.f, 1.f);
+                // Set the background color of the ImGui window
+                glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
+
+            // Update Animation here
+            std::string currentTextureKey;
+            if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x == 0.f &&
+                EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y == 0.f)
+            {
+                currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
+            }
+            else
+            {
+                currentTextureKey = animationManager.UpdateAnimation(walkingAnimation, deltaTime);
+            }
+            
+            EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
             DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
 
@@ -231,8 +268,8 @@ namespace PE
             // Make draw call for each game object with a renderer component
             for (const EntityID& id : SceneView<Renderer>())
             {
-                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
+                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::mat4 glmObjectTransform
                 {
@@ -262,133 +299,97 @@ namespace PE
             ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
             r_shaderProgram.Use();
 
-            int count{};
+            // Pass the world to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uWorldToNdc", r_worldToNdc);
+
+            // Bind the quad mesh
             size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
             m_meshes[meshIndex].Bind();
+
+            // Store the texture being used
+            std::string currentTexture{};
             std::shared_ptr<Graphics::Texture> p_texture{};
 
-            
-            worldToNdcMatrices.clear();
-            modelToWorldMatrices.clear();
-            colors.clear();
+            // Clear the buffers for the 
+            m_isTextured.clear();
+            m_modelToWorldMatrices.clear();
+            m_colors.clear();
+
+            int count{};
 
             // Make draw call for each game object with a renderer component
+
             for (const EntityID& id : SceneView<Renderer>())
             {
-                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
-
-                worldToNdcMatrices.emplace_back(r_worldToNdc);
-                modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
-                    transform.height, transform.orientation, // height, orientation
-                    transform.position.x, transform.position.y)); // x, y position
-                colors.emplace_back(renderer.GetColor());
+                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 // Attempt to retrieve and bind the texture
                 if (renderer.GetTextureKey().empty())
                 {
-                    if (!p_texture) 
-                    {
-                        r_shaderProgram.SetUniform("uIsTextured", false);
-                    }
+                    m_isTextured.emplace_back(0.f);
                 }
-                else if(!p_texture)
+                else if(currentTexture != renderer.GetTextureKey())
                 {
+                    // Check if we were already 
+                    if (!currentTexture.empty()) 
+                    {
+                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                        currentTexture.clear();
+                        count = 0;
+                    }
+
                     auto textureIterator{ ResourceManager::GetInstance().Textures.find(renderer.GetTextureKey()) };
 
-                    // Check if shader program is valid
+                    // Check if texture program is valid
                     if (textureIterator == ResourceManager::GetInstance().Textures.end())
                     {
                         engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                         engine_logger.SetTime();
                         engine_logger.AddLog(false, "Texture " + renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
 
-                        r_shaderProgram.SetUniform("uIsTextured", false);
+                        // Remove the texture and set the object to neon pink
+                        renderer.SetTextureKey("");
+                        renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+
+                        m_isTextured.emplace_back(0.f);
                     }
                     else
                     {
-                        p_texture = textureIterator->second;
+                        // Unbind the existing texture
+                        if (p_texture) 
+                        {
+                            p_texture->Unbind();
+                        }
+
+                        // Store the texture key of the current texture
+                        currentTexture = renderer.GetTextureKey();
+
+                        // Bind the new texture
                         unsigned int textureUnit{ 0 };
+                        p_texture = textureIterator->second;
                         p_texture->Bind(textureUnit);
                         r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
-                        r_shaderProgram.SetUniform("uIsTextured", true);
+
+                        m_isTextured.emplace_back(1.f);
                     }
                 }
+                else 
+                {
+                    m_isTextured.emplace_back(1.f);
+                }
+
+                // Add the matrix and colors to the buffer
+                m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
+                    transform.height, transform.orientation, // height, orientation
+                    transform.position.x, transform.position.y)); // x, y position
+                m_colors.emplace_back(renderer.GetColor());
 
                 ++count;
             }
 
-            // Create buffer object for additional vertex data
-            GLuint vbo_hdl;
-            glCreateBuffers(1, &vbo_hdl);
-            glNamedBufferStorage(vbo_hdl,
-                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)
-                    + worldToNdcMatrices.size() * sizeof(glm::mat4) * 2.f),
-                nullptr, GL_DYNAMIC_STORAGE_BIT);
-
-
-            // Store colors in VBO
-            glNamedBufferSubData(vbo_hdl, 0,
-                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)),
-                reinterpret_cast<GLvoid*>(colors.data()));
-
-            // Store world to NDC matrix in VBO
-            glNamedBufferSubData(vbo_hdl,
-                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4)),
-                static_cast<GLintptr>(worldToNdcMatrices.size() * sizeof(glm::mat4)),
-                reinterpret_cast<GLvoid*>(worldToNdcMatrices.data()));
-
-            // Store model to world matrix in VBO
-            glNamedBufferSubData(vbo_hdl,
-                static_cast<GLsizeiptr>(colors.size() * sizeof(glm::vec4) + worldToNdcMatrices.size() * sizeof(glm::mat4)),
-                static_cast<GLintptr>(modelToWorldMatrices.size() * sizeof(glm::mat4)),
-                reinterpret_cast<GLvoid*>(modelToWorldMatrices.data()));
-
-            // Bind the colors
-            GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
-            glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex);
-            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl, 0,
-                static_cast<GLsizei>(sizeof(glm::vec4)));
-            glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
-            glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex, bindingIndex);
-            glVertexAttribDivisor(attributeIndex, 1);
-
-            // Bind the world to NDC matrices
-            attributeIndex = 3, bindingIndex = 3;
-
-            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
-                static_cast<GLintptr>(colors.size() * sizeof(glm::vec4)),
-                static_cast<GLsizei>(sizeof(glm::mat4)));
-
-            for (int i{}; i < 4; ++i) 
-            {
-                glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i);
-
-                glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
-                glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, bindingIndex);
-            }
-
-            glVertexArrayBindingDivisor(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, 1);
-
-            // Bind the model to world matrices
-            attributeIndex = 7, bindingIndex = 4;
-
-            glVertexArrayVertexBuffer(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, vbo_hdl,
-                static_cast<GLintptr>(colors.size() * sizeof(glm::vec4) + worldToNdcMatrices.size() * sizeof(glm::mat4)),
-                static_cast<GLsizei>(sizeof(glm::mat4)));
-
-            for (int i{}; i < 4; ++i) 
-            {
-                glEnableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i);
-
-                glVertexArrayAttribFormat(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
-                glVertexArrayAttribBinding(m_meshes[meshIndex].GetVertexArrayObjectIndex(), attributeIndex + i, bindingIndex);
-            }
-
-            glVertexArrayBindingDivisor(m_meshes[meshIndex].GetVertexArrayObjectIndex(), bindingIndex, 1);
-
-            glDrawElementsInstanced(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-                GL_UNSIGNED_SHORT, NULL, count);
+            // Draw the remaining objects
+            DrawInstanced(count, meshIndex, GL_TRIANGLES);
 
             // Unbind everything
             m_meshes[meshIndex].Unbind();
@@ -398,11 +399,6 @@ namespace PE
             {
                 p_texture->Unbind();
             }
-
-            glDeleteBuffers(1, &vbo_hdl); 
-            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 2);
-            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 3);
-            glDisableVertexArrayAttrib(m_meshes[meshIndex].GetVertexArrayObjectIndex(), 7);
         }
 
 
@@ -426,7 +422,7 @@ namespace PE
             // Draw each of the colliders
             for (const EntityID& id : SceneView<Collider>())
             {
-                Collider& collider{ g_entityManager->Get<Collider>(id) };
+                Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
                 std::visit([&](auto& col)
                     {
@@ -438,8 +434,8 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
-                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
+                RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
@@ -557,6 +553,96 @@ namespace PE
             }
         }   
 
+        void RendererManager::DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType)
+        {
+            if (!count) { return; }
+
+            // Store the sizes of the sub buffers
+            size_t sizeOfTexturedVector{ m_isTextured.size() * sizeof(float) };
+            size_t sizeOfColorVector{ m_colors.size() * sizeof(glm::vec4) };
+            size_t sizeOfMatrixVector{ m_modelToWorldMatrices.size() * sizeof(glm::mat4) };
+
+
+            // Create buffer object for additional vertex data
+            GLuint vertexBufferObject{}, vertexArrayObjectIndex{ m_meshes[meshIndex].GetVertexArrayObjectIndex() };
+            glCreateBuffers(1, &vertexBufferObject);
+            glNamedBufferStorage(vertexBufferObject,
+                static_cast<GLsizeiptr>(sizeOfTexturedVector + sizeOfColorVector + sizeOfMatrixVector),
+                nullptr, GL_DYNAMIC_STORAGE_BIT);
+
+
+            // Store textured bools in VBO
+            glNamedBufferSubData(vertexBufferObject, 0,
+                static_cast<GLsizeiptr>(sizeOfTexturedVector),
+                reinterpret_cast<GLvoid*>(m_isTextured.data())); 
+
+            // Bind the textured bools
+            GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
+            glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
+            glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject, 0,
+                static_cast<GLsizei>(sizeof(float)));
+            glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 1, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
+            glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance
+
+
+            // Store colors in VBO
+            glNamedBufferSubData(vertexBufferObject,
+                static_cast<GLintptr>(sizeOfTexturedVector),
+                static_cast<GLsizeiptr>(sizeOfColorVector),
+                reinterpret_cast<GLvoid*>(m_colors.data()));
+
+            // Bind the colors
+            ++attributeIndex, ++bindingIndex;
+            glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
+            glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject,
+                static_cast<GLintptr>(sizeOfTexturedVector), static_cast<GLsizei>(sizeof(glm::vec4)));
+            glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
+            glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance
+
+            // Store model to NDC matrices in VBO
+            glNamedBufferSubData(vertexBufferObject,
+                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLsizeiptr>(sizeOfMatrixVector),
+                reinterpret_cast<GLvoid*>(m_modelToWorldMatrices.data()));
+
+            // Bind the model to NDC matrices
+            ++attributeIndex, ++bindingIndex;
+
+            glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject,
+                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLsizei>(sizeof(glm::mat4)));
+
+            for (int i{}; i < 4; ++i)
+            {
+                glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
+
+                glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
+                glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
+                ++attributeIndex;
+            }
+            // Advance once per instance
+            glVertexArrayBindingDivisor(vertexArrayObjectIndex, bindingIndex, 1);
+
+            // Make instanced draw
+            glDrawElementsInstanced(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL, static_cast<GLsizei>(count));
+
+            // Delete the buffer
+            glDeleteBuffers(1, &vertexBufferObject);
+
+            --attributeIndex;
+            while (attributeIndex >= 2) 
+            {
+                glDisableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex--);
+            }
+
+            // Clear the vectors
+            m_isTextured.clear();
+            m_colors.clear();
+            m_modelToWorldMatrices.clear();
+        }
 
         void RendererManager::DrawCollider(AABBCollider const& r_aabbCollider,
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,

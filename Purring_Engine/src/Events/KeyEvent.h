@@ -13,8 +13,8 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-#ifndef KEY_EVENTS_H
-#define KEY_EVENTS_H
+
+#pragma once
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
@@ -23,20 +23,72 @@
 
 namespace PE
 {
-
 	//Key Event Types
 	enum class KeyEvents
 	{
+		KeyTriggered,
 		KeyPressed,
 		KeyRelease
 	};
 
 
-	class KeyPressedEvent : public Event<KeyEvents>
+	class KeyTriggeredEvent : public Event<KeyEvents>
 	{
+		// ----- Public variables ----- // 
+	public:
+		int keycode = -1; // ascii keycode
+		float repeat = 0; //is the key on repeat
+
 		// ----- Constructors ----- // 
 	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
+		KeyTriggeredEvent() : Event<KeyEvents>(KeyEvents::KeyTriggered, "KeyTriggered") {}
+
+		/*!***********************************************************************************
+		\brief			default destructor of events
+		*************************************************************************************/
+		virtual ~KeyTriggeredEvent() {}
+
+		// ----- Public methods ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief					implicit conversion to a std::string, used for output streams
+
+		 \return std::string	Returns information about the event
+		*************************************************************************************/
+		inline std::string ToString() const override
+		{
+			std::stringstream ss;
+			if (keycode >= 32 && keycode <= 96)
+				ss << "Key Triggered: " << (char)keycode;
+			else
+			{
+				ss << "GLFW KeyCode of Key Triggered: " << keycode;
+			}
+			return ss.str();
+		}
+
+	};
+
+	class KeyPressedEvent : public Event<KeyEvents>
+	{
+
+		// ----- Public variables ----- // 
+	public:
+		int keycode = -1; // ascii keycode
+		float repeat = 0; //is the key on repeat
+
+		// ----- Constructors ----- // 
+	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
 		KeyPressedEvent() : Event<KeyEvents>(KeyEvents::KeyPressed, "KeyPressed") {}
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
 		virtual ~KeyPressedEvent() {}
 
 		// ----- Public methods ----- // 
@@ -56,23 +108,25 @@ namespace PE
 				ss << "GLFW KeyCode of Key Pressed: " << keycode;
 			}
 
-			if (repeat < 0)
-				ss << " (Key is being held)";
-
 			return ss.str();
 		}
-
-		// ----- Public variables ----- // 
-	public:
-		int keycode = -1; // ascii keycode
-		float repeat = 0; //is the key on repeat
 	};
 
 	class KeyReleaseEvent : public Event<KeyEvents>
 	{
+		// ----- Public variables ----- // 
+	public:
+		int keycode = -1; // ascii keycode
+
 		// ----- Constructors ----- // 
 	public:
-		KeyReleaseEvent() : Event<KeyEvents>(KeyEvents::KeyRelease, "KeyReleaseE") {}
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
+		KeyReleaseEvent() : Event<KeyEvents>(KeyEvents::KeyRelease, "KeyRelease") {}
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
 		virtual ~KeyReleaseEvent() {}
 
 		// ----- Public methods ----- // 
@@ -94,12 +148,8 @@ namespace PE
 			return ss.str();
 		}
 
-		// ----- Public variables ----- // 
-	public:
-		int keycode = -1; // ascii keycode
 	};
 
 
 }
 
-#endif

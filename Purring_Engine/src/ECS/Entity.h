@@ -21,7 +21,8 @@
 // INCLUDES
 #include "prpch.h"
 #include "Components.h"
-//#include "Data/SerializationManager.h"
+#include "Data/SerializationManager.h"
+#include "Singleton.h"
 
 
 
@@ -35,9 +36,10 @@ namespace PE
 	 \brief Entity manager struct
 	 
 	*************************************************************************************/
-	class EntityManager
+	class EntityManager : public Singleton<EntityManager>
 	{
-
+	public:
+		friend class Singleton<EntityManager>;
 	// ----- Constructors ----- //
 	public:
 		/*!***********************************************************************************
@@ -79,18 +81,18 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Get a pointer to a specific component pool (const)
 
-		 \param[in] component 			The pool to Get
+		 \param[in] r_component 			The pool to Get
 		 \return const ComponentPool* 	The pointer to the pool
 		*************************************************************************************/
-		const ComponentPool* GetComponentPoolPointer(const ComponentID& component) const;
+		const ComponentPool* GetComponentPoolPointer(const ComponentID& r_component) const;
 
 		/*!***********************************************************************************
 		 \brief Get a pointer to a specific component pool
 
-		 \param[in] component 			The pool to Get
+		 \param[in] r_component 			The pool to Get
 		 \return const ComponentPool* 	The pointer to the pool
 		*************************************************************************************/
-		ComponentPool* GetComponentPoolPointer(const ComponentID& component);
+		ComponentPool* GetComponentPoolPointer(const ComponentID& r_component);
 
 
 		/*!***********************************************************************************
@@ -179,7 +181,7 @@ namespace PE
 		 \return T* 	The created entity
 		*************************************************************************************/
 		template<typename T>
-		T* Assign(EntityID id, T const& val);
+		T* Assign(EntityID id, T const& r_val);
 
 		/*!***********************************************************************************
 		 \brief Assign an entity with a component specified by the componentID & the 
@@ -188,7 +190,7 @@ namespace PE
 		 \param[in] id 				ID of the entity to assign components to
 		 \param[in] componentID 	The ID of the component to assign 
 		*************************************************************************************/
-		void Assign(const EntityID& id, const char* componentID);
+		void Assign(const EntityID& r_id, const char* p_componentID);
 
 
 		/*!***********************************************************************************
@@ -197,7 +199,7 @@ namespace PE
 		 \param[in] id 				ID of the entity to asign components to
 		 \param[in] componentID 	The component to assign
 		*************************************************************************************/
-		void Assign(const EntityID& id, const ComponentID& componentID);
+		void Assign(const EntityID& r_id, const ComponentID& r_componentID);
 
 		/*!***********************************************************************************
 		 \brief Copies a component from src entity into dest entity
@@ -208,7 +210,7 @@ namespace PE
 		 \param[in] dest 		Destination to copy to
 		 \param[in] component 	The component to copy
 		*************************************************************************************/
-		void CopyComponent(EntityID src, EntityID dest, const ComponentID& component);
+		void CopyComponent(EntityID src, EntityID dest, const ComponentID& r_component);
 
 		/*!***********************************************************************************
 		 \brief Copies a component's value from src into the entity specified by id
@@ -218,7 +220,7 @@ namespace PE
 		 \param[in] src 	The source component to copy from
 		*************************************************************************************/
 		template <typename T>
-		void Copy(EntityID id, const T& src);
+		void Copy(EntityID id, const T& r_src);
 
 		/*!***********************************************************************************
 		 \brief Checks if the entity has component type T
@@ -239,7 +241,7 @@ namespace PE
 		 \return true 			Entity has component
 		 \return false 			Entity does not have component
 		*************************************************************************************/
-		bool Has(EntityID id, const ComponentID& component) const;
+		bool Has(EntityID id, const ComponentID& r_component) const;
 
 		/*!***********************************************************************************
 		 \brief Removes a component from an entity
@@ -311,21 +313,34 @@ namespace PE
 		std::vector<ComponentID> GetComponentIDs(EntityID id)
 		{
 			std::vector<ComponentID> ret;
-			for (std::pair<const ComponentID, ComponentPool*>& component : m_componentPools)
+			for (std::pair<const ComponentID, ComponentPool*>& r_component : m_componentPools)
 			{
-				if (component.second->HasEntity(id))
+				if (r_component.second->HasEntity(id))
 				{
-					ret.emplace_back(component.first);
+					ret.emplace_back(r_component.first);
 				}
 			}
 			return ret;
 		}
 
-		const std::vector<EntityID>& GetEntitiesInPool(const ComponentID& pool)
+		/*!***********************************************************************************
+		 \brief Get the Entities In Pool object
+		 
+		 \param[in] r_pool 						The pool to get the eneity vector from
+		 \return const std::vector<EntityID>& 	Gets the pool's vector of entities
+		*************************************************************************************/
+		const std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool)
 		{
-			return m_poolsEntity[pool];
+			return m_poolsEntity[r_pool];
 		}
 
+		/*!***********************************************************************************
+		 \brief Updates the entity vectors, helps keeps track of which entity can be found in
+		 		in which pool
+
+		 \param[in] id 	ID of the entity to handle
+		 \param[in] add Add or remove flag, true = add, false = remove from pool
+		*************************************************************************************/
 		void UpdateVectors(EntityID id, bool add = true)
 		{
 			if (add) 
@@ -360,10 +375,7 @@ namespace PE
 				}
 			}
 		}
-	// ----- Private Functions ----- //
-	private:
-
-	// ----- Private Variables ----- //
+			// ----- Private Variables ----- //
 	private:
 		// set of entities picked over vector to increase the speed of searches for specific entites
 		std::set<EntityID> m_entities;
@@ -371,13 +383,11 @@ namespace PE
 		std::map<ComponentID, ComponentPool*> m_componentPools;
 		// a queue of entity IDs to handle removed entities
 		std::queue<EntityID> m_removed;
-		
+		// a map to a vector of entity IDs used to keep track of entity components (used to iterate in SceneView)
 		std::map<ComponentID, std::vector<EntityID>> m_poolsEntity;
+		// a counter to help keep track of the entities "absolute" count
 		size_t m_entityCounter{1};
 	};
-
-	// extern to allow the access to the entity manager instance
-	extern EntityManager* g_entityManager;
 
 	//-------------------- Templated function implementations --------------------//
 
@@ -397,24 +407,23 @@ namespace PE
 		}
 
 		// add to component pool's map keeping track of index
-		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
 		
 		// initialize that region of memory
-		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->m_capacity - 1)
+		if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
 		{
-			m_componentPools[componentID]->resize(m_componentPools[componentID]->m_capacity * 2);
+			m_componentPools[componentID]->Resize(m_componentPools[componentID]->m_capacity * 2);
 		}
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead of allocating more memory
 		m_componentPools[componentID]->Get(id) =  T();
-		++(m_componentPools[componentID]->m_size);
-		Update
+		++(m_componentPools[componentID]->size);
 		return p_component;
 	}
 
 
 	template<typename T>
-	T* EntityManager::Assign(EntityID id, T const& val)
+	T* EntityManager::Assign(EntityID id, T const& r_val)
 	{
 		static ComponentID componentID = GetComponentID<T>();
 
@@ -428,18 +437,18 @@ namespace PE
 			return;
 		}
 		// add to component pool's map keeping track of index
-		m_componentPools[componentID]->m_idxMap.emplace(id, m_componentPools[componentID]->m_idxMap.size());
+		m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
 
 		// initialize that region of memory
-		if (m_componentPools[componentID]->m_size >= m_componentPools[componentID]->capacity - 1)
+		if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
 		{
-			m_componentPools[componentID]->resize(m_componentPools[componentID]->capacity * 2);
+			m_componentPools[componentID]->Resize(m_componentPools[componentID]->capacity * 2);
 		}
 
 
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead of allocating more memory
-		m_componentPools[componentID]->Get(id) = T(val);
+		m_componentPools[componentID]->Get(id) = T(r_val);
 		++(m_componentPools[componentID]->size);
 		return p_component;
 	}
@@ -513,11 +522,11 @@ namespace PE
 	}
 
 	template <typename T>
-	void EntityManager::Copy(EntityID id, const T& src)
+	void EntityManager::Copy(EntityID id, const T& r_src)
 	{
 		if (m_componentPools[GetComponentID<T>()]->HasEntity(id))
 		{
-			Get<T>(id) = T(src);
+			Get<T>(id) = T(r_src);
 		}
 	}
 

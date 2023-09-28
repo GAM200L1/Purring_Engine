@@ -41,6 +41,7 @@
 #include "Singleton.h"
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/Texture.h"
+#include "AudioManager.h"
 
 //class Resource
 //{
@@ -55,8 +56,6 @@
 //    std::string m_filepath;
 //};
 
-// should namespace this under the engine
-// setting as singleton class - think theres only need for one instance of this
 namespace PE
 {
     class ResourceManager : public Singleton<ResourceManager>
@@ -65,7 +64,8 @@ namespace PE
         friend class Singleton<ResourceManager>;
         // ----- Public Variables ----- //
         std::map<std::string, std::shared_ptr<Graphics::ShaderProgram>> ShaderPrograms;
-        std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;  
+        std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;
+        std::map<std::string, std::shared_ptr<AudioManager::Audio>> Sounds;
         // Icons?
 
         // Unloads all resources that were previously loaded
@@ -98,6 +98,14 @@ namespace PE
             \param[in] r_filePath File path of texture.
         *************************************************************************************/
         void LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Loads audio from file and inserts into Sounds map container.
+
+            \param[in] r_key Name of audio file.
+            \param[in] r_filePath File path of audio.
+        *************************************************************************************/
+        void LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.

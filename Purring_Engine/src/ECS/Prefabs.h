@@ -9,6 +9,7 @@
  
  \brief 	Contains the Prefabs for use for default Entity compositions
 
+
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
@@ -27,7 +28,7 @@ namespace PE
 	*************************************************************************************/
 	namespace Prefabs
 	{
-		constexpr std::initializer_list<const char*> GameObject = { "RigidBody", "Collider", "Transform", "Renderer"};
+		constexpr std::initializer_list<const char*> GameObject = { "Transform", "RigidBody", "Collider", "Renderer"};
 	}
 
 	/*!***********************************************************************************
@@ -38,7 +39,7 @@ namespace PE
 	{
 	// ----- Public variables ----- // 
 	public:
-		std::map<std::string, std::initializer_list<const char*>> m_map;
+		std::map<std::string, std::initializer_list<const char*>> prefabs;
 		
 	// ----- Constructors ----- //
 	public:
@@ -48,10 +49,8 @@ namespace PE
 		*************************************************************************************/
 		Prefab()
 		{
-			//LoadComponents();
-			m_map.emplace("GameObject", Prefabs::GameObject);
+			prefabs.emplace("GameObject", Prefabs::GameObject);
 		}
-	
 	};
 
 }

@@ -579,8 +579,6 @@ namespace PE
 		mat3x3 Adjoint() const;
 		// Inverse
 		mat3x3 Inverse() const;
-		// conversion for glm
-		mat4x4 ConvertTo4x4() const;
 	};
 
 
@@ -662,7 +660,7 @@ namespace PE
 
 	void Clamp(float& r_varToClamp, float min, float max);
 
-	//void Wrap(float& r_varToWrap, float min, float max);
+	void Wrap(float& r_varToWrap, float min, float max);
 }
 
 

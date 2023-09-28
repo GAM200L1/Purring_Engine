@@ -2,43 +2,148 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     AudioManager.h
- \date     16-09-2023
+ \date     10-09-2023
 
- \author               You Yang ONG
+ \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
 
- \brief    This file contains the AudioManager class, which manages
-           audio playback and includes FMOD as the underlying audio system.
+ \brief	   This file features the AudioManager class that encapsulates the FMOD library API
+           for audio operations. It initializes the FMOD system and controls its lifecycle,
+           provides a series of methods for sound playback, and interfaces seamlessly with
+           the ResourceManager to manage audio assets.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
+#include "prpch.h"
 #include "fmod.hpp"
 #include "fmod_errors.h"
-class AudioManager
+#include "Singleton.h"
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
+
+namespace PE
 {
-public:
-    // Constructor - Destructor
-    AudioManager();
-    ~AudioManager();
+    /*!***********************************************************************************
+     \brief     AudioManager class for handling FMOD audio system and events.
+    *************************************************************************************/
+    class AudioManager : public Singleton<AudioManager>
+    {
+    public:
+        friend class Singleton<AudioManager>;
 
-    bool Init();
-    void Update();
-    void PlaySound(const char* filePath);
-    void StopSound();
-    static AudioManager* GetInstance();
-private:
-    // FMOD system object for managing audio resources
-    FMOD::System* system;
+        /*!***********************************************************************************
+         \brief     Nested Audio class for handling individual audio data.
+        *************************************************************************************/
+        class Audio
+        {
+        public:
+            /*!***********************************************************************************
+             \brief     Load a sound from a file path.
+             \param     path Path to the audio file.
+             \param     system FMOD::System pointer for audio system management.
+             \return    bool True if the sound is successfully loaded.
+            *************************************************************************************/
+            bool LoadSound(const std::string& path, FMOD::System* system);
 
-    // FMOD sound objects to hold audio data
-    FMOD::Sound* sound1;
-    FMOD::Sound* sound2;
+            /*!***********************************************************************************
+             \brief     Getter for FMOD::Sound* object.
+             \return    FMOD::Sound* The sound object.
+            *************************************************************************************/
+            FMOD::Sound* GetSound() const { return m_sound; }
 
-    // FMOD channel objects to control playback
-    FMOD::Channel* channel1;
-    FMOD::Channel* channel2;
+            /*!***********************************************************************************
+             \brief     Setter for FMOD::Channel* object.
+             \param     channel The channel object.
+            *************************************************************************************/
+            void SetChannel(FMOD::Channel* channel) { m_channel = channel; }
 
-    static std::unique_ptr<AudioManager> s_Instance;
+            /*!***********************************************************************************
+             \brief     Getter for FMOD::Channel* object.
+             \return    FMOD::Channel* The channel object.
+            *************************************************************************************/
+            FMOD::Channel* GetChannel() const { return m_channel; }
 
-};
+        private:
+            FMOD::Sound* m_sound = nullptr;
+            FMOD::Channel* m_channel = nullptr;
+        };
+
+        /*!***********************************************************************************
+         \brief     Initialize the FMOD audio system.
+         \return    bool True if initialization is successful.
+        *************************************************************************************/
+        bool Init();
+
+        /*!***********************************************************************************
+         \brief     Update the audio system. Typically called per frame.
+        *************************************************************************************/
+        void Update();
+
+        /*!***********************************************************************************
+         \brief     Play a sound by its identifier.
+         \param     id The identifier for the sound to be played.
+        *************************************************************************************/
+        void PlaySound(const std::string& id);
+
+        /*!***********************************************************************************
+         \brief     Set the volume for a specific sound.
+         \param     id The identifier for the sound.
+         \param     volume The new volume level (0.0 to 1.0).
+        *************************************************************************************/
+        void SetVolume(const std::string& id, float volume);
+
+        /*!***********************************************************************************
+         \brief     Set the global volume for all sounds.
+         \param     volume The new global volume level (0.0 to 1.0).
+        *************************************************************************************/
+        void SetGlobalVolume(float volume);
+
+        /*!***********************************************************************************
+         \brief     Pause a specific sound.
+         \param     id The identifier for the sound to be paused.
+        *************************************************************************************/
+        void PauseSound(const std::string& id);
+
+        /*!***********************************************************************************
+         \brief     Resume a paused sound.
+         \param     id The identifier for the sound to be resumed.
+        *************************************************************************************/
+        void ResumeSound(const std::string& id);
+
+        /*!***********************************************************************************
+         \brief     Stop a specific sound.
+         \param     id The identifier for the sound to be stopped.
+        *************************************************************************************/
+        void StopSound(const std::string& id);
+
+        /*!***********************************************************************************
+         \brief     Stop all currently playing sounds.
+        *************************************************************************************/
+        void StopAllSounds();
+
+        /*!***********************************************************************************
+         \brief     Get the FMOD system.
+         \return    FMOD::System* The current FMOD system.
+        *************************************************************************************/
+        FMOD::System* GetFMODSystem() { return m_system; }
+
+    private:
+        /*!***********************************************************************************
+         \brief     Private constructor for Meyer's Singleton.
+        *************************************************************************************/
+        AudioManager();
+
+        /*!***********************************************************************************
+         \brief     Destructor for cleaning up FMOD resources.
+        *************************************************************************************/
+        ~AudioManager();
+
+        /*!***********************************************************************************
+         \brief     The FMOD audio system.
+        *************************************************************************************/
+        FMOD::System* m_system;
+    };
+}
