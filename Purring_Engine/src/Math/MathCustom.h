@@ -510,14 +510,31 @@ namespace PE
 	struct mat3x3
 	{
 		float m[9];
-		// col row format
+		// column major
 		float& m_00 = m[0], & m_01 = m[1], & m_02 = m[2],
 			& m_10 = m[3], & m_11 = m[4], & m_12 = m[5],
 			& m_20 = m[6], & m_21 = m[7], & m_22 = m[8];
 
-		// default constructor
+		// ----- Constructors ----- //
+		/*!***********************************************************************************
+		 \brief Constructs a new mat3x3 object where all elements are 0.
+		 
+		*************************************************************************************/
 		mat3x3();
-		// constructor
+		/*!***********************************************************************************
+		 \brief Constructs a new mat3x3 object based on user's input. Note that input has to be
+		 		column major.
+		 
+		 \param[in,out] c0_r0 
+		 \param[in,out] c0_r1 
+		 \param[in,out] c0_r2 
+		 \param[in,out] c1_r0 
+		 \param[in,out] c1_r1 
+		 \param[in,out] c1_r2 
+		 \param[in,out] c2_r0 
+		 \param[in,out] c2_r1 
+		 \param[in,out] c2_r2 
+		*************************************************************************************/
 		explicit mat3x3(float c0_r0, float c0_r1, float c0_r2,
 			float c1_r0, float c1_r1, float c1_r2,
 			float c2_r0, float c2_r1, float c2_r2);
