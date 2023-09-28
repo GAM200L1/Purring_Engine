@@ -8,53 +8,102 @@
 #include "Physics/Colliders.h"
 #include "Graphics/Renderer.h"
 
-struct PlayerStats
+struct StructPlayerStats
 {
-    int health;
-    int level;
-    float experience;
-    std::string playerName;
+    int m_health;
+    int m_level;
+    float m_experience;
+    std::string m_playerName;
 
-    void from_json(const nlohmann::json& j, int& entityId, class SerializationManager& sm);
-    nlohmann::json to_json(int entityId, class SerializationManager& sm) const;
+    //void FromJson(const nlohmann::json& j, int& r_entityId, class SerializationManager& r_sm);
+    //nlohmann::json ToJson(int r_entityId, class SerializationManager& r_sm) const;
 };
 
-// Structure to represent an Entity with variable names and data
-struct Entity
+struct StructEntity
 {
-    std::string name;                                   // Entity name
-    std::unordered_map<std::string, std::any> data;     // Variable names and their data
+    std::string m_name;                                   // Entity name
+    std::unordered_map<std::string, std::any> m_data;     // Variable names and their data
 
     // Additional data members
-    int id;
-    int someInt;
-    float someFloat;
-    double someDouble;
-    char someChar;
-    bool someBool;
-    std::string someString;
+    int m_id;
+    int m_someInt;
+    float m_someFloat;
+    double m_someDouble;
+    char m_someChar;
+    bool m_someBool;
+    std::string m_someString;
 };
 
 class SerializationManager
 {
+    // ----- Public Methods ----- //
 public:
-    nlohmann::json serializeEntity(int entityID);
-    EntityID deserializeEntity(const nlohmann::json& j);
+    /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object.
+    *************************************************************************************/
+    nlohmann::json SerializeEntity(int entityId);
 
-    void saveToFile(const std::string& filename, int entityID);
-    EntityID loadFromFile(const std::string& filename);
+    /*!***********************************************************************************
+     \brief Deserialize a JSON object to create an entity, returning its ID.
+    *************************************************************************************/
+    int DeserializeEntity(const nlohmann::json& r_j);
 
-// ----- Private Methods ----- //
+    /*!***********************************************************************************
+     \brief Save the serialized entity to a file.
+    *************************************************************************************/
+    void SaveToFile(const std::string& r_filename, int entityId);
+
+    /*!***********************************************************************************
+     \brief Load an entity from a serialized file, returning its ID.
+    *************************************************************************************/
+    int LoadFromFile(const std::string& r_filename);
+
+
+
+    // ----- Private Methods ----- //
 private:
+    /*!***********************************************************************************
+     \brief Load the serialization functions for different components.
+    *************************************************************************************/
     void LoadLoaders();
+
+    /*!***********************************************************************************
+     \brief Load the RigidBody component from JSON.
+    *************************************************************************************/
     bool LoadRigidBody(const EntityID& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Collider component from JSON.
+    *************************************************************************************/
     bool LoadCollider(const EntityID& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Transform component from JSON.
+    *************************************************************************************/
     bool LoadTransform(const EntityID& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Renderer component from JSON.
+    *************************************************************************************/
     bool LoadRenderer(const EntityID& r_id, const nlohmann::json& r_json);
-// ----- Private Variables ----- //
+
+
+
+    // ----- Private Methods ----- //
 private:
-    std::unordered_map<int, Entity> entities; // Store entities with integer IDs
-    std::string structName = "Entity"; // Default struct name for serialization
-    typedef bool(SerializationManager::* fnptrVoidptrLoad)(const EntityID& r_id, const nlohmann::json& r_json);
-    std::map<std::string, fnptrVoidptrLoad> m_initializeComponent;
+    /*!***********************************************************************************
+     \brief Map of entities identified by integer IDs.
+    *************************************************************************************/
+    std::unordered_map<int, StructEntity> m_entities;              // Store entities with integer IDs
+
+    /*!***********************************************************************************
+     \brief Default struct name used for serialization.
+    *************************************************************************************/
+    std::string m_structName = "Entity";                           // Default struct name for serialization
+
+    /*!***********************************************************************************
+     \brief Function pointer map for initializing components.
+    *************************************************************************************/
+    typedef bool(SerializationManager::* FnptrVoidptrLoad)(const EntityID& r_id, const nlohmann::json& r_json);
+    std::map<std::string, FnptrVoidptrLoad> m_initializeComponent;
 };

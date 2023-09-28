@@ -1123,10 +1123,10 @@ namespace PE {
 						int testEntityID = m_currentSelectedObject;
 
 						// debugging print onto consle
-						nlohmann::json serializedEntity = serializationManager.serializeEntity(testEntityID);
+						nlohmann::json serializedEntity = serializationManager.SerializeEntity(testEntityID);
 						std::cout << "Serialized Entity: " << serializedEntity.dump(4) << std::endl;  // 4 is for indentation
 
-						serializationManager.saveToFile("Saved_Data.json", testEntityID);
+						serializationManager.SaveToFile("Saved_Data.json", testEntityID);
 					}
 					if (ImGui::MenuItem("Load"))
 					{
@@ -1156,7 +1156,7 @@ namespace PE {
 						{
 							std::wstring wfp = ofn.lpstrFile;
 							std::string fp(wfp.begin(), wfp.end());
-							serializationManager.loadFromFile(fp);
+							serializationManager.LoadFromFile(fp);
 						}
 					}
 					ImGui::Separator();

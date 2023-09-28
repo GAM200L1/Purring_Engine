@@ -3,49 +3,46 @@
 #include "ECS/EntityFactory.h"
 #include "Math/MathCustom.h"
 
-nlohmann::json SerializationManager::serializeEntity(int entityID)
+/*!***********************************************************************************
+ \brief     Serializes an entity identified by its entityID into a JSON object.
+
+ \tparam T             This function does not use a template.
+ \param[in] entityID   The unique identifier for the entity to be serialized.
+ \return nlohmann::json A JSON object containing the serialized entity data.
+*************************************************************************************/
+nlohmann::json SerializationManager::SerializeEntity(int entityId)
 {
-    // Get a reference or pointer to your EntityManager
     PE::EntityManager* entityManager = PE::g_entityManager;
 
-    // Convert your entityID to your EntityID type
-    EntityID eID = static_cast<EntityID>(entityID);
+    EntityID eID = static_cast<EntityID>(entityId);
 
-    nlohmann::json j;                           // Create a JSON object to store the serialized data.
-    Entity& entity = entities[entityID];        // Get a reference to the entity with the specified ID.
+    nlohmann::json j;
+    StructEntity& entity = m_entities[entityId];
 
-    // Set the entity's name in the JSON object.
-    j["Entity"]["name"] = entity.name;
+    j["Entity"]["name"] = entity.m_name;
 
-    // Loop through the data associated with the entity.
-    for (const auto& [key, val] : entity.data)
+    for (const auto& [key, val] : entity.m_data)
     {
-        // Check the type of the data stored in 'val' using std::type_info.
         if (val.type() == typeid(int))
         {
-            // If it's an int, add type information and the int value to JSON.
             j["Entity"]["data"][key]["type"] = "int";
             j["Entity"]["data"][key]["value"] = std::any_cast<int>(val);
         }
         else if (val.type() == typeid(float))
         {
-            // If it's a float, add type information and the float value to JSON.
             j["Entity"]["data"][key]["type"] = "float";
             j["Entity"]["data"][key]["value"] = std::any_cast<float>(val);
         }
         else if (val.type() == typeid(std::string))
         {
-            // If it's a string, add type information and the string value to JSON.
             j["Entity"]["data"][key]["type"] = "string";
             j["Entity"]["data"][key]["value"] = std::any_cast<std::string>(val);
         }
         else if (val.type() == typeid(std::vector<int>))
         {
-            // If it's a vector of int(s), add type information and the vector value to JSON.
             j["Entity"]["data"][key]["type"] = "vector<int>";
             j["Entity"]["data"][key]["value"] = std::any_cast<std::vector<int>>(val);
         }
-        // To add similar blocks for other data types in the future..... -hans
     }
 
     {
@@ -78,109 +75,119 @@ nlohmann::json SerializationManager::serializeEntity(int entityID)
         }
     }
 
-    return j; // Return the JSON object containing the serialized entity.
+    return j; 
 }
 
-EntityID SerializationManager::deserializeEntity(const nlohmann::json& j)
-{
-    Entity entity;                              // Create an empty Entity object to store the deserialized data.
-    int entityID = -1;                          // Initialize entityID with a failure code.
 
-    // Get a reference or pointer to your EntityManager
+
+/*!***********************************************************************************
+ \brief     Deserializes a JSON object into an entity, creating a new entity in the process.
+
+ \tparam T             This function does not use a template.
+ \param[in] j          A JSON object containing the serialized entity data.
+ \return EntityID      The unique identifier for the newly created entity.
+*************************************************************************************/
+int SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
+{
+    StructEntity entity;
+    int entityID = -1;
+
     PE::EntityManager* entityManager = PE::g_entityManager;
     if (m_initializeComponent.empty())
         LoadLoaders();
 
-    // This is to check if "Entity" key exists in the JSON 
     EntityID id = MAXSIZE_T;
-    if (j.contains("Entity"))
+    if (r_j.contains("Entity"))
     {
-        const auto& entityJson = j["Entity"];
+        const auto& entityJson = r_j["Entity"];
 
-        // This is to check if "name" key exists under "Entity"
-        //if (entityJson.contains("name"))
-        //{
-        //    entity.name = entityJson["name"];
-        //}
-        //else
-        //{
-        //    // if name is missing debuggigin
-        //    std::cerr << "Error: Missing 'name' key in entity JSON." << std::endl;
-        //    return std::make_pair(Entity(), -1);
-        //}
 
-        // Loop through the data items in the JSON and deserialize them based on their types.
         id = PE::g_entityFactory->CreateEntity();
-        for (const auto& t : j["Entity"].items())
+        for (const auto& t : r_j["Entity"].items())
         {
             // to change?
             if (t.key() == "name")
             {
-                entity.name = entityJson["name"];
+                entity.m_name = entityJson["name"];
             }
             else
             {
-                for (const auto& data : j["Entity"][t.key()].items())
+                for (const auto& data : r_j["Entity"][t.key()].items())
                 {
                     const std::string k = data.key();
-                    std::invoke(m_initializeComponent[k], this, id, j);
+                    std::invoke(m_initializeComponent[k], this, id, r_j);
                 }
                 // // Deserialize components
             }
         }
     }
-    // Return a pair containing the deserialized entity and its entityID.
     return id;
 }
 
-void SerializationManager::saveToFile(const std::string& filename, int entityID)
-{
-    // Serialize the entity with the given entityID into a JSON object.
-    nlohmann::json serializedEntity = serializeEntity(entityID);
 
-    // Open the specified file for writing.
-    std::ofstream outFile(filename);
+
+/*!***********************************************************************************
+ \brief     Saves a serialized entity to a JSON file.
+
+ \tparam T                This function does not use a template.
+ \param[in] filename      The name of the file where the serialized entity will be saved.
+ \param[in] entityID      The unique identifier for the entity to be serialized and saved.
+ \return void             This function does not return a value but writes to a file.
+*************************************************************************************/
+void SerializationManager::SaveToFile(const std::string& r_filename, int entityId)
+{
+    nlohmann::json serializedEntity = SerializeEntity(entityId);
+
+    std::ofstream outFile(r_filename);
 
     if (outFile.is_open())
     {
-        // Write the serialized JSON to the file with 4-space indentation for readability.
         outFile << serializedEntity.dump(4);
 
-        // Close the file after writing.
         outFile.close();
     }
     else
     {
-        // Print an error message if the file couldn't be opened for writing.
-        std::cerr << "Could not open the file for writing: " << filename << std::endl;
+        std::cerr << "Could not open the file for writing: " << r_filename << std::endl;
     }
 }
 
-EntityID SerializationManager::loadFromFile(const std::string& filename)
+
+
+/*!***********************************************************************************
+ \brief     Loads an entity from a JSON file and deserializes it.
+
+ \tparam T                This function does not use a template.
+ \param[in] filename      The name of the file from which the serialized entity will be loaded.
+ \return EntityID         Returns the unique identifier of the deserialized entity, or MAXSIZE_T if file could not be opened.
+*************************************************************************************/
+int SerializationManager::LoadFromFile(const std::string& r_filename)
 {
-    // Open the specified file for reading.
-    std::ifstream inFile(filename);
+    std::ifstream inFile(r_filename);
 
     if (!inFile.is_open())
     {
-        // Print an error message if the file couldn't be opened for reading.
-        std::cerr << "Could not open the file for reading: " << filename << std::endl;
-        return MAXSIZE_T;        // Return an empty Entity and a failure code.
+        std::cerr << "Could not open the file for reading: " << r_filename << std::endl;
+        return MAXSIZE_T;       
     }
 
     nlohmann::json j;
 
-    // Read the JSON data from the file into the 'j' JSON object.
     inFile >> j;
 
-    // Close the file after reading.
     inFile.close();
 
-    // Call the deserializeEntity function to convert the JSON into an Entity and entityID.
-    return deserializeEntity(j);
+    return DeserializeEntity(j);
 }
 
 
+
+/*!***********************************************************************************
+ \brief     Initializes the component loaders for various types of components.
+
+ \tparam T                This function does not use a template.
+ \return void             This function does not return a value but populates the component loader map.
+*************************************************************************************/
 void SerializationManager::LoadLoaders()
 {
     m_initializeComponent.emplace("RigidBody", &SerializationManager::LoadRigidBody);
@@ -189,6 +196,16 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("Renderer", &SerializationManager::LoadRenderer);
 }
 
+
+
+/*!***********************************************************************************
+ \brief     Loads and initializes a RigidBody component for an entity from a JSON object.
+
+ \tparam T                 This function does not use a template.
+ \param[in] r_id           The unique identifier for the entity for which the RigidBody will be loaded.
+ \param[in] r_json         The JSON object containing the serialized RigidBody data.
+ \return bool              Returns true if the RigidBody component is successfully loaded, otherwise false.
+*************************************************************************************/
 bool SerializationManager::LoadRigidBody(const EntityID& r_id, const nlohmann::json& r_json)
 {
     PE::RigidBody rb;
@@ -198,6 +215,16 @@ bool SerializationManager::LoadRigidBody(const EntityID& r_id, const nlohmann::j
     return true;
 }
 
+
+
+/*!***********************************************************************************
+ \brief     Loads the Collider component for an entity based on the provided JSON data.
+
+ \tparam T                This function does not use a template.
+ \param[in] r_id          The unique identifier of the entity for which to load the Collider component.
+ \param[in] r_json        The JSON object containing the serialized Collider data for the entity.
+ \return bool             Returns true upon successful loading and initialization of the Collider component.
+*************************************************************************************/
 bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::json& r_json)
 {
     PE::Collider col;
@@ -214,6 +241,16 @@ bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::js
     return true;
 }
 
+
+
+/*!***********************************************************************************
+ \brief     Loads the Transform component for an entity based on the provided JSON data.
+
+ \tparam T                This function does not use a template.
+ \param[in] r_id          The unique identifier of the entity for which to load the Transform component.
+ \param[in] r_json        The JSON object containing the serialized Transform data for the entity.
+ \return bool             Returns true upon successful loading and initialization of the Transform component.
+*************************************************************************************/
 bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
 {
     PE::Transform trans;
@@ -225,6 +262,16 @@ bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::j
     return true;
 }
 
+
+
+/*!***********************************************************************************
+ \brief     Loads the Renderer component for an entity based on the provided JSON data.
+
+ \tparam T                This function does not use a template.
+ \param[in] r_id          The unique identifier of the entity for which to load the Renderer component.
+ \param[in] r_json        The JSON object containing the serialized Renderer data for the entity.
+ \return bool             Returns true upon successful loading and initialization of the Renderer component.
+*************************************************************************************/
 bool SerializationManager::LoadRenderer(const EntityID& r_id, const nlohmann::json& r_json)
 {
     PE::Graphics::Renderer ren;

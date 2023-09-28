@@ -114,11 +114,11 @@ namespace PE
 
 	bool EntityFactory::InitializePlayerStats(const EntityID& id, void* data)
 	{
-		g_entityManager->Get<PlayerStats>(id) = 
+		g_entityManager->Get<StructPlayerStats>(id) =
 		(data == nullptr) ?
-			PlayerStats()
+			StructPlayerStats()
 			:
-			*reinterpret_cast<PlayerStats*>(data);
+			*reinterpret_cast<StructPlayerStats*>(data);
 		return true;
 	}
 

@@ -130,7 +130,7 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2", "../Assets/Textures/image2.png");
     for (size_t i{}; i < 1; ++i)
     {
-        EntityID id = serializationManager.loadFromFile("../Assets/Prefabs/Player_Prefab.json");
+        EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
 
         // Make overlapping circle colliders at the origin
         //g_entityManager->Get<Transform>(id).position.x = 0.f;
@@ -162,7 +162,7 @@ PE::CoreApplication::CoreApplication()
     //g_entityManager->Get<Collider>(1).colliderVariant = AABBCollider();
 
     for (size_t i{}; i < 2500; ++i) {
-        EntityID id2 = serializationManager.loadFromFile("../Assets/Prefabs/Render_Prefab.json");
+        EntityID id2 = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
         g_entityManager->Get<Transform>(id2).position.x = 50.f * (i % 50) - 600.f;
         g_entityManager->Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
     }
