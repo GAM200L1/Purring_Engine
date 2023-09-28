@@ -21,8 +21,11 @@
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
 #include "Physics/PhysicsManager.h"
+#include "Logging/Logger.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
+
+extern Logger engine_logger;
 
 namespace PE {
 	Editor::Editor() {
@@ -722,7 +725,16 @@ namespace PE {
 			ImGui::Text("Other Test");
 			if (ImGui::Button("Crash Log"))
 			{
-
+				try
+				{
+					std::vector testVector = { 1 };
+					testVector[0] = testVector.at(1); // force an out of range access exception
+				}
+				catch (const std::out_of_range& r_err)
+				{
+					engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
+					throw r_err; // pass the error along
+				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Performance Viewer"))

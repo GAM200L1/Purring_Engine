@@ -39,9 +39,9 @@ namespace PE
             // ----- Public methods ----- // 
         public:
             /*!***********************************************************************************
-             \brief Returns the 
+             \brief Returns the index of the vertex array object.
 
-             \return GLuint - 
+             \return GLuint - The index of the vertex array object.
             *************************************************************************************/
             inline GLuint GetVertexArrayObjectIndex() const { return m_vertexArrayObject; }
 
