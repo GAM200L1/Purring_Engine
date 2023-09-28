@@ -711,13 +711,12 @@ namespace PE {
 			ImGui::Text("Object Test");
 			if (ImGui::Button("Draw 2500 objects"))
 			{
-				ClearObjectList();
-				EntityID id2 = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
-				for (size_t i{}; i < 2499; ++i) {
-					EntityID id3 = EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[id2]);
-					EntityManager::GetInstance().Get<Transform>(id3).position.x = 50.f * (i % 50) - 600.f;
-					EntityManager::GetInstance().Get<Transform>(id3).position.y = 50.f * (i / 50) - 300.f;
-				}
+					ClearObjectList();
+					for (size_t i{}; i < 2500; ++i) {
+						EntityID id2 = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+						EntityManager::GetInstance().Get<Transform>(id2).position.x = 50.f * (i % 50) - 600.f;
+						EntityManager::GetInstance().Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+					}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Toggle Debug Lines"))
