@@ -36,8 +36,15 @@
 // Physics and collision
 #include "Physics/Colliders.h"
 
+// Animation
+#include "Animation/Animation.h"
+
 extern Logger engine_logger;
 
+
+// temp animation manager
+PE::AnimationManager animationManager;
+int idleAnimation, walkingAnimation;
 
 namespace PE
 {
@@ -93,6 +100,23 @@ namespace PE
             m_isTextured.reserve(3000);
             m_modelToWorldMatrices.reserve(3000);
             m_colors.reserve(3000);
+
+            // Create Animation
+            idleAnimation = animationManager.CreateAnimation();
+            walkingAnimation = animationManager.CreateAnimation();
+
+            // animation 1
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim1", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim2", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim3", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim4", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim5", 0.1f);
+
+            // animation 2
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -173,6 +197,20 @@ namespace PE
                 glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
+
+            // Update Animation here
+            std::string currentTextureKey;
+            if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x == 0.f &&
+                EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y == 0.f)
+            {
+                currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
+            }
+            else
+            {
+                currentTextureKey = animationManager.UpdateAnimation(walkingAnimation, deltaTime);
+            }
+            
+            EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
             DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
 
