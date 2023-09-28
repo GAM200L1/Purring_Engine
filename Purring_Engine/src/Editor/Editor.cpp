@@ -711,13 +711,12 @@ namespace PE {
 				for (size_t i{}; i < 2500; ++i) {
 					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
 					EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
-					EntityManager::GetInstance().Get<Transform>(id2).position.x = 50.f * (i % 50) - 200.f;
-					EntityManager::GetInstance().Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
-					EntityManager::GetInstance().Get<Transform>(id2).width = 50.f;
-					EntityManager::GetInstance().Get<Transform>(id2).height = 50.f;
+					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
+					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
+					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
+					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey("cat");
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
 				}
 			}
 			ImGui::SameLine();
