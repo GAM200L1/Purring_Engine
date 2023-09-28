@@ -2,15 +2,25 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     FrameRateTargetControl.cpp
- \creation date:       13-08-2023
- \last updated:        16-09-2023
- \author:              Hans (You Yang) ONG
+ \date     28-08-2023
 
- \par      email:      youyang.o\@digipen.edu
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
 
- \brief    This file contains the implementation details of the FrameRateTargetControl class.
-           FrameRateTargetControl ensures frame-rate consistency, enabling control and monitoring
-           of frame rates throughout the application runtime.
+ \co-author            Brandon HO Jun Jie
+ \par      email:      brandonjunjie.ho@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
+
+ \brief	   This file encompasses the implementation of the FrameRateTargetControl class that
+           facilitates consistent frame-rate management across the application.
+           Functionalities:
+           1. Set a target FPS (Frames Per Second).
+           2. Control the actual FPS to closely align with the target.
+           3. Retrieve the current FPS.
+           4. Update the target FPS based on keyboard input.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -21,20 +31,18 @@
 #include "prpch.h"
 #include "Time/TimeManager.h"
 #include "FrameRateTargetControl.h"
-#include <iostream>
 #include <thread>
 #include <chrono>
 
 namespace PE
 {
-    /*                                                                                                          class member implementations
-    --------------------------------------------------------------------------------------------------------------------- */
-    /*-----------------------------------------------------------------------------
-    /// <summary>
-    /// Constructor for the FrameRateTargetControl class.
-    /// Initializes tracking to default 60 FPS.
-    /// </summary>
-    ----------------------------------------------------------------------------- */
+    /*!***********************************************************************************
+     \brief     Default constructor for FrameRateTargetControl.
+                Initializes frame rate control variables.
+
+     \tparam T          This function does not use a template.
+     \return            Does not return a value, as this is a constructor.
+    *************************************************************************************/
     FrameRateTargetControl::FrameRateTargetControl()
         : m_targetFrameTime(1.0 / 60.0),  // Default to 60 FPS
         m_frameCount(0),
@@ -45,23 +53,34 @@ namespace PE
 
 
 
-    /*-----------------------------------------------------------------------------
-    /// <summary>
-    /// Set the desired target frames per second.
-    /// </summary>
-    /// <param name="fps">Target frames per second.</param>
-    ----------------------------------------------------------------------------- */
+    /*!***********************************************************************************
+     \brief     Set the target FPS for the frame rate controller.
+
+     \tparam T          This function does not use a template.
+     \param[in] fps     The target frames per second.
+     \return void       Does not return a value.
+    *************************************************************************************/
     void FrameRateTargetControl::SetTargetFPS(unsigned int fps)
     {
         m_targetFrameTime = 1.0 / static_cast<double>(fps);
     }
 
-    /*-----------------------------------------------------------------------------
-    /// <summary>
-    /// Calculate and handle frame timings at the end of a frame.
-    /// Sleeps the thread if frame rendering is faster than target time.
-    /// </summary>
-    ----------------------------------------------------------------------------- */
+
+
+    /*!***********************************************************************************
+     \brief     End of frame calculations and FPS control.
+
+     \tparam T          This function does not use a template.
+     \return void       Does not return a value.
+
+     This function performs the following operations:
+     1. Updates the frame count.
+     2. Calculates the time since the last FPS update.
+     3. Updates the current FPS once per second.
+     4. Controls the FPS to match the target frame time.
+
+     Note: This method relies on TimeManager::GetInstance().GetDeltaTime() for time calculation.
+    *************************************************************************************/
     void FrameRateTargetControl::EndFrame()
     {
         ++m_frameCount;
@@ -80,18 +99,18 @@ namespace PE
         {
             duration = std::chrono::high_resolution_clock::now() - TimeManager::GetInstance().GetStartTime();
             //std::cout << " Actual: " << glfwGetTime() << '\n';
-        } while (duration.count() < m_targetFrameTime);
-
+        }
+        while (duration.count() < m_targetFrameTime);
     }
 
 
 
-    /*-----------------------------------------------------------------------------
-    /// <summary>
-    /// Retrieve the current frames per second.
-    /// </summary>
-    /// <returns>Current FPS.</returns>
-    ----------------------------------------------------------------------------- */
+    /*!***********************************************************************************
+     \brief     Retrieve the current Frames Per Second (FPS).
+
+     \tparam T          This function does not use a template.
+     \return double     The current frames per second.
+    *************************************************************************************/
     double FrameRateTargetControl::GetFPS() const
     {
         return m_currentFPS;
@@ -99,13 +118,13 @@ namespace PE
 
 
 
-    /*-----------------------------------------------------------------------------
-    /// <summary>
-    /// Updates the target frames per second (FPS) based on a key input.
-    /// The function maps specific key inputs to predetermined FPS values.
-    /// </summary>
-    /// <param name="key">The key input used to determine the target FPS.</param>
-    ----------------------------------------------------------------------------- */
+    /*!***********************************************************************************
+     \brief     Update the target FPS based on the pressed key.
+
+     \tparam T          This function does not use a template.
+     \param[in] key     The key code of the pressed key.
+     \return void       Does not return a value.
+    *************************************************************************************/
     void FrameRateTargetControl::UpdateTargetFPSBasedOnKey(int key)
     {
         switch (key)

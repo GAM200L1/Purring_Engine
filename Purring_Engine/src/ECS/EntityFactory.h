@@ -27,6 +27,7 @@
 #include "Physics/RigidBody.h"
 #include "Graphics/Renderer.h"
 #include "Prefabs.h"
+#include "Singleton.h"
 
 
 
@@ -38,8 +39,9 @@ namespace PE
 	 \brief Enity factory struct
 	 
 	*************************************************************************************/
-	class EntityFactory
+	class EntityFactory : public Singleton<EntityFactory>
 	{
+		friend class Singleton<EntityFactory>;
 	// ----- Constructors -----//
 	public:
 	    /*!***********************************************************************************
@@ -80,11 +82,11 @@ namespace PE
 		 					class/struct
 		*************************************************************************************/
 		template <typename T>
-		void AddComponentCreator(const ComponentID& name, const size_t& creator)
+		void AddComponentCreator(const ComponentID& r_name, const size_t& r_creator)
 		{
-			name;
-			m_componentMap[g_entityManager->GetComponentID<T>()] = creator;
-			g_entityManager->AddToPool<T>();
+			r_name;
+			m_componentMap[EntityManager::GetInstance().GetComponentID<T>()] = r_creator;
+			EntityManager::GetInstance().AddToPool<T>();
 		}
 		/*!***********************************************************************************
 		 \brief Create a Entity object with input component types.
@@ -111,16 +113,6 @@ namespace PE
 		EntityID CreateEntity(CT ... args);
 
 		/*!***********************************************************************************
-		 \brief Assings components to the entity
-		 
-		 \tparam T 			No need to fill, the input parameters are enough
-		 \param[in] id 		The ID of the entity to assign the components to
-		 \param[in] var 	The components to assign the entity
-		*************************************************************************************/
-		/*template<typename... T>
-		void Assign(EntityID id, T ... var);*/
-
-		/*!***********************************************************************************
 		 \brief Assigns components to an entity using an inisializer list of componentIDs
 		 
 		 \tparam T 			The ComponentID(std::string) data type or 
@@ -140,7 +132,7 @@ namespace PE
 		 \param[in] var 	The initializer list of components
 		*************************************************************************************/
 		template<typename T>
-		void Assign(EntityID id, const std::vector<T>& var);
+		void Assign(EntityID id, const std::vector<T>& r_var);
 
 		/*!***********************************************************************************
 		 \brief Copies the components in input arguments into the entity
@@ -154,7 +146,7 @@ namespace PE
 		void Copy(EntityID id, T ... component);
 
 		// Hans
-		void AssignComponent(EntityID id, const std::string& name, int componentData);
+		void AssignComponent(EntityID id, const std::string& r_name, int componentData);
 
 		/*!***********************************************************************************
 		 \brief Create an enity from Prefab object
@@ -162,7 +154,7 @@ namespace PE
 		 \param[in] prefab 	The name of the prefab to load from
 		 \return EntityID 	The created entity's ID
 		*************************************************************************************/
-		EntityID CreateFromPrefab(const char* prefab);
+		EntityID CreateFromPrefab(const char* p_prefab);
 
 		/*!***********************************************************************************
 		 \brief 	Loads a component including data into an entity, if the entity doesn't
@@ -174,11 +166,22 @@ namespace PE
 		 \return true 			Successfully copied the component
 		 \return false 			Failed to copy the component
 		*************************************************************************************/
-		bool LoadComponent(EntityID id, const char* component, void* data);
+		bool LoadComponent(EntityID id, const char* p_component, void* p_data);
+
+
+		// ----- Private Variables ----- //
+	private:
+		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& r_id, void* p_data);
+		typedef std::map<ComponentID, size_t> ComponentMapType; // component map typedef
+		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
+		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
+		std::map<std::string, fnptrVoidptrConstruct> m_initializeComponent;
+		Prefab m_prefabs;
 
 	// ----- Private Methods ----- //
 	private:
-		// Components Handling
+
+	// ----- Components Handling ----- //
 
 		/*!***********************************************************************************
 		 \brief Initializes/copy the component of the specified entity
@@ -189,30 +192,19 @@ namespace PE
 		 \return true 	 Successfully copied/initialized
 		 \return false 	 Failed to copy/initialize
 		*************************************************************************************/
-		bool InitializeRigidBody(const EntityID& id, void* data);
-		bool InitializeCollider(const EntityID& id, void* data);
-		bool InitializeTransform(const EntityID& id, void* data);
-		bool InitializePlayerStats(const EntityID& id, void* data);
-		bool InitializeRenderer(const EntityID& id, void* data);
+		bool InitializeRigidBody(const EntityID& r_id, void* p_data);
+		bool InitializeCollider(const EntityID& r_id, void* p_data);
+		bool InitializeTransform(const EntityID& r_id, void* p_data);
+		bool InitializePlayerStats(const EntityID& r_id, void* p_data);
+		bool InitializeRenderer(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap
 		 
 		*************************************************************************************/
 		void LoadComponents();
-
-	// ----- Private Variables ----- //
-	private:
-		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& id, void* data);
-		typedef std::map<ComponentID, size_t> ComponentMapType; // component map typedef
-		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
-		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
-		std::map<std::string, fnptrVoidptrConstruct> g_initializeComponent;
-		Prefab m_prefabs;
 	};
 
-	// extern for those including the .h to access the factory instance
-	extern EntityFactory* g_entityFactory;
 
 	
 	//-------------------- Templated function implementations --------------------//
@@ -229,7 +221,7 @@ namespace PE
 				}
 			(), ...);
 		}
-
+		p_entityManager->UpdateVectors(ret);
 		return ret;
 	}
 
@@ -245,7 +237,7 @@ namespace PE
 				}
 			(), ...);
 		}
-
+		p_entityManager->UpdateVectors(ret);
 		return ret;
 	}
 
@@ -254,21 +246,20 @@ namespace PE
 	{
 		if (typeid(T) != typeid(ComponentID) && typeid(T) != typeid(const char*))
 		{
-			engine_logger.AddLog(true, "T was not a string!!", __FUNCTION__);
-			engine_logger.FlushLog();
 			throw;
 		}
-		for (const T& type : var)
+		for (const T& r_type : var)
 		{
-			if (m_componentMap.find(type) != m_componentMap.end())
+			if (m_componentMap.find(r_type) != m_componentMap.end())
 			{
-				p_entityManager->Assign(id, type);
+				p_entityManager->Assign(id, r_type);
 			}
 		}
+		p_entityManager->UpdateVectors(id);
 	}
 
 	template<typename T>
-	void EntityFactory::Assign(EntityID id, const std::vector<T>& var)
+	void EntityFactory::Assign(EntityID id, const std::vector<T>& r_var)
 	{
 		if (typeid(T) != typeid(ComponentID) && typeid(T) != typeid(const char*))
 		{
@@ -276,13 +267,14 @@ namespace PE
 			engine_logger.FlushLog();
 			throw;
 		}
-		for (const T& type : var)
+		for (const T& r_type : r_var)
 		{
-			if (m_componentMap.find(type) != m_componentMap.end())
+			if (m_componentMap.find(r_type) != m_componentMap.end())
 			{
-				p_entityManager->Assign(id, type);
+				p_entityManager->Assign(id, r_type);
 			}
 		}
+		p_entityManager->UpdateVectors(id);
 	}
 
 
@@ -303,6 +295,7 @@ namespace PE
 				}
 			(), ...);
 		}
+		p_entityManager->UpdateVectors(id);
 	}
 
 }

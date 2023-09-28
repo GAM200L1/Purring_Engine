@@ -12,7 +12,6 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-
 #pragma once
 
 #include "Math/MathCustom.h"
@@ -22,9 +21,9 @@ namespace PE
 {
     struct Transform
     {
-        float width, height;
-        float orientation; // in radians
-        vec2 position;
+        float width{100}, height{100};
+        float orientation{}; // in radians
+        vec2 position{};
 
         mat3x3 GetTransformMatrix3x3() const
         {
@@ -36,11 +35,6 @@ namespace PE
             transMat.Translate(position.x, position.y);
 
             return transMat * rotMat * scaleMat;
-        }
-
-        mat4x4 GetTransformMatrix4x4() const
-        {
-            return GetTransformMatrix3x3().ConvertTo4x4();
         }
     };
 }

@@ -49,7 +49,8 @@ namespace PE
         
         if (!ShaderPrograms[r_key]->LoadAndCompileShadersFromFile(r_vertexShaderPath, r_fragmentShaderPath))
         {
-            // fail to compile, throw?
+            // fail to compile, delete key
+            ShaderPrograms.erase(r_key);
         }
     }
 
@@ -74,8 +75,26 @@ namespace PE
         Textures[r_name] = std::make_shared<Graphics::Texture>();
         if (!Textures[r_name]->CreateTexture(r_filePath))
         {
-            // fail to create texture, throw?
+            // fail to create texture, delete key
             std::cout << "Couldn't create texture " << r_filePath << std::endl;
+            Textures.erase(r_name);
+        }
+    }
+
+    void ResourceManager::LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath)
+    {
+        Sounds[r_key] = std::make_shared<AudioManager::Audio>();
+
+        if (AudioManager::GetInstance().GetFMODSystem() == nullptr)
+        {
+            std::cout << "NO SYSTEM";
+        }
+
+        if (!Sounds[r_key]->LoadSound(r_filePath, AudioManager::GetInstance().GetFMODSystem()))
+        {
+            std::cout << "Fail to load sound" << r_filePath << std::endl;
+            // fail to load sound, delete key
+            Sounds.erase(r_key);
         }
     }
 

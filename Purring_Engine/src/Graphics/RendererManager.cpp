@@ -40,12 +40,22 @@
 #include "Text.h"
 #include "Time/TimeManager.h"
 
+// Animation
+#include "Animation/Animation.h"
+
 extern Logger engine_logger;
+
+
+// temp animation manager
+PE::AnimationManager animationManager;
+int idleAnimation, walkingAnimation;
 
 namespace PE
 {
     namespace Graphics
     {
+        Camera RendererManager::m_mainCamera{};
+
         RendererManager::RendererManager(GLFWwindow* p_window) 
         {
             // Initialize GLEW
@@ -89,6 +99,28 @@ namespace PE
 
             // Load a shader program
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
+            ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
+
+            m_isTextured.reserve(3000);
+            m_modelToWorldMatrices.reserve(3000);
+            m_colors.reserve(3000);
+
+            // Create Animation
+            idleAnimation = animationManager.CreateAnimation();
+            walkingAnimation = animationManager.CreateAnimation();
+
+            // animation 1
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim1", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim2", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim3", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim4", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim5", 0.1f);
+
+            // animation 2
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
 
             // Load a font
             ResourceManager::GetInstance().LoadShadersFromFile("text", "../Shaders/Text.vert", "../Shaders/Text.frag");
@@ -137,10 +169,27 @@ namespace PE
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
                 m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
+
+                // Compute the world to NDC matrix
+                float halfWidth{ windowWidth * 0.5f };
+                float halfHeight{ windowHeight * 0.5f };
+                m_cachedWorldToNdcMatrix = 
+                    glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
+                    * m_mainCamera.GetWorldToViewMatrix();
+            } 
+            // Check if the camera has changed
+            else if (m_mainCamera.GetHasChanged()) 
+            {
+                // Compute the world to NDC matrix
+                float halfWidth{ windowWidth * 0.5f };
+                float halfHeight{ windowHeight * 0.5f };
+                m_cachedWorldToNdcMatrix =
+                    glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
+                    * m_mainCamera.GetWorldToViewMatrix();
             }
 
-            // Set background color to black
-            glClearColor(1.f, 1.f, 1.f, 1.f);
+            // Set background color of the window
+            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
             // Enable alpha blending
@@ -152,33 +201,39 @@ namespace PE
                 // Bind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Bind();
 
-                // Set the background color of the ImGui window to white
-                glClearColor(1.f, 1.f, 1.f, 1.f);
+                // Set the background color of the ImGui window
+                glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
 
-            // Compute the view to NDC matrix
-            float halfWidth{ windowWidth * 0.5f };
-            float halfHeight{ windowHeight * 0.5f };
-            glm::mat4 worldToNdc{
-                glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f) 
-                * m_mainCamera.GetWorldToViewMatrix()
-            };
+            // Update Animation here
+            std::string currentTextureKey;
+            if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x == 0.f &&
+                EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y == 0.f)
+            {
+                currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
+            }
+            else
+            {
+                currentTextureKey = animationManager.UpdateAnimation(walkingAnimation, deltaTime);
+            }
+            
+            EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
-            DrawScene(worldToNdc); // Draw objects in the scene
+            DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
 
             if (Editor::GetInstance().IsRenderingDebug()) 
             {
-                DrawDebug(worldToNdc); // Draw debug gizmos in the scene
+                DrawDebug(m_cachedWorldToNdcMatrix); // Draw debug gizmos in the scene
             }
 
 
             // Render Text
             // text object 1
-            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, worldToNdc, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
 
            // text object 2
-            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, worldToNdc, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
 
             // Unbind the RBO for rendering to the ImGui window
             m_imguiFrameBuffer.Unbind();
@@ -228,10 +283,10 @@ namespace PE
             }
 
             // Make draw call for each game object with a renderer component
-            for (EntityID id : SceneView<Renderer, Transform>())
+            for (const EntityID& id : SceneView<Renderer>())
             {
-                Renderer& renderer{ g_entityManager->Get<Renderer>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
+                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::mat4 glmObjectTransform
                 {
@@ -242,6 +297,124 @@ namespace PE
 
                 Draw(renderer, *(shaderProgramIterator->second), GL_TRIANGLES,
                     r_worldToNdc * glmObjectTransform);
+            }
+        }
+
+        void RendererManager::DrawSceneInstanced(glm::mat4 const& r_worldToNdc)
+        {
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
+
+            // Check if shader program is valid
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + m_instancedShaderProgramKey + " does not exist.", __FUNCTION__);
+                return;
+            }
+
+            ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
+            r_shaderProgram.Use();
+
+            // Pass the world to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uWorldToNdc", r_worldToNdc);
+
+            // Bind the quad mesh
+            size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
+            m_meshes[meshIndex].Bind();
+
+            // Store the texture being used
+            std::string currentTexture{};
+            std::shared_ptr<Graphics::Texture> p_texture{};
+
+            // Clear the buffers for the 
+            m_isTextured.clear();
+            m_modelToWorldMatrices.clear();
+            m_colors.clear();
+
+            int count{};
+
+            // Make draw call for each game object with a renderer component
+
+            for (const EntityID& id : SceneView<Renderer>())
+            {
+                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+
+                // Attempt to retrieve and bind the texture
+                if (renderer.GetTextureKey().empty())
+                {
+                    m_isTextured.emplace_back(0.f);
+                }
+                else if(currentTexture != renderer.GetTextureKey())
+                {
+                    // Check if we were already 
+                    if (!currentTexture.empty()) 
+                    {
+                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                        currentTexture.clear();
+                        count = 0;
+                    }
+
+                    auto textureIterator{ ResourceManager::GetInstance().Textures.find(renderer.GetTextureKey()) };
+
+                    // Check if texture program is valid
+                    if (textureIterator == ResourceManager::GetInstance().Textures.end())
+                    {
+                        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                        engine_logger.SetTime();
+                        engine_logger.AddLog(false, "Texture " + renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
+
+                        // Remove the texture and set the object to neon pink
+                        renderer.SetTextureKey("");
+                        renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+
+                        m_isTextured.emplace_back(0.f);
+                    }
+                    else
+                    {
+                        // Unbind the existing texture
+                        if (p_texture) 
+                        {
+                            p_texture->Unbind();
+                        }
+
+                        // Store the texture key of the current texture
+                        currentTexture = renderer.GetTextureKey();
+
+                        // Bind the new texture
+                        unsigned int textureUnit{ 0 };
+                        p_texture = textureIterator->second;
+                        p_texture->Bind(textureUnit);
+                        r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+
+                        m_isTextured.emplace_back(1.f);
+                    }
+                }
+                else 
+                {
+                    m_isTextured.emplace_back(1.f);
+                }
+
+                // Add the matrix and colors to the buffer
+                m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
+                    transform.height, transform.orientation, // height, orientation
+                    transform.position.x, transform.position.y)); // x, y position
+                m_colors.emplace_back(renderer.GetColor());
+
+                ++count;
+            }
+
+            // Draw the remaining objects
+            DrawInstanced(count, meshIndex, GL_TRIANGLES);
+
+            // Unbind everything
+            m_meshes[meshIndex].Unbind();
+            r_shaderProgram.UnUse();
+
+            if (p_texture != nullptr)
+            {
+                p_texture->Unbind();
             }
         }
 
@@ -264,9 +437,9 @@ namespace PE
             glPointSize(10.f);
 
             // Draw each of the colliders
-            for (EntityID id : SceneView<Collider>()) 
+            for (const EntityID& id : SceneView<Collider>())
             {
-                Collider& collider{ g_entityManager->Get<Collider>(id) };
+                Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
                 std::visit([&](auto& col)
                     {
@@ -276,10 +449,10 @@ namespace PE
             }
 
             // Draw a point and line for each rigidbody representing the position and velocity
-            for (EntityID id : SceneView<RigidBody, Transform>())
+            for (const EntityID& id : SceneView<RigidBody>())
             {
-                RigidBody& rigidbody{ g_entityManager->Get<RigidBody>(id) };
-                Transform& transform{ g_entityManager->Get<Transform>(id) };
+                RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
@@ -397,6 +570,96 @@ namespace PE
             }
         }   
 
+        void RendererManager::DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType)
+        {
+            if (!count) { return; }
+
+            // Store the sizes of the sub buffers
+            size_t sizeOfTexturedVector{ m_isTextured.size() * sizeof(float) };
+            size_t sizeOfColorVector{ m_colors.size() * sizeof(glm::vec4) };
+            size_t sizeOfMatrixVector{ m_modelToWorldMatrices.size() * sizeof(glm::mat4) };
+
+
+            // Create buffer object for additional vertex data
+            GLuint vertexBufferObject{}, vertexArrayObjectIndex{ m_meshes[meshIndex].GetVertexArrayObjectIndex() };
+            glCreateBuffers(1, &vertexBufferObject);
+            glNamedBufferStorage(vertexBufferObject,
+                static_cast<GLsizeiptr>(sizeOfTexturedVector + sizeOfColorVector + sizeOfMatrixVector),
+                nullptr, GL_DYNAMIC_STORAGE_BIT);
+
+
+            // Store textured bools in VBO
+            glNamedBufferSubData(vertexBufferObject, 0,
+                static_cast<GLsizeiptr>(sizeOfTexturedVector),
+                reinterpret_cast<GLvoid*>(m_isTextured.data())); 
+
+            // Bind the textured bools
+            GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
+            glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
+            glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject, 0,
+                static_cast<GLsizei>(sizeof(float)));
+            glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 1, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
+            glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance
+
+
+            // Store colors in VBO
+            glNamedBufferSubData(vertexBufferObject,
+                static_cast<GLintptr>(sizeOfTexturedVector),
+                static_cast<GLsizeiptr>(sizeOfColorVector),
+                reinterpret_cast<GLvoid*>(m_colors.data()));
+
+            // Bind the colors
+            ++attributeIndex, ++bindingIndex;
+            glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
+            glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject,
+                static_cast<GLintptr>(sizeOfTexturedVector), static_cast<GLsizei>(sizeof(glm::vec4)));
+            glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
+            glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance
+
+            // Store model to NDC matrices in VBO
+            glNamedBufferSubData(vertexBufferObject,
+                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLsizeiptr>(sizeOfMatrixVector),
+                reinterpret_cast<GLvoid*>(m_modelToWorldMatrices.data()));
+
+            // Bind the model to NDC matrices
+            ++attributeIndex, ++bindingIndex;
+
+            glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject,
+                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLsizei>(sizeof(glm::mat4)));
+
+            for (int i{}; i < 4; ++i)
+            {
+                glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
+
+                glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 4, GL_FLOAT, GL_FALSE, sizeof(GL_FLOAT) * 4 * i); // offset by vert pos and color
+                glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
+                ++attributeIndex;
+            }
+            // Advance once per instance
+            glVertexArrayBindingDivisor(vertexArrayObjectIndex, bindingIndex, 1);
+
+            // Make instanced draw
+            glDrawElementsInstanced(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL, static_cast<GLsizei>(count));
+
+            // Delete the buffer
+            glDeleteBuffers(1, &vertexBufferObject);
+
+            --attributeIndex;
+            while (attributeIndex >= 2) 
+            {
+                glDisableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex--);
+            }
+
+            // Clear the vectors
+            m_isTextured.clear();
+            m_colors.clear();
+            m_modelToWorldMatrices.clear();
+        }
 
         void RendererManager::DrawCollider(AABBCollider const& r_aabbCollider,
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
@@ -623,33 +886,16 @@ namespace PE
         glm::mat4 RendererManager::GenerateTransformMatrix(float const width, float const height,
             float const orientation, float const positionX, float const positionY) 
         {
-            // Get scale matrix
-            glm::mat4 scale_matrix{
-                width,  0.f,    0.f, 0.f,
-                0.f,    height, 0.f, 0.f,
-                0.f,    0.f,    1.f, 0.f,
-                0.f,    0.f,    0.f, 1.f
-            };
-
             // Get rotation matrix
             GLfloat sin_angle{ glm::sin(orientation) };
             GLfloat cos_angle{ glm::cos(orientation) };
-            glm::mat4 rotation_matrix{
-                cos_angle,  sin_angle, 0.f, 0.f,
-                -sin_angle, cos_angle, 0.f, 0.f,
-                0.f,        0.f,       1.f, 0.f,
-                0.f,        0.f,       0.f, 1.f
-            };
 
-            // Get translation matrix
-            glm::mat4 translation_matrix{
-                1.f,    0.f,    0.f,    0.f,
-                0.f,    1.f,    0.f,    0.f,
-                0.f,    0.f,    1.f,    0.f,
+            return glm::mat4{
+                width * cos_angle, width * sin_angle, 0.f, 0.f,
+                height * -sin_angle, height * cos_angle, 0.f, 0.f,
+                0.f,        0.f,       1.f, 0.f,
                 positionX, positionY, 0.f, 1.f
             };
-
-            return translation_matrix * rotation_matrix * scale_matrix;
         }
 
 
@@ -660,7 +906,7 @@ namespace PE
                 rightVector.x, rightVector.y, 0.f,    0.f,
                 upVector.x,   upVector.y,   0.f,    0.f,
                 0.f,    0.f,    1.f,    0.f,
-                centerPosition.x, centerPosition.y,     0.f,    1.f
+                centerPosition.x, centerPosition.y, 0.f, 1.f
             };
         }
 
@@ -692,6 +938,5 @@ namespace PE
                 << "\nGL Maximum texture size: " << maxTextureSize
                 << "\nMaximum Viewport Dimensions: " << maxViewportDims[0] << " x " << maxViewportDims[1] << "\n" << std::endl;
         }
-
     } // End of Graphics namespace
 } // End of PE namespace

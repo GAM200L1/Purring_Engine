@@ -30,15 +30,15 @@ namespace PE
 		try
 		{
 			//printing total allocated memory
-			std::stringstream ss1;
-			ss1 << "Currently allocated: " << m_stackAllocator.GetStackTop();
-			Editor::GetInstance().AddInfoLog(ss1.str());
+			std::string s("Currently allocated: ");
+			s += std::to_string(m_stackAllocator.GetStackTop());
+			Editor::GetInstance().AddInfoLog(s);
 			Editor::GetInstance().AddInfoLog("trying to allocate more memory now");
 
 			//determine buffer size incase of writing over
 			int buffer = (size + 1) / 2;
 			//attempt to allocate memory
-			void* newptr = m_stackAllocator.Allocate(size + buffer);
+			void* p_newptr = m_stackAllocator.Allocate(size + buffer);
 
 			//save data of allocated memory
 			m_memoryAllocationData.push_back(MemoryData(name, size, buffer));
@@ -48,13 +48,13 @@ namespace PE
 			ss << "memory allocated of size: " << size << " to: " << name << " along with buffer of: " << buffer;
 			Editor::GetInstance().AddInfoLog(ss.str());
 
-			return newptr;
+			return p_newptr;
 		}
 		catch (int i) {
 			//sending error to logs
-			std::stringstream ss;
-			ss << "memory cannot be allocated to " << name;
-			Editor::GetInstance().AddErrorLog(ss.str());
+			std::string ss("memory cannot be allocated to ");
+			ss += name;
+			Editor::GetInstance().AddErrorLog(ss);
 			return nullptr;
 		}
 	}
@@ -64,7 +64,7 @@ namespace PE
 		try
 		{
 			//freeing the latest allocated memory, have to give the size + buffer
-			m_stackAllocator.Free(m_memoryAllocationData[m_memoryAllocationData.size()-1].s_size + m_memoryAllocationData[m_memoryAllocationData.size() - 1].s_bufferSize);
+			m_stackAllocator.Free(m_memoryAllocationData[m_memoryAllocationData.size()-1].size + m_memoryAllocationData[m_memoryAllocationData.size() - 1].bufferSize);
 			m_memoryAllocationData.pop_back();
 		}
 		catch (int i) {
@@ -81,24 +81,24 @@ namespace PE
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) 
 		{
 			//if written over buffer
-			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].s_size + totalMemory) != '\0')
+			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].size + totalMemory) != '\0')
 			{
-				std::stringstream ss;
-				ss << m_memoryAllocationData[i].s_name << " Writing into more than allocated spaces!" << std::endl;
-				Editor::GetInstance().AddErrorLog(ss.str());
+				std::string s(m_memoryAllocationData[i].name);
+				s += " Writing into more than allocated spaces!";
+				Editor::GetInstance().AddErrorLog(s);
 			}
 
 			//go to next object
-			totalMemory += m_memoryAllocationData[i].s_size + m_memoryAllocationData[i].s_bufferSize;
+			totalMemory += m_memoryAllocationData[i].size + m_memoryAllocationData[i].bufferSize;
 		}
 	}
 
 	void MemoryManager::PrintData()
 	{
 		//print total allocated memory
-		std::stringstream ss;
-		ss << "currently allocated: " << m_stackAllocator.GetStackTop();
-		Editor::GetInstance().AddInfoLog(ss.str());
+		std::string s("Currently allocated: ");
+		s += std::to_string(m_stackAllocator.GetStackTop());
+		Editor::GetInstance().AddInfoLog(s);
 
 		//print structure data
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) {
@@ -110,9 +110,9 @@ namespace PE
 	StackAllocator::StackAllocator(int size) : m_totalSize(size), m_stackTop(0)
 	{
 		//allocate memory based on given size
-		m_stack = new char[size]();
+		p_stack = new char[size]();
 		//initialize values just incase
-		memset(m_stack, '\0', size);
+		memset(p_stack, '\0', size);
 	}
 
 	void* StackAllocator::Allocate(int size)
@@ -120,9 +120,9 @@ namespace PE
 		//if trying to allocate over max size
 		if (m_stackTop + size <= m_totalSize)
 		{
-			void* newPtr = (m_stack + m_stackTop);
+			void* p_newPtr = (p_stack + m_stackTop);
 			m_stackTop += size;
-			return newPtr;
+			return p_newPtr;
 		}
 		else 
 		{
@@ -146,7 +146,7 @@ namespace PE
 
 	char* StackAllocator::GetStack()
 	{
-		return m_stack;
+		return p_stack;
 	}
 
 	int StackAllocator::GetStackTop()
@@ -158,7 +158,7 @@ namespace PE
 	std::string MemoryData::ToString() const
 	{
 		std::stringstream ss;
-		ss << s_name << " has been allocated: " << s_size << " with a buffer of " << s_bufferSize;
+		ss << name << " has been allocated: " << size << " with a buffer of " << bufferSize;
 		return ss.str();
 	}
 
