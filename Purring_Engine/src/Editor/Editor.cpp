@@ -20,8 +20,6 @@
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
-
-// test for file exploer -hans
 #include <Windows.h>
 #include <Commdlg.h>
 #include "Data/SerializationManager.h"
@@ -232,7 +230,7 @@ namespace PE {
 			}
 			ImGui::SameLine();
 
-			//temp for now, i really dk how i shld store this
+			//temp for now
 			static bool warningfilter;
 			static bool eventfilter;
 			static bool infofilter;
