@@ -28,8 +28,8 @@ namespace PE
 		float GetVelocityNegligence();
 		void SetVelocityNegligence(float negligence);
 
-		float GetFixedDt();
-		void SetFixedDt(float fixDt);
+		//float GetFixedDt();
+		//void SetFixedDt(float fixDt);
 
 		static bool& GetStepPhysics();
 		static bool& GetAdvanceStep();
@@ -48,9 +48,9 @@ namespace PE
 		// ----- Private Variables ----- //
 		float m_linearDragCoefficient{};
 		float m_velocityNegligence{};
-		float m_fixedDt{};
-		float m_accumulator{};
-		float m_accumulatorLimit{};
+		//float m_fixedDt{};
+		//float m_accumulator{};
+		//float m_accumulatorLimit{};
 		static bool m_applyStepPhysics;
 		static bool m_advanceStep;
 		std::string m_systemName{ "Physics" };
