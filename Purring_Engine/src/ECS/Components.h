@@ -88,7 +88,6 @@ namespace PE
         }
 
         std::map<size_t, size_t> m_idxMap;  // map to decouple the entity ID from the internal index
-        std::queue<size_t> m_removed;       // keep track of removed indexes
         size_t m_elementSize{};             // the size of each element in the pool
         size_t m_size{};                    // the current size of the pool (entity count, should lineup to m_idxMap)
         size_t m_capacity{};                // the actual capacity of the pool
@@ -170,19 +169,23 @@ namespace PE
         {
             if (!m_idxMap.count(index))
                 throw; // log in the future
-            p_data[m_idxMap.at(index)] = T();
-            EntityID lastIdx{ (*std::prev(m_idxMap.end())).second };
-            if (lastIdx != index)
+            
+            EntityID key{}, lastIdx{};
+            for (const auto& pair : m_idxMap)
             {
-                std::swap(p_data[m_idxMap.at(index)], p_data[lastIdx]);
-                for (auto& map : m_idxMap)
+                if (lastIdx <= pair.second)
                 {
-                    if (map.second == lastIdx)
-                        map.second = m_idxMap.at(index);
+                    lastIdx = pair.second;
+                    key = pair.first;
                 }
-               
             }
-            //m_removed.emplace(m_idxMap[index]);
+            // if index is not the last as well...
+            if (key != index)
+            {
+                p_data[m_idxMap[index]] = p_data[lastIdx];
+                m_idxMap[key] = m_idxMap[index];
+            }
+            p_data[lastIdx] = T();
             m_idxMap.erase(index);
             --m_size;
         }

@@ -17,7 +17,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 // static variables decleration
 Logger::LoggerFlag Logger::m_flags;
-bool LOG = true;
+bool LOG = false;
 
 
 Logger::Logger(const char inst_name[]) :
