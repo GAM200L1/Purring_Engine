@@ -396,6 +396,7 @@ namespace PE {
 				{
 					AddInfoLog("Object Deleted");
 
+
 					g_entityManager->RemoveEntity(g_entityManager->GetEntitiesInPool("All")[m_currentSelectedObject]);
 
 					//if not first index
@@ -415,6 +416,8 @@ namespace PE {
 			{
 
 				//g_entityFactory->Clone(m_currentSelectedObject);
+
+				if(m_currentSelectedObject)
 				g_entityFactory->Clone(g_entityManager->GetEntitiesInPool("All")[m_currentSelectedObject]);
 				//UpdateObjectList();
 			}
@@ -1027,6 +1030,8 @@ namespace PE {
 					//the closest i can get to setting center the button x(
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
+
+					if(m_currentSelectedObject)
 					if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0))) 
 					{
 						isModalOpen = true;

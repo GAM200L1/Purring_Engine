@@ -197,21 +197,24 @@ namespace PE
 			KeyPressedEvent ev;
 			ev = dynamic_cast<const KeyPressedEvent&>(r_event);
 			// ----- M1 Movement ----- //
-			if (ev.keycode == GLFW_KEY_W)
+			if (g_entityManager->GetComponentPool<RigidBody>().HasEntity(1))
 			{
-				g_entityManager->Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_A)
-			{
-				g_entityManager->Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_S)
-			{
-				g_entityManager->Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_D)
-			{
-				g_entityManager->Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+				if (ev.keycode == GLFW_KEY_W)
+				{
+					g_entityManager->Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
+				}
+				if (ev.keycode == GLFW_KEY_A)
+				{
+					g_entityManager->Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+				}
+				if (ev.keycode == GLFW_KEY_S)
+				{
+					g_entityManager->Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+				}
+				if (ev.keycode == GLFW_KEY_D)
+				{
+					g_entityManager->Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+				}
 			}
 
 			// dash

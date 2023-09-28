@@ -222,8 +222,8 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
-
-        Graphics::RendererManager::m_mainCamera.SetPosition(g_entityManager->Get<Transform>(1).position.x, g_entityManager->Get<Transform>(1).position.y);
+        if (g_entityManager->GetComponentPool<Transform>().HasEntity(1))
+            Graphics::RendererManager::m_mainCamera.SetPosition(g_entityManager->Get<Transform>(1).position.x, g_entityManager->Get<Transform>(1).position.y);
 
         // Flush log entries
         engine_logger.FlushLog();
