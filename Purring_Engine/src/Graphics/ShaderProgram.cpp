@@ -37,14 +37,14 @@ namespace PE
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(true, "Creating shader program", __FUNCTION__);
+            engine_logger.AddLog(false, "Creating shader program", __FUNCTION__);
         }
 
         ShaderProgram::~ShaderProgram()
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(true, "Destroying shader program", __FUNCTION__);
+            engine_logger.AddLog(false, "Destroying shader program", __FUNCTION__);
             DeleteProgram();
         }
 
@@ -55,7 +55,16 @@ namespace PE
 
             if (!vertexFileStream)
             {
-                // error
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, "Vertex shader file " + vertexFile + " could not be opened", __FUNCTION__);
+                return false;
+            }
+            else if (!fragmentFileStream) 
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(true, "Fragment shader file " + fragmentFile + " could not be opened", __FUNCTION__);
                 return false;
             }
 
@@ -68,9 +77,7 @@ namespace PE
             vertexFileStream.close();
             fragmentFileStream.close();
 
-            CompileLinkValidateProgram(vertexStream.str(), fragmentStream.str());
-
-            return true;
+            return CompileLinkValidateProgram(vertexStream.str(), fragmentStream.str());
         }
 
 
@@ -115,6 +122,8 @@ namespace PE
                     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                     engine_logger.SetTime();
                     engine_logger.AddLog(true, logString, __FUNCTION__);
+
+                    std::cout << logString << "\n";
                 }
 
                 return false;
@@ -127,6 +136,8 @@ namespace PE
             {
                 return false;
             }
+
+            std::cout << "Shader compiled!" << "\n";
             return true;
         }
 
@@ -218,6 +229,8 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
+
+                std::cout << errorLog << "\n";
             }
         }
 
@@ -243,6 +256,8 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
+
+                std::cout << errorLog << "\n";
             }
         }
 
@@ -265,6 +280,8 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
+
+                std::cout << errorLog << "\n";
             }
         }
 
@@ -287,6 +304,8 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
+
+                std::cout << errorLog << "\n";
             }
         }
 

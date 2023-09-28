@@ -38,8 +38,10 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
+#include "Singleton.h"
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/Texture.h"
+#include "AudioManager.h"
 
 //class Resource
 //{
@@ -54,30 +56,20 @@
 //    std::string m_filepath;
 //};
 
-// should namespace this under the engine
-// setting as singleton class - think theres only need for one instance of this
 namespace PE
 {
-    class ResourceManager
+    class ResourceManager : public Singleton<ResourceManager>
     {
     public:
+        friend class Singleton<ResourceManager>;
         // ----- Public Variables ----- //
-        static std::map<std::string, std::shared_ptr<Graphics::ShaderProgram>> ShaderPrograms;
-        static std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;  
+        std::map<std::string, std::shared_ptr<Graphics::ShaderProgram>> ShaderPrograms;
+        std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;
+        std::map<std::string, std::shared_ptr<AudioManager::Audio>> Sounds;
         // Icons?
 
-        // Delete any copy functions
-        // don't need copy constructor or assignment
-        // Another ResourceManager should not exist in run
-        ResourceManager(ResourceManager const& r_cpyRM) = delete;
-        ResourceManager operator=(ResourceManager const& r_cpyRM) = delete;
-
-        // Gets the instance of this class (i need to check why i need this;;)
-        static ResourceManager* GetInstance();
-        static void DeleteInstance();
-
         // Unloads all resources that were previously loaded
-        static void UnloadResources();
+        void UnloadResources();
 
     public:
         // ----- Public methods ----- //
@@ -91,7 +83,7 @@ namespace PE
             \param[in] r_vertexShaderPath File path of vertex shader.
             \param[in] r_fragmentShaderPath File path of fragment shader.
         *************************************************************************************/
-        static void LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderString,
+        void LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderString,
             std::string const& r_fragmentShaderString);
 
         // wip
@@ -105,7 +97,15 @@ namespace PE
             \param[in] r_name Name of texture.
             \param[in] r_filePath File path of texture.
         *************************************************************************************/
-        static void LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
+        void LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Loads audio from file and inserts into Sounds map container.
+
+            \param[in] r_key Name of audio file.
+            \param[in] r_filePath File path of audio.
+        *************************************************************************************/
+        void LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.
@@ -114,15 +114,13 @@ namespace PE
 
             \return Texture object in map.
         *************************************************************************************/
-        static std::shared_ptr<Graphics::Texture> GetTexture(std::string const& r_name);
-
+        std::shared_ptr<Graphics::Texture> GetTexture(std::string const& r_name);
     private:
-
-        // pointer to the instance of this class
-        static ResourceManager* p_instance;
         // constructor
-        ResourceManager() {}
-        ~ResourceManager() {}
+        ResourceManager()
+        {
+
+        }
     };
 }
 

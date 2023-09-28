@@ -34,15 +34,15 @@ namespace PE
 	public:
 		// ----- Public Variables ----- //
 
-		vec2 m_prevPosition;
+		vec2 m_prevPosition{};
 		
-		vec2 m_velocity;
-		float m_rotationVelocity;
+		vec2 m_velocity{};
+		float m_rotationVelocity{};
 
-		vec2 m_force;
-		float m_torque;
+		vec2 m_force{};
+		//float m_torque{};
 
-		bool m_awake; //! enables collision of object, true for awake
+		//bool m_awake{}; //! enables collision of object, true for awake
 
 	public:
 		// ----- Constructors ----- //
@@ -59,21 +59,13 @@ namespace PE
 		float GetInverseMass() const;
 		void SetMass(float mass);
 
-		vec2 GetVelocity() const;
-		void SetVelocity(vec2 const& r_linearVelocity);
-
-		float GetRotationVelocity() const;
-		void SetRotationVelocity(float angularVelocity);
-
-		vec2 GetForce() const;
-		void SetForce(vec2 const& r_force);
 		void ZeroForce();
 
 		EnumRigidBodyType GetType() const;
 		void SetType(EnumRigidBodyType flag);
 
-		bool IsAwake() const;
-		void SetAwake(bool flag);
+		//bool IsAwake() const;
+		//void SetAwake(bool flag);
 
 	public:
 		// ----- Public Methods ----- //
@@ -82,7 +74,7 @@ namespace PE
 		void ApplyForce(vec2 const& r_addOnForce);
 
 		// Adds on to existing torque, ultimately affects rotation
-		void ApplyTorque(float r_addOnTorque);
+		//void ApplyTorque(float r_addOnTorque);
 
 		// Applies impulse - directly adds to linear velocity
 		void ApplyLinearImpulse(vec2 const& r_impulseForce);
@@ -91,10 +83,10 @@ namespace PE
 		// ----- Private Variables ----- //
 		EnumRigidBodyType m_type = EnumRigidBodyType::STATIC;
 
-		float m_mass;
-		float m_inverseMass;
-		float m_drag;
-		float m_rotationDrag;
+		float m_mass{10.f};
+		float m_inverseMass{1.f/10.f};
+		//float m_drag;
+		//float m_rotationDrag;
 	};
 
 }

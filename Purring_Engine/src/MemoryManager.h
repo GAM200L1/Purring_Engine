@@ -15,31 +15,32 @@
 
 *************************************************************************************/
 #pragma once
+#include "Singleton.h"
 #include <string>
 #include <vector>
 #include <memory>
 // CONSTANT VARIABLES
-constexpr size_t max_size = 1024;
+constexpr size_t max_size = 1000000;
 
 namespace PE {
 	/*!***********************************************************************************
 	 \brief				Structure to hold the name of the object borrowing memory and amount borrowed
-	 \param				s_name
-	 \param				s_size
-	 \param				s_bufferSize
+	 \param				name
+	 \param				size
+	 \param				bufferSize
 	*************************************************************************************/
 	struct MemoryData
 	{
-		std::string s_name;
-		int s_size; // total size;
-		int s_bufferSize; //the amount of buffer added to ensure safety
-		MemoryData(std::string name, int size, int buffersize) : s_name(name), s_size(size) ,s_bufferSize(buffersize){}
+		std::string name;
+		int size; // total size;
+		int bufferSize; //the amount of buffer added to ensure safety
+		MemoryData(std::string name, int size, int buffersize) : name(name), size(size) ,bufferSize(buffersize){}
 
 		std::string ToString() const;
 	};
 
 	//a stack allocating system
-	class StackAllocator
+	class StackAllocator 
 	{
 		// ----- Constructors ----- // 
 	public:
@@ -51,7 +52,7 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief					Destructor, deletes the allocated memory
 		*************************************************************************************/
-		~StackAllocator() { delete[] m_stack;}
+		~StackAllocator() { delete[] p_stack;}
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
@@ -78,14 +79,15 @@ namespace PE {
 		*************************************************************************************/
 		int GetStackTop();
 	private:
-		char* m_stack{ nullptr }; //where all the data in the stack will be stored
+		char* p_stack{ nullptr }; //where all the data in the stack will be stored
 		int m_totalSize; // size of the stack
 		int m_stackTop; // current top of the stack
 		//hold a shared pointer to ECS pool allocator
 	};
 
-	class MemoryManager
+	class MemoryManager : public Singleton <MemoryManager>
 	{
+		friend class Singleton<MemoryManager>;
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************
@@ -118,16 +120,9 @@ namespace PE {
 		*************************************************************************************/
 		void PrintData();
 		// ----- Public getters ----- // 
-	public:
-		/*!***********************************************************************************
-		 \brief					returns the top of the stack
-		 \return				char* returns a pointer to the top of the stack
-		*************************************************************************************/
-		static MemoryManager* GetInstance();
 	private:
 		std::vector<MemoryData> m_memoryAllocationData;		//for storing what memory allocated to where
 		StackAllocator m_stackAllocator; //the stack allocator
-		static std::unique_ptr<MemoryManager> s_Instance; // single instance of the memory manager
 	};
 
 

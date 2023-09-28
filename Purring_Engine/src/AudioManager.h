@@ -20,44 +20,46 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
-class AudioManager
+namespace PE
 {
-public:
-    // Nested Audio class
-    class Audio
+    class AudioManager
     {
     public:
-        bool LoadSound(const std::string& path, FMOD::System* system);
-        FMOD::Sound* GetSound() const { return m_sound; }
-        void SetChannel(FMOD::Channel* channel) { m_channel = channel; }
-        FMOD::Channel* GetChannel() const { return m_channel; }
+        // Nested Audio class
+        class Audio
+        {
+        public:
+            bool LoadSound(const std::string& path, FMOD::System* system);
+            FMOD::Sound* GetSound() const { return m_sound; }
+            void SetChannel(FMOD::Channel* channel) { m_channel = channel; }
+            FMOD::Channel* GetChannel() const { return m_channel; }
+
+        private:
+            FMOD::Sound* m_sound = nullptr;
+            FMOD::Channel* m_channel = nullptr;
+        };
+
+        static AudioManager& GetInstance();                 // Singleton accessor
+        AudioManager(const AudioManager&) = delete;
+        AudioManager& operator=(const AudioManager&) = delete;
+
+        bool Init();
+        void Update();
+        void PlaySound(const std::string& id);
+        void SetVolume(const std::string& id, float volume);
+        void SetGlobalVolume(float volume);
+        void PauseSound(const std::string& id);
+        void ResumeSound(const std::string& id);
+        void StopSound(const std::string& id);
+        void StopAllSounds();
+        FMOD::System* GetFMODSystem() { return m_system; }
+
 
     private:
-        FMOD::Sound* m_sound = nullptr;
-        FMOD::Channel* m_channel = nullptr;
+        AudioManager();                                     // Private constructor for Meyer's Singleton
+        ~AudioManager();
+
+        FMOD::System* m_system;
     };
-
-    static AudioManager& GetInstance();                 // Singleton accessor
-    AudioManager(const AudioManager&) = delete;
-    AudioManager& operator=(const AudioManager&) = delete;
-
-    bool Init();
-    void Update();
-    bool LoadAudio(const std::string& id, const std::string& path);
-    void PlaySound(const std::string& id);
-    void SetVolume(const std::string& id, float volume);
-    void SetGlobalVolume(float volume);
-    void PauseSound(const std::string& id);
-    void ResumeSound(const std::string& id);
-    void StopSound(const std::string& id);
-    void StopAllSounds();
-
-
-private:
-    AudioManager();                                     // Private constructor for Meyer's Singleton
-    ~AudioManager();
-
-    FMOD::System* m_system;
-    std::unordered_map<std::string, Audio> m_audioMap;
-};
+}
 

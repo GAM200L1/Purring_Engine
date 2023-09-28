@@ -18,20 +18,12 @@
 namespace PE
 {
 	TimeManager::TimeManager()
-		: m_systemFrameTime{},
-		  m_systemStartFrame{},
-		  m_systemEndFrame{},
-		  m_startFrame{},
-		  m_endFrame{},
-		  m_previousStartFrame{},
-		  m_engineStartTime{},
-		  m_engineRunTime{},
-		  m_frameTime { 1.0 / 60.0 }, // default fps
-		  m_deltaTime{ 1.0 / 60.0 },
-		  m_durationInSeconds {}
-	{}
+	{
+		// might need to init the other variables
+		m_frameTime = 1.f / 60.f; // default fps
+	}
 
-	void TimeManager::SystemStartFrame(int system)
+	void TimeManager::SystemStartFrame()
 	{
 		m_systemStartFrame = std::chrono::high_resolution_clock::now();
 	}
@@ -56,7 +48,7 @@ namespace PE
 
 		// calculate delta time based on previous frame
 		m_durationInSeconds = (m_startFrame - m_previousStartFrame);
-		m_deltaTime = m_durationInSeconds.count();
+		m_deltaTime = m_deltaTime == 0.f ? 1.f / 60.f : m_durationInSeconds.count();
 		m_previousStartFrame = m_startFrame;
 
 		// calculate total run time

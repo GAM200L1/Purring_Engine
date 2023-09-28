@@ -27,12 +27,24 @@
 #include <misc/cpp/imgui_stdlib.h>
 #include <iostream>
 
+#include "Singleton.h"
+
 #include "Graphics/GLHeaders.h"
+
+#include "ECS//EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
+#include "ECS/Prefabs.h"
+#include "ECS/SceneView.h"
+
 
 namespace PE {
 
-	class Editor
+	class Editor : public Singleton<Editor>
 	{
+		// ----- Singleton ----- // 
+		friend class Singleton<Editor>;
+
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************
@@ -51,13 +63,81 @@ namespace PE {
 
 		 \param[in] GLFWwindow 	the glfw window that we are drawing onto
 		*************************************************************************************/
-		void Init(GLFWwindow*);
+		void Init(GLFWwindow* p_window);
 		/*!***********************************************************************************
 		 \brief Render all imgui windows
 
 		 \param[in] GLuint 	the id of the texture to be drawn on the scene view
 		*************************************************************************************/
 		void Render(GLuint texture_id);
+
+		// ----- Public Getters ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief Return the size of the imgui window
+		 \param[out] float x value
+		 \param[out] float y value
+		*************************************************************************************/
+		void GetWindowSize(float&, float&);
+		/*!***********************************************************************************
+		 \brief get the boolean to show if the editor is active
+		 \return bool whether editor is active so we know we need to transfer the buffer
+		*************************************************************************************/
+		bool IsEditorActive();
+		/*!***********************************************************************************
+		 \brief get the boolean to know if we need to render debug lines
+		 \return bool return whether debug drawing is on or off
+		*************************************************************************************/
+		bool IsRenderingDebug();
+
+		// ----- Public Logging Functions ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief add logs to the log vector to print on the log window
+
+		 \param[in] std::string the string to print on the log window
+		*************************************************************************************/
+		void AddLog(std::string_view text);
+		/*!***********************************************************************************
+		 \brief add text to the console vector to print on the console window
+
+		 \param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddConsole(std::string_view text);
+		/*!***********************************************************************************
+		\brief add text appeneded with error to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddErrorLog(std::string_view text);
+
+		/*!***********************************************************************************
+		\brief add text appeneded with info to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddInfoLog(std::string_view text);
+		/*!***********************************************************************************
+		\brief add text appeneded with event to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddEventLog(std::string_view text);
+
+		/*!***********************************************************************************
+		\brief add text appeneded with warning to the console vector to print on the console window
+
+		\param[in] std::string the string to print on the console window
+		*************************************************************************************/
+		void AddWarningLog(std::string_view text);
+
+		// -----Event Callbacks ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief the callback function for an onkeyevent
+		 \param[in] const temp::Event<temp::KeyEvents>& event called
+		*************************************************************************************/
+		void OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_e);
 
 		// ----- ImGui Window Functions ----- // 
 	private:
@@ -66,25 +146,25 @@ namespace PE {
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowLogs(bool* Active);
+		void ShowLogsWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the console window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowConsole(bool* Active);
+		void ShowConsoleWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the object list window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowObject(bool* Active);
+		void ShowObjectWindow(bool* Active);
 		/*!***********************************************************************************
-		 \brief render the test windows
+		 \brief render the test windows (Temp for milestone 1 for elie to test)
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowDebugTests(bool* Active);
+		void ShowDemoWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the object component window
 
@@ -115,27 +195,8 @@ namespace PE {
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowSceneView(GLuint texture_id, bool* active);
-
-		// ----- ImGui Logging Functions ----- // 
-	public:
-		/*!***********************************************************************************
-		 \brief add logs to the log vector to print on the log window
-
-		 \param[in] std::string the string to print on the log window
-		*************************************************************************************/
-		void AddLog(std::string text);
-		/*!***********************************************************************************
-		 \brief add text to the console vector to print on the console window
-
-		 \param[in] std::string the string to print on the console window
-		*************************************************************************************/
-		void AddConsole(std::string text);
-		/*!***********************************************************************************
-		\brief add text appeneded with error to the console vector to print on the console window
-
-		\param[in] std::string the string to print on the console window
-		*************************************************************************************/
-		void AddError(std::string text);
+		
+		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
 		 \brief empty the log vector
@@ -146,39 +207,34 @@ namespace PE {
 		*************************************************************************************/
 		void ClearConsole();
 
-		// -----Event Callbacks ----- // 
-	public:
+		// ----- Private Methods ----- //
+	private:
 		/*!***********************************************************************************
-		 \brief the callback function for an onkeyevent
-		 \param[in] const temp::Event<temp::KeyEvents>& event called
+		 \brief toggle rendering of debug lines
 		*************************************************************************************/
-		void OnKeyPressedEvent(const temp::Event<temp::KeyEvents>& e);
-		void OnMousePressedEvent(const temp::Event<temp::MouseEvents>& e);
+		void ToggleDebugRender();
 
-		// ----- Getters ----- // 
-	public:
+		// ----- ImGui Command Functions ----- // 
+	private:
 		/*!***********************************************************************************
-		 \brief Get the instance of imguiwindow, if it does not exist, create it.
-		 \return Editor* 	 pointer to Editor
+		 \brief command line ping that replies pong
 		*************************************************************************************/
-		static Editor* GetInstance();
+		void ping();
 		/*!***********************************************************************************
-		 \brief Return the size of the imgui window
-		 \param[out] float x value
-		 \param[out] float y value
+		 \brief command line test that opens the test window
 		*************************************************************************************/
-		void GetWindowSize(float&, float&);
+		void test();
+
+		// ----- Private Functions ----- // 
 		/*!***********************************************************************************
-		 \brief get the boolean to show if the editor is active
-		 \return bool whether editor is active so we know we need to transfer the buffer
+		 \brief Clear all the objects on the scene
 		*************************************************************************************/
-		bool IsEditorActive();
-		/*!***********************************************************************************
-		 \brief set the editor on or off
-		*************************************************************************************/
-		void ToggleEditor();
+		void ClearObjectList();
+
+
 		// ----- Private Variables ----- // 
 	private:
+		//boolean for windows
 		bool m_showLogs;
 		bool m_showObjectList;
 		bool m_showConsole;
@@ -189,16 +245,26 @@ namespace PE {
 		bool m_showResourceWindow;
 		bool m_showPerformanceWindow;
 		bool m_firstLaunch;
-		static std::unique_ptr<Editor> s_Instance;
+
+		//boolean for rendering
+		bool m_renderDebug;
+
+		//variables for logging
 		std::vector<std::string> m_logOutput;
 		std::vector<std::string> m_consoleOutput;
 		std::string m_input;
+		std::string m_findText;
+		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
+
+		//variable for objects
 		bool m_objectIsSelected;
-		int m_currentSelectedIndex;
-		std::vector<std::string> m_items;
+		int m_currentSelectedObject;
+
+		//variable for the windows
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
+
 	};
 }
 

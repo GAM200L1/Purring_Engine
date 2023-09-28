@@ -40,6 +40,10 @@ namespace PE
         // In charge of calling the draw functions in all the renderer components.
         class RendererManager : public System
         {
+            // ----- Public Variables ----- //
+        public:
+            static Graphics::Camera m_mainCamera; //! 9Camera object
+            
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
@@ -82,6 +86,13 @@ namespace PE
             void DrawScene(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
+             \brief  
+
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+            *************************************************************************************/
+            void DrawSceneInstanced(glm::mat4 const& r_worldToNdc);
+
+            /*!***********************************************************************************
              \brief Calls DrawRenderer() on all debug objects in [m_lineObjects] and 
                     [m_pointObjects].
 
@@ -113,6 +124,16 @@ namespace PE
             *************************************************************************************/
             void Draw(EnumMeshType const meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
                 GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
+
+            /*!***********************************************************************************
+             \brief Creates a new VBO with the texture status, color and matrix of each instance
+                    of the mesh, binds it to the VAO and makes an instanced draw call.
+
+             \param[in] count Number of instances to draw.
+             \param[in] meshIndex Index of mesh in [m_meshes]. Derived by casting EnumMeshType.
+             \param[in] primitiveType GL Primitive type to make the draw call with.
+            *************************************************************************************/
+            void DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType);
 
             /*!***********************************************************************************
              \brief Makes a draw call for a square to represent the AABB collider passed in.
@@ -166,22 +187,28 @@ namespace PE
 
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_windowRef{}; //! Pointer to the GLFW window to render to
+            GLFWwindow* p_windowRef{}; // Pointer to the GLFW window to render to
 
-            Graphics::Camera m_mainCamera{}; //! Camera object
+            Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
 
-            Graphics::FrameBuffer m_imguiFrameBuffer{}; //! Framebuffer object for rendering to ImGui window
+            std::string m_systemName{ "Graphics" }; // Name of system
 
-            std::string m_systemName{ "Graphics" }; //! Name of system
-
-            //! Default shader program to use
+            // Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};
+            std::string m_instancedShaderProgramKey{"Instanced"};
 
-            //! Container of meshes
+            // Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
 
-            //! Width and height of the ImGui window the last time the framebuffer was resized
+            // Width and height of the ImGui window the last time the framebuffer was resized
             float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
+
+            // 4x4 world to NDC matrix. Updated when window is resized or camera has been repositioned
+            glm::mat4 m_cachedWorldToNdcMatrix{}; 
+                        
+            std::vector<float> m_isTextured{}; // Container that stores whether the quad is textured
+            std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
+            std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
 
             // ----- Private methods ----- //
         private:
@@ -262,9 +289,9 @@ namespace PE
                 glm::vec2 const& upVector, glm::vec2 const& centerPosition);
 
             /*!***********************************************************************************
-             \brief Prints the graphics specifications of the device.
+             \brief Prints the hardware specifications of the device related to graphics.
             *************************************************************************************/
-            void PrintSpecifications();
+            void PrintSpecifications() const;
         };
 
 

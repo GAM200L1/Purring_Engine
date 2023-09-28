@@ -42,30 +42,6 @@
 
 namespace PE
 {
-    std::map<std::string, std::shared_ptr<Graphics::ShaderProgram>> ResourceManager::ShaderPrograms;
-    std::map<std::string, std::shared_ptr<Graphics::Texture>> ResourceManager::Textures;
-
-    ResourceManager* ResourceManager::p_instance;
-
-    ResourceManager* ResourceManager::GetInstance()
-    {
-        if (!p_instance)
-        {
-            p_instance = new ResourceManager();
-        }
-        return p_instance;
-    }
-
-    void ResourceManager::DeleteInstance()
-    {
-        if (p_instance) 
-        {
-            delete p_instance;
-            p_instance = nullptr;
-        }
-    }
-
-    // 
     void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderPath,
                              std::string const& r_fragmentShaderPath)
     {
@@ -73,7 +49,8 @@ namespace PE
         
         if (!ShaderPrograms[r_key]->LoadAndCompileShadersFromFile(r_vertexShaderPath, r_fragmentShaderPath))
         {
-            // fail to compile, throw?
+            // fail to compile, delete key
+            ShaderPrograms.erase(r_key);
         }
     }
 
@@ -98,8 +75,21 @@ namespace PE
         Textures[r_name] = std::make_shared<Graphics::Texture>();
         if (!Textures[r_name]->CreateTexture(r_filePath))
         {
-            // fail to create texture, throw?
+            // fail to create texture, delete key
             std::cout << "Couldn't create texture " << r_filePath << std::endl;
+            Textures.erase(r_name);
+        }
+    }
+
+    void ResourceManager::LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath)
+    {
+        Sounds[r_key] = std::make_shared<AudioManager::Audio>();
+
+        if (!Sounds[r_key]->LoadSound(r_key, AudioManager::GetInstance().GetFMODSystem()))
+        {
+            std::cout << "Fail to load sound" << r_filePath << std::endl;
+            // fail to load sound, delete key
+            Sounds.erase(r_key);
         }
     }
 
