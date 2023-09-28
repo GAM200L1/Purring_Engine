@@ -17,6 +17,8 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
+#pragma warning(disable : 4505) // warning C4505: ('FMOD_ErrorString': unreferenced function with internal linkage has been removed)
+
 #include "prpch.h"
 #include "fmod.hpp"
 #include "fmod_errors.h"

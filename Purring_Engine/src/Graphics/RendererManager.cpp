@@ -36,6 +36,10 @@
 // Physics and collision
 #include "Physics/Colliders.h"
 
+// text
+#include "Text.h"
+#include "Time/TimeManager.h"
+
 // Animation
 #include "Animation/Animation.h"
 
@@ -117,6 +121,10 @@ namespace PE
             animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
             animationManager.AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
             animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
+
+            // Load a font
+            ResourceManager::GetInstance().LoadShadersFromFile("text", "../Shaders/Text.vert", "../Shaders/Text.frag");
+            m_font.Init(ResourceManager::GetInstance().ShaderPrograms["text"]);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -220,6 +228,15 @@ namespace PE
             }
 
 
+            // Render Text
+            // text object 1
+            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+
+           // text object 2
+            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+
+            // Unbind the RBO for rendering to the ImGui window
+            m_imguiFrameBuffer.Unbind();
             if (renderInEditor)
             {
                 // Unbind the RBO for rendering to the ImGui window
