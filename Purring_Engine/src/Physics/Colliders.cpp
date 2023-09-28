@@ -15,17 +15,17 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 namespace PE
 {
-	// ----- AABB Collider ----- //
-	
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
+		r_AABB.center = r_position;
 		r_AABB.min = r_position - (r_scale * 0.5f);
 		r_AABB.max = r_position + (r_scale * 0.5f);
+		r_AABB.scale = r_scale;
 	}
-	
+
 
 	// ---- Circle Collider ----- //
-	
+
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_circle.center = r_position;
@@ -38,26 +38,25 @@ namespace PE
 	{
 		point0 = r_startPt;
 		point1 = r_endPt;
-		normal = point1 - point0;
-		normal = vec2{ normal.y, -normal.x };
-		normal.Normalize();
+		lineVec = point1 - point0;
+		normal = vec2{ lineVec.y, -lineVec.x }.GetNormalized();
 	}
 
 	Manifold::Manifold(Contact const& r_contData,
-					   Transform& r_transA, Transform& r_transB,
-					   RigidBody* r_rbA, RigidBody* r_rbB)
-					   : contactData{ r_contData },
-					     r_transformA{ r_transA }, r_transformB{ r_transB },
-					     r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
+		Transform& r_transA, Transform& r_transB,
+		RigidBody* r_rbA, RigidBody* r_rbB)
+		: contactData{ r_contData },
+		r_transformA{ r_transA }, r_transformB{ r_transB },
+		r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
 
-	void Manifold::Resolve(float deltaTime)
+	void Manifold::ResolveCollision()
 	{
 		ResolveVelocity();
-		ResolvePosition(deltaTime);
+		ResolvePosition();
 	}
 
 	// set the objects to where they would be when they just collide
-	void Manifold::ResolvePosition(float deltaTime)
+	void Manifold::ResolvePosition()
 	{
 		float totalInvMass = r_rigidBodyA->GetInverseMass() + r_rigidBodyB->GetInverseMass();
 
@@ -83,7 +82,7 @@ namespace PE
 			r_rigidBodyA->m_velocity = r_rigidBodyA->m_velocity - (contactData.normal * r_rigidBodyA->GetMass() * p);
 		}
 		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
-		{	
+		{
 			r_rigidBodyB->m_velocity = r_rigidBodyB->m_velocity + (contactData.normal * r_rigidBodyB->GetMass() * p);
 		}
 	}

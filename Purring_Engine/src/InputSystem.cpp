@@ -2,10 +2,12 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     InputSystem.cpp
- \date     9/25/2023
+ \date     25-09-2023
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
 
  \brief    This file contains the implementation details of the mouse input callbacks.
            The functions in this file handle mouse movements and button presses.
@@ -13,22 +15,18 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "InputSystem.h"
-#include <iostream>
 #include "Logging/Logger.h"
-
 #include "Events/EventHandler.h"
-
 
 namespace PE 
 {
     //static declarations
-    float InputSystem::m_bufferTime = 0.2f;
-    std::vector<KeyPressedEvent> InputSystem::m_KeyPressed;
+    float InputSystem::m_bufferTime = 0.12f;
+    std::vector<KeyPressedEvent> InputSystem::m_KeyDown;
 
     //system functions
     void InputSystem::InitializeSystem(){}
@@ -36,6 +34,16 @@ namespace PE
     InputSystem::~InputSystem(){}
     void InputSystem::DestroySystem() {}
 
+    /*!***********************************************************************************
+     \brief     GLFW callback function for mouse movements. Creates and sends a MouseMovedEvent
+                based on the cursor's x and y position.
+
+     \tparam T          This function does not use a template.
+     \param[in] window  Pointer to the GLFWwindow that received the event.
+     \param[in] xpos    The x-coordinate of the cursor position.
+     \param[in] ypos    The y-coordinate of the cursor position.
+     \return void       Does not return a value.
+    *************************************************************************************/
     void InputSystem::mouse_callback(GLFWwindow* window, double xpos, double ypos)
     {
         //unreferenced variable
@@ -50,6 +58,19 @@ namespace PE
         PE::SEND_MOUSE_EVENT(mme)
     }
 
+
+
+    /*!***********************************************************************************
+     \brief     GLFW callback function for mouse button events. Creates and sends either a
+                MouseButtonPressedEvent or MouseButtonReleaseEvent based on the button action.
+
+     \tparam T          This function does not use a template.
+     \param[in] window  Pointer to the GLFWwindow that received the event. 
+     \param[in] button  The mouse button that was pressed or released.
+     \param[in] action  The type of mouse button action (GLFW_PRESS or GLFW_RELEASE).
+     \param[in] mods    Bit field describing which modifier keys were held down. 
+     \return void       Does not return a value.
+    *************************************************************************************/
     void InputSystem::check_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
     {
         //unrefereced variables
@@ -79,19 +100,42 @@ namespace PE
     }
 
 
+
+    /*!***********************************************************************************
+     \brief     GLFW callback function for scroll wheel events. Creates and sends a MouseScrolledEvent
+                based on the scroll wheel's x and y offsets.
+
+     \tparam T          This function does not use a template.
+     \param[in] window  Pointer to the GLFWwindow that received the event.
+     \param[in] xoffset The x-offset of the scroll wheel.
+     \param[in] yoffset The y-offset of the scroll wheel.
+     \return void       Does not return a value.
+    *************************************************************************************/
     void InputSystem::scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
     {
         //unreferenced variable
         window;
         //creation of event and sending
         PE::MouseScrolledEvent mse;
-        mse.xOffset = static_cast<int>(xoffset);
-        mse.yOffset = static_cast<int>(yoffset);
+        mse.xOffset = xoffset;
+        mse.yOffset = yoffset;
         PE::SEND_MOUSE_EVENT(mse)
     }
 
 
 
+    /*!***********************************************************************************
+     \brief     GLFW callback function for keyboard events. Creates and sends KeyTriggeredEvent,
+                KeyPressedEvent, and KeyReleaseEvent based on the key event triggered.
+
+     \tparam T          This function does not use a template.
+     \param[in] window  Pointer to the GLFWwindow that received the event.
+     \param[in] key     The key that triggered the event.
+     \param[in] scancode The scancode of the key that triggered the event.
+     \param[in] action  The action (GLFW_PRESS, GLFW_RELEASE) that triggered the event.
+     \param[in] mods    Additional modifiers to the key event. (Currently is unused in the function)
+     \return void       Does not return a value.
+    *************************************************************************************/
     void InputSystem::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
     {
         //unreferenced variables
@@ -102,14 +146,15 @@ namespace PE
         case GLFW_PRESS:
         {
             //creation of event
+            PE::KeyTriggeredEvent kte;
             PE::KeyPressedEvent kpe;
-            kpe.keycode = key;
+            kte.keycode = kpe.keycode = key;
             //setting a buffer before the keypressed becomes a repeat
             kpe.repeat = m_bufferTime;
             //saving the keypressed event
-            m_KeyPressed.push_back(kpe);
+            m_KeyDown.push_back(kpe);
             //sending of event
-            PE::SEND_KEY_EVENT(kpe)
+            PE::SEND_KEY_EVENT(kte)
                 break;
         }
         case GLFW_RELEASE:
@@ -118,13 +163,13 @@ namespace PE
             PE::KeyReleaseEvent kre;
             kre.keycode = key;
             //remove the keypressed event from the saved vector
-            if (!m_KeyPressed.empty())
+            if (!m_KeyDown.empty())
             {
-                for (std::vector<KeyPressedEvent>::iterator it = std::begin(m_KeyPressed); it != std::end(m_KeyPressed);)
+                for (std::vector<KeyPressedEvent>::iterator it = std::begin(m_KeyDown); it != std::end(m_KeyDown);)
                 {
                     if (it->keycode == kre.keycode)
                     {
-                        it = m_KeyPressed.erase(it);
+                        it = m_KeyDown.erase(it);
                     }
                     else
                         ++it;
@@ -138,10 +183,19 @@ namespace PE
 
     }
 
+
+
+    /*!***********************************************************************************
+     \brief     Updates the InputSystem by decrementing the buffer time for each key pressed
+                event. If the buffer time is less than 0, sends an "on-hold" event for the key.
+
+     \param[in] deltaTime  The time elapsed since the last frame, used for updating the buffer time.
+     \return void          Does not return a value.
+    *************************************************************************************/
     void InputSystem::UpdateSystem(float deltaTime)
     {
         //every frame reduce the buffer for repeat
-        for (KeyPressedEvent& kpe : m_KeyPressed)
+        for (KeyPressedEvent& kpe : m_KeyDown)
         {
             if (kpe.repeat >= 0)
             {
@@ -155,15 +209,29 @@ namespace PE
         }
     }
 
+
+
+    /*!***********************************************************************************
+     \brief     Retrieves the name of the InputSystem.
+
+     \return std::string  The name of the InputSystem ("InputSystem").
+    *************************************************************************************/
     std::string InputSystem::GetName()
     {
         return "InputSystem";
     }
 
+
+
+    /*!***********************************************************************************
+     \brief     Sets the buffer time for key hold events in the InputSystem.
+
+     \param[in] s  The time in seconds to set as the hold buffer time.
+     \return void  Does not return a value.
+    *************************************************************************************/
     void InputSystem::SetHoldBufferTime(float s)
     {
         m_bufferTime = s;
     }
-
 
 }
