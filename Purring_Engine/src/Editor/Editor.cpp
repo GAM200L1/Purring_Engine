@@ -667,7 +667,7 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
+				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
 				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
@@ -868,9 +868,9 @@ namespace PE {
 								//ImGui::Checkbox("Is Awake", &EntityManager::GetInstance().Get<RigidBody>(m_currentSelectedIndex).m_awake);
 								//mass variable of the rigidbody component
 
-								//float mass = EntityManager::GetInstance().Get<RigidBody>(entityID).GetMass();
-								//ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
-								//EntityManager::GetInstance().Get<RigidBody>(entityID).SetMass(mass);
+								float mass = EntityManager::GetInstance().Get<RigidBody>(entityID).GetMass();
+								ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
+								EntityManager::GetInstance().Get<RigidBody>(entityID).SetMass(mass);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
