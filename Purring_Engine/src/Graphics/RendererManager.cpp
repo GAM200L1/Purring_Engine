@@ -154,8 +154,8 @@ namespace PE
                     * m_mainCamera.GetWorldToViewMatrix();
             }
 
-            // Set background color to black
-            glClearColor(1.f, 1.f, 1.f, 1.f);
+            // Set background color of the window
+            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
             // Enable alpha blending
@@ -167,8 +167,8 @@ namespace PE
                 // Bind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Bind();
 
-                // Set the background color of the ImGui window to white
-                glClearColor(1.f, 1.f, 1.f, 1.f);
+                // Set the background color of the ImGui window
+                glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
 
