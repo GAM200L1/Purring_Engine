@@ -39,10 +39,10 @@ class SerializationManager
 {
 public:
     nlohmann::json serializeEntity(int entityID);
-    std::pair<Entity, int> deserializeEntity(const nlohmann::json& j);
+    EntityID deserializeEntity(const nlohmann::json& j);
 
     void saveToFile(const std::string& filename, int entityID);
-    std::pair<Entity, int> loadFromFile(const std::string& filename);
+    EntityID loadFromFile(const std::string& filename);
 
 private:
     std::unordered_map<int, Entity> entities; // Store entities with integer IDs
