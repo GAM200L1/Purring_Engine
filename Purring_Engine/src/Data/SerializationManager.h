@@ -46,7 +46,7 @@ public:
     /*!***********************************************************************************
      \brief Deserialize a JSON object to create an entity, returning its ID.
     *************************************************************************************/
-    int DeserializeEntity(const nlohmann::json& r_j);
+    size_t DeserializeEntity(const nlohmann::json& r_j);
 
     /*!***********************************************************************************
      \brief Save the serialized entity to a file.
@@ -56,7 +56,7 @@ public:
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
     *************************************************************************************/
-    int LoadFromFile(const std::string& r_filename);
+    size_t LoadFromFile(const std::string& r_filename);
 
 
 
@@ -70,22 +70,22 @@ private:
     /*!***********************************************************************************
      \brief Load the RigidBody component from JSON.
     *************************************************************************************/
-    bool LoadRigidBody(const EntityID& r_id, const nlohmann::json& r_json);
+    bool LoadRigidBody(const size_t& r_id, const nlohmann::json& r_json);
 
     /*!***********************************************************************************
      \brief Load the Collider component from JSON.
     *************************************************************************************/
-    bool LoadCollider(const EntityID& r_id, const nlohmann::json& r_json);
+    bool LoadCollider(const size_t& r_id, const nlohmann::json& r_json);
 
     /*!***********************************************************************************
      \brief Load the Transform component from JSON.
     *************************************************************************************/
-    bool LoadTransform(const EntityID& r_id, const nlohmann::json& r_json);
+    bool LoadTransform(const size_t& r_id, const nlohmann::json& r_json);
 
     /*!***********************************************************************************
      \brief Load the Renderer component from JSON.
     *************************************************************************************/
-    bool LoadRenderer(const EntityID& r_id, const nlohmann::json& r_json);
+    bool LoadRenderer(const size_t& r_id, const nlohmann::json& r_json);
 
 
 
@@ -104,6 +104,6 @@ private:
     /*!***********************************************************************************
      \brief Function pointer map for initializing components.
     *************************************************************************************/
-    typedef bool(SerializationManager::* FnptrVoidptrLoad)(const EntityID& r_id, const nlohmann::json& r_json);
+    typedef bool(SerializationManager::* FnptrVoidptrLoad)(const size_t& r_id, const nlohmann::json& r_json);
     std::map<std::string, FnptrVoidptrLoad> m_initializeComponent;
 };

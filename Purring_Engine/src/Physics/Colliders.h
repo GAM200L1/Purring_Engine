@@ -25,9 +25,14 @@ namespace PE
 	struct AABBCollider
 	{
 		// ----- Public Variables ----- //
-		vec2 min;
-		vec2 max;
+		//vec2 offsetFromObj{ 0.f, 0.f };
+		vec2 center{};
+		vec2 min{};
+		vec2 max{};
+		vec2 scale{};
 
+
+		// ----- Public Methods ----- //
 		// For Future -hans
 		// Serialization
 		nlohmann::json ToJson() const
@@ -50,11 +55,6 @@ namespace PE
 			aabb.max.y = j["max"]["y"];
 			return aabb;
 		}
-		//vec2 offsetFromObj{ 0.f, 0.f };
-		vec2 center{};
-		vec2 min{};
-		vec2 max{};
-		vec2 scale{};
 	};
 
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale);
@@ -65,6 +65,8 @@ namespace PE
 		vec2 center;
 		float radius;
 
+
+		// ----- Public Methods ----- //
 		// For Future -hans
 		// Serialization
 		nlohmann::json ToJson() const
@@ -92,6 +94,8 @@ namespace PE
 		std::variant<AABBCollider, CircleCollider> colliderVariant;
 		std::set<size_t> objectsCollided;
 
+
+		// ----- Public Methods ----- //
 		// Serialization
 		nlohmann::json ToJson() const
 		{

@@ -12,7 +12,7 @@
 *************************************************************************************/
 nlohmann::json SerializationManager::SerializeEntity(int entityId)
 {
-    PE::EntityManager* entityManager = PE::g_entityManager;
+    PE::EntityManager* entityManager = &PE::EntityManager::GetInstance();
 
     EntityID eID = static_cast<EntityID>(entityId);
 
@@ -87,12 +87,11 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
  \param[in] j          A JSON object containing the serialized entity data.
  \return EntityID      The unique identifier for the newly created entity.
 *************************************************************************************/
-int SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
+size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
 {
     StructEntity entity;
-    int entityID = -1;
 
-    PE::EntityManager* entityManager = PE::g_entityManager;
+
     if (m_initializeComponent.empty())
         LoadLoaders();
 
@@ -102,7 +101,7 @@ int SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
         const auto& entityJson = r_j["Entity"];
 
 
-        id = PE::g_entityFactory->CreateEntity();
+        id = PE::EntityFactory::GetInstance().CreateEntity();
         for (const auto& t : r_j["Entity"].items())
         {
             // to change?
@@ -161,7 +160,7 @@ void SerializationManager::SaveToFile(const std::string& r_filename, int entityI
  \param[in] filename      The name of the file from which the serialized entity will be loaded.
  \return EntityID         Returns the unique identifier of the deserialized entity, or MAXSIZE_T if file could not be opened.
 *************************************************************************************/
-int SerializationManager::LoadFromFile(const std::string& r_filename)
+size_t SerializationManager::LoadFromFile(const std::string& r_filename)
 {
     std::ifstream inFile(r_filename);
 
@@ -211,7 +210,7 @@ bool SerializationManager::LoadRigidBody(const EntityID& r_id, const nlohmann::j
     PE::RigidBody rb;
     rb.SetMass(r_json["Entity"]["components"]["RigidBody"]["mass"].get<float>());
     rb.SetType(static_cast<EnumRigidBodyType>(r_json["Entity"]["components"]["RigidBody"]["type"].get<int>()));
-    PE::g_entityFactory->LoadComponent(r_id, "RigidBody", static_cast<void*>(&rb));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, "RigidBody", static_cast<void*>(&rb));
     return true;
 }
 
@@ -237,7 +236,7 @@ bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::js
     {
         col.colliderVariant = PE::AABBCollider();
     }
-    PE::g_entityFactory->LoadComponent(r_id, "Collider", static_cast<void*>(&col));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, "Collider", static_cast<void*>(&col));
     return true;
 }
 
@@ -258,7 +257,7 @@ bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::j
     trans.width = r_json["Entity"]["components"]["Transform"]["width"].get<float>();
     trans.orientation = r_json["Entity"]["components"]["Transform"]["orientation"].get<float>();
     trans.position = PE::vec2{ r_json["Entity"]["components"]["Transform"]["position"]["x"].get<float>(), r_json["Entity"]["components"]["Transform"]["position"]["y"].get<float>() };
-    PE::g_entityFactory->LoadComponent(r_id, "Transform", static_cast<void*>(&trans));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, "Transform", static_cast<void*>(&trans));
     return true;
 }
 
@@ -277,6 +276,6 @@ bool SerializationManager::LoadRenderer(const EntityID& r_id, const nlohmann::js
     PE::Graphics::Renderer ren;
     ren.SetColor({ r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>() });
     ren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
-    PE::g_entityFactory->LoadComponent(r_id, "Renderer", static_cast<void*>(&ren));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, "Renderer", static_cast<void*>(&ren));
     return true;
 }

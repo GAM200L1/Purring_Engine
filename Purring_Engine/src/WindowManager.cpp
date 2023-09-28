@@ -247,7 +247,7 @@ namespace PE
 	{
 		std::ostringstream titleStream;
 		titleStream << "March of the Meows | FPS: " << static_cast<int>(fps);
-		glfwSetWindowTitle(window, titleStream.str().c_str());
+		glfwSetWindowTitle(p_window, titleStream.str().c_str());
 	}
 
 
