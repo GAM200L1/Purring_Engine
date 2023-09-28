@@ -30,7 +30,7 @@ namespace PE
 		vec2 max{};
 		vec2 scale{};
 	};
-	
+
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale);
 
 	struct CircleCollider
@@ -44,7 +44,7 @@ namespace PE
 	{
 		std::variant<AABBCollider, CircleCollider> colliderVariant;
 		std::set<size_t> objectsCollided;
-		bool isTrigger;
+		bool isTrigger{ false };
 	};
 
 	struct LineSegment
@@ -69,8 +69,8 @@ namespace PE
 	{
 		Manifold() = delete;
 		Manifold(Contact const& r_contData,
-				 Transform& r_transA, Transform& r_transB,
-				 RigidBody* r_rbA, RigidBody* r_rbB);
+			Transform& r_transA, Transform& r_transB,
+			RigidBody* r_rbA, RigidBody* r_rbB);
 
 		Transform& r_transformA;
 		Transform& r_transformB;
