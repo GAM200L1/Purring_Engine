@@ -16,6 +16,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "ECS/Entity.h"
 #include "ECS/SceneView.h"
 #include "Logging/Logger.h"
+#include "Editor/Editor.h"
 
 extern Logger engine_logger;
 
@@ -134,7 +135,7 @@ namespace PE
 							else
 							{
 								// else send message to trigger event associated with this entity?
-								engine_logger.AddLog(false, "Collided with Trigger!\n", __FUNCTION__);
+								Editor::GetInstance().AddEventLog("Collided with Trigger.\n");
 							}
 							
 						}
