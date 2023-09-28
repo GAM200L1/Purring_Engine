@@ -313,7 +313,6 @@ namespace PE
 		*************************************************************************************/
 		float operator[](unsigned int index) const;
 
-		// allows modification
 		/*!***********************************************************************************
 		 \brief Array subscript operator overload, allows the access of x, y and z values
 		 		using array subcript syntax, allowing for modification of values.
@@ -323,7 +322,7 @@ namespace PE
 		*************************************************************************************/
 		float& operator[](unsigned int index);
 
-		// addition
+		// ----- Addition ----- //
 		/*!***********************************************************************************
 		 \brief Addition operator overload, allows the addition of two vec3, returns a copy
 		 		of the result.
@@ -341,7 +340,7 @@ namespace PE
 		*************************************************************************************/
 		vec3& operator+=(vec3 const& r_rhs);
 
-		// subtraction
+		// ----- Subtraction ----- //
 		/*!***********************************************************************************
 		 \brief Subtraction operator overload, allows the subtraction of two vec3, returns
 		 		a copy of the result
@@ -360,7 +359,7 @@ namespace PE
 		*************************************************************************************/
 		vec3& operator-=(vec3 const& r_rhs);
 
-		// scale
+		// ----- Scale ----- //
 		/*!***********************************************************************************
 		 \brief Multiplication operator overload, allows for the scaling (by multiplication) 
 		 		of vec3 by a float value and returns a copy of the result.
@@ -397,14 +396,14 @@ namespace PE
 		*************************************************************************************/
 		vec3& operator/=(float scale);
 
-		// zero the vector
+		// Zeroes the vector
 		/*!***********************************************************************************
 		 \brief Zeroes out this vec3
 		 
 		*************************************************************************************/
 		void Zero();
 
-		// cross product
+		// ----- Cross Product ----- //
 		/*!***********************************************************************************
 		 \brief Calulates the cross product of two vec3, and returns a copy of the result.
 		 
@@ -413,7 +412,7 @@ namespace PE
 		*************************************************************************************/
 		vec3 Cross(vec3 const& r_rhs) const;
 
-		// dot product
+		// ----- Dot Product ----- //
 		/*!***********************************************************************************
 		 \brief Caclulates the dot product of the two vec3, and returns a copy of the result.
 		 
@@ -422,9 +421,9 @@ namespace PE
 		*************************************************************************************/
 		float Dot(vec3 const& r_rhs) const;
 
-		// Squared Distance betweem two vectors
+		// ----- Distance ----- //
 		/*!***********************************************************************************
-		 \brief Calculates the distance squared between the two vec3, and returns the result.
+		 \brief Calculates the distance squared between the two vec3 points, and returns the result.
 		 
 		 \param[in] r_rhs 	The vec3 to get the distance to
 		 \return float 		The distance squared between this and r_rhs
@@ -433,14 +432,14 @@ namespace PE
 		// Distance between two vectors
 
 		/*!***********************************************************************************
-		 \brief Calculates the distance between the two vec3, and returns the result.
+		 \brief Calculates the distance between the two vec3 points, and returns the result.
 		 
 		 \param[in] r_rhs 	The vec3 to get the distance to
 		 \return float 		The distance between this and r_rhs
 		*************************************************************************************/
 		float Distance(vec3 const& r_rhs) const;
-		// get normal of vec3
-
+		
+		// ----- Normalize ----- //
 		/*!***********************************************************************************
 		 \brief Caclulates the normalized vector of this vec3, returns a copy of the result.
 		 
@@ -448,7 +447,13 @@ namespace PE
 		*************************************************************************************/
 		vec3 GetNormalized() const;
 
-		// Find length^2
+		/*!***********************************************************************************
+		 \brief Normalizes this vec3
+		 
+		*************************************************************************************/
+		void Normalize();
+
+		// ----- Length ----- //
 		/*!***********************************************************************************
 		 \brief Calculates the magnitude squared of this vec3
 		 
@@ -456,20 +461,13 @@ namespace PE
 		*************************************************************************************/
 		float LengthSquared() const;
 
-		// Find length/magnitude
 		/*!***********************************************************************************
 		 \brief Calculates the magnitude of this vec3
 		 
 		 \return float 	The magnitude of this vec3
 		*************************************************************************************/
 		float Length() const;
-
-		// normalize
-		/*!***********************************************************************************
-		 \brief Normalizes this vec3
-		 
-		*************************************************************************************/
-		void Normalize();
+		
 	};
 
 	//struct vec4
@@ -534,22 +532,35 @@ namespace PE
 		 \brief Constructs a new mat3x3 object based on user's input. Note that input has to be
 		 		column major.
 		 
-		 \param[in,out] c0_r0 
-		 \param[in,out] c0_r1 
-		 \param[in,out] c0_r2 
-		 \param[in,out] c1_r0 
-		 \param[in,out] c1_r1 
-		 \param[in,out] c1_r2 
-		 \param[in,out] c2_r0 
-		 \param[in,out] c2_r1 
-		 \param[in,out] c2_r2 
+		 \param[in,out] c0_r0 - element at column 0 row 0
+		 \param[in,out] c0_r1 - element at column 0 row 1
+		 \param[in,out] c0_r2 - element at column 0 row 2
+		 \param[in,out] c1_r0 - element at column 1 row 0
+		 \param[in,out] c1_r1 - element at column 1 row 1
+		 \param[in,out] c1_r2 - element at column 1 row 2
+		 \param[in,out] c2_r0 - element at column 2 row 0
+		 \param[in,out] c2_r1 - element at column 2 row 1
+		 \param[in,out] c2_r2 - element at column 2 row 2
 		*************************************************************************************/
 		explicit mat3x3(float c0_r0, float c0_r1, float c0_r2,
 			float c1_r0, float c1_r1, float c1_r2,
 			float c2_r0, float c2_r1, float c2_r2);
-		// copy constructor
+		
+		/*!***********************************************************************************
+		 \brief Copy constructs a new mat3x3 object 
+		 
+		 \param[in,out] r_cpy - mat3x3 object to make copy of
+		*************************************************************************************/
 		mat3x3(mat3x3 const& r_cpy);
-		// 3 vec3 constructor
+		
+		/*!***********************************************************************************
+		 \brief Construct a new mat3x3 object using 3 vec3s. vec3s are to represent each column
+		 		of the mat3x3.
+		 
+		 \param[in,out] r_col0 -  
+		 \param[in,out] r_col1 - 
+		 \param[in,out] r_col2 
+		*************************************************************************************/
 		mat3x3(vec3 const& r_col0, vec3 const& r_col1, vec3 const& r_col2);
 		// copy assignment
 		mat3x3& operator=(mat3x3 const& r_cpy);
