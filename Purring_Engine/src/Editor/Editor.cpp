@@ -1185,10 +1185,10 @@ namespace PE {
 			std::vector<float> values{
 				TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime(),
 				TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime()
-				//TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
+				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime(),
+				TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
 			};
-			char* names[] = { /*"Logics",*/ "Physics", "Collision", "Graphics" };
+			char* names[] = { "Input", "Physics", "Collision", "Graphics" };
 			ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
 
 			if (ImGui::IsItemHovered())
@@ -1341,8 +1341,20 @@ namespace PE {
 						if (GetOpenFileNameW(&ofn) == TRUE)
 						{
 							std::wstring wfp = ofn.lpstrFile;
-							std::string fp(wfp.begin(), wfp.end());
-							serializationManager.LoadFromFile(fp);
+
+							// Determine the required buffer size for the narrow string
+							int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, nullptr, 0, nullptr, nullptr);
+
+							if (requiredSize > 0)
+							{
+								std::string fp(requiredSize, '\0');
+
+								// Perform the actual conversion
+								if (WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
+								{
+									serializationManager.LoadFromFile(fp);
+								}
+							}
 						}
 					}
 					ImGui::Separator();
