@@ -425,11 +425,20 @@ namespace PE {
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				for (int n = 0; n < g_entityManager->GetEntitiesInPool("All").size(); n++)
 				{
+					std::string name;
 					const bool is_selected = (m_currentSelectedObject == n);
-
-					std::string name = "GameObject";
-					name += std::to_string(g_entityManager->GetEntitiesInPool("All")[n]);
-
+					if (n == 0) //hardcoding
+					{
+						name = "Background";
+					}
+					else if (n == 1)
+					{
+						name = "Player";
+					}
+					else {
+						name = "GameObject";
+						name += std::to_string(g_entityManager->GetEntitiesInPool("All")[n]);
+					}
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -907,7 +916,7 @@ namespace PE {
 									r_cc.positionOffset.y = offset.y;
 									r_cc.positionOffset.x = offset.x;
 									
-									float offset2 = p_cc.scaleOffset;
+									float offset2 = r_cc.scaleOffset;
 									ImGui::Text("Collider Scale Offset: ");
 									ImGui::Text("sc x offset: "); ImGui::SameLine(); ImGui::InputFloat("##scaleOffsetcircle", &offset2, 1.0f, 100.f, "%.3f");
 							
