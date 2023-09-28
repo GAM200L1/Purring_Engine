@@ -134,8 +134,8 @@ PE::CoreApplication::CoreApplication()
     g_entityFactory->Assign(id, { "Transform", "Renderer" });
     g_entityManager->Get<Transform>(id).position.x = 0.f;
     g_entityManager->Get<Transform>(id).position.y = 0.f;
-    g_entityManager->Get<Transform>(id).width = 1000.f;
-    g_entityManager->Get<Transform>(id).height = 1000.f;
+    g_entityManager->Get<Transform>(id).width = static_cast<float>(width);
+    g_entityManager->Get<Transform>(id).height = static_cast<float>(height);
     g_entityManager->Get<Transform>(id).orientation = 0.f;
     g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
     g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
@@ -153,6 +153,7 @@ PE::CoreApplication::CoreApplication()
     g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
     g_entityManager->Get<RigidBody>(id2).SetMass(10.f);
     
+
 }
 
 /*-----------------------------------------------------------------------------
