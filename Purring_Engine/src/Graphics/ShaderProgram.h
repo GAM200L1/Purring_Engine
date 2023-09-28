@@ -109,6 +109,9 @@ namespace PE
             *************************************************************************************/
             void SetUniform(std::string const& r_uniformName, GLuint const value);
 
+            // text
+            void SetUniform(const std::string& name, const glm::vec3& value);
+
             // ----- Private variables ----- //
         private:
             unsigned int m_programId{}; //! ID of the program created for OpenGL. Set to zero if not linked to a program
