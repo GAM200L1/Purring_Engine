@@ -103,7 +103,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::Init(GLFWwindow* p_window)
+	void Editor::Init(GLFWwindow* p_window_)
 	{
 		//check imgui's version 
 		IMGUI_CHECKVERSION();
@@ -122,7 +122,7 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
 
-		p_window = p_window;
+		p_window = p_window_;
 		//getting the full display size of glfw so that the ui know where to be in
 		int width, height;
 		glfwGetWindowSize(p_window, &width, &height);
