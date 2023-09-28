@@ -14,7 +14,8 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
 *************************************************************************************/
-#pragma once
+#ifndef MOUSE_EVENTS_H
+#define MOUSE_EVENTS_H
 
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
@@ -22,7 +23,7 @@
 #include <sstream>
 #include <utility>
 
-namespace PE
+namespace temp
 {
 	enum class MouseEvents
 	{
@@ -35,13 +36,7 @@ namespace PE
 	class MouseMovedEvent : public Event<MouseEvents>
 	{
 	public:
-		/*!***********************************************************************************
-		\brief			Constructor of event
-		*************************************************************************************/
 		MouseMovedEvent() : Event<MouseEvents>(MouseEvents::MouseMoved, "MouseMoved") {}
-		/*!***********************************************************************************
-		\brief			Destructor of event
-		*************************************************************************************/
 		virtual ~MouseMovedEvent() {}
 
 		inline std::string ToString() const override
@@ -58,13 +53,7 @@ namespace PE
 	class MouseButtonPressedEvent : public Event<MouseEvents>
 	{
 	public:
-		/*!***********************************************************************************
-		\brief			Constructor of event
-		*************************************************************************************/
 		MouseButtonPressedEvent() : Event<MouseEvents>(MouseEvents::MouseButtonPressed, "MouseButtonPressed") {}
-		/*!***********************************************************************************
-		\brief			Destructor of event
-		*************************************************************************************/
 		virtual ~MouseButtonPressedEvent() {}
 
 		inline std::string ToString() const override
@@ -72,25 +61,15 @@ namespace PE
 			std::stringstream ss;
 			ss << "Button Pressed: " << button;
 			return ss.str();
-			//if (repeat < 0)
-			//	ss << " (Button Being Held)";
-
 		}
 
 		int button = -1; //lmb 1, mmb 2, rmb 3
-		float repeat = 0;
 	};
 
 	class MouseButtonReleaseEvent : public Event<MouseEvents>
 	{
 	public:
-		/*!***********************************************************************************
-		\brief			Constructor of event
-		*************************************************************************************/
 		MouseButtonReleaseEvent() : Event<MouseEvents>(MouseEvents::MouseButtonReleased, "MouseButtonPressed") {}
-		/*!***********************************************************************************
-		\brief			Destructor of event
-		*************************************************************************************/
 		virtual ~MouseButtonReleaseEvent() {}
 
 		inline std::string ToString() const override
@@ -106,24 +85,19 @@ namespace PE
 	class MouseScrolledEvent : public Event<MouseEvents>
 	{
 	public:
-		/*!***********************************************************************************
-		\brief			Constructor of event
-		*************************************************************************************/
 		MouseScrolledEvent() : Event<MouseEvents>(MouseEvents::MouseScrolled, "MouseScrolled") {}
-		/*!***********************************************************************************
-		\brief			Destructor of event
-		*************************************************************************************/
 		virtual ~MouseScrolledEvent() {}
 
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "Mouse Scrolled: " << xOffset << "," << yOffset;
+			ss << "Button Scrolled: " << xOffset << "," << yOffset;
 			return ss.str();
 		}
 
-		float xOffset = 0, yOffset = 0;
+		int xOffset = 0, yOffset = 0;
 	};
 
 }
 
+#endif

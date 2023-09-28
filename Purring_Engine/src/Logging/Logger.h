@@ -1,25 +1,24 @@
-/*!***********************************************************************************
- \project  Purring Engine
- \module   CSD2401-A
- \file     Logger.cpp
- \date     25-08-2023
- 
- \author               Foong Jun Wei
- \par      email:      f.junwei\@digipen.edu
- 
- \brief 	This file contains the decleration of the logger class.
+/*!*****************************************************************************
+    @file       Logger.h
+    @author     Foong Jun Wei
+    @co-author
+    @par        DP email: f.junwei\@digipen.edu
+    @par        Course: CSD2401, Section A
+    @date       250823
 
+    @brief      This file contains the decleration of the logger class.
+                
 
- All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*************************************************************************************/
-#pragma once
+All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*******************************************************************************/
+#ifndef LOGGER_H
+#define LOGGER_H
 
 #include <stdio.h>
 #include <vector>
 #include <string>
 #include <iostream>
 #include <chrono>
-#include <fstream>
 
 
 /*!******************************************************************************************************************
@@ -63,81 +62,34 @@ public:
         WRITE_TO_FILE      = 0b0000000000000100,      // enable/disable write to file
         NUM_FLAGS
     };
-    const std::string instanceName;   // name of the current instance
+    const std::string m_instanceName;   // name of the current instance
 
 /* ----- Constructors ----- */
 public:
-    /*!***********************************************************************************
-     \brief Construct a new Logger object
-     
-     \param[in] inst_name The name of the instance to create with
-    *************************************************************************************/
-    Logger(const char inst_name[]);
-
-    /*!***********************************************************************************
-     \brief Destroy the Logger object, also flushes the log before ending the instance
-     
-    *************************************************************************************/
-    ~Logger()
-    {
-        FlushLog();
-        if (m_outFile.is_open())
-            m_outFile.close();
+    // Methods/Functions
+    Logger(const char inst_name[]) : 
+    m_instanceName{ inst_name }
+    { 
+        // empty by design 
     }
     
 /* ----- Public setters ----- */
 public:
-    /*!***********************************************************************************
-     \brief Sets the specified flags to allow changes in the behaviour of the logger
-            Refer to EnumLoggerFlags for all currently supported flags
-     
-     \param[in] r_flag  The flags to modify.
-     \param[in] r_set   The state to set the flags to,
-                        true  = set specified flags to true,
-                        false = set specified falgs to false
-    *************************************************************************************/
-    void SetFlag(const LoggerFlag& r_flag, const bool& r_set);
-    
-    /*!***********************************************************************************
-     \brief  Sets a static variable within the class to the current system clock time
-    		 this is to prevent unnecessary calls to get said time multiple times per
-    		 frame.
-    
-    *************************************************************************************/
+    void SetFlag(const LoggerFlag& flag, const bool& set);
     void SetTime();
 
 /* ----- Public Methods ----- */
 public:
-    /*!***********************************************************************************
-     \brief Adds a log message (or error) to the log buffer.
-            In the even it is an error, it will automatically flush the log.
-            
-     
-     \param[in] r_isError   Sepcifies if the message is an error,
-                            true = error,
-                            false = message
-     \param[in] r_msg       The message to log
-     \param[in] fnName      The name of the function calling the log
-                            use: __FUNCTION__ OR __FUNCDNAME__
-                            The former is just the function name without decoration, use in case of 
-                            the function only having one instance.
-                            The latter is with decoration, it allows us to defferentiate between which
-                            instance it was called within.
-    *************************************************************************************/
-    void AddLog(const bool& r_isError, const std::string& r_msg, const char fnName[]);
-    
-    /*!***********************************************************************************
-     \brief Flushes the whole log into console or to a file as specified by flags
-     
-    *************************************************************************************/
+    void AddLog(const bool& is_error, const std::string& msg, const char fn_name[]);
     void FlushLog();
 
 /* ----- Private variables----- */
 private:
-    std::stringstream m_logBuffer;       // all instances will share the same buffer? or sperate them
+    static std::stringstream m_logBuffer;       // all instances will share the same buffer? or sperate them
                                                 // the buffer will hold all lines until it is flushed to console/file?
                                                 // after which it is cleared. (e.g. wait till end of each frame before flushing?)
     static LoggerFlag m_flags;                  // mode singleton (all instances should share the same mode)
-    std::string m_currTime;
-    std::ofstream m_outFile;
+    static std::string m_currTime;
 };
+
+#endif // !LOGGER_H

@@ -24,8 +24,8 @@ namespace PE
 		std::vector<System*> m_systemList;
 
 		// is engine running
-		bool m_Running{};
-		double m_lastFrameTime{};
+		bool m_Running;
+		float m_lastFrameTime;
 
 	};
 }

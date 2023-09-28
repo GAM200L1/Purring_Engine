@@ -21,24 +21,34 @@
 
 namespace PE
 {
+	std::unique_ptr<MemoryManager> MemoryManager::s_Instance = nullptr;
+
 	MemoryManager::MemoryManager(){}
 	MemoryManager::~MemoryManager(){}
 
+	MemoryManager* MemoryManager::GetInstance()
+	{
+		if (!s_Instance)
+			s_Instance = std::make_unique<MemoryManager>();
+
+
+		return s_Instance.get();
+	}
 
 	void* MemoryManager::AllocateMemory(std::string name, int size)
 	{
 		try
 		{
 			//printing total allocated memory
-			std::string s("Currently allocated: ");
-			s += std::to_string(m_stackAllocator.GetStackTop());
-			Editor::GetInstance().AddInfoLog(s);
-			Editor::GetInstance().AddInfoLog("trying to allocate more memory now");
+			std::stringstream ss1;
+			ss1 << "Currently allocated: " << m_stackAllocator.GetStackTop();
+			Editor::GetInstance()->AddConsole(ss1.str());
+			Editor::GetInstance()->AddConsole("trying to allocate more memory now");
 
 			//determine buffer size incase of writing over
 			int buffer = (size + 1) / 2;
 			//attempt to allocate memory
-			void* p_newptr = m_stackAllocator.Allocate(size + buffer);
+			void* newptr = m_stackAllocator.Allocate(size + buffer);
 
 			//save data of allocated memory
 			m_memoryAllocationData.push_back(MemoryData(name, size, buffer));
@@ -46,16 +56,15 @@ namespace PE
 			//print to console how much was allocated
 			std::stringstream ss;
 			ss << "memory allocated of size: " << size << " to: " << name << " along with buffer of: " << buffer;
-			Editor::GetInstance().AddInfoLog(ss.str());
+			Editor::GetInstance()->AddConsole(ss.str());
 
-			return p_newptr;
+			return newptr;
 		}
 		catch (int i) {
-			i;
 			//sending error to logs
-			std::string ss("memory cannot be allocated to ");
-			ss += name;
-			Editor::GetInstance().AddErrorLog(ss);
+			std::stringstream ss;
+			ss << "memory cannot be allocated to " << name;
+			Editor::GetInstance()->AddError(ss.str());
 			return nullptr;
 		}
 	}
@@ -65,11 +74,11 @@ namespace PE
 		try
 		{
 			//freeing the latest allocated memory, have to give the size + buffer
-			m_stackAllocator.Free(m_memoryAllocationData[m_memoryAllocationData.size()-1].size + m_memoryAllocationData[m_memoryAllocationData.size() - 1].bufferSize);
+			m_stackAllocator.Free(m_memoryAllocationData[m_memoryAllocationData.size()-1].s_size + m_memoryAllocationData[m_memoryAllocationData.size() - 1].s_bufferSize);
 			m_memoryAllocationData.pop_back();
 		}
 		catch (int i) {
-			throw i;
+			throw;
 		}
 	}
 
@@ -82,28 +91,28 @@ namespace PE
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) 
 		{
 			//if written over buffer
-			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].size + totalMemory) != '\0')
+			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].s_size + totalMemory) != '\0')
 			{
-				std::string s(m_memoryAllocationData[i].name);
-				s += " Writing into more than allocated spaces!";
-				Editor::GetInstance().AddErrorLog(s);
+				std::stringstream ss;
+				ss << m_memoryAllocationData[i].s_name << " Writing into more than allocated spaces!" << std::endl;
+				Editor::GetInstance()->AddError(ss.str());
 			}
 
 			//go to next object
-			totalMemory += m_memoryAllocationData[i].size + m_memoryAllocationData[i].bufferSize;
+			totalMemory += m_memoryAllocationData[i].s_size + m_memoryAllocationData[i].s_bufferSize;
 		}
 	}
 
 	void MemoryManager::PrintData()
 	{
 		//print total allocated memory
-		std::string s("Currently allocated: ");
-		s += std::to_string(m_stackAllocator.GetStackTop());
-		Editor::GetInstance().AddInfoLog(s);
+		std::stringstream ss;
+		ss << "currently allocated: " << m_stackAllocator.GetStackTop();
+		Editor::GetInstance()->AddConsole(ss.str());
 
 		//print structure data
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) {
-			Editor::GetInstance().AddInfoLog(m_memoryAllocationData[i].ToString());
+			Editor::GetInstance()->AddConsole(m_memoryAllocationData[i].ToString());
 		}
 	}
 
@@ -111,9 +120,9 @@ namespace PE
 	StackAllocator::StackAllocator(int size) : m_totalSize(size), m_stackTop(0)
 	{
 		//allocate memory based on given size
-		p_stack = new char[size]();
+		m_stack = new char[size]();
 		//initialize values just incase
-		memset(p_stack, '\0', size);
+		memset(m_stack, '\0', size);
 	}
 
 	void* StackAllocator::Allocate(int size)
@@ -121,13 +130,14 @@ namespace PE
 		//if trying to allocate over max size
 		if (m_stackTop + size <= m_totalSize)
 		{
-			void* p_newPtr = (p_stack + m_stackTop);
+			void* newPtr = (m_stack + m_stackTop);
 			m_stackTop += size;
-			return p_newPtr;
+			return newPtr;
 		}
 		else 
 		{
 			throw 0;
+			return nullptr;
 		}
 	}
 
@@ -147,7 +157,7 @@ namespace PE
 
 	char* StackAllocator::GetStack()
 	{
-		return p_stack;
+		return m_stack;
 	}
 
 	int StackAllocator::GetStackTop()
@@ -159,7 +169,7 @@ namespace PE
 	std::string MemoryData::ToString() const
 	{
 		std::stringstream ss;
-		ss << name << " has been allocated: " << size << " with a buffer of " << bufferSize;
+		ss << s_name << " has been allocated: " << s_size << " with a buffer of " << s_bufferSize;
 		return ss.str();
 	}
 

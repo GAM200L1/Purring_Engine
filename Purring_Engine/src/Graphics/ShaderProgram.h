@@ -27,8 +27,8 @@ namespace PE
         class ShaderProgram
         {
         public:
-            ShaderProgram();    // Does nothing.
-            ~ShaderProgram();   // Deletes the shader program.
+            ShaderProgram();
+            ~ShaderProgram();
 
             // ----- Public methods ----- //
         public:
@@ -65,12 +65,12 @@ namespace PE
             /*!***********************************************************************************
              \brief Use this program.
             *************************************************************************************/
-            void Use() const;
+            void Use();
 
             /*!***********************************************************************************
              \brief Stop using this program.
             *************************************************************************************/
-            void UnUse() const;
+            void UnUse();
 
             /*!***********************************************************************************
              \brief Delete the shader program. Call this when cleaning up.
@@ -84,33 +84,6 @@ namespace PE
              \param[in,out] r_matrix Reference to the matrix.
             *************************************************************************************/
             void SetUniform(std::string const& r_uniformName, glm::mat4 const& r_matrix);
-
-            /*!***********************************************************************************
-             \brief Set the Uniform object with the name [r_uniformName] using [r_vector4].
-
-             \param[in,out] r_uniformName Name of the uniform.
-             \param[in,out] r_vector4 Reference to the vector 4 object variable to.
-            *************************************************************************************/
-            void SetUniform(std::string const& r_uniformName, glm::vec4 const& r_vector4);
-            
-            /*!***********************************************************************************
-             \brief Set the Uniform object with the name [r_uniformName] using [value].
-
-             \param[in,out] r_uniformName Name of the uniform.
-             \param[in,out] value Boolean value to set the uniform variable to.
-            *************************************************************************************/
-            void SetUniform(std::string const& r_uniformName, bool const value);
-            
-            /*!***********************************************************************************
-             \brief Set the Uniform object with the name [r_uniformName] using [value].
-
-             \param[in,out] r_uniformName Name of the uniform.
-             \param[in,out] value Unsigned int value to set the uniform variable to.
-            *************************************************************************************/
-            void SetUniform(std::string const& r_uniformName, GLuint const value);
-
-            // text
-            void SetUniform(const std::string& name, const glm::vec3& value);
 
             // ----- Private variables ----- //
         private:

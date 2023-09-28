@@ -406,9 +406,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-
-Application/Audio/
-
-Purring_Engine/Audio/
-
-Textures/

@@ -6,13 +6,6 @@
  
  \author               Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
-  \par      code %:     95%
-
- \co-author            Brandon Ho Jun Jie
- \par      email:      brandonjunjie.ho\@digipen.edu
- \par      code %:     5%
- \par      changes:    16-09-2023
-                       Load shader from file
  
  \brief    This file contains the ShaderProgram class, which contains methods
            to compile and store a shader program.
@@ -37,47 +30,19 @@ namespace PE
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(false, "Creating shader program", __FUNCTION__);
+            engine_logger.AddLog(true, "Creating shader program", __FUNCTION__);
         }
 
         ShaderProgram::~ShaderProgram()
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(false, "Destroying shader program", __FUNCTION__);
-            DeleteProgram();
+            engine_logger.AddLog(true, "Destroyng shader program", __FUNCTION__);
         }
 
         bool ShaderProgram::LoadAndCompileShadersFromFile(std::string vertexFile, std::string fragmentFile)
         {
-            std::ifstream vertexFileStream(vertexFile);
-            std::ifstream fragmentFileStream(fragmentFile);
-
-            if (!vertexFileStream)
-            {
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(true, "Vertex shader file " + vertexFile + " could not be opened", __FUNCTION__);
-                return false;
-            }
-            else if (!fragmentFileStream) 
-            {
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(true, "Fragment shader file " + fragmentFile + " could not be opened", __FUNCTION__);
-                return false;
-            }
-
-            std::stringstream vertexStream;
-            std::stringstream fragmentStream;
-
-            vertexStream << vertexFileStream.rdbuf();
-            fragmentStream << fragmentFileStream.rdbuf();
-
-            vertexFileStream.close();
-            fragmentFileStream.close();
-
-            return CompileLinkValidateProgram(vertexStream.str(), fragmentStream.str());
+            return false;
         }
 
 
@@ -122,8 +87,6 @@ namespace PE
                     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                     engine_logger.SetTime();
                     engine_logger.AddLog(true, logString, __FUNCTION__);
-
-                    std::cout << logString << "\n";
                 }
 
                 return false;
@@ -136,8 +99,6 @@ namespace PE
             {
                 return false;
             }
-
-            std::cout << "Shader compiled!" << "\n";
             return true;
         }
 
@@ -186,7 +147,7 @@ namespace PE
         }
 
 
-        void ShaderProgram::Use() const
+        void ShaderProgram::Use()
         {
             if (m_programId > 0 && m_isLinked)
             {
@@ -195,7 +156,7 @@ namespace PE
         }
 
 
-        void ShaderProgram::UnUse() const
+        void ShaderProgram::UnUse()
         {
             glUseProgram(0);
         }
@@ -229,91 +190,7 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
-
-                std::cout << errorLog << "\n";
             }
-        }
-
-
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, glm::vec4 const& r_vector4) {
-
-            GLint uniformLocation = glGetUniformLocation(m_programId,
-                reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
-
-            // Check if the uniform variable can be found
-            if (uniformLocation >= 0 &&
-                !(GL_INVALID_OPERATION == uniformLocation ||
-                    GL_INVALID_VALUE == uniformLocation)) {
-
-                // Pass the vector values as a uniform variable
-                glUniform4f(uniformLocation, static_cast<GLfloat>(r_vector4.x),
-                    static_cast<GLfloat>(r_vector4.y),
-                    static_cast<GLfloat>(r_vector4.z),
-                    static_cast<GLfloat>(r_vector4.w));
-            }
-            else {
-                std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(true, errorLog, __FUNCTION__);
-
-                std::cout << errorLog << "\n";
-            }
-        }
-
-
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, bool const value) {
-
-            GLint uniformLocation = glGetUniformLocation(m_programId,
-                reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
-
-            // Check if the uniform variable can be found
-            if (uniformLocation >= 0 &&
-                !(GL_INVALID_OPERATION == uniformLocation ||
-                    GL_INVALID_VALUE == uniformLocation)) {
-
-                // Pass the boolean value as a uniform variable
-                glUniform1i(uniformLocation, static_cast<GLint>(value));
-            }
-            else {
-                std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(true, errorLog, __FUNCTION__);
-
-                std::cout << errorLog << "\n";
-            }
-        }
-
-
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, GLuint const value) {
-
-            GLint uniformLocation = glGetUniformLocation(m_programId,
-                reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
-
-            // Check if the uniform variable can be found
-            if (uniformLocation >= 0 &&
-                !(GL_INVALID_OPERATION == uniformLocation ||
-                    GL_INVALID_VALUE == uniformLocation)) {
-
-                // Pass the int value as a uniform variable
-                glUniform1ui(uniformLocation, value);
-            }
-            else {
-                std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(true, errorLog, __FUNCTION__);
-
-                std::cout << errorLog << "\n";
-            }
-        }
-
-        // text
-        void ShaderProgram::SetUniform(const std::string& name, const glm::vec3& value)
-        {
-            GLint location = glGetUniformLocation(m_programId, name.c_str());
-            glUniform3f(location, value.x, value.y, value.z);
         }
 
 
