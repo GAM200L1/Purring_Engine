@@ -215,17 +215,17 @@ void PE::CoreApplication::Run()
         // ----- UPDATE ----- //
         
         // List of keys to check for FPS adjustment
-        //const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
+        const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
 
         //// Iterate through the list of keys and check if any are pressed
-        //for (int key : keys)
-        //{
-        //    // Update target FPS if a key is pressed
-        //    if (glfwGetKey(m_window, key) == GLFW_PRESS)
-        //    {
-        //        m_fpsController.UpdateTargetFPSBasedOnKey(key);
-        //    }
-        //}
+        for (int key : keys)
+        {
+            // Update target FPS if a key is pressed
+            if (glfwGetKey(m_window, key) == GLFW_PRESS)
+            {
+                m_fpsController.UpdateTargetFPSBasedOnKey(key);
+            }
+        }
         if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
         {
             try

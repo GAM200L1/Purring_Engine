@@ -30,8 +30,8 @@ namespace PE
 	// ----- Constructor ----- //
 
 	PhysicsManager::PhysicsManager() :
-		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f },
-		m_fixedDt{ 1.f / 60.f }, m_accumulator{ 0.f }, m_dtLimit{ 1.f/4.f } {}
+		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f } {} 
+	//, m_fixedDt{ 1.f / 60.f }, m_accumulator{ 0.f }, m_accumulatorLimit{ 1.f } {}
 	
 	// ----- Public Getters ----- //
 
@@ -54,14 +54,14 @@ namespace PE
 		m_velocityNegligence = negligence;
 	}
 
-	float PhysicsManager::GetFixedDt()
-	{
-		return m_fixedDt;
-	}
-	void PhysicsManager::SetFixedDt(float fixDt)
-	{
-		m_fixedDt = fixDt;
-	}
+	//float PhysicsManager::GetFixedDt()
+	//{
+	//	return m_fixedDt;
+	//}
+	//void PhysicsManager::SetFixedDt(float fixDt)
+	//{
+	//	m_fixedDt = fixDt;
+	//}
 
 	bool& PhysicsManager::GetStepPhysics()
 	{
@@ -89,20 +89,19 @@ namespace PE
 		// Simple fixed deltaTime		
 		if (!m_applyStepPhysics)
 		{
-			m_accumulator += (deltaTime > m_dtLimit)? m_dtLimit : deltaTime;
 			//m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
-			while (m_accumulator >= m_fixedDt)
-			{
-				UpdateDynamics(m_fixedDt);
-				m_accumulator -= m_fixedDt;
-			}
+			//while (m_accumulator >= m_fixedDt)
+			//{
+				UpdateDynamics(deltaTime);
+			//	m_accumulator -= m_fixedDt;
+			//}
 		}
 		else
 		{
 			// Applies Step Physics
 			if (m_advanceStep)
 			{
-				UpdateDynamics(m_fixedDt);
+				UpdateDynamics(deltaTime);
 				m_advanceStep = false;
 			}
 		}
