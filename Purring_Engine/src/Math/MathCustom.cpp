@@ -6,8 +6,7 @@
  
  \author               Liew Yeni
  \par      email:      yeni.l\@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
+ \par      code %:     100%
  
  \co-author            Foong Jun Wei
  \par      email:      f.junwei\@digipen.edu

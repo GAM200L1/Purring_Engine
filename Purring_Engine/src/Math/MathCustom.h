@@ -26,7 +26,9 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
+//! Definition of PI
 constexpr float PE_PI = 3.14159265358979323846f;
+
 namespace PE
 {
 	//! Forward declaration of structs
