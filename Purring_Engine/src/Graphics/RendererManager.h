@@ -32,6 +32,7 @@
 #include "System.h"
 #include "Physics/Colliders.h"
 
+#include "Text.h"
 
 namespace PE
 {
@@ -200,7 +201,8 @@ namespace PE
             // Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
 
-            // Width and height of the ImGui window the last time the framebuffer was resized
+            Font m_font;
+            //! Width and height of the ImGui window the last time the framebuffer was resized
             float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
 
             // 4x4 world to NDC matrix. Updated when window is resized or camera has been repositioned

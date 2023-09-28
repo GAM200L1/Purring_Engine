@@ -36,6 +36,8 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "Data/SerializationManager.h"
+#include "Data/json.hpp"
 
 
 namespace PE {

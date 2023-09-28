@@ -20,10 +20,16 @@
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
+
+// test for file exploer -hans
+#include <Windows.h>
+#include <Commdlg.h>
+#include "Data/SerializationManager.h"
 #include "Physics/PhysicsManager.h"
 #include "Logging/Logger.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
+SerializationManager serializationManager;  // Create an instance
 
 extern Logger engine_logger;
 
@@ -1292,6 +1298,8 @@ namespace PE {
 
 			}
 
+			nlohmann::json serializedEntity;  // Declaring at higher scope-hans
+
 			//docking port menu bar
 			if (ImGui::BeginMainMenuBar())
 			{
@@ -1300,12 +1308,42 @@ namespace PE {
 				{
 					if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						//save code goes here
+						if (m_currentSelectedObject)
+						{
+							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
+						}
+
 					}
 					if (ImGui::MenuItem("Load"))
 					{
-						//if youre capable loading from different scene you can add more menu item like below
-						//otherwise just use this
+						//serializationManager.loadFromFile("Saved_Data.json");
+
+						// Call the method to load the serialized entity from a file and deserialize it.
+						//serializationManager.loadFromFile("Saved_Data.json");
+						//int deserializedEntityID = deserializedData.second;
+
+						//// Still need to integrate the deserialized entity into JW ECS via file exploer + the logic.
+						OPENFILENAME ofn;
+						wchar_t szFile[260];
+						ZeroMemory(&ofn, sizeof(ofn));
+						ofn.lStructSize = sizeof(ofn);
+						ofn.hwndOwner = NULL;
+						ofn.lpstrFile = szFile;
+						ofn.lpstrFile[0] = '\0';
+						ofn.nMaxFile = sizeof(szFile);
+						ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
+						ofn.nFilterIndex = 1;
+						ofn.lpstrFileTitle = NULL;
+						ofn.nMaxFileTitle = 0;
+						ofn.lpstrInitialDir = NULL;
+						ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+						if (GetOpenFileNameW(&ofn) == TRUE)
+						{
+							std::wstring wfp = ofn.lpstrFile;
+							std::string fp(wfp.begin(), wfp.end());
+							serializationManager.LoadFromFile(fp);
+						}
 					}
 					ImGui::Separator();
 					//remove the false,false if using
@@ -1486,6 +1524,5 @@ namespace PE {
 		if (KTE.keycode == GLFW_KEY_F10)
 			ToggleDebugRender();
 	}
-
 }
 

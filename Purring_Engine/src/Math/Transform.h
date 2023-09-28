@@ -13,9 +13,9 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
-
 #include "Math/MathCustom.h"
 #include "ECS/Components.h"
+#include "Data/json.hpp"
 
 namespace PE
 {
@@ -35,6 +35,30 @@ namespace PE
             transMat.Translate(position.x, position.y);
 
             return transMat * rotMat * scaleMat;
+        }
+
+        // Serialization
+        nlohmann::json ToJson() const
+        {
+            nlohmann::json j;
+            j["width"] = width;
+            j["height"] = height;
+            j["orientation"] = orientation;
+            j["position"]["x"] = position.x;
+            j["position"]["y"] = position.y;
+            return j;
+        }
+
+        // Deserialization
+        static Transform FromJson(const nlohmann::json& j)
+        {
+            Transform t;
+            t.width = j["width"];
+            t.height = j["height"];
+            t.orientation = j["orientation"];
+            t.position.x = j["position"]["x"];
+            t.position.y = j["position"]["y"];
+            return t;
         }
     };
 }

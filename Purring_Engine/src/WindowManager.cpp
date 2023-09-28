@@ -269,7 +269,7 @@ namespace PE
 	void WindowManager::UpdateTitle(GLFWwindow* p_window, double fps)
 	{
 		std::ostringstream titleStream;
-		titleStream << "Purring Engine | FPS: " << static_cast<int>(fps);
+		titleStream << "March of the Meows | FPS: " << static_cast<int>(fps);
 		glfwSetWindowTitle(p_window, titleStream.str().c_str());
 	}
 

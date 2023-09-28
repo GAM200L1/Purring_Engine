@@ -73,6 +73,7 @@
 // Graphics
 #include "Graphics/Renderer.h"
 #include "InputSystem.h"
+#include "Data/SerializationManager.h"
 
 // testing
 Logger engine_logger = Logger("ENGINE");
@@ -98,8 +99,17 @@ PE::CoreApplication::CoreApplication()
 	m_Running = true;
 	m_lastFrameTime = 0;
 
+    // parse the JSON file
+    std::ifstream configFile("config.json");
+    nlohmann::json configJson;
+    configFile >> configJson;
+
+    // Access width and height from the parsed JSON.
+    int width = configJson["window"]["width"];
+    int height = configJson["window"]["height"];
+
     // Create and set up the window using WindowManager
-    m_window = m_windowManager.InitWindow(1000, 1000, "Purring Engine");
+    m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
 
     // Default to 60 FPS
     m_fpsController.SetTargetFPS(60);
@@ -109,6 +119,7 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
+    SerializationManager serializationManager;  // Create an instance
 
     // Audio Initalization & Loading Audio - HANS
     AudioManager::GetInstance().Init();
@@ -152,7 +163,7 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
 
     EntityID id = EntityFactory::GetInstance().CreateEntity();
-    int width{ 1000 }, height{ 1000 };
+
     glfwGetWindowSize(m_window, &width, &height);
     EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
     EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;

@@ -309,6 +309,13 @@ namespace PE
             }
         }
 
+        // text
+        void ShaderProgram::SetUniform(const std::string& name, const glm::vec3& value)
+        {
+            GLint location = glGetUniformLocation(m_programId, name.c_str());
+            glUniform3f(location, value.x, value.y, value.z);
+        }
+
 
         bool ShaderProgram::CheckProgramId() {
 
