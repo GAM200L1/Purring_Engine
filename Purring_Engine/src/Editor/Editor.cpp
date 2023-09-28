@@ -20,8 +20,6 @@
 #include "AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
-
-// test for file exploer -hans
 #include <Windows.h>
 #include <Commdlg.h>
 #include "Data/SerializationManager.h"
@@ -232,7 +230,7 @@ namespace PE {
 			}
 			ImGui::SameLine();
 
-			//temp for now, i really dk how i shld store this
+			//temp for now
 			static bool warningfilter;
 			static bool eventfilter;
 			static bool infofilter;
@@ -392,11 +390,7 @@ namespace PE {
 			if (ImGui::Button("Create Object")) // add a string into vector
 			{
 				AddInfoLog("Object Created");
-				EntityID id = EntityFactory::GetInstance().CreateEntity();
-				EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
-				EntityManager::GetInstance().Get<Transform>(id).height = 100.f;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100.f;
-				//UpdateObjectList();
+				serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
 			}
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
@@ -419,15 +413,18 @@ namespace PE {
 					count--;
 
 				}
+				else 
+				{
+					AddWarningLog("You are not allowed to delete the background or player as of now");
+				}
 			}
 
 			if (ImGui::Button("Clone Object"))
 			{
-
-				//EntityFactory::GetInstance().Clone(m_currentSelectedObject);
 				if(m_currentSelectedObject)
 				EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
-				//UpdateObjectList();
+				else
+					AddWarningLog("You are not allowed to clone the background");
 			}
 
 			ImGui::Separator();
@@ -714,17 +711,12 @@ namespace PE {
 			ImGui::Text("Object Test");
 			if (ImGui::Button("Draw 2500 objects"))
 			{
-				ClearObjectList();
-				for (size_t i{}; i < 2500; ++i) {
-					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-					EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
-					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
-					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
-					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
-					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
-					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
-				}
+					ClearObjectList();
+					for (size_t i{}; i < 2500; ++i) {
+						EntityID id2 = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+						EntityManager::GetInstance().Get<Transform>(id2).position.x = 50.f * (i % 50) - 600.f;
+						EntityManager::GetInstance().Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
+					}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Toggle Debug Lines"))
@@ -919,11 +911,6 @@ namespace PE {
 									{
 										EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant = AABBCollider();
 									}
-									/*Transform& transform{ EntityManager::GetInstance().Get<Transform>(entityID) };
-									std::visit([&](auto& col)
-										{
-											Initialize(col, transform.position, vec2(transform.width, transform.height));
-										}, EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);*/
 								}
 
 								if (index)
@@ -1185,10 +1172,10 @@ namespace PE {
 			std::vector<float> values{
 				TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime(),
 				TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime()
-				//TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
+				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime(),
+				TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
 			};
-			char* names[] = { /*"Logics",*/ "Physics", "Collision", "Graphics" };
+			char* names[] = { "Input", "Physics", "Collision", "Graphics" };
 			ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
 
 			if (ImGui::IsItemHovered())
@@ -1310,22 +1297,15 @@ namespace PE {
 					{
 						if (m_currentSelectedObject)
 						{
-							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
+							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]));
 						}
 
 					}
 					if (ImGui::MenuItem("Load"))
 					{
-						//serializationManager.loadFromFile("Saved_Data.json");
-
-						// Call the method to load the serialized entity from a file and deserialize it.
-						//serializationManager.loadFromFile("Saved_Data.json");
-						//int deserializedEntityID = deserializedData.second;
-
-						//// Still need to integrate the deserialized entity into JW ECS via file exploer + the logic.
 						OPENFILENAME ofn;
 						wchar_t szFile[260];
-						ZeroMemory(&ofn, sizeof(ofn));
+						ZeroMemory(&ofn, static_cast<size_t>(sizeof(ofn)));
 						ofn.lStructSize = sizeof(ofn);
 						ofn.hwndOwner = NULL;
 						ofn.lpstrFile = szFile;
@@ -1341,8 +1321,20 @@ namespace PE {
 						if (GetOpenFileNameW(&ofn) == TRUE)
 						{
 							std::wstring wfp = ofn.lpstrFile;
-							std::string fp(wfp.begin(), wfp.end());
-							serializationManager.LoadFromFile(fp);
+
+							// Determine the required buffer size for the narrow string
+							int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, nullptr, 0, nullptr, nullptr);
+
+							if (requiredSize > 0)
+							{
+								std::string fp(requiredSize, '\0');
+
+								// Perform the actual conversion
+								if (WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
+								{
+									serializationManager.LoadFromFile(fp);
+								}
+							}
 						}
 					}
 					ImGui::Separator();
@@ -1494,8 +1486,6 @@ namespace PE {
 		{
 			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
 		}
-
-		//may want to change this to switch case to look cleaner
 
 		if (KTE.keycode == GLFW_KEY_F1)
 			m_showConsole = !m_showConsole;
