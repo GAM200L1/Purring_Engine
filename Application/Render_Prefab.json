@@ -1,9 +1,6 @@
 {
     "Entity": {
         "components": {
-            "Collider": {
-                "type": "CircleCollider"
-            },
             "Renderer": {
                 "Color": {
                     "a": 1.0,
@@ -13,20 +10,16 @@
                 },
                 "TextureKey": "cat"
             },
-            "RigidBody": {
-                "mass": 10.0,
-                "type": 1
-            },
             "Transform": {
-                "height": 100.0,
+                "height": 50.0,
                 "orientation": 0.0,
                 "position": {
                     "x": 0.0,
                     "y": 0.0
                 },
-                "width": 100.0
+                "width": 50.0
             }
         },
-        "name": "Player Prefab"
+        "name": "Render Prefab"
     }
 }

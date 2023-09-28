@@ -1130,31 +1130,34 @@ namespace PE {
 					}
 					if (ImGui::MenuItem("Load"))
 					{
+						//serializationManager.loadFromFile("Saved_Data.json");
+
 						// Call the method to load the serialized entity from a file and deserialize it.
-						EntityID id = serializationManager.loadFromFile("Saved_Data.json");
+						//serializationManager.loadFromFile("Saved_Data.json");
 						//int deserializedEntityID = deserializedData.second;
 
 						//// Still need to integrate the deserialized entity into JW ECS via file exploer + the logic.
-						//OPENFILENAME ofn;
-						//wchar_t szFile[260];
-						//ZeroMemory(&ofn, sizeof(ofn));
-						//ofn.lStructSize = sizeof(ofn);
-						//ofn.hwndOwner = NULL;
-						//ofn.lpstrFile = szFile;
-						//ofn.lpstrFile[0] = '\0';
-						//ofn.nMaxFile = sizeof(szFile);
-						//ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
-						//ofn.nFilterIndex = 1;
-						//ofn.lpstrFileTitle = NULL;
-						//ofn.nMaxFileTitle = 0;
-						//ofn.lpstrInitialDir = NULL;
-						//ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+						OPENFILENAME ofn;
+						wchar_t szFile[260];
+						ZeroMemory(&ofn, sizeof(ofn));
+						ofn.lStructSize = sizeof(ofn);
+						ofn.hwndOwner = NULL;
+						ofn.lpstrFile = szFile;
+						ofn.lpstrFile[0] = '\0';
+						ofn.nMaxFile = sizeof(szFile);
+						ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
+						ofn.nFilterIndex = 1;
+						ofn.lpstrFileTitle = NULL;
+						ofn.nMaxFileTitle = 0;
+						ofn.lpstrInitialDir = NULL;
+						ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
-						//if (GetOpenFileNameW(&ofn) == TRUE)
-						//{
-						//	std::pair<Entity, int> deserializedData = serializationManager.loadFromFile("saved_transform.json");
-						//	int deserializedEntityID = deserializedData.second;
-						//}
+						if (GetOpenFileNameW(&ofn) == TRUE)
+						{
+							std::wstring wfp = ofn.lpstrFile;
+							std::string fp(wfp.begin(), wfp.end());
+							serializationManager.loadFromFile(fp);
+						}
 					}
 					ImGui::Separator();
 					//remove the false,false if using
