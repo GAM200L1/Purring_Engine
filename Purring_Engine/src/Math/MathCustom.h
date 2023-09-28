@@ -557,15 +557,28 @@ namespace PE
 		 \brief Construct a new mat3x3 object using 3 vec3s. vec3s are to represent each column
 		 		of the mat3x3.
 		 
-		 \param[in,out] r_col0 -  
-		 \param[in,out] r_col1 - 
-		 \param[in,out] r_col2 
+		 \param[in,out] r_col0 - vec3 that represents the values in the first column of the mat3x3
+		 \param[in,out] r_col1 - vec3 that represents the values in the second column of the mat3x3
+		 \param[in,out] r_col2 - vec3 that represents the values in the third column of the mat3x3
 		*************************************************************************************/
 		mat3x3(vec3 const& r_col0, vec3 const& r_col1, vec3 const& r_col2);
-		// copy assignment
+		
+		/*!***********************************************************************************
+		 \brief Copy assignment operator overload for mat3x3. mat3x3 elements will become a copy
+		 		of the mat3x3 input.
+		 
+		 \param[in,out] r_cpy - the mat3x3 to copy
+		 \return mat3x3& - reference to this mat3x3
+		*************************************************************************************/
 		mat3x3& operator=(mat3x3 const& r_cpy);
 
-		// access operator
+		// ----- Access Operators ----- //
+		/*!***********************************************************************************
+		 \brief 
+		 
+		 \param[in,out] index 
+		 \return float 
+		*************************************************************************************/
 		float operator[](unsigned int index) const; // 0-8
 		// float operator[][](unsigned int index1, unsigned int index2) const; // [col][row]
 
