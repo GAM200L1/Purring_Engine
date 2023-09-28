@@ -15,6 +15,7 @@
 *************************************************************************************/
 #pragma once
 #include "prpch.h"
+#include "Singleton.h"
 #include "fmod.hpp"
 #include "fmod_errors.h"
 /*                                                                                                          includes

@@ -85,7 +85,12 @@ namespace PE
     {
         Sounds[r_key] = std::make_shared<AudioManager::Audio>();
 
-        if (!Sounds[r_key]->LoadSound(r_key, AudioManager::GetInstance().GetFMODSystem()))
+        if (AudioManager::GetInstance().GetFMODSystem() == nullptr)
+        {
+            std::cout << "NO SYSTEM";
+        }
+
+        if (!Sounds[r_key]->LoadSound(r_filePath, AudioManager::GetInstance().GetFMODSystem()))
         {
             std::cout << "Fail to load sound" << r_filePath << std::endl;
             // fail to load sound, delete key
