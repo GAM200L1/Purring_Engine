@@ -189,8 +189,6 @@ namespace PE
         private:
             GLFWwindow* p_windowRef{}; // Pointer to the GLFW window to render to
 
-            Graphics::Camera m_mainCamera{}; // Camera object
-
             Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
 
             std::string m_systemName{ "Graphics" }; // Name of system

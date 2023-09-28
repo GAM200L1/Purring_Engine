@@ -130,7 +130,9 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
     
     // Creates an entity that displays the background image
-    EntityID id = g_entityFactory->CreateEntity();    
+    EntityID id = g_entityFactory->CreateEntity();
+    int width{ 1000 }, height{ 1000 };
+    glfwGetWindowSize(m_window, &width, &height);
     g_entityFactory->Assign(id, { "Transform", "Renderer" });
     g_entityManager->Get<Transform>(id).position.x = 0.f;
     g_entityManager->Get<Transform>(id).position.y = 0.f;
