@@ -14,8 +14,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include "GLHeaders.h"
 
 #include <cstddef>
@@ -37,17 +35,20 @@ namespace PE
 {
     namespace Graphics
     {
-        // In charge of calling the draw functions in all the renderer components.
+        /*!***********************************************************************************
+         \brief System In charge of calling the draw functions in all the renderer components.
+        *************************************************************************************/
         class RendererManager : public System
         {
             // ----- Public Variables ----- //
         public:
-            static Graphics::Camera m_mainCamera; //! 9Camera object
+            static Graphics::Camera m_mainCamera; // Camera object. Made static for ease of access, pending camera system.
             
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
-             \brief Sets the reference to the window to draw to. 
+             \brief Initializes the renderer manager, and sets the reference to the window to 
+                    draw to. 
 
              \param[in,out] p_window Pointer to the GLFWwindow to render to.
             *************************************************************************************/
@@ -62,7 +63,7 @@ namespace PE
             void InitializeSystem();
 
             /*!***********************************************************************************
-             \brief Calls the drawing functions
+             \brief Draws the editor windows, the gameobjects and the debug shapes. 
 
              \param[in] deltaTime Timestep (in seconds). Not used by the renderer manager.
             *************************************************************************************/
@@ -79,23 +80,27 @@ namespace PE
             inline std::string GetName() { return m_systemName; }
 
             /*!***********************************************************************************
-             \brief Calls DrawRenderer() on all renderable objects in [m_renderableObjects].
+             \brief Loops through all objects with a Renderer component and draws it. Makes a
+                    draw call for each object.
 
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
             void DrawScene(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
-             \brief  
+             \brief Loops through all objects with a Renderer component and draws it. Batches 
+             the colors, transformation matrices and textured status together into a vertex buffer 
+             object and makes an instanced drawcall. The instanced batch is broken when a new 
+             texture is encountered.
 
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
             void DrawSceneInstanced(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
-             \brief Calls DrawRenderer() on all debug objects in [m_lineObjects] and 
-                    [m_pointObjects].
-
+             \brief Loops through all objects with colliders and rigidbody components and draws 
+                    shapes to visualise their bounds, direction and magnitude for debug purposes. 
+                    
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
             void DrawDebug(glm::mat4 const& r_worldToNdc);
@@ -109,14 +114,14 @@ namespace PE
              \param[in] primitiveType GL Primitive type to make the draw call with.
              \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
             *************************************************************************************/
-            void Draw(Renderer const& r_renderer, ShaderProgram& r_shaderProgram, 
+            void Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram, 
                 GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
 
             /*!***********************************************************************************
-             \brief Binds the shader program, vertex array object and texture and makes the
-                    draw call for the [r_renderer] passed in.
+             \brief Binds the shader program, vertex array object and texture and makes a
+                    draw call for the object passed in.
 
-             \param[in] meshType Type of mesh.
+             \param[in] meshType Type of mesh to draw with.
              \param[in] r_color Color to draw the mesh.
              \param[in] r_shaderProgram Shader program to use.
              \param[in] primitiveType GL Primitive type to make the draw call with.
@@ -187,7 +192,7 @@ namespace PE
 
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_windowRef{}; // Pointer to the GLFW window to render to
+            GLFWwindow* p_glfwWindow{}; // Pointer to the GLFW window to render to
 
             Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
 

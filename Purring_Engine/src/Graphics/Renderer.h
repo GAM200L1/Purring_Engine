@@ -16,25 +16,22 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include "Graphics/GLHeaders.h"
-#include <glm/glm.hpp>
-#include <vector>
-#include <string>
-#include <fstream>
-#include <iostream>
 
-#include "ECS/Components.h"
-#include "VertexData.h"
+#include <glm/glm.hpp>  // glm::vec4, glm::clamp
+#include <vector>   // vector
+#include <string>   // string
+
 #include "Texture.h"
-#include "Math/Transform.h"
 
 namespace PE
 {
     namespace Graphics
     {
-        //! Types of primitives 
+        /*!***********************************************************************************
+         \brief Types of meshes that can be rendered. The value of the enum corresponds 
+                to the index of a mesh object stored in r_meshes in the renderer manager.         
+        *************************************************************************************/
         enum class EnumMeshType : unsigned char
         {
             QUAD,
@@ -46,51 +43,87 @@ namespace PE
             MESH_COUNT
         };
 
-        // Renderer component. Attach one to each gameobject to be drawn.
+        /*!***********************************************************************************
+         \brief Component to attach to gameobjects to be drawn. This components contains 
+                information about the color and texture of the object to be rendered.         
+        *************************************************************************************/
         class Renderer
         {
             // ----- Public functions ----- //
         public:
+            /*!***********************************************************************************
+            \brief Get the RGBA color values of the object as a glm::vec4 object.
+            
+            \return glm::vec4 const& - RGBA values of the color of the object.
+            *************************************************************************************/
             inline glm::vec4 const& GetColor() const { return m_color; }
+
+            /*!***********************************************************************************
+             \brief Get the type of mesh to use to render this object.
+              
+             \return Graphics::EnumMeshType The type of mesh to use to render this object.
+            *************************************************************************************/
             inline Graphics::EnumMeshType GetMeshType() const { return m_meshType; }
+
+            /*!***********************************************************************************
+             \brief Gets whether the renderer is enabled. 
+             
+             \return true - The renderer is enabled and this object will be displayed.
+             \return false - The renderer is disabled and this object will not be displayed.
+            *************************************************************************************/
             inline bool GetEnabled() const { return m_enabled; }
+
+
+            /*!***********************************************************************************
+             \brief Gets the texture key string. If the object does not have texture on it, the
+                    key should be empty ("").
+             
+             \return std::string const& 
+            *************************************************************************************/
             inline std::string const& GetTextureKey() const { return m_textureKey; }
 
-            void Renderer::SetColor(glm::vec4 const& newColor)
-            {
-                m_color.r = glm::clamp(newColor.r, 0.f, 1.f);
-                m_color.g = glm::clamp(newColor.g, 0.f, 1.f);
-                m_color.b = glm::clamp(newColor.b, 0.f, 1.f);
-                m_color.a = glm::clamp(newColor.a, 0.f, 1.f);
-            }
 
+            /*!***********************************************************************************
+             \brief Sets the RGBA color of the object. If the object has a texture on it, 
+                    this tints the color of the texture.
+             
+             \param[in] newColor RGBA color to set the object to (the values should be on 
+                                    a range of [0, 1]).
+            *************************************************************************************/
+            void Renderer::SetColor(glm::vec4 const& newColor);
 
-            void Renderer::SetColor(float const r = 1.f, float const g = 1.f, float const b = 1.f, float const a = 1.f)
-            {
-                m_color.r = glm::clamp(r, 0.f, 1.f);
-                m_color.g = glm::clamp(g, 0.f, 1.f);
-                m_color.b = glm::clamp(b, 0.f, 1.f);
-                m_color.a = glm::clamp(a, 0.f, 1.f);
-            }
+            /*!***********************************************************************************
+             \brief Sets the RGBA color of the object. If the object has a texture on it, 
+                    this tints the color of the texture.
+             
+             \param[in] r Red component of the color to set the object to (from [0, 1]).
+             \param[in] g Green component of the color to set the object to (from [0, 1]).
+             \param[in] b Blue component of the color to set the object to (from [0, 1]).
+             \param[in] a Alpha component of the color to set the object to (from [0, 1]).
+            *************************************************************************************/
+            void Renderer::SetColor(float const r = 1.f, float const g = 1.f, float const b = 1.f, float const a = 1.f);
 
+            /*!***********************************************************************************
+             \brief Sets whether the renderer is enabled. If set to true, this object will be 
+                    visible in the scene.
+             
+             \param[in] newEnabled Whether the renderer should be enabled.
+            *************************************************************************************/
+            void Renderer::SetEnabled(bool const newEnabled);
 
-            void Renderer::SetEnabled(bool const newEnabled)
-            {
-                m_enabled = newEnabled;
-            }
-
-
-            void Renderer::SetTextureKey(std::string const& r_newKey)
-            {
-                m_textureKey = r_newKey;
-            }
+            /*!***********************************************************************************
+             \brief Set the texture key associated with this object. If the key passed in does 
+                    not exist, the texture key will be cleared.
+             
+             \param[in] r_newKey Texture key to set the texture key of this renderer to.
+            *************************************************************************************/
+            void Renderer::SetTextureKey(std::string const& r_newKey);
 
         private:
             bool m_enabled{ true }; // Set to true to render the object, false not to.
-            glm::vec4 m_color{ 0.5f, 0.5f, 0.5f, 0.5f }; // RGBA values of a color in a range of 0 to 1
-            Graphics::EnumMeshType m_meshType{ EnumMeshType::QUAD }; // Type of mesh
-            std::string m_textureKey{ "" }; // Key for the corresponding texture in the resource manager
-            // obj factory will set a hidden layer value
+            glm::vec4 m_color{ 0.5f, 0.5f, 0.5f, 0.5f }; // RGBA values of a color in a range of 0 to 1.
+            Graphics::EnumMeshType m_meshType{ EnumMeshType::QUAD }; // Type of mesh. 
+            std::string m_textureKey{ "" }; // Key for the corresponding texture in the resource manager.
         };
     } // End of Graphics namespace
 } // End of PE namespace

@@ -17,9 +17,9 @@
 
 #define GLFW_INCLUDE_NONE
 #define GLEW_STATIC
-#define GLM_FORCE_SILENT_WARNINGS
 
-// Suppress warnings for glm's type_quat.hpp
+// suppress warnings for glm's anonymous structs in type_quat.hpp
+#define GLM_FORCE_SILENT_WARNINGS 
 # pragma warning(push)
 # pragma warning(disable:4201) // warning C4201: nonstandard extension used : nameless struct/union
 
