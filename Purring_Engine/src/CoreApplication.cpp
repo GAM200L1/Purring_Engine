@@ -128,30 +128,30 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
     
     // Creates an entity that displays the background image
-    EntityID id = g_entityFactory->CreateEntity();
+    EntityID id = EntityFactory::GetInstance().CreateEntity();
     int width{ 1000 }, height{ 1000 };
     glfwGetWindowSize(m_window, &width, &height);
-    g_entityFactory->Assign(id, { "Transform", "Renderer" });
-    g_entityManager->Get<Transform>(id).position.x = 0.f;
-    g_entityManager->Get<Transform>(id).position.y = 0.f;
-    g_entityManager->Get<Transform>(id).width = static_cast<float>(width);
-    g_entityManager->Get<Transform>(id).height = static_cast<float>(height);
-    g_entityManager->Get<Transform>(id).orientation = 0.f;
-    g_entityManager->Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
-    g_entityManager->Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
+    EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
+    EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(width);
+    EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(height);
+    EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
     
     // Creates an entity that is attached to the Character Controller
-    EntityID id2 = g_entityFactory->CreateFromPrefab("GameObject");
-    g_entityManager->Get<Transform>(id2).position.x = 0.f;
-    g_entityManager->Get<Transform>(id2).position.y = 0.f;
-    g_entityManager->Get<Transform>(id2).width = 100.f;
-    g_entityManager->Get<Transform>(id2).height = 100.f;
-    g_entityManager->Get<Transform>(id2).orientation = 0.f;
-    g_entityManager->Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
-    g_entityManager->Get<Collider>(id2).colliderVariant = CircleCollider();
-    g_entityManager->Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
-    g_entityManager->Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
-    g_entityManager->Get<RigidBody>(id2).SetMass(10.f);
+    EntityID id2 = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    EntityManager::GetInstance().Get<Transform>(id2).position.x = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id2).position.y = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id2).width = 100.f;
+    EntityManager::GetInstance().Get<Transform>(id2).height = 100.f;
+    EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
+    EntityManager::GetInstance().Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
+    EntityManager::GetInstance().Get<Collider>(id2).colliderVariant = CircleCollider();
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
+    EntityManager::GetInstance().Get<RigidBody>(id2).SetMass(10.f);
     
 
 }
@@ -236,8 +236,8 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
-        if (g_entityManager->GetComponentPool<Transform>().HasEntity(1))
-            Graphics::RendererManager::m_mainCamera.SetPosition(g_entityManager->Get<Transform>(1).position.x, g_entityManager->Get<Transform>(1).position.y);
+        if (EntityManager::GetInstance().GetComponentPool<Transform>().HasEntity(1))
+            Graphics::RendererManager::m_mainCamera.SetPosition(EntityManager::GetInstance().Get<Transform>(1).position.x, EntityManager::GetInstance().Get<Transform>(1).position.y);
 
         // Flush log entries
         engine_logger.FlushLog();

@@ -430,8 +430,7 @@ namespace PE {
 				{
 					std::string name;
 					const bool is_selected = (m_currentSelectedObject == n);
-
-					std::string name = "GameObject";
+					name = "GameObject";
 					name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
@@ -914,7 +913,7 @@ namespace PE {
 								if (index)
 								{
 									ImVec2 offset;
-									CircleCollider& r_cc = std::get<CircleCollider>(g_entityManager->Get<Collider>(entityID).colliderVariant);
+									CircleCollider& r_cc = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);
 
 									offset.x = r_cc.positionOffset.x;
 									offset.y = r_cc.positionOffset.y;
@@ -933,24 +932,24 @@ namespace PE {
 								else
 								{
 									ImVec2 offset;
-									offset.x = g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x;
-									offset.y = g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y;
+									offset.x = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x;
+									offset.y = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y;
 									ImGui::Text("Collider Position Offset: ");
 									ImGui::Text("pos x offset: "); ImGui::SameLine(); ImGui::InputFloat("##xoffsetaabb", &offset.x, 1.0f, 100.f, "%.3f");
 									ImGui::Text("pos y offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetaabb", &offset.y, 1.0f, 100.f, "%.3f");
-									g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y = offset.y;
-									g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x = offset.x;
+									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y = offset.y;
+									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x = offset.x;
 
 									ImVec2 offset2;
-									offset2.x = g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x;
-									offset2.y = g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y;
+									offset2.x = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x;
+									offset2.y = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y;
 									ImGui::Text("Collider Scale Offset: ");
 									ImGui::Text("x scale offset: "); ImGui::SameLine(); ImGui::InputFloat("##xscaleOffsetaabb", &offset2.x, 1.0f, 100.f, "%.3f");
 									ImGui::Text("y scale offset: "); ImGui::SameLine(); ImGui::InputFloat("##yscaleOffsetaabb", &offset2.y, 1.0f, 100.f, "%.3f");
-									g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y = std::abs(offset2.y);
-									g_entityManager->Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x = std::abs(offset2.x);
+									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y = std::abs(offset2.y);
+									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x = std::abs(offset2.x);
 								}
-								ImGui::Checkbox("Is Trigger", &g_entityManager->Get<Collider>(m_currentSelectedObject).isTrigger);
+								ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(m_currentSelectedObject).isTrigger);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
