@@ -13,6 +13,7 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "prpch.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
+#include "Physics/PhysicsManager.h"
 #include <sstream>
 
 namespace PE
@@ -92,7 +93,7 @@ namespace PE
 	// Adds on to existing force, ultimately affects position
 	void RigidBody::ApplyForce(vec2 const& r_addOnForce)
 	{
-		if (m_type != EnumRigidBodyType::DYNAMIC)
+		if (m_type != EnumRigidBodyType::DYNAMIC || (!PhysicsManager::GetAdvanceStep() && PhysicsManager::GetStepPhysics()))
 			return;
 
 		m_force += r_addOnForce;
@@ -109,7 +110,7 @@ namespace PE
 
 	void RigidBody::ApplyLinearImpulse(vec2 const& r_impulseForce)
 	{
-		if (m_type != EnumRigidBodyType::DYNAMIC)
+		if (m_type != EnumRigidBodyType::DYNAMIC || (!PhysicsManager::GetAdvanceStep() && PhysicsManager::GetStepPhysics()))
 			return;
 		m_velocity += r_impulseForce * m_inverseMass;
 	}

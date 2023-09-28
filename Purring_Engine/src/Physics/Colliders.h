@@ -25,7 +25,8 @@ namespace PE
 	struct AABBCollider
 	{
 		// ----- Public Variables ----- //
-		//vec2 offsetFromObj{ 0.f, 0.f };
+		vec2 positionOffset{ 0.f, 0.f };
+		vec2 scaleOffset{ 1.f, 1.f };
 		vec2 center{};
 		vec2 min{};
 		vec2 max{};
@@ -62,8 +63,10 @@ namespace PE
 	struct CircleCollider
 	{
 		// ----- Public Variables ----- //
-		vec2 center;
-		float radius;
+		vec2 positionOffset{ 0.f, 0.f };
+		float scaleOffset{ 1.f };
+		vec2 center{};
+		float radius{};
 
 
 		// ----- Public Methods ----- //
@@ -87,7 +90,10 @@ namespace PE
 			circle.radius = j["radius"];
 			return circle;
 		}
+
 	};
+
+	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
 
 	struct Collider
 	{
@@ -168,6 +174,4 @@ namespace PE
 		void ResolveVelocity();
 		void ResolvePosition();
 	};
-
-	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
 }

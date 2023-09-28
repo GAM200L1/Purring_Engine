@@ -162,8 +162,9 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim1", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_2.png");
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
 
-    glfwGetWindowSize(m_window, &width, &height);
     EntityID id = EntityFactory::GetInstance().CreateEntity();
+
+    glfwGetWindowSize(m_window, &width, &height);
     EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
     EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
     EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
@@ -172,94 +173,21 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
     EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
     EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
+    
+    // Creates an entity that is attached to the Character Controller
+    EntityID id2 = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    EntityManager::GetInstance().Get<Transform>(id2).position.x = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id2).position.y = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id2).width = 100.f;
+    EntityManager::GetInstance().Get<Transform>(id2).height = 100.f;
+    EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
+    EntityManager::GetInstance().Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
+    EntityManager::GetInstance().Get<Collider>(id2).colliderVariant = CircleCollider();
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
+    EntityManager::GetInstance().Get<RigidBody>(id2).SetMass(10.f);
+    
 
-    EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-    EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-
-    // ----- Limit Test for Physics ----- //
-    //std::random_device rd;
-    //std::mt19937 gen(rd());
-    //for (size_t i{ 2 }; i < 20; ++i)
-    //{
-    //    EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-    //
-    //    std::uniform_int_distribution<>distr0(-550, 550);
-    //    EntityManager::GetInstance().Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
-    //    std::uniform_int_distribution<>distr1(-250, 250);
-    //    EntityManager::GetInstance().Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
-    //    std::uniform_int_distribution<>distr2(10, 200);
-    //    EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(distr2(gen));
-    //    EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(distr2(gen));
-    //    EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
-    //
-    //    if (i%3)
-    //        EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-    //    
-    //    if (i%2)
-    //        EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
-    //    else
-    //        EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
-    //}
-
-    // Make the first gameobject with a collider circle at world pos (100, 100)
-    EntityManager::GetInstance().Get<Transform>(1).position.x = 0.f;
-    EntityManager::GetInstance().Get<Transform>(1).position.y = 0.f;
-    EntityManager::GetInstance().Get<Transform>(1).width = 100.f;
-    EntityManager::GetInstance().Get<Transform>(1).height = 100.f;
-    EntityManager::GetInstance().Get<Transform>(1).orientation = 0.f;
-    EntityManager::GetInstance().Get<RigidBody>(1).SetType(EnumRigidBodyType::DYNAMIC);
-    EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-    EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(catTextureName);
-    EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetColor(1.f, 1.f, 0.f);
-    EntityManager::GetInstance().Get<RigidBody>(1).SetMass(10.f);
-
-    // Make the second gameobject a rectangle with an AABB collider at world pos (-100, -100)
-    EntityManager::GetInstance().Get<Transform>(2).position.x = -100.f;
-    EntityManager::GetInstance().Get<Transform>(2).position.y = -100.f;
-    EntityManager::GetInstance().Get<Transform>(2).width = 50.f;
-    EntityManager::GetInstance().Get<Transform>(2).height = 200.f;
-    EntityManager::GetInstance().Get<Transform>(2).orientation = 0.f;
-    EntityManager::GetInstance().Get<RigidBody>(2).SetType(EnumRigidBodyType::STATIC);
-    EntityManager::GetInstance().Get<Collider>(2).colliderVariant = AABBCollider();
-    EntityManager::GetInstance().Get<Collider>(2).isTrigger = true;
-
-    // Render grid of 500 cat 2
-    for (size_t i{}; i < 500; ++i) {
-        EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-        EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
-        EntityManager::GetInstance().Get<Transform>(id2).position.x = 20.f * (i % 40) - 300.f;
-        EntityManager::GetInstance().Get<Transform>(id2).position.y = 20.f * (i / 40) - 300.f;
-        EntityManager::GetInstance().Get<Transform>(id2).width = 20.f;
-        EntityManager::GetInstance().Get<Transform>(id2).height = 20.f;
-        EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-        EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(cat2TextureName);
-        EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 1.f, 0.1f);
-    }
-
-    // Render grid of 2000 cat 1
-    for (size_t i{}; i < 2000; ++i) {
-        EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-        EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
-        EntityManager::GetInstance().Get<Transform>(id2).position.x = 10.f * (i % 45) - 100.f;
-        EntityManager::GetInstance().Get<Transform>(id2).position.y = 10.f * (i / 45) - 100.f;
-        EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
-        EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
-        EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-        EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
-        EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(0.f, 1.f, 1.f, 0.5f);
-    }
-
-    // Render grid of 100 red squares
-    for (size_t i{}; i < 100; ++i) {
-        EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-        EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
-        EntityManager::GetInstance().Get<Transform>(id2).position.x = 10.f * (i % 20) - 300.f;
-        EntityManager::GetInstance().Get<Transform>(id2).position.y = 10.f * (i / 20);
-        EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
-        EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
-        EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-        EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 0.f, 0.f, 0.5f);
-    }
 }
 
 /*-----------------------------------------------------------------------------
@@ -300,7 +228,7 @@ void PE::CoreApplication::Run()
         // List of keys to check for FPS adjustment
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
 
-        // Iterate through the list of keys and check if any are pressed
+        //// Iterate through the list of keys and check if any are pressed
         for (int key : keys)
         {
             // Update target FPS if a key is pressed
@@ -342,8 +270,8 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
-
-        Graphics::RendererManager::m_mainCamera.SetPosition(EntityManager::GetInstance().Get<Transform>(1).position.x, EntityManager::GetInstance().Get<Transform>(1).position.y);
+        //if (EntityManager::GetInstance().GetComponentPool<Transform>().HasEntity(1))
+        //    Graphics::RendererManager::m_mainCamera.SetPosition(EntityManager::GetInstance().Get<Transform>(1).position.x, EntityManager::GetInstance().Get<Transform>(1).position.y);
 
         // Flush log entries
         engine_logger.FlushLog();
