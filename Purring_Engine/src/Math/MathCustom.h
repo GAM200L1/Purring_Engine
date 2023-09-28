@@ -513,14 +513,14 @@ namespace PE
 	//	float Dot(vec4 const& r_rhs);
 	//};
 
-
+	//! Matrix 3 column 3 row struct
 	struct mat3x3
 	{
 		float m[9];
 		// column major
-		float& m_00 = m[0], & m_01 = m[1], & m_02 = m[2],
-			& m_10 = m[3], & m_11 = m[4], & m_12 = m[5],
-			& m_20 = m[6], & m_21 = m[7], & m_22 = m[8];
+		float& _m00 = m[0], & _m01 = m[1], & _m02 = m[2],
+			 & _m10 = m[3], & _m11 = m[4], & _m12 = m[5],
+			 & _m20 = m[6], & _m21 = m[7], & _m22 = m[8];
 
 		// ----- Constructors ----- //
 		/*!***********************************************************************************
@@ -574,142 +574,469 @@ namespace PE
 
 		// ----- Access Operators ----- //
 		/*!***********************************************************************************
-		 \brief 
+		 \brief Subscript Operator for mat3x3 to access and read the element at the index.
+		 		mat3x3 indexing: 0 3 6
+								 1 4 7
+								 2 5 8
 		 
-		 \param[in,out] index 
-		 \return float 
+		 \param[in,out] index - The index of the element to be accessed
+		 \return float - element in mat3x3 at 'index'
 		*************************************************************************************/
 		float operator[](unsigned int index) const; // 0-8
 		// float operator[][](unsigned int index1, unsigned int index2) const; // [col][row]
 
-		// allows modification
+		/*!***********************************************************************************
+		 \brief Subscript Operator for mat3x3 to access, read and modify the element at the index
+		 		mat3x3 indexing: 0 3 6
+								 1 4 7
+								 2 5 8
+		 \param[in,out] index - The index of the element to be accessed.
+		 \return float& - reference to the element at 'index' which can be modified
+		*************************************************************************************/
 		float& operator[](unsigned int index); // 0-8
 		// float& operator[][](unsigned int index1, unsigned int index2); // [col][row]
 
-		// addition
+
+		// ----- Addition ----- //
+		/*!***********************************************************************************
+		 \brief Addition operator overload to add two mat3x3 objects together. 
+		 		Returns the result of the addition.
+	
+		 \param[in,out] r_rhs - The mat3x3 to add on to this mat3x3
+		 \return mat3x3 - the sum of the two mat3x3s
+		*************************************************************************************/
 		mat3x3 operator+(mat3x3 const& r_rhs) const;
+
+		/*!***********************************************************************************
+		 \brief Addition assignment operator to add to the mat3x3, thereby modifying it.
+
+		 \param[in,out] r_rhs - The mat3x3 to add on to this mat3x3
+		 \return mat3x3& - this mat3x3 modified from adding r_rhs
+		*************************************************************************************/
 		mat3x3& operator+=(mat3x3 const& r_rhs);
 
-		// subtraction
+		// ------ Subtraction ----- //
+		/*!***********************************************************************************
+		 \brief Subtraction operator to subtract a mat3x3 from another mat3x3
+		 		and return the result of that subtraction
+		 
+		 \param[in,out] r_rhs - The mat3x3 to subtract from the left-side mat3x3
+		 \return mat3x3 - The result of the subtraction
+		*************************************************************************************/
 		mat3x3 operator-(mat3x3 const& r_rhs) const;
+
+		/*!***********************************************************************************
+		 \brief Subtract assignment operator overload to subtract 'r_rhs' from reference mat3x3,
+		 		directly modifying it.
+		 
+		 \param[in,out] r_rhs - mat3x3 to subtract from reference mat3x3
+		 \return mat3x3& - the modified mat3x3 post subtraction
+		*************************************************************************************/
 		mat3x3& operator-=(mat3x3 const& r_rhs);
 
-		// scale
+		// ----- Scaling ----- //
+		/*!***********************************************************************************
+		 \brief Multiply operator to scale matrix by a float.
+		 
+		 \param[in,out] scale - amount to multiply each element by
+		 \return mat3x3 - the resultant mat3x3 from scaling
+		*************************************************************************************/
 		mat3x3 operator*(float scale) const;
+
+		/*!***********************************************************************************
+		 \brief Division operator to divide matrix by a float.
+		 
+		 \param[in,out] scale - amount to divide each element by
+		 \return mat3x3 - the resultant mat3x3 from scaling
+		*************************************************************************************/
 		mat3x3 operator/(float scale) const;
+
+		/*!***********************************************************************************
+		 \brief Multiply assignment operator to directly modify and scale a mat3x3 by a float.
+		 
+		 \param[in,out] scale - amount to multiply each element by
+		 \return mat3x3& - the referenced mat3x3 post scaling
+		*************************************************************************************/
 		mat3x3& operator*=(float scale);
+
+		/*!***********************************************************************************
+		 \brief Division assignment operator to directly modify and divide a mat3x3 by a float.
+		 
+		 \param[in,out] scale - amount to divide each element by
+		 \return mat3x3& - the referenced mat3x3 post division
+		*************************************************************************************/
 		mat3x3& operator/=(float scale);
 
-		// matrix multiplication
-		vec2 operator*(vec2 const& r_rhs) const;
+		// ----- Matrix Multiplication ----- //
+		// vec2 operator*(vec2 const& r_rhs) const;
+		/*!***********************************************************************************
+		 \brief Perform matrix multiplication with a vec3, multiplying row of mat3x3 with vec3 column
+		 
+		 \param[in,out] r_rhs - vec3 to do matrix multiplication with
+		 \return vec3 - the result of the matrix multiplication
+		*************************************************************************************/
 		vec3 operator*(vec3 const& r_rhs) const;
+		/*!***********************************************************************************
+		 \brief Perform matrix multiplication with a mat3x3, multiplying row of LHS mat3x3 with
+		 		column of RHS mat3x3.
+		 
+		 \param[in,out] r_rhs - mat3x3 to do matrix multiplication wtih
+		 \return mat3x3 - result of matrix multiplication
+		*************************************************************************************/
 		mat3x3 operator*(mat3x3 const& r_rhs) const;
 
-		// zero the vector
+
+		/*!***********************************************************************************
+		 \brief Zeroes the mat3x3
+		 
+		*************************************************************************************/
 		void Zero();
-		// set to identity matrix
+
+		/*!***********************************************************************************
+		 \brief Set mat3x3 to identity
+		 		1 0 0
+				0 1 0
+				0 0 1
+		*************************************************************************************/
 		void Identity();
-		// transpose the matrix
+
+		/*!***********************************************************************************
+		 \brief Transposes matrix, row and columns are swapped
+		 		Note that it is still in column major
+		 		0 3 6		0 1 2
+				1 4 7  -->  3 4 5
+				2 5 8		6 7 8 
+		*************************************************************************************/
 		void Transpose();
-		// create translation matrix
+		
+		/*!***********************************************************************************
+		 \brief Creates a translation matrix. Will change matrix to identity matrix before setting
+		 		t_x and t_y
+		 		1 0 t_x
+				0 1 t_y
+				0 0  1
+		 
+		 \param[in,out] t_x - x coordinate to translate by 
+		 \param[in,out] t_y - y cooridnate to translate by
+		*************************************************************************************/
 		void Translate(float t_x, float t_y);
-		// create scale matrix
+
+		/*!***********************************************************************************
+		 \brief Creates a scaling matrix
+		 		s_x   0   0
+				 0   s_y  0
+				 0    0   1
+		 
+		 \param[in,out] s_x - scaling by x axis
+		 \param[in,out] s_y - scaling by y axis
+		*************************************************************************************/
 		void Scale(float s_x, float s_y);
-		// create rotation matrix from angle which is in radians
+
+		/*!***********************************************************************************
+		 \brief Creates a rotation matrix from 'angle' which is in radians.
+		 
+		 \param[in,out] angle - angle of rotation in radians
+		*************************************************************************************/
 		void RotateRad(float angle);
-		// create rotation matrix from angle which is in degrees
+		
+		/*!***********************************************************************************
+		 \brief Creates a rotation matrix from 'angle' which is in degrees
+		 
+		 \param[in,out] angle - angle of rotation in degrees
+		*************************************************************************************/
 		void RotateDeg(float angle);
 
 		// equations
-		// dot product
+		/*!***********************************************************************************
+		 \brief Get the dot product of two matrices.
+		 
+		 \param[in,out] r_rhs - mat3x3 to perform dot operation with
+		 \return float - dot product of two matrices
+		*************************************************************************************/
 		float Dot(mat3x3 const& r_rhs) const;
-		// Determinant
+		
+		/*!***********************************************************************************
+		 \brief Find determinant of mat3x3
+		 
+		 \return float - Determinant of mat3x3
+		*************************************************************************************/
 		float Determinant() const;
-		// Adjoint
+		
+		/*!***********************************************************************************
+		 \brief Find adjoint of mat3x3
+		 
+		 \return mat3x3 - adjoint version of mat3x3
+		*************************************************************************************/
 		mat3x3 Adjoint() const;
-		// Inverse
+		
+		/*!***********************************************************************************
+		 \brief Find inverse of mat3x3 by using determinant and adjoint
+		 
+		 \return mat3x3 - Inverse of this matrix
+		*************************************************************************************/
 		mat3x3 Inverse() const;
 	};
 
-
+	//! Matrix column 4 row 4 struct
 	struct mat4x4
 	{
+		// ----- Public Variables ----- //
+		public:
 		float m[16];
 
-		// col row format
-		float& m_00 = m[0], & m_01 = m[1], & m_02 = m[2], & m_03 = m[3],
-			& m_10 = m[4], & m_11 = m[5], & m_12 = m[6], & m_13 = m[7],
-			& m_20 = m[8], & m_21 = m[9], & m_22 = m[10], & m_23 = m[11],
-			& m_30 = m[12], & m_31 = m[13], & m_32 = m[14], & m_33 = m[15];
+		// In column major
+		float& _m00 = m[0], & _m01 = m[1], & _m02 = m[2], & _m03 = m[3],
+			 & _m10 = m[4], & _m11 = m[5], & _m12 = m[6], & _m13 = m[7],
+			 & _m20 = m[8], & _m21 = m[9], & _m22 = m[10], & _m23 = m[11],
+			 & _m30 = m[12], & _m31 = m[13], & _m32 = m[14], & _m33 = m[15];
 
-		// default constructor
+		// ----- Constructors ----- //
+		/*!***********************************************************************************
+		 \brief Construct a new mat4x4 object with each element initialized to 0.f
+		 
+		*************************************************************************************/
 		mat4x4();
-		// constructor
+		/*!***********************************************************************************
+		 \brief Construct a new mat4x4 object based on input parameters
+		 
+		 \param[in,out] c0_r0 - element at column 0 row 0
+		 \param[in,out] c0_r1 - element at column 0 row 1
+		 \param[in,out] c0_r2 - element at column 0 row 2
+		 \param[in,out] c0_r3 - element at column 0 row 3
+		 \param[in,out] c1_r0 - element at column 1 row 0
+		 \param[in,out] c1_r1 - element at column 1 row 1
+		 \param[in,out] c1_r2 - element at column 1 row 2
+		 \param[in,out] c1_r3 - element at column 1 row 3
+		 \param[in,out] c2_r0 - element at column 2 row 0
+		 \param[in,out] c2_r1 - element at column 2 row 1
+		 \param[in,out] c2_r2 - element at column 2 row 2
+		 \param[in,out] c2_r3 - element at column 2 row 3
+		 \param[in,out] c3_r0 - element at column 3 row 0
+		 \param[in,out] c3_r1 - element at column 3 row 1
+		 \param[in,out] c3_r2 - element at column 3 row 2
+		 \param[in,out] c3_r3 - element at column 3 row 3
+		*************************************************************************************/
 		explicit mat4x4(float c0_r0, float c0_r1, float c0_r2, float c0_r3,
 			float c1_r0, float c1_r1, float c1_r2, float c1_r3,
 			float c2_r0, float c2_r1, float c2_r2, float c2_r3,
 			float c3_r0, float c3_r1, float c3_r2, float c3_r3);
-		// copy constructor
+		
+		/*!***********************************************************************************
+		 \brief Copy constructor for mat4x4.
+		 
+		 \param[in,out] r_cpy - mat4x4 to construct copy of
+		*************************************************************************************/
 		mat4x4(mat4x4 const& r_cpy);
 
 		// potentially unneeded
 		//mat4x4(vec4 const& r_col0, vec4 const& r_col1, vec4 const& r_col2, vec4 const& r_col3);
 
-		// copy assignment
+		// ----- Public Methods ----- //
+		public:
+
+		/*!***********************************************************************************
+		 \brief Copy assignment for mat4x4
+		 
+		 \param[in,out] r_cpy - mat4x4 to copy assign
+		 \return mat4x4& - reference to this mat4x4, is directly modifiable
+		*************************************************************************************/
 		mat4x4& operator=(mat4x4 const& r_cpy);
 
-		// access operator
+		// ----- Access Operators ----- //
+		/*!***********************************************************************************
+		 \brief Subscript operator overload to access element in matrix at index
+		 
+		 \param[in,out] index - the index of the element to read
+		 \return float - element at the index
+		*************************************************************************************/
 		float operator[](unsigned int index) const; // 0-15
 		// float operator[][](unsigned int index1, unsigned int index2) const; // [col][row]
 
-		// allows modification
+		/*!***********************************************************************************
+		 \brief Subscript operator overload to access and modify element in matrix at index
+		 
+		 \param[in,out] index - the index of the element to read
+		 \return float& - element at the index which can be directly modified
+		*************************************************************************************/
 		float& operator[](unsigned int index); // 0-15
 		// float& operator[][](unsigned int index1, unsigned int index2); // [col][row]
 
-		// addition
+		// ----- Addition ----- //
+		/*!***********************************************************************************
+		 \brief Addition operator overload. Sums two mat4x4 together and returns the result
+		 
+		 \param[in,out] r_rhs - mat4x4 to add to this mat4x4
+		 \return mat4x4 - summation of two mat4x4
+		*************************************************************************************/
 		mat4x4 operator+(mat4x4 const& r_rhs) const;
+		/*!***********************************************************************************
+		 \brief Addition assignment operator overload. Sums two mat4x4 together and directly modifies
+		 		referenced matrix
+		 
+		 \param[in,out] r_rhs - mat4x4 to add to this mat4x4
+		 \return mat4x4& - reference to this mat4x4 post addition
+		*************************************************************************************/
 		mat4x4& operator+=(mat4x4 const& r_rhs);
 
-		// subtraction
+		// ----- Subtraction ----- //
+		/*!***********************************************************************************
+		 \brief Subtraction operator overload. Subtracts mat4x4 from LHS mat4x4
+		 
+		 \param[in,out] r_rhs - mat4x4 to subtract from this mat4x4
+		 \return mat4x4 - mat4x4 after subtracting r_rhs from it
+		*************************************************************************************/
 		mat4x4 operator-(mat4x4 const& r_rhs) const;
+		/*!***********************************************************************************
+		 \brief Subtraction assignment operator overload. Subtracts r_rhs from this matrix,
+		 		directly modifying it.
+		 
+		 \param[in,out] r_rhs - mat4x4 to subtract from this mat4x4
+		 \return mat4x4& - modified mat4x4 post subtraction
+		*************************************************************************************/
 		mat4x4& operator-=(mat4x4 const& r_rhs);
 
-		// scale
+		// ----- Scale ----- //
+		/*!***********************************************************************************
+		 \brief Multiply operator to scale matrix by a float.
+		 
+		 \param[in,out] scale - amount to multiply each element by
+		 \return mat4x4 - the resultant mat4x4 from scaling
+		*************************************************************************************/
 		mat4x4 operator*(float scale) const;
+
+		/*!***********************************************************************************
+		 \brief Division operator to divide matrix by a float.
+		 
+		 \param[in,out] scale - amount to divide each element by
+		 \return mat4x4 - the resultant mat4x4 from scaling
+		*************************************************************************************/
 		mat4x4 operator/(float scale) const;
+
+		/*!***********************************************************************************
+		 \brief Multiply assignment operator to directly modify and scale a mat4x4 by a float.
+		 
+		 \param[in,out] scale - amount to multiply each element by
+		 \return mat4x4& - the referenced mat4x4 post scaling
+		*************************************************************************************/
 		mat4x4& operator*=(float scale);
+
+		/*!***********************************************************************************
+		 \brief Division assignment operator to directly modify and divide a mat4x4 by a float.
+		 
+		 \param[in,out] scale - amount to divide each element by
+		 \return mat4x4& - the referenced mat4x4 post division
+		*************************************************************************************/
 		mat4x4& operator/=(float scale);
 
-		// zero the vector
+		/*!***********************************************************************************
+		 \brief Zeros this mat4x4
+		 
+		*************************************************************************************/
 		void Zero();
-		// set to identity matrix
+		/*!***********************************************************************************
+		 \brief Sets this mat4x4 to be identity matrix
+		 		1 0 0 0
+				0 1 0 0
+				0 0 1 0
+				0 0 0 1		 
+		*************************************************************************************/
 		void Identity();
-		// transpose the matrix
+		
+		/*!***********************************************************************************
+		 \brief Transposes this matrix. Swaps row and column
+		 
+		*************************************************************************************/
 		void Transpose();
 	};
 
+	// ----- Non-Member functions ----- //
 
-	// vec2 functions
+	// ----- Vec2 Functions ----- //
+	/*!***********************************************************************************
+	 \brief Calculates the dot product of two vec2
+	
+	 \param[in] r_lhs  	The vec2 to dot product with r_rhs
+	 \param[in] r_rhs  	The vec2 to dot product with r_lhs
+	 \return float 		The dot product
+	*************************************************************************************/
 	float Dot(vec2 const& r_lhs, vec2 const& r_rhs);
+
+	/*!***********************************************************************************
+	 \brief Calculates the cross product of two vec2 (cross product magnitude/z-axis)
+	
+	 \param[in] r_lhs 	The lhs vec2 to cross product with r_rhs
+	 \param[in] r_rhs 	rhs vec2 to cross product with r_lhs
+	 \return float 		The cross product magnitude
+	*************************************************************************************/
 	float Cross(vec2 const& r_lhs, vec2 const& r_rhs);
 
-	// vec3 functions
+	// ----- Vec3 functions ----- //
+	
+	/*!***********************************************************************************
+	 \brief Caclulates the dot product of the two vec3, and returns a copy of the result.
+	
+	 \param[in] r_lhs 	The vec3 to dot with r_rhs
+	 \param[in] r_rhs 	The vec3 to dot with r_lhs
+	 \return float 		The dot product
+	*************************************************************************************/
 	float Dot(vec3 const& r_lhs, vec3 const& r_rhs);
+
+	/*!***********************************************************************************
+	 \brief Calulates the cross product of two vec3, and returns a copy of the result.
+	
+	 \param[in] r_lhs 	The vec3 to cross with r_rhs
+	 \param[in] r_rhs 	The vec3 to cross with r_lhs
+	 \return vec3 		The cross product
+	*************************************************************************************/
 	vec3 Cross(vec3 const& r_lhs, vec3 const& r_rhs);
 
 	//// vec4 functions
 	//float Dot(vec4 const& r_lhs, vec4 const& r_rhs);
 	//vec4 Cross(vec4 const& r_lhs, vec4 const& r_rhs);
 
-	// mat3x3 functions
+	// ----- Mat3x3 functions ----- //
+	/*!***********************************************************************************
+	 \brief Get the dot product of two matrices.
+	
+	 \param[in,out] r_lhs - first mat3x3 in dot operation
+	 \param[in,out] r_rhs - second mat3x3 in dot operation
+	 \return float - dot product of two matrices
+	*************************************************************************************/
 	float Dot(mat3x3 const& r_lhs, mat3x3 const& r_rhs);
 
+	/*!***********************************************************************************
+	 \brief Converts input angle to degrees
+	 
+	 \param[in,out] radAngle - angle in radians
+	 \return float - radAngle converted to degrees
+	*************************************************************************************/
 	float ConvertRadToDeg(float radAngle);
 
+	/*!***********************************************************************************
+	 \brief Converts input angle to radians
+	 
+	 \param[in,out] degAngle - angle in degreed
+	 \return float - degAngle converted to radians
+	*************************************************************************************/
 	float ConvertDegToRad(float degAngle);
 
+	/*!***********************************************************************************
+	 \brief Clamps a variable within a range
+	 
+	 \param[in,out] r_varToClamp - variable to clamp
+	 \param[in,out] min - the smallest value variable can be
+	 \param[in,out] max - the larget value the variable can be
+	*************************************************************************************/
 	void Clamp(float& r_varToClamp, float min, float max);
-
+	
+	/*!***********************************************************************************
+	 \brief Wraps a variable within a range. 
+	 		ie. when variable is less than min, it becomes max and vice versa
+	 
+	 \param[in,out] r_varToWrap - variable to wrap
+	 \param[in,out] min - minimum value variable becomes when it becomes larger than max
+	 \param[in,out] max - maximum value variable becomes when it becomes smaller than min
+	*************************************************************************************/
 	void Wrap(float& r_varToWrap, float min, float max);
 }
 
