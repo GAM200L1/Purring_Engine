@@ -14,27 +14,28 @@
 *************************************************************************************/
 #pragma once
 
+#include "Singleton.h"
 #include <chrono>
 #include <set>
 #include <array>
 
 namespace PE
 {
-	constexpr auto TotalSystems = 3; // hardcoded?
+	constexpr auto TotalSystems = 4; // hardcoded?
 	enum SystemType
 	{
-		//LOGIC = 0,
+		INPUT = 0,
 		PHYSICS,
 		COLLISION,
 		GRAPHICS,
 		SYSTEMCOUNT
 	};
 
-	class TimeManager {
+	class TimeManager : public Singleton<TimeManager> {
 	public:
-
+		friend class Singleton<TimeManager>;
 		// system
-		void SystemStartFrame(int system);
+		void SystemStartFrame();
 		void SystemEndFrame(int system);
 
 		// global
@@ -50,19 +51,8 @@ namespace PE
 
 		float GetSystemFrameTime(int system) const { return m_systemFrameTime[system]; }
 
-
-		// singleton class
-		static TimeManager& GetInstance()
-		{
-			static TimeManager instance;
-			return instance;
-		}
-
 	private:
 		TimeManager();
-		~TimeManager() = default;
-
-		// delete copy and assignment?
 
 	private:
 		// system time

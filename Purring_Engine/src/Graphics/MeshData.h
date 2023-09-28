@@ -39,6 +39,15 @@ namespace PE
             // ----- Public methods ----- // 
         public:
             /*!***********************************************************************************
+             \brief Returns the index of the vertex array object.
+
+             \return GLuint - The index of the vertex array object.
+            *************************************************************************************/
+            inline GLuint GetVertexArrayObjectIndex() const { return m_vertexArrayObject; }
+
+            // ----- Public methods ----- // 
+        public:
+            /*!***********************************************************************************
              \brief Creates a vertex array object from the mesh data.
 
              \return true - If the Vertex Array Object was created successfully.
@@ -50,13 +59,13 @@ namespace PE
              \brief Binds the vertex array object associated with this mesh from
                     the OpenGL context.
             *************************************************************************************/
-            void BindMesh();
+            void Bind() const;
 
             /*!***********************************************************************************
              \brief Unbinds the vertex array object associated with this mesh from
                     the OpenGL context.
             *************************************************************************************/
-            void UnbindMesh();
+            void Unbind() const;
 
             /*!***********************************************************************************
              \brief Returns the buffers used by this mesh back to the GPU.

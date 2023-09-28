@@ -2,15 +2,22 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     CoreApplication.cpp
- \creation date:       To check
- \last updated:        16-09-2023
- \author:              Brandon HO Jun Jie
- \co-author:           Hans (You Yang) ONG
- \co-author:           Jarran TAN Yan Zhi
+ \date     28-08-2023
 
+ \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
+
+ \co-author            Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
+
+ \co-author            Jarran TAN Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
 
  \brief    This file contains the CoreApplication class, which serves as the entry point for
            the engine. It handles the main application loop, initializes and updates all registered 
@@ -38,14 +45,39 @@
 #include "Logging/Logger.h"
 #include "MemoryManager.h"
 
+// Resource manager
+#include "ResourceManager/ResourceManager.h"
+
 // Audio Stuff - HANS
 #include "AudioManager.h"
 
 // Time
 #include "Time/TimeManager.h"
 
+// Physics and Collision
+#include "Physics/RigidBody.h"
+#include "Physics/Colliders.h"
+#include "Physics/CollisionManager.h"
+#include "Physics/PhysicsManager.h"
+
+// Serialization
+#include "Data/SerializationManager.h"
+
+// ECS
+#include "ECS//EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
+#include "ECS/Prefabs.h"
+#include "ECS/SceneView.h"
+
+// Graphics
+#include "Graphics/Renderer.h"
+#include "InputSystem.h"
+
 // testing
 Logger engine_logger = Logger("ENGINE");
+SerializationManager sm;
+
 
 
 /*-----------------------------------------------------------------------------
@@ -57,36 +89,95 @@ Logger engine_logger = Logger("ENGINE");
 ----------------------------------------------------------------------------- */
 PE::CoreApplication::CoreApplication()
 {
+    // Registers Components to ECS
+    REGISTERCOMPONENT(RigidBody);
+    REGISTERCOMPONENT(Collider);
+    REGISTERCOMPONENT(Transform);
+    REGISTERCOMPONENT(Graphics::Renderer);
+
 	m_Running = true;
 	m_lastFrameTime = 0;
 
     // Create and set up the window using WindowManager
-    m_window = m_windowManager.InitWindow(1000, 1000, "Purring_Engine");
+    m_window = m_windowManager.InitWindow(1000, 1000, "Purring Engine");
 
-    m_fpsController.SetTargetFPS(60);                   // Default to 60 FPS
+    // Default to 60 FPS
+    m_fpsController.SetTargetFPS(60);
+    
     // set flags
-    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
 
-    // Pass the pointer to the GLFW window to the rendererManager
-
-    // Audio Stuff - HANS
-    
-    AudioManager::GetInstance()->Init();
+    // Audio Initalization & Loading Audio - HANS
+    AudioManager::GetInstance().Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
     }
+
+    // Load audio
+    ResourceManager::GetInstance().LoadAudioFromFile("sound1", "../Assets/Audio/sound1.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("sound2", "../Assets/Audio/sound2.mp3");
+
     //create instance of memory manager (prob shld bring this out to entry point)
-    MemoryManager::GetInstance();
-    //assignning memory manually to renderer manager
-    Graphics::RendererManager* rendererManager = new (MemoryManager::GetInstance()->AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
-    AddSystem(rendererManager);
+    MemoryManager::GetInstance();   
+
+    // Add system to list & assigning memory to them
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
+    PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
+    CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
+    InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(p_inputSystem);
+    AddSystem(p_physicsManager);
+    AddSystem(p_collisionManager);
+    AddSystem(p_rendererManager);
+
+    // Load a texture
+    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
+    ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
+
+    // Animation textures
+    // Animation 1
+    ResourceManager::GetInstance().LoadTextureFromFile("catAnim1", "../Assets/Textures/CatSprite/Cat_Grey_128px1.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("catAnim2", "../Assets/Textures/CatSprite/Cat_Grey_128px2.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("catAnim3", "../Assets/Textures/CatSprite/Cat_Grey_128px3.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("catAnim4", "../Assets/Textures/CatSprite/Cat_Grey_128px4.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("catAnim5", "../Assets/Textures/CatSprite/Cat_Grey_128px5.png");
+
+    // Animation 2
+    ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim1", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_2.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
+
+    EntityID id = EntityFactory::GetInstance().CreateEntity();
+    int width{ 1000 }, height{ 1000 };
+    glfwGetWindowSize(m_window, &width, &height);
+    EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
+    EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(width);
+    EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(height);
+    EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
+    
+    // Creates an entity that is attached to the Character Controller
+    EntityID id2 = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    EntityManager::GetInstance().Get<Transform>(id2).position.x = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id2).position.y = 0.f;
+    EntityManager::GetInstance().Get<Transform>(id2).width = 100.f;
+    EntityManager::GetInstance().Get<Transform>(id2).height = 100.f;
+    EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
+    EntityManager::GetInstance().Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
+    EntityManager::GetInstance().Get<Collider>(id2).colliderVariant = CircleCollider();
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
+    EntityManager::GetInstance().Get<RigidBody>(id2).SetMass(10.f);
+    
 
 }
-
-
 
 /*-----------------------------------------------------------------------------
 /// <summary>
@@ -113,19 +204,20 @@ void PE::CoreApplication::Run()
     TimeManager::GetInstance().EngineStart();
 
     // Main Application Loop
-    while (!glfwWindowShouldClose(m_window))            // Continue until the GLFW window is flagged to close
+    // Continue until the GLFW window is flagged to close
+    while (!glfwWindowShouldClose(m_window))
     {
         // Time start
         TimeManager::GetInstance().StartFrame();
         engine_logger.SetTime();
-        MemoryManager::GetInstance()->CheckMemoryOver();
-        // UPDATE -----------------------------------------------------
+        MemoryManager::GetInstance().CheckMemoryOver();
         
-
+        // ----- UPDATE ----- //
+        
         // List of keys to check for FPS adjustment
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
 
-        // Iterate through the list of keys and check if any are pressed
+        //// Iterate through the list of keys and check if any are pressed
         for (int key : keys)
         {
             // Update target FPS if a key is pressed
@@ -134,12 +226,24 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            try
+            {
+                std::vector testVector = { 1 };
+                testVector[0] = testVector.at(1);
+            }
+            catch (const std::out_of_range& r_err)
+            {
+                engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
+                throw r_err;
+            }
+        }
 
         //Audio Stuff - HANS
-        AudioManager::GetInstance()->Update();
+        AudioManager::GetInstance().Update();
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
-
         // Update the window title to display FPS (every second)
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
@@ -151,10 +255,12 @@ void PE::CoreApplication::Run()
         // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
-            TimeManager::GetInstance().SystemStartFrame(i);
+            TimeManager::GetInstance().SystemStartFrame();
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
+        //if (EntityManager::GetInstance().GetComponentPool<Transform>().HasEntity(1))
+        //    Graphics::RendererManager::m_mainCamera.SetPosition(EntityManager::GetInstance().Get<Transform>(1).position.x, EntityManager::GetInstance().Get<Transform>(1).position.y);
 
         // Flush log entries
         engine_logger.FlushLog();
@@ -171,6 +277,7 @@ void PE::CoreApplication::Run()
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();
+    ResourceManager::GetInstance().UnloadResources();
 }
 
 
