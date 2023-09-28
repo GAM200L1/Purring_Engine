@@ -44,7 +44,17 @@ public:
     void saveToFile(const std::string& filename, int entityID);
     EntityID loadFromFile(const std::string& filename);
 
+// ----- Private Methods ----- //
+private:
+    void LoadLoaders();
+    bool LoadRigidBody(const EntityID& r_id, const nlohmann::json& r_json);
+    bool LoadCollider(const EntityID& r_id, const nlohmann::json& r_json);
+    bool LoadTransform(const EntityID& r_id, const nlohmann::json& r_json);
+    bool LoadRenderer(const EntityID& r_id, const nlohmann::json& r_json);
+// ----- Private Variables ----- //
 private:
     std::unordered_map<int, Entity> entities; // Store entities with integer IDs
     std::string structName = "Entity"; // Default struct name for serialization
+    typedef bool(SerializationManager::* fnptrVoidptrLoad)(const EntityID& r_id, const nlohmann::json& r_json);
+    std::map<std::string, fnptrVoidptrLoad> m_initializeComponent;
 };

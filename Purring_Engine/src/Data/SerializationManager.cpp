@@ -88,6 +88,8 @@ EntityID SerializationManager::deserializeEntity(const nlohmann::json& j)
 
     // Get a reference or pointer to your EntityManager
     PE::EntityManager* entityManager = PE::g_entityManager;
+    if (m_initializeComponent.empty())
+        LoadLoaders();
 
     // This is to check if "Entity" key exists in the JSON 
     EntityID id = MAXSIZE_T;
@@ -120,52 +122,11 @@ EntityID SerializationManager::deserializeEntity(const nlohmann::json& j)
             {
                 for (const auto& data : j["Entity"][t.key()].items())
                 {
-                    std::string k = data.key();
-                    // example inside function
-
-                    auto dat = data.value();
-                    if (k == "Collider")
-                    {
-                        PE::Collider col;
-                        std::string type = dat["type"];
-                        if (type == "CircleCollider")
-                        {
-                            col.colliderVariant = PE::CircleCollider();
-                        }
-                        else
-                        {
-                            col.colliderVariant = PE::AABBCollider();
-                        }
-                        PE::g_entityFactory->LoadComponent(id, k.c_str(), static_cast<void*>(&col));
-                    }
-                    else if (k == "Renderer")
-                    {
-                        PE::Graphics::Renderer ren;
-                        ren.SetColor({ dat["Color"]["r"].get<float>(),dat["Color"]["g"].get<float>(), dat["Color"]["b"].get<float>(), dat["Color"]["a"].get<float>() });
-                        ren.SetTextureKey(dat["TextureKey"].get<std::string>());
-                        PE::g_entityFactory->LoadComponent(id, k.c_str(), static_cast<void*>(&ren));
-                    }
-                    else if (k == "RigidBody")
-                    {
-                        PE::RigidBody rb;
-                        rb.SetMass(dat["mass"].get<float>());
-                        rb.SetType(static_cast<EnumRigidBodyType>(dat["type"].get<int>()));
-                        PE::g_entityFactory->LoadComponent(id, k.c_str(), static_cast<void*>(&rb));
-                    }
-                    else if (k == "Transform")
-                    {
-                        PE::Transform trans;
-                        trans.height = dat["height"].get<float>();
-                        trans.width = dat["width"].get<float>();
-                        trans.orientation = dat["orientation"].get<float>();
-                        trans.position = PE::vec2{ dat["position"]["x"].get<float>(), dat["position"]["y"].get<float>() };
-                        PE::g_entityFactory->LoadComponent(id, k.c_str(), static_cast<void*>(&trans));
-                    }
+                    const std::string k = data.key();
+                    std::invoke(m_initializeComponent[k], this, id, j);
                 }
                 // // Deserialize components
             }
-
-
         }
     }
     // Return a pair containing the deserialized entity and its entityID.
@@ -217,4 +178,58 @@ EntityID SerializationManager::loadFromFile(const std::string& filename)
 
     // Call the deserializeEntity function to convert the JSON into an Entity and entityID.
     return deserializeEntity(j);
+}
+
+
+void SerializationManager::LoadLoaders()
+{
+    m_initializeComponent.emplace("RigidBody", &SerializationManager::LoadRigidBody);
+    m_initializeComponent.emplace("Collider", &SerializationManager::LoadCollider);
+    m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
+    m_initializeComponent.emplace("Renderer", &SerializationManager::LoadRenderer);
+}
+
+bool SerializationManager::LoadRigidBody(const EntityID& r_id, const nlohmann::json& r_json)
+{
+    PE::RigidBody rb;
+    rb.SetMass(r_json["Entity"]["components"]["RigidBody"]["mass"].get<float>());
+    rb.SetType(static_cast<EnumRigidBodyType>(r_json["Entity"]["components"]["RigidBody"]["type"].get<int>()));
+    PE::g_entityFactory->LoadComponent(r_id, "RigidBody", static_cast<void*>(&rb));
+    return true;
+}
+
+bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::json& r_json)
+{
+    PE::Collider col;
+    std::string type = r_json["Entity"]["components"]["Collider"]["type"].get<std::string>();
+    if (type == "CircleCollider")
+    {
+        col.colliderVariant = PE::CircleCollider();
+    }
+    else
+    {
+        col.colliderVariant = PE::AABBCollider();
+    }
+    PE::g_entityFactory->LoadComponent(r_id, "Collider", static_cast<void*>(&col));
+    return true;
+}
+
+bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
+{
+    PE::Transform trans;
+    trans.height = r_json["Entity"]["components"]["Transform"]["height"].get<float>();
+    trans.width = r_json["Entity"]["components"]["Transform"]["width"].get<float>();
+    trans.orientation = r_json["Entity"]["components"]["Transform"]["orientation"].get<float>();
+    trans.position = PE::vec2{ r_json["Entity"]["components"]["Transform"]["position"]["x"].get<float>(), r_json["Entity"]["components"]["Transform"]["position"]["y"].get<float>() };
+    PE::g_entityFactory->LoadComponent(r_id, "Transform", static_cast<void*>(&trans));
+    return true;
+}
+
+bool SerializationManager::LoadRenderer(const EntityID& r_id, const nlohmann::json& r_json)
+{
+    PE::Graphics::Renderer ren;
+    ren.SetColor({ r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>() });
+    ren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
+    PE::g_entityFactory->LoadComponent(r_id, "Renderer", static_cast<void*>(&ren));
+    return true;
 }
