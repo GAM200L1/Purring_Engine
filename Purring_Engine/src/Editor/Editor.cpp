@@ -839,7 +839,7 @@ namespace PE {
 								EnumRigidBodyType bt = g_entityManager->Get<RigidBody>(entityID).GetType();
 								int index = static_cast<int>(bt);
 								//hard coded rigidbody types
-								const char* types[] = { "STATIC","DYNAMIC","KINEMATIC" };
+								const char* types[] = { "STATIC","DYNAMIC" };
 								ImGui::Text("Rigidbody Type: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
 								//combo box of the different rigidbody types

@@ -20,7 +20,7 @@ enum class EnumRigidBodyType
 {
 	STATIC = 0, //! Zero mass, zero velocity, not affected by force but position can be set -> during simulation, it won't move and it wont collide with anything
 	DYNAMIC,	//! Has mass, velocity can be set, affected by forces
-	KINEMATIC	//! Zero mass, velocity can be set, not affected by forces, can move by setting velocity
+	//KINEMATIC	//! Zero mass, velocity can be set, not affected by forces, can move by setting velocity
 };
 
 namespace PE
