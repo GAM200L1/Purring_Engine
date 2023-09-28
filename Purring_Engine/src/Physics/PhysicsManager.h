@@ -50,7 +50,7 @@ namespace PE
 		float m_velocityNegligence{};
 		float m_fixedDt{};
 		float m_accumulator{};
-		float m_accumulatorLimit{};
+		float m_dtLimit{};
 		static bool m_applyStepPhysics;
 		static bool m_advanceStep;
 		std::string m_systemName{ "Physics" };

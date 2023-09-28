@@ -31,7 +31,7 @@ namespace PE
 
 	PhysicsManager::PhysicsManager() :
 		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f },
-		m_fixedDt{ 1.f / 60.f }, m_accumulator{ 0.f }, m_accumulatorLimit{ 1.f } {}
+		m_fixedDt{ 1.f / 60.f }, m_accumulator{ 0.f }, m_dtLimit{ 1.f/4.f } {}
 	
 	// ----- Public Getters ----- //
 
@@ -89,8 +89,8 @@ namespace PE
 		// Simple fixed deltaTime		
 		if (!m_applyStepPhysics)
 		{
-			m_accumulator += deltaTime;
-			m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
+			m_accumulator += (deltaTime > m_dtLimit)? m_dtLimit : deltaTime;
+			//m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
 			while (m_accumulator >= m_fixedDt)
 			{
 				UpdateDynamics(m_fixedDt);
