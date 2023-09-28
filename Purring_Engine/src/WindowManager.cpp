@@ -191,6 +191,17 @@ namespace PE
 					Editor::GetInstance().AddEventLog("Advanced Step.\n");
 				}
 			}
+
+			// dash
+			if (EntityManager::GetInstance().GetComponentPool<RigidBody>().HasEntity(1))
+			{
+				if (ev.keycode == GLFW_KEY_E)
+				{
+					if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.Dot(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity) == 0.f)
+						EntityManager::GetInstance().Get<RigidBody>(1).m_velocity = vec2{ 1.f, 0.f };
+					EntityManager::GetInstance().Get<RigidBody>(1).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.GetNormalized() * 1000.f);
+				}
+			}
 		}
 		else if (r_event.GetType() == KeyEvents::KeyPressed)
 		{
@@ -214,14 +225,6 @@ namespace PE
 				if (ev.keycode == GLFW_KEY_D)
 				{
 					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-				}
-
-				// dash
-				if (ev.keycode == GLFW_KEY_LEFT_SHIFT)
-				{
-					if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.Dot(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity) == 0.f)
-						EntityManager::GetInstance().Get<RigidBody>(1).m_velocity = vec2{ 1.f, 0.f };
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.GetNormalized() * 1000.f);
 				}
 
 				// rotation
