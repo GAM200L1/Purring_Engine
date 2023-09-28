@@ -86,27 +86,25 @@ namespace PE
 
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
-		// Simple fixed deltaTime
-		m_accumulator += deltaTime;
-
-		m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
-
-		while (m_accumulator >= m_fixedDt)
+		// Simple fixed deltaTime		
+		if (!m_applyStepPhysics)
 		{
-			if (!m_applyStepPhysics)
+			m_accumulator += deltaTime;
+			m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
+			while (m_accumulator >= m_fixedDt)
 			{
 				UpdateDynamics(m_fixedDt);
+				m_accumulator -= m_fixedDt;
 			}
-			else
+		}
+		else
+		{
+			// Applies Step Physics
+			if (m_advanceStep)
 			{
-				// Applies Step Physics
-				if (m_advanceStep)
-				{
-					UpdateDynamics(m_fixedDt);
-					m_advanceStep = false;
-				}
+				UpdateDynamics(m_fixedDt);
+				m_advanceStep = false;
 			}
-			m_accumulator -= m_fixedDt;
 		}
 	}
 

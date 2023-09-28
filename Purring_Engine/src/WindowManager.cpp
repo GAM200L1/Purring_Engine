@@ -199,7 +199,7 @@ namespace PE
 				{
 					if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.Dot(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity) == 0.f)
 						EntityManager::GetInstance().Get<RigidBody>(1).m_velocity = vec2{ 1.f, 0.f };
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.GetNormalized() * 1000.f);
+					EntityManager::GetInstance().Get<RigidBody>(1).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.GetNormalized() * 5000.f);
 				}
 			}
 		}
