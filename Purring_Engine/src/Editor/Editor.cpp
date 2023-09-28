@@ -392,11 +392,7 @@ namespace PE {
 			if (ImGui::Button("Create Object")) // add a string into vector
 			{
 				AddInfoLog("Object Created");
-				EntityID id = EntityFactory::GetInstance().CreateEntity();
-				EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
-				EntityManager::GetInstance().Get<Transform>(id).height = 100.f;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100.f;
-				//UpdateObjectList();
+				serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
 			}
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
@@ -419,15 +415,18 @@ namespace PE {
 					count--;
 
 				}
+				else 
+				{
+					AddWarningLog("You are not allowed to delete the background or player as of now");
+				}
 			}
 
 			if (ImGui::Button("Clone Object"))
 			{
-
-				//EntityFactory::GetInstance().Clone(m_currentSelectedObject);
 				if(m_currentSelectedObject)
 				EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
-				//UpdateObjectList();
+				else
+					AddWarningLog("You are not allowed to clone the background");
 			}
 
 			ImGui::Separator();
@@ -715,15 +714,11 @@ namespace PE {
 			if (ImGui::Button("Draw 2500 objects"))
 			{
 				ClearObjectList();
-				for (size_t i{}; i < 2500; ++i) {
-					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-					EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
-					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
-					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
-					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
-					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
-					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
+				EntityID id2 = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+				for (size_t i{}; i < 2499; ++i) {
+					EntityID id3 = EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[id2]);
+					EntityManager::GetInstance().Get<Transform>(id3).position.x = 50.f * (i % 50) - 600.f;
+					EntityManager::GetInstance().Get<Transform>(id3).position.y = 50.f * (i / 50) - 300.f;
 				}
 			}
 			ImGui::SameLine();
@@ -919,11 +914,6 @@ namespace PE {
 									{
 										EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant = AABBCollider();
 									}
-									/*Transform& transform{ EntityManager::GetInstance().Get<Transform>(entityID) };
-									std::visit([&](auto& col)
-										{
-											Initialize(col, transform.position, vec2(transform.width, transform.height));
-										}, EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant);*/
 								}
 
 								if (index)
@@ -1310,22 +1300,15 @@ namespace PE {
 					{
 						if (m_currentSelectedObject)
 						{
-							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
+							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]));
 						}
 
 					}
 					if (ImGui::MenuItem("Load"))
 					{
-						//serializationManager.loadFromFile("Saved_Data.json");
-
-						// Call the method to load the serialized entity from a file and deserialize it.
-						//serializationManager.loadFromFile("Saved_Data.json");
-						//int deserializedEntityID = deserializedData.second;
-
-						//// Still need to integrate the deserialized entity into JW ECS via file exploer + the logic.
 						OPENFILENAME ofn;
 						wchar_t szFile[260];
-						ZeroMemory(&ofn, sizeof(ofn));
+						ZeroMemory(&ofn, static_cast<size_t>(sizeof(ofn)));
 						ofn.lStructSize = sizeof(ofn);
 						ofn.hwndOwner = NULL;
 						ofn.lpstrFile = szFile;
@@ -1494,8 +1477,6 @@ namespace PE {
 		{
 			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
 		}
-
-		//may want to change this to switch case to look cleaner
 
 		if (KTE.keycode == GLFW_KEY_F1)
 			m_showConsole = !m_showConsole;
