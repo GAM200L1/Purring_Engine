@@ -3,6 +3,7 @@
  \module   CSD2401-A
  \file     AudioManager.h
  \date     16-09-2023
+ \last updated 24-09-2023
 
  \author               You Yang ONG
  \par      email:      youyang.o@digipen.edu
@@ -13,32 +14,50 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
+#include "prpch.h"
+#include "Singleton.h"
 #include "fmod.hpp"
 #include "fmod_errors.h"
-class AudioManager
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
+
+namespace PE
 {
-public:
-    // Constructor - Destructor
-    AudioManager();
-    ~AudioManager();
+    class AudioManager : public Singleton<AudioManager>
+    {
+    public:
+        friend class Singleton<AudioManager>;
 
-    bool Init();
-    void Update();
-    void PlaySound(const char* filePath);
-    void StopSound();
-    static AudioManager* GetInstance();
-private:
-    // FMOD system object for managing audio resources
-    FMOD::System* system;
+        // Nested Audio class
+        class Audio
+        {
+        public:
+            bool LoadSound(const std::string& path, FMOD::System* system);
+            FMOD::Sound* GetSound() const { return m_sound; }
+            void SetChannel(FMOD::Channel* channel) { m_channel = channel; }
+            FMOD::Channel* GetChannel() const { return m_channel; }
 
-    // FMOD sound objects to hold audio data
-    FMOD::Sound* sound1;
-    FMOD::Sound* sound2;
+        private:
+            FMOD::Sound* m_sound = nullptr;
+            FMOD::Channel* m_channel = nullptr;
+        };
 
-    // FMOD channel objects to control playback
-    FMOD::Channel* channel1;
-    FMOD::Channel* channel2;
+        bool Init();
+        void Update();
+        void PlaySound(const std::string& id);
+        void SetVolume(const std::string& id, float volume);
+        void SetGlobalVolume(float volume);
+        void PauseSound(const std::string& id);
+        void ResumeSound(const std::string& id);
+        void StopSound(const std::string& id);
+        void StopAllSounds();
+        FMOD::System* GetFMODSystem() { return m_system; }
 
-    static std::unique_ptr<AudioManager> s_Instance;
+    private:
+        AudioManager();                                     // Private constructor for Meyer's Singleton
+        ~AudioManager();
 
-};
+        FMOD::System* m_system;
+    };
+}
+

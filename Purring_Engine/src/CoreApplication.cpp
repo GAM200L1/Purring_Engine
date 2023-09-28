@@ -2,15 +2,22 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     CoreApplication.cpp
- \creation date:       To check
- \last updated:        16-09-2023
- \author:              Brandon HO Jun Jie
- \co-author:           Hans (You Yang) ONG
- \co-author:           Jarran TAN Yan Zhi
+ \date     28-08-2023
 
+ \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
+
+ \co-author            Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
+
+ \co-author            Jarran TAN Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
 
  \brief    This file contains the CoreApplication class, which serves as the entry point for
            the engine. It handles the main application loop, initializes and updates all registered 
@@ -102,11 +109,16 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
-    // Audio Stuff - HANS
-    AudioManager::GetInstance()->Init();
+
+    // Audio Initalization & Loading Audio - HANS
+    AudioManager::GetInstance().Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
     }
+
+    // Load audio
+    ResourceManager::GetInstance().LoadAudioFromFile("sound1", "../Assets/Audio/sound1.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("sound2", "../Assets/Audio/sound2.mp3");
 
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();   
@@ -218,7 +230,7 @@ void PE::CoreApplication::Run()
         }
 
         //Audio Stuff - HANS
-        AudioManager::GetInstance()->Update();
+        AudioManager::GetInstance().Update();
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)
