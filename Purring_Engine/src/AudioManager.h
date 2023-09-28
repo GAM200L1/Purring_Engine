@@ -23,9 +23,11 @@
 
 namespace PE
 {
-    class AudioManager
+    class AudioManager : public Singleton<AudioManager>
     {
     public:
+        friend class Singleton<AudioManager>;
+
         // Nested Audio class
         class Audio
         {
@@ -40,10 +42,6 @@ namespace PE
             FMOD::Channel* m_channel = nullptr;
         };
 
-        static AudioManager& GetInstance();                 // Singleton accessor
-        AudioManager(const AudioManager&) = delete;
-        AudioManager& operator=(const AudioManager&) = delete;
-
         bool Init();
         void Update();
         void PlaySound(const std::string& id);
@@ -54,7 +52,6 @@ namespace PE
         void StopSound(const std::string& id);
         void StopAllSounds();
         FMOD::System* GetFMODSystem() { return m_system; }
-
 
     private:
         AudioManager();                                     // Private constructor for Meyer's Singleton

@@ -22,25 +22,6 @@
 
 namespace PE
 {
-    /*---------------------------------------------------------------------------
-    /// <summary>
-    /// Utilizes the Meyer's Singleton approach for the AudioManager class.
-    /// This function enforces the Singleton design pattern to guarantee a single
-    /// AudioManager instance within the system at all times.
-    /// </summary>
-    ///
-    /// <returns>
-    /// Provides the unique instance of AudioManager.
-    /// </returns>
-    ---------------------------------------------------------------------------*/
-    AudioManager& AudioManager::GetInstance()
-    {
-        static AudioManager instance;
-        return instance;
-    }
-
-
-
     /*-----------------------------------------------------------------------------
     /// <summary>
     /// Constructor for the AudioManager class.
@@ -67,8 +48,6 @@ namespace PE
         if (m_system)
             m_system->release();
     }
-
-
 
     /*-----------------------------------------------------------------------------
     /// <summary>
