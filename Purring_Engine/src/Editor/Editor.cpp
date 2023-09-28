@@ -897,22 +897,21 @@ namespace PE {
 								if (index)
 								{
 									ImVec2 offset;
-									CircleCollider* p_cc = &std::get<1>(g_entityManager->Get<Collider>(entityID).colliderVariant);
+									CircleCollider& r_cc = std::get<CircleCollider>(g_entityManager->Get<Collider>(entityID).colliderVariant);
 
-									g_entityManager->Get<Collider>(entityID).colliderVariant = CircleCollider();
-									offset.x = (*p_cc).positionOffset.x;
-									offset.y = (*p_cc).positionOffset.y;
+									offset.x = r_cc.positionOffset.x;
+									offset.y = r_cc.positionOffset.y;
 									ImGui::Text("Collider Position Offset: ");
 									ImGui::Text("x pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##xoffsetcircle", &offset.x, 1.0f, 100.f, "%.3f");
-									ImGui::Text("y pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetcircle", &offset.x, 1.0f, 100.f, "%.3f");
-									(*p_cc).positionOffset.y = offset.y;
-									(*p_cc).positionOffset.x = offset.x;
+									ImGui::Text("y pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetcircle", &offset.y, 1.0f, 100.f, "%.3f");
+									r_cc.positionOffset.y = offset.y;
+									r_cc.positionOffset.x = offset.x;
 									
-									float offset2 = (*p_cc).scaleOffset;
+									float offset2 = p_cc.scaleOffset;
 									ImGui::Text("Collider Scale Offset: ");
 									ImGui::Text("sc x offset: "); ImGui::SameLine(); ImGui::InputFloat("##scaleOffsetcircle", &offset2, 1.0f, 100.f, "%.3f");
 							
-									(*p_cc).scaleOffset = std::abs(offset2);
+									r_cc.scaleOffset = std::abs(offset2);
 								}
 								else
 								{

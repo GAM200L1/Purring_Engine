@@ -43,6 +43,8 @@ namespace PE
 		float radius{};
 	};
 
+	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
+
 	struct Collider
 	{
 		std::variant<AABBCollider, CircleCollider> colliderVariant;
@@ -87,6 +89,4 @@ namespace PE
 		void ResolveVelocity();
 		void ResolvePosition();
 	};
-
-	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
 }
