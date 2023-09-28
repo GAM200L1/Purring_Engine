@@ -102,11 +102,16 @@ PE::CoreApplication::CoreApplication()
     engine_logger.SetTime();
     engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
 
-    // Audio Stuff - HANS
-    AudioManager::GetInstance()->Init();
+
+    // Audio Initalization & Loading Audio - HANS
+    AudioManager::GetInstance().Init();
     {
         engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
     }
+
+    // Load audio
+    ResourceManager::GetInstance().LoadAudioFromFile("sound1", "../Assets/Audio/sound1.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("sound2", "../Assets/Audio/sound2.mp3");
 
     //create instance of memory manager (prob shld bring this out to entry point)
     MemoryManager::GetInstance();   
@@ -290,7 +295,7 @@ void PE::CoreApplication::Run()
         }
 
         //Audio Stuff - HANS
-        AudioManager::GetInstance()->Update();
+        AudioManager::GetInstance().Update();
 
         // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)
