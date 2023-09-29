@@ -524,12 +524,12 @@ namespace PE {
 			ImGui::Text("Audio Test");
 			if (ImGui::Button("Play Audio 1"))
 			{
-				AudioManager::GetInstance().PlaySound("sound1");
+				AudioManager::GetInstance().PlaySound("audio_sound1");
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Play Audio 2"))
 			{
-				AudioManager::GetInstance().PlaySound("sound2");
+				AudioManager::GetInstance().PlaySound("audio_sound2");
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Stop Audio"))
