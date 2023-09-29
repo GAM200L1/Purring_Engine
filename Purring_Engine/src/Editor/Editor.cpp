@@ -107,7 +107,7 @@ namespace PE {
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (int n = EntityManager::GetInstance().GetEntitiesInPool("All").size()-1; n > 2; --n)
+		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool("All").size()-1; n > 2; --n)
 		{
 			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
 		}
