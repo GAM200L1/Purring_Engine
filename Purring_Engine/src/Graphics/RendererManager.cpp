@@ -209,8 +209,8 @@ namespace PE
 
             // Update Animation here
             std::string currentTextureKey;
-            if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x == 0.f &&
-                EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y == 0.f)
+            if (EntityManager::GetInstance().Get<RigidBody>(1).velocity.x == 0.f &&
+                EntityManager::GetInstance().Get<RigidBody>(1).velocity.y == 0.f)
             {
                 currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
             }
@@ -462,7 +462,7 @@ namespace PE
                 glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
                 // Draw a line that represents the velocity
-                DrawDebugLine(glm::vec2{ rigidbody.m_velocity.x, rigidbody.m_velocity.y }, 
+                DrawDebugLine(glm::vec2{ rigidbody.velocity.x, rigidbody.velocity.y }, 
                     glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
 
                 // Draw a point at the center of the object

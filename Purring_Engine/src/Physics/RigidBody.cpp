@@ -1,15 +1,17 @@
-/*!*****************************************************************************
-	@file       RigidBody.cpp
-	@author     Liew Yeni
-	@co-author
-	@par        DP email: yeni.l\@digipen.edu
-	@par        Course: CSD2401, Section A
-	@date       10/9/2023
-
-	@brief
-
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     RigidBody.cpp
+ \date     29-09-2023
+ 
+ \author               Liew Yeni
+ \par      email:      yeni.l/@digipen.edu.sg
+ 
+ \brief 
+ 
+ 
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
@@ -18,29 +20,32 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 namespace PE
 {
+	// ------ RigidBody Class ----- //
+	
+	// ----- Constructors/Copy Assignment ------ //
 	RigidBody::RigidBody() :
-		m_velocity{ vec2{ 0.f, 0.f } }, m_rotationVelocity{ 0.f },
-		m_force{ vec2{ 0.f, 0.f } }, //m_torque{ 0.f }, m_awake{ false },
+		velocity{ vec2{ 0.f, 0.f } }, rotationVelocity{ 0.f },
+		force{ vec2{ 0.f, 0.f } }, //m_torque{ 0.f }, m_awake{ false },
 		m_mass{ 10.f }, m_inverseMass{ 1/10.f }, // m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
-		m_prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
+		prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
 
 	RigidBody::RigidBody(RigidBody const& r_cpy) :
-		m_velocity{ r_cpy.m_velocity }, m_rotationVelocity{ r_cpy.m_rotationVelocity },
-		m_force{ r_cpy.m_force }, //m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
+		velocity{ r_cpy.velocity }, rotationVelocity{ r_cpy.rotationVelocity },
+		force{ r_cpy.force }, //m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
 		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, 
 		//m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag },
-		m_prevPosition{ r_cpy.m_prevPosition }, m_type{ r_cpy.m_type } {}
+		prevPosition{ r_cpy.prevPosition }, m_type{ r_cpy.m_type } {}
 
 	RigidBody& RigidBody::operator=(RigidBody const& r_cpy)
 	{
-		m_velocity = r_cpy.m_velocity;
-		m_rotationVelocity = r_cpy.m_rotationVelocity;
-		m_force = r_cpy.m_force;
+		velocity = r_cpy.velocity;
+		rotationVelocity = r_cpy.rotationVelocity;
+		force = r_cpy.force;
 		//m_torque = r_cpy.m_torque;
 		//m_awake = r_cpy.m_awake;
 		m_mass = r_cpy.m_mass;
 		m_inverseMass = r_cpy.m_inverseMass;
-		m_prevPosition = r_cpy.m_prevPosition;
+		prevPosition = r_cpy.prevPosition;
 		// m_drag = r_cpy.m_drag;
 		// m_rotationDrag = r_cpy.m_rotationDrag;
 		m_type = r_cpy.m_type;
@@ -60,7 +65,7 @@ namespace PE
 	void RigidBody::SetMass(float mass)
 	{
 		m_mass = mass;
-		m_inverseMass = 1.f / mass;
+		m_inverseMass = 1.f / mass; // inverse mass can only be set through mass
 	}
 
 	void RigidBody::ZeroForce()
@@ -68,16 +73,16 @@ namespace PE
 		if (m_type != EnumRigidBodyType::DYNAMIC)
 			return;
 
-		m_force = vec2{ 0.f, 0.f };
+		force = vec2{ 0.f, 0.f };
 	}
 
 	EnumRigidBodyType RigidBody::GetType() const
 	{
 		return m_type;
 	}
-	void RigidBody::SetType(EnumRigidBodyType flag)
+	void RigidBody::SetType(EnumRigidBodyType newType)
 	{
-		m_type = flag;
+		m_type = newType;
 	}
 
 	//bool RigidBody::IsAwake() const
@@ -90,13 +95,14 @@ namespace PE
 	//}
 
 	// ----- Public Methods ----- //
+
 	// Adds on to existing force, ultimately affects position
 	void RigidBody::ApplyForce(vec2 const& r_addOnForce)
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC || (!PhysicsManager::GetAdvanceStep() && PhysicsManager::GetStepPhysics()))
 			return;
 
-		m_force += r_addOnForce;
+		force += r_addOnForce;
 	}
 
 	// Adds on to existing torque, ultimately affects rotation
@@ -108,10 +114,11 @@ namespace PE
 	//	m_torque += r_addOnTorque;
 	//}
 
+	// Adds on immediately to object's velocity for burst movement
 	void RigidBody::ApplyLinearImpulse(vec2 const& r_impulseForce)
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC || (!PhysicsManager::GetAdvanceStep() && PhysicsManager::GetStepPhysics()))
 			return;
-		m_velocity += r_impulseForce * m_inverseMass;
+		velocity += r_impulseForce * m_inverseMass;
 	}
 }
