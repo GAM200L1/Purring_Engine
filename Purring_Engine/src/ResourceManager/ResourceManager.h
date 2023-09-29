@@ -41,7 +41,7 @@
 #include "Singleton.h"
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/Texture.h"
-#include "AudioManager.h"
+#include "AudioManager/AudioManager.h"
 #include "Graphics/Text.h"
 
 //class Resource

@@ -46,13 +46,13 @@
 
 // Logging and Memory
 #include "Logging/Logger.h"
-#include "MemoryManager.h"
+#include "Memory/MemoryManager.h"
 
 // Resource Management
 #include "ResourceManager/ResourceManager.h"
 
 // Audio
-#include "AudioManager.h"
+#include "AudioManager/AudioManager.h"
 
 // Time Management
 #include "Time/TimeManager.h"
@@ -74,7 +74,7 @@
 #include "ECS/SceneView.h"
 
 // Input
-#include "InputSystem.h"
+#include "Input/InputSystem.h"
 
 // Testing
 Logger engine_logger = Logger("ENGINE");

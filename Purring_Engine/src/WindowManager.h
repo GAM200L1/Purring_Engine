@@ -18,8 +18,8 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Graphics/GLHeaders.h"
-#include "FrameRateTargetControl.h"
-#include "InputSystem.h"
+#include "Time/FrameRateTargetControl.h"
+#include "Input/InputSystem.h"
 #include "Events/EventHandler.h"
 #include "System.h"
 
