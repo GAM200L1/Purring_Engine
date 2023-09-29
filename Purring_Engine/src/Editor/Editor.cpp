@@ -15,8 +15,8 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "Editor.h"
-#include "MemoryManager.h"
-#include "AudioManager.h"
+#include "Memory/MemoryManager.h"
+#include "AudioManager/AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
 #include <Windows.h>
