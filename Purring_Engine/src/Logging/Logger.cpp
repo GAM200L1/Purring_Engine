@@ -14,6 +14,7 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "Logger.h"
+#include "Editor/Editor.h"
 #pragma warning(disable : 4996)
 
 // static variables decleration

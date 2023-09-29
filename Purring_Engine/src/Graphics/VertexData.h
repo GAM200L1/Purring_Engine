@@ -16,9 +16,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include <glm/glm.hpp>
 
 namespace PE
@@ -29,8 +26,8 @@ namespace PE
         {
             // ----- Public variables ----- // 
         public:
-            glm::vec2 position{};	    //! xy coordinates of the vertex
-            glm::vec2 textureCoord{};	//! 2D texture coordinates of the vertex
+            glm::vec2 position{};	    // xy coordinates of the vertex
+            glm::vec2 textureCoord{};	// 2D texture coordinates of the vertex
 
             // ----- Constructors ----- // 
         public:

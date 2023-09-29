@@ -67,10 +67,10 @@ namespace PE
                 throw;
             }
 
-            p_windowRef = p_window;
+            p_glfwWindow = p_window;
 
             int width, height;
-            glfwGetWindowSize(p_windowRef, &width, &height);
+            glfwGetWindowSize(p_glfwWindow, &width, &height);
             m_imguiFrameBuffer.CreateFrameBuffer(width, height);
 
             Editor::GetInstance().Init(p_window);
@@ -83,7 +83,7 @@ namespace PE
 
             // Create the framebuffer to render to ImGui window
             int width, height;
-            glfwGetWindowSize(p_windowRef, &width, &height);
+            glfwGetWindowSize(p_glfwWindow, &width, &height);
             m_imguiFrameBuffer.CreateFrameBuffer(width, height);
             m_cachedWindowWidth = static_cast<float>(width), 
                 m_cachedWindowHeight = static_cast<float>(height);
@@ -101,6 +101,7 @@ namespace PE
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
 
+            // Reserve memory for the vectors to build the buffer with
             m_isTextured.reserve(3000);
             m_modelToWorldMatrices.reserve(3000);
             m_colors.reserve(3000);
@@ -134,7 +135,7 @@ namespace PE
 
         void RendererManager::UpdateSystem(float deltaTime)
         {
-            if (!p_windowRef)
+            if (!p_glfwWindow)
             {
                 return;
             }
@@ -154,7 +155,7 @@ namespace PE
             else 
             {
                 int width, height;
-                glfwGetWindowSize(p_windowRef, &width, &height);
+                glfwGetWindowSize(p_glfwWindow, &width, &height);
                 windowWidth = static_cast<float>(width);
                 windowHeight = static_cast<float>(height);
             }
@@ -252,7 +253,7 @@ namespace PE
             glfwPollEvents(); // should be called before glfwSwapbuffers
 
             // Swap front and back buffers
-            glfwSwapBuffers(p_windowRef);
+            glfwSwapBuffers(p_glfwWindow);
         }
 
 
@@ -339,6 +340,10 @@ namespace PE
             for (const EntityID& id : SceneView<Renderer>())
             {
                 Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                
+                // Skip drawing this object is the renderer is not enabled
+                if (!renderer.GetEnabled()) { continue; }
+                
                 const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 // Attempt to retrieve and bind the texture
@@ -504,7 +509,7 @@ namespace PE
         }
 
 
-        void RendererManager::Draw(Renderer const& r_renderer, ShaderProgram& r_shaderProgram,
+        void RendererManager::Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram,
             GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
         {
             r_shaderProgram.Use();
@@ -520,12 +525,6 @@ namespace PE
             }
 
             m_meshes[meshIndex].Bind();
-
-            // Pass the model to NDC transform matrix as a uniform variable
-            r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
-
-            // Pass the color of the quad as a uniform variable
-            r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
 
             // Attempt to retrieve and bind the texture
             std::shared_ptr<Graphics::Texture> p_texture{};
@@ -545,6 +544,10 @@ namespace PE
                     engine_logger.SetTime();
                     engine_logger.AddLog(false, "Texture " + r_renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
 
+                    // Remove the texture and set the object to neon pink
+                    r_renderer.SetTextureKey("");
+                    r_renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+
                     r_shaderProgram.SetUniform("uIsTextured", false);
                 }
                 else 
@@ -556,6 +559,13 @@ namespace PE
                     r_shaderProgram.SetUniform("uIsTextured", true);
                 }
             }
+
+            // Pass the model to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
+
+            // Pass the color of the quad as a uniform variable
+            r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
+
 
             glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
                 GL_UNSIGNED_SHORT, NULL);
@@ -665,6 +675,8 @@ namespace PE
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
             glm::vec4 const& r_color)
         {
+            // Derive the scale and position of the debug shape to draw
+            // from the bounds of the AABB collider
             glm::mat4 modelToWorld
             {
                 GenerateTransformMatrix(r_aabbCollider.max.x - r_aabbCollider.min.x, // width
@@ -683,6 +695,8 @@ namespace PE
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
             glm::vec4 const& r_color)
         {
+            // Derive the scale and position of the debug shape to draw
+            // from the radius and position of the collider
             float const diameter{ r_circleCollider.radius * 2.f };
 
             glm::mat4 modelToWorld

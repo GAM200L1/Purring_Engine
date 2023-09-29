@@ -15,8 +15,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include "prpch.h"
 #include "MeshData.h"
 #include "Logging/Logger.h"
@@ -98,22 +96,13 @@ namespace PE
             glVertexArrayAttribFormat(m_vertexArrayObject, attributeIndex, 2, GL_FLOAT, GL_FALSE, 0);
             glVertexArrayAttribBinding(m_vertexArrayObject, attributeIndex, bindingIndex);
 
-            // Bind the colors to attrib 1
-            //attributeIndex = 1, bindingIndex = 1;
-            //glEnableVertexArrayAttrib(m_vertexArrayObject, attributeIndex);
-            //glVertexArrayVertexBuffer(m_vertexArrayObject, bindingIndex, m_vertexBufferObject, 0,
-            //    static_cast<GLsizei>(sizeof(VertexData)));
-            //glVertexArrayAttribFormat(m_vertexArrayObject, attributeIndex, 3, GL_FLOAT, GL_FALSE,
-            //    static_cast<GLuint>(sizeof(glm::vec2)));	// offset by vert pos
-            //glVertexArrayAttribBinding(m_vertexArrayObject, attributeIndex, bindingIndex);
-
-            // Bind the texture coordinate to attrib 2
+            // Bind the texture coordinate to attrib 1
             attributeIndex = 1, bindingIndex = 1;
             glEnableVertexArrayAttrib(m_vertexArrayObject, attributeIndex);
             glVertexArrayVertexBuffer(m_vertexArrayObject, bindingIndex, m_vertexBufferObject, 0,
                 static_cast<GLsizei>(sizeof(VertexData)));
             glVertexArrayAttribFormat(m_vertexArrayObject, attributeIndex, 2, GL_FLOAT, GL_FALSE,
-                static_cast<GLintptr>(sizeof(glm::vec2)));// +sizeof(glm::vec3))); // offset by vert pos and color
+                static_cast<GLintptr>(sizeof(glm::vec2))); // offset by vert pos and color
             glVertexArrayAttribBinding(m_vertexArrayObject, attributeIndex, bindingIndex);
 
             // Bind the element array to the vert array
