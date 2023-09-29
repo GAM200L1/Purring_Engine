@@ -46,13 +46,13 @@ namespace PE
 
         // ----- Serialization ------ //
         
-    /*!***********************************************************************************
-     \brief Serializes the Transform object to a JSON object. Converts the width, height,
-            orientation, and position of the Transform object to a JSON object for
-            easy storage and transmission.
+        /*!***********************************************************************************
+        \brief Serializes the Transform object to a JSON object. Converts the width, height,
+                orientation, and position of the Transform object to a JSON object for
+                easy storage and transmission.
 
-     \return The JSON representation of the Transform object.
-    *************************************************************************************/        nlohmann::json ToJson() const
+        \return The JSON representation of the Transform object.
+        *************************************************************************************/        nlohmann::json ToJson() const
         {
             nlohmann::json j;
             j["width"] = width;
@@ -63,13 +63,13 @@ namespace PE
             return j;
         }
 
-    /*!***********************************************************************************
-     \brief Deserializes the Transform object from a JSON object. Converts a JSON object to a
-            Transform by extracting width, height, orientation, and position values.
+        /*!***********************************************************************************
+        \brief Deserializes the Transform object from a JSON object. Converts a JSON object to a
+                Transform by extracting width, height, orientation, and position values.
 
-     \param[in] r_j JSON object containing the values to load into the Transform object.
-     \return The deserialized Transform object.
-    *************************************************************************************/
+        \param[in] r_j JSON object containing the values to load into the Transform object.
+        \return The deserialized Transform object.
+        *************************************************************************************/
         static Transform FromJson(const nlohmann::json& r_j)
         {
             Transform t;

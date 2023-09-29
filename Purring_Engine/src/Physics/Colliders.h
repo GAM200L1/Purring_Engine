@@ -44,9 +44,10 @@ namespace PE
 		// ----- Public Methods ----- //
 		
 		/*!***********************************************************************************
-		 \brief Serializes Collider information
-		 
-		 \return nlohmann::json - json object to store serialized collider information
+		\brief Serializes the AABBCollider object to a JSON object. Converts the minimum and maximum
+		coordinates of the AABBCollider object to a JSON object for easy storage and transmission.
+
+		\return The JSON representation of the AABBCollider object.
 		*************************************************************************************/
 		nlohmann::json ToJson() const
 		{
@@ -58,6 +59,13 @@ namespace PE
 			return j;
 		}
 
+		/*!***********************************************************************************
+		\brief Deserializes the AABBCollider object from a JSON object. Converts a JSON object to an
+		AABBCollider by extracting the minimum and maximum coordinates.
+
+		\param[in] r_j JSON object containing the values to load into the AABBCollider object.
+		\return The deserialized AABBCollider object.
+		*************************************************************************************/
 		static AABBCollider FromJson(const nlohmann::json& r_j)
 		{
 			AABBCollider aabb;
@@ -93,7 +101,14 @@ namespace PE
 
 		// ----- Public Methods ----- //
 		
-		// Serialization
+		/*!***********************************************************************************
+		\brief Serializes the CircleCollider object to a JSON object.
+		
+		Converts the center coordinates and radius of the CircleCollider object to a JSON 
+		object for easy storage and transmission.
+
+		\return The JSON representation of the CircleCollider object.
+		*************************************************************************************/
 		nlohmann::json ToJson() const
 		{
 			nlohmann::json j;
@@ -103,7 +118,12 @@ namespace PE
 			return j;
 		}
 
-		// Deserialization
+		/*!***********************************************************************************
+		\brief Deserializes the CircleCollider object from a JSON object.
+
+		\param[in] r_j JSON object containing the values to load into the CircleCollider object.
+		\return The deserialized CircleCollider object.
+		*************************************************************************************/
 		static CircleCollider FromJson(const nlohmann::json& r_j)
 		{
 			CircleCollider circle;
