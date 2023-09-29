@@ -111,17 +111,8 @@ PE::CoreApplication::CoreApplication()
     InitializeLogger();
     InitializeAudio();
     InitializeMemoryManager();
+    InitializeSystems();
 
-
-    // Add system to list & assigning memory to them
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
-    PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
-    CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
-    InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    AddSystem(p_inputSystem);
-    AddSystem(p_physicsManager);
-    AddSystem(p_collisionManager);
-    AddSystem(p_rendererManager);
 
     // Load Textures and Animations
     std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
@@ -373,3 +364,18 @@ void PE::CoreApplication::InitializeMemoryManager()
 {
     MemoryManager::GetInstance();
 }
+
+void PE::CoreApplication::InitializeSystems()
+{
+    // Add system to list & assigning memory to them
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window };
+    PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
+    CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
+    InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(p_inputSystem);
+    AddSystem(p_physicsManager);
+    AddSystem(p_collisionManager);
+    AddSystem(p_rendererManager);
+}
+
+

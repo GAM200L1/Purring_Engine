@@ -80,6 +80,10 @@ namespace PE
 		void     InitializeLogger();
 		void InitializeAudio();
 		void InitializeMemoryManager();
+		void InitializeSystems();
+
+
+
 		// Uncomment if window is managed as a unique_ptr
 		//std::unique_ptr<Window> m_Window;
 
