@@ -14,6 +14,7 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "Logger.h"
+#include "Editor/Editor.h"
 #pragma warning(disable : 4996)
 
 // static variables decleration
@@ -77,7 +78,7 @@ void Logger::FlushLog()
 	{
 		// if write to console
 		if (m_flags & EnumLoggerFlags::WRITE_TO_CONSOLE)
-			std::cout << buf << "\n";
+			PE::Editor::GetInstance().AddLog(buf);
 		// if write to file
 		if (m_flags & EnumLoggerFlags::WRITE_TO_FILE)
 			m_outFile << buf << "\n";
