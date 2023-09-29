@@ -48,8 +48,8 @@ namespace PE {
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
-		 \brief     Implicit conversion to a std::string, used for output streams.
-		 \return    std::string - Returns the name of the event.
+		 \brief     Prints out data from the event
+		 \return    std::string - Returns the data of the event as a string
 		*************************************************************************************/
 		virtual std::string ToString() const { return GetName(); }
 
@@ -97,7 +97,7 @@ namespace PE {
 		 \param[in] T type - The type of event to listen to.
 		 \param[in] const Func& func - The callback function to be invoked when the event is dispatched.
 		*************************************************************************************/
-		void AddListener(T type, const Func& func) { m_Listerners[type].push_back(func); }				// Map type to a function
+		void AddListener(T type, const Func& func) { m_Listerners[type].push_back(func); }
 
 
 		// To be defined within engine to makesure only accessible through the engine
@@ -119,7 +119,7 @@ namespace PE {
 		}
 		// ----- Private variables ----- // 
 	private:
-		std::map<T, std::vector<Func>> m_Listerners;
+		std::map<T, std::vector<Func>> m_Listerners; // subscribed events
 	};
 
 	/*!***********************************************************************************

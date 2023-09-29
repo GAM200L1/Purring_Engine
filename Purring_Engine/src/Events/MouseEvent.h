@@ -66,7 +66,10 @@ namespace PE
 		\brief			Destructor of event
 		*************************************************************************************/
 		virtual ~MouseButtonPressedEvent() {}
-
+		/*!***********************************************************************************
+		 \brief     Prints out data from the event
+		 \return    std::string - Returns the data of the event as a string
+		*************************************************************************************/
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -92,7 +95,10 @@ namespace PE
 		\brief			Destructor of event
 		*************************************************************************************/
 		virtual ~MouseButtonReleaseEvent() {}
-
+		/*!***********************************************************************************
+		 \brief     Prints out data from the event
+		 \return    std::string - Returns the data of the event as a string
+		*************************************************************************************/
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
@@ -114,7 +120,10 @@ namespace PE
 		\brief			Destructor of event
 		*************************************************************************************/
 		virtual ~MouseScrolledEvent() {}
-
+		/*!***********************************************************************************
+		 \brief     Prints out data from the event
+		 \return    std::string - Returns the data of the event as a string
+		*************************************************************************************/
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;

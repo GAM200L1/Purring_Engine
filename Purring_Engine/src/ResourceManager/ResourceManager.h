@@ -1,19 +1,19 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     ResourceManager.cpp
+ \file     ResourceManager.h
  \date     25-08-2023
  
  \author               Liew Yeni
  \par      email:      yeni.l\@digipen.edu
- \par      code %:     55%
+ \par      code %:     25%
  \par      changes:    Original Author
 
  \co-author            Brandon Ho Jun Jie
  \par      email:      brandonjunjie.ho\@digipen.edu
- \par      code %:     40%
- \par      changes:    16-09-2023
-                       Texture loading, Shader loading
+ \par      code %:     70%
+ \par      changes:    29-09-2023
+                       Loading Textures, Audio, Font, Shader programs
  
  \co-author            Foong Jun Wei
  \par      email:      f.junwei\@digipen.edu
@@ -42,6 +42,7 @@
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/Texture.h"
 #include "AudioManager.h"
+#include "Graphics/Text.h"
 
 //class Resource
 //{
@@ -66,7 +67,7 @@ namespace PE
         std::map<std::string, std::shared_ptr<Graphics::ShaderProgram>> ShaderPrograms;
         std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;
         std::map<std::string, std::shared_ptr<AudioManager::Audio>> Sounds;
-        // Icons?
+        std::map<std::string, std::shared_ptr<Font>> Fonts;
 
         // Unloads all resources that were previously loaded
         void UnloadResources();
@@ -106,6 +107,14 @@ namespace PE
             \param[in] r_filePath File path of audio.
         *************************************************************************************/
         void LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Loads font from file and inserts into Sounds map container.
+
+            \param[in] r_key Name of font file.
+            \param[in] r_filePath File path of font.
+        *************************************************************************************/
+        void LoadFontFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.

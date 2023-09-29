@@ -64,8 +64,6 @@ namespace PE
 												PE::EventHandler::GetInstance().KeyEventDispatcher.AddListener(PE::KeyEvents::KeyPressed, std::bind(&func,arg,std::placeholders::_1));
 
 
-
-	//if engine but we not doing this yet
 #define SEND_WINDOW_EVENT(_event) EventHandler::GetInstance().WindowEventDispatcher.SendEvent(_event);
 #define SEND_MOUSE_EVENT(_event) EventHandler::GetInstance().MouseEventDispatcher.SendEvent(_event);
 #define SEND_KEY_EVENT(_event) EventHandler::GetInstance().KeyEventDispatcher.SendEvent(_event);
