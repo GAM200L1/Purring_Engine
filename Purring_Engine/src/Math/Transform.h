@@ -3,13 +3,20 @@
  \module   CSD2401-A
  \file     Transform.h
  \date     20-09-2023
-
+ 
  \author               Liew Yeni
- \par      email:      yeni.l\@digipen.edu
-
- \brief    Contains the implementation of the Transform component.
-
-
+ \par      email:      yeni.l/@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
+ 
+ \co-author            Krystal
+ \par      email:      <remove if sole author>
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
+ 
+ \brief 
+ 
+ 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
@@ -21,10 +28,12 @@ namespace PE
 {
     struct Transform
     {
+        // ----- Pubic Variables ----- //
         float width{100}, height{100};
         float orientation{}; // in radians
         vec2 position{};
         
+        // ----- Getter ----- //
         /*!***********************************************************************************
          \brief Gets the Transformation Matrix version of this Transform
 
@@ -42,7 +51,13 @@ namespace PE
             return transMat * rotMat * scaleMat;
         }
 
-        // Serialization
+        // ----- Serialization ------ //
+        
+        /*!***********************************************************************************
+         \brief 
+         
+         \return nlohmann::json 
+        *************************************************************************************/
         nlohmann::json ToJson() const
         {
             nlohmann::json j;

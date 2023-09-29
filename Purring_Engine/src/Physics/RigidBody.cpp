@@ -1,15 +1,17 @@
-/*!*****************************************************************************
-	@file       RigidBody.cpp
-	@author     Liew Yeni
-	@co-author
-	@par        DP email: yeni.l\@digipen.edu
-	@par        Course: CSD2401, Section A
-	@date       10/9/2023
-
-	@brief
-
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     RigidBody.cpp
+ \date     29-09-2023
+ 
+ \author               Liew Yeni
+ \par      email:      yeni.l/@digipen.edu.sg
+ 
+ \brief 
+ 
+ 
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
@@ -18,6 +20,9 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 namespace PE
 {
+	// ------ RigidBody Class ----- //
+	
+	// ----- Constructors/Copy Assignment ------ //
 	RigidBody::RigidBody() :
 		velocity{ vec2{ 0.f, 0.f } }, rotationVelocity{ 0.f },
 		force{ vec2{ 0.f, 0.f } }, //m_torque{ 0.f }, m_awake{ false },
@@ -60,7 +65,7 @@ namespace PE
 	void RigidBody::SetMass(float mass)
 	{
 		m_mass = mass;
-		m_inverseMass = 1.f / mass;
+		m_inverseMass = 1.f / mass; // inverse mass can only be set through mass
 	}
 
 	void RigidBody::ZeroForce()
@@ -90,6 +95,7 @@ namespace PE
 	//}
 
 	// ----- Public Methods ----- //
+
 	// Adds on to existing force, ultimately affects position
 	void RigidBody::ApplyForce(vec2 const& r_addOnForce)
 	{
@@ -108,6 +114,7 @@ namespace PE
 	//	m_torque += r_addOnTorque;
 	//}
 
+	// Adds on immediately to object's velocity for burst movement
 	void RigidBody::ApplyLinearImpulse(vec2 const& r_impulseForce)
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC || (!PhysicsManager::GetAdvanceStep() && PhysicsManager::GetStepPhysics()))

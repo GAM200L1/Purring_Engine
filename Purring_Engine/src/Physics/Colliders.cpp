@@ -1,16 +1,17 @@
-/*!*****************************************************************************
-	@file       Colliders.cpp
-	@author     Liew Yeni
-	@co-author
-	@par        DP email: yeni.l\@digipen.edu
-	@par        Course: CSD2401, Section A
-	@date       15/9/2023
-
-	@brief		This file contains definitions for functions that updates colliders,
-				constructs line segments and manifolds and resolves each manifolds collision
-
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     Colliders.cpp
+ \date     16-09-2023
+ 
+ \author               Liew Yeni
+ \par      email:      yeni.l/@digipen.edu
+ 
+ \brief 
+ 
+ 
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include "Colliders.h"
 
