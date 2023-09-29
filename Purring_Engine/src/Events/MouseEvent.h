@@ -3,7 +3,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     MouseEvent.h
- \date     8/30/2023
+ \date     30-8-2023
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu

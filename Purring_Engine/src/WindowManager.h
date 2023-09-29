@@ -6,8 +6,6 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
 
  \brief	   This file contains the implementation of the WindowManager class.
            WindowManager handles the initialization, maintenance, and cleanup
@@ -20,8 +18,8 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Graphics/GLHeaders.h"
-#include "FrameRateTargetControl.h"
-#include "InputSystem.h"
+#include "Time/FrameRateTargetControl.h"
+#include "Input/InputSystem.h"
 #include "Events/EventHandler.h"
 #include "System.h"
 

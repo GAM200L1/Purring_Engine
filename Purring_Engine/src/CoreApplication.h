@@ -38,13 +38,13 @@
 
 //tmp
 #include "WindowManager.h"
-#include "FrameRateTargetControl.h"
+#include "Time/FrameRateTargetControl.h"
 #include "Graphics/RendererManager.h"
 
 namespace PE
 {
 	// CoreApplication class definition
-	class  CoreApplication
+	class CoreApplication
 	{
 	public:
 		// Default constructor and virtual destructor
@@ -54,14 +54,28 @@ namespace PE
 		// Main application loop
 		void Run();
 
+		/*!***********************************************************************************
+		 \brief     Initializes all the systems in the CoreApplication class.
+
+		 \tparam T          This function does not use a template.
+		 \return    void    This function returns void and performs its tasks by initializing
+							each system in m_systemList.
+		*************************************************************************************/
+		void Initialize();
+
+		/*!***********************************************************************************
+		 \brief     Destroys all the systems in the CoreApplication class.
+
+		 \tparam T          This function does not use a template.
+		 \note              Memory is automatically deallocated by the Memory Manager, so the 'delete'
+							operator is not used for the systems in this function.
+		 \return    void    This function returns void and performs its tasks by destroying
+							each system in m_systemList.
+		*************************************************************************************/
+		void DestroySystems();
+
 		// Add a system to the application
 		void AddSystem(System* system);
-
-		// Initialize all systems in m_systemList
-		void InitSystems();
-
-		// Destroy all systems and release resources
-		void DestroySystems();
 
 		// Add a rendering layer to the application
 		void AddLayer(Layer* layer);
@@ -74,6 +88,13 @@ namespace PE
 		//inline Window& GetWindow() { return *m_Window; }
 
 	private:
+
+		void InitializeVariables();
+		void RegisterComponents();
+		void InitializeLogger();
+		void InitializeAudio();
+		void InitializeMemoryManager();
+		void InitializeSystems();
 
 		// Uncomment if window is managed as a unique_ptr
 		//std::unique_ptr<Window> m_Window;

@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     RendererManager.cpp
- \creation date:       20-08-2023
+ \creation date:       30-08-2023
  \last updated:        16-09-2023
  \author:              Krystal YAMIN
 

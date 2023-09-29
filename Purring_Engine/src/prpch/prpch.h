@@ -1,3 +1,16 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     prpch.cpp
+ \date     29-09-2023
+
+ \author               Brandon HO Jun Jie
+ \par      email:      brandonjunjie.ho@digipen.edu
+
+ \brief	   This file contains include headers that will be used in the project.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #pragma once
 
 #include <Windows.h>

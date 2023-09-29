@@ -6,8 +6,6 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
 
  \brief	   This file features the AudioManager class that encapsulates the FMOD library API
            for audio operations. It initializes the FMOD system and controls its lifecycle,

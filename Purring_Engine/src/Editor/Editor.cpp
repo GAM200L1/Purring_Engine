@@ -1,9 +1,8 @@
 /*!***********************************************************************************
-
  \project  Purring Engine
  \module   CSD2401-A
  \file     Editor.cpp
- \date     8/30/2023
+ \date     30-08-2023
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
@@ -16,8 +15,8 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "Editor.h"
-#include "MemoryManager.h"
-#include "AudioManager.h"
+#include "Memory/MemoryManager.h"
+#include "AudioManager/AudioManager.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
 #include <Windows.h>

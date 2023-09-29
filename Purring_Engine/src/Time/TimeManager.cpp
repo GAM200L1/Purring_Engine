@@ -12,6 +12,9 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
+
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "TimeManager.h"
 
@@ -22,7 +25,6 @@ namespace PE
 		// might need to init the other variables
 		m_frameTime = 1.f / 60.f; // default fps
 	}
-
 	void TimeManager::SystemStartFrame()
 	{
 		m_systemStartFrame = std::chrono::high_resolution_clock::now();
@@ -37,10 +39,6 @@ namespace PE
 		m_systemFrameTime[system] = m_durationInSeconds.count();
 	}
 
-	/// <summary>
-	/// This function gets the time for the start of the frame and also updates delta time between the previous frame
-	/// and updates total runtime of engine
-	/// </summary>
 	void TimeManager::StartFrame()
 	{
 		// get current time
@@ -56,9 +54,6 @@ namespace PE
 		m_engineRunTime = m_durationInSeconds.count();
 	}
 
-	/// <summary>
-	/// This function calculates the time taken for the whole frame to complete
-	/// </summary>
 	void TimeManager::EndFrame()
 	{
 		// get current time
