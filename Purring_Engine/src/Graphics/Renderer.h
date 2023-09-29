@@ -23,6 +23,8 @@
 #include <string>   // string
 
 #include "Texture.h"
+#include "Math/Transform.h"
+#include "Data/json.hpp"
 
 namespace PE
 {
@@ -118,6 +120,27 @@ namespace PE
              \param[in] r_newKey Texture key to set the texture key of this renderer to.
             *************************************************************************************/
             void Renderer::SetTextureKey(std::string const& r_newKey);
+
+            // Serialization
+            nlohmann::json ToJson() const
+            {
+                nlohmann::json j;
+                j["TextureKey"] = GetTextureKey();
+                j["Color"]["r"] = GetColor().r;
+                j["Color"]["g"] = GetColor().g;
+                j["Color"]["b"] = GetColor().b;
+                j["Color"]["a"] = GetColor().a;
+                return j;
+            }
+
+            // Deserialization
+            static Renderer FromJson(const nlohmann::json& j)
+            {
+                Renderer r;
+                r.SetTextureKey(j["TextureKey"]);
+                r.SetColor(j["Color"]["r"], j["Color"]["g"], j["Color"]["b"], j["Color"]["a"]);
+                return r;
+            }
 
         private:
             bool m_enabled{ true }; // Set to true to render the object, false not to.

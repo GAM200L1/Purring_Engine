@@ -2,182 +2,265 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     AudioManager.cpp
- \date     16-09-2023
+ \date     10-09-2023
 
- \author               You Yang ONG
+ \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     <remove if sole author>
+ \par      changes:    <remove if sole author>
 
- \brief    This file contains the AudioManager class, which manages
-           audio playback and includes FMOD as the underlying audio system.
+ \brief	   This file features the AudioManager class that encapsulates the FMOD library API
+           for audio operations. It initializes the FMOD system and controls its lifecycle,
+           provides a series of methods for sound playback, and interfaces seamlessly with
+           the ResourceManager to manage audio assets.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
 #include "prpch.h"
 #include "AudioManager.h"
-#include <iostream>
+#include "ResourceManager/ResourceManager.h"
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
-//single static instance of imguiwindow 
-std::unique_ptr<AudioManager> AudioManager::s_Instance = nullptr;
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Default constructor for the AudioManager class.
-/// Initializes member pointers to nullptr, ensuring they are in a safe state.
-/// FMOD system, sound, and channel resources will be allocated later in Init().
-/// </summary>
------------------------------------------------------------------------------ */
-AudioManager::AudioManager()
-    : system(nullptr),
-    sound1(nullptr),
-    sound2(nullptr),
-    channel1(nullptr),
-    channel2(nullptr)
+namespace PE
 {
-}
+    /*!***********************************************************************************
+    \brief     Constructor for the AudioManager class, initializes FMOD system to nullptr.
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Default constructor for the AudioManager class.
-/// Initializes member pointers to nullptr, ensuring they are in a safe state.
-/// FMOD system, sound, and channel resources will be allocated later in Init().
-/// </summary>
------------------------------------------------------------------------------ */
-AudioManager::~AudioManager()
-{
-    if (sound1) sound1->release();
-    if (sound2) sound2->release();
-    if (system) system->release();
-}
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Initializes the FMOD audio system and sound resources.
-/// This method will create the FMOD System object, initialize it,
-/// and also create Sound objects for sound1 and sound2.
-/// </summary>
-/// <returns>
-/// Returns true if all initializations are successful, otherwise returns false.
-/// </returns>
------------------------------------------------------------------------------ */
-bool AudioManager::Init()
-{
-    // Create the FMOD System object
-    FMOD_RESULT result = FMOD::System_Create(&system);
-
-    // Check if FMOD System object was successfully created
-    if (result != FMOD_OK)
+    \tparam T          This function does not use a template.
+    \return void       Constructor does not return a value.
+    *************************************************************************************/
+    AudioManager::AudioManager()
+        : m_system(nullptr)  // Initialize FMOD system to nullptr
     {
-        std::cout << "FMOD System_Create failed: " << FMOD_ErrorString(result) << "\n";
-        return false;                           // Return false if init failed
+        // Constructor.
+        // Additional code for future..
     }
 
-    // Initialize the FMOD System object with 512 channels
-    result = system->init(512, FMOD_INIT_NORMAL, 0);
 
-    // Check if FMOD System was successfully initialized
-    if (result != FMOD_OK)
+
+    /*!***********************************************************************************
+     \brief     Destructor for the AudioManager class, releases the FMOD system if it exists.
+
+     \tparam T          This function does not use a template.
+     \return void       Destructor does not return a value.
+    *************************************************************************************/
+    AudioManager::~AudioManager()
     {
-        std::cout << "FMOD init failed: " << FMOD_ErrorString(result) << "\n";
-        return false;                           // Return false if init failed
+        if (m_system)
+            m_system->release();
     }
 
-    // Create the sound object for sound1
-    result = system->createSound("../Assets/Audio/sound1.wav", FMOD_DEFAULT, 0, &sound1);
 
-    // Check if sound1 was successfully created
-    if (result != FMOD_OK)
+
+    /*!***********************************************************************************
+    \brief     Initializes the AudioManager class by creating an FMOD system and setting it up.
+
+    \tparam T          This function does not use a template.
+    \return bool       Returns true if FMOD system initialization is successful, false otherwise.
+    *************************************************************************************/
+    bool AudioManager::Init()
     {
-        std::cout << "FMOD createSound failed for sound1: " << FMOD_ErrorString(result) << "\n";
-        return false;                           // Return false if init failed
+        FMOD_RESULT result = FMOD::System_Create(&m_system);
+        if (result != FMOD_OK)
+        {
+            std::cout << "FMOD System_Create failed: " << FMOD_ErrorString(result) << "\n";
+            return false;
+        }
+
+        result = m_system->init(512, FMOD_INIT_NORMAL, nullptr);
+        if (result != FMOD_OK)
+        {
+            std::cout << "FMOD init failed: " << FMOD_ErrorString(result) << "\n";
+            return false;
+        }
+
+        return true;
     }
 
-    // Create the sound object for sound2
-    result = system->createSound("../Assets/Audio/sound2.wav", FMOD_DEFAULT, 0, &sound2);
 
-    // Check if sound2 was successfully created
-    if (result != FMOD_OK)
+
+    /*!***********************************************************************************
+     \brief     Updates the FMOD system, usually called once per frame.
+
+     \tparam T          This function does not use a template.
+     \return void       Does not return a value.
+    *************************************************************************************/
+    void AudioManager::Update()
     {
-        std::cout << "FMOD createSound failed for sound2: " << FMOD_ErrorString(result) << "\n";
-        return false;                           // Return false if init failed
+        m_system->update();
     }
 
-    return true;
-}
 
 
+/*                                                                                                    Audio Controls
+--------------------------------------------------------------------------------------------------------------------- */
+    /*!***********************************************************************************
+    \brief     Loads a sound from a specified path into the FMOD system.
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Updates the FMOD audio system.
-/// This method calles once per frame keeping the FMOD system updated.
-/// </summary>
------------------------------------------------------------------------------ */
-void AudioManager::Update()
-{
-    system->update();
-}
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Plays a sound specified by the file path.
-/// The method maps the given filePath to a preloaded FMOD::Sound object and plays it.
-/// </summary>
-/// <param name="filePath">
-/// The file path of the sound to be played.
-/// </param>
------------------------------------------------------------------------------ */
-void AudioManager::PlaySound(const char* filePath)
-{
-    FMOD::Sound* sound = nullptr;
-
-    if (strcmp(filePath, "../Assets/Audio/sound1.wav") == 0) {
-        sound = sound1;
-    }
-    else if (strcmp(filePath, "../Assets/Audio/sound2.wav") == 0) {
-        sound = sound2;
+    \tparam T          This function does not use a template.
+    \param[in] path    The path to the sound file to be loaded.
+    \param[in] system  Pointer to the FMOD::System that will manage the sound.
+    \return bool       Returns true if the sound was loaded successfully, otherwise false.
+    *************************************************************************************/
+    bool AudioManager::Audio::LoadSound(const std::string& path, FMOD::System* system)
+    {
+        FMOD_RESULT result = system->createSound(path.c_str(), FMOD_DEFAULT, nullptr, &m_sound);
+        return (result == FMOD_OK);
     }
 
-    if (sound) {
-        FMOD_RESULT result = system->playSound(sound, 0, false, &channel1);
-        if (result != FMOD_OK) {
-            std::cout << "Failed to play sound: " << FMOD_ErrorString(result) << "\n";
+
+
+    /*!***********************************************************************************
+     \brief     Plays a sound associated with a given identifier string.
+
+     \tparam T          This function does not use a template.
+     \param[in] id      The identifier string associated with the sound to be played.
+     \return void       Does not return a value.
+    *************************************************************************************/
+    void AudioManager::PlaySound(const std::string& id)
+    {
+        auto it = ResourceManager::GetInstance().Sounds.find(id);
+        if (it != ResourceManager::GetInstance().Sounds.end())
+        {
+            FMOD::Channel* channel = it->second->GetChannel();
+            if (channel)
+            {
+                bool isPlaying = false;
+                channel->isPlaying(&isPlaying);
+                if (isPlaying)
+                {
+                    return;  // Exit the function as sound is already playing
+                }
+            }
+
+            FMOD_RESULT result = m_system->playSound(it->second->GetSound(), nullptr, false, &channel);
+            if (result == FMOD_OK)
+            {
+                it->second->SetChannel(channel);
+            }
+            else
+            {
+                std::cout << "Failed to play sound: " << FMOD_ErrorString(result) << "\n";
+            }
+        }
+        else
+        {
+            std::cout << "Sound not found for id: " << id << "\n";
         }
     }
-    else {
-        std::cout << "Sound not found for filePath: " << filePath << "\n";
+
+
+
+    /*!***********************************************************************************
+     \brief     Sets the volume for a sound associated with a given identifier string.
+
+     \tparam T          This function does not use a template.
+     \param[in] id      The identifier string associated with the sound for which the volume will be set.
+     \param[in] volume  The volume level to set for the sound, typically between 0.0 (mute) and 1.0 (full volume).
+     \return void       Does not return a value.
+    *************************************************************************************/
+    void AudioManager::SetVolume(const std::string& id, float volume)
+    {
+        auto it = ResourceManager::GetInstance().Sounds.find(id);
+        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        {
+            it->second->GetChannel()->setVolume(volume);
+        }
     }
-}
 
 
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Stops any sound currently being played on channel1 and channel2.
-/// This method checks if the channels are initialized and then stops the sound playback.
-/// </summary>
------------------------------------------------------------------------------ */
-void AudioManager::StopSound()
-{
-    if (channel1) channel1->stop();
-    if (channel2) channel2->stop();
-}
+    /*!***********************************************************************************
+     \brief     Sets the global volume for all sounds currently managed by the ResourceManager.
 
-AudioManager* AudioManager::GetInstance()
-{
-    //may need to make another function to manually allocate memory for this 
-    if (!s_Instance)
-        s_Instance = std::make_unique<AudioManager>();
+     \tparam T          This function does not use a template.
+     \param[in] volume  The volume level to set for all sounds, typically between 0.0 (mute) and 1.0 (full volume).
+     \return void       Does not return a value.
+    *************************************************************************************/
+    void AudioManager::SetGlobalVolume(float volume)
+    {
+        for (auto& pair : ResourceManager::GetInstance().Sounds)
+        {
+            FMOD::Channel* channel = pair.second->GetChannel();
+            if (channel)
+            {
+                channel->setVolume(volume);
+            }
+        }
+    }
 
-    return s_Instance.get();
+
+
+    /*!***********************************************************************************
+     \brief     Pauses a sound associated with a given identifier string if it is currently playing.
+
+     \tparam T          This function does not use a template.
+     \param[in] id      The identifier string associated with the sound to be paused.
+     \return void       Does not return a value.
+    *************************************************************************************/
+    void AudioManager::PauseSound(const std::string& id)
+    {
+        auto it = ResourceManager::GetInstance().Sounds.find(id);
+        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        {
+            it->second->GetChannel()->setPaused(true);
+        }
+    }
+
+
+
+    /*!***********************************************************************************
+     \brief     Resumes a paused sound associated with a given identifier string if it is currently paused.
+
+     \tparam T          This function does not use a template.
+     \param[in] id      The identifier string associated with the sound to be resumed.
+     \return void       Does not return a value.
+    *************************************************************************************/
+    void AudioManager::ResumeSound(const std::string& id)
+    {
+        auto it = ResourceManager::GetInstance().Sounds.find(id);
+        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        {
+            it->second->GetChannel()->setPaused(false);
+        }
+    }
+
+
+
+    /*!***********************************************************************************
+     \brief     Stops a sound associated with a given identifier string if it is currently playing.
+
+     \tparam T          This function does not use a template.
+     \param[in] id      The identifier string associated with the sound to be stopped.
+     \return void       Does not return a value.
+    *************************************************************************************/
+    void AudioManager::StopSound(const std::string& id)
+    {
+        auto it = ResourceManager::GetInstance().Sounds.find(id);
+        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        {
+            it->second->GetChannel()->stop();
+        }
+    }
+
+
+    /*!***********************************************************************************
+     \brief     Stops all sounds that are currently being managed by the ResourceManager.
+
+     \tparam T          This function does not use a template.
+     \return void       Does not return a value.
+    *************************************************************************************/
+    void AudioManager::StopAllSounds()
+    {
+        for (auto& pair : ResourceManager::GetInstance().Sounds)
+        {
+            FMOD::Channel* channel = pair.second->GetChannel();
+            if (channel)
+            {
+                channel->stop();
+            }
+        }
+    }
 }

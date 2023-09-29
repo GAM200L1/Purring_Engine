@@ -1,116 +1,109 @@
-#ifndef SERIALIZATION_MANAGER_H
-#define SERIALIZATION_MANAGER_H
-#include <unordered_map>
-#include <utility>
-#include <string>
+#pragma once
+#include "prpch.h"
 #include "json.hpp"
-#include <any>
-#include <unordered_map>
 #include "ECS/Components.h"
+#include "ECS/Entity.h"
+#include "Math/Transform.h"
+#include "Physics/RigidBody.h"
+#include "Physics/Colliders.h"
+#include "Graphics/Renderer.h"
 
-struct PlayerStats
+struct StructPlayerStats
 {
-    int health;
-    int level;
-    float experience;
-    std::string playerName;
+    int m_health;
+    int m_level;
+    float m_experience;
+    std::string m_playerName;
 
-    void from_json(const nlohmann::json& j, int& entityId, class SerializationManager& sm);
-    nlohmann::json to_json(int entityId, class SerializationManager& sm) const;
+    //void FromJson(const nlohmann::json& j, int& r_entityId, class SerializationManager& r_sm);
+    //nlohmann::json ToJson(int r_entityId, class SerializationManager& r_sm) const;
 };
 
-// Structure to represent an Entity with variable names and data
-struct Entity
+struct StructEntity
 {
-    std::string name;                                   // Entity name
-    std::unordered_map<std::string, std::any> data;     // Variable names and their data
+    std::string m_name;                                   // Entity name
+    std::unordered_map<std::string, std::any> m_data;     // Variable names and their data
 
     // Additional data members
-    int id;
-    int someInt;
-    float someFloat;
-    double someDouble;
-    char someChar;
-    bool someBool;
-    std::string someString;
+    int m_id;
+    int m_someInt;
+    float m_someFloat;
+    double m_someDouble;
+    char m_someChar;
+    bool m_someBool;
+    std::string m_someString;
 };
 
-// Class for managing serialization and deserialization
 class SerializationManager
 {
+    // ----- Public Methods ----- //
 public:
-    // @JWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW
-    // A map to store the mapping between entity IDs and their corresponding names
-    std::unordered_map<int, std::string> entityIdToNameMap;
+    /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object.
+    *************************************************************************************/
+    nlohmann::json SerializeEntity(int entityId);
 
-    // Method to set the name associated with an entity ID
-    void setEntityName(int entityId, const std::string& name)
-    {
-        entityIdToNameMap[entityId] = name;
-    }
+    /*!***********************************************************************************
+     \brief Deserialize a JSON object to create an entity, returning its ID.
+    *************************************************************************************/
+    size_t DeserializeEntity(const nlohmann::json& r_j);
 
-    // Method to retrieve the name associated with an entity ID
-    std::string getEntityName(int entityId)
-    {
-        if (entityIdToNameMap.find(entityId) != entityIdToNameMap.end())
-        {
-            return entityIdToNameMap[entityId];
-        }
-        return "";
-    }
+    /*!***********************************************************************************
+     \brief Save the serialized entity to a file.
+    *************************************************************************************/
+    void SaveToFile(const std::string& r_filename, int entityId);
 
-
-
-
-    // @JW I comment this out as I was test setEntityName and getEntityName functions above**
-    //// New function to serialize a PlayerStats object.
-    //nlohmann::json serializePlayerStats(const PlayerStats& stats) {
-    //    return stats.to_json();
-    //}
-
-    //// New function to deserialize a PlayerStats object.
-    //PlayerStats deserializePlayerStats(const nlohmann::json& j) {
-    //    PlayerStats stats;
-    //    stats.from_json(j);
-    //    return stats;
-    //}
+    /*!***********************************************************************************
+     \brief Load an entity from a serialized file, returning its ID.
+    *************************************************************************************/
+    size_t LoadFromFile(const std::string& r_filename);
 
 
 
-
-    // Set an entity with a given ID
-    void setEntity(int id, const Entity& entity)
-    {
-        entities[id] = entity;
-    }
-
-    // Get an entity by its ID
-    Entity getEntity(int id)
-    {
-        return entities[id];
-    }
-
-    // Set the name of the struct for serialization
-    void setStructName(const std::string& name)
-    {
-        structName = name;
-    }
-
-    // Serialize an entity into JSON format
-    nlohmann::json serializeEntity(int entityID);
-
-    // Deserialize JSON into an Entity and an ID
-    std::pair<Entity, int> deserializeEntity(const nlohmann::json& j);
-
-    // Save a serialized entity to a file
-    void saveToFile(const std::string& filename, int entityID);
-
-    // Load an entity from a file and return it with its ID
-    std::pair<Entity, int> loadFromFile(const std::string& filename);
-
+    // ----- Private Methods ----- //
 private:
-    std::unordered_map<int, Entity> entities; // Store entities with integer IDs
-    std::string structName = "Entity"; // Default struct name for serialization
-};
+    /*!***********************************************************************************
+     \brief Load the serialization functions for different components.
+    *************************************************************************************/
+    void LoadLoaders();
 
-#endif // SERIALIZATION_MANAGER_H
+    /*!***********************************************************************************
+     \brief Load the RigidBody component from JSON.
+    *************************************************************************************/
+    bool LoadRigidBody(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Collider component from JSON.
+    *************************************************************************************/
+    bool LoadCollider(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Transform component from JSON.
+    *************************************************************************************/
+    bool LoadTransform(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Renderer component from JSON.
+    *************************************************************************************/
+    bool LoadRenderer(const size_t& r_id, const nlohmann::json& r_json);
+
+
+
+    // ----- Private Methods ----- //
+private:
+    /*!***********************************************************************************
+     \brief Map of entities identified by integer IDs.
+    *************************************************************************************/
+    std::unordered_map<int, StructEntity> m_entities;              // Store entities with integer IDs
+
+    /*!***********************************************************************************
+     \brief Default struct name used for serialization.
+    *************************************************************************************/
+    std::string m_structName = "Entity";                           // Default struct name for serialization
+
+    /*!***********************************************************************************
+     \brief Function pointer map for initializing components.
+    *************************************************************************************/
+    typedef bool(SerializationManager::* FnptrVoidptrLoad)(const size_t& r_id, const nlohmann::json& r_json);
+    std::map<std::string, FnptrVoidptrLoad> m_initializeComponent;
+};

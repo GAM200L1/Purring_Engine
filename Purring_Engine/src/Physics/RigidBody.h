@@ -14,13 +14,13 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 
 #include "Math/MathCustom.h"
 #include "ECS/Components.h"
-
+#include "Data/json.hpp"
 
 enum class EnumRigidBodyType
 {
 	STATIC = 0, //! Zero mass, zero velocity, not affected by force but position can be set -> during simulation, it won't move and it wont collide with anything
 	DYNAMIC,	//! Has mass, velocity can be set, affected by forces
-	KINEMATIC	//! Zero mass, velocity can be set, not affected by forces, can move by setting velocity
+	//KINEMATIC	//! Zero mass, velocity can be set, not affected by forces, can move by setting velocity
 };
 
 namespace PE
@@ -32,6 +32,27 @@ namespace PE
 	class RigidBody
 	{
 	public:
+
+		// Serialization
+		nlohmann::json ToJson() const
+		{
+			nlohmann::json j;
+			j["type"] = static_cast<int>(GetType()); // right now its an enum
+			j["mass"] = m_mass;
+
+			return j;
+		}
+
+		// Deserialization
+		static RigidBody FromJson(const nlohmann::json& j)
+		{
+			RigidBody rb;
+			rb.SetType(static_cast<EnumRigidBodyType>(j["type"].get<int>())); // right now its an enum
+			rb.m_mass = j["mass"];
+
+			return rb;
+		}
+
 		// ----- Public Variables ----- //
 
 		vec2 m_prevPosition{};

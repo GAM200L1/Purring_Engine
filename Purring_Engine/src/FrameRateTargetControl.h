@@ -22,14 +22,38 @@
 
 namespace PE
 {
+    /*!***********************************************************************************
+     \brief     FrameRateTargetControl class for managing target frame rates.
+    *************************************************************************************/
     class FrameRateTargetControl
     {
     public:
+        /*!***********************************************************************************
+         \brief     Constructor for initializing frame rate target variables.
+        *************************************************************************************/
         FrameRateTargetControl();
 
+        /*!***********************************************************************************
+         \brief     Set the target frames per second.
+         \param     fps The desired FPS.
+        *************************************************************************************/
         void SetTargetFPS(unsigned int fps);
+
+        /*!***********************************************************************************
+         \brief     Ends the current frame and updates FPS counter.
+        *************************************************************************************/
         void EndFrame();
+        
+        /*!***********************************************************************************
+         \brief     Gets the current frames per second.
+         \return    double Current FPS.
+        *************************************************************************************/
         double GetFPS() const;
+
+        /*!***********************************************************************************
+         \brief     Update the target FPS based on a key input.
+         \param     key The input key.
+        *************************************************************************************/
         void UpdateTargetFPSBasedOnKey(int key);
 
     private:

@@ -1,0 +1,20 @@
+{
+    "Entity": {
+        "components": {
+            "RigidBody": {
+                "mass": 10.0,
+                "type": 1
+            },
+            "Transform": {
+                "height": 100.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 100.0,
+                    "y": 100.0
+                },
+                "width": 100.0
+            }
+        },
+        "name": ""
+    }
+}

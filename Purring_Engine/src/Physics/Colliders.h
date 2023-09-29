@@ -16,7 +16,8 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 #include "Math/Transform.h"
 #include "RigidBody.h"
 #include <variant>
-
+#include "Data/json.hpp"
+#include <set>
 
 namespace PE
 {
@@ -24,11 +25,37 @@ namespace PE
 	struct AABBCollider
 	{
 		// ----- Public Variables ----- //
-		//vec2 offsetFromObj{ 0.f, 0.f };
+		vec2 positionOffset{ 0.f, 0.f };
+		vec2 scaleOffset{ 1.f, 1.f };
 		vec2 center{};
 		vec2 min{};
 		vec2 max{};
 		vec2 scale{};
+
+
+		// ----- Public Methods ----- //
+		// For Future -hans
+		// Serialization
+		nlohmann::json ToJson() const
+		{
+			nlohmann::json j;
+			j["min"]["x"] = min.x;
+			j["min"]["y"] = min.y;
+			j["max"]["x"] = max.x;
+			j["max"]["y"] = max.y;
+			return j;
+		}
+
+		// Deserialization
+		static AABBCollider FromJson(const nlohmann::json& j)
+		{
+			AABBCollider aabb;
+			aabb.min.x = j["min"]["x"];
+			aabb.min.y = j["min"]["y"];
+			aabb.max.x = j["max"]["x"];
+			aabb.max.y = j["max"]["y"];
+			return aabb;
+		}
 	};
 
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale);
@@ -36,14 +63,77 @@ namespace PE
 	struct CircleCollider
 	{
 		// ----- Public Variables ----- //
+		vec2 positionOffset{ 0.f, 0.f };
+		float scaleOffset{ 1.f };
 		vec2 center{};
 		float radius{};
+
+
+		// ----- Public Methods ----- //
+		// For Future -hans
+		// Serialization
+		nlohmann::json ToJson() const
+		{
+			nlohmann::json j;
+			j["center"]["x"] = center.x;
+			j["center"]["y"] = center.y;
+			j["radius"] = radius;
+			return j;
+		}
+
+		// Deserialization
+		static CircleCollider FromJson(const nlohmann::json& j)
+		{
+			CircleCollider circle;
+			circle.center.x = j["center"]["x"];
+			circle.center.y = j["center"]["y"];
+			circle.radius = j["radius"];
+			return circle;
+		}
+
 	};
+
+	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
 
 	struct Collider
 	{
 		std::variant<AABBCollider, CircleCollider> colliderVariant;
 		std::set<size_t> objectsCollided;
+
+
+		// ----- Public Methods ----- //
+		// Serialization
+		nlohmann::json ToJson() const
+		{
+			nlohmann::json j;
+			if (std::holds_alternative<AABBCollider>(colliderVariant))
+			{
+				j["type"] = "AABBCollider";
+				//j["data"] = std::get<AABBCollider>(colliderVariant).ToJson();			// for future -hans
+			}
+			else if (std::holds_alternative<CircleCollider>(colliderVariant))
+			{
+				j["type"] = "CircleCollider";
+				//j["data"] = std::get<CircleCollider>(colliderVariant).ToJson();		// for future -hans
+			}
+			return j;
+		}
+
+		// Deserialization
+		static Collider FromJson(const nlohmann::json& j)
+		{
+			Collider collider;
+			std::string type = j["type"];
+			if (type == "AABBCollider")
+			{
+				collider.colliderVariant = AABBCollider::FromJson(j["data"]);
+			}
+			else if (type == "CircleCollider")
+			{
+				collider.colliderVariant = CircleCollider::FromJson(j["data"]);
+			}
+			return collider;
+		}
 		bool isTrigger{ false };
 	};
 
@@ -84,6 +174,4 @@ namespace PE
 		void ResolveVelocity();
 		void ResolvePosition();
 	};
-
-	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
 }

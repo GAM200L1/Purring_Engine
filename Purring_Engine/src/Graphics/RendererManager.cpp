@@ -14,6 +14,8 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
 #include <glm/gtc/constants.hpp>    // pi()
@@ -34,8 +36,19 @@
 // Physics and collision
 #include "Physics/Colliders.h"
 
+// text
+#include "Text.h"
+#include "Time/TimeManager.h"
+
+// Animation
+#include "Animation/Animation.h"
+
 extern Logger engine_logger;
 
+
+// temp animation manager
+PE::AnimationManager animationManager;
+int idleAnimation, walkingAnimation;
 
 namespace PE
 {
@@ -92,6 +105,27 @@ namespace PE
             m_isTextured.reserve(3000);
             m_modelToWorldMatrices.reserve(3000);
             m_colors.reserve(3000);
+
+            // Create Animation
+            idleAnimation = animationManager.CreateAnimation();
+            walkingAnimation = animationManager.CreateAnimation();
+
+            // animation 1
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim1", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim2", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim3", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim4", 0.1f);
+            animationManager.AddFrameToAnimation(idleAnimation, "catAnim5", 0.1f);
+
+            // animation 2
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
+            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
+
+            // Load a font
+            ResourceManager::GetInstance().LoadShadersFromFile("text", "../Shaders/Text.vert", "../Shaders/Text.frag");
+            m_font.Init(ResourceManager::GetInstance().ShaderPrograms["text"]);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -173,6 +207,20 @@ namespace PE
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
 
+            // Update Animation here
+            std::string currentTextureKey;
+            if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x == 0.f &&
+                EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y == 0.f)
+            {
+                currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
+            }
+            else
+            {
+                currentTextureKey = animationManager.UpdateAnimation(walkingAnimation, deltaTime);
+            }
+            
+            EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
+
             DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
 
             if (Editor::GetInstance().IsRenderingDebug()) 
@@ -181,6 +229,15 @@ namespace PE
             }
 
 
+            // Render Text
+            // text object 1
+            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+
+           // text object 2
+            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+
+            // Unbind the RBO for rendering to the ImGui window
+            m_imguiFrameBuffer.Unbind();
             if (renderInEditor)
             {
                 // Unbind the RBO for rendering to the ImGui window
@@ -283,10 +340,10 @@ namespace PE
             for (const EntityID& id : SceneView<Renderer>())
             {
                 Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
-
+                
                 // Skip drawing this object is the renderer is not enabled
                 if (!renderer.GetEnabled()) { continue; }
-
+                
                 const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 // Attempt to retrieve and bind the texture
@@ -472,11 +529,11 @@ namespace PE
             // Attempt to retrieve and bind the texture
             std::shared_ptr<Graphics::Texture> p_texture{};
 
-            if (r_renderer.GetTextureKey().empty())
+            if (r_renderer.GetTextureKey().empty()) 
             {
                 r_shaderProgram.SetUniform("uIsTextured", false);
             }
-            else
+            else 
             {
                 auto textureIterator{ ResourceManager::GetInstance().Textures.find(r_renderer.GetTextureKey()) };
 
@@ -487,14 +544,13 @@ namespace PE
                     engine_logger.SetTime();
                     engine_logger.AddLog(false, "Texture " + r_renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
 
-
                     // Remove the texture and set the object to neon pink
                     r_renderer.SetTextureKey("");
                     r_renderer.SetColor(1.f, 0.f, 1.f, 1.f);
 
                     r_shaderProgram.SetUniform("uIsTextured", false);
                 }
-                else
+                else 
                 {
                     p_texture = textureIterator->second;
                     unsigned int textureUnit{ 0 };
@@ -509,6 +565,7 @@ namespace PE
 
             // Pass the color of the quad as a uniform variable
             r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
+
 
             glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
                 GL_UNSIGNED_SHORT, NULL);

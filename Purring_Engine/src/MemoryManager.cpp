@@ -51,7 +51,7 @@ namespace PE
 			return p_newptr;
 		}
 		catch (int i) {
-			//sending error to logs
+			i; //stop unreference
 			std::string ss("memory cannot be allocated to ");
 			ss += name;
 			Editor::GetInstance().AddErrorLog(ss);

@@ -141,13 +141,15 @@ project "Purring_Engine"
         "%{IncludeDir.glm}",
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.GLEW}",
-        "%{IncludeDir.FMOD}"
+        "%{IncludeDir.FMOD}",
+        "vendor/freetype/include"
     }
 
     libdirs
     {
         "vendor/GLEW/lib/Release/x64",
-        "vendor/FMOD/core/lib/x64"
+        "vendor/FMOD/core/lib/x64",
+        "vendor/freetype/libs"
     }
 
     links
@@ -155,9 +157,11 @@ project "Purring_Engine"
         "GLFW",
         "glew32s",
         "ImGui",
-        "opengl32.lib",  -- not sure if needed
-        "fmod_vc",
+        "opengl32",  -- not sure if needed
+        "fmod_vc"
     }
+
+    linkoptions { "/ignore:4006" }
 
     filter "system:windows"
         systemversion "latest"
@@ -205,13 +209,16 @@ project "Application"
 
     libdirs
     {
-
+        "vendor/freetype/libs"
     }
 
     links
     {
-        "Purring_Engine"
+        "Purring_Engine",
+        "freetype"
     }
+    
+    linkoptions { "/ignore:4006", "/ignore:4098", "/ignore:4099"}
 
     postbuildcommands
     {
