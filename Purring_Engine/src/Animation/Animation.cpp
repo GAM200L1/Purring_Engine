@@ -1,3 +1,22 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     Animation.cpp
+ \date     25-09-2023
+
+ \author               Brandon HO Jun Jie
+ \par      email:      brandonjunjie.ho@digipen.edu
+
+ \brief	   This file contains the implementation of the Animation and AnimationManager 
+           classes. Animation handles the logic for updating and maintaining individual 
+           animation frames, while AnimationManager manages multiple Animation objects,
+           offering an interface for creating, updating, and adding frames to animations.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
+
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "Animation.h"
 
@@ -5,7 +24,7 @@ namespace PE
 {
 	Animation::Animation() : m_currentFrameIndex{ 0 }, m_elapsedTime{ 0.0f }
 	{
-
+	
 	}
 
 	void Animation::AddFrame(std::string textureKey, float duration)
@@ -26,7 +45,6 @@ namespace PE
 		return m_animationFrames[m_currentFrameIndex].textureKey;		
 	}
 
-	// Animation Manager
 	int AnimationManager::CreateAnimation()
 	{
 		m_animations.emplace_back(Animation());

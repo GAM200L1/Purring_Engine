@@ -1,3 +1,23 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     SerializationManager.cpp
+ \date     25-09-2023
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+
+ \brief	   This file contains the implementation of the SerializationManager class.
+           The SerializationManager is responsible for serializing and deserializing entities
+           to and from JSON format. It offers an interface for saving serialized entities to files
+           and loading them back. The manager also handles the initialization of various component
+           types during the deserialization process.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
+
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "SerializationManager.h"
 #include "ECS/EntityFactory.h"

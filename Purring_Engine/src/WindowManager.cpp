@@ -6,8 +6,6 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
 
  \brief	   This file contains the implementation of the WindowManager class.
 		   WindowManager handles the initialization, maintenance, and cleanup

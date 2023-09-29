@@ -9,7 +9,7 @@
  \par      code %:     95%
  
  \co-author            Hans Ong You Yang
- \par      email:      <remove if sole author>
+ \par      email:      youyang.o/@digipen.edu
  \par      code %:     5%
  \par      changes:    Added Serialization and Deserialization functions for RigidBody Component
  

@@ -4,7 +4,7 @@
 	@co-author
 	@par        DP email: yeni.l\@digipen.edu
 	@par        Course: CSD2401, Section A
-	@date       15/9/2023
+	@date       15-09-2023
 
 	@brief		This file contains struct implementation for each type of collider,
 				line segment, manifolds, and declaration of each collider's update functions

@@ -22,7 +22,6 @@ namespace PE
 {
 	// The pointer to the current instance
 
-	
 	EntityFactory::EntityFactory() : p_entityManager(&EntityManager::GetInstance())
 	{ 
 		LoadComponents();

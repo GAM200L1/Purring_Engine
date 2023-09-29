@@ -26,32 +26,35 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
-// imgui
+// ImGui Headers
 #include "Editor/Editor.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-// graphics
+// Graphics Headers
 #include "Graphics/GLHeaders.h"
+#include "Graphics/Renderer.h"
 
+// Core Functionality
 #include "CoreApplication.h"
 #include "WindowManager.h"
+
+// Logging and Memory
 #include "Logging/Logger.h"
 #include "MemoryManager.h"
 
-// Resource manager
+// Resource Management
 #include "ResourceManager/ResourceManager.h"
 
-// Audio Stuff - HANS
+// Audio
 #include "AudioManager.h"
 
-// Time
+// Time Management
 #include "Time/TimeManager.h"
 
 // Physics and Collision
@@ -63,88 +66,41 @@
 // Serialization
 #include "Data/SerializationManager.h"
 
-// ECS
-#include "ECS//EntityFactory.h"
+// Entity Component System (ECS)
+#include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 
-// Graphics
-#include "Graphics/Renderer.h"
+// Input
 #include "InputSystem.h"
-#include "Data/SerializationManager.h"
 
-// testing
+// Testing
 Logger engine_logger = Logger("ENGINE");
-SerializationManager sm;
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Constructor for the CoreApplication class.
-/// Initializes variables and sets up the application window, FPS controller,
-/// logging, and rendering system.
-/// </summary>
------------------------------------------------------------------------------ */
 PE::CoreApplication::CoreApplication()
 {
-    // Registers Components to ECS
-    REGISTERCOMPONENT(RigidBody);
-    REGISTERCOMPONENT(Collider);
-    REGISTERCOMPONENT(Transform);
-    REGISTERCOMPONENT(Graphics::Renderer);
+    InitializeVariables();
+    RegisterComponents();
 
-	m_Running = true;
-	m_lastFrameTime = 0;
-
-    // parse the JSON file
+    // Load Configuration
     std::ifstream configFile("config.json");
     nlohmann::json configJson;
     configFile >> configJson;
-
-    // Access width and height from the parsed JSON.
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-
-    // Create and set up the window using WindowManager
+    // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
-
-    // Default to 60 FPS
     m_fpsController.SetTargetFPS(60);
     
-    // set flags
-    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
-    engine_logger.SetTime();
-    engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
+    InitializeLogger();
+    InitializeAudio();
+    InitializeMemoryManager();
+    InitializeSystems();
 
-    SerializationManager serializationManager;  // Create an instance
 
-    // Audio Initalization & Loading Audio - HANS
-    AudioManager::GetInstance().Init();
-    {
-        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
-    }
-
-    // Load audio
-    ResourceManager::GetInstance().LoadAudioFromFile("sound1", "../Assets/Audio/sound1.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("sound2", "../Assets/Audio/sound2.mp3");
-
-    //create instance of memory manager (prob shld bring this out to entry point)
-    MemoryManager::GetInstance();   
-
-    // Add system to list & assigning memory to them
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
-    PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
-    CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
-    InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    AddSystem(p_inputSystem);
-    AddSystem(p_physicsManager);
-    AddSystem(p_collisionManager);
-    AddSystem(p_rendererManager);
-
-    // Load a texture
+    // Load Textures and Animations
     std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
@@ -162,6 +118,7 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim1", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_2.png");
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
 
+    SerializationManager serializationManager;
     //create background from file
     serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json");
     
@@ -171,25 +128,11 @@ PE::CoreApplication::CoreApplication()
 
 }
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Destructor for the CoreApplication class.
-/// Responsible for cleaning up resources.
-/// </summary>
------------------------------------------------------------------------------ */
 PE::CoreApplication::~CoreApplication()
 {
-	// anything for destructor to do?
+    // future stuff can add here
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Main loop for the CoreApplication class.
-/// Controls the game loop, updates systems, and handles user input and FPS.
-/// </summary>
------------------------------------------------------------------------------ */
 void PE::CoreApplication::Run()
 {
     // Start engine run time
@@ -272,17 +215,7 @@ void PE::CoreApplication::Run()
     ResourceManager::GetInstance().UnloadResources();
 }
 
-
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Initializes all registered systems in CoreApplication.
-/// Iterates through each system in the system list and calls their
-/// respective InitializeSystem function.
-/// </summary>
------------------------------------------------------------------------------ */
-void PE::CoreApplication::InitSystems()
+void PE::CoreApplication::Initialize()
 {
     // Init all systems and iterate through each system in m_systemList and initialize it
     for (System* system : m_systemList)
@@ -291,15 +224,6 @@ void PE::CoreApplication::InitSystems()
     }
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Destroys all registered systems in CoreApplication.
-/// Iterates through each system in the system list, calls their respective
-/// DestroySystem function, and then deletes them.
-/// </summary>
------------------------------------------------------------------------------ */
 void PE::CoreApplication::DestroySystems()
 {
     //memory auto deallocated by memory manager
@@ -313,20 +237,60 @@ void PE::CoreApplication::DestroySystems()
     }
 }
 
-
-
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Adds a system to the CoreApplication's system list.
-/// Appends the given system pointer to the end of the system list,
-/// </summary>
-///
-/// <param name="system">
-/// A pointer to the system that will be managed by CoreApplication.
-/// </param>
------------------------------------------------------------------------------ */
 void PE::CoreApplication::AddSystem(System* system)
 {
     // Add a system to CoreApplication append the provided system pointer to the m_systemList vector
     m_systemList.push_back(system);
+}
+
+
+void PE::CoreApplication::InitializeVariables()
+{
+    m_Running = true;
+    m_lastFrameTime = 0;
+}
+
+void PE::CoreApplication::RegisterComponents()
+{
+    REGISTERCOMPONENT(RigidBody);
+    REGISTERCOMPONENT(Collider);
+    REGISTERCOMPONENT(Transform);
+    REGISTERCOMPONENT(Graphics::Renderer);
+}
+
+void PE::CoreApplication::InitializeLogger()
+{
+    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
+    engine_logger.SetTime();
+    engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
+}
+
+
+void PE::CoreApplication::InitializeAudio()
+{
+    AudioManager::GetInstance().Init();
+    {
+        engine_logger.AddLog(false, "AudioManager initialized!", __FUNCTION__);
+    }
+    ResourceManager::GetInstance().LoadAudioFromFile("sound1", "../Assets/Audio/sound1.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("sound2", "../Assets/Audio/sound2.mp3");
+}
+
+
+void PE::CoreApplication::InitializeMemoryManager()
+{
+    MemoryManager::GetInstance();
+}
+
+void PE::CoreApplication::InitializeSystems()
+{
+    // Add system to list & assigning memory to them
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window };
+    PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
+    CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
+    InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(p_inputSystem);
+    AddSystem(p_physicsManager);
+    AddSystem(p_collisionManager);
+    AddSystem(p_rendererManager);
 }
