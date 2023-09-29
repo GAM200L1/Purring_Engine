@@ -14,8 +14,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include "Graphics/GLHeaders.h"
 #include <glm/glm.hpp>
 #include <string>
@@ -24,6 +22,9 @@ namespace PE
 {
     namespace Graphics
     {
+        /*!***********************************************************************************
+         \brief Contains methods to compile and store a shader program.
+        *************************************************************************************/
         class ShaderProgram
         {
         public:
@@ -34,7 +35,7 @@ namespace PE
         public:
 
             /*!***********************************************************************************
-             \brief Not implemented yet. Loads files specified by the arguments and calls
+             \brief Loads files specified by the arguments and calls
                     CompileLinkValidateProgram() to compile and link the shader program.
 
              \param[in,out] vertexFile Filepath of the vertex shader.
@@ -42,7 +43,7 @@ namespace PE
              \return true - If the program was compiled successfully and is ready to be executed.
              \return false - If any part of the process was unsuccessful.
             *************************************************************************************/
-            bool LoadAndCompileShadersFromFile(std::string vertexFile, std::string fragmentFile);
+            bool LoadAndCompileShadersFromFile(std::string const& vertexFile, std::string const& fragmentFile);
 
             /*!***********************************************************************************
              \brief Compiles and links the shaders to a shader program.
@@ -52,7 +53,7 @@ namespace PE
              \return true - If the program was compiled successfully and is ready to be executed.
              \return false - If any part of the process was unsuccessful.
             *************************************************************************************/
-            bool CompileLinkValidateProgram(std::string vertexString, std::string fragmentString);
+            bool CompileLinkValidateProgram(std::string const& vertexString, std::string const& fragmentString);
 
             /*!***********************************************************************************
              \brief Validates if the shader program can be executed.
@@ -114,8 +115,8 @@ namespace PE
 
             // ----- Private variables ----- //
         private:
-            unsigned int m_programId{}; //! ID of the program created for OpenGL. Set to zero if not linked to a program
-            bool m_isLinked{ false }; //! True if the program has been compiled and linked successfully, false otherwise.
+            unsigned int m_programId{}; // ID of the program created for OpenGL. Set to zero if not linked to a program
+            bool m_isLinked{ false }; // True if the program has been compiled and linked successfully, false otherwise.
 
             // ----- Private methods ----- //
         private:

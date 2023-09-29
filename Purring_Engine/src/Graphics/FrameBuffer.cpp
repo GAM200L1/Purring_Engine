@@ -103,6 +103,7 @@ namespace PE
 
         void FrameBuffer::Resize(int const newWidth, int const newHeight)
         {
+            // Resize the texture to be of the same width and height as that passed in
             glBindTexture(GL_TEXTURE_2D, m_textureIndex);
             glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newWidth, newHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);

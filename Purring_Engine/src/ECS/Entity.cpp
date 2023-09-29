@@ -142,15 +142,9 @@ namespace PE
 			for (const ComponentID& r_pool : GetComponentIDs(id))
 			{
 				m_componentPools[r_pool]->Remove(id);
-				std::string str = "Removed Component-";
-				str += r_pool;
-				engine_logger.AddLog(false, str, __FUNCTION__);
 			}
 			m_entities.erase(id);
 			m_removed.emplace(id);
-			std::string str = "Removed Entity-";
-			str += std::to_string(id);
-			engine_logger.AddLog(false, str, __FUNCTION__);
 			UpdateVectors(id, false);
 		}
 	}

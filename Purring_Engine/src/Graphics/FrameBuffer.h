@@ -16,8 +16,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include "Graphics/GLHeaders.h"
 #include <vector>
 
@@ -27,24 +25,36 @@ namespace PE
 {
     namespace Graphics
     {
+        /*!***********************************************************************************
+        \brief  Creates and manages a framebuffer with a texture bound to it.
+        *************************************************************************************/
         class FrameBuffer
         {
             // ----- Public getters ----- // 
         public:
+            /*!***********************************************************************************
+             \brief Returns the index of the texture bound to the framebuffer.
+
+             \return GLuint - Returns the index of the texture bound to the framebuffer.
+            *************************************************************************************/
             inline GLuint GetTextureId() { return m_textureIndex; }
+
+            /*!***********************************************************************************
+             \brief Returns the index of the framebuffer.
+
+             \return GLuint - Returns the index of the framebuffer.
+            *************************************************************************************/
             inline GLuint GetFrameBufferId() { return m_frameBufferObjectIndex; }
             
             // ----- Public methods ----- // 
         public:
             /*!***********************************************************************************
              \brief Creates a frame buffer object with a texture bound to the color buffer so that
-                    the texture can be read back and rendered to an ImGui window.
-                    Throws if the frame buffer object was not created successfully.
+                    the texture can be read back and rendered to an ImGui window. Returns true 
+                    if the frame buffer object was created successfully, false otherwise.
 
-             \param[in] bufferWidth Width the buffer should be set to. Should match that of
-                                    the ImGui window.
-             \param[in] bufferHeight Height the buffer should be set to. Should match that of
-                                     the ImGui window.
+             \param[in] bufferWidth Width the buffer should be set to.
+             \param[in] bufferHeight Height the buffer should be set to.
 
              \return true - FrameBuffer created successfully.
              \return false - FrameBuffer was not created.
@@ -65,9 +75,7 @@ namespace PE
              \brief Resizes the texture object to match the size passed in.
 
              \param[in] width Width the texture object should be set to.
-                              Should match that of the ImGui window.
              \param[in] height Height the buffer should be set to.
-                               Should match that of the ImGui window.
             *************************************************************************************/
             void Resize(int const newWidth, int const newHeight);
 
@@ -78,8 +86,8 @@ namespace PE
 
             // ----- Private variables ----- // 
         private:
-            GLuint m_frameBufferObjectIndex{}; //! Frame buffer object to draw to
-            GLuint m_textureIndex{}; //! Texture ID of the texture generated to attach to the framebuffer
+            GLuint m_frameBufferObjectIndex{}; // Frame buffer object to draw to
+            GLuint m_textureIndex{}; // Texture ID of the texture generated to attach to the framebuffer
         };
     } // End of Graphics namespace
 } // End of PE namespace

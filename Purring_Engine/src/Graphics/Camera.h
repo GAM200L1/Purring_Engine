@@ -23,6 +23,9 @@ namespace PE
 {
     namespace Graphics
     {
+        /*!***********************************************************************************
+        \brief  Contains data and member functions to compute the view transform matrix.
+        *************************************************************************************/
         class Camera
         {
         public:
@@ -120,14 +123,14 @@ namespace PE
 
 
         private:
-            glm::vec2 m_position{ 0.f, 0.f }; //! Position of center of camera in the world
-            float m_orientation{ 0.f };       //! Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
-            float m_magnification{ 1.f };     //! Zoom to apply to the camera
+            glm::vec2 m_position{ 0.f, 0.f }; // Position of center of camera in the world
+            float m_orientation{ 0.f };       // Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
+            float m_magnification{ 1.f };     // Zoom to apply to the camera
 
-            glm::mat4 m_cachedViewMatrix{}; //! To prevent unnecessary recalculation of the view matrix
-            glm::vec2 m_cachedPosition{ -1.f, -1.f }; //! Position of center of camera in the world used by the cached matrix
-            float m_cachedOrientation{ -1.f };       //! Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
-            float m_cachedMagnification{ -1.f };     //! Zoom to apply to the camera
+            glm::mat4 m_cachedViewMatrix{}; // To prevent unnecessary recalculation of the view matrix
+            glm::vec2 m_cachedPosition{ -1.f, -1.f }; // Position of center of camera in the world used by the cached matrix
+            float m_cachedOrientation{ -1.f };       // Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
+            float m_cachedMagnification{ -1.f };     // Zoom to apply to the camera
         };
     } // End of Graphics namespace
 } // End of PE namespace
