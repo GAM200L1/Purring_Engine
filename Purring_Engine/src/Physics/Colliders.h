@@ -4,7 +4,7 @@
 	@co-author
 	@par        DP email: yeni.l\@digipen.edu
 	@par        Course: CSD2401, Section A
-	@date       15-09-2023
+	@date       16-09-2023
 
 	@brief		This file contains struct implementation for each type of collider,
 				line segment, manifolds, and declaration of each collider's update functions
@@ -40,7 +40,11 @@ namespace PE
 
 		// ----- Public Methods ----- //
 		
-		// Serialization
+		/*!***********************************************************************************
+		 \brief Serializes Collider information
+		 
+		 \return nlohmann::json - json object to store serialized collider information
+		*************************************************************************************/
 		nlohmann::json ToJson() const
 		{
 			nlohmann::json j;
@@ -51,7 +55,6 @@ namespace PE
 			return j;
 		}
 
-		// Deserialization
 		static AABBCollider FromJson(const nlohmann::json& r_j)
 		{
 			AABBCollider aabb;
@@ -142,12 +145,10 @@ namespace PE
 			if (std::holds_alternative<AABBCollider>(colliderVariant))
 			{
 				j["type"] = "AABBCollider";
-				//j["data"] = std::get<AABBCollider>(colliderVariant).ToJson();			// for future -hans
 			}
 			else if (std::holds_alternative<CircleCollider>(colliderVariant))
 			{
 				j["type"] = "CircleCollider";
-				//j["data"] = std::get<CircleCollider>(colliderVariant).ToJson();		// for future -hans
 			}
 			return j;
 		}

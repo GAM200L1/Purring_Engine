@@ -30,7 +30,6 @@ enum class EnumRigidBodyType
 {
 	STATIC = 0, //! Zero mass, zero velocity, not affected by force but position can be set -> during simulation, it won't move and it wont collide with anything
 	DYNAMIC,	//! Has mass, velocity can be set, affected by forces
-	//KINEMATIC	//! Zero mass, velocity can be set, not affected by forces, can move by setting velocity
 };
 
 namespace PE
@@ -48,8 +47,6 @@ namespace PE
 		vec2 velocity{};
 		float rotationVelocity{};
 		vec2 force{};
-		//float m_torque{};
-		//bool m_awake{}; //! enables collision of object, true for awake
 
 		// ----- Constructors ----- //
 		public:
@@ -121,9 +118,6 @@ namespace PE
 		*************************************************************************************/
 		void SetType(EnumRigidBodyType newType);
 
-		//bool IsAwake() const;
-		//void SetAwake(bool flag);
-
 	public:
 		// ----- Public Methods ----- //
 
@@ -134,9 +128,6 @@ namespace PE
 		 \param[in,out] r_addOnForce - force to add on to the objects 'force'
 		*************************************************************************************/
 		void ApplyForce(vec2 const& r_addOnForce);
-
-		// Adds on to existing torque, ultimately affects rotation
-		//void ApplyTorque(float r_addOnTorque);
 
 		/*!***********************************************************************************
 		 \brief Applies impulse to the object, directly adding on to 'velocity', allowing
@@ -174,28 +165,6 @@ namespace PE
 
 		float m_mass{10.f};
 		float m_inverseMass{1.f/10.f};
-
-		//float m_drag;
-		//float m_rotationDrag;
 	};
 
 }
-
-
-// ignore! remove before pulling!! //
-/*
-float GetLinearDamping() const;
-void SetLinearDamping(float linearDamping);
-
-float GetAngularDamping() const;
-void SetAngularDamping(float angularDamping);
-
-float GetTorque() const;
-void SetTorque(float torque);
-void ZeroTorque();
-
-// Applies impulse - directly adds to angular velocity
-void ApplyAngularImpulse(float impulse);
-
-void PrintDebug() const;
-*/

@@ -1,15 +1,17 @@
-/*!*****************************************************************************
-	@file       PhysicsManager.cpp
-	@author     Liew Yeni
-	@co-author
-	@par        DP email: yeni.l\@digipen.edu
-	@par        Course: CSD2401, Section A
-	@date       10-9-2023
-
-	@brief
-
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     PhysicsManager.cpp
+ \date     10-09-2023
+ 
+ \author               Liew Yeni
+ \par      email:      yeni.l/@digipen.edu
+ 
+ \brief    Contains definition of PhysicsManager's member functions
+ 
+ 
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include "PhysicsManager.h"
 #include "ECS/Entity.h"
@@ -31,7 +33,6 @@ namespace PE
 
 	PhysicsManager::PhysicsManager() :
 		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f } {} 
-	//, m_fixedDt{ 1.f / 60.f }, m_accumulator{ 0.f }, m_accumulatorLimit{ 1.f } {}
 	
 	// ----- Public Getters ----- //
 
@@ -53,15 +54,6 @@ namespace PE
 	{
 		m_velocityNegligence = negligence;
 	}
-
-	//float PhysicsManager::GetFixedDt()
-	//{
-	//	return m_fixedDt;
-	//}
-	//void PhysicsManager::SetFixedDt(float fixDt)
-	//{
-	//	m_fixedDt = fixDt;
-	//}
 
 	bool& PhysicsManager::GetStepPhysics()
 	{
@@ -86,15 +78,10 @@ namespace PE
 
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
-		// Simple fixed deltaTime		
+		// In normal physics simulation mode
 		if (!m_applyStepPhysics)
 		{
-			//m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
-			//while (m_accumulator >= m_fixedDt)
-			//{
 				UpdateDynamics(deltaTime);
-			//	m_accumulator -= m_fixedDt;
-			//}
 		}
 		else
 		{
@@ -124,7 +111,7 @@ namespace PE
 
 			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
 			{
-				// Quick dirty implementation of drag force
+				// Applies drag force
 				rb.ApplyForce(rb.velocity * rb.GetMass() * m_linearDragCoefficient);
 				
 				// Update Speed based on total forces
