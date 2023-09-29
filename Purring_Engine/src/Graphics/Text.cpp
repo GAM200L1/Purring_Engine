@@ -37,7 +37,7 @@ namespace PE
         glBindVertexArray(0);
     }
 
-    void Font::Load(const std::string& r_fontPath, unsigned int fontSize)
+    bool Font::Load(const std::string& r_fontPath, unsigned int fontSize)
     {
         Characters.clear();
         
@@ -46,6 +46,7 @@ namespace PE
         if (FT_Init_FreeType(&ft))
         {
             std::cout << "ERROR::FREETYPE: Could not init FreeType Library" << std::endl;
+            return false;
         }
 
         // Load font as face
@@ -53,6 +54,7 @@ namespace PE
         if (FT_New_Face(ft, r_fontPath.c_str(), 0, &face))
         {
             std::cout << "ERROR::FREETYPE: Failed to load font" << std::endl;
+            return false;
         }
         
         // Define pixel font size to extract
@@ -108,6 +110,8 @@ namespace PE
         // Clear freetype resource
         FT_Done_Face(face);
         FT_Done_FreeType(ft);
+
+        return true;
     }
 
     void Font::RenderText(std::string const& r_text, glm::vec2 position, float scale, glm::mat4 const& r_worldToNdc, glm::vec3 const& r_color)
