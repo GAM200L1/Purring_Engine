@@ -54,9 +54,8 @@ namespace PE
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
-		 \brief					implicit conversion to a std::string, used for output streams
-
-		 \return std::string	Returns information about the event
+		 \brief     Prints out data from the event
+		 \return    std::string - Returns the data of the event as a string
 		*************************************************************************************/
 		inline std::string ToString() const override
 		{
@@ -94,9 +93,8 @@ namespace PE
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
-		 \brief					implicit conversion to a std::string, used for output streams
-
-		 \return std::string	Returns information about the event
+		 \brief     Prints out data from the event
+		 \return    std::string - Returns the data of the event as a string
 		*************************************************************************************/
 		inline std::string ToString() const override
 		{
@@ -132,9 +130,8 @@ namespace PE
 		// ----- Public methods ----- // 
 	public:
 		/*!***********************************************************************************
-		 \brief					implicit conversion to a std::string, used for output streams
-
-		 \return std::string	Returns information about the event
+		 \brief     Prints out data from the event
+		 \return    std::string - Returns the data of the event as a string
 		*************************************************************************************/
 		inline std::string ToString() const override
 		{

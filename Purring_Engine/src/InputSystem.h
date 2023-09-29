@@ -42,15 +42,14 @@ namespace PE
          \brief Destructor for the Input System
         *************************************************************************************/
         virtual ~InputSystem();
+        // ----- GLFW callbacks ----- // 
+    public:
         /*!***********************************************************************************
          \brief Callback function for mouse movement. Outputs the current mouse position to the console.
          \param [In] GLFWwindow* window     glfw window
          \param [In] double xpos            xpos of mouse
          \param [In] double ypos            ypos of mouse
         *************************************************************************************/
-
-        // ----- GLFW callbacks ----- // 
-    public:
         void static mouse_callback(GLFWwindow* window, double xpos, double ypos);
         /*!***********************************************************************************
          \brief Callback function for mouse button actions. Outputs which mouse button was pressed to the console.
@@ -98,6 +97,9 @@ namespace PE
         
         // ----- Public Getter/Setter ----- // 
     public:
+        /*!***********************************************************************************
+         \brief Return the type of system
+        *************************************************************************************/
         std::string GetName();
         /*!***********************************************************************************
          \brief To set the buffer time before counting a key press as hold
@@ -107,7 +109,7 @@ namespace PE
 
         // ----- Private Variables ----- // 
     private:
-        static std::vector<KeyPressedEvent> m_KeyDown;
+        static std::vector<KeyPressedEvent> m_KeyDown; // vector holding current held down buttons
         static float m_bufferTime; // has to be static to be used by the callbacks
     };
 }

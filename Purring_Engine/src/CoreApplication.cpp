@@ -163,10 +163,7 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
 
     //create background from file
-    glfwGetWindowSize(m_window, &width, &height);
-    EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json");
-    EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(width);
-    EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(height);
+    serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json");
     
     // Creates an entity from file that is attached to the Character Controller
     serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");

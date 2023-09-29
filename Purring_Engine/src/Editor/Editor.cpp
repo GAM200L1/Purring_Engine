@@ -104,7 +104,9 @@ namespace PE {
 
 	void Editor::ClearObjectList()
 	{
+		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
+		//delete all objects
 		for (int n = 2; n < EntityManager::GetInstance().GetEntitiesInPool("All").size();)
 		{
 			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
@@ -274,6 +276,7 @@ namespace PE {
 					}
 					ImVec4 color;
 					bool has_color = false;
+					//check for specific words to color and filter
 					if (i->find("[ERROR]") != std::string::npos)
 					{
 						if (errorfilter)
@@ -472,7 +475,6 @@ namespace PE {
 		else
 		{
 			static int allocated = 1;
-			//test 1
 			ImGui::Text("Memory Test");
 			ImGui::Spacing();
 			if (ImGui::Button("Allocating Memory"))
@@ -484,13 +486,11 @@ namespace PE {
 				allocationtest;
 			}
 			ImGui::SameLine();
-			//test 2
 			if (ImGui::Button("Create Out of Index Object on Stack"))
 			{
 				char* outofmemorytest = (char*)MemoryManager::GetInstance().AllocateMemory("out of index test", 1000000);
 				outofmemorytest;
 			}
-			//test 3
 			static bool buffertester = false;
 			ImGui::BeginDisabled(buffertester);
 			if (ImGui::Button("Written over Buffer Tests"))
@@ -505,7 +505,6 @@ namespace PE {
 			}
 			ImGui::EndDisabled();
 			ImGui::SameLine();
-			//test 4
 			ImGui::BeginDisabled(!(allocated > 1));
 			if (ImGui::Button("popback previous allocation"))
 			{
@@ -515,7 +514,6 @@ namespace PE {
 				allocated--;
 			}
 			ImGui::EndDisabled();
-			//print memory stuff
 			if (ImGui::Button("Print Memory Data"))
 			{
 				MemoryManager::GetInstance().PrintData();
@@ -539,7 +537,7 @@ namespace PE {
 			{
 				AudioManager::GetInstance().StopAllSounds();
 			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
+			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // add space
 
 			ImGui::Separator();
 			ImGui::Text("Physics Test");
@@ -830,6 +828,8 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								//open a combo box to select type of rb
 								EnumRigidBodyType bt = EntityManager::GetInstance().Get<RigidBody>(entityID).GetType();
 								int index = static_cast<int>(bt);
 								//hard coded rigidbody types
@@ -848,10 +848,7 @@ namespace PE {
 								ImGui::Separator(); // add line to make it neater
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								//temp here untill yeni confirms it is getting used
-								//ImGui::Checkbox("Is Awake", &EntityManager::GetInstance().Get<RigidBody>(m_currentSelectedIndex).m_awake);
-								//mass variable of the rigidbody component
-
+								//mass variable
 								float mass = EntityManager::GetInstance().Get<RigidBody>(entityID).GetMass();
 								ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
 								EntityManager::GetInstance().Get<RigidBody>(entityID).SetMass(mass);
@@ -899,6 +896,7 @@ namespace PE {
 									}
 								}
 
+								//depends on different collider, have different variables
 								if (index)
 								{
 									ImVec2 offset;
@@ -906,12 +904,15 @@ namespace PE {
 
 									offset.x = r_cc.positionOffset.x;
 									offset.y = r_cc.positionOffset.y;
+
+									//collider position
 									ImGui::Text("Collider Position Offset: ");
 									ImGui::Text("x pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##xoffsetcircle", &offset.x, 1.0f, 100.f, "%.3f");
 									ImGui::Text("y pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetcircle", &offset.y, 1.0f, 100.f, "%.3f");
 									r_cc.positionOffset.y = offset.y;
 									r_cc.positionOffset.x = offset.x;
 
+									//colider scale from center
 									float offset2 = r_cc.scaleOffset;
 									ImGui::Text("Collider Scale Offset: ");
 									ImGui::Text("sc x offset: "); ImGui::SameLine(); ImGui::InputFloat("##scaleOffsetcircle", &offset2, 1.0f, 100.f, "%.3f");
@@ -921,6 +922,7 @@ namespace PE {
 								else
 								{
 									ImVec2 offset;
+									//aabb position offset
 									offset.x = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x;
 									offset.y = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.y;
 									ImGui::Text("Collider Position Offset: ");
@@ -930,6 +932,7 @@ namespace PE {
 									EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().positionOffset.x = offset.x;
 
 									ImVec2 offset2;
+									//aabb scale offset
 									offset2.x = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x;
 									offset2.y = EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y;
 									ImGui::Text("Collider Scale Offset: ");
@@ -1024,6 +1027,7 @@ namespace PE {
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
 
+					//other than background, we can add components to objects
 					if (m_currentSelectedObject)
 						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
 						{
@@ -1031,10 +1035,12 @@ namespace PE {
 							ImGui::OpenPopup("Components");
 						}
 
+					//add different kind of components, however if it already has we cannot add
 					if (ImGui::BeginPopup("Components"))
 					{
 						if (ImGui::Selectable("Add Collision"))
 						{
+							//not allowed to add collision without a rigidbody
 							if (EntityManager::GetInstance().Has(entityID, "RigidBody"))
 							{
 								if (!EntityManager::GetInstance().Has(entityID, "Collider"))
@@ -1289,6 +1295,7 @@ namespace PE {
 					}
 					if (ImGui::MenuItem("Load"))
 					{
+						//to open file explorer
 						OPENFILENAME ofn;
 						wchar_t szFile[260];
 						ZeroMemory(&ofn, static_cast<size_t>(sizeof(ofn)));
@@ -1330,18 +1337,18 @@ namespace PE {
 					if (ImGui::MenuItem("Scene 3", "", false, false)) {}
 					ImGui::EndMenu();
 				}
-				//menu 2
+				//does not work only for show
 				if (ImGui::BeginMenu("Edit"))
 				{
-					if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
-					if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}
+					if (ImGui::MenuItem("Undo", "")) {}
+					if (ImGui::MenuItem("Redo", "", false, false)) {}
 					ImGui::Separator();
-					if (ImGui::MenuItem("Cut", "CTRL+X")) {}
-					if (ImGui::MenuItem("Copy", "CTRL+C")) {}
-					if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+					if (ImGui::MenuItem("Cut", "")) {}
+					if (ImGui::MenuItem("Copy", "")) {}
+					if (ImGui::MenuItem("Paste", "")) {}
 					ImGui::EndMenu();
 				}
-				//menu 3
+				//all the different windows
 				if (ImGui::BeginMenu("Window"))
 				{
 					if (ImGui::MenuItem("console", "f1", m_showConsole, !m_showConsole))
