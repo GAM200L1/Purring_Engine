@@ -145,9 +145,6 @@ namespace PE
 			}
 			m_entities.erase(id);
 			m_removed.emplace(id);
-			std::string str = "Removed Entity-";
-			str += std::to_string(id);
-			engine_logger.AddLog(false, str, __FUNCTION__);
 			UpdateVectors(id, false);
 		}
 	}

@@ -78,7 +78,7 @@ void Logger::FlushLog()
 	{
 		// if write to console
 		if (m_flags & EnumLoggerFlags::WRITE_TO_CONSOLE)
-			PE::Editor::GetInstance().AddLog(buf);
+			std::cout << buf << "\n";
 		// if write to file
 		if (m_flags & EnumLoggerFlags::WRITE_TO_FILE)
 			m_outFile << buf << "\n";
