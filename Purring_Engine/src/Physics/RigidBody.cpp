@@ -80,9 +80,9 @@ namespace PE
 	{
 		return m_type;
 	}
-	void RigidBody::SetType(EnumRigidBodyType flag)
+	void RigidBody::SetType(EnumRigidBodyType newType)
 	{
-		m_type = flag;
+		m_type = newType;
 	}
 
 	//bool RigidBody::IsAwake() const
