@@ -1,9 +1,8 @@
 /*!***********************************************************************************
-
  \project  Purring Engine
  \module   CSD2401-A
  \file     Editor.h
- \date     8/30/2023
+ \date     30-08-2023
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu

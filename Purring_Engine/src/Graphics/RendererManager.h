@@ -3,7 +3,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     RendererManager.h
- \date     20-08-2023
+ \date     30-08-2023
  
  \author               Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
@@ -276,7 +276,6 @@ namespace PE
             *************************************************************************************/
             glm::mat4 GenerateTransformMatrix(float const width, float const height, 
                 float const orientation, float const positionX, float const positionY);
-
 
             /*!***********************************************************************************
             \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.

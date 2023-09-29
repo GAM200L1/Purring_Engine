@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     Logger.cpp
- \date     25-08-2023
+ \date     30-08-2023
  
  \author               Foong Jun Wei
  \par      email:      f.junwei\@digipen.edu

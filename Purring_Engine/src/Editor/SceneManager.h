@@ -3,7 +3,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     SceneManager.h
- \date     9/19/2023
+ \date     19-09-2023
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu

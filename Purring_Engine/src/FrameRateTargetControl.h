@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     FrameRateTargetControl.h
- \creation date:       13-08-2023
+ \creation date:       28-08-2023
  \last updated:        16-09-2023
  \author:              Hans (You Yang) ONG
 

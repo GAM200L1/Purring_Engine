@@ -4,7 +4,7 @@
 	@co-author
 	@par        DP email: yeni.l\@digipen.edu
 	@par        Course: CSD2401, Section A
-	@date       10/9/2023
+	@date       10-9-2023
 
 	@brief		This file contains the declarations for the RigidBody struct and
 				EnumRigidBodyStruct.

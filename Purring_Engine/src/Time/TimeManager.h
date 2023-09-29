@@ -23,8 +23,7 @@
 
 namespace PE
 {
-	constexpr auto TotalSystems = 4; // hardcoded?
-
+	constexpr auto TotalSystems = 4;
 	/*!***********************************************************************************
 	 \brief Enumeration for identifying different subsystems.
 	*************************************************************************************/
@@ -106,7 +105,6 @@ namespace PE
 		 \return The frame time for the specified subsystem in seconds.
 		*************************************************************************************/
 		float GetSystemFrameTime(int system) const { return m_systemFrameTime[system]; }
-
 
 		// ----- Private Methods and Members ----- //
 	private:

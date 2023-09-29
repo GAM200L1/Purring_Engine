@@ -80,19 +80,6 @@
 Logger engine_logger = Logger("ENGINE");
 SerializationManager sm;
 
-
-
-/*!***********************************************************************************
- \brief     Initializes the core application, setting up various systems, managers, and entities.
-
- \tparam T  This function does not use a template.
- \return    void  This function does not return a value but performs various initialization tasks like:
-                    - Registering components to ECS.
-                    - Parsing config files for window dimensions.
-                    - Initializing window, logging, audio, and other managers.
-                    - Loading assets like audio and textures.
-                    - Setting up entities and their components.
-*************************************************************************************/
 PE::CoreApplication::CoreApplication()
 {
     InitializeVariables();
@@ -158,33 +145,11 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<RigidBody>(id2).SetMass(10.f);
 }
 
-
-
-/*!***********************************************************************************
- \brief     Destructor for the CoreApplication class.
-
- \tparam T  This function does not use a template.
- \return    void  Currently, the destructor does not perform any specific operations.
-                   Future resource deallocation or cleanup tasks should be added here.
-*************************************************************************************/
 PE::CoreApplication::~CoreApplication()
 {
     // future stuff can add here
 }
 
-
-
-/*!***********************************************************************************
- \brief     The main application loop of the CoreApplication class.
-
- \details   This function handles the essential operations that keep the game engine
-            running. It's responsible for managing time, capturing and processing
-            events, updating various subsystems, logging, and resource cleanup.
-
- \tparam    T  This function does not use a template.
- \return    void  This function returns void and performs its tasks within the loop,
-                  until a signal to close the GLFW window is received.
-*************************************************************************************/
 void PE::CoreApplication::Run()
 {
     // Start engine run time
@@ -267,17 +232,7 @@ void PE::CoreApplication::Run()
     ResourceManager::GetInstance().UnloadResources();
 }
 
-
-
-
-/*!***********************************************************************************
- \brief     Initializes all the systems in the CoreApplication class.
-
- \tparam T          This function does not use a template.
- \return    void    This function returns void and performs its tasks by initializing
-                    each system in m_systemList.
-*************************************************************************************/
-void PE::CoreApplication::InitSystems()
+void PE::CoreApplication::Initialize()
 {
     // Init all systems and iterate through each system in m_systemList and initialize it
     for (System* system : m_systemList)
@@ -286,17 +241,6 @@ void PE::CoreApplication::InitSystems()
     }
 }
 
-
-
-/*!***********************************************************************************
- \brief     Destroys all the systems in the CoreApplication class.
-
- \tparam T          This function does not use a template.
- \note              Memory is automatically deallocated by the Memory Manager, so the 'delete'
-                    operator is not used for the systems in this function.
- \return    void    This function returns void and performs its tasks by destroying
-                    each system in m_systemList.
-*************************************************************************************/
 void PE::CoreApplication::DestroySystems()
 {
     //memory auto deallocated by memory manager
@@ -310,16 +254,6 @@ void PE::CoreApplication::DestroySystems()
     }
 }
 
-
-
-/*!***********************************************************************************
- \brief     Adds a new system to CoreApplication's list of systems.
-
- \tparam T          This function does not use a template.
- \param[in] system  A pointer to the system object to be added to the list.
- \return    void    This function does not return a value but modifies the internal state
-                    of the CoreApplication object by appending the system to m_systemList.
-*************************************************************************************/
 void PE::CoreApplication::AddSystem(System* system)
 {
     // Add a system to CoreApplication append the provided system pointer to the m_systemList vector
@@ -353,7 +287,7 @@ void PE::CoreApplication::InitializeAudio()
 {
     AudioManager::GetInstance().Init();
     {
-        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
+        engine_logger.AddLog(false, "AudioManager initialized!", __FUNCTION__);
     }
     ResourceManager::GetInstance().LoadAudioFromFile("sound1", "../Assets/Audio/sound1.mp3");
     ResourceManager::GetInstance().LoadAudioFromFile("sound2", "../Assets/Audio/sound2.mp3");
@@ -377,5 +311,3 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_collisionManager);
     AddSystem(p_rendererManager);
 }
-
-

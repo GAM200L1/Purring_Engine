@@ -1,3 +1,17 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     LayerStack.h
+ \date     29-09-2023
+
+ \author               Brandon HO Jun Jie
+ \par      email:      brandonjunjie.ho@digipen.edu
+
+ \brief	   This file contains the implementation of the layer stack system that provides
+		   the functionality to insert and remove layers in order.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #pragma once
 
 #include "Layer.h"

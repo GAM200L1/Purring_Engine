@@ -19,6 +19,13 @@ namespace PE
 	class Singleton
 	{
 	public: 
+
+		/*!***********************************************************************************
+		 \brief     Initializes a static instance of type T and returns it.
+
+		 \tparam T     The type of singleton being initialized
+		 \return T&    This static instance to be returned.
+		*************************************************************************************/
 		static T& GetInstance()
 		{
 			static T instance{};

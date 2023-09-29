@@ -44,7 +44,7 @@
 namespace PE
 {
 	// CoreApplication class definition
-	class  CoreApplication
+	class CoreApplication
 	{
 	public:
 		// Default constructor and virtual destructor
@@ -54,10 +54,24 @@ namespace PE
 		// Main application loop
 		void Run();
 
-		// Initialize all systems in m_systemList
-		void InitSystems();
+		/*!***********************************************************************************
+		 \brief     Initializes all the systems in the CoreApplication class.
 
-		// Destroy all systems and release resources
+		 \tparam T          This function does not use a template.
+		 \return    void    This function returns void and performs its tasks by initializing
+							each system in m_systemList.
+		*************************************************************************************/
+		void Initialize();
+
+		/*!***********************************************************************************
+		 \brief     Destroys all the systems in the CoreApplication class.
+
+		 \tparam T          This function does not use a template.
+		 \note              Memory is automatically deallocated by the Memory Manager, so the 'delete'
+							operator is not used for the systems in this function.
+		 \return    void    This function returns void and performs its tasks by destroying
+							each system in m_systemList.
+		*************************************************************************************/
 		void DestroySystems();
 
 		// Add a system to the application
@@ -77,12 +91,10 @@ namespace PE
 
 		void InitializeVariables();
 		void RegisterComponents();
-		void     InitializeLogger();
+		void InitializeLogger();
 		void InitializeAudio();
 		void InitializeMemoryManager();
 		void InitializeSystems();
-
-
 
 		// Uncomment if window is managed as a unique_ptr
 		//std::unique_ptr<Window> m_Window;

@@ -125,15 +125,12 @@ namespace PE
 			Assign(dest, r_component);
 
 		memcpy_s(m_componentPools[r_component]->Get(dest), m_componentPools[r_component]->elementSize, m_componentPools[r_component]->Get(src), m_componentPools[r_component]->elementSize);
-	}
-
-	
+	}	
 
 	bool EntityManager::Has(EntityID id, const ComponentID& r_component) const
 	{
 		return m_componentPools.at(r_component)->HasEntity(id);
 	}
-
 
 	void EntityManager::RemoveEntity(EntityID id)
 	{
