@@ -14,6 +14,8 @@
 *************************************************************************************/
 #pragma once
 
+/*                                                                                                          includes
+--------------------------------------------------------------------------------------------------------------------- */
 #include "Singleton.h"
 #include <chrono>
 #include <set>
@@ -22,6 +24,10 @@
 namespace PE
 {
 	constexpr auto TotalSystems = 4; // hardcoded?
+
+	/*!***********************************************************************************
+	 \brief Enumeration for identifying different subsystems.
+	*************************************************************************************/
 	enum SystemType
 	{
 		INPUT = 0,
@@ -31,41 +37,99 @@ namespace PE
 		SYSTEMCOUNT
 	};
 
-	class TimeManager : public Singleton<TimeManager> {
+	/*!***********************************************************************************
+	 \brief A Singleton class for managing time in the engine.
+	*************************************************************************************/
+	class TimeManager : public Singleton<TimeManager>
+	{
+
+		// ----- Public Methods ----- //
 	public:
 		friend class Singleton<TimeManager>;
-		// system
+
+		/*!***********************************************************************************
+		 \brief Initialize the frame time for a particular subsystem.
+		*************************************************************************************/
 		void SystemStartFrame();
+
+		/*!***********************************************************************************
+		 \brief Conclude the frame time for a particular subsystem.
+		 \param[in] system The subsystem to conclude frame time for.
+		*************************************************************************************/
 		void SystemEndFrame(int system);
 
-		// global
+		/*!***********************************************************************************
+		 \brief Begin global frame timing.
+		*************************************************************************************/
 		void StartFrame();
+
+		/*!***********************************************************************************
+		 \brief End global frame timing.
+		*************************************************************************************/
 		void EndFrame();
 
+		/*!***********************************************************************************
+		 \brief Initialize the engine's start time.
+		*************************************************************************************/
 		void EngineStart();
 
+
+		// ----- Public Getters ----- //
+	public:
+		/*!***********************************************************************************
+		 \brief Get the frame time for the last completed frame.
+		 \return The last frame time in seconds.
+		*************************************************************************************/
 		float GetFrameTime() const { return m_frameTime; }
+
+		/*!***********************************************************************************
+		 \brief Get the time passed since the last frame.
+		 \return The delta time in seconds.
+		*************************************************************************************/
 		float GetDeltaTime() const { return m_deltaTime; }
+
+		/*!***********************************************************************************
+		 \brief Get the total run time of the engine.
+		 \return The run time in seconds.
+		*************************************************************************************/
 		float GetRunTime() const { return m_engineRunTime; }
+
+		/*!***********************************************************************************
+		 \brief Get the starting time point of the frame.
+		 \return The high-resolution time point when the frame started.
+		*************************************************************************************/
 		std::chrono::high_resolution_clock::time_point const& GetStartTime() { return m_startFrame; }
 
+		/*!***********************************************************************************
+		 \brief Get the frame time for a specific subsystem.
+		 \param[in] system The subsystem identifier.
+		 \return The frame time for the specified subsystem in seconds.
+		*************************************************************************************/
 		float GetSystemFrameTime(int system) const { return m_systemFrameTime[system]; }
 
+
+		// ----- Private Methods and Members ----- //
 	private:
+		/*!***********************************************************************************
+		 \brief Private constructor to enforce Singleton pattern.
+		*************************************************************************************/
 		TimeManager();
 
+
+		// ----- Private Variables ----- //
 	private:
 		// system time
-		std::array<float, TotalSystems> m_systemFrameTime; // stores all system frame time, may change to vector
-		std::chrono::high_resolution_clock::time_point m_systemStartFrame, m_systemEndFrame; // system time
+		std::array<float, TotalSystems> m_systemFrameTime;		// stores all system frame time, may change to vector
+		std::chrono::high_resolution_clock::time_point m_systemStartFrame, m_systemEndFrame;	// system time
 
 		// global time
 		std::chrono::high_resolution_clock::time_point m_startFrame, m_endFrame, m_previousStartFrame, m_engineStartTime;
 		float m_engineRunTime;
-		float m_frameTime; // total frame time
-		float m_deltaTime; // time between last and current frame
+		float m_frameTime;										// total frame time
+		float m_deltaTime;										// time between last and current frame
 
 		// holds duration in seconds
 		std::chrono::duration<float> m_durationInSeconds;
 	};
+
 }

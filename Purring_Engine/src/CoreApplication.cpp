@@ -26,32 +26,35 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
-// imgui
+// ImGui Headers
 #include "Editor/Editor.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
 
-// graphics
+// Graphics Headers
 #include "Graphics/GLHeaders.h"
+#include "Graphics/Renderer.h"
 
+// Core Functionality
 #include "CoreApplication.h"
 #include "WindowManager.h"
+
+// Logging and Memory
 #include "Logging/Logger.h"
 #include "MemoryManager.h"
 
-// Resource manager
+// Resource Management
 #include "ResourceManager/ResourceManager.h"
 
-// Audio Stuff - HANS
+// Audio
 #include "AudioManager.h"
 
-// Time
+// Time Management
 #include "Time/TimeManager.h"
 
 // Physics and Collision
@@ -63,76 +66,52 @@
 // Serialization
 #include "Data/SerializationManager.h"
 
-// ECS
-#include "ECS//EntityFactory.h"
+// Entity Component System (ECS)
+#include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 
-// Graphics
-#include "Graphics/Renderer.h"
+// Input
 #include "InputSystem.h"
-#include "Data/SerializationManager.h"
 
-// testing
+// Testing
 Logger engine_logger = Logger("ENGINE");
 SerializationManager sm;
 
 
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Constructor for the CoreApplication class.
-/// Initializes variables and sets up the application window, FPS controller,
-/// logging, and rendering system.
-/// </summary>
------------------------------------------------------------------------------ */
+/*!***********************************************************************************
+ \brief     Initializes the core application, setting up various systems, managers, and entities.
+
+ \tparam T  This function does not use a template.
+ \return    void  This function does not return a value but performs various initialization tasks like:
+                    - Registering components to ECS.
+                    - Parsing config files for window dimensions.
+                    - Initializing window, logging, audio, and other managers.
+                    - Loading assets like audio and textures.
+                    - Setting up entities and their components.
+*************************************************************************************/
 PE::CoreApplication::CoreApplication()
 {
-    // Registers Components to ECS
-    REGISTERCOMPONENT(RigidBody);
-    REGISTERCOMPONENT(Collider);
-    REGISTERCOMPONENT(Transform);
-    REGISTERCOMPONENT(Graphics::Renderer);
+    InitializeVariables();
+    RegisterComponents();
 
-	m_Running = true;
-	m_lastFrameTime = 0;
-
-    // parse the JSON file
+    // Load Configuration
     std::ifstream configFile("config.json");
     nlohmann::json configJson;
     configFile >> configJson;
-
-    // Access width and height from the parsed JSON.
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-
-    // Create and set up the window using WindowManager
+    // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
-
-    // Default to 60 FPS
     m_fpsController.SetTargetFPS(60);
     
-    // set flags
-    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
-    engine_logger.SetTime();
-    engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
+    InitializeLogger();
+    InitializeAudio();
+    InitializeMemoryManager();
 
-    SerializationManager serializationManager;  // Create an instance
-
-    // Audio Initalization & Loading Audio - HANS
-    AudioManager::GetInstance().Init();
-    {
-        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
-    }
-
-    // Load audio
-    ResourceManager::GetInstance().LoadAudioFromFile("sound1", "../Assets/Audio/sound1.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("sound2", "../Assets/Audio/sound2.mp3");
-
-    //create instance of memory manager (prob shld bring this out to entry point)
-    MemoryManager::GetInstance();   
 
     // Add system to list & assigning memory to them
     Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{m_window};
@@ -144,7 +123,7 @@ PE::CoreApplication::CoreApplication()
     AddSystem(p_collisionManager);
     AddSystem(p_rendererManager);
 
-    // Load a texture
+    // Load Textures and Animations
     std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
@@ -186,29 +165,35 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
     EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
     EntityManager::GetInstance().Get<RigidBody>(id2).SetMass(10.f);
-    
-
 }
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Destructor for the CoreApplication class.
-/// Responsible for cleaning up resources.
-/// </summary>
------------------------------------------------------------------------------ */
+
+
+/*!***********************************************************************************
+ \brief     Destructor for the CoreApplication class.
+
+ \tparam T  This function does not use a template.
+ \return    void  Currently, the destructor does not perform any specific operations.
+                   Future resource deallocation or cleanup tasks should be added here.
+*************************************************************************************/
 PE::CoreApplication::~CoreApplication()
 {
-	// anything for destructor to do?
+    // future stuff can add here
 }
 
 
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Main loop for the CoreApplication class.
-/// Controls the game loop, updates systems, and handles user input and FPS.
-/// </summary>
------------------------------------------------------------------------------ */
+/*!***********************************************************************************
+ \brief     The main application loop of the CoreApplication class.
+
+ \details   This function handles the essential operations that keep the game engine
+            running. It's responsible for managing time, capturing and processing
+            events, updating various subsystems, logging, and resource cleanup.
+
+ \tparam    T  This function does not use a template.
+ \return    void  This function returns void and performs its tasks within the loop,
+                  until a signal to close the GLFW window is received.
+*************************************************************************************/
 void PE::CoreApplication::Run()
 {
     // Start engine run time
@@ -294,13 +279,13 @@ void PE::CoreApplication::Run()
 
 
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Initializes all registered systems in CoreApplication.
-/// Iterates through each system in the system list and calls their
-/// respective InitializeSystem function.
-/// </summary>
------------------------------------------------------------------------------ */
+/*!***********************************************************************************
+ \brief     Initializes all the systems in the CoreApplication class.
+
+ \tparam T          This function does not use a template.
+ \return    void    This function returns void and performs its tasks by initializing
+                    each system in m_systemList.
+*************************************************************************************/
 void PE::CoreApplication::InitSystems()
 {
     // Init all systems and iterate through each system in m_systemList and initialize it
@@ -312,13 +297,15 @@ void PE::CoreApplication::InitSystems()
 
 
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Destroys all registered systems in CoreApplication.
-/// Iterates through each system in the system list, calls their respective
-/// DestroySystem function, and then deletes them.
-/// </summary>
------------------------------------------------------------------------------ */
+/*!***********************************************************************************
+ \brief     Destroys all the systems in the CoreApplication class.
+
+ \tparam T          This function does not use a template.
+ \note              Memory is automatically deallocated by the Memory Manager, so the 'delete'
+                    operator is not used for the systems in this function.
+ \return    void    This function returns void and performs its tasks by destroying
+                    each system in m_systemList.
+*************************************************************************************/
 void PE::CoreApplication::DestroySystems()
 {
     //memory auto deallocated by memory manager
@@ -334,18 +321,55 @@ void PE::CoreApplication::DestroySystems()
 
 
 
-/*-----------------------------------------------------------------------------
-/// <summary>
-/// Adds a system to the CoreApplication's system list.
-/// Appends the given system pointer to the end of the system list,
-/// </summary>
-///
-/// <param name="system">
-/// A pointer to the system that will be managed by CoreApplication.
-/// </param>
------------------------------------------------------------------------------ */
+/*!***********************************************************************************
+ \brief     Adds a new system to CoreApplication's list of systems.
+
+ \tparam T          This function does not use a template.
+ \param[in] system  A pointer to the system object to be added to the list.
+ \return    void    This function does not return a value but modifies the internal state
+                    of the CoreApplication object by appending the system to m_systemList.
+*************************************************************************************/
 void PE::CoreApplication::AddSystem(System* system)
 {
     // Add a system to CoreApplication append the provided system pointer to the m_systemList vector
     m_systemList.push_back(system);
+}
+
+
+void PE::CoreApplication::InitializeVariables()
+{
+    m_Running = true;
+    m_lastFrameTime = 0;
+}
+
+void PE::CoreApplication::RegisterComponents()
+{
+    REGISTERCOMPONENT(RigidBody);
+    REGISTERCOMPONENT(Collider);
+    REGISTERCOMPONENT(Transform);
+    REGISTERCOMPONENT(Graphics::Renderer);
+}
+
+void PE::CoreApplication::InitializeLogger()
+{
+    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::WRITE_TO_FILE | Logger::EnumLoggerFlags::DEBUG, true);
+    engine_logger.SetTime();
+    engine_logger.AddLog(false, "Engine initialized!", __FUNCTION__);
+}
+
+
+void PE::CoreApplication::InitializeAudio()
+{
+    AudioManager::GetInstance().Init();
+    {
+        engine_logger.AddLog(false, "Failed to initialize AudioManager", __FUNCTION__);
+    }
+    ResourceManager::GetInstance().LoadAudioFromFile("sound1", "../Assets/Audio/sound1.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("sound2", "../Assets/Audio/sound2.mp3");
+}
+
+
+void PE::CoreApplication::InitializeMemoryManager()
+{
+    MemoryManager::GetInstance();
 }

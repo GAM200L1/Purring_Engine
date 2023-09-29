@@ -54,14 +54,14 @@ namespace PE
 		// Main application loop
 		void Run();
 
-		// Add a system to the application
-		void AddSystem(System* system);
-
 		// Initialize all systems in m_systemList
 		void InitSystems();
 
 		// Destroy all systems and release resources
 		void DestroySystems();
+
+		// Add a system to the application
+		void AddSystem(System* system);
 
 		// Add a rendering layer to the application
 		void AddLayer(Layer* layer);
@@ -75,6 +75,11 @@ namespace PE
 
 	private:
 
+		void InitializeVariables();
+		void RegisterComponents();
+		void     InitializeLogger();
+		void InitializeAudio();
+		void InitializeMemoryManager();
 		// Uncomment if window is managed as a unique_ptr
 		//std::unique_ptr<Window> m_Window;
 
