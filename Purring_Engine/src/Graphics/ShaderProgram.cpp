@@ -6,7 +6,8 @@
  
  \author               Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
-  \par      code %:     95%
+ \par      code %:     95%
+ \par      changes:    Compile, link and validate the shader program.
 
  \co-author            Brandon Ho Jun Jie
  \par      email:      brandonjunjie.ho\@digipen.edu
@@ -20,12 +21,10 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include "prpch.h"
 #include <iostream>
-#include "ShaderProgram.h" // <string>, <glm/glm.hpp>
-#include "../Logging/Logger.h" // ----- @TODO: Fix the include paths... ------
+#include "ShaderProgram.h" 
+#include "Logging/Logger.h" 
 
 extern Logger engine_logger;
 
@@ -48,7 +47,7 @@ namespace PE
             DeleteProgram();
         }
 
-        bool ShaderProgram::LoadAndCompileShadersFromFile(std::string vertexFile, std::string fragmentFile)
+        bool ShaderProgram::LoadAndCompileShadersFromFile(std::string const& vertexFile, std::string const& fragmentFile)
         {
             std::ifstream vertexFileStream(vertexFile);
             std::ifstream fragmentFileStream(fragmentFile);
@@ -81,7 +80,7 @@ namespace PE
         }
 
 
-        bool ShaderProgram::CompileLinkValidateProgram(std::string vertexString, std::string fragmentString)
+        bool ShaderProgram::CompileLinkValidateProgram(std::string const& vertexString, std::string const& fragmentString)
         {
             // Check if able to create a program
             if (!CheckProgramId())
@@ -122,8 +121,6 @@ namespace PE
                     engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                     engine_logger.SetTime();
                     engine_logger.AddLog(true, logString, __FUNCTION__);
-
-                    std::cout << logString << "\n";
                 }
 
                 return false;
@@ -137,7 +134,6 @@ namespace PE
                 return false;
             }
 
-            std::cout << "Shader compiled!" << "\n";
             return true;
         }
 
@@ -210,7 +206,8 @@ namespace PE
         }
 
 
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, glm::mat4 const& r_matrix) {
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, glm::mat4 const& r_matrix) 
+        {
 
             GLint matrixLocation = glGetUniformLocation(m_programId,
                 reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
@@ -218,7 +215,8 @@ namespace PE
             // Check if the uniform variable can be found
             if (matrixLocation >= 0 &&
                 !(GL_INVALID_OPERATION == matrixLocation ||
-                    GL_INVALID_VALUE == matrixLocation)) {
+                    GL_INVALID_VALUE == matrixLocation)) 
+            {
 
                 // Pass the matrix as a uniform variable
                 glUniformMatrix4fv(matrixLocation, 1, GL_FALSE,
@@ -229,13 +227,12 @@ namespace PE
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
-
-                std::cout << errorLog << "\n";
             }
         }
 
 
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, glm::vec4 const& r_vector4) {
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, glm::vec4 const& r_vector4) 
+        {
 
             GLint uniformLocation = glGetUniformLocation(m_programId,
                 reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
@@ -243,7 +240,8 @@ namespace PE
             // Check if the uniform variable can be found
             if (uniformLocation >= 0 &&
                 !(GL_INVALID_OPERATION == uniformLocation ||
-                    GL_INVALID_VALUE == uniformLocation)) {
+                    GL_INVALID_VALUE == uniformLocation)) 
+            {
 
                 // Pass the vector values as a uniform variable
                 glUniform4f(uniformLocation, static_cast<GLfloat>(r_vector4.x),
@@ -251,18 +249,18 @@ namespace PE
                     static_cast<GLfloat>(r_vector4.z),
                     static_cast<GLfloat>(r_vector4.w));
             }
-            else {
+            else 
+            {
                 std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
-
-                std::cout << errorLog << "\n";
             }
         }
 
 
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, bool const value) {
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, bool const value) 
+        {
 
             GLint uniformLocation = glGetUniformLocation(m_programId,
                 reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
@@ -270,23 +268,24 @@ namespace PE
             // Check if the uniform variable can be found
             if (uniformLocation >= 0 &&
                 !(GL_INVALID_OPERATION == uniformLocation ||
-                    GL_INVALID_VALUE == uniformLocation)) {
+                    GL_INVALID_VALUE == uniformLocation)) 
+            {
 
                 // Pass the boolean value as a uniform variable
                 glUniform1i(uniformLocation, static_cast<GLint>(value));
             }
-            else {
+            else 
+            {
                 std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
-
-                std::cout << errorLog << "\n";
             }
         }
 
 
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, GLuint const value) {
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, GLuint const value) 
+        {
 
             GLint uniformLocation = glGetUniformLocation(m_programId,
                 reinterpret_cast<GLchar const*>(r_uniformName.c_str()));
@@ -294,18 +293,18 @@ namespace PE
             // Check if the uniform variable can be found
             if (uniformLocation >= 0 &&
                 !(GL_INVALID_OPERATION == uniformLocation ||
-                    GL_INVALID_VALUE == uniformLocation)) {
+                    GL_INVALID_VALUE == uniformLocation)) 
+            {
 
                 // Pass the int value as a uniform variable
                 glUniform1ui(uniformLocation, value);
             }
-            else {
+            else 
+            {
                 std::string errorLog{ "Uniform variable " + r_uniformName + " doesn't exist.\n" };
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
                 engine_logger.AddLog(true, errorLog, __FUNCTION__);
-
-                std::cout << errorLog << "\n";
             }
         }
 
@@ -317,7 +316,8 @@ namespace PE
         }
 
 
-        bool ShaderProgram::CheckProgramId() {
+        bool ShaderProgram::CheckProgramId() 
+        {
 
             if (m_programId <= 0)
             {

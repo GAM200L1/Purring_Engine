@@ -8,8 +8,8 @@
  \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
 
- \brief    This file contains the Texture class, which contains methods that encapsulates
-						a texture object.
+ \brief    This file contains the Texture class, which contains methods that creates 
+						and stores an OpenGL texture object.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -22,8 +22,8 @@ namespace PE
 				{
 						// ----- Constructors ----- // 
 				public:
-						Texture(); //! Default intializes the member variables
-						~Texture(); //! Deletes the texture object
+						Texture(); // Default intializes the member variables
+						~Texture(); // Deletes the texture object
 
 
 						// ----- Public getters ----- // 

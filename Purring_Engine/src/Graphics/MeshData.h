@@ -17,8 +17,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include "Graphics/GLHeaders.h"
 #include <glm/glm.hpp>
 #include <vector>
@@ -33,8 +31,8 @@ namespace PE
         {
             // ----- Public variables ----- // 
         public:
-            std::vector<VertexData> vertices{}; //! Vertex coordinates in model space
-            std::vector<GLushort> indices{};    //! Order to draw the vertices coordinates in
+            std::vector<VertexData> vertices{}; // Vertex coordinates in model space
+            std::vector<GLushort> indices{};    // Order to draw the vertices coordinates in
 
             // ----- Public methods ----- // 
         public:
@@ -75,9 +73,9 @@ namespace PE
 
             // ----- Private variables ----- // 
         private:
-            GLuint		m_vertexArrayObject{};    //! Handle to Vertex Array Object (VAO)
-            GLuint		m_vertexBufferObject{};   //! Handle to Vertex Buffer Object (VBO)
-            GLuint		m_elementBufferObject{};  //! Handle to Element Buffer Object (EBO)
+            GLuint		m_vertexArrayObject{};    // Handle to Vertex Array Object (VAO)
+            GLuint		m_vertexBufferObject{};   // Handle to Vertex Buffer Object (VBO)
+            GLuint		m_elementBufferObject{};  // Handle to Element Buffer Object (EBO)
         };
     } // End of Graphics namespace
 } // End of PE namespace

@@ -7,8 +7,8 @@
  \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
 
- \brief    This file contains the Texture class, which contains methods that encapsulates
-						a texture object.
+ \brief    This file contains the Texture class, which contains methods that creates 
+						and stores an OpenGL texture object.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -48,7 +48,7 @@ namespace PE
 			// Unbind if currently bound
 			if (static_cast<GLuint>(currentTexture) == m_textureID)
 			{
-					glBindTexture(GL_TEXTURE_2D, 0);
+				glBindTexture(GL_TEXTURE_2D, 0);
 			}
 		}
 
