@@ -297,116 +297,6 @@ namespace PE
 		*this /= this->Length();
 	}
 
-	///*potentially dont need																				   vec4 struct member implementations
-	//--------------------------------------------------------------------------------------------------------------------- */
-	//// copy assignment
-	//vec4& vec4::operator=(vec4 const& r_cpy)
-	//{
-	//	x = r_cpy.x;
-	//	y = r_cpy.y;
-	//	z = r_cpy.z;
-	//	w = r_cpy.w;
-	//}
-	//
-	//// access operator
-	//float vec4::operator[](unsigned int index) const
-	//{
-	//	// if (index > 3)
-	//		// return error
-	//	return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
-	//}
-	//
-	//// allows modification
-	//float& vec4::operator[](unsigned int index)
-	//{
-	//	return (*this)[index];
-	//}
-	//
-	//// addition
-	//vec4 vec4::operator+(vec4 const& r_rhs)
-	//{
-	//	return vec4{ x + r_rhs.x,
-	//				 y + r_rhs.y,
-	//				 z + r_rhs.z,
-	//				 w + r_rhs.w };
-	//}
-	//vec4& vec4::operator+=(vec4 const& r_rhs)
-	//{
-	//	x += r_rhs.x;
-	//	y += r_rhs.y;
-	//	z += r_rhs.z;
-	//	w += r_rhs.w;
-	//	return *this;
-	//}
-	//
-	//// subtraction
-	//vec4 vec4::operator-(vec4 const& r_rhs)
-	//{
-	//	return vec4{ x - r_rhs.x,
-	//				 y - r_rhs.y,
-	//				 z - r_rhs.z,
-	//				 w - r_rhs.w };
-	//}
-	//vec4& vec4::operator-=(vec4 const& r_rhs)
-	//{
-	//	x -= r_rhs.x;
-	//	y -= r_rhs.y;
-	//	z -= r_rhs.z;
-	//	w -= r_rhs.w;
-	//	return *this;
-	//}
-	//
-	//// scale
-	//vec4 vec4::operator/(float scale)
-	//{
-	//	return vec4{ x / scale,
-	//				 y / scale,
-	//				 z / scale,
-	//				 w / scale };
-	//}
-	//vec4 vec4::operator*(float scale)
-	//{
-	//	return vec4{ x * scale,
-	//				 y * scale,
-	//				 z * scale,
-	//				 w * scale };
-	//}
-	//vec4& vec4::operator*=(float scale)
-	//{
-	//	x *= scale;
-	//	y *= scale;
-	//	z *= scale;
-	//	w *= scale;
-	//	return *this;
-	//}
-	//vec4& vec4::operator/=(float scale)
-	//{
-	//	x /= scale;
-	//	y /= scale;
-	//	z /= scale;
-	//	w /= scale;
-	//	return *this;
-	//}
-	//
-	//// zero the vector
-	//void vec4::Zero()
-	//{
-	//	x = 0.f;
-	//	y = 0.f;
-	//	z = 0.f;
-	//	w = 0.f;
-	//}
-	//// cross product
-	//vec4 vec4::Cross(vec4 const& r_rhs)
-	//{
-	//
-	//}
-	//// dot product
-	//float vec4::Dot(vec4 const& r_rhs)
-	//{
-	//	return ((x * r_rhs.x) + (y * r_rhs.y) + (z * r_rhs.z) + (w * r_rhs.w));
-	//}
-
 	/*                                                                               mat3x3 struct member implementations
 	--------------------------------------------------------------------------------------------------------------------- */
 	// default constructor
@@ -451,14 +341,12 @@ namespace PE
 	{
 		return m[index];
 	}
-	// float operator[][](unsigned int index1, unsigned int index2) const; // [col][row]
 
 	// allows modification
 	float& mat3x3::operator[](unsigned int index) // 0-8
 	{
 		return m[index];
 	}
-	// float& operator[][](unsigned int index1, unsigned int index2); // [col][row]
 
 	// addition
 	mat3x3 mat3x3::operator+(mat3x3 const& r_rhs) const
@@ -514,12 +402,6 @@ namespace PE
 		return *this;
 	}
 
-	// matrix multiplication
-	// vec2 mat3x3::operator*(vec2 const& r_rhs) const
-	// {
-	// 	vec3 ret = *this * vec3{ r_rhs, 1.f };
-	// 	return vec2{ ret.x, ret.y };
-	// }
 	vec3 mat3x3::operator*(vec3 const& r_rhs) const
 	{
 		vec3 ret{};
@@ -666,22 +548,6 @@ namespace PE
 			m[i] = r_cpy.m[i];
 		}
 	}
-
-	//mat4x4::mat4x4(vec4 const& r_col0, vec4 const& r_col1, vec4 const& r_col2, vec4 const& r_col3)
-	//{
-	//	m[0] = r_col0.x; m[4] = r_col1.x; m[8] = r_col2.x; m[12] = r_col3.x;
-	//	m[1] = r_col0.y; m[5] = r_col1.y; m[9] = r_col2.y; m[13] = r_col3.y;
-	//	m[2] = r_col0.z; m[6] = r_col1.z; m[10] = r_col2.z; m[14] = r_col3.z;
-	//	m[3] = r_col0.w; m[7] = r_col1.w; m[11] = r_col2.w; m[15] = r_col3.w;
-	//}
-	// potentially dont need
-	//mat4x4::mat4x4(mat3x3 const& r_mat, vec4 const& r_vec)
-	//{
-	//	m[0] = r_mat[0], m[1] = r_mat[1], m[2] = r_mat[2],  m[3] = r_vec.x,
-	//	m[4] = r_mat[3], m[5] = r_mat[4], m[6] = r_mat[5],  m[7] = r_vec.y,
-	//	m[8] = r_mat[6], m[9] = r_mat[7], m[10] = r_mat[8], m[11] = r_vec.z,
-	//	m[12] = 0.f,	 m[13] = 0.f,	  m[14] = 0.f,		m[15] = r_vec.w;
-	//}
 
 	mat4x4& mat4x4::operator=(mat4x4 const& r_cpy)
 	{

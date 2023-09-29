@@ -54,22 +54,6 @@ namespace PE
         }
     }
 
-    // wip
-    //Graphics::ShaderProgram* ResourceManager::GetShaderProgram(std::string const& r_key, std::string const& r_vertexShaderString, std::string const& r_fragmentShaderString)
-    //{
-    //    //if (m_shaderPrograms.find(r_key) == m_shaderPrograms.end())
-    //    //{
-    //    //    // Graphics::ShaderProgram newShader{};
-    //    //    Graphics::ShaderProgram* newShader = new Graphics::ShaderProgram();
-    //    //    if (newShader->CompileLinkValidateProgram(r_vertexShaderString, r_fragmentShaderString))
-    //    //        m_shaderPrograms[r_key] = newShader;
-    //    //    else
-    //    //        throw;
-    //    //}
-
-    //    //return m_shaderPrograms[r_key];
-    //}
-
     void ResourceManager::LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath)
     {
         Textures[r_name] = std::make_shared<Graphics::Texture>();

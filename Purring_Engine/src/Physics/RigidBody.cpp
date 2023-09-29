@@ -86,15 +86,6 @@ namespace PE
 		m_type = newType;
 	}
 
-	//bool RigidBody::IsAwake() const
-	//{
-	//	return (m_awake) ? true : false;
-	//}
-	//void RigidBody::SetAwake(bool flag)
-	//{
-	//	m_awake = flag;
-	//}
-
 	// ----- Public Methods ----- //
 
 	// Adds on to existing force, ultimately affects position
@@ -105,15 +96,6 @@ namespace PE
 
 		force += r_addOnForce;
 	}
-
-	// Adds on to existing torque, ultimately affects rotation
-	//void RigidBody::ApplyTorque(float r_addOnTorque)
-	//{
-	//	if (m_type != EnumRigidBodyType::DYNAMIC)
-	//		return;
-	//
-	//	m_torque += r_addOnTorque;
-	//}
 
 	// Adds on immediately to object's velocity for burst movement
 	void RigidBody::ApplyLinearImpulse(vec2 const& r_impulseForce)

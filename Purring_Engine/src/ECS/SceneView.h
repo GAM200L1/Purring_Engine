@@ -95,35 +95,6 @@ int compare(const void* p_lhs, const void* p_rhs);
 				p_entityManager(&EntityManager::GetInstance()), index(index), all(all)
 			{
 				poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*r_components.begin()));
-				// @TO REMOVE FOR SUBMISSION
-				/*
-				if (all)
-				{
-					poolIdx = p_entityManager->GetEntitiesInPool("All");
-				}
-				else
-				{
-					if (components.size() == 1)
-					{
-						poolIdx = p_entityManager->GetEntitiesInPool((*components.begin()));
-					}
-					else
-					{
-						for (const auto& component : components)
-						{
-							for (const auto& id : p_entityManager->GetEntitiesInPool(component))
-								poolIdx.emplace_back(id);
-						}
-						std::qsort(poolIdx.data(), poolIdx.size(), sizeof(EntityID), PE::compare);
-						const std::vector<EntityID>::iterator iter = Duplicates(poolIdx.begin(), poolIdx.end());
-						for (auto it{ std::prev(poolIdx.end()) }; it != iter; )
-						{
-							auto copy = it--;
-							poolIdx.erase(copy);
-						}
-					}
-				}
-				*/
 				poolIdx.emplace_back(p_entityManager->OnePast());
 			}
 

@@ -75,8 +75,6 @@ namespace PE
 			std::stringstream ss;
 			ss << "Button Pressed: " << button;
 			return ss.str();
-			//if (repeat < 0)
-			//	ss << " (Button Being Held)";
 
 		}
 

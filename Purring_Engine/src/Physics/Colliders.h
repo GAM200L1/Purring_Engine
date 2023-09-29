@@ -24,9 +24,7 @@
 #include <set>
 
 namespace PE
-{
-	// may change this to box collider to combine obb and aabb in the future
-	
+{	
 	// ----- AABB Collider ----- //
 	
 	//! Struct containing AABBCollider parameters

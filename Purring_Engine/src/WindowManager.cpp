@@ -116,9 +116,6 @@ namespace PE
 	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event)
 	{
 		Editor::GetInstance().AddEventLog(r_event.ToString());
-		//commented so it stops flooding the console
-		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
-		//event_logger.FlushLog();
 	}
 
 
@@ -140,10 +137,6 @@ namespace PE
 			Graphics::RendererManager::m_mainCamera.AdjustMagnification(-mse.yOffset);
 
 		}
-
-		//commented so it stops flooding the console
-		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
-		//event_logger.FlushLog();
 	}
 
 
@@ -158,9 +151,6 @@ namespace PE
 	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
 	{
 		Editor::GetInstance().AddEventLog(r_event.ToString());
-		//commented so it stops flooding the console
-		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
-		//event_logger.FlushLog();
 
 		//dynamic cast
 		if (r_event.GetType() == KeyEvents::KeyTriggered)

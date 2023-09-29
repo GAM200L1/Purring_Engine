@@ -44,19 +44,6 @@
 #include "AudioManager/AudioManager.h"
 #include "Graphics/Text.h"
 
-//class Resource
-//{
-//public:
-//    
-//    Resource(); // don't allow no specification of the file path
-//    //Resource(std::string const& r_filepath);
-//    ~Resource() = default;
-//
-//protected:
-//    unsigned int m_resourceID;
-//    std::string m_filepath;
-//};
-
 namespace PE
 {
     class ResourceManager : public Singleton<ResourceManager>
@@ -86,11 +73,6 @@ namespace PE
         *************************************************************************************/
         void LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderString,
             std::string const& r_fragmentShaderString);
-
-        // wip
-        //static PE::Graphics::ShaderProgram* GetShaderProgram(std::string const& r_key,
-        //    std::string const& r_vertexShaderString,
-        //    std::string const& r_fragmentShaderString);
 
         /*!***********************************************************************************
             \brief Loads texture from file and inserts into Textures map container.

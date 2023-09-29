@@ -47,8 +47,7 @@ namespace PE
         : m_targetFrameTime(1.0 / 60.0),  // Default to 60 FPS
         m_frameCount(0),
         m_timeSinceLastFPSUpdate(0.0),
-        m_currentFPS(0.0),
-        m_deltaTime(0.0)
+        m_currentFPS(0.0)
     {}
 
 
@@ -98,7 +97,6 @@ namespace PE
         do 
         {
             duration = std::chrono::high_resolution_clock::now() - TimeManager::GetInstance().GetStartTime();
-            //std::cout << " Actual: " << glfwGetTime() << '\n';
         }
         while (duration.count() < m_targetFrameTime);
     }

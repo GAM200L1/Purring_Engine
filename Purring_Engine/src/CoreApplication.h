@@ -83,10 +83,6 @@ namespace PE
 		// Add an overlay layer to the application
 		void AddOverlay(Layer* overlay);
 
-		// Uncomment below if singletons are required
-		//inline static Application& Get() { return *s_Instance; }
-		//inline Window& GetWindow() { return *m_Window; }
-
 	private:
 
 		void InitializeVariables();
@@ -95,9 +91,6 @@ namespace PE
 		void InitializeAudio();
 		void InitializeMemoryManager();
 		void InitializeSystems();
-
-		// Uncomment if window is managed as a unique_ptr
-		//std::unique_ptr<Window> m_Window;
 
 		// Running state flag
 		bool m_Running;
