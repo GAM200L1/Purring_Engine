@@ -1,15 +1,18 @@
-/*!*****************************************************************************
-	@file       CollisionManager.cpp
-	@author     Liew Yeni
-	@co-author
-	@par        DP email: yeni.l\@digipen.edu
-	@par        Course: CSD2401, Section A
-	@date       09-09-2023
-
-	@brief
-
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     CollisionManager.cpp
+ \date     10-09-2023
+ 
+ \author               Liew Yeni
+ \par      email:      yeni.l/@digipen.edu
+ 
+ \brief   Contains definitions for CollisionManager's member functions
+		  as well as definitions for functions that check if two objects with colliders have collided
+ 
+ 
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 
 #include "prpch.h"
 #include "CollisionManager.h"
@@ -134,7 +137,7 @@ namespace PE
 							}
 							else
 							{
-								// else send message to trigger event associated with this entity?
+								// else send message to trigger event associated with this entity
 								Editor::GetInstance().AddEventLog("Collided with Trigger.\n");
 							}
 							
@@ -364,91 +367,3 @@ namespace PE
 		return 0;
 	}
 }
-
-/* 
-Physics + Collision Tentative Loop
-Update Dynamics
-TestColliders
-ResolveCollision / Update Position
-Update Colliders
-*/
-
-
-// Circle Circle Extra
-/*else
-		{
-			// Dynamic Collision Check
-
-			vec2 const& startPos_e1 = EntityManager::GetInstance().Get<RigidBody>(r_entity1).prevPosition;
-			vec2 const& endPos_e1 = r_circle1.center;
-			//vec2 const& v_e1 = endPos_e1 - startPos_e1;
-
-			vec2 const& startPos_e2 = EntityManager::GetInstance().Get<RigidBody>(r_entity2).prevPosition;
-			vec2 const& endPos_e2 = r_circle2.center;
-			//vec2 const& v_e2 = endPos_e2 - startPos_e2;
-
-			vec2 const v = (endPos_e1 - startPos_e1) - (endPos_e2 - startPos_e2); // v = v1 - v2
-			vec2 const s = startPos_e1 - startPos_e2;
-			
-			float eqnC = Dot(s, s) - (totalRadius * totalRadius);
-			if (eqnC < 0.f)
-			{
-				
-			}
-
-			// quadratic equation to solve for t
-			float eqnA = Dot(v, v);
-			if (eqnA < std::numeric_limits<float>::epsilon()) 
-			{ return false; } // not moving relative to each other
-			
-			float eqnB = Dot(v, s);
-			if (eqnB >= 0.f)
-			{ return false; } // not moving towards each other
-
-			
-			
-			// checks if it has root values;
-			float discriminant = 
-		}*/
-
-// CircleAABBEdge Extra
-/*vec2 normalScaleRadius = (check <= -r_circle.radius) ? -(r_lineSeg.normal * r_circle.radius) : (r_lineSeg.normal * r_circle.radius);
-
-			vec2 _p0 = r_lineSeg.point0 + normalScaleRadius;
-			vec2 _p1 = r_lineSeg.point1 + normalScaleRadius;
-
-			vec2 v = EntityManager::GetInstance().Get<Transform>(r_entity1).position - r_circle.center;
-			vec2 M{ v.y, -v.x };
-
-			vec2 Bs_p0 = _p0 - r_circle.center;
-			vec2 Bs_p1 = _p1 - r_circle.center;
-
-			float interTime{ 0.f };
-
-			if (Dot(M, Bs_p0) * Dot(M, Bs_p1) < 0.f)
-			{
-				interTime = Dot(r_lineSeg.normal, r_lineSeg.point0)
-							- Dot(r_lineSeg.normal, r_circle.center);
-
-				interTime += (check <= -r_circle.radius)? - r_circle.radius : r_circle.radius;
-				interTime /= Dot(r_lineSeg.normal, v);
-
-				if (0.f <= interTime && interTime <= 1.f)
-				{
-					if (r_interTime > interTime)
-					{
-						r_interTime = interTime;
-						r_contactPt.intersectionPoint = r_circle.center + (v * interTime);
-						r_contactPt.normal = (check <= -r_circle.radius) ? -r_lineSeg.normal : r_lineSeg.normal;
-					}
-					return true;
-				}
-			}
-			else
-			{
-				return false; // call check line edges function here with false
-			}
-		else
-		{
-			return false; // call check line edges function here with true
-		}*/

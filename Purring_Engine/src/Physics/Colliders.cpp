@@ -7,7 +7,8 @@
  \author               Liew Yeni
  \par      email:      yeni.l/@digipen.edu
  
- \brief 
+ \brief    This file contains definition of each collider's update functions and
+		   definition for resolving collision.
  
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -17,6 +18,7 @@
 
 namespace PE
 {
+	// ----- AABB Collider ----- //
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_AABB.center = r_position + r_AABB.positionOffset;
@@ -82,7 +84,7 @@ namespace PE
 	void Manifold::ResolveVelocity()
 	{
 		float p = (2.f * (Dot(p_rigidBodyA->velocity, contactData.normal) - Dot(p_rigidBodyB->velocity, contactData.normal))) / (p_rigidBodyA->GetInverseMass() + p_rigidBodyB->GetInverseMass());
-		//std::cout << p << '\n';
+		
 		if (p_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
 			p_rigidBodyA->velocity = p_rigidBodyA->velocity - (contactData.normal * p_rigidBodyA->GetInverseMass() * p);
@@ -93,9 +95,3 @@ namespace PE
 		}
 	}
 }
-
-// do not do this for m1
-/*struct OBB
-{
-
-};*/
