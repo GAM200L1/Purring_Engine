@@ -7,7 +7,7 @@
  \author               Liew Yeni
  \par      email:      yeni.l\@digipen.edu
 
- \brief     Contains the implementation of the Transform component.
+ \brief    Contains the implementation of the Transform component.
 
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -24,7 +24,12 @@ namespace PE
         float width{100}, height{100};
         float orientation{}; // in radians
         vec2 position{};
+        
+        /*!***********************************************************************************
+         \brief Gets the Transformation Matrix version of this Transform
 
+         \return mat3x3		The transformation matrix as a mat3x3
+        *************************************************************************************/
         mat3x3 GetTransformMatrix3x3() const
         {
             mat3x3 scaleMat;
@@ -50,14 +55,14 @@ namespace PE
         }
 
         // Deserialization
-        static Transform FromJson(const nlohmann::json& j)
+        static Transform FromJson(const nlohmann::json& r_j)
         {
             Transform t;
-            t.width = j["width"];
-            t.height = j["height"];
-            t.orientation = j["orientation"];
-            t.position.x = j["position"]["x"];
-            t.position.y = j["position"]["y"];
+            t.width = r_j["width"];
+            t.height = r_j["height"];
+            t.orientation = r_j["orientation"];
+            t.position.x = r_j["position"]["x"];
+            t.position.y = r_j["position"]["y"];
             return t;
         }
     };
