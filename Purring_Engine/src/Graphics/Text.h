@@ -41,9 +41,9 @@ namespace PE
 		Font() = default;
 
 		/*!***********************************************************************************
-			\brief 
+			\brief Init font class with vbo and vao
 
-			\param[in shaderProgram Shader program for rendering text.
+			\param[in] shaderProgram Shader program for rendering text.
 		*************************************************************************************/
 		void Init(std::shared_ptr<Graphics::ShaderProgram> shaderProgram);
 
@@ -52,8 +52,10 @@ namespace PE
 
 			\param[in] r_fontPath File path of font.
 			\param[in] fontSize Size of pixel to extract.
+
+			return
 		*************************************************************************************/
-		void Load(std::string const& r_fontPath, unsigned int fontSize = 45);
+		bool Load(std::string const& r_fontPath, unsigned int fontSize = 45);
 
 		/*!***********************************************************************************
 			\brief Renders text from r_text parameter. Retrieves glyph information from map

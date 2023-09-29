@@ -98,6 +98,16 @@ namespace PE
         }
     }
 
+    void ResourceManager::LoadFontFromFile(std::string const& r_key, std::string const& r_filePath)
+    {
+        Fonts[r_key] = std::make_shared<Font>();
+
+        if (!Fonts[r_key]->Load(r_filePath))
+        {
+            Fonts.erase(r_key);
+        }
+    }
+
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
     {
         return Textures[r_name];
@@ -107,5 +117,7 @@ namespace PE
     {
         ShaderPrograms.clear();
         Textures.clear();
+        Sounds.clear();
+        Fonts.clear();
     }
 }
