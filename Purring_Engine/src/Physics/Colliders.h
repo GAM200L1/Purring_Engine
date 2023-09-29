@@ -138,36 +138,48 @@ namespace PE
 		// ----- Public Methods ----- //
 		public:
 
-		// Serialization
-		nlohmann::json ToJson() const
-		{
-			nlohmann::json j;
-			if (std::holds_alternative<AABBCollider>(colliderVariant))
-			{
-				j["type"] = "AABBCollider";
-			}
-			else if (std::holds_alternative<CircleCollider>(colliderVariant))
-			{
-				j["type"] = "CircleCollider";
-			}
-			return j;
-		}
+			/*!***********************************************************************************
+			\brief Serializes the Collider object to a JSON object. Based on the type of the collider
+			(AABBCollider or CircleCollider), the type is stored as a string in the JSON object. 
 
-		// Deserialization
-		static Collider FromJson(const nlohmann::json& r_j)
-		{
-			Collider collider;
-			std::string type = r_j["type"];
-			if (type == "AABBCollider")
+			\return The JSON representation of the Collider object.
+			*************************************************************************************/
+			nlohmann::json ToJson() const
 			{
-				collider.colliderVariant = AABBCollider::FromJson(r_j["data"]);
+				nlohmann::json j;
+				if (std::holds_alternative<AABBCollider>(colliderVariant))
+				{
+					j["type"] = "AABBCollider";
+				}
+				else if (std::holds_alternative<CircleCollider>(colliderVariant))
+				{
+					j["type"] = "CircleCollider";
+				}
+				return j;
 			}
-			else if (type == "CircleCollider")
+
+			/*!***********************************************************************************
+			\brief Deserializes the Collider object from a JSON object. Based on the "type" field in
+					the JSON object, it constructs the appropriate collider (AABBCollider or CircleCollider)
+					and stores it in the colliderVariant.
+
+			\param[in] r_j 	JSON object containing the values to load into the Collider object.
+			\return 		The deserialized Collider object.
+			*************************************************************************************/
+			static Collider FromJson(const nlohmann::json& r_j)
 			{
-				collider.colliderVariant = CircleCollider::FromJson(r_j["data"]);
+				Collider collider;
+				std::string type = r_j["type"];
+				if (type == "AABBCollider")
+				{
+					collider.colliderVariant = AABBCollider::FromJson(r_j["data"]);
+				}
+				else if (type == "CircleCollider")
+				{
+					collider.colliderVariant = CircleCollider::FromJson(r_j["data"]);
+				}
+				return collider;
 			}
-			return collider;
-		}
 	};
 
 	// ----- Line Segment ----- //

@@ -139,7 +139,12 @@ namespace PE
 
 		// ----- Serialization ----- //
 
-		// Serialization
+
+		/*!***********************************************************************************
+		\brief Serializes the RigidBody object to a JSON object.
+
+		\return The JSON representation of the RigidBody object.
+		*************************************************************************************/
 		nlohmann::json ToJson() const
 		{
 			nlohmann::json j;
@@ -149,7 +154,12 @@ namespace PE
 			return j;
 		}
 
-		// Deserialization
+		/*!***********************************************************************************
+		\brief Deserializes the RigidBody object from a JSON object.
+
+		\param[in] j JSON object containing the values to load into the RigidBody object.
+		\return The deserialized RigidBody object.
+		*************************************************************************************/
 		static RigidBody FromJson(const nlohmann::json& j)
 		{
 			RigidBody rb;

@@ -6,14 +6,7 @@
  
  \author               Liew Yeni
  \par      email:      yeni.l/@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
- 
- \co-author            Krystal
- \par      email:      <remove if sole author>
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
- 
+
  \brief 
  
  
@@ -53,12 +46,13 @@ namespace PE
 
         // ----- Serialization ------ //
         
-        /*!***********************************************************************************
-         \brief 
-         
-         \return nlohmann::json 
-        *************************************************************************************/
-        nlohmann::json ToJson() const
+    /*!***********************************************************************************
+     \brief Serializes the Transform object to a JSON object. Converts the width, height,
+            orientation, and position of the Transform object to a JSON object for
+            easy storage and transmission.
+
+     \return The JSON representation of the Transform object.
+    *************************************************************************************/        nlohmann::json ToJson() const
         {
             nlohmann::json j;
             j["width"] = width;
@@ -69,7 +63,13 @@ namespace PE
             return j;
         }
 
-        // Deserialization
+    /*!***********************************************************************************
+     \brief Deserializes the Transform object from a JSON object. Converts a JSON object to a
+            Transform by extracting width, height, orientation, and position values.
+
+     \param[in] r_j JSON object containing the values to load into the Transform object.
+     \return The deserialized Transform object.
+    *************************************************************************************/
         static Transform FromJson(const nlohmann::json& r_j)
         {
             Transform t;
