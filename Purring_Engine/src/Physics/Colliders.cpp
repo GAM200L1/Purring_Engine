@@ -81,15 +81,15 @@ namespace PE
 	// set the trajectory post-collision - only valid for dynamic objects
 	void Manifold::ResolveVelocity()
 	{
-		float p = (2.f * (Dot(p_rigidBodyA->velocity, contactData.normal) - Dot(p_rigidBodyB->velocity, contactData.normal))) / (p_rigidBodyA->GetMass() + p_rigidBodyB->GetMass());
+		float p = (2.f * (Dot(p_rigidBodyA->velocity, contactData.normal) - Dot(p_rigidBodyB->velocity, contactData.normal))) / (p_rigidBodyA->GetInverseMass() + p_rigidBodyB->GetInverseMass());
 		//std::cout << p << '\n';
 		if (p_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			p_rigidBodyA->velocity = p_rigidBodyA->velocity - (contactData.normal * p_rigidBodyA->GetMass() * p);
+			p_rigidBodyA->velocity = p_rigidBodyA->velocity - (contactData.normal * p_rigidBodyA->GetInverseMass() * p);
 		}
 		if (p_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			p_rigidBodyB->velocity = p_rigidBodyB->velocity + (contactData.normal * p_rigidBodyB->GetMass() * p);
+			p_rigidBodyB->velocity = p_rigidBodyB->velocity + (contactData.normal * p_rigidBodyB->GetInverseMass() * p);
 		}
 	}
 }
