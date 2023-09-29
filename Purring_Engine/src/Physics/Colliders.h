@@ -39,7 +39,7 @@ namespace PE
 
 
 		// ----- Public Methods ----- //
-		// For Future -hans
+		
 		// Serialization
 		nlohmann::json ToJson() const
 		{
@@ -86,7 +86,7 @@ namespace PE
 
 
 		// ----- Public Methods ----- //
-		// For Future -hans
+		
 		// Serialization
 		nlohmann::json ToJson() const
 		{
@@ -119,16 +119,22 @@ namespace PE
 	*************************************************************************************/
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale);
 	
+
 	// ----- Collider ----- //
 
 	//! General Collider each type of collider is loosely based off
 	struct Collider
 	{
+		// ----- Public Variables ----- //
+		public:
+
 		std::variant<AABBCollider, CircleCollider> colliderVariant; // contains the different types of colliders
 		std::set<size_t> objectsCollided; // contains the IDs of the entities that each collider has collided with
 		bool isTrigger{ false }; // determines whether the collider will need to resolve its collision
 
 		// ----- Public Methods ----- //
+		public:
+
 		// Serialization
 		nlohmann::json ToJson() const
 		{
@@ -168,6 +174,17 @@ namespace PE
 	//! Struct containing LineSegment parameters
 	struct LineSegment
 	{
+		// ----- Public Variables ----- //
+		public:
+
+		vec2 point0; // start point of the line
+		vec2 point1; // end point of the line
+		vec2 lineVec; // the vector of the line segment
+		vec2 normal; // normalized normal of line segment
+
+		// ----- Constructor ----- //
+		public:
+		
 		/*!***********************************************************************************
 		 \brief Alternative constructor for LineSegment. Sets point0 and point1 of the LineSegment
 				using input parameters and calculates the other parameters based off it.
@@ -176,10 +193,7 @@ namespace PE
 		 \param[in] r_endPt 	The coordinates for the end point of the line segment
 		*************************************************************************************/
 		LineSegment(vec2 const& r_startPt, vec2 const& r_endPt);
-		vec2 point0; // start point of the line
-		vec2 point1; // end point of the line
-		vec2 lineVec; // the vector of the line segment
-		vec2 normal; // normalized normal of line segment
+		
 	};
 
 	// ----- Collision Info ----- //
@@ -187,6 +201,9 @@ namespace PE
 	//! Struct containing parameters which denote the the point where two objects have collided
 	struct Contact
 	{
+		// ----- Public Variables ------ //
+		public:
+
 		vec2 intersectionPoint{ 0.f, 0.f };
 		vec2 normal{ 0.f, 0.f };		// outward normal from intersectionPoint, towards Entity1
 		float penetrationDepth{ 0.f }; // amount of overlap between the two objects
@@ -195,7 +212,21 @@ namespace PE
 	//! Struct containing contact point data and reference to the transform and pointer to the RigidBody of the respective entity
 	struct Manifold
 	{
-		// Manifold cannot be constructed with no basis entity
+		// ----- Public Variables ----- //
+		public:
+
+		Transform& r_transformA;
+		Transform& r_transformB;
+
+		RigidBody* p_rigidBodyA = nullptr; // this could be nonexistent as trigger/static
+		RigidBody* p_rigidBodyB = nullptr; // collision objects do not always need a rigidbody
+
+		Contact contactData;
+
+		// ----- Constructors ------ //
+		public:
+		
+		// Manifold cannot be constructed with no basis entity therefore constructor with no input parameters is deleted
 		Manifold() = delete;
 
 		/*!***********************************************************************************
@@ -211,14 +242,9 @@ namespace PE
 				 Transform& r_transA, Transform& r_transB,
 				 RigidBody* p_rbA, RigidBody* p_rbB);
 
-		Transform& r_transformA;
-		Transform& r_transformB;
-
-		RigidBody* p_rigidBodyA = nullptr; // this could be nonexistent as trigger/static
-		RigidBody* p_rigidBodyB = nullptr; // collision objects do not always need a rigidbody
-
-		Contact contactData;
-
+		// ------ Public Methods ------ //
+		public:
+		
 		/*!***********************************************************************************
 		 \brief Resolves both velocity and position of the entities by calling ResolveVelocity
 				and Resolve Position

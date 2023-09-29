@@ -19,28 +19,28 @@ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reser
 namespace PE
 {
 	RigidBody::RigidBody() :
-		m_velocity{ vec2{ 0.f, 0.f } }, m_rotationVelocity{ 0.f },
-		m_force{ vec2{ 0.f, 0.f } }, //m_torque{ 0.f }, m_awake{ false },
+		velocity{ vec2{ 0.f, 0.f } }, rotationVelocity{ 0.f },
+		force{ vec2{ 0.f, 0.f } }, //m_torque{ 0.f }, m_awake{ false },
 		m_mass{ 10.f }, m_inverseMass{ 1/10.f }, // m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
-		m_prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
+		prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
 
 	RigidBody::RigidBody(RigidBody const& r_cpy) :
-		m_velocity{ r_cpy.m_velocity }, m_rotationVelocity{ r_cpy.m_rotationVelocity },
-		m_force{ r_cpy.m_force }, //m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
+		velocity{ r_cpy.velocity }, rotationVelocity{ r_cpy.rotationVelocity },
+		force{ r_cpy.force }, //m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
 		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, 
 		//m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag },
-		m_prevPosition{ r_cpy.m_prevPosition }, m_type{ r_cpy.m_type } {}
+		prevPosition{ r_cpy.prevPosition }, m_type{ r_cpy.m_type } {}
 
 	RigidBody& RigidBody::operator=(RigidBody const& r_cpy)
 	{
-		m_velocity = r_cpy.m_velocity;
-		m_rotationVelocity = r_cpy.m_rotationVelocity;
-		m_force = r_cpy.m_force;
+		velocity = r_cpy.velocity;
+		rotationVelocity = r_cpy.rotationVelocity;
+		force = r_cpy.force;
 		//m_torque = r_cpy.m_torque;
 		//m_awake = r_cpy.m_awake;
 		m_mass = r_cpy.m_mass;
 		m_inverseMass = r_cpy.m_inverseMass;
-		m_prevPosition = r_cpy.m_prevPosition;
+		prevPosition = r_cpy.prevPosition;
 		// m_drag = r_cpy.m_drag;
 		// m_rotationDrag = r_cpy.m_rotationDrag;
 		m_type = r_cpy.m_type;
@@ -68,7 +68,7 @@ namespace PE
 		if (m_type != EnumRigidBodyType::DYNAMIC)
 			return;
 
-		m_force = vec2{ 0.f, 0.f };
+		force = vec2{ 0.f, 0.f };
 	}
 
 	EnumRigidBodyType RigidBody::GetType() const
@@ -96,7 +96,7 @@ namespace PE
 		if (m_type != EnumRigidBodyType::DYNAMIC || (!PhysicsManager::GetAdvanceStep() && PhysicsManager::GetStepPhysics()))
 			return;
 
-		m_force += r_addOnForce;
+		force += r_addOnForce;
 	}
 
 	// Adds on to existing torque, ultimately affects rotation
@@ -112,6 +112,6 @@ namespace PE
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC || (!PhysicsManager::GetAdvanceStep() && PhysicsManager::GetStepPhysics()))
 			return;
-		m_velocity += r_impulseForce * m_inverseMass;
+		velocity += r_impulseForce * m_inverseMass;
 	}
 }

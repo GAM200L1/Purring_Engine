@@ -33,34 +33,15 @@ namespace PE
 	{
 	public:
 
-		// Serialization
-		nlohmann::json ToJson() const
-		{
-			nlohmann::json j;
-			j["type"] = static_cast<int>(GetType()); // right now its an enum
-			j["mass"] = m_mass;
-
-			return j;
-		}
-
-		// Deserialization
-		static RigidBody FromJson(const nlohmann::json& j)
-		{
-			RigidBody rb;
-			rb.SetType(static_cast<EnumRigidBodyType>(j["type"].get<int>())); // right now its an enum
-			rb.m_mass = j["mass"];
-
-			return rb;
-		}
-
 		// ----- Public Variables ----- //
 
-		vec2 m_prevPosition{};
+		vec2 prevPosition{}; // the position of the object with RigidBody in the previous frame is stored here
 		
-		vec2 m_velocity{};
-		float m_rotationVelocity{};
+		vec2 velocity{};
+		float rotationVelocity{};
 
-		vec2 m_force{};
+		vec2 force{};
+
 		//float m_torque{};
 
 		//bool m_awake{}; //! enables collision of object, true for awake
@@ -68,7 +49,6 @@ namespace PE
 	public:
 		// ----- Constructors ----- //
 		RigidBody();
-		~RigidBody() = default;
 
 		RigidBody(RigidBody const& r_cpy);
 		RigidBody& operator=(RigidBody const& r_cpy);
@@ -100,12 +80,35 @@ namespace PE
 		// Applies impulse - directly adds to linear velocity
 		void ApplyLinearImpulse(vec2 const& r_impulseForce);
 
+		// ----- Serialization ----- //
+
+		// Serialization
+		nlohmann::json ToJson() const
+		{
+			nlohmann::json j;
+			j["type"] = static_cast<int>(GetType()); // right now its an enum
+			j["mass"] = m_mass;
+
+			return j;
+		}
+
+		// Deserialization
+		static RigidBody FromJson(const nlohmann::json& j)
+		{
+			RigidBody rb;
+			rb.SetType(static_cast<EnumRigidBodyType>(j["type"].get<int>())); // right now its an enum
+			rb.m_mass = j["mass"];
+
+			return rb;
+		}
+
 	private:
 		// ----- Private Variables ----- //
 		EnumRigidBodyType m_type = EnumRigidBodyType::STATIC;
 
 		float m_mass{10.f};
 		float m_inverseMass{1.f/10.f};
+
 		//float m_drag;
 		//float m_rotationDrag;
 	};

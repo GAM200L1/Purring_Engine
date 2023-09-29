@@ -30,7 +30,7 @@ namespace PE
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_circle.center = r_position + r_circle.positionOffset;
-		r_circle.radius = (r_scale.x > r_scale.y)? r_scale.x : r_scale.y;
+		r_circle.radius = (r_scale.x > r_scale.y)? r_scale.x : r_scale.y; // Collider radius is based on larger axis
 		r_circle.radius *= 0.5f * r_circle.scaleOffset;
 	}
 
@@ -44,6 +44,8 @@ namespace PE
 		normal = vec2{ lineVec.y, -lineVec.x }.GetNormalized();
 	}
 
+	// ----- Manifolds ------ //
+
 	Manifold::Manifold(Contact const& r_contData,
 		Transform& r_transA, Transform& r_transB,
 		RigidBody* p_rbA, RigidBody* p_rbB)
@@ -51,13 +53,14 @@ namespace PE
 		r_transformA{ r_transA }, r_transformB{ r_transB },
 		p_rigidBodyA{ p_rbA }, p_rigidBodyB{ p_rbB } {}
 
+	// will not be called if one of the collidable objects involved is a trigger
 	void Manifold::ResolveCollision()
 	{
 		ResolveVelocity();
 		ResolvePosition();
 	}
 
-	// set the objects to where they would be when they just collide
+	// set the objects to where they would be when they collide, i.e. not overlapping - only for dynamic objects
 	void Manifold::ResolvePosition()
 	{
 		float totalInvMass = p_rigidBodyA->GetInverseMass() + p_rigidBodyB->GetInverseMass();
@@ -74,18 +77,18 @@ namespace PE
 		}
 	}
 
-	// set the post trajectory
+	// set the trajectory post-collision - only valid for dynamic objects
 	void Manifold::ResolveVelocity()
 	{
-		float p = (2.f * (Dot(p_rigidBodyA->m_velocity, contactData.normal) - Dot(p_rigidBodyB->m_velocity, contactData.normal))) / (p_rigidBodyA->GetMass() + p_rigidBodyB->GetMass());
+		float p = (2.f * (Dot(p_rigidBodyA->velocity, contactData.normal) - Dot(p_rigidBodyB->velocity, contactData.normal))) / (p_rigidBodyA->GetMass() + p_rigidBodyB->GetMass());
 		//std::cout << p << '\n';
 		if (p_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			p_rigidBodyA->m_velocity = p_rigidBodyA->m_velocity - (contactData.normal * p_rigidBodyA->GetMass() * p);
+			p_rigidBodyA->velocity = p_rigidBodyA->velocity - (contactData.normal * p_rigidBodyA->GetMass() * p);
 		}
 		if (p_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			p_rigidBodyB->m_velocity = p_rigidBodyB->m_velocity + (contactData.normal * p_rigidBodyB->GetMass() * p);
+			p_rigidBodyB->velocity = p_rigidBodyB->velocity + (contactData.normal * p_rigidBodyB->GetMass() * p);
 		}
 	}
 }
