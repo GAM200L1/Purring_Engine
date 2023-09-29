@@ -162,30 +162,14 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim1", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_2.png");
     ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
 
-    EntityID id = EntityFactory::GetInstance().CreateEntity();
-
+    //create background from file
     glfwGetWindowSize(m_window, &width, &height);
-    EntityFactory::GetInstance().Assign(id, { "Transform", "Renderer" });
-    EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
-    EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
+    EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json");
     EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(width);
     EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(height);
-    EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
-    EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(bgTextureName);
-    EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
     
-    // Creates an entity that is attached to the Character Controller
-    EntityID id2 = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-    EntityManager::GetInstance().Get<Transform>(id2).position.x = 0.f;
-    EntityManager::GetInstance().Get<Transform>(id2).position.y = 0.f;
-    EntityManager::GetInstance().Get<Transform>(id2).width = 100.f;
-    EntityManager::GetInstance().Get<Transform>(id2).height = 100.f;
-    EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-    EntityManager::GetInstance().Get<RigidBody>(id2).SetType(EnumRigidBodyType::DYNAMIC);
-    EntityManager::GetInstance().Get<Collider>(id2).colliderVariant = CircleCollider();
-    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey(catTextureName);
-    EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f);
-    EntityManager::GetInstance().Get<RigidBody>(id2).SetMass(10.f);
+    // Creates an entity from file that is attached to the Character Controller
+    serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
     
 
 }

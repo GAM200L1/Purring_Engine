@@ -104,6 +104,7 @@ namespace PE {
 
 	void Editor::ClearObjectList()
 	{
+		m_currentSelectedObject = -1;
 		for (int n = 2; n < EntityManager::GetInstance().GetEntitiesInPool("All").size();)
 		{
 			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
@@ -390,7 +391,7 @@ namespace PE {
 			if (ImGui::Button("Create Object")) // add a string into vector
 			{
 				AddInfoLog("Object Created");
-				serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
+				serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
 			}
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
@@ -399,7 +400,7 @@ namespace PE {
 				{
 					AddInfoLog("Object Deleted");
 
-					
+
 					EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
 
 					//if not first index
@@ -413,7 +414,7 @@ namespace PE {
 					count--;
 
 				}
-				else 
+				else
 				{
 					AddWarningLog("You are not allowed to delete the background or player as of now");
 				}
@@ -421,8 +422,8 @@ namespace PE {
 
 			if (ImGui::Button("Clone Object"))
 			{
-				if(m_currentSelectedObject)
-				EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
+				if (m_currentSelectedObject)
+					EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
 				else
 					AddWarningLog("You are not allowed to clone the background");
 			}
@@ -449,9 +450,9 @@ namespace PE {
 					}
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
-							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-						if (is_selected) // to show the highlight if selected
-							ImGui::SetItemDefaultFocus();
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (is_selected) // to show the highlight if selected
+						ImGui::SetItemDefaultFocus();
 
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 				}
@@ -549,24 +550,24 @@ namespace PE {
 				std::mt19937 gen(rd());
 				for (size_t i{ 2 }; i < 20; ++i)
 				{
-				    EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-				
-				    std::uniform_int_distribution<>distr0(-550, 550);
-				    EntityManager::GetInstance().Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
-				    std::uniform_int_distribution<>distr1(-250, 250);
-				    EntityManager::GetInstance().Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
-				    std::uniform_int_distribution<>distr2(10, 200);
-				    EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(distr2(gen));
-				    EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(distr2(gen));
-				    EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
-				
-				    if (i%3)
-				        EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				    
-				    if (i%2)
-				        EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
-				    else
-				        EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
+					EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+
+					std::uniform_int_distribution<>distr0(-550, 550);
+					EntityManager::GetInstance().Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
+					std::uniform_int_distribution<>distr1(-250, 250);
+					EntityManager::GetInstance().Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
+					std::uniform_int_distribution<>distr2(10, 200);
+					EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(distr2(gen));
+					EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(distr2(gen));
+					EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
+
+					if (i % 3)
+						EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+
+					if (i % 2)
+						EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
+					else
+						EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
 				}
 			}
 			ImGui::SameLine();
@@ -579,14 +580,12 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
-				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100;
-				EntityManager::GetInstance().Get<Transform>(id).height = 100;
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("AABB AABB DYNAMIC DYNAMIC"))
@@ -594,29 +593,24 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
-				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100;
-				EntityManager::GetInstance().Get<Transform>(id).height = 100;
 			}
 			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC STATIC"))
 			{
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
-				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
-				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100;
-				EntityManager::GetInstance().Get<Transform>(id).height = 100;
-				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC DYNAMIC"))
@@ -624,30 +618,24 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
-				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
-				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100;
-				EntityManager::GetInstance().Get<Transform>(id).height = 100;
-				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 			}
 			if (ImGui::Button("AABB CIRCLE DYNAMIC STATIC"))
 			{
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
-				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100;
-				EntityManager::GetInstance().Get<Transform>(id).height = 100;
-				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("AABB CIRCLE DYNAMIC DYNAMIC"))
@@ -655,30 +643,24 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
-				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100;
-				EntityManager::GetInstance().Get<Transform>(id).height = 100;
-				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
 			}
 			if (ImGui::Button("CIRCLE AABB DYNAMIC STATIC"))
 			{
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
-				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
-				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100;
-				EntityManager::GetInstance().Get<Transform>(id).height = 100;
-				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("CIRCLE AABB DYNAMIC DYNAMIC"))
@@ -686,15 +668,12 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
-				EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
 				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-				EntityManager::GetInstance().Get<Transform>(id).position.x = 100;
-				EntityManager::GetInstance().Get<Transform>(id).position.y = 100;
-				EntityManager::GetInstance().Get<Transform>(id).width = 100;
-				EntityManager::GetInstance().Get<Transform>(id).height = 100;
-				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
 			}
 			if (ImGui::Button("Toggle Step Physics"))
 			{
@@ -711,12 +690,19 @@ namespace PE {
 			ImGui::Text("Object Test");
 			if (ImGui::Button("Draw 2500 objects"))
 			{
-					ClearObjectList();
-					for (size_t i{}; i < 2500; ++i) {
-						EntityID id2 = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
-						EntityManager::GetInstance().Get<Transform>(id2).position.x = 50.f * (i % 50) - 600.f;
-						EntityManager::GetInstance().Get<Transform>(id2).position.y = 50.f * (i / 50) - 300.f;
-					}
+				ClearObjectList();
+				for (size_t i{}; i < 2500; ++i)
+				{
+					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
+					EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
+					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
+					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
+					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
+					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
+					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
+
+				}
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Toggle Debug Lines"))
@@ -925,11 +911,11 @@ namespace PE {
 									ImGui::Text("y pos offset: "); ImGui::SameLine(); ImGui::InputFloat("##yoffsetcircle", &offset.y, 1.0f, 100.f, "%.3f");
 									r_cc.positionOffset.y = offset.y;
 									r_cc.positionOffset.x = offset.x;
-									
+
 									float offset2 = r_cc.scaleOffset;
 									ImGui::Text("Collider Scale Offset: ");
 									ImGui::Text("sc x offset: "); ImGui::SameLine(); ImGui::InputFloat("##scaleOffsetcircle", &offset2, 1.0f, 100.f, "%.3f");
-							
+
 									r_cc.scaleOffset = std::abs(offset2);
 								}
 								else
@@ -1038,12 +1024,12 @@ namespace PE {
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
 
-					if(m_currentSelectedObject)
-					if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0))) 
-					{
-						isModalOpen = true;
-						ImGui::OpenPopup("Components");
-					}
+					if (m_currentSelectedObject)
+						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
+						{
+							isModalOpen = true;
+							ImGui::OpenPopup("Components");
+						}
 
 					if (ImGui::BeginPopup("Components"))
 					{
@@ -1051,7 +1037,7 @@ namespace PE {
 						{
 							if (EntityManager::GetInstance().Has(entityID, "RigidBody"))
 							{
-								if(!EntityManager::GetInstance().Has(entityID, "Collider"))
+								if (!EntityManager::GetInstance().Has(entityID, "Collider"))
 									EntityFactory::GetInstance().Assign(entityID, { "Collider" });
 								else
 									AddErrorLog("ALREADY HAS A COLLIDER");
