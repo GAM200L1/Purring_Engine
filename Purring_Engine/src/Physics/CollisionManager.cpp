@@ -109,8 +109,6 @@ namespace PE
 						Contact contactPt;
 						if (CollisionIntersection(col1, col2, contactPt))
 						{
-							//engine_logger.AddLog(false, "Collided!\n", __FUNCTION__);
-
 							// adds collided objects so that it won't be checked again
 							collider1.objectsCollided.emplace(ColliderID_2);
 							collider2.objectsCollided.emplace(ColliderID_1);
