@@ -65,6 +65,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
         }
     }
 
+    if (entityManager->GetInstance().Has(eID, "Transform"))
     {
         PE::Transform* transform = static_cast<PE::Transform*>(entityManager->GetComponentPoolPointer("Transform")->Get(eID));
 
@@ -72,6 +73,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
 
         j["Entity"]["components"]["Transform"] = jTransform;
     }
+    if (entityManager->GetInstance().Has(eID, "RigidBody"))
     {
         PE::RigidBody* rigidBody = static_cast<PE::RigidBody*>(entityManager->GetComponentPoolPointer("RigidBody")->Get(eID));
         if (rigidBody != nullptr)
@@ -80,6 +82,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
             j["Entity"]["components"]["RigidBody"] = jRigidBody;
         }
     }
+    if (entityManager->GetInstance().Has(eID, "Collider"))
     {
         PE::Collider* collider = static_cast<PE::Collider*>(entityManager->GetComponentPoolPointer("Collider")->Get(eID));
         if (collider != nullptr) {
@@ -87,6 +90,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
             j["Entity"]["components"]["Collider"] = jCollider;
         }
     }
+    if (entityManager->GetInstance().Has(eID, "Renderer"))
     {
         PE::Graphics::Renderer* renderer = static_cast<PE::Graphics::Renderer*>(entityManager->GetComponentPoolPointer("Renderer")->Get(eID));
         if (renderer != nullptr) {
