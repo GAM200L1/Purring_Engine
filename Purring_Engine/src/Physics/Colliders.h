@@ -1,16 +1,19 @@
-/*!*****************************************************************************
-	@file       Colliders.h
-	@author     Liew Yeni
-	@co-author
-	@par        DP email: yeni.l\@digipen.edu
-	@par        Course: CSD2401, Section A
-	@date       16-09-2023
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     Colliders.h
+ \date     16-09-2023
 
-	@brief		This file contains struct implementation for each type of collider,
-				line segment, manifolds, and declaration of each collider's update functions
+ \author               Liew Yeni
+ \par      email:      yeni.l/@digipen.edu
 
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+ \brief    This file contains struct implementation for each type of collider,
+		   line segment, manifolds, and declaration of each collider's update
+		   functions.
+
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #pragma once
 
 #include "Math/MathCustom.h"
