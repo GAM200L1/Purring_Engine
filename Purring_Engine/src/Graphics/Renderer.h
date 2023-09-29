@@ -121,26 +121,18 @@ namespace PE
             *************************************************************************************/
             void Renderer::SetTextureKey(std::string const& r_newKey);
 
-            // Serialization
-            nlohmann::json ToJson() const
-            {
-                nlohmann::json j;
-                j["TextureKey"] = GetTextureKey();
-                j["Color"]["r"] = GetColor().r;
-                j["Color"]["g"] = GetColor().g;
-                j["Color"]["b"] = GetColor().b;
-                j["Color"]["a"] = GetColor().a;
-                return j;
-            }
+            /*!***********************************************************************************
+             \brief Serializes the data attached to this renderer.
+            *************************************************************************************/
+            nlohmann::json ToJson() const;
 
-            // Deserialization
-            static Renderer FromJson(const nlohmann::json& j)
-            {
-                Renderer r;
-                r.SetTextureKey(j["TextureKey"]);
-                r.SetColor(j["Color"]["r"], j["Color"]["g"], j["Color"]["b"], j["Color"]["a"]);
-                return r;
-            }
+            /*!***********************************************************************************
+             \brief Deserializes data from a JSON file and loads it as values to set this 
+                    component to.
+
+             \param[in] j JSON object containing the values to load into the renderer component.
+            *************************************************************************************/
+            static Renderer FromJson(const nlohmann::json& j);
 
         private:
             bool m_enabled{ true }; // Set to true to render the object, false not to.

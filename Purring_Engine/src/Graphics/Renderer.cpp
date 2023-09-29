@@ -51,5 +51,26 @@ namespace PE
         {
             m_textureKey = r_newKey;
         }
+
+
+        nlohmann::json Renderer::ToJson() const
+        {
+            nlohmann::json j;
+            j["TextureKey"] = GetTextureKey();
+            j["Color"]["r"] = GetColor().r;
+            j["Color"]["g"] = GetColor().g;
+            j["Color"]["b"] = GetColor().b;
+            j["Color"]["a"] = GetColor().a;
+            return j;
+        }
+
+
+        Renderer Renderer::FromJson(const nlohmann::json& j)
+        {
+            Renderer r;
+            r.SetTextureKey(j["TextureKey"]);
+            r.SetColor(j["Color"]["r"], j["Color"]["g"], j["Color"]["b"], j["Color"]["a"]);
+            return r;
+        }
     } // End of Graphics namespace
 } // End of PE namespace
