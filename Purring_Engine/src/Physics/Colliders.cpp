@@ -1,15 +1,17 @@
-/*!*****************************************************************************
-	@file       Colliders.cpp
-	@author     Liew Yeni
-	@co-author
-	@par        DP email: yeni.l\@digipen.edu
-	@par        Course: CSD2401, Section A
-	@date       09-09-2023
-
-	@brief
-
-All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
-*******************************************************************************/
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     Colliders.cpp
+ \date     16-09-2023
+ 
+ \author               Liew Yeni
+ \par      email:      yeni.l/@digipen.edu
+ 
+ \brief 
+ 
+ 
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include "Colliders.h"
 
@@ -29,7 +31,7 @@ namespace PE
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_circle.center = r_position + r_circle.positionOffset;
-		r_circle.radius = (r_scale.x > r_scale.y)? r_scale.x : r_scale.y;
+		r_circle.radius = (r_scale.x > r_scale.y)? r_scale.x : r_scale.y; // Collider radius is based on larger axis
 		r_circle.radius *= 0.5f * r_circle.scaleOffset;
 	}
 
@@ -43,48 +45,51 @@ namespace PE
 		normal = vec2{ lineVec.y, -lineVec.x }.GetNormalized();
 	}
 
+	// ----- Manifolds ------ //
+
 	Manifold::Manifold(Contact const& r_contData,
 		Transform& r_transA, Transform& r_transB,
-		RigidBody* r_rbA, RigidBody* r_rbB)
+		RigidBody* p_rbA, RigidBody* p_rbB)
 		: contactData{ r_contData },
 		r_transformA{ r_transA }, r_transformB{ r_transB },
-		r_rigidBodyA{ r_rbA }, r_rigidBodyB{ r_rbB } {}
+		p_rigidBodyA{ p_rbA }, p_rigidBodyB{ p_rbB } {}
 
+	// will not be called if one of the collidable objects involved is a trigger
 	void Manifold::ResolveCollision()
 	{
 		ResolveVelocity();
 		ResolvePosition();
 	}
 
-	// set the objects to where they would be when they just collide
+	// set the objects to where they would be when they collide, i.e. not overlapping - only for dynamic objects
 	void Manifold::ResolvePosition()
 	{
-		float totalInvMass = r_rigidBodyA->GetInverseMass() + r_rigidBodyB->GetInverseMass();
+		float totalInvMass = p_rigidBodyA->GetInverseMass() + p_rigidBodyB->GetInverseMass();
 
 		vec2 penM = contactData.normal * (contactData.penetrationDepth / totalInvMass);
 
-		if (r_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
+		if (p_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			r_transformA.position += (penM * r_rigidBodyA->GetInverseMass());
+			r_transformA.position += (penM * p_rigidBodyA->GetInverseMass());
 		}
-		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
+		if (p_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			r_transformB.position += (penM * -r_rigidBodyB->GetInverseMass());
+			r_transformB.position += (penM * -p_rigidBodyB->GetInverseMass());
 		}
 	}
 
-	// set the post trajectory
+	// set the trajectory post-collision - only valid for dynamic objects
 	void Manifold::ResolveVelocity()
 	{
-		float p = (2.f * (Dot(r_rigidBodyA->m_velocity, contactData.normal) - Dot(r_rigidBodyB->m_velocity, contactData.normal))) / (r_rigidBodyA->GetMass() + r_rigidBodyB->GetMass());
+		float p = (2.f * (Dot(p_rigidBodyA->velocity, contactData.normal) - Dot(p_rigidBodyB->velocity, contactData.normal))) / (p_rigidBodyA->GetInverseMass() + p_rigidBodyB->GetInverseMass());
 		//std::cout << p << '\n';
-		if (r_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
+		if (p_rigidBodyA->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			r_rigidBodyA->m_velocity = r_rigidBodyA->m_velocity - (contactData.normal * r_rigidBodyA->GetMass() * p);
+			p_rigidBodyA->velocity = p_rigidBodyA->velocity - (contactData.normal * p_rigidBodyA->GetInverseMass() * p);
 		}
-		if (r_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
+		if (p_rigidBodyB->GetType() == EnumRigidBodyType::DYNAMIC)
 		{
-			r_rigidBodyB->m_velocity = r_rigidBodyB->m_velocity + (contactData.normal * r_rigidBodyB->GetMass() * p);
+			p_rigidBodyB->velocity = p_rigidBodyB->velocity + (contactData.normal * p_rigidBodyB->GetInverseMass() * p);
 		}
 	}
 }

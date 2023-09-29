@@ -379,11 +379,11 @@ Update Colliders
 		{
 			// Dynamic Collision Check
 
-			vec2 const& startPos_e1 = EntityManager::GetInstance().Get<RigidBody>(r_entity1).m_prevPosition;
+			vec2 const& startPos_e1 = EntityManager::GetInstance().Get<RigidBody>(r_entity1).prevPosition;
 			vec2 const& endPos_e1 = r_circle1.center;
 			//vec2 const& v_e1 = endPos_e1 - startPos_e1;
 
-			vec2 const& startPos_e2 = EntityManager::GetInstance().Get<RigidBody>(r_entity2).m_prevPosition;
+			vec2 const& startPos_e2 = EntityManager::GetInstance().Get<RigidBody>(r_entity2).prevPosition;
 			vec2 const& endPos_e2 = r_circle2.center;
 			//vec2 const& v_e2 = endPos_e2 - startPos_e2;
 

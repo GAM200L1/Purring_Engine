@@ -125,25 +125,25 @@ namespace PE
 			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
 			{
 				// Quick dirty implementation of drag force
-				rb.ApplyForce(rb.m_velocity * rb.GetMass() * m_linearDragCoefficient);
+				rb.ApplyForce(rb.velocity * rb.GetMass() * m_linearDragCoefficient);
 				
 				// Update Speed based on total forces
-				rb.m_velocity += rb.m_force * rb.GetInverseMass() * deltaTime;
+				rb.velocity += rb.force * rb.GetInverseMass() * deltaTime;
 
 				// at negligible velocity, velocity will set to 0.f
-				rb.m_velocity.x = (rb.m_velocity.x < m_velocityNegligence && rb.m_velocity.x > -m_velocityNegligence) ? 0.f : rb.m_velocity.x;
-				rb.m_velocity.y = (rb.m_velocity.y < m_velocityNegligence && rb.m_velocity.y > -m_velocityNegligence) ? 0.f : rb.m_velocity.y;
+				rb.velocity.x = (rb.velocity.x < m_velocityNegligence && rb.velocity.x > -m_velocityNegligence) ? 0.f : rb.velocity.x;
+				rb.velocity.y = (rb.velocity.y < m_velocityNegligence && rb.velocity.y > -m_velocityNegligence) ? 0.f : rb.velocity.y;
 			}
 
 			if (rb.GetType() != EnumRigidBodyType::STATIC)
 			{
-				rb.m_prevPosition = transform.position;
-				transform.position += rb.m_velocity * deltaTime;
-				transform.orientation += rb.m_rotationVelocity * deltaTime;
+				rb.prevPosition = transform.position;
+				transform.position += rb.velocity * deltaTime;
+				transform.orientation += rb.rotationVelocity * deltaTime;
 				Wrap(transform.orientation, 0.f, 2.f * PE_PI);
 			}
 			rb.ZeroForce();
-			rb.m_rotationVelocity = 0.f;
+			rb.rotationVelocity = 0.f;
 		}
 	}
 }

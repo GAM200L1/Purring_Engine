@@ -577,8 +577,8 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
@@ -590,8 +590,8 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
@@ -602,8 +602,8 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
@@ -615,8 +615,8 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
@@ -627,8 +627,8 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
@@ -640,8 +640,8 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
@@ -652,8 +652,8 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
@@ -665,8 +665,8 @@ namespace PE {
 				ClearObjectList();
 				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
 				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.y = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
+				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
 				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
 
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");

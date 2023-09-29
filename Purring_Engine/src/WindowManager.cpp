@@ -199,9 +199,9 @@ namespace PE
 			{
 				if (ev.keycode == GLFW_KEY_E)
 				{
-					if (EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.Dot(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity) == 0.f)
-						EntityManager::GetInstance().Get<RigidBody>(1).m_velocity = vec2{ 1.f, 0.f };
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(1).m_velocity.GetNormalized() * 5000.f);
+					if (EntityManager::GetInstance().Get<RigidBody>(1).velocity.Dot(EntityManager::GetInstance().Get<RigidBody>(1).velocity) == 0.f)
+						EntityManager::GetInstance().Get<RigidBody>(1).velocity = vec2{ 1.f, 0.f };
+					EntityManager::GetInstance().Get<RigidBody>(1).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(1).velocity.GetNormalized() * 5000.f);
 				}
 			}
 		}
@@ -232,11 +232,11 @@ namespace PE
 				// rotation
 				if (ev.keycode == GLFW_KEY_RIGHT)
 				{
-					EntityManager::GetInstance().Get<RigidBody>(1).m_rotationVelocity = -PE_PI;
+					EntityManager::GetInstance().Get<RigidBody>(1).rotationVelocity = -PE_PI;
 				}
 				if (ev.keycode == GLFW_KEY_LEFT)
 				{
-					EntityManager::GetInstance().Get<RigidBody>(1).m_rotationVelocity = PE_PI;
+					EntityManager::GetInstance().Get<RigidBody>(1).rotationVelocity = PE_PI;
 				}
 
 				// scale

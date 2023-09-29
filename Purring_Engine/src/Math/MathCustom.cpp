@@ -6,8 +6,7 @@
  
  \author               Liew Yeni
  \par      email:      yeni.l\@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
+ \par      code %:     100%
  
  \co-author            Foong Jun Wei
  \par      email:      f.junwei\@digipen.edu
@@ -516,11 +515,11 @@ namespace PE
 	}
 
 	// matrix multiplication
-	vec2 mat3x3::operator*(vec2 const& r_rhs) const
-	{
-		vec3 ret = *this * vec3{ r_rhs, 1.f };
-		return vec2{ ret.x, ret.y };
-	}
+	// vec2 mat3x3::operator*(vec2 const& r_rhs) const
+	// {
+	// 	vec3 ret = *this * vec3{ r_rhs, 1.f };
+	// 	return vec2{ ret.x, ret.y };
+	// }
 	vec3 mat3x3::operator*(vec3 const& r_rhs) const
 	{
 		vec3 ret{};
@@ -558,40 +557,40 @@ namespace PE
 	void mat3x3::Identity()
 	{
 		this->Zero();
-		m_00 = 1.f;
-		m_11 = 1.f;
-		m_22 = 1.f;
+		_m00 = 1.f;
+		_m11 = 1.f;
+		_m22 = 1.f;
 	}
 	// transpose the matrix
 	void mat3x3::Transpose()
 	{
-		mat3x3 transposed{ m_00, m_10, m_20,
-						   m_01, m_11, m_21,
-						   m_02, m_12, m_22 };
+		mat3x3 transposed{ _m00, _m10, _m20,
+						   _m01, _m11, _m21,
+						   _m02, _m12, _m22 };
 		*this = transposed;
 	}
 	// create translation matrix
 	void mat3x3::Translate(float t_x, float t_y)
 	{
 		this->Identity();
-		m_02 = t_x;
-		m_12 = t_y;
+		_m02 = t_x;
+		_m12 = t_y;
 	}
 	// create scale matrix
 	void mat3x3::Scale(float s_x, float s_y)
 	{
 		this->Identity();
-		m_00 = s_x;
-		m_11 = s_y;
+		_m00 = s_x;
+		_m11 = s_y;
 	}
 	// create rotation matrix from angle which is in radians
 	void mat3x3::RotateRad(float angle)
 	{
 		this->Identity();
-		m_00 = cosf(angle);
-		m_01 = -sinf(angle);
-		m_10 = sinf(angle);
-		m_11 = cosf(angle);
+		_m00 = cosf(angle);
+		_m01 = -sinf(angle);
+		_m10 = sinf(angle);
+		_m11 = cosf(angle);
 	}
 	// create rotation matrix from angle which is in degrees
 	void mat3x3::RotateDeg(float angle)
@@ -601,15 +600,15 @@ namespace PE
 	// find the determinant of a matrix
 	float mat3x3::Determinant() const
 	{
-		return   (m_00 * m_11 * m_22) + (m_01 * m_12 * m_20) + (m_02 * m_10 * m_21)
-			- (m_02 * m_11 * m_20) - (m_01 * m_10 * m_22) - (m_00 * m_12 * m_21);
+		return   (_m00 * _m11 * _m22) + (_m01 * _m12 * _m20) + (_m02 * _m10 * _m21)
+			- (_m02 * _m11 * _m20) - (_m01 * _m10 * _m22) - (_m00 * _m12 * _m21);
 	}
 	// find the adjoint of a matrix
 	mat3x3 mat3x3::Adjoint() const
 	{
-		mat3x3 adj = mat3x3{ ((m_11 * m_22) - (m_21 * m_12)), -((m_10 * m_22) - (m_20 * m_12)),  ((m_10 * m_21) - (m_20 * m_11)),
-							-((m_01 * m_22) - (m_21 * m_02)),  ((m_00 * m_22) - (m_20 * m_02)), -((m_00 * m_21) - (m_20 * m_01)),
-							 ((m_01 * m_12) - (m_11 * m_02)), -((m_00 * m_12) - (m_10 * m_02)),  ((m_00 * m_11) - (m_10 * m_01)) };
+		mat3x3 adj = mat3x3{ ((_m11 * _m22) - (_m21 * _m12)), -((_m10 * _m22) - (_m20 * _m12)),  ((_m10 * _m21) - (_m20 * _m11)),
+							-((_m01 * _m22) - (_m21 * _m02)),  ((_m00 * _m22) - (_m20 * _m02)), -((_m00 * _m21) - (_m20 * _m01)),
+							 ((_m01 * _m12) - (_m11 * _m02)), -((_m00 * _m12) - (_m10 * _m02)),  ((_m00 * _m11) - (_m10 * _m01)) };
 		adj.Transpose();
 		return adj;
 	}
@@ -771,18 +770,18 @@ namespace PE
 	void mat4x4::Identity()
 	{
 		this->Zero();
-		m_00 = 1.f;
-		m_11 = 1.f;
-		m_22 = 1.f;
-		m_33 = 1.f;
+		_m00 = 1.f;
+		_m11 = 1.f;
+		_m22 = 1.f;
+		_m33 = 1.f;
 	}
 	// transpose the matrix
 	void mat4x4::Transpose()
 	{
-		mat4x4 transposed{ m_00, m_10, m_20, m_30,
-						   m_01, m_11, m_21, m_31,
-						   m_02, m_12, m_22, m_32,
-						   m_03, m_13, m_23, m_33 };
+		mat4x4 transposed{ _m00, _m10, _m20, _m30,
+						   _m01, _m11, _m21, _m31,
+						   _m02, _m12, _m22, _m32,
+						   _m03, _m13, _m23, _m33 };
 		*this = transposed;
 	}
 
