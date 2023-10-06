@@ -106,7 +106,7 @@ namespace PE {
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool("All").size()-1; n > 2; --n)
+		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool("All").size()-1; n > 1; --n)
 		{
 			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
 		}
@@ -530,6 +530,10 @@ namespace PE {
 			if (ImGui::Button("Play Audio 2"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound2");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Play bgm"))
+			{
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Stop Audio"))
