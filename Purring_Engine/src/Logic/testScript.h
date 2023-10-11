@@ -12,4 +12,8 @@ namespace PE
 		virtual void Destroy(EntityID id);		
 	};
 
+	struct TestScriptData
+	{
+		float m_rotationSpeed{10};
+	};
 }

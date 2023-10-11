@@ -1,7 +1,7 @@
 #pragma once
 #include "System.h"
 #include "Script.h"
-
+#include "ECS/EntityFactory.h"
 namespace PE {
 	class LogicSystem : public System
 	{
@@ -51,17 +51,12 @@ namespace PE {
 	struct ScriptComponent
 	{
 		std::vector<std::string> m_scriptKeys;
-		ScriptComponent() 
-		{ 
-			//m_scriptKeys.push_back("test");
-			//m_scriptKeys.push_back("test2");
-		}
 
 		void addScript(std::string key)
 		{
 			auto itr = std::find(m_scriptKeys.begin(), m_scriptKeys.end(), key);
 			if (itr == m_scriptKeys.end())
-			m_scriptKeys.push_back(key);
+				m_scriptKeys.push_back(key);
 		}
 		void removeScript(std::string key)
 		{
@@ -71,6 +66,7 @@ namespace PE {
 		}
 		void removeScript(int keycode)
 		{
+			if (!m_scriptKeys.empty())
 				m_scriptKeys.erase(m_scriptKeys.begin() + keycode);
 		}
 

@@ -22,6 +22,8 @@ void PE::LogicSystem::InitializeSystem()
 {
 	m_scriptContainer["test"] = new testScript();
 	m_scriptContainer["test2"] = new testScript2();
+
+	REGISTERCOMPONENT(TestScriptData);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

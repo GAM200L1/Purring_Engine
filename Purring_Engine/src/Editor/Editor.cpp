@@ -26,6 +26,7 @@
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
 #include "Graphics/RendererManager.h"
+#include "Logic/testScript.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
@@ -1059,6 +1060,7 @@ namespace PE {
 								if (ImGui::Button("Add Script"))
 								{
 									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
+
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
@@ -1086,6 +1088,32 @@ namespace PE {
 									selectedScript = -1;
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
+
+						if (name == "testScriptComponent")
+						{
+							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								ImGui::Text("rotation speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &EntityManager::GetInstance().Get<TestScriptData>(entityID).m_rotationSpeed, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								std::cout << &EntityManager::GetInstance().Get<TestScriptData>(entityID).m_rotationSpeed <<std::endl;
 							}
 						}
 					}

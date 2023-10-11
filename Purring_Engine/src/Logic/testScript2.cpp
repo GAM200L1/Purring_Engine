@@ -9,6 +9,7 @@ namespace PE
 	}
 	void testScript2::Update(EntityID id, float deltaTime)
 	{
+		//EntityFactory::GetInstance().Assign(entityID, { "Collider" });
 		PE::EntityManager::GetInstance().Get<PE::Transform>(id).position.x += 100 * deltaTime;
 	}
 	void testScript2::Destroy(EntityID id)

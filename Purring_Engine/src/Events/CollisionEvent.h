@@ -38,7 +38,7 @@ namespace PE
 
 		// ----- Public variables ----- // 
 	public:
-		EntityID Entity1{ -1 }, Entity2{ -1 };
+		EntityID Entity1{ (EntityID) - 1}, Entity2{ (EntityID)-1};
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************
@@ -60,7 +60,7 @@ namespace PE
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "OnCollisionEvent: " << Entity1 << " with " << Entity2;
+			ss << "OnCollisionEvent: " << (int)Entity1 << " with " << (int)Entity2;
 			return ss.str();
 		}
 

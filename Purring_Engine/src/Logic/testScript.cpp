@@ -9,7 +9,10 @@ namespace PE
 	}
 	void testScript::Update(EntityID id, float deltaTime)
 	{
-		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime);
+		if (!EntityManager::GetInstance().Has(id, "TestScriptData"))
+			EntityFactory::GetInstance().Assign(id, { "TestScriptData" });
+
+		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * PE::EntityManager::GetInstance().Get <TestScriptData>(id).m_rotationSpeed);
 	}
 	void testScript::Destroy(EntityID id)
 	{

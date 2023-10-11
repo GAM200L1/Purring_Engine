@@ -8,8 +8,8 @@
 
  \par      email:      jarranyanzhi.tan@digipen.edu
 
- \brief    Header file for the EventHandler class, which manages event dispatching within 
-           the Purring Engine.
+ \brief    Header file for the EventHandler class, which manages event dispatching within
+		   the Purring Engine.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -21,6 +21,7 @@
 #include "MouseEvent.h"
 #include "KeyEvent.h"
 #include "WindowEvent.h"
+#include "CollisionEvent.h"
 #include <memory>
 #include "Singleton.h"
 
@@ -35,6 +36,8 @@ namespace PE
 		EventDispatcher<MouseEvents> MouseEventDispatcher;
 
 		EventDispatcher<KeyEvents> KeyEventDispatcher;
+
+		//EventDispatcher<CollisionEvents> KeyEventDispatcher;
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************

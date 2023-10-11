@@ -18,8 +18,8 @@
 *************************************************************************************/
 
 #pragma once
-//#include "prpch.h"
-#include "EntityFactory.h"
+#include "prpch.h"
+//#include "EntityFactory.h"
 #include "Entity.h"
 #include "Components.h"
 #include "Data/SerializationManager.h"
