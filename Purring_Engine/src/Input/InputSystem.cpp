@@ -27,6 +27,7 @@ namespace PE
     //static declarations
     float InputSystem::m_bufferTime = 0.12f;
     std::vector<KeyPressedEvent> InputSystem::m_KeyDown;
+    std::vector<MouseButtonHoldEvent> InputSystem::m_MouseDown;
 
     //system functions
     void InputSystem::InitializeSystem(){}
@@ -82,9 +83,13 @@ namespace PE
         {
             //creation of event and sending
             PE::MouseButtonPressedEvent mbpe;
+            PE::MouseButtonHoldEvent mbhe;
             mbpe.button = (int)button;
-            mbpe.repeat = m_bufferTime; // will implement hold for mouse next time
+            mbhe.button = (int)button;
+            mbhe.repeat = m_bufferTime; // will implement hold for mouse next time
+            m_MouseDown.push_back(mbhe);
             PE::SEND_MOUSE_EVENT(mbpe)
+
                 break;
         }
         case GLFW_RELEASE:
@@ -92,6 +97,18 @@ namespace PE
             //creation of event and sending
             PE::MouseButtonReleaseEvent mbre;
             mbre.button = (int)button;
+            if (!m_MouseDown.empty())
+            {
+                for (std::vector<MouseButtonHoldEvent>::iterator it = std::begin(m_MouseDown); it != std::end(m_MouseDown);)
+                {
+                    if (it->button == mbre.button)
+                    {
+                        it = m_MouseDown.erase(it);
+                    }
+                    else
+                        ++it;
+                }
+            }
             PE::SEND_MOUSE_EVENT(mbre)
                 break;
         }
@@ -205,6 +222,19 @@ namespace PE
             {
                 //if buffer is less than 0 send the event as a on hold event
                 PE::SEND_KEY_EVENT(kpe)
+            }
+        }
+
+        for (auto& mhe : m_MouseDown)
+        {
+            if (mhe.repeat >= 0)
+            {
+                mhe.repeat -= deltaTime;
+            }
+            else 
+            {
+                //if buffer is less than 0 send the event as a on hold event
+                PE::SEND_MOUSE_EVENT(mhe)
             }
         }
     }
