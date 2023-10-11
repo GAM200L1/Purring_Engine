@@ -18,7 +18,7 @@
 *************************************************************************************/
 
 #pragma once
-#include "prpch.h"
+//#include "prpch.h"
 #include "EntityFactory.h"
 #include "Entity.h"
 #include "Components.h"

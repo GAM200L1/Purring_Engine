@@ -140,6 +140,11 @@ namespace PE {
 		*************************************************************************************/
 		void OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_e);
 
+		/*!***********************************************************************************
+		 \brief the callback function for an mouse scroll
+		 \param[in] const temp::Event<temp::KeyEvents>& event called
+		*************************************************************************************/
+		void OnMouseScrollEvent(const PE::Event<PE::MouseEvents>& r_e);
 		// ----- ImGui Window Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -265,6 +270,8 @@ namespace PE {
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
+		bool m_mouseInScene;
+
 
 	};
 }

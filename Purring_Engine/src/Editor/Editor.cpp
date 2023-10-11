@@ -24,6 +24,8 @@
 #include "Data/SerializationManager.h"
 #include "Physics/PhysicsManager.h"
 #include "Logging/Logger.h"
+#include "Logic/LogicSystem.h"
+#include "Graphics/RendererManager.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
@@ -49,10 +51,11 @@ namespace PE {
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
+		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseScrolled, Editor::OnMouseScrollEvent, this)
 			//for the object list
 			m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
-
+		m_mouseInScene = false;
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
@@ -1017,7 +1020,74 @@ namespace PE {
 							}
 						}
 
+						if (name == "ScriptComponent")
+						{
 
+							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{							
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//setting textures
+								std::vector<const char*> key;
+								//to get all the keys
+								for (std::map<std::string, Script*>::iterator it = LogicSystem::m_scriptContainer.begin(); it != LogicSystem::m_scriptContainer.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								static int scriptindex{};
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Scripts: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##Scripts", &scriptindex, key.data(), static_cast<int>(key.size()))) {}
+								}
+								if (ImGui::Button("Add Script"))
+								{
+									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								static int selectedScript{};
+								ImGui::Text("Scripts List");
+								//loop to show all the items ins the vector
+								if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+									for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
+									{
+										const bool is_selected = (selectedScript == n);
+
+										if (ImGui::Selectable(EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+											selectedScript = n; //seteting current index to check for selection
+										// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+										if (is_selected) // to show the highlight if selected
+											ImGui::SetItemDefaultFocus();
+									}
+								}
+								ImGui::EndChild();
+								if (ImGui::Button("Remove Script"))
+								{
+									if(selectedScript >= 0)
+									EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
+									selectedScript = -1;
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
 					}
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
@@ -1076,6 +1146,13 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { "Renderer" });
 							else
 								AddErrorLog("ALREADY HAS A RENDERER");
+						}
+						if (ImGui::Selectable("Add ScriptComponent"))
+						{
+							if (!EntityManager::GetInstance().Has(entityID, "ScriptComponent"))
+								EntityFactory::GetInstance().Assign(entityID, { "ScriptComponent" });
+							else
+								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 						}
 						ImGui::EndPopup();
 					}
@@ -1418,6 +1495,7 @@ namespace PE {
 			ImVec2(1, 0)
 		);
 
+		m_mouseInScene = ImGui::IsWindowHovered();
 		//end the window
 		ImGui::End();
 	}
@@ -1509,6 +1587,17 @@ namespace PE {
 
 		if (KTE.keycode == GLFW_KEY_F10)
 			ToggleDebugRender();
+	}
+	void Editor::OnMouseScrollEvent(const PE::Event<PE::MouseEvents>& r_e)
+	{
+		if (r_e.GetType() == MouseEvents::MouseScrolled)
+		{
+			MouseScrolledEvent mse;
+			mse = dynamic_cast<const MouseScrolledEvent&>(r_e);
+			if(m_mouseInScene)
+			Graphics::RendererManager::m_mainCamera.AdjustMagnification(-mse.yOffset);
+
+		}
 	}
 }
 

@@ -64,6 +64,8 @@
 // Input
 #include "Input/InputSystem.h"
 
+#include "Logic/LogicSystem.h"
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -244,6 +246,7 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Collider);
     REGISTERCOMPONENT(Transform);
     REGISTERCOMPONENT(Graphics::Renderer);
+    REGISTERCOMPONENT(ScriptComponent);
 }
 
 void PE::CoreApplication::InitializeLogger()
@@ -273,10 +276,12 @@ void PE::CoreApplication::InitializeMemoryManager()
 void PE::CoreApplication::InitializeSystems()
 {
     // Add system to list & assigning memory to them
+    LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(p_logicSystem);
     AddSystem(p_inputSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
