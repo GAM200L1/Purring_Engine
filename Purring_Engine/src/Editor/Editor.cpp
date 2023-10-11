@@ -1060,7 +1060,7 @@ namespace PE {
 								if (ImGui::Button("Add Script"))
 								{
 									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
-
+									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
@@ -1091,7 +1091,7 @@ namespace PE {
 							}
 						}
 
-						if (name == "testScriptComponent")
+						if (name == "TestScriptData")
 						{
 							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
