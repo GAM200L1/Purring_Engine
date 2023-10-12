@@ -27,30 +27,24 @@ namespace PE
         {
             if (GetHasChanged())
             {
+                float scaleReciprocal{ 1.f / m_magnification };
+
                 glm::vec2 up{ -glm::sin(m_orientation), glm::cos(m_orientation) };
+                up *= scaleReciprocal;
+
                 glm::vec2 right{ up.y, -up.x };
 
                 float upDotPosition{ (up.x * m_position.x + up.y * m_position.y) };
                 float rightDotPosition{ (right.x * m_position.x + right.y * m_position.y) };
 
-                float scaleReciprocal{ 1.f / m_magnification };
-
-                glm::mat4 viewScale = {
-                    scaleReciprocal, 0.f, 0.f, 0.f,
-                    0.f, scaleReciprocal, 0.f, 0.f,
-                    0.f, 0.f, 1.f, 0.f,
-                    0.f, 0.f, 0.f, 1.f
-                };
-
-                glm::mat4 viewRotation = {
+                
+                // Update the cached values
+                m_cachedViewMatrix = glm::mat4{
                     right.x, up.x, 0.f, 0.f,
                     right.y, up.y, 0.f, 0.f,
                     0.f,    0.f,   1.f, 0.f,
                     -rightDotPosition, -upDotPosition, 1.f, 1.f
                 };
-
-                // Update the cached values
-                m_cachedViewMatrix = viewScale * viewRotation;
                 m_cachedPosition = m_position;
                 m_cachedOrientation = m_orientation;
                 m_cachedMagnification = m_magnification;
