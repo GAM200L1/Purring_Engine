@@ -81,6 +81,17 @@ namespace PE
         }
     }
 
+    void ResourceManager::LoadIconFromFile(std::string const& r_name, std::string const& r_filePath)
+    {
+        Icons[r_name] = std::make_shared<Graphics::Texture>();
+        if (!Textures[r_name]->CreateTexture(r_filePath))
+        {
+            // fail to create texture, delete key
+            std::cout << "Couldn't create icon " << r_filePath << std::endl;
+            Textures.erase(r_name);
+        }
+    }
+
     void ResourceManager::LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath)
     {
         Sounds[r_key] = std::make_shared<AudioManager::Audio>();

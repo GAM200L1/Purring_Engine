@@ -68,6 +68,7 @@ namespace PE
         std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;
         std::map<std::string, std::shared_ptr<AudioManager::Audio>> Sounds;
         std::map<std::string, std::shared_ptr<Font>> Fonts;
+        std::map<std::string, std::shared_ptr<Graphics::Texture>> Icons;
 
         // Unloads all resources that were previously loaded
         void UnloadResources();
@@ -99,6 +100,14 @@ namespace PE
             \param[in] r_filePath File path of texture.
         *************************************************************************************/
         void LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Loads icon from file and inserts into Icons map container.
+
+            \param[in] r_name Name of icon.
+            \param[in] r_filePath File path of icon.
+        *************************************************************************************/
+        void LoadIconFromFile(std::string const& r_name, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Loads audio from file and inserts into Sounds map container.
