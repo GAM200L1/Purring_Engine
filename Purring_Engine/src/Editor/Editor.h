@@ -90,6 +90,11 @@ namespace PE {
 		 \return bool return whether debug drawing is on or off
 		*************************************************************************************/
 		bool IsRenderingDebug();
+		/*!***********************************************************************************
+		 \brief get the boolean to know editor is in runtime
+		 \return bool return whether it is editor mode or runtime
+		*************************************************************************************/
+		bool IsRunTime();
 
 		// ----- Public Logging Functions ----- // 
 	public:
@@ -254,6 +259,7 @@ namespace PE {
 
 		//boolean for rendering
 		bool m_renderDebug;
+		bool m_isRunTime;
 
 		//variables for logging
 		std::vector<std::string> m_logOutput;

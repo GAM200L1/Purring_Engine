@@ -170,23 +170,23 @@ namespace PE
 				}
 			}
 
-			// Movement
-			if (ev.keycode == GLFW_KEY_W)
-			{
-				EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_A)
-			{
-				EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_S)
-			{
-				EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_D)
-			{
-				EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-			}
+			//// Movement
+			//if (ev.keycode == GLFW_KEY_W)
+			//{
+			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
+			//}
+			//if (ev.keycode == GLFW_KEY_A)
+			//{
+			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+			//}
+			//if (ev.keycode == GLFW_KEY_S)
+			//{
+			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+			//}
+			//if (ev.keycode == GLFW_KEY_D)
+			//{
+			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+			//}
 			// dash
 			if (EntityManager::GetInstance().GetComponentPool<RigidBody>().HasEntity(1))
 			{
@@ -205,22 +205,22 @@ namespace PE
 			// ----- M1 Movement ----- //
 			if (EntityManager::GetInstance().GetComponentPool<RigidBody>().HasEntity(1))
 			{
-				if (ev.keycode == GLFW_KEY_W)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
-				}
-				if (ev.keycode == GLFW_KEY_A)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-				}
-				if (ev.keycode == GLFW_KEY_S)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-				}
-				if (ev.keycode == GLFW_KEY_D)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-				}
+				//if (ev.keycode == GLFW_KEY_W)
+				//{
+				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
+				//}
+				//if (ev.keycode == GLFW_KEY_A)
+				//{
+				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+				//}
+				//if (ev.keycode == GLFW_KEY_S)
+				//{
+				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+				//}
+				//if (ev.keycode == GLFW_KEY_D)
+				//{
+				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+				//}
 
 				// rotation
 				if (ev.keycode == GLFW_KEY_RIGHT)

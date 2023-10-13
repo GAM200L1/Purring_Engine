@@ -82,6 +82,11 @@ namespace PE {
 		return m_renderDebug;
 	}
 
+	bool Editor::IsRunTime()
+	{
+		return m_isRunTime;
+	}
+
 	void Editor::ToggleDebugRender()
 	{
 		if (m_renderDebug)
@@ -1112,8 +1117,6 @@ namespace PE {
 
 								ImGui::Text("rotation speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &EntityManager::GetInstance().Get<TestScriptData>(entityID).m_rotationSpeed, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
-								std::cout << &EntityManager::GetInstance().Get<TestScriptData>(entityID).m_rotationSpeed <<std::endl;
 							}
 						}
 					}
@@ -1513,16 +1516,35 @@ namespace PE {
 		//setting the current width and height of the window to be drawn on
 		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 		m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
+		ImGuiStyle& style = ImGui::GetStyle();
+		float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
+		float avail = ImGui::GetContentRegionAvail().x;
 
-		//the graphics rendered onto an image on the imgui window
-		ImGui::Image(
-			reinterpret_cast<void*>(
-				static_cast<intptr_t>(texture_id)),
-			ImVec2(m_renderWindowWidth, m_renderWindowHeight),
-			ImVec2(0, 1),
-			ImVec2(1, 0)
-		);
-
+		float off = (avail - size) * 0.5;
+		if (off > 0.0f)
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x)/2);
+		//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
+		if(ImGui::Button("Play"))
+		{
+			m_isRunTime = true;
+		}
+		ImGui::SameLine();
+		if (
+			ImGui::Button("Stop")
+			) {
+			m_isRunTime = false; 
+		}
+		if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration)) {
+			//the graphics rendered onto an image on the imgui window
+			ImGui::Image(
+				reinterpret_cast<void*>(
+					static_cast<intptr_t>(texture_id)),
+				ImVec2(m_renderWindowWidth, m_renderWindowHeight),
+				ImVec2(0, 1),
+				ImVec2(1, 0)
+			);
+		}
+		ImGui::EndChild();
 		m_mouseInScene = ImGui::IsWindowHovered();
 		//end the window
 		ImGui::End();

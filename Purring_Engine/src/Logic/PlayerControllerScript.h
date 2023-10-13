@@ -3,7 +3,7 @@
 #include "Events/EventHandler.h"
 namespace PE
 {
-	class testScript2 : public Script
+	class PlayerControllerScript : public Script
 	{
 	public:
 		virtual void Init(EntityID id);
@@ -15,10 +15,8 @@ namespace PE
 		bool Button;
 	};
 
-	struct TestScript2Data
+	struct PlayerControllerScriptData
 	{
-		EntityID targetID{ 1 };
-		EntityID CollisionTarget{ 2 };
-		std::vector<vec2> points;
+		float speed{5000};
 	};
 }
