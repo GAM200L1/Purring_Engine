@@ -16,8 +16,7 @@
 
 
 // INCLUDES
-#include "prpch.h"
-
+#include "Entity.h"
 
 
 namespace PE
@@ -28,7 +27,7 @@ namespace PE
 	*************************************************************************************/
 	namespace Prefabs
 	{
-		constexpr std::initializer_list<const char*> GameObject = { "Transform", "RigidBody", "Collider", "Renderer"};
+		//constexpr std::initializer_list<ComponentID> GameObject = { "Transform", "RigidBody", "Collider", "Renderer"};
 	}
 
 	/*!***********************************************************************************
@@ -39,7 +38,7 @@ namespace PE
 	{
 	// ----- Public variables ----- // 
 	public:
-		std::map<std::string, std::initializer_list<const char*>> prefabs;
+		std::map<std::string, std::initializer_list<ComponentID>> prefabs;
 		
 	// ----- Constructors ----- //
 	public:
@@ -49,8 +48,8 @@ namespace PE
 		*************************************************************************************/
 		Prefab()
 		{
-			prefabs.emplace("GameObject", Prefabs::GameObject);
+			std::initializer_list<ComponentID> GameObject = { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), EntityManager::GetInstance().GetComponentID<Collider>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() };
+			prefabs.emplace("GameObject", GameObject);
 		}
 	};
-
 }

@@ -208,4 +208,4 @@ namespace PE
  \brief Registers a component to the component pools
  
 *************************************************************************************/
-#define REGISTERCOMPONENT(type) EntityFactory::GetInstance().AddComponentCreator<type>( #type, sizeof(type)  );
+#define REGISTERCOMPONENT(type) EntityFactory::GetInstance().AddComponentCreator<type>( EntityManager::GetInstance().GetComponentID<type>(), sizeof(type)  );

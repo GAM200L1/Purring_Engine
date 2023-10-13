@@ -18,6 +18,15 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
+
+// Entity Component System (ECS)
+#include "ECS/EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
+#include "ECS/Prefabs.h"
+#include "ECS/SceneView.h"
+
+
 // ImGui Headers
 #include "Editor/Editor.h"
 #include "imgui.h"
@@ -53,13 +62,6 @@
 
 // Serialization
 #include "Data/SerializationManager.h"
-
-// Entity Component System (ECS)
-#include "ECS/EntityFactory.h"
-#include "ECS/Entity.h"
-#include "ECS/Components.h"
-#include "ECS/Prefabs.h"
-#include "ECS/SceneView.h"
 
 // Input
 #include "Input/InputSystem.h"
@@ -166,7 +168,6 @@ void PE::CoreApplication::Run()
         //Audio Stuff - HANS
         AudioManager::GetInstance().Update();
 
-        // engine_logger.AddLog(false, "Frame rendered", __FUNCTION__);
         // Update the window title to display FPS (every second)
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
@@ -182,8 +183,6 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
-        //if (EntityManager::GetInstance().GetComponentPool<Transform>().HasEntity(1))
-        //    Graphics::RendererManager::m_mainCamera.SetPosition(EntityManager::GetInstance().Get<Transform>(1).position.x, EntityManager::GetInstance().Get<Transform>(1).position.y);
 
         // Flush log entries
         engine_logger.FlushLog();

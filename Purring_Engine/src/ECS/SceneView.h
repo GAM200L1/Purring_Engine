@@ -73,7 +73,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 		// ptr to the entity manager
 		PE::EntityManager* p_entityManager{ nullptr };
 		// the components for this scope
-		std::set<ComponentID> components;
+		std::set<ComponentID, Comparer> components;
 		// flag for toggling whether all components are in scope
 		bool all{ false };
 
@@ -91,39 +91,10 @@ int compare(const void* p_lhs, const void* p_rhs);
 			\param[in] components 	The components to scope to
 			\param[in] all 		Whether or not the scope is to all copmonents
 			*************************************************************************************/
-			Iterator(EntityID index, const std::set<ComponentID>& r_components, bool all) :
+			Iterator(EntityID index, const std::set<ComponentID, Comparer>& r_components, bool all) :
 				p_entityManager(&EntityManager::GetInstance()), index(index), all(all)
 			{
-				poolIdx = (all)? p_entityManager->GetEntitiesInPool("All") : p_entityManager->GetEntitiesInPool((*r_components.begin()));
-				// @TO REMOVE FOR SUBMISSION
-				/*
-				if (all)
-				{
-					poolIdx = p_entityManager->GetEntitiesInPool("All");
-				}
-				else
-				{
-					if (components.size() == 1)
-					{
-						poolIdx = p_entityManager->GetEntitiesInPool((*components.begin()));
-					}
-					else
-					{
-						for (const auto& component : components)
-						{
-							for (const auto& id : p_entityManager->GetEntitiesInPool(component))
-								poolIdx.emplace_back(id);
-						}
-						std::qsort(poolIdx.data(), poolIdx.size(), sizeof(EntityID), PE::compare);
-						const std::vector<EntityID>::iterator iter = Duplicates(poolIdx.begin(), poolIdx.end());
-						for (auto it{ std::prev(poolIdx.end()) }; it != iter; )
-						{
-							auto copy = it--;
-							poolIdx.erase(copy);
-						}
-					}
-				}
-				*/
+				poolIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL) : p_entityManager->GetEntitiesInPool(*(std::prev(r_components.end())));
 				poolIdx.emplace_back(p_entityManager->OnePast());
 			}
 
