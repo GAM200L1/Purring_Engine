@@ -486,7 +486,7 @@ namespace PE
 	template<typename T>
 	ComponentID EntityManager::GetComponentID() const
 	{
-		auto tmp = typeid(T).name();
+		//auto tmp = typeid(T).name();
 		//size_t cPos = tmp.find_last_of(":");
 		//cPos = (cPos == std::string::npos) ? 0 : cPos + 1;
 		//tmp = tmp.substr(cPos);
