@@ -44,7 +44,7 @@ namespace PE
         ComponentPool(size_t elementsize, size_t entcnt = DEFAULT_ENTITY_CNT)
         {
             elementSize = elementsize;
-            capacity = entcnt;            
+            capacity = entcnt;
         }
 
         /*!***********************************************************************************

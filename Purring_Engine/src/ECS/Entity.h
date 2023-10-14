@@ -350,7 +350,7 @@ namespace PE
 			}
 			catch (const std::out_of_range& c_error)
 			{
-				c_error.what();
+				UNREFERENCED_PARAMETER(c_error);
 				// make the pool?
 				m_poolsEntity[r_pool];
 				for (const auto& id : m_entities)
@@ -390,11 +390,6 @@ namespace PE
 					}
 					if (cnt2 == cnt)
 						m_poolsEntity[vec.first].emplace_back(id);
-					/*if (pool.second->HasEntity(id) &&
-					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
-					{
-						m_poolsEntity[pool.first].emplace_back(id);
-					}*/
 				}
 			}
 			else
@@ -404,10 +399,9 @@ namespace PE
 				{
 					m_poolsEntity[ALL].erase(std::remove(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id), m_poolsEntity[ALL].end());
 				}
-				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				for (const auto& pool : m_poolsEntity)
 				{
-					if (!pool.second->HasEntity(id) &&
-					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					if ((std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
 					{
 						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
 					}
