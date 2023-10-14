@@ -74,6 +74,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 		PE::EntityManager* p_entityManager{ nullptr };
 		// the components for this scope
 		std::set<ComponentID, Comparer> components;
+		ComponentID componentsCombined;
 		// flag for toggling whether all components are in scope
 		bool all{ false };
 
@@ -91,10 +92,10 @@ int compare(const void* p_lhs, const void* p_rhs);
 			\param[in] components 	The components to scope to
 			\param[in] all 		Whether or not the scope is to all copmonents
 			*************************************************************************************/
-			Iterator(EntityID index, const std::set<ComponentID, Comparer>& r_components, bool all) :
+			Iterator(EntityID index, const ComponentID& r_components, bool all) :
 				p_entityManager(&EntityManager::GetInstance()), index(index), all(all)
 			{
-				poolIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL) : p_entityManager->GetEntitiesInPool(*(std::prev(r_components.end())));
+				poolIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL) : p_entityManager->GetEntitiesInPool(r_components);
 				poolIdx.emplace_back(p_entityManager->OnePast());
 			}
 
@@ -176,6 +177,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 				for (const ComponentID& c : componentIDs)
 				{
 					components.emplace(c);
+					componentsCombined |= c;
 				}
 			}
 			else // if no components are provided, it assume the user wants to scope to all components
@@ -210,7 +212,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 		const Iterator begin() const	// cannot follow coding conventions due to c++ begin() & end() standards
 		{
 			if (!p_entityManager->Size())
-				Iterator(0, components, all); // update to error log
+				return Iterator(0, componentsCombined, all); // update to error log
 			size_t firstIndex{};
 			while ((firstIndex < p_entityManager->OnePast()) &&
 				(!HasComponents(firstIndex) ||
@@ -219,7 +221,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 			{
 				++firstIndex;
 			}
-			return Iterator(firstIndex, components, all);
+			return Iterator(firstIndex, componentsCombined, all);
 		}
 
 		/*!***********************************************************************************
@@ -229,7 +231,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 		*************************************************************************************/
 		const Iterator end() const		// cannot follow coding conventions due to c++ begin() & end() standards
 		{
-			return Iterator(p_entityManager->OnePast(), components, all);
+			return Iterator(p_entityManager->OnePast(), componentsCombined, all);
 		}
 	};
 }

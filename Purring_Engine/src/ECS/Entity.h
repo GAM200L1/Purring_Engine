@@ -344,22 +344,21 @@ namespace PE
 		*************************************************************************************/
 		const std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool)
 		{
-
-			return m_poolsEntity[r_pool];
-			//else
-			//{
-			//	std::vector<EntityID> ret;
-			//	unsigned cnt = 
-			//	for (const auto& pool : m_componentPools)
-			//	{
-			//		if ((r_pool & pool.first).any())
-			//		{
-			//			
-			//		}
-			//	}
-
-			//	return std::move(ret);
-			//}
+			try
+			{
+				return m_poolsEntity.at(r_pool);
+			}
+			catch (const std::out_of_range& c_error)
+			{
+				c_error.what();
+				// make the pool?
+				m_poolsEntity[r_pool];
+				for (const auto& id : m_entities)
+				{
+					UpdateVectors(id);
+				}
+				return m_poolsEntity.at(r_pool);
+			}
 		}
 
 		/*!***********************************************************************************
@@ -371,19 +370,31 @@ namespace PE
 		*************************************************************************************/
 		void UpdateVectors(EntityID id, bool add = true)
 		{
-			if (add) 
-			{			
+			if (add)
+			{
 				if (std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) == m_poolsEntity[ALL].end())
 				{
 					m_poolsEntity[ALL].emplace_back(id);
 				}
-				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				for (const auto& vec : m_poolsEntity)
 				{
-					if (pool.second->HasEntity(id) && 
+					const size_t cnt = vec.first.count();
+					size_t cnt2{};
+					for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+					{
+						if ((vec.first & pool.first).any() && pool.second->HasEntity(id)) 
+						if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
+						{
+							++cnt2;
+						}
+					}
+					if (cnt2 == cnt)
+						m_poolsEntity[vec.first].emplace_back(id);
+					/*if (pool.second->HasEntity(id) &&
 					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
 					{
 						m_poolsEntity[pool.first].emplace_back(id);
-					}
+					}*/
 				}
 			}
 			else
