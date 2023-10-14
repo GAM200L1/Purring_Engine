@@ -821,7 +821,7 @@ namespace PE {
 						//rigidbody component
 						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
 						{
-							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -1025,10 +1025,10 @@ namespace PE {
 							}
 						}
 
-						if (name == "ScriptComponent")
+						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
 						{
 
-							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{							
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -1064,15 +1064,14 @@ namespace PE {
 								if (ImGui::Button("Add Script"))
 								{
 									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
-									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
-								}
+									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								static int selectedScript{};
 								ImGui::Text("Scripts List");
 								//loop to show all the items ins the vector
-								if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+								if (ImGui::BeginChild("GameObjectList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
 									for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
 									{
 										const bool is_selected = (selectedScript == n);
@@ -1095,9 +1094,9 @@ namespace PE {
 							}
 						}
 
-						if (name == "TestScriptData")
+						if (name == EntityManager::GetInstance().GetComponentID<TestScriptData>())
 						{
-							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("TestScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -1179,8 +1178,8 @@ namespace PE {
 						}
 						if (ImGui::Selectable("Add ScriptComponent"))
 						{
-							if (!EntityManager::GetInstance().Has(entityID, "ScriptComponent"))
-								EntityFactory::GetInstance().Assign(entityID, { "ScriptComponent" });
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
 							else
 								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 						}

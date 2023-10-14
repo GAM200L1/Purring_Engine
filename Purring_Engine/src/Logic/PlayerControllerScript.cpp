@@ -35,11 +35,11 @@ namespace PE
 
 	void PlayerControllerScript::OnAttach(EntityID id)
 	{
-		if (!EntityManager::GetInstance().Has(id, "RigidBody"))
-			EntityFactory::GetInstance().Assign(id, { "RigidBody" });
+		if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<RigidBody>()))
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
 
-		if (!EntityManager::GetInstance().Has(id, "PlayerControllerScriptData"))
-			EntityFactory::GetInstance().Assign(id, { "PlayerControllerScriptData" });
+		if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<PlayerControllerScriptData>()))
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<PlayerControllerScriptData>() });
 
 
 	}

@@ -93,8 +93,8 @@ namespace PE
 
 	void testScript2::OnAttach(EntityID id)
 	{
-		if (!EntityManager::GetInstance().Has(id, "TestScript2Data"))
-			EntityFactory::GetInstance().Assign(id, { "TestScript2Data" });
+		if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<TestScript2Data>()))
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<TestScript2Data>() });
 
 	}
 
