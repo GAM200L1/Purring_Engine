@@ -45,7 +45,7 @@ namespace PE
         ComponentPool(size_t elementsize, size_t entcnt = DEFAULT_ENTITY_CNT)
         {
             elementSize = elementsize;
-            capacity = entcnt;            
+            capacity = entcnt;
         }
 
         /*!***********************************************************************************
@@ -209,4 +209,4 @@ namespace PE
  \brief Registers a component to the component pools
  
 *************************************************************************************/
-#define REGISTERCOMPONENT(type) EntityFactory::GetInstance().AddComponentCreator<type>( #type, sizeof(type)  );
+#define REGISTERCOMPONENT(type) EntityFactory::GetInstance().AddComponentCreator<type>( EntityManager::GetInstance().GetComponentID<type>(), sizeof(type)  );

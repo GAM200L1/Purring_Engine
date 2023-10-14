@@ -115,9 +115,9 @@ namespace PE {
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool("All").size()-1; n > 1; --n)
+		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 2; --n)
 		{
-			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
+			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 		}
 	}
 
@@ -412,7 +412,7 @@ namespace PE {
 					AddInfoLog("Object Deleted");
 
 
-					EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
+					EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
 
 					//if not first index
 					m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
@@ -420,7 +420,7 @@ namespace PE {
 					//if object selected
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
-					if (EntityManager::GetInstance().GetEntitiesInPool("All").empty()) m_currentSelectedObject = -1;//if nothing selected
+					if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 
 					count--;
 
@@ -434,7 +434,7 @@ namespace PE {
 			if (ImGui::Button("Clone Object"))
 			{
 				if (m_currentSelectedObject)
-					EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]);
+					EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
 				else
 					AddWarningLog("You are not allowed to clone the background");
 			}
@@ -443,7 +443,7 @@ namespace PE {
 
 			//loop to show all the items ins the vector
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool("All").size(); n++)
+				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
 				{
 					std::string name;
 					const bool is_selected = (m_currentSelectedObject == n);
@@ -457,7 +457,7 @@ namespace PE {
 					}
 					else {
 						name = "GameObject";
-						name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool("All")[n]);
+						name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 					}
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
@@ -539,10 +539,6 @@ namespace PE {
 			if (ImGui::Button("Play Audio 2"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound2");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Play bgm"))
-			{
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Stop Audio"))
@@ -704,7 +700,7 @@ namespace PE {
 				for (size_t i{}; i < 2500; ++i)
 				{
 					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-					EntityFactory::GetInstance().Assign(id2, { "Transform", "Renderer" });
+					EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
@@ -773,7 +769,7 @@ namespace PE {
 			{
 				if (m_objectIsSelected)
 				{
-					EntityID entityID = EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject];
+					EntityID entityID = EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject];
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
 					for (const ComponentID& name : components)
@@ -784,9 +780,10 @@ namespace PE {
 						//search through each component, create a collapsible header if the component exist
 
 						//transform component
-						if (name == "Transform")
+						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 						{
-							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -822,9 +819,9 @@ namespace PE {
 						}
 
 						//rigidbody component
-						if (name == "RigidBody")
+						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
 						{
-							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -869,9 +866,10 @@ namespace PE {
 						}
 
 						//collider component
-						if (name == "Collider")
+						if (name == EntityManager::GetInstance().GetComponentID<Collider>())
 						{
-							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("Collider", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -959,9 +957,10 @@ namespace PE {
 						}
 
 						//renderer component
-						if (name == "Renderer")
+						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
 						{
-							if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("Renderer", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -1145,10 +1144,10 @@ namespace PE {
 						if (ImGui::Selectable("Add Collision"))
 						{
 							//not allowed to add collision without a rigidbody
-							if (EntityManager::GetInstance().Has(entityID, "RigidBody"))
+							if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
 							{
-								if (!EntityManager::GetInstance().Has(entityID, "Collider"))
-									EntityFactory::GetInstance().Assign(entityID, { "Collider" });
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
 								else
 									AddErrorLog("ALREADY HAS A COLLIDER");
 							}
@@ -1159,22 +1158,22 @@ namespace PE {
 						}
 						if (ImGui::Selectable("Add Transform"))
 						{
-							if (!EntityManager::GetInstance().Has(entityID, "Transform"))
-								EntityFactory::GetInstance().Assign(entityID, { "Transform" });
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
 							else
 								AddErrorLog("ALREADY HAS A TRANSFORM");
 						}
 						if (ImGui::Selectable("Add RigidBody"))
 						{
-							if (!EntityManager::GetInstance().Has(entityID, "RigidBody"))
-								EntityFactory::GetInstance().Assign(entityID, { "RigidBody" });
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
 							else
 								AddErrorLog("ALREADY HAS A TRANSFORM");
 						}
 						if (ImGui::Selectable("Add Renderer"))
 						{
-							if (!EntityManager::GetInstance().Has(entityID, "Renderer"))
-								EntityFactory::GetInstance().Assign(entityID, { "Renderer" });
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 							else
 								AddErrorLog("ALREADY HAS A RENDERER");
 						}
@@ -1400,7 +1399,7 @@ namespace PE {
 					{
 						if (m_currentSelectedObject)
 						{
-							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool("All")[m_currentSelectedObject]));
+							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]));
 						}
 
 					}
