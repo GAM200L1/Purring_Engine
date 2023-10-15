@@ -190,10 +190,7 @@ namespace PE
             // ----- Cached Variables ----- //
             glm::mat4 m_cachedViewMatrix{}; // To prevent unnecessary recalculation of the view matrix
             glm::mat4 m_cachedWorldToNdcMatrix{}; // To prevent unnecessary recalculation of the world to NDC matrix
-            glm::vec2 m_cachedPosition{ -1.f, -1.f }; // Position of center of camera in the world used by the cached matrix
-            float m_cachedOrientation{ -1.f };       // Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis) used by the cached matrix
-            float m_cachedMagnification{ -1.f };     // Zoom to apply to the camera used by the cached matrix
-            float m_cachedViewportWidth{ -1.f }, m_cachedViewportHeight{ -1.f };  // Height and width of the camera viewport used by the cached matrix
+            bool hasTransformChanged{ true }, hasViewportChanged{ true };
         };
     } // End of Graphics namespace
 } // End of PE namespace

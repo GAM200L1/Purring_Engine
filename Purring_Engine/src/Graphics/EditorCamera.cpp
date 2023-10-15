@@ -46,14 +46,10 @@ namespace PE
 
         glm::mat4 EditorCamera::GetWorldToNdcMatrix()
         {
-            if (GetHasChanged() ||
-                m_cachedViewportWidth != m_viewportWidth ||
-                m_cachedViewportHeight != m_viewportHeight)
+            if (GetHasChanged() || hasViewportChanged)
             {
                 m_cachedWorldToNdcMatrix = GetWorldToViewMatrix() * GetViewToNdcMatrix();
-
-                m_cachedViewportWidth = m_viewportWidth;
-                m_cachedViewportHeight = m_viewportHeight;
+                hasViewportChanged = false;
             }
 
             return m_cachedWorldToNdcMatrix;
@@ -62,9 +58,7 @@ namespace PE
 
         bool EditorCamera::GetHasChanged() const
         {
-            return (m_cachedPosition != m_position ||
-                m_cachedOrientation != m_orientation ||
-                m_cachedMagnification != m_magnification);
+            return hasTransformChanged;
         }
 
 
@@ -89,9 +83,7 @@ namespace PE
                 -rightDotPosition, -upDotPosition, 1.f, 1.f
             };
 
-            m_cachedPosition = m_position;
-            m_cachedOrientation = m_orientation;
-            m_cachedMagnification = m_magnification;
+            hasTransformChanged = false;
         }
 
 
@@ -99,6 +91,7 @@ namespace PE
         {
             m_viewportWidth = width;
             m_viewportHeight = height;
+            hasViewportChanged = true;
         }
 
 
@@ -106,6 +99,7 @@ namespace PE
         {
             // Clamping to 10 is arbitrary.
             m_magnification = glm::clamp(value, 0.1f, 10.f);
+            hasTransformChanged = true;
         }
 
 
@@ -113,6 +107,7 @@ namespace PE
         {
             m_position.x = valueX;
             m_position.y = valueY;
+            hasTransformChanged = true;
         }
 
 
@@ -120,18 +115,21 @@ namespace PE
         {
             float angleRadians{ glm::radians(degrees) };
             m_orientation = angleRadians;
+            hasTransformChanged = true;
         }
 
 
         void EditorCamera::SetRotationRadians(float const radians)
         {
             m_orientation = radians;
+            hasTransformChanged = true;
         }
 
 
         void EditorCamera::AdjustMagnification(float const delta)
         {
             SetMagnification(m_magnification + delta);
+            hasTransformChanged = true;
         }
 
         
@@ -139,6 +137,7 @@ namespace PE
         {
             m_position.x += deltaX;
             m_position.y += deltaY;
+            hasTransformChanged = true;
         }
 
 
@@ -146,12 +145,14 @@ namespace PE
         {
             float angleRadians{ glm::radians(delta) };
             m_orientation += angleRadians;
+            hasTransformChanged = true;
         }
 
 
         void EditorCamera::AdjustRotationRadians(float const delta)
         {
             m_orientation += delta;
+            hasTransformChanged = true;
         }
     } // End of Graphics namespace
 } // End of PE namspace

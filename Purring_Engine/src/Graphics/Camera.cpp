@@ -18,98 +18,102 @@
 ----------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "Camera.h"
+#include <glm/gtc/matrix_transform.hpp> // ortho()
 
 namespace PE 
 {
     namespace Graphics
     {
-        glm::mat4 Camera::GetWorldToViewMatrix()
+        glm::mat4 Camera::GetWorldToViewMatrix(Transform const& r_transform)
         {
-            if (GetHasChanged())
+            if (GetHasChanged(r_transform))
             {
-                float scaleReciprocal{ 1.f / m_magnification };
-
-                glm::vec2 up{ -glm::sin(m_orientation), glm::cos(m_orientation) };
-                up *= scaleReciprocal;
-
-                glm::vec2 right{ up.y, -up.x };
-
-                float upDotPosition{ (up.x * m_position.x + up.y * m_position.y) };
-                float rightDotPosition{ (right.x * m_position.x + right.y * m_position.y) };
-
-                
-                // Update the cached values
-                m_cachedViewMatrix = glm::mat4{
-                    right.x, up.x, 0.f, 0.f,
-                    right.y, up.y, 0.f, 0.f,
-                    0.f,    0.f,   1.f, 0.f,
-                    -rightDotPosition, -upDotPosition, 1.f, 1.f
-                };
-                m_cachedPosition = m_position;
-                m_cachedOrientation = m_orientation;
-                m_cachedMagnification = m_magnification;
+                ComputeViewMatrix(r_transform);
             }
 
             return m_cachedViewMatrix;
         }
 
-        bool Camera::GetHasChanged() const
+
+        glm::mat4 Camera::GetViewToNdcMatrix() const
         {
-            return (m_cachedPosition != m_position ||
-                m_cachedOrientation != m_orientation ||
-                m_cachedMagnification != m_magnification);
+            float halfWidth{ m_viewportWidth * 0.5f };
+            float halfHeight{ m_viewportHeight * 0.5f };
+
+            return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -m_magnification, m_magnification);
         }
+
+
+        glm::mat4 Camera::GetWorldToNdcMatrix(Transform const& r_transform)
+        {
+            if (GetHasChanged(r_transform) || hasViewportChanged)
+            {
+                m_cachedWorldToNdcMatrix = GetWorldToViewMatrix(r_transform) * GetViewToNdcMatrix();
+                hasViewportChanged = false;
+            }
+
+            return m_cachedWorldToNdcMatrix;
+        }
+
+
+        bool Camera::GetHasChanged(Transform const& r_transform) const
+        {
+            return (m_cachedPositionX != r_transform.position.x ||
+                m_cachedPositionY != r_transform.position.y ||
+                m_cachedOrientation != r_transform.orientation ||
+                hasTransformChanged);
+        }
+
+
+        void Camera::ComputeViewMatrix(Transform const& r_transform)
+        {
+            float scaleReciprocal{ 1.f / m_magnification };
+
+            glm::vec2 up{ -glm::sin(r_transform.orientation), glm::cos(r_transform.orientation) };
+            up *= scaleReciprocal;
+
+            glm::vec2 right{ up.y, -up.x };
+
+            float upDotPosition{ (up.x * r_transform.position.x + up.y * r_transform.position.y) };
+            float rightDotPosition{ (right.x * r_transform.position.x + right.y * r_transform.position.y) };
+
+
+            // Update the cached values
+            m_cachedViewMatrix = glm::mat4{
+                right.x, up.x, 0.f, 0.f,
+                right.y, up.y, 0.f, 0.f,
+                0.f,    0.f,   1.f, 0.f,
+                -rightDotPosition, -upDotPosition, 1.f, 1.f
+            }; 
+
+            m_cachedPositionX = r_transform.position.x;
+            m_cachedPositionY = r_transform.position.y;
+            m_cachedOrientation = r_transform.orientation;
+            hasTransformChanged = false;
+        }
+
+
+        void Camera::SetViewDimensions(float const width, float const height)
+        {
+            m_viewportWidth = width;
+            m_viewportHeight = height;
+            hasViewportChanged = true;
+        }
+
 
         void Camera::SetMagnification(float const value)
         {
             // Clamping to 10 is arbitrary.
             m_magnification = glm::clamp(value, 0.1f, 10.f);
-        }
-
-
-        void Camera::SetPosition(float const valueX, float const valueY)
-        {
-            m_position.x = valueX;
-            m_position.y = valueY;
-        }
-
-
-        void Camera::SetRotationDegrees(float const degrees)
-        {
-            float angleRadians{ glm::radians(degrees) };
-            m_orientation = angleRadians;
-        }
-
-
-        void Camera::SetRotationRadians(float const radians)
-        {
-            m_orientation = radians;
+            hasTransformChanged = true;
         }
 
 
         void Camera::AdjustMagnification(float const delta)
         {
             SetMagnification(m_magnification + delta);
+            hasTransformChanged = true;
         }
 
-        
-        void Camera::AdjustPosition(float const deltaX, float const deltaY)
-        {
-            m_position.x += deltaX;
-            m_position.y += deltaY;
-        }
-
-
-        void Camera::AdjustRotationDegrees(float const delta)
-        {
-            float angleRadians{ glm::radians(delta) };
-            m_orientation += angleRadians;
-        }
-
-
-        void Camera::AdjustRotationRadians(float const delta)
-        {
-            m_orientation += delta;
-        }
     } // End of Graphics namespace
 } // End of PE namspace
