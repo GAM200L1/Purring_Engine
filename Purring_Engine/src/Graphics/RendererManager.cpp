@@ -54,7 +54,7 @@ namespace PE
 {
     namespace Graphics
     {
-        Camera RendererManager::m_mainCamera{};
+        EditorCamera RendererManager::m_mainCamera{};
 
         RendererManager::RendererManager(GLFWwindow* p_window) 
         {
@@ -171,23 +171,9 @@ namespace PE
                 m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
 
-                // Compute the world to NDC matrix
-                float halfWidth{ windowWidth * 0.5f };
-                float halfHeight{ windowHeight * 0.5f };
-                m_cachedWorldToNdcMatrix = 
-                    glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
-                    * m_mainCamera.GetWorldToViewMatrix();
+                // Update the editor camera viewport size
+                m_mainCamera.SetViewDimensions(windowWidth, windowHeight);
             } 
-            // Check if the camera has changed
-            else if (m_mainCamera.GetHasChanged()) 
-            {
-                // Compute the world to NDC matrix
-                float halfWidth{ windowWidth * 0.5f };
-                float halfHeight{ windowHeight * 0.5f };
-                m_cachedWorldToNdcMatrix =
-                    glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
-                    * m_mainCamera.GetWorldToViewMatrix();
-            }
 
             // Set background color of the window
             glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
@@ -221,20 +207,20 @@ namespace PE
             
             EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
-            DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
+            DrawSceneInstanced(m_mainCamera.GetWorldToNdcMatrix()); // Draw objects in the scene
 
             if (Editor::GetInstance().IsRenderingDebug()) 
             {
-                DrawDebug(m_cachedWorldToNdcMatrix); // Draw debug gizmos in the scene
+                DrawDebug(m_mainCamera.GetWorldToNdcMatrix()); // Draw debug gizmos in the scene
             }
 
 
             // Render Text
             // text object 1
-            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, m_mainCamera.GetWorldToNdcMatrix(), { 0.2f, 0.8f, 0.8f });
 
            // text object 2
-            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, m_mainCamera.GetWorldToNdcMatrix(), { 0.2f, 0.8f, 0.8f });
 
             // Unbind the RBO for rendering to the ImGui window
             m_imguiFrameBuffer.Unbind();

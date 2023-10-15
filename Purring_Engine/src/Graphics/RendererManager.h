@@ -22,7 +22,7 @@
 #include <map>
 #include <vector>
 
-#include "Camera.h"
+#include "EditorCamera.h"
 #include "MeshData.h"
 #include "Renderer.h"
 #include "FrameBuffer.h"
@@ -43,7 +43,7 @@ namespace PE
         {
             // ----- Public Variables ----- //
         public:
-            static Graphics::Camera m_mainCamera; // Camera object. Made static for ease of access, pending camera system.
+            static Graphics::EditorCamera m_mainCamera; // Camera object. Made static for ease of access, pending camera system.
             
             // ----- Constructors ----- //
         public:
@@ -208,10 +208,7 @@ namespace PE
 
             Font m_font;
             //! Width and height of the ImGui window the last time the framebuffer was resized
-            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
-
-            // 4x4 world to NDC matrix. Updated when window is resized or camera has been repositioned
-            glm::mat4 m_cachedWorldToNdcMatrix{}; 
+            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
                         
             std::vector<float> m_isTextured{}; // Container that stores whether the quad is textured
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
