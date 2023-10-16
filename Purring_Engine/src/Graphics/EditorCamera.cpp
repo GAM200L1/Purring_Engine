@@ -101,7 +101,6 @@ namespace PE
             {
                 m_magnification = value;
                 hasTransformChanged = true;
-                std::cout << "new magnification: " << m_magnification << "\n";
             }
         }
 
