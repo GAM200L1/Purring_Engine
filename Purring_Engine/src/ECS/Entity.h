@@ -22,15 +22,29 @@
 #include "Components.h"
 #include "Data/SerializationManager.h"
 #include "Singleton.h"
+#include <bitset>
 
-
+// Const expressions
+constexpr unsigned MAX_COMPONENTS = 32;
+static unsigned s_componentCounter{};
 
 // Typedefs
-typedef unsigned long long EntityID;				// typedef for storing the unique ID of the entity, same as size_t
-typedef std::string ComponentID;					// ComponentID type, internally it is a std::string
+typedef unsigned long long EntityID;								// typedef for storing the unique ID of the entity, same as size_t
+typedef std::bitset<MAX_COMPONENTS> ComponentID;					// ComponentID type, internally it is a bitset
+
+
+const auto ALL = std::move(std::bitset<MAX_COMPONENTS>{}.set());
 
 namespace PE
 {
+
+	struct Comparer {
+		bool operator() (const std::bitset<MAX_COMPONENTS>& b1, const std::bitset<MAX_COMPONENTS>& b2) const {
+			return b1.to_ulong() < b2.to_ulong();
+		}
+	};
+
+
 	/*!***********************************************************************************
 	 \brief Entity manager struct
 	 
@@ -287,7 +301,7 @@ namespace PE
 		*************************************************************************************/
 		inline size_t OnePast() const
 		{
-			return m_entityCounter;
+			return m_entityCounter + 1;
 		}
 		
 
@@ -328,10 +342,7 @@ namespace PE
 		 \param[in] r_pool 						The pool to get the eneity vector from
 		 \return const std::vector<EntityID>& 	Gets the pool's vector of entities
 		*************************************************************************************/
-		const std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool)
-		{
-			return m_poolsEntity[r_pool];
-		}
+		std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool);
 
 		/*!***********************************************************************************
 		 \brief Updates the entity vectors, helps keeps track of which entity can be found in
@@ -342,32 +353,38 @@ namespace PE
 		*************************************************************************************/
 		void UpdateVectors(EntityID id, bool add = true)
 		{
-			if (add) 
-			{			
-				if (std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) == m_poolsEntity["All"].end())
+			if (add)
+			{
+				if (std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) == m_poolsEntity[ALL].end())
 				{
-					m_poolsEntity["All"].emplace_back(id);
+					m_poolsEntity[ALL].emplace_back(id);
 				}
-				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				for (const auto& vec : m_poolsEntity)
 				{
-					if (pool.second->HasEntity(id) && 
-					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
+					const size_t cnt = vec.first.count();
+					size_t cnt2{};
+					for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
 					{
-						m_poolsEntity[pool.first].emplace_back(id);
+						if ((vec.first & pool.first).any() && pool.second->HasEntity(id)) 
+						if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
+						{
+							++cnt2;
+						}
 					}
+					if (cnt2 == cnt)
+						m_poolsEntity[vec.first].emplace_back(id);
 				}
 			}
 			else
 			{
 				if (!m_entities.count(id) &&
-					(std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) != m_poolsEntity["All"].end()))
+					(std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) != m_poolsEntity[ALL].end()))
 				{
-					m_poolsEntity["All"].erase(std::remove(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id), m_poolsEntity["All"].end());
+					m_poolsEntity[ALL].erase(std::remove(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id), m_poolsEntity[ALL].end());
 				}
-				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				for (const auto& pool : m_poolsEntity)
 				{
-					if (!pool.second->HasEntity(id) &&
-					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					if ((std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
 					{
 						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
 					}
@@ -379,13 +396,13 @@ namespace PE
 		// set of entities picked over vector to increase the speed of searches for specific entites
 		std::set<EntityID> m_entities;
 		// map of to store pointers to individual componnet pools
-		std::map<ComponentID, ComponentPool*> m_componentPools;
+		std::map<ComponentID, ComponentPool*, Comparer> m_componentPools;
 		// a queue of entity IDs to handle removed entities
 		std::queue<EntityID> m_removed;
 		// a map to a vector of entity IDs used to keep track of entity components (used to iterate in SceneView)
-		std::map<ComponentID, std::vector<EntityID>> m_poolsEntity;
+		std::map<ComponentID, std::vector<EntityID>, Comparer> m_poolsEntity;
 		// a counter to help keep track of the entities "absolute" count
-		size_t m_entityCounter{1};
+		size_t m_entityCounter{0};
 	};
 
 	//-------------------- Templated function implementations --------------------//
@@ -457,12 +474,15 @@ namespace PE
 	template<typename T>
 	ComponentID EntityManager::GetComponentID() const
 	{
-		ComponentID tmp = typeid(T).name();
-		size_t cPos = tmp.find_last_of(":");
-		cPos = (cPos == std::string::npos) ? 0 : cPos + 1;
-		tmp = tmp.substr(cPos);
-		return (tmp[0] == 's') ? tmp.substr(7) :
-			   (tmp[0] == 'c') ? tmp.substr(6) : tmp;
+		//auto tmp = typeid(T).name();
+		//size_t cPos = tmp.find_last_of(":");
+		//cPos = (cPos == std::string::npos) ? 0 : cPos + 1;
+		//tmp = tmp.substr(cPos);
+		//return (tmp[0] == 's') ? tmp.substr(7) :
+		//	   (tmp[0] == 'c') ? tmp.substr(6) : tmp;
+
+		static unsigned s_componentID = s_componentCounter++;
+		return ComponentID().set(s_componentID);
 	}
 
 

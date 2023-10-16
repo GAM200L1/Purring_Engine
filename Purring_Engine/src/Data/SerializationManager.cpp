@@ -65,34 +65,34 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
         }
     }
 
-    if (entityManager->GetInstance().Has(eID, "Transform"))
+    if (entityManager->GetInstance().Has(eID, entityManager->GetComponentID<PE::Transform>()))
     {
-        PE::Transform* transform = static_cast<PE::Transform*>(entityManager->GetComponentPoolPointer("Transform")->Get(eID));
+        PE::Transform* transform = static_cast<PE::Transform*>(entityManager->GetComponentPoolPointer(entityManager->GetComponentID<PE::Transform>())->Get(eID));
 
         nlohmann::json jTransform = transform->ToJson();
 
         j["Entity"]["components"]["Transform"] = jTransform;
     }
-    if (entityManager->GetInstance().Has(eID, "RigidBody"))
+    if (entityManager->GetInstance().Has(eID, entityManager->GetComponentID<PE::RigidBody>()))
     {
-        PE::RigidBody* rigidBody = static_cast<PE::RigidBody*>(entityManager->GetComponentPoolPointer("RigidBody")->Get(eID));
+        PE::RigidBody* rigidBody = static_cast<PE::RigidBody*>(entityManager->GetComponentPoolPointer(entityManager->GetComponentID<PE::RigidBody>())->Get(eID));
         if (rigidBody != nullptr)
         {
             nlohmann::json jRigidBody = rigidBody->ToJson(); // Make sure your RigidBody class has a ToJson function
             j["Entity"]["components"]["RigidBody"] = jRigidBody;
         }
     }
-    if (entityManager->GetInstance().Has(eID, "Collider"))
+    if (entityManager->GetInstance().Has(eID, entityManager->GetComponentID<PE::Collider>()))
     {
-        PE::Collider* collider = static_cast<PE::Collider*>(entityManager->GetComponentPoolPointer("Collider")->Get(eID));
+        PE::Collider* collider = static_cast<PE::Collider*>(entityManager->GetComponentPoolPointer(entityManager->GetComponentID<PE::Collider>())->Get(eID));
         if (collider != nullptr) {
             nlohmann::json jCollider = collider->ToJson();
             j["Entity"]["components"]["Collider"] = jCollider;
         }
     }
-    if (entityManager->GetInstance().Has(eID, "Renderer"))
+    if (entityManager->GetInstance().Has(eID, entityManager->GetComponentID<PE::Graphics::Renderer>()))
     {
-        PE::Graphics::Renderer* renderer = static_cast<PE::Graphics::Renderer*>(entityManager->GetComponentPoolPointer("Renderer")->Get(eID));
+        PE::Graphics::Renderer* renderer = static_cast<PE::Graphics::Renderer*>(entityManager->GetComponentPoolPointer(entityManager->GetComponentID<PE::Graphics::Renderer>())->Get(eID));
         if (renderer != nullptr) {
             nlohmann::json jRenderer = renderer->ToJson();
             j["Entity"]["components"]["Renderer"] = jRenderer;
@@ -234,7 +234,7 @@ bool SerializationManager::LoadRigidBody(const EntityID& r_id, const nlohmann::j
     PE::RigidBody rb;
     rb.SetMass(r_json["Entity"]["components"]["RigidBody"]["mass"].get<float>());
     rb.SetType(static_cast<EnumRigidBodyType>(r_json["Entity"]["components"]["RigidBody"]["type"].get<int>()));
-    PE::EntityFactory::GetInstance().LoadComponent(r_id, "RigidBody", static_cast<void*>(&rb));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::RigidBody>(), static_cast<void*>(&rb));
     return true;
 }
 
@@ -260,7 +260,7 @@ bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::js
     {
         col.colliderVariant = PE::AABBCollider();
     }
-    PE::EntityFactory::GetInstance().LoadComponent(r_id, "Collider", static_cast<void*>(&col));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Collider>(), static_cast<void*>(&col));
     return true;
 }
 
@@ -281,7 +281,7 @@ bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::j
     trans.width = r_json["Entity"]["components"]["Transform"]["width"].get<float>();
     trans.orientation = r_json["Entity"]["components"]["Transform"]["orientation"].get<float>();
     trans.position = PE::vec2{ r_json["Entity"]["components"]["Transform"]["position"]["x"].get<float>(), r_json["Entity"]["components"]["Transform"]["position"]["y"].get<float>() };
-    PE::EntityFactory::GetInstance().LoadComponent(r_id, "Transform", static_cast<void*>(&trans));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Transform>(), static_cast<void*>(&trans));
     return true;
 }
 
@@ -300,6 +300,6 @@ bool SerializationManager::LoadRenderer(const EntityID& r_id, const nlohmann::js
     PE::Graphics::Renderer ren;
     ren.SetColor({ r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>() });
     ren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
-    PE::EntityFactory::GetInstance().LoadComponent(r_id, "Renderer", static_cast<void*>(&ren));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>(), static_cast<void*>(&ren));
     return true;
 }

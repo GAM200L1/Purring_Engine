@@ -56,7 +56,7 @@ namespace PE
         std::optional<std::reference_wrapper<Camera>> CameraManager::GetMainCamera()
         {
             // Check if the main camera ID stored is valid
-            if (EntityManager::GetInstance().Has(m_mainCameraId, "Camera")) 
+            if (EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
             {
                 return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
             }
@@ -95,7 +95,7 @@ namespace PE
             deltaTime; // Prevent warnings
 
             // Check if the main camera ID stored is valid
-            bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, "Camera") };
+            bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
 
             Transform& playerTransform{ EntityManager::GetInstance().Get<Transform>(1) };          
 

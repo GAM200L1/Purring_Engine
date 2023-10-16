@@ -16,8 +16,7 @@
 
 
 // INCLUDES
-#include "prpch.h"
-
+#include "Entity.h"
 
 
 namespace PE
@@ -28,8 +27,6 @@ namespace PE
 	*************************************************************************************/
 	namespace Prefabs
 	{
-		constexpr std::initializer_list<const char*> GameObject = { "Transform", "RigidBody", "Collider", "Renderer"};
-		constexpr std::initializer_list<const char*> CameraObject = { "Transform", "RigidBody", "Camera" };
 	}
 
 	/*!***********************************************************************************
@@ -40,7 +37,7 @@ namespace PE
 	{
 	// ----- Public variables ----- // 
 	public:
-		std::map<std::string, std::initializer_list<const char*>> prefabs;
+		std::map<std::string, std::vector<ComponentID>> prefabs;
 		
 	// ----- Constructors ----- //
 	public:
@@ -50,9 +47,11 @@ namespace PE
 		*************************************************************************************/
 		Prefab()
 		{
-			prefabs.emplace("GameObject", Prefabs::GameObject);
-			prefabs.emplace("CameraObject", Prefabs::CameraObject);
-		}
+			prefabs.emplace("GameObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), 
+																						  EntityManager::GetInstance().GetComponentID<Collider>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+			
+			prefabs.emplace("CameraObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), 
+																							EntityManager::GetInstance().GetComponentID<Graphics::Camera>() });
+        }
 	};
-
 }

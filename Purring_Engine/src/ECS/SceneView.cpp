@@ -17,10 +17,5 @@
 
 namespace PE
 {
-	int compare(const void* p_lhs, const void* p_rhs)
-	{
-		const size_t* x = (size_t*)p_lhs;
-		const size_t* y = (size_t*)p_rhs;
-		return (*x > *y) ? 1 : (*x < *y) ? -1 : 0;
-	}
+
 }
