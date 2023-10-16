@@ -27,7 +27,7 @@
 
 #include "System.h"
 #include "Events/KeyEvent.h"
-
+#include "Events/MouseEvent.h"
 namespace PE 
 {
     class InputSystem : public System
@@ -107,9 +107,14 @@ namespace PE
         *************************************************************************************/
         void SetHoldBufferTime(float s);
 
+        bool static IsKeyTriggered(int keycode);
+        bool static IsKeyHeld(int keycode);
+
         // ----- Private Variables ----- // 
     private:
         static std::vector<KeyPressedEvent> m_KeyDown; // vector holding current held down buttons
+        static std::vector<MouseButtonHoldEvent> m_MouseDown; // vector holding current held down buttons
+        static std::map<int, float> m_KeyTriggered;
         static float m_bufferTime; // has to be static to be used by the callbacks
     };
 }
