@@ -56,4 +56,8 @@ namespace PE
 	{
 		return m_ScriptData;
 	}
+
+	PlayerControllerScript::~PlayerControllerScript()
+	{
+	}
 }

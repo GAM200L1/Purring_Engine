@@ -17,6 +17,7 @@ namespace PE
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
 		std::map<EntityID, PlayerControllerScriptData>& GetScriptData();
+		~PlayerControllerScript();
 	private:
 		std::map<EntityID, PlayerControllerScriptData> m_ScriptData;
 	};

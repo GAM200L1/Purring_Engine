@@ -1120,13 +1120,13 @@ namespace PE {
 							{
 								if (key == "test")
 								{
-									testScript* test = dynamic_cast<testScript*>(val);
-									auto it = test->GetScriptData().find(m_currentSelectedObject);
-									if(it != test->GetScriptData().end())
-									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-									{
-										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
-									}
+									//testScript* test = dynamic_cast<testScript*>(val);
+									//auto it = test->GetScriptData().find(m_currentSelectedObject);
+									//if(it != test->GetScriptData().end())
+									//if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									//{
+									//	ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
+									//}
 								}
 
 								if (key == "PlayerControllerScript")

@@ -28,7 +28,7 @@ namespace PE
     float InputSystem::m_bufferTime = 0.12f;
     std::vector<KeyPressedEvent> InputSystem::m_KeyDown;
     std::vector<MouseButtonHoldEvent> InputSystem::m_MouseDown;
-    std::map<int, int> InputSystem::m_KeyTriggered;
+    std::map<int, float> InputSystem::m_KeyTriggered;
 
 
     //system functions
@@ -168,7 +168,7 @@ namespace PE
             PE::KeyTriggeredEvent kte;
             PE::KeyPressedEvent kpe;
             kte.keycode = kpe.keycode = key;
-            m_KeyTriggered[key] = 1.f;
+            m_KeyTriggered[key] = m_bufferTime;
             //setting a buffer before the keypressed becomes a repeat
             kpe.repeat = m_bufferTime;
             //saving the keypressed event

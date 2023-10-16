@@ -18,6 +18,7 @@ namespace PE
 		virtual void Destroy(EntityID id);		
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
+		~testScript2();
 	private:
 		std::map<EntityID, TestScript2Data> m_ScriptData;
 	};

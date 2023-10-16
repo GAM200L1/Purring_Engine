@@ -17,6 +17,10 @@ namespace PE
 		id;
 	}
 
+	testScript::~testScript()
+	{
+	}
+
 	void testScript::OnAttach(EntityID id)
 	{
 		m_ScriptData[id] = TestScriptData();

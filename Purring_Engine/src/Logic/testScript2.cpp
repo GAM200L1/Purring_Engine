@@ -102,4 +102,8 @@ namespace PE
 		if (it != m_ScriptData.end())
 			m_ScriptData.erase(id);
 	}
+
+	testScript2::~testScript2()
+	{
+	}
 }
