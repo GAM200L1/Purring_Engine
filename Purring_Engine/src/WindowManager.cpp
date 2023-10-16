@@ -132,14 +132,7 @@ namespace PE
 	*************************************************************************************/
 	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
 	{
-		Editor::GetInstance().AddEventLog(r_event.ToString());
-		if (r_event.GetType() == MouseEvents::MouseScrolled)
-		{
-			MouseScrolledEvent mse;
-			mse = dynamic_cast<const MouseScrolledEvent&>(r_event);
-			Graphics::RendererManager::m_mainCamera.AdjustMagnification(-mse.yOffset);
-
-		}
+		Editor::GetInstance().AddEventLog(r_event.ToString());		
 
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
@@ -230,11 +223,11 @@ namespace PE
 				}
 
 				// rotation
-				if (ev.keycode == GLFW_KEY_RIGHT)
+				if (ev.keycode == GLFW_KEY_X)
 				{
 					EntityManager::GetInstance().Get<RigidBody>(1).rotationVelocity = -PE_PI;
 				}
-				if (ev.keycode == GLFW_KEY_LEFT)
+				if (ev.keycode == GLFW_KEY_Z)
 				{
 					EntityManager::GetInstance().Get<RigidBody>(1).rotationVelocity = PE_PI;
 				}

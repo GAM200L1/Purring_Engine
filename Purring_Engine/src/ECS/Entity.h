@@ -19,7 +19,6 @@
 #pragma once
 
 // INCLUDES
-#include "prpch.h"
 #include "Components.h"
 #include "Data/SerializationManager.h"
 #include "Singleton.h"

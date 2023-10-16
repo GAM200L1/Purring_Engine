@@ -17,7 +17,7 @@
 #include "glm/glm.hpp"
 #include "Graphics/Texture.h"
 #include "Graphics/ShaderProgram.h"
-#include "Graphics/Camera.h"
+#include "Graphics/EditorCamera.h"
 
 namespace PE
 {

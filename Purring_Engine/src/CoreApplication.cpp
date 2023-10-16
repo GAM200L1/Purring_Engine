@@ -27,6 +27,7 @@
 // Graphics Headers
 #include "Graphics/GLHeaders.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/CameraManager.h"
 
 // Core Functionality
 #include "CoreApplication.h"
@@ -114,6 +115,19 @@ PE::CoreApplication::CoreApplication()
     serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
     
 
+    // Make a runtime camera that follows the player
+    EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = -100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = -100.f;
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+
+    // Make a second runtime camera to test switching
+    cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -244,6 +258,7 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Collider);
     REGISTERCOMPONENT(Transform);
     REGISTERCOMPONENT(Graphics::Renderer);
+    REGISTERCOMPONENT(Graphics::Camera);
 }
 
 void PE::CoreApplication::InitializeLogger()
@@ -272,13 +287,20 @@ void PE::CoreApplication::InitializeMemoryManager()
 
 void PE::CoreApplication::InitializeSystems()
 {
+    // Get the window width and height to initialize the camera manager with
+    int width, height;
+    glfwGetWindowSize(m_window, &width, &height);
+
     // Add system to list & assigning memory to them
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window };
+    Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+
     AddSystem(p_inputSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
+    AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
 }

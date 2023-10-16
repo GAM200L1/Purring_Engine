@@ -20,7 +20,6 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
-#include "prpch.h"
 #include "json.hpp"
 #include "ECS/Components.h"
 #include "ECS/Entity.h"
