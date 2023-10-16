@@ -193,6 +193,7 @@ namespace PE
 		bool InitializeTransform(const EntityID& r_id, void* p_data);
 		bool InitializePlayerStats(const EntityID& r_id, void* p_data);
 		bool InitializeRenderer(const EntityID& r_id, void* p_data);
+		bool InitializeScriptComponent(const EntityID& r_id, void* p_data);
 		bool InitializeCamera(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************

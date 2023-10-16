@@ -96,8 +96,31 @@ namespace PE {
 		 \brief     Adds a listener for a specific event type.
 		 \param[in] T type - The type of event to listen to.
 		 \param[in] const Func& func - The callback function to be invoked when the event is dispatched.
+		 \return	returns an int as a handle to the event to be use to remove event later on
 		*************************************************************************************/
-		void AddListener(T type, const Func& func) { m_Listerners[type].push_back(func); }
+		int AddListener(T type, const Func& func) 
+		{ 
+			m_Listerners[type].push_back(func); 
+			int handle = m_NextListenerID++;
+			m_ListenerHandles[handle] = { type, std::prev(m_Listerners[type].end()) };
+			return handle;
+		}
+
+		/*!***********************************************************************************
+		 \brief     remove a listener for a specific event type.
+		 \param[in] int handle the handle to remove from the map
+		*************************************************************************************/
+		void RemoveListener(int handle)
+		{
+			auto it = m_ListenerHandles.find(handle);
+			if (it != m_ListenerHandles.end())
+			{
+				const auto& listenerInfo = it->second;
+				auto& listeners = m_Listerners[listenerInfo.first];
+				listeners.erase(listenerInfo.second);
+				m_ListenerHandles.erase(it);
+			}
+		}
 
 
 		// To be defined within engine to makesure only accessible through the engine
@@ -120,6 +143,8 @@ namespace PE {
 		// ----- Private variables ----- // 
 	private:
 		std::map<T, std::vector<Func>> m_Listerners; // subscribed events
+		int m_NextListenerID = 0;
+		std::map<int, std::pair<T, typename std::vector<Func>::iterator>> m_ListenerHandles;
 	};
 
 	/*!***********************************************************************************

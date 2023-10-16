@@ -90,6 +90,16 @@ namespace PE {
 		 \return bool return whether debug drawing is on or off
 		*************************************************************************************/
 		bool IsRenderingDebug();
+		/*!***********************************************************************************
+		 \brief get the boolean to know editor is in runtime
+		 \return bool return whether it is editor mode or runtime
+		*************************************************************************************/
+		bool IsRunTime();
+		/*!***********************************************************************************
+		 \brief get the boolean to know editor is in runtime
+		 \return bool return whether it is editor mode or runtime
+		*************************************************************************************/
+		bool IsMouseInScene();
 
 		// ----- Public Logging Functions ----- // 
 	public:
@@ -139,7 +149,6 @@ namespace PE {
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
 		void OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_e);
-
 		// ----- ImGui Window Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -249,6 +258,7 @@ namespace PE {
 
 		//boolean for rendering
 		bool m_renderDebug;
+		bool m_isRunTime;
 
 		//variables for logging
 		std::vector<std::string> m_logOutput;
@@ -265,6 +275,8 @@ namespace PE {
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
+		bool m_mouseInScene;
+
 
 	};
 }
