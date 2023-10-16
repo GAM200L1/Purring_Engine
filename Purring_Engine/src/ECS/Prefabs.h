@@ -27,7 +27,6 @@ namespace PE
 	*************************************************************************************/
 	namespace Prefabs
 	{
-		//constexpr std::initializer_list<ComponentID> GameObject = { "Transform", "RigidBody", "Collider", "Renderer"};
 	}
 
 	/*!***********************************************************************************
@@ -48,10 +47,11 @@ namespace PE
 		*************************************************************************************/
 		Prefab()
 		{
-			std::initializer_list<ComponentID> GameObject = { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), EntityManager::GetInstance().GetComponentID<Collider>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() };
-			prefabs.emplace("GameObject", GameObject);
-            std::initializer_list<ComponentID> CameraObject = { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), EntityManager::GetInstance().GetComponentID<Graphics::Camera>() };
-			prefabs.emplace("CameraObject", CameraObject);
+			prefabs.emplace("GameObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), 
+																						  EntityManager::GetInstance().GetComponentID<Collider>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+			
+			prefabs.emplace("CameraObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), 
+																							EntityManager::GetInstance().GetComponentID<Graphics::Camera>() });
         }
 	};
 }

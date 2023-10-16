@@ -22,42 +22,6 @@
 
 namespace PE
 {
-
-/*!***********************************************************************************
- \brief Helper function to sort all duplicates to the "left" and push all the rest
-		to the "right", will return an iterator to the new "end".
-		Takes in a sorted vector/container.
- 
- \tparam Iter Iterator to the new end
-*************************************************************************************/
-template<class Iter>
-/** Moves duplicates to front, returning end of duplicates range.
- *  Use a sorted range as input. */
-Iter Duplicates(Iter begin, Iter end) {
-	Iter dup = begin;
-	for (Iter it = begin; it != end; ++it) {
-		Iter next = it;
-		++next;
-		Iter const miss = std::mismatch(next, end, it).second;
-		if (miss != it) {
-			*dup++ = *miss;
-			it = miss;
-		}
-	}
-	return dup;
-}
-
-/*!***********************************************************************************
- \brief A compare function (ascending order) for use inside qsort. (follows the 
- 		requirements of it as well, hence the void ptr inputs)
-		Compares p_lhs and p_rhs. 
- 
- \param[in] p_lhs 	Left hand value
- \param[in] p_rhs 	Right hand value
- \return int 		1 = p_lhs > p_rhs, -1 = p_lhs < p_rhs, 0 otherwise
-*************************************************************************************/
-int compare(const void* p_lhs, const void* p_rhs);
-
 	/*!***********************************************************************************
 	\brief
 
@@ -103,7 +67,6 @@ int compare(const void* p_lhs, const void* p_rhs);
 					poolIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL).end() : p_entityManager->GetEntitiesInPool(r_components).end();
 					endIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL).end() : p_entityManager->GetEntitiesInPool(r_components).end();
 				}
-				//poolIdx.emplace_back(p_entityManager->OnePast());
 			}
 
 			/*!***********************************************************************************
