@@ -87,6 +87,11 @@ namespace PE {
 		return m_isRunTime;
 	}
 
+	bool Editor::IsMouseInScene()
+	{
+		return m_mouseInScene;
+	}
+
 	void Editor::ToggleDebugRender()
 	{
 		if (m_renderDebug)
@@ -801,10 +806,11 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
+								float min = 1.0f, max = 100.f;
 								//each variable in the component
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Position: ");
-								ImGui::Text("x: "); ImGui::SameLine(); ImGui::InputFloat("##x", &EntityManager::GetInstance().Get<Transform>(entityID).position.x, 1.0f, 100.f, "%.3f");
+								ImGui::Text("x: "); ImGui::SameLine(); ImGui::InputFloat("##x", &EntityManager::GetInstance().Get<Transform>(entityID).position.x, 1.0f, 100.f, "%.3f");								
 								ImGui::Text("y: "); ImGui::SameLine(); ImGui::InputFloat("##y", &EntityManager::GetInstance().Get<Transform>(entityID).position.y, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Scale: ");
@@ -1062,11 +1068,13 @@ namespace PE {
 									//set selected texture id
 									if (ImGui::Combo("##Scripts", &scriptindex, key.data(), static_cast<int>(key.size()))) {}
 								}
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
 								if (ImGui::Button("Add Script"))
 								{
 									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
 									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
 								}
+								ImGui::PopStyleColor(1);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1086,12 +1094,14 @@ namespace PE {
 									}
 								}
 								ImGui::EndChild();
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
 								if (ImGui::Button("Remove Script"))
 								{
 									if(selectedScript >= 0)
 									EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
 									selectedScript = -1;
 								}
+								ImGui::PopStyleColor(1);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
@@ -1534,7 +1544,7 @@ namespace PE {
 			) {
 			m_isRunTime = false; 
 		}
-		if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration)) {
+		if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
 			//the graphics rendered onto an image on the imgui window
 			ImGui::Image(
 				reinterpret_cast<void*>(
@@ -1543,9 +1553,10 @@ namespace PE {
 				ImVec2(0, 1),
 				ImVec2(1, 0)
 			);
+			m_mouseInScene = ImGui::IsWindowHovered();
 		}
 		ImGui::EndChild();
-		m_mouseInScene = ImGui::IsWindowHovered();
+
 		//end the window
 		ImGui::End();
 	}

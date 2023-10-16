@@ -95,6 +95,11 @@ namespace PE {
 		 \return bool return whether it is editor mode or runtime
 		*************************************************************************************/
 		bool IsRunTime();
+		/*!***********************************************************************************
+		 \brief get the boolean to know editor is in runtime
+		 \return bool return whether it is editor mode or runtime
+		*************************************************************************************/
+		bool IsMouseInScene();
 
 		// ----- Public Logging Functions ----- // 
 	public:
