@@ -23,13 +23,14 @@
 
 namespace PE
 {
-	constexpr auto TotalSystems = 5;
+	constexpr auto TotalSystems = 6;
 	/*!***********************************************************************************
 	 \brief Enumeration for identifying different subsystems.
 	*************************************************************************************/
 	enum SystemType
 	{
-		INPUT = 0,
+		LOGIC = 0,
+		INPUT,
 		PHYSICS,
 		COLLISION,
 		GRAPHICS,
