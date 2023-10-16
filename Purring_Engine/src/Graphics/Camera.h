@@ -10,14 +10,16 @@
  \par      email:      krystal.y@digipen.edu
  
  \brief    This file contains the camera class, which contains data and 
-           member functions to compute the view transform matrix.
+           member functions to compute the world to NDC transform matrix using
+           orthographic projection.
  
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-/*                                                                   includes
------------------------------------------------------------------------------ */
+
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp> // ortho()
+
 #include "Math/Transform.h"
 
 namespace PE
@@ -35,11 +37,9 @@ namespace PE
             \brief  Gets the matrix to transform coordinates in world space to view space as
                     a 4x4 matrix.
 
-            \param[in] r_transform Reference to the camera's transform component.
-
             \return glm::mat4 - 4x4 matrix to transform coordinates in world space to view space.
             *************************************************************************************/
-            glm::mat4 GetWorldToViewMatrix(Transform const& r_transform);
+            inline glm::mat4 GetWorldToViewMatrix() const { return m_cachedViewMatrix; }
 
             /*!***********************************************************************************
             \brief  Gets the matrix to transform coordinates in view space to NDC space as
@@ -47,7 +47,13 @@ namespace PE
 
             \return glm::mat4 - 4x4 matrix to transform coordinates in view space to NDC space.
             *************************************************************************************/
-            glm::mat4 GetViewToNdcMatrix() const;
+            inline glm::mat4 GetViewToNdcMatrix() const
+            {
+                float halfWidth{ m_viewportWidth * 0.5f };
+                float halfHeight{ m_viewportHeight * 0.5f };
+
+                return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -m_magnification, m_magnification);
+            }
 
             /*!***********************************************************************************
             \brief  Gets the matrix to transform coordinates in world space to NDC space as
@@ -55,7 +61,15 @@ namespace PE
 
             \return glm::mat4 - 4x4 matrix to transform coordinates in world space to NDC space.
             *************************************************************************************/
-            glm::mat4 GetWorldToNdcMatrix(Transform const& r_transform);
+            inline glm::mat4 GetWorldToNdcMatrix() const { return m_cachedWorldToNdcMatrix; }
+
+            /*!***********************************************************************************
+            \brief  Recomputes the world to NDC matrix if the viewport dimensions or 
+                    the camera's transform has been updated.
+
+            \param[in] r_transform Reference to the camera's transform component.
+            *************************************************************************************/
+            void UpdateCamera(Transform const& r_transform);
 
             /*!***********************************************************************************
             \brief  Returns true if the camera's transform has been updated and its matrix 
@@ -70,7 +84,13 @@ namespace PE
                             recalculated
             \return false - Camera's transform has not changed, cached camera matrix can be used.
             *************************************************************************************/
-            bool GetHasChanged(Transform const& r_transform) const;
+            inline bool GetHasChanged(Transform const& r_transform) const
+            {
+                return (m_cachedPositionX != r_transform.position.x ||
+                    m_cachedPositionY != r_transform.position.y ||
+                    m_cachedOrientation != r_transform.orientation ||
+                    hasTransformChanged);
+            }
 
             /*!***********************************************************************************
             \brief  Compute the matrix to transform coordinates in world space to view space as
@@ -125,18 +145,19 @@ namespace PE
             void AdjustMagnification(float const delta);
 
 
-        protected:
+        private:
             float m_magnification{ 1.f };     // Zoom to apply to the camera
             float m_viewportWidth{ 1.f }, m_viewportHeight{ 1.f };  // Height and width of the camera viewport
 
             // ----- Cached Variables ----- //
-            glm::mat4 m_cachedViewMatrix{}; // To prevent unnecessary recalculation of the view matrix
-            glm::mat4 m_cachedWorldToNdcMatrix{}; // To prevent unnecessary recalculation of the world to NDC matrix
             float m_cachedPositionX{ -1.f }, m_cachedPositionY{ -1.f }; // Position of center of camera in the world used by the cached matrix
             float m_cachedOrientation{ -1.f };       // Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
 
-            bool hasTransformChanged{ true }, hasViewportChanged{ true };
+            glm::mat4 m_cachedViewMatrix{}; // To prevent unnecessary recalculation of the view matrix
+            glm::mat4 m_cachedWorldToNdcMatrix{}; // To prevent unnecessary recalculation of the world to NDC matrix
 
+            // Set to true when the world to NDC matrix should be recalculated
+            bool hasTransformChanged{ true }, hasViewportChanged{ true };
         };
     } // End of Graphics namespace
 } // End of PE namespace

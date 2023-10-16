@@ -14,54 +14,26 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
-/*                                                                   includes
------------------------------------------------------------------------------ */
 #include "prpch.h"
 #include "Camera.h"
-#include <glm/gtc/matrix_transform.hpp> // ortho()
 
 namespace PE 
 {
     namespace Graphics
     {
-        glm::mat4 Camera::GetWorldToViewMatrix(Transform const& r_transform)
+        void Camera::UpdateCamera(Transform const& r_transform)
         {
             if (GetHasChanged(r_transform))
             {
                 ComputeViewMatrix(r_transform);
-            }
-
-            return m_cachedViewMatrix;
-        }
-
-
-        glm::mat4 Camera::GetViewToNdcMatrix() const
-        {
-            float halfWidth{ m_viewportWidth * 0.5f };
-            float halfHeight{ m_viewportHeight * 0.5f };
-
-            return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -m_magnification, m_magnification);
-        }
-
-
-        glm::mat4 Camera::GetWorldToNdcMatrix(Transform const& r_transform)
-        {
-            if (GetHasChanged(r_transform) || hasViewportChanged)
+                m_cachedWorldToNdcMatrix = GetWorldToViewMatrix() * GetViewToNdcMatrix();
+                hasViewportChanged = false;
+            }            
+            else if(hasViewportChanged)
             {
-                m_cachedWorldToNdcMatrix = GetWorldToViewMatrix(r_transform) * GetViewToNdcMatrix();
+                m_cachedWorldToNdcMatrix = GetWorldToViewMatrix() * GetViewToNdcMatrix();
                 hasViewportChanged = false;
             }
-
-            return m_cachedWorldToNdcMatrix;
-        }
-
-
-        bool Camera::GetHasChanged(Transform const& r_transform) const
-        {
-            return (m_cachedPositionX != r_transform.position.x ||
-                m_cachedPositionY != r_transform.position.y ||
-                m_cachedOrientation != r_transform.orientation ||
-                hasTransformChanged);
         }
 
 

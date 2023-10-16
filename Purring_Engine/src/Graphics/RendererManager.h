@@ -22,7 +22,7 @@
 #include <map>
 #include <vector>
 
-#include "EditorCamera.h"
+#include "CameraManager.h"
 #include "MeshData.h"
 #include "Renderer.h"
 #include "FrameBuffer.h"
@@ -40,11 +40,7 @@ namespace PE
          \brief System In charge of calling the draw functions in all the renderer components.
         *************************************************************************************/
         class RendererManager : public System
-        {
-            // ----- Public Variables ----- //
-        public:
-            static Graphics::EditorCamera m_mainCamera; // Camera object. Made static for ease of access, pending camera system.
-            
+        {            
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
@@ -52,8 +48,9 @@ namespace PE
                     draw to. 
 
              \param[in,out] p_window Pointer to the GLFWwindow to render to.
+             \param[in,out] r_cameraManagerArg Reference to the camera manager.
             *************************************************************************************/
-            RendererManager(GLFWwindow* p_window);
+            RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg);
 
             // ----- Public methods ----- //
         public:
@@ -193,7 +190,8 @@ namespace PE
 
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_glfwWindow{}; // Pointer to the GLFW window to render to
+            GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to
+            CameraManager& r_cameraManager; // Reference to the camera manager
 
             Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
 

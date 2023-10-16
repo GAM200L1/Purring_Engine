@@ -16,8 +16,7 @@
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-/*                                                                   includes
------------------------------------------------------------------------------ */
+
 #include <glm/glm.hpp>
 
 namespace PE
@@ -190,6 +189,8 @@ namespace PE
             // ----- Cached Variables ----- //
             glm::mat4 m_cachedViewMatrix{}; // To prevent unnecessary recalculation of the view matrix
             glm::mat4 m_cachedWorldToNdcMatrix{}; // To prevent unnecessary recalculation of the world to NDC matrix
+
+            // Set to true when the world to NDC matrix should be recalculated
             bool hasTransformChanged{ true }, hasViewportChanged{ true };
         };
     } // End of Graphics namespace

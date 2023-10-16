@@ -137,7 +137,7 @@ namespace PE
 		{
 			MouseScrolledEvent mse;
 			mse = dynamic_cast<const MouseScrolledEvent&>(r_event);
-			Graphics::RendererManager::m_mainCamera.AdjustMagnification(-mse.yOffset);
+			Graphics::CameraManager::GetEditorCamera().AdjustMagnification(-mse.yOffset);
 
 		}
 

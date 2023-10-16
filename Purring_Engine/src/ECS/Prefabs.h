@@ -29,6 +29,7 @@ namespace PE
 	namespace Prefabs
 	{
 		constexpr std::initializer_list<const char*> GameObject = { "Transform", "RigidBody", "Collider", "Renderer"};
+		constexpr std::initializer_list<const char*> CameraObject = { "Transform", "Camera" };
 	}
 
 	/*!***********************************************************************************
@@ -50,6 +51,7 @@ namespace PE
 		Prefab()
 		{
 			prefabs.emplace("GameObject", Prefabs::GameObject);
+			prefabs.emplace("CameraObject", Prefabs::CameraObject);
 		}
 	};
 

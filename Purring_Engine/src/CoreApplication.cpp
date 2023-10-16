@@ -27,6 +27,7 @@
 // Graphics Headers
 #include "Graphics/GLHeaders.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/CameraManager.h"
 
 // Core Functionality
 #include "CoreApplication.h"
@@ -244,6 +245,7 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Collider);
     REGISTERCOMPONENT(Transform);
     REGISTERCOMPONENT(Graphics::Renderer);
+    REGISTERCOMPONENT(Graphics::Camera);
 }
 
 void PE::CoreApplication::InitializeLogger()
@@ -272,13 +274,20 @@ void PE::CoreApplication::InitializeMemoryManager()
 
 void PE::CoreApplication::InitializeSystems()
 {
+    // Get the window width and height to initialize the camera manager with
+    int width, height;
+    glfwGetWindowSize(m_window, &width, &height);
+
     // Add system to list & assigning memory to them
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window };
+    Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+
     AddSystem(p_inputSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
+    AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
 }

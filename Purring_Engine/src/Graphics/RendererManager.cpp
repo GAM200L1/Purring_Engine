@@ -54,9 +54,8 @@ namespace PE
 {
     namespace Graphics
     {
-        EditorCamera RendererManager::m_mainCamera{};
-
-        RendererManager::RendererManager(GLFWwindow* p_window) 
+        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
+            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
         {
             // Initialize GLEW
             if (glewInit() != GLEW_OK)
@@ -66,8 +65,6 @@ namespace PE
                 engine_logger.AddLog(true, "Failed to initialize GLEW.", __FUNCTION__);
                 throw;
             }
-
-            p_glfwWindow = p_window;
 
             int width, height;
             glfwGetWindowSize(p_glfwWindow, &width, &height);
@@ -172,7 +169,7 @@ namespace PE
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
 
                 // Update the editor camera viewport size
-                m_mainCamera.SetViewDimensions(windowWidth, windowHeight);
+                r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
             } 
 
             // Set background color of the window
@@ -207,20 +204,29 @@ namespace PE
             
             EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
-            DrawSceneInstanced(m_mainCamera.GetWorldToNdcMatrix()); // Draw objects in the scene
+            glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(true).value()};
+
+            // @TODO
+            //if (r_cameraManager.GetWorldToNdcMatrix(renderInEditor).has_value())
+            //{
+            //    worldToNdcMatrix = r_cameraManager.GetWorldToNdcMatrix(renderInEditor).value();
+            //}
+
+            DrawSceneInstanced(worldToNdcMatrix); // Draw objects in the scene
+
 
             if (Editor::GetInstance().IsRenderingDebug()) 
             {
-                DrawDebug(m_mainCamera.GetWorldToNdcMatrix()); // Draw debug gizmos in the scene
+                DrawDebug(worldToNdcMatrix); // Draw debug gizmos in the scene
             }
 
 
             // Render Text
             // text object 1
-            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, m_mainCamera.GetWorldToNdcMatrix(), { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, worldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
 
            // text object 2
-            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, m_mainCamera.GetWorldToNdcMatrix(), { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, worldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
 
             // Unbind the RBO for rendering to the ImGui window
             m_imguiFrameBuffer.Unbind();
