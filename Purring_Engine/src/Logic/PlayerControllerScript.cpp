@@ -14,19 +14,19 @@ namespace PE
 		// Movement
 		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } *PE::EntityManager::GetInstance().Get <PlayerControllerScriptData>(id).speed);
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed);
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *PE::EntityManager::GetInstance().Get <PlayerControllerScriptData>(id).speed);
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } * m_ScriptData[id].speed);
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *PE::EntityManager::GetInstance().Get <PlayerControllerScriptData>(id).speed);
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } * m_ScriptData[id].speed);
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *PE::EntityManager::GetInstance().Get <PlayerControllerScriptData>(id).speed);
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } * m_ScriptData[id].speed);
 		}
 	}
 	void PlayerControllerScript::Destroy(EntityID id)
@@ -38,9 +38,7 @@ namespace PE
 		if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<RigidBody>()))
 			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
 
-		if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<PlayerControllerScriptData>()))
-			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<PlayerControllerScriptData>() });
-
+		m_ScriptData[id] = PlayerControllerScriptData();
 
 	}
 

@@ -3,6 +3,11 @@
 #include "Events/EventHandler.h"
 namespace PE
 {
+	struct PlayerControllerScriptData
+	{
+		float speed{ 5000 };
+	};
+
 	class PlayerControllerScript : public Script
 	{
 	public:
@@ -12,11 +17,7 @@ namespace PE
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
 	private:
-		bool Button;
+		std::map<EntityID, PlayerControllerScriptData> m_ScriptData;
 	};
 
-	struct PlayerControllerScriptData
-	{
-		float speed{5000};
-	};
 }

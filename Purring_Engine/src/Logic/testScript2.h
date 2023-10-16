@@ -3,6 +3,13 @@
 #include "Events/EventHandler.h"
 namespace PE
 {
+	struct TestScript2Data
+	{
+		EntityID targetID{ 1 };
+		EntityID CollisionTarget{ 2 };
+		std::vector<vec2> points;
+	};
+
 	class testScript2 : public Script
 	{
 	public:
@@ -12,13 +19,7 @@ namespace PE
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
 	private:
-		bool Button;
+		std::map<EntityID, TestScript2Data> m_ScriptData;
 	};
 
-	struct TestScript2Data
-	{
-		EntityID targetID{ 1 };
-		EntityID CollisionTarget{ 2 };
-		std::vector<vec2> points;
-	};
 }

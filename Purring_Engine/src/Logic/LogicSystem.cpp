@@ -9,6 +9,7 @@
 #include "testScript2.h"
 #include "PlayerControllerScript.h"
 #include "Editor/Editor.h"
+
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
 
 PE::LogicSystem::LogicSystem()
@@ -25,9 +26,9 @@ void PE::LogicSystem::InitializeSystem()
 	m_scriptContainer["test2"] = new testScript2();
 	m_scriptContainer["PlayerControllerScript"] = new PlayerControllerScript();
 
-	REGISTERCOMPONENT(TestScriptData);
-	REGISTERCOMPONENT(TestScript2Data);
-	REGISTERCOMPONENT(PlayerControllerScriptData);
+	//REGISTERCOMPONENT(TestScriptData);
+	//REGISTERCOMPONENT(TestScript2Data);
+	//REGISTERCOMPONENT(PlayerControllerScriptData);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

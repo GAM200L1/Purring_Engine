@@ -71,6 +71,7 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Transform>(), &EntityFactory::InitializeTransform);
 		//m_initializeComponent.emplace(p_entityManager->GetComponentID<PlayerStats>(), &EntityFactory::InitializePlayerStats);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(), &EntityFactory::InitializeRenderer);
+		//m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* p_data)
@@ -122,6 +123,16 @@ namespace PE
 			*reinterpret_cast<Graphics::Renderer*>(p_data);
 		return true;
 	}
+
+	//bool EntityFactory::InitializeScriptComponent(const EntityID& r_id, void* p_data)
+	//{
+	//	EntityManager::GetInstance().Get<ScriptComponent>(r_id) =
+	//		(p_data == nullptr) ?
+	//		ScriptComponent()
+	//		:
+	//		*reinterpret_cast<ScriptComponent*>(p_data);
+	//	return true;
+	//}
 
 
 	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)

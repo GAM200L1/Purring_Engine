@@ -1098,33 +1098,10 @@ namespace PE {
 								{
 									if(selectedScript >= 0)
 									EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
+									LogicSystem::m_scriptContainer[key[selectedScript]]->OnDetach(entityID);
 									selectedScript = -1;
 								}
 								ImGui::PopStyleColor(1);
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-							}
-						}
-
-						if (name == EntityManager::GetInstance().GetComponentID<TestScriptData>())
-						{
-							if (ImGui::CollapsingHeader("TestScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-							{
-								//setting reset button to open a popup with selectable text
-								ImGui::SameLine();
-								std::string id = "options##", o = "o##";
-								id += std::to_string(componentCount);
-								o += std::to_string(componentCount);
-								if (ImGui::BeginPopup(id.c_str()))
-								{
-									if (ImGui::Selectable("Reset")) {}
-									ImGui::EndPopup();
-								}
-								if (ImGui::Button(o.c_str()))
-									ImGui::OpenPopup(id.c_str());
-
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
-								ImGui::Text("rotation speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &EntityManager::GetInstance().Get<TestScriptData>(entityID).m_rotationSpeed, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}

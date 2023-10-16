@@ -33,14 +33,6 @@ namespace PE {
 		 \return    std::string The name of the system.
 		*************************************************************************************/
 		std::string GetName() override;
-
-		//to load scripts into the script vector?
-		//void LoadScripts();
-	private:
-		//this is to hold all the existing types of scripts?
-		//may need to change to a map with a key to a script
-		//std::vector<Script> m_scriptContainer;
-		Script* test;
 	};
 
 	//holds script on an object
@@ -50,6 +42,7 @@ namespace PE {
 
 	struct ScriptComponent
 	{
+		ScriptComponent() {}
 		std::vector<std::string> m_scriptKeys;
 
 		void addScript(std::string key)
