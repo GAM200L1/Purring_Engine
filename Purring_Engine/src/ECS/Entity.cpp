@@ -146,4 +146,24 @@ namespace PE
 			UpdateVectors(id, false);
 		}
 	}
+
+	std::vector<EntityID>& EntityManager::GetEntitiesInPool(const ComponentID& r_pool)
+	{
+		try
+		{
+			return m_poolsEntity.at(r_pool);
+		}
+		catch (const std::out_of_range& c_error)
+		{
+			engine_logger.AddLog(false, c_error.what(), __FUNCTION__);
+			
+			// make the pool?
+			m_poolsEntity[r_pool];
+			for (const auto& id : m_entities)
+			{
+				UpdateVectors(id);
+			}
+			return m_poolsEntity.at(r_pool);
+		}
+	}
 }

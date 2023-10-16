@@ -54,9 +54,8 @@ namespace PE
 {
     namespace Graphics
     {
-        Camera RendererManager::m_mainCamera{};
-
-        RendererManager::RendererManager(GLFWwindow* p_window) 
+        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
+            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
         {
             // Initialize GLEW
             if (glewInit() != GLEW_OK)
@@ -66,8 +65,6 @@ namespace PE
                 engine_logger.AddLog(true, "Failed to initialize GLEW.", __FUNCTION__);
                 throw;
             }
-
-            p_glfwWindow = p_window;
 
             int width, height;
             glfwGetWindowSize(p_glfwWindow, &width, &height);
@@ -171,23 +168,9 @@ namespace PE
                 m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
 
-                // Compute the world to NDC matrix
-                float halfWidth{ windowWidth * 0.5f };
-                float halfHeight{ windowHeight * 0.5f };
-                m_cachedWorldToNdcMatrix = 
-                    glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
-                    * m_mainCamera.GetWorldToViewMatrix();
+                // Update the editor camera viewport size
+                r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
             } 
-            // Check if the camera has changed
-            else if (m_mainCamera.GetHasChanged()) 
-            {
-                // Compute the world to NDC matrix
-                float halfWidth{ windowWidth * 0.5f };
-                float halfHeight{ windowHeight * 0.5f };
-                m_cachedWorldToNdcMatrix =
-                    glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -1.0f, 1.0f)
-                    * m_mainCamera.GetWorldToViewMatrix();
-            }
 
             // Set background color of the window
             glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
@@ -221,20 +204,29 @@ namespace PE
             
             EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
-            DrawSceneInstanced(m_cachedWorldToNdcMatrix); // Draw objects in the scene
+            glm::mat4 worldToNdcMatrix{ 0 };
+
+            // Get the world to NDC matrix of the editor cam or the main runtime camera
+            if (r_cameraManager.GetWorldToNdcMatrix(renderInEditor).has_value())
+            {
+                worldToNdcMatrix = r_cameraManager.GetWorldToNdcMatrix(renderInEditor).value();
+            }
+
+            DrawSceneInstanced(worldToNdcMatrix); // Draw objects in the scene
+
 
             if (Editor::GetInstance().IsRenderingDebug()) 
             {
-                DrawDebug(m_cachedWorldToNdcMatrix); // Draw debug gizmos in the scene
+                DrawDebug(worldToNdcMatrix); // Draw debug gizmos in the scene
             }
 
 
             // Render Text
             // text object 1
-            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, worldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
 
            // text object 2
-            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, m_cachedWorldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, worldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
 
             // Unbind the RBO for rendering to the ImGui window
             m_imguiFrameBuffer.Unbind();
@@ -467,6 +459,19 @@ namespace PE
 
                 // Draw a point at the center of the object
                 DrawDebugPoint(glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
+            }
+
+            // Draw a "+" for every camera component
+            for (const EntityID& id : SceneView<Camera, Transform>())
+            {
+                Camera& camera{ EntityManager::GetInstance().Get<Camera>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+
+                glm::vec2 glmPosition{ transform.position.x, transform.position.y };
+
+                // Draw a cross to represent the orientation and position of the camera
+                DrawDebugCross(glmPosition, camera.GetUpVector(transform.orientation) * 100.f,
+                    camera.GetRightVector(transform.orientation) * 100.f, r_worldToNdc, *(shaderProgramIterator->second));
             }
 
             glPointSize(1.f);
@@ -740,6 +745,17 @@ namespace PE
                     glm::vec4{ 0.f, 1.f, 0.f, 0.f },
                     glm::vec4{ 0.f, 0.f, 1.f, 0.f },
                     ndcPosition });
+        }
+
+
+        void RendererManager::DrawDebugCross(glm::vec2 const& r_position,
+            glm::vec2 const& r_upVector, glm::vec2 const& r_rightVector,
+            glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+            glm::vec4 const& r_color)
+        {
+            // Draw vertical line then horizontal line
+            DrawDebugLine(r_upVector, r_position - r_upVector * 0.5f, r_worldToNdc, r_shaderProgram, r_color);
+            DrawDebugLine(r_rightVector, r_position - r_rightVector * 0.5f, r_worldToNdc, r_shaderProgram, r_color);
         }
 
         void RendererManager::InitializeCircleMesh(std::size_t const segments, MeshData& r_mesh)

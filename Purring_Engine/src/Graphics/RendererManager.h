@@ -22,7 +22,7 @@
 #include <map>
 #include <vector>
 
-#include "Camera.h"
+#include "CameraManager.h"
 #include "MeshData.h"
 #include "Renderer.h"
 #include "FrameBuffer.h"
@@ -40,11 +40,7 @@ namespace PE
          \brief System In charge of calling the draw functions in all the renderer components.
         *************************************************************************************/
         class RendererManager : public System
-        {
-            // ----- Public Variables ----- //
-        public:
-            static Graphics::Camera m_mainCamera; // Camera object. Made static for ease of access, pending camera system.
-            
+        {            
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
@@ -52,8 +48,9 @@ namespace PE
                     draw to. 
 
              \param[in,out] p_window Pointer to the GLFWwindow to render to.
+             \param[in,out] r_cameraManagerArg Reference to the camera manager.
             *************************************************************************************/
-            RendererManager(GLFWwindow* p_window);
+            RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg);
 
             // ----- Public methods ----- //
         public:
@@ -191,9 +188,26 @@ namespace PE
                 glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
                 glm::vec4 const& r_color = { 0.f, 0.f, 1.f, 1.f });
 
+            /*!***********************************************************************************
+             \brief Makes a draw call for a "+" to represent the position, up and right vectors 
+                    passed in.
+
+             \param[in] r_position Position to draw the point at.
+             \param[in] r_upVector Direction and magnitude of the vertical line to draw.
+             \param[in] r_rightVector Direction and magnitude of the horizontal line to draw.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugCross(glm::vec2 const& r_position,
+                glm::vec2 const& r_upVector, glm::vec2 const& r_rightVector,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.5f, 0.5f, 1.f, 1.f });
+
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_glfwWindow{}; // Pointer to the GLFW window to render to
+            GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to
+            CameraManager& r_cameraManager; // Reference to the camera manager
 
             Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
 
@@ -208,10 +222,7 @@ namespace PE
 
             Font m_font;
             //! Width and height of the ImGui window the last time the framebuffer was resized
-            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
-
-            // 4x4 world to NDC matrix. Updated when window is resized or camera has been repositioned
-            glm::mat4 m_cachedWorldToNdcMatrix{}; 
+            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
                         
             std::vector<float> m_isTextured{}; // Container that stores whether the quad is textured
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad

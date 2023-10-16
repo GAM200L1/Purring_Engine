@@ -342,24 +342,7 @@ namespace PE
 		 \param[in] r_pool 						The pool to get the eneity vector from
 		 \return const std::vector<EntityID>& 	Gets the pool's vector of entities
 		*************************************************************************************/
-		std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool)
-		{
-			try
-			{
-				return m_poolsEntity.at(r_pool);
-			}
-			catch (const std::out_of_range& c_error)
-			{
-				UNREFERENCED_PARAMETER(c_error);
-				// make the pool?
-				m_poolsEntity[r_pool];
-				for (const auto& id : m_entities)
-				{
-					UpdateVectors(id);
-				}
-				return m_poolsEntity.at(r_pool);
-			}
-		}
+		std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool);
 
 		/*!***********************************************************************************
 		 \brief Updates the entity vectors, helps keeps track of which entity can be found in

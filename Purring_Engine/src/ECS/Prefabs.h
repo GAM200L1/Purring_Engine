@@ -38,7 +38,7 @@ namespace PE
 	{
 	// ----- Public variables ----- // 
 	public:
-		std::map<std::string, std::initializer_list<ComponentID>> prefabs;
+		std::map<std::string, std::vector<ComponentID>> prefabs;
 		
 	// ----- Constructors ----- //
 	public:
@@ -50,6 +50,8 @@ namespace PE
 		{
 			std::initializer_list<ComponentID> GameObject = { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), EntityManager::GetInstance().GetComponentID<Collider>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() };
 			prefabs.emplace("GameObject", GameObject);
-		}
+            std::initializer_list<ComponentID> CameraObject = { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), EntityManager::GetInstance().GetComponentID<Graphics::Camera>() };
+			prefabs.emplace("CameraObject", CameraObject);
+        }
 	};
 }

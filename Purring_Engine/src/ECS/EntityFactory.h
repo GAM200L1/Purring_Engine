@@ -25,6 +25,7 @@
 #include "Physics/Colliders.h"
 #include "Physics/RigidBody.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/Camera.h"
 #include "Prefabs.h"
 #include "Singleton.h"
 
@@ -192,6 +193,7 @@ namespace PE
 		bool InitializeTransform(const EntityID& r_id, void* p_data);
 		bool InitializePlayerStats(const EntityID& r_id, void* p_data);
 		bool InitializeRenderer(const EntityID& r_id, void* p_data);
+		bool InitializeCamera(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap
