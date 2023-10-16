@@ -1566,7 +1566,7 @@ namespace PE {
 		float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
 		float avail = ImGui::GetContentRegionAvail().x;
 
-		float off = (avail - size) * 0.5;
+		float off = (float)((avail - size) * 0.5);
 		if (off > 0.0f)
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x)/2);
 		//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
