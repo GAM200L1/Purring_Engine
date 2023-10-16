@@ -8,9 +8,11 @@ namespace PE
 
 	void PlayerControllerScript::Init(EntityID id)
 	{
+		id;
 	}
 	void PlayerControllerScript::Update(EntityID id, float deltaTime)
 	{
+		deltaTime;
 		// Movement
 		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
 		{
@@ -31,6 +33,7 @@ namespace PE
 	}
 	void PlayerControllerScript::Destroy(EntityID id)
 	{
+		id;
 	}
 
 	void PlayerControllerScript::OnAttach(EntityID id)

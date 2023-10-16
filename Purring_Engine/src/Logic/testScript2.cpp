@@ -8,14 +8,15 @@ namespace PE
 
 	void testScript2::Init(EntityID id)
 	{
+		id;
 	}
 	void testScript2::Update(EntityID id, float deltaTime)
 	{
 		//PE::EntityManager::GetInstance().Get<PE::Transform>(id).position.x += 100 * deltaTime;
-
+		deltaTime;
 		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].targetID);
-		Transform& colliderObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].CollisionTarget);
+		//Transform& colliderObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].CollisionTarget);
 					
 		////only doing this for aabb for now ill think abt circle somehow next time
 		//AABBCollider* p_ab;
@@ -87,6 +88,7 @@ namespace PE
 	}
 	void testScript2::Destroy(EntityID id)
 	{
+		id;
 	}
 
 	void testScript2::OnAttach(EntityID id)

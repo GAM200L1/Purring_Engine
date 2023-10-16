@@ -6,6 +6,7 @@ namespace PE
 {
 	void testScript::Init(EntityID id)
 	{
+		id;
 	}
 	void testScript::Update(EntityID id, float deltaTime)
 	{
@@ -13,6 +14,7 @@ namespace PE
 	}
 	void testScript::Destroy(EntityID id)
 	{
+		id;
 	}
 
 	void testScript::OnAttach(EntityID id)

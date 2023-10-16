@@ -804,7 +804,6 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
-								float min = 1.0f, max = 100.f;
 								//each variable in the component
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Position: ");
