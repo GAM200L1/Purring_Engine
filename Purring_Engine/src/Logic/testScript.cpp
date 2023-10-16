@@ -9,7 +9,7 @@ namespace PE
 	}
 	void testScript::Update(EntityID id, float deltaTime)
 	{
-		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime/* * m_ScriptData[id].m_rotationSpeed*/);
+		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * m_ScriptData[id].m_rotationSpeed);
 	}
 	void testScript::Destroy(EntityID id)
 	{
@@ -17,11 +17,19 @@ namespace PE
 
 	void testScript::OnAttach(EntityID id)
 	{
-		//m_ScriptData[id] = TestScriptData();
+		m_ScriptData[id] = TestScriptData();
 	}
 
-	void testScript::OnDetatch(EntityID id)
+	void testScript::OnDetach(EntityID id)
 	{
+		auto it = m_ScriptData.find(id);
+		if (it != m_ScriptData.end())
+			m_ScriptData.erase(id);
+	}
+
+	std::map<EntityID, TestScriptData>& testScript::GetScriptData()
+	{
+		return m_ScriptData;
 	}
 
 }

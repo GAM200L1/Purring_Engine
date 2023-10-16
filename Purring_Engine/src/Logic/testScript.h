@@ -15,7 +15,8 @@ namespace PE
 		virtual void Update(EntityID id, float deltaTime);
 		virtual void Destroy(EntityID id);		
 		virtual void OnAttach(EntityID id);
-		virtual void OnDetatch(EntityID id);
+		virtual void OnDetach(EntityID id);
+		std::map<EntityID, TestScriptData>& GetScriptData();
 	private:
 		std::map<EntityID, TestScriptData> m_ScriptData;
 	};

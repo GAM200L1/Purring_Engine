@@ -27,6 +27,7 @@
 #include "Logic/LogicSystem.h"
 #include "Graphics/RendererManager.h"
 #include "Logic/testScript.h"
+#include "Logic/PlayerControllerScript.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
@@ -776,6 +777,7 @@ namespace PE {
 					EntityID entityID = EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject];
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
+					bool hasScripts = false;
 					for (const ComponentID& name : components)
 					{
 						++componentCount;//increment unique id
@@ -1030,9 +1032,10 @@ namespace PE {
 							}
 						}
 
+						//Script Component
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
 						{
-
+							hasScripts = true;
 							if (ImGui::CollapsingHeader("ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{							
 								//setting reset button to open a popup with selectable text
@@ -1076,7 +1079,8 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								static int selectedScript{};
+								static int selectedScript{-1};
+								static std::string selectedScriptName{};
 								ImGui::Text("Scripts List");
 								//loop to show all the items ins the vector
 								if (ImGui::BeginChild("GameObjectList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
@@ -1084,8 +1088,12 @@ namespace PE {
 									{
 										const bool is_selected = (selectedScript == n);
 
-										if (ImGui::Selectable(EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+										if (ImGui::Selectable(EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str(), is_selected)) 
+										{
 											selectedScript = n; //seteting current index to check for selection
+											selectedScriptName = EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str();
+										}//imgui selectable is the function to make the clickable bar of text
+											
 										// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 										if (is_selected) // to show the highlight if selected
 											ImGui::SetItemDefaultFocus();
@@ -1095,16 +1103,47 @@ namespace PE {
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
 								if (ImGui::Button("Remove Script"))
 								{
-									if(selectedScript >= 0)
-									EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
-									LogicSystem::m_scriptContainer[key[selectedScript]]->OnDetach(entityID);
-									selectedScript = -1;
+									if (selectedScript >= 0) 
+									{
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
+										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
+										selectedScript = -1;
+									}
 								}
 								ImGui::PopStyleColor(1);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
-                        						// Camera component
+                        
+						if (hasScripts)
+						{
+							for (auto& [key, val] : LogicSystem::m_scriptContainer)
+							{
+								if (key == "test")
+								{
+									testScript* test = dynamic_cast<testScript*>(val);
+									auto it = test->GetScriptData().find(m_currentSelectedObject);
+									if(it != test->GetScriptData().end())
+									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
+									}
+								}
+
+								if (key == "PlayerControllerScript")
+								{
+									PlayerControllerScript* test = dynamic_cast<PlayerControllerScript*>(val);
+									auto it = test->GetScriptData().find(m_currentSelectedObject);
+									if (it != test->GetScriptData().end())
+										if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+										{
+											ImGui::Text("speed: "); ImGui::SameLine(); ImGui::InputFloat("##movespeed", &it->second.speed, 1.0f, 100.f, "%.3f");
+										}
+								}
+							}
+						}
+
+						// Camera component
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
 								if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 								{
@@ -1127,6 +1166,7 @@ namespace PE {
 						}
 
 					}
+
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 					ImGui::Separator();

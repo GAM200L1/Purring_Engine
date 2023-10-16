@@ -73,8 +73,6 @@ namespace PE
 
 		//then calculate if player is behind those 2 points somehow (I might just use center instead of the entire range)
 			
-
-
 		//then calculate player is closer to which point
 
 		//then take that angle as the angle to rotate towards
@@ -98,6 +96,8 @@ namespace PE
 
 	void testScript2::OnDetach(EntityID id)
 	{
-
+		auto it = m_ScriptData.find(id);
+		if (it != m_ScriptData.end())
+			m_ScriptData.erase(id);
 	}
 }

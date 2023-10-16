@@ -44,6 +44,13 @@ namespace PE
 
 	void PlayerControllerScript::OnDetach(EntityID id)
 	{
+		auto it = m_ScriptData.find(id);
+		if (it != m_ScriptData.end())
+			m_ScriptData.erase(id);
 	}
 
+	std::map<EntityID, PlayerControllerScriptData>& PlayerControllerScript::GetScriptData()
+	{
+		return m_ScriptData;
+	}
 }

@@ -25,8 +25,6 @@
 #include "Physics/Colliders.h"
 #include "Physics/RigidBody.h"
 #include "Graphics/Renderer.h"
-//#include "Logic/Script.h"
-//#include "Logic/LogicSystem.h"
 #include "Graphics/Camera.h"
 #include "Prefabs.h"
 #include "Singleton.h"
