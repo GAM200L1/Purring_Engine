@@ -342,7 +342,7 @@ namespace PE
 		 \param[in] r_pool 						The pool to get the eneity vector from
 		 \return const std::vector<EntityID>& 	Gets the pool's vector of entities
 		*************************************************************************************/
-		const std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool)
+		std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool)
 		{
 			try
 			{
