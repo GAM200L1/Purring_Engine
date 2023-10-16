@@ -52,7 +52,6 @@ namespace PE {
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
-		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseScrolled, Editor::OnMouseScrollEvent, this)
 			//for the object list
 			m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
@@ -1647,16 +1646,6 @@ namespace PE {
 		if (KTE.keycode == GLFW_KEY_F10)
 			ToggleDebugRender();
 	}
-	void Editor::OnMouseScrollEvent(const PE::Event<PE::MouseEvents>& r_e)
-	{
-		if (r_e.GetType() == MouseEvents::MouseScrolled)
-		{
-			MouseScrolledEvent mse;
-			mse = dynamic_cast<const MouseScrolledEvent&>(r_e);
-			if(m_mouseInScene)
-			Graphics::RendererManager::m_mainCamera.AdjustMagnification(-mse.yOffset);
 
-		}
-	}
 }
 
