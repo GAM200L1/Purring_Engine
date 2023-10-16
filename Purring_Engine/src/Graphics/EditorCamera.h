@@ -3,27 +3,21 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     Camera.h
- \date     28-08-2023
+ \file     EditorCamera.h
+ \date     12-10-2023
  
  \author               Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
  
- \brief    This file contains the camera class, which contains data and 
-           member functions to compute the world to NDC transform matrix using
-           orthographic projection.
+ \brief    This file contains the editor camera class, which contains data and 
+           member functions to compute the view transform matrix for the camera 
+           in editor mode.
  
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp> // ortho()
-
-#include <cmath> // sin(), cos()
-#include <utility>
-
-#include "Math/Transform.h"
 
 namespace PE
 {
@@ -32,8 +26,9 @@ namespace PE
         /*!***********************************************************************************
         \brief  Contains data and member functions to compute the view transform matrix.
         *************************************************************************************/
-        class Camera
+        class EditorCamera
         {
+            // ----- Public getters ----- // 
         public:
 
             /*!***********************************************************************************
@@ -42,7 +37,7 @@ namespace PE
 
             \return glm::mat4 - 4x4 matrix to transform coordinates in world space to view space.
             *************************************************************************************/
-            inline glm::mat4 GetWorldToViewMatrix() const { return m_cachedViewMatrix; }
+            glm::mat4 GetWorldToViewMatrix();
 
             /*!***********************************************************************************
             \brief  Gets the matrix to transform coordinates in view space to NDC space as
@@ -50,13 +45,7 @@ namespace PE
 
             \return glm::mat4 - 4x4 matrix to transform coordinates in view space to NDC space.
             *************************************************************************************/
-            inline glm::mat4 GetViewToNdcMatrix() const
-            {
-                float halfWidth{ m_viewportWidth * 0.5f };
-                float halfHeight{ m_viewportHeight * 0.5f };
-
-                return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.f, 10.f);
-            }
+            glm::mat4 GetViewToNdcMatrix() const;
 
             /*!***********************************************************************************
             \brief  Gets the matrix to transform coordinates in world space to NDC space as
@@ -64,72 +53,23 @@ namespace PE
 
             \return glm::mat4 - 4x4 matrix to transform coordinates in world space to NDC space.
             *************************************************************************************/
-            inline glm::mat4 GetWorldToNdcMatrix() const { return m_cachedWorldToNdcMatrix; }
-
-            /*!***********************************************************************************
-            \brief  Recomputes the world to NDC matrix if the viewport dimensions or 
-                    the camera's transform has been updated.
-
-            \param[in] r_transform Reference to the camera's transform component.
-            *************************************************************************************/
-            void UpdateCamera(Transform const& r_transform);
+            glm::mat4 GetWorldToNdcMatrix();
 
             /*!***********************************************************************************
             \brief  Returns true if the camera's transform has been updated and its matrix 
                     needs to be recalculated; false otherwise.
 
-            \param[in] r_transform Reference to the camera's transform component.
-
             \return true - If the camera's transform has been updated and its matrix needs to be 
                             recalculated
             \return false - Camera's transform has not changed, cached camera matrix can be used.
             *************************************************************************************/
-            inline bool GetHasChanged(Transform const& r_transform) const
-            {
-                return (m_cachedPositionX != r_transform.position.x ||
-                    m_cachedPositionY != r_transform.position.y ||
-                    m_cachedOrientation != r_transform.orientation ||
-                    hasTransformChanged);
-            }
-
-
-            /*!***********************************************************************************
-            \brief  Returns the normalized up vector of the camera.
-
-            \param[in] orientation Orientation of the camera about the z-axis (in radians, 
-                            counter-clockwise from the x-axis)
-
-            \return glm::vec2 - The normalized right vector of the camera.
-            *************************************************************************************/
-            inline glm::vec2 GetUpVector(float const orientation) const
-            {
-                return glm::vec2{-glm::sin(orientation), glm::cos(orientation)};
-            }
-
-            /*!***********************************************************************************
-            \brief  Returns the normalized right vector of the camera.
-
-            \param[in] orientation Orientation of the camera about the z-axis (in radians, 
-                            counter-clockwise from the x-axis)
-
-            \return glm::vec2 - The normalized right vector of the camera.
-            *************************************************************************************/
-            inline glm::vec2 GetRightVector(float const orientation) const
-            {
-                return glm::vec2{ glm::cos(orientation), glm::sin(orientation) };
-            }
+            bool GetHasChanged() const;
 
             /*!***********************************************************************************
             \brief  Compute the matrix to transform coordinates in world space to view space as
                     a 4x4 matrix and store it as m_cachedViewMatrix.
-
-            \param[in] currentPositionX X position of center of camera in the world.
-            \param[in] currentPositionY Y position of center of camera in the world.
-            \param[in] currentOrientation Orientation of the camera about the z-axis
-                                          (in radians, counter-clockwise from the x-axis).
-            \param[in] currentMagnification Zoom to apply to the camera.
             *************************************************************************************/
-            void ComputeViewMatrix(Transform const& r_transform);
+            void ComputeViewMatrix();
 
             /*!***********************************************************************************
             \brief  Returns the aspect ratio (width / height) of the camera's view frustrum.
@@ -139,25 +79,27 @@ namespace PE
             inline float GetAspectRatio() const { return (m_viewportWidth / m_viewportHeight); }
 
             /*!***********************************************************************************
+            \brief  Returns the position of center of camera in the world.
+
+            \return glm::vec2 - The position of center of camera in the world.
+            *************************************************************************************/
+            inline glm::vec2 GetPosition() const { return m_position; }
+
+            /*!***********************************************************************************
+            \brief  Returns the orientation of the camera about the z-axis 
+                    (in radians, counter-clockwise from the x-axis).
+
+            \return float - The orientation of the camera about the z-axis 
+                            (in radians, counter-clockwise from the x-axis)
+            *************************************************************************************/
+            inline float GetOrientation() const { return m_orientation; }
+
+            /*!***********************************************************************************
             \brief  Returns the zoom to apply to the camera.
 
             \return float - The zoom to apply to the camera.
             *************************************************************************************/
             inline float GetMagnification() const { return m_magnification; }
-
-            /*!***********************************************************************************
-            \brief  Returns the width of the viewport of the camera.
-
-            \return float - Width of the viewport of the camera.
-            *************************************************************************************/
-            inline float GetViewportWidth() const { return m_viewportWidth; }
-
-            /*!***********************************************************************************
-            \brief  Returns the height of the viewport of the camera.
-
-            \return float - Height of the viewport of the camera.
-            *************************************************************************************/
-            inline float GetViewportHeight() const { return m_viewportHeight; }
 
 
             // ----- Public setters ----- // 
@@ -179,21 +121,72 @@ namespace PE
             void SetMagnification(float value);
 
             /*!***********************************************************************************
+            \brief  Sets the position of the camera to the value passed in.
+
+            \param[in] valueX Value to set the camera to along the camera's x-axis.
+            \param[in] valueY Value to set the camera to along the camera's y-axis.
+            *************************************************************************************/
+            void SetPosition(float const valueX, float const valueY);
+
+            /*!***********************************************************************************
+            \brief  Sets the orientation of the camera about the z-axis from the x-axis 
+                    to the amount passed in.
+
+            \param[in] degrees Orientation of the camera about the z-axis (in degrees, 
+                             counter-clockwise from the x-axis)
+            *************************************************************************************/
+            void SetRotationDegrees(float const degrees);
+
+            /*!***********************************************************************************
+            \brief  Sets the orientation of the camera about the z-axis from the x-axis 
+                    to the amount passed in.
+
+            \param[in] radians Orientation of the camera about the z-axis (in radians, 
+                             counter-clockwise from the x-axis)
+            *************************************************************************************/
+            void SetRotationRadians(float const radians);
+
+            /*!***********************************************************************************
             \brief  Changes the magnification of the camera by the amount passed in.
 
             \param[in] delta Amount to change the magnification of the camera by.
             *************************************************************************************/
             void AdjustMagnification(float const delta);
 
+            /*!***********************************************************************************
+            \brief  Changes the position of the camera by the amount passed in.
+
+            \param[in] deltaX Amount to move the camera along the camera's x-axis.
+            \param[in] deltaY Amount to move the camera along the camera's y-axis.
+            *************************************************************************************/
+            void AdjustPosition(float const deltaX, float const deltaY);
+
+            /*!***********************************************************************************
+            \brief  Changes the orientation of the camera about the z-axis from the x-axis 
+                    by the amount passed in.
+
+            \param[in] delta Angle (in degrees) to rotate the camera by. Pass in a positive value
+                             to rotate counter-clockwise and negative to rotate clockwise.
+            *************************************************************************************/
+            void AdjustRotationDegrees(float const delta);
+
+            /*!***********************************************************************************
+            \brief  Changes the orientation of the camera about the z-axis from the x-axis 
+                    by the amount passed in.
+
+            \param[in] delta Angle (in radians) to rotate the camera by. Pass in a positive value
+                             to rotate counter-clockwise and negative to rotate clockwise.
+            *************************************************************************************/
+            void AdjustRotationRadians(float const delta);
+
 
         private:
+            glm::vec2 m_position{ 0.f, 0.f }; // Position of center of camera in the world
+            float m_orientation{ 0.f };       // Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
             float m_magnification{ 1.f };     // Zoom to apply to the camera
             float m_viewportWidth{ 1.f }, m_viewportHeight{ 1.f };  // Height and width of the camera viewport
 
             // ----- Cached Variables ----- //
-            float m_cachedPositionX{ -1.f }, m_cachedPositionY{ -1.f }; // Position of center of camera in the world used by the cached matrix
-            float m_cachedOrientation{ -1.f };       // Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
-
             glm::mat4 m_cachedViewMatrix{}; // To prevent unnecessary recalculation of the view matrix
             glm::mat4 m_cachedWorldToNdcMatrix{}; // To prevent unnecessary recalculation of the world to NDC matrix
 

@@ -19,6 +19,7 @@
 #include "SceneView.h"
 #include "Physics/Colliders.h"
 #include "Logging/Logger.h"
+#include "EntityFactory.h"
 
 extern Logger engine_logger;
 
@@ -123,7 +124,8 @@ namespace PE
 		if (!Has(dest, r_component))
 			Assign(dest, r_component);
 
-		memcpy_s(m_componentPools[r_component]->Get(dest), m_componentPools[r_component]->elementSize, m_componentPools[r_component]->Get(src), m_componentPools[r_component]->elementSize);
+		//memcpy_s(m_componentPools[r_component]->Get(dest), m_componentPools[r_component]->elementSize, m_componentPools[r_component]->Get(src), m_componentPools[r_component]->elementSize);
+		EntityFactory::GetInstance().LoadComponent(dest, r_component, m_componentPools[r_component]->Get(src));
 	}	
 
 	bool EntityManager::Has(EntityID id, const ComponentID& r_component) const
@@ -142,6 +144,26 @@ namespace PE
 			m_entities.erase(id);
 			m_removed.emplace(id);
 			UpdateVectors(id, false);
+		}
+	}
+
+	std::vector<EntityID>& EntityManager::GetEntitiesInPool(const ComponentID& r_pool)
+	{
+		try
+		{
+			return m_poolsEntity.at(r_pool);
+		}
+		catch (const std::out_of_range& c_error)
+		{
+			engine_logger.AddLog(false, c_error.what(), __FUNCTION__);
+			
+			// make the pool?
+			m_poolsEntity[r_pool];
+			for (const auto& id : m_entities)
+			{
+				UpdateVectors(id);
+			}
+			return m_poolsEntity.at(r_pool);
 		}
 	}
 }

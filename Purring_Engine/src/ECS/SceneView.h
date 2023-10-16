@@ -16,49 +16,12 @@
 *************************************************************************************/
 
 #pragma once
-#include "prpch.h"
 #include "Entity.h"
 #include "Components.h"
 
 
 namespace PE
 {
-
-/*!***********************************************************************************
- \brief Helper function to sort all duplicates to the "left" and push all the rest
-		to the "right", will return an iterator to the new "end".
-		Takes in a sorted vector/container.
- 
- \tparam Iter Iterator to the new end
-*************************************************************************************/
-template<class Iter>
-/** Moves duplicates to front, returning end of duplicates range.
- *  Use a sorted range as input. */
-Iter Duplicates(Iter begin, Iter end) {
-	Iter dup = begin;
-	for (Iter it = begin; it != end; ++it) {
-		Iter next = it;
-		++next;
-		Iter const miss = std::mismatch(next, end, it).second;
-		if (miss != it) {
-			*dup++ = *miss;
-			it = miss;
-		}
-	}
-	return dup;
-}
-
-/*!***********************************************************************************
- \brief A compare function (ascending order) for use inside qsort. (follows the 
- 		requirements of it as well, hence the void ptr inputs)
-		Compares p_lhs and p_rhs. 
- 
- \param[in] p_lhs 	Left hand value
- \param[in] p_rhs 	Right hand value
- \return int 		1 = p_lhs > p_rhs, -1 = p_lhs < p_rhs, 0 otherwise
-*************************************************************************************/
-int compare(const void* p_lhs, const void* p_rhs);
-
 	/*!***********************************************************************************
 	\brief
 
@@ -73,7 +36,6 @@ int compare(const void* p_lhs, const void* p_rhs);
 		// ptr to the entity manager
 		PE::EntityManager* p_entityManager{ nullptr };
 		// the components for this scope
-		std::set<ComponentID, Comparer> components;
 		ComponentID componentsCombined;
 		// flag for toggling whether all components are in scope
 		bool all{ false };
@@ -92,11 +54,19 @@ int compare(const void* p_lhs, const void* p_rhs);
 			\param[in] components 	The components to scope to
 			\param[in] all 		Whether or not the scope is to all copmonents
 			*************************************************************************************/
-			Iterator(EntityID index, const ComponentID& r_components, bool all) :
-				p_entityManager(&EntityManager::GetInstance()), index(index), all(all)
+			Iterator(bool index, const ComponentID& r_components, bool all) :
+				p_entityManager(&EntityManager::GetInstance()), all(all)
 			{
-				poolIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL) : p_entityManager->GetEntitiesInPool(r_components);
-				poolIdx.emplace_back(p_entityManager->OnePast());
+				if (index)
+				{
+					poolIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL).begin() : p_entityManager->GetEntitiesInPool(r_components).begin();
+					endIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL).end() : p_entityManager->GetEntitiesInPool(r_components).end();
+				}
+				else
+				{
+					poolIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL).end() : p_entityManager->GetEntitiesInPool(r_components).end();
+					endIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL).end() : p_entityManager->GetEntitiesInPool(r_components).end();
+				}
 			}
 
 			/*!***********************************************************************************
@@ -106,7 +76,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 			*************************************************************************************/
 			EntityID operator* () const
 			{
-				return index;
+				return *poolIdx;
 			}
 
 			/*!***********************************************************************************
@@ -118,7 +88,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 			*************************************************************************************/
 			bool operator== (const Iterator& r_rhs) const
 			{
-				return (index == r_rhs.index) || (index == p_entityManager->OnePast());
+				return (poolIdx == endIdx) || (poolIdx == r_rhs.poolIdx);
 			}
 
 			/*!***********************************************************************************
@@ -130,7 +100,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 			*************************************************************************************/
 			bool operator!= (const Iterator& r_rhs) const
 			{
-				return (index != r_rhs.index) || (index != p_entityManager->OnePast());
+				return (poolIdx != endIdx) || (poolIdx != r_rhs.poolIdx);
 			}
 
 
@@ -142,21 +112,17 @@ int compare(const void* p_lhs, const void* p_rhs);
 			*************************************************************************************/
 			Iterator& operator++()
 			{
-				if ((poolIdx[idxIterator] != p_entityManager->OnePast()))
-					++idxIterator;
-				
-				index = poolIdx[idxIterator];
+				if (poolIdx != endIdx)
+					++poolIdx;
 				return *this;
 			}
 
 			// ptr to the entity manager
 			PE::EntityManager* p_entityManager;
 			// The stored vector of entities for this iterator
-			std::vector<EntityID> poolIdx;
-			// The current iteration inside poolIdx
-			size_t idxIterator{};
-			// the current index/entity
-			EntityID index{};
+			std::vector<EntityID>::iterator poolIdx;
+			// end of the vector
+			std::vector<EntityID>::iterator endIdx;
 			// flag for toggling whether all components are in scope
 			bool all{ false };
 		};
@@ -176,7 +142,6 @@ int compare(const void* p_lhs, const void* p_rhs);
 				std::initializer_list<ComponentID> componentIDs = { p_entityManager->GetComponentID<ComponentTypes>() ... };
 				for (const ComponentID& c : componentIDs)
 				{
-					components.emplace(c);
 					componentsCombined |= c;
 				}
 			}
@@ -187,22 +152,6 @@ int compare(const void* p_lhs, const void* p_rhs);
 		}
 		// ----- Public Methods ----- //
 
-		/*!***********************************************************************************
-		\brief Checks if entity at index has all the components within this scope
-
-		\param[in] index index of the entity to check
-		\return true 	  the entity has all the components in this scope
-		\return false 	  the entity does not have all the components in this scope
-		*************************************************************************************/
-		bool HasComponents(size_t index) const
-		{
-			for (const ComponentID& r_component : components)
-			{
-				if (!p_entityManager->GetComponentPoolPointer(r_component)->HasEntity(index))
-					return false;
-			}
-			return true;
-		}
 
 		/*!***********************************************************************************
 		\brief Generates a begin iterator to the first entity that matches the scope
@@ -211,17 +160,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 		*************************************************************************************/
 		const Iterator begin() const	// cannot follow coding conventions due to c++ begin() & end() standards
 		{
-			if (!p_entityManager->Size())
-				return Iterator(0, componentsCombined, all); // update to error log
-			size_t firstIndex{};
-			while ((firstIndex < p_entityManager->OnePast()) &&
-				(!HasComponents(firstIndex) ||
-					!p_entityManager->IsEntityValid(firstIndex))
-				)
-			{
-				++firstIndex;
-			}
-			return Iterator(firstIndex, componentsCombined, all);
+			return Iterator(true, componentsCombined, all);
 		}
 
 		/*!***********************************************************************************
@@ -231,7 +170,7 @@ int compare(const void* p_lhs, const void* p_rhs);
 		*************************************************************************************/
 		const Iterator end() const		// cannot follow coding conventions due to c++ begin() & end() standards
 		{
-			return Iterator(p_entityManager->OnePast(), componentsCombined, all);
+			return Iterator(false, componentsCombined, all);
 		}
 	};
 }

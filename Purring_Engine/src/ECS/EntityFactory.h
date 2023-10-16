@@ -27,6 +27,7 @@
 #include "Graphics/Renderer.h"
 //#include "Logic/Script.h"
 //#include "Logic/LogicSystem.h"
+#include "Graphics/Camera.h"
 #include "Prefabs.h"
 #include "Singleton.h"
 
@@ -195,6 +196,7 @@ namespace PE
 		bool InitializePlayerStats(const EntityID& r_id, void* p_data);
 		bool InitializeRenderer(const EntityID& r_id, void* p_data);
 		bool InitializeScriptComponent(const EntityID& r_id, void* p_data);
+		bool InitializeCamera(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap

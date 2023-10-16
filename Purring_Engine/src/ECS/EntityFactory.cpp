@@ -72,6 +72,7 @@ namespace PE
 		//m_initializeComponent.emplace(p_entityManager->GetComponentID<PlayerStats>(), &EntityFactory::InitializePlayerStats);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(), &EntityFactory::InitializeRenderer);
 		//m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(), &EntityFactory::InitializeCamera);
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* p_data)
@@ -133,6 +134,16 @@ namespace PE
 	//		*reinterpret_cast<ScriptComponent*>(p_data);
 	//	return true;
 	//}
+    
+	bool EntityFactory::InitializeCamera(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<Graphics::Camera>(r_id) =
+			(p_data == nullptr) ?
+			Graphics::Camera()
+			:
+			*reinterpret_cast<Graphics::Camera*>(p_data);
+		return true;
+	}
 
 
 	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)
@@ -142,7 +153,7 @@ namespace PE
 		// if the prefab exists in the current list
 		if (m_prefabs.prefabs.count(p_prefab))
 		{
-			Assign(id, m_prefabs.prefabs.at(p_prefab));
+			//Assign(id, m_prefabs.prefabs.at(p_prefab));
 			for (const ComponentID& componentID : m_prefabs.prefabs[p_prefab])
 			{
 				LoadComponent(id, componentID, nullptr);

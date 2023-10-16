@@ -23,7 +23,7 @@
 
 namespace PE
 {
-	constexpr auto TotalSystems = 4;
+	constexpr auto TotalSystems = 5;
 	/*!***********************************************************************************
 	 \brief Enumeration for identifying different subsystems.
 	*************************************************************************************/

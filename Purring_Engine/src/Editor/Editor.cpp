@@ -1105,6 +1105,28 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
+                        						// Camera component
+						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
+								if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+								{
+										float viewportWidth{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportWidth() };
+										float viewportHeight{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportHeight() };
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+										ImGui::Text("Viewport Dimensions: ");
+										ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
+										ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+										float zoom{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetMagnification() };
+										ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+										EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetViewDimensions(viewportWidth, viewportHeight);
+										EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetMagnification(zoom);
+								}
+						}
+
 					}
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
