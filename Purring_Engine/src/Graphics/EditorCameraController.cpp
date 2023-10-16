@@ -21,29 +21,34 @@ namespace PE
 {
     namespace Graphics
     {
+        EditorCameraController::EditorCameraController() 
+        {
+            //InitializeCameraController();
+        }
+
         void EditorCameraController::InitializeCameraController()
         {
-            //ADD_ALL_WINDOW_EVENT_LISTENER(EditorCameraController::OnWindowEvent, this)
-            //ADD_ALL_MOUSE_EVENT_LISTENER(EditorCameraController::OnMouseEvent, this)
-            //ADD_ALL_KEY_EVENT_LISTENER(EditorCameraController::OnKeyEvent, this)
+            ADD_ALL_WINDOW_EVENT_LISTENER(EditorCameraController::OnWindowEvent, this)
+            ADD_ALL_MOUSE_EVENT_LISTENER(EditorCameraController::OnMouseEvent, this)
+            ADD_ALL_KEY_EVENT_LISTENER(EditorCameraController::OnKeyEvent, this)
         }
 
 
         void EditorCameraController::OnWindowEvent(const PE::Event<PE::WindowEvents>&)
         {
-
+            std::cout << "EditorCameraController::OnWindowEvent\n";
         }
 
 
         void EditorCameraController::OnMouseEvent(const PE::Event<PE::MouseEvents>&)
         {
-
+            std::cout << "EditorCameraController::OnMouseEvent\n";
         }
 
 
         void EditorCameraController::OnKeyEvent(const PE::Event<PE::KeyEvents>&)
         {
-
+            std::cout << "EditorCameraController::OnKeyEvent\n";
         }
 
     } // End of Graphics namespace

@@ -204,13 +204,13 @@ namespace PE
             
             EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
-            glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(true).value()};
+            glm::mat4 worldToNdcMatrix{ 0 };
 
-            // @TODO
-            //if (r_cameraManager.GetWorldToNdcMatrix(renderInEditor).has_value())
-            //{
-            //    worldToNdcMatrix = r_cameraManager.GetWorldToNdcMatrix(renderInEditor).value();
-            //}
+            // Get the world to NDC matrix of the editor cam or the main runtime camera
+            if (r_cameraManager.GetWorldToNdcMatrix(renderInEditor).has_value())
+            {
+                worldToNdcMatrix = r_cameraManager.GetWorldToNdcMatrix(renderInEditor).value();
+            }
 
             DrawSceneInstanced(worldToNdcMatrix); // Draw objects in the scene
 
@@ -459,6 +459,19 @@ namespace PE
 
                 // Draw a point at the center of the object
                 DrawDebugPoint(glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
+            }
+
+            // Draw a "+" for every camera component
+            for (const EntityID& id : SceneView<Camera, Transform>())
+            {
+                Camera& camera{ EntityManager::GetInstance().Get<Camera>(id) };
+                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+
+                glm::vec2 glmPosition{ transform.position.x, transform.position.y };
+
+                // Draw a cross to represent the orientation and position of the camera
+                DrawDebugCross(glmPosition, camera.GetUpVector(transform.orientation) * 100.f,
+                    camera.GetRightVector(transform.orientation) * 100.f, r_worldToNdc, *(shaderProgramIterator->second));
             }
 
             glPointSize(1.f);
@@ -732,6 +745,17 @@ namespace PE
                     glm::vec4{ 0.f, 1.f, 0.f, 0.f },
                     glm::vec4{ 0.f, 0.f, 1.f, 0.f },
                     ndcPosition });
+        }
+
+
+        void RendererManager::DrawDebugCross(glm::vec2 const& r_position,
+            glm::vec2 const& r_upVector, glm::vec2 const& r_rightVector,
+            glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+            glm::vec4 const& r_color)
+        {
+            // Draw vertical line then horizontal line
+            DrawDebugLine(r_upVector, r_position - r_upVector * 0.5f, r_worldToNdc, r_shaderProgram, r_color);
+            DrawDebugLine(r_rightVector, r_position - r_rightVector * 0.5f, r_worldToNdc, r_shaderProgram, r_color);
         }
 
         void RendererManager::InitializeCircleMesh(std::size_t const segments, MeshData& r_mesh)

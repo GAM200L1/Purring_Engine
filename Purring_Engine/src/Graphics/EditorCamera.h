@@ -118,7 +118,7 @@ namespace PE
 
             \param[in] value Value to set the magnification of the camera to.
             *************************************************************************************/
-            void SetMagnification(float const value);
+            void SetMagnification(float value);
 
             /*!***********************************************************************************
             \brief  Sets the position of the camera to the value passed in.

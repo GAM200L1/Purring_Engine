@@ -71,6 +71,7 @@ namespace PE
 		m_initializeComponent.emplace("Transform", &EntityFactory::InitializeTransform);
 		m_initializeComponent.emplace("PlayerStats", &EntityFactory::InitializePlayerStats);
 		m_initializeComponent.emplace("Renderer", &EntityFactory::InitializeRenderer);
+		m_initializeComponent.emplace("Camera", &EntityFactory::InitializeCamera);
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* p_data)
@@ -120,6 +121,16 @@ namespace PE
 			Graphics::Renderer()
 			:
 			*reinterpret_cast<Graphics::Renderer*>(p_data);
+		return true;
+	}
+
+	bool EntityFactory::InitializeCamera(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<Graphics::Camera>(r_id) =
+			(p_data == nullptr) ?
+			Graphics::Camera()
+			:
+			*reinterpret_cast<Graphics::Camera*>(p_data);
 		return true;
 	}
 

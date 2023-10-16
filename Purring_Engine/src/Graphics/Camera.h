@@ -20,6 +20,9 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> // ortho()
 
+#include <cmath> // sin(), cos()
+#include <utility>
+
 #include "Math/Transform.h"
 
 namespace PE
@@ -52,7 +55,7 @@ namespace PE
                 float halfWidth{ m_viewportWidth * 0.5f };
                 float halfHeight{ m_viewportHeight * 0.5f };
 
-                return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -m_magnification, m_magnification);
+                return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.f, 10.f);
             }
 
             /*!***********************************************************************************
@@ -75,10 +78,7 @@ namespace PE
             \brief  Returns true if the camera's transform has been updated and its matrix 
                     needs to be recalculated; false otherwise.
 
-            \param[in] currentPositionX X position of center of camera in the world.
-            \param[in] currentPositionY Y position of center of camera in the world.
-            \param[in] currentOrientation Orientation of the camera about the z-axis 
-                                          (in radians, counter-clockwise from the x-axis).
+            \param[in] r_transform Reference to the camera's transform component.
 
             \return true - If the camera's transform has been updated and its matrix needs to be 
                             recalculated
@@ -90,6 +90,33 @@ namespace PE
                     m_cachedPositionY != r_transform.position.y ||
                     m_cachedOrientation != r_transform.orientation ||
                     hasTransformChanged);
+            }
+
+
+            /*!***********************************************************************************
+            \brief  Returns the normalized up vector of the camera.
+
+            \param[in] orientation Orientation of the camera about the z-axis (in radians, 
+                            counter-clockwise from the x-axis)
+
+            \return glm::vec2 - The normalized right vector of the camera.
+            *************************************************************************************/
+            inline glm::vec2 GetUpVector(float const orientation) const
+            {
+                return glm::vec2{-glm::sin(orientation), glm::cos(orientation)};
+            }
+
+            /*!***********************************************************************************
+            \brief  Returns the normalized right vector of the camera.
+
+            \param[in] orientation Orientation of the camera about the z-axis (in radians, 
+                            counter-clockwise from the x-axis)
+
+            \return glm::vec2 - The normalized right vector of the camera.
+            *************************************************************************************/
+            inline glm::vec2 GetRightVector(float const orientation) const
+            {
+                return glm::vec2{ glm::cos(orientation), glm::sin(orientation) };
             }
 
             /*!***********************************************************************************
@@ -118,6 +145,20 @@ namespace PE
             *************************************************************************************/
             inline float GetMagnification() const { return m_magnification; }
 
+            /*!***********************************************************************************
+            \brief  Returns the width of the viewport of the camera.
+
+            \return float - Width of the viewport of the camera.
+            *************************************************************************************/
+            inline float GetViewportWidth() const { return m_viewportWidth; }
+
+            /*!***********************************************************************************
+            \brief  Returns the height of the viewport of the camera.
+
+            \return float - Height of the viewport of the camera.
+            *************************************************************************************/
+            inline float GetViewportHeight() const { return m_viewportHeight; }
+
 
             // ----- Public setters ----- // 
         public:
@@ -135,7 +176,7 @@ namespace PE
 
             \param[in] value Value to set the magnification of the camera to.
             *************************************************************************************/
-            void SetMagnification(float const value);
+            void SetMagnification(float value);
 
             /*!***********************************************************************************
             \brief  Changes the magnification of the camera by the amount passed in.

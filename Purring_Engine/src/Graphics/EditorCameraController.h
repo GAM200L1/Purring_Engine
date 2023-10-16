@@ -31,6 +31,11 @@ namespace PE
         {
         public:
 
+            EditorCameraController();
+
+
+        public:
+
             /*!***********************************************************************************
             \brief      Subscribe this controller's listeners to the input events.
             *************************************************************************************/

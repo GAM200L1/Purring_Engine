@@ -115,6 +115,19 @@ PE::CoreApplication::CoreApplication()
     serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
     
 
+    // Make a runtime camera that follows the player
+    EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = -100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = -100.f;
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+
+    // Make a second runtime camera to test switching
+    cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
 }
 
 PE::CoreApplication::~CoreApplication()

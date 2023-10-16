@@ -188,6 +188,22 @@ namespace PE
                 glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
                 glm::vec4 const& r_color = { 0.f, 0.f, 1.f, 1.f });
 
+            /*!***********************************************************************************
+             \brief Makes a draw call for a "+" to represent the position, up and right vectors 
+                    passed in.
+
+             \param[in] r_position Position to draw the point at.
+             \param[in] r_upVector Direction and magnitude of the vertical line to draw.
+             \param[in] r_rightVector Direction and magnitude of the horizontal line to draw.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugCross(glm::vec2 const& r_position,
+                glm::vec2 const& r_upVector, glm::vec2 const& r_rightVector,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.5f, 0.5f, 1.f, 1.f });
+
             // ----- Private variables ----- //
         private:
             GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to

@@ -38,7 +38,7 @@ namespace PE
             float halfWidth{ m_viewportWidth * 0.5f };
             float halfHeight{ m_viewportHeight * 0.5f };
 
-            return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -m_magnification, m_magnification);
+            return glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.f, 10.f);
         }
 
 
@@ -46,7 +46,7 @@ namespace PE
         {
             if (GetHasChanged() || hasViewportChanged)
             {
-                m_cachedWorldToNdcMatrix = GetWorldToViewMatrix() * GetViewToNdcMatrix();
+                m_cachedWorldToNdcMatrix =  GetViewToNdcMatrix() * GetWorldToViewMatrix();
                 hasViewportChanged = false;
             }
 
@@ -63,15 +63,12 @@ namespace PE
         void EditorCamera::ComputeViewMatrix()
         {
             float scaleReciprocal{ 1.f / m_magnification };
-
             glm::vec2 up{ -glm::sin(m_orientation), glm::cos(m_orientation) };
             up *= scaleReciprocal;
-
             glm::vec2 right{ up.y, -up.x };
 
-            float upDotPosition{ (up.x * m_position.x + up.y * m_position.y) };
-            float rightDotPosition{ (right.x * m_position.x + right.y * m_position.y) };
-
+            float upDotPosition{ up.x * m_position.x + up.y * m_position.y };
+            float rightDotPosition{ right.x * m_position.x + right.y * m_position.y };
 
             // Update the cached values
             m_cachedViewMatrix = glm::mat4{
@@ -87,47 +84,63 @@ namespace PE
 
         void EditorCamera::SetViewDimensions(float const width, float const height)
         {
-            m_viewportWidth = width;
-            m_viewportHeight = height;
-            hasViewportChanged = true;
+            if (width != m_viewportWidth || height != m_viewportHeight)
+            {
+                m_viewportWidth = width;
+                m_viewportHeight = height;
+                hasViewportChanged = true;
+            }
         }
 
 
-        void EditorCamera::SetMagnification(float const value)
+        void EditorCamera::SetMagnification(float value)
         {
             // Clamping to 10 is arbitrary.
-            m_magnification = glm::clamp(value, 0.1f, 10.f);
-            hasTransformChanged = true;
+            value = glm::clamp(value, 0.1f, 10.f);
+            if (value != m_magnification)
+            {
+                m_magnification = value;
+                hasTransformChanged = true;
+                std::cout << "new magnification: " << m_magnification << "\n";
+            }
         }
 
 
         void EditorCamera::SetPosition(float const valueX, float const valueY)
         {
-            m_position.x = valueX;
-            m_position.y = valueY;
-            hasTransformChanged = true;
+            if (valueX != m_position.x || valueY != m_position.y)
+            {
+                m_position.x = valueX;
+                m_position.y = valueY;
+                hasTransformChanged = true;
+            }
         }
 
 
         void EditorCamera::SetRotationDegrees(float const degrees)
         {
             float angleRadians{ glm::radians(degrees) };
-            m_orientation = angleRadians;
-            hasTransformChanged = true;
+            if (angleRadians != m_orientation)
+            {
+                m_orientation = angleRadians;
+                hasTransformChanged = true;
+            }
         }
 
 
         void EditorCamera::SetRotationRadians(float const radians)
         {
-            m_orientation = radians;
-            hasTransformChanged = true;
+            if (radians != m_orientation)
+            {
+                m_orientation = radians;
+                hasTransformChanged = true;
+            }
         }
 
 
         void EditorCamera::AdjustMagnification(float const delta)
         {
             SetMagnification(m_magnification + delta);
-            hasTransformChanged = true;
         }
 
         

@@ -18,9 +18,11 @@
 #include <optional>
 
 #include "Camera.h"
-#include "EditorCameraController.h"
-#include "System.h"
+#include "EditorCamera.h"
+
+#include "Events/EventHandler.h"
 #include "ECS/Entity.h"
+#include "System.h"
 
 namespace PE
 {
@@ -118,6 +120,26 @@ namespace PE
             *************************************************************************************/
             void DestroySystem();
 
+            /*!***********************************************************************************
+            \brief      Handle window-specific events.
+
+            \param[in]  r_event Event containing window-specific details.
+            *************************************************************************************/
+            void OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event);
+
+            /*!***********************************************************************************
+            \brief      Handle mouse-specific events.
+
+            \param[in]  r_event Event containing mouse-specific details.
+            *************************************************************************************/
+            void OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event);
+
+            /*!***********************************************************************************
+            \brief      Handle keyboard-specific events.
+
+            \param[in]  r_event Event containing keyboard-specific details.
+            *************************************************************************************/
+            void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
         private:
             std::string m_systemName{ "Camera Manager" }; // Name of system
