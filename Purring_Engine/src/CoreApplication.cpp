@@ -72,6 +72,10 @@
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
+// Scripting
+// #include "ScriptingManager.h"
+// ScriptingManager scriptingManager;
+
 PE::CoreApplication::CoreApplication()
 {
     InitializeVariables();
@@ -199,6 +203,11 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
+
+        // Scripting Test
+        // scriptingManager.ExecuteMoveDown();
+
+
 
         // Flush log entries
         engine_logger.FlushLog();
