@@ -553,6 +553,7 @@ namespace PE {
 			ImGui::SameLine();
 			if (ImGui::Button("Play BGM"))
 			{
+				AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
 			}
 			ImGui::SameLine();
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // add space
