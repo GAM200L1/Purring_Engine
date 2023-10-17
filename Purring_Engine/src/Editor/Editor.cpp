@@ -546,16 +546,20 @@ namespace PE {
 				AudioManager::GetInstance().PlaySound("audio_sound2");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Stop Audio"))
+			if (ImGui::Button("Play Audio 3"))
 			{
-				AudioManager::GetInstance().StopAllSounds();
+				AudioManager::GetInstance().PlaySound("audio_sound2");
 			}
-			ImGui::SameLine();
 			if (ImGui::Button("Play BGM"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
 			}
 			ImGui::SameLine();
+
+			if (ImGui::Button("Stop Audio"))
+			{
+				AudioManager::GetInstance().StopAllSounds();
+			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // add space
 
 			ImGui::Separator();
