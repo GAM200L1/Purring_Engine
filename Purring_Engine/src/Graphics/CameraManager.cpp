@@ -60,18 +60,22 @@ namespace PE
             {
                 return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
             }
-            else 
-            {
-                // Check if there are any runtime cameras
-                for (const EntityID& id : SceneView<Camera>())
-                {
-                    // Return the first camera
-                    SetMainCamera(id);
-                    return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
-                }
 
-                return std::nullopt;
+            bool foundCamera{ false };
+            // Check if there are any runtime cameras
+            for (const EntityID& id : SceneView<Camera>())
+            {
+                // Return the first camera
+                SetMainCamera(id);
+                foundCamera = true;
             }
+
+            if (foundCamera) 
+            {
+                return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
+            }
+
+            return std::nullopt;
         }
 
 
