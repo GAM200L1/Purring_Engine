@@ -536,27 +536,27 @@ namespace PE {
 			ImGui::Separator();
 			//audio
 			ImGui::Text("Audio Test");
-			if (ImGui::Button("Play Audio 1"))
+			if (ImGui::Button("Play SFX 1"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound1");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Play Audio 2"))
+			if (ImGui::Button("Play SFX 2"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound2");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Play Audio 3"))
+			if (ImGui::Button("Play SFX 3"))
 			{
-				AudioManager::GetInstance().PlaySound("audio_sound2");
+				AudioManager::GetInstance().PlaySound("audio_sound3");
 			}
-			if (ImGui::Button("Play BGM"))
+			if (ImGui::Button("Play Background Music"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
 			}
 			ImGui::SameLine();
 
-			if (ImGui::Button("Stop Audio"))
+			if (ImGui::Button("Stop All Audio"))
 			{
 				AudioManager::GetInstance().StopAllSounds();
 			}
