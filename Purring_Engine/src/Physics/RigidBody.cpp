@@ -26,15 +26,14 @@ namespace PE
 	// ----- Constructors/Copy Assignment ------ //
 	RigidBody::RigidBody() :
 		velocity{ vec2{ 0.f, 0.f } }, rotationVelocity{ 0.f },
-		force{ vec2{ 0.f, 0.f } }, //m_torque{ 0.f }, m_awake{ false },
-		m_mass{ 10.f }, m_inverseMass{ 1/10.f }, // m_drag{ 0.f }, m_rotationDrag{ 0.f }, 
+		force{ vec2{ 0.f, 0.f } }, linearDrag{ 2.f },
+		m_mass{ 10.f }, m_inverseMass{ 1.f/10.f },
 		prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
 
 	RigidBody::RigidBody(RigidBody const& r_cpy) :
 		velocity{ r_cpy.velocity }, rotationVelocity{ r_cpy.rotationVelocity },
-		force{ r_cpy.force }, //m_torque{ r_cpy.m_torque }, m_awake{ r_cpy.m_awake },
+		force{ r_cpy.force }, linearDrag{ r_cpy.linearDrag },
 		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, 
-		//m_drag{ r_cpy.m_drag }, m_rotationDrag{ r_cpy.m_rotationDrag },
 		prevPosition{ r_cpy.prevPosition }, m_type{ r_cpy.m_type } {}
 
 	RigidBody& RigidBody::operator=(RigidBody const& r_cpy)
@@ -42,13 +41,9 @@ namespace PE
 		velocity = r_cpy.velocity;
 		rotationVelocity = r_cpy.rotationVelocity;
 		force = r_cpy.force;
-		//m_torque = r_cpy.m_torque;
-		//m_awake = r_cpy.m_awake;
 		m_mass = r_cpy.m_mass;
 		m_inverseMass = r_cpy.m_inverseMass;
 		prevPosition = r_cpy.prevPosition;
-		// m_drag = r_cpy.m_drag;
-		// m_rotationDrag = r_cpy.m_rotationDrag;
 		m_type = r_cpy.m_type;
 		return *this;
 	}

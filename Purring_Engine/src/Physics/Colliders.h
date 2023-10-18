@@ -156,7 +156,7 @@ namespace PE
 
 		std::variant<AABBCollider, CircleCollider> colliderVariant; // contains the different types of colliders
 		std::set<size_t> objectsCollided; // contains the IDs of the entities that each collider has collided with
-		bool isTrigger{ false }; // determines whether the collider will need to resolve its collision
+		bool isTrigger{ true }; // determines whether the collider will need to resolve its collision
 
 		// ----- Public Methods ----- //
 		public:

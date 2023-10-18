@@ -47,6 +47,7 @@ namespace PE
 		vec2 velocity{};
 		float rotationVelocity{};
 		vec2 force{};
+		float linearDrag{};
 
 		// ----- Constructors ----- //
 		public:
