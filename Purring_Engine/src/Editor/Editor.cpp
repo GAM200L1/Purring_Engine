@@ -120,7 +120,7 @@ namespace PE {
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 2; --n)
+		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 1; --n)
 		{
 			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 		}
@@ -536,17 +536,27 @@ namespace PE {
 			ImGui::Separator();
 			//audio
 			ImGui::Text("Audio Test");
-			if (ImGui::Button("Play Audio 1"))
+			if (ImGui::Button("Play SFX 1"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound1");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Play Audio 2"))
+			if (ImGui::Button("Play SFX 2"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound2");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Stop Audio"))
+			if (ImGui::Button("Play SFX 3"))
+			{
+				AudioManager::GetInstance().PlaySound("audio_sound3");
+			}
+			if (ImGui::Button("Play Background Music"))
+			{
+				AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
+			}
+			ImGui::SameLine();
+
+			if (ImGui::Button("Stop All Audio"))
 			{
 				AudioManager::GetInstance().StopAllSounds();
 			}
