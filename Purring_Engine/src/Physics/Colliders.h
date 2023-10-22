@@ -156,7 +156,7 @@ namespace PE
 
 		std::variant<AABBCollider, CircleCollider> colliderVariant; // contains the different types of colliders
 		std::set<size_t> objectsCollided; // contains the IDs of the entities that each collider has collided with
-		bool isTrigger{ true }; // determines whether the collider will need to resolve its collision
+		bool isTrigger{ false }; // determines whether the collider will need to resolve its collision
 
 		// ----- Public Methods ----- //
 		public:
@@ -254,8 +254,8 @@ namespace PE
 		Transform& r_transformA;
 		Transform& r_transformB;
 
-		RigidBody* p_rigidBodyA = nullptr; // this could be nonexistent as trigger/static
-		RigidBody* p_rigidBodyB = nullptr; // collision objects do not always need a rigidbody
+		std::unique_ptr<RigidBody> p_rigidBodyA = nullptr; // this could be nonexistent as trigger/static
+		std::unique_ptr<RigidBody> p_rigidBodyB = nullptr; // collision objects do not always need a rigidbody
 
 		Contact contactData;
 

@@ -102,7 +102,7 @@ namespace PE
 			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
 			{
 				// Applies drag force
-				rb.ApplyForce(rb.velocity * rb.GetMass() * rb.damping * -1.f);
+				rb.ApplyForce(rb.velocity * rb.GetMass() * rb.GetLinearDrag() * -1.f);
 				
 				// Update Speed based on total forces
 				rb.velocity += rb.force * rb.GetInverseMass() * deltaTime;

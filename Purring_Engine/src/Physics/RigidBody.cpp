@@ -26,13 +26,13 @@ namespace PE
 	// ----- Constructors/Copy Assignment ------ //
 	RigidBody::RigidBody() :
 		velocity{ vec2{ 0.f, 0.f } }, rotationVelocity{ 0.f },
-		force{ vec2{ 0.f, 0.f } }, linearDrag{ 2.f },
+		force{ vec2{ 0.f, 0.f } }, m_linearDrag{ 2.f },
 		m_mass{ 10.f }, m_inverseMass{ 1.f/10.f },
 		prevPosition{ vec2{ 0.f, 0.f } }, m_type{ EnumRigidBodyType::STATIC } {}
 
 	RigidBody::RigidBody(RigidBody const& r_cpy) :
 		velocity{ r_cpy.velocity }, rotationVelocity{ r_cpy.rotationVelocity },
-		force{ r_cpy.force }, linearDrag{ r_cpy.linearDrag },
+		force{ r_cpy.force }, m_linearDrag{ r_cpy.m_linearDrag },
 		m_mass{ r_cpy.m_mass }, m_inverseMass{ r_cpy.m_inverseMass }, 
 		prevPosition{ r_cpy.prevPosition }, m_type{ r_cpy.m_type } {}
 
@@ -64,6 +64,16 @@ namespace PE
 		m_inverseMass = 1.f / mass; // inverse mass can only be set through mass
 	}
 
+	float RigidBody::GetLinearDrag() const
+	{
+		return m_linearDrag;
+	}
+
+	void RigidBody::SetLinearDrag(float drag)
+	{
+		m_linearDrag = drag;
+	}
+
 	void RigidBody::ZeroForce()
 	{
 		if (m_type != EnumRigidBodyType::DYNAMIC)
@@ -81,15 +91,6 @@ namespace PE
 		m_type = newType;
 	}
 
-	//bool RigidBody::IsAwake() const
-	//{
-	//	return (m_awake) ? true : false;
-	//}
-	//void RigidBody::SetAwake(bool flag)
-	//{
-	//	m_awake = flag;
-	//}
-
 	// ----- Public Methods ----- //
 
 	// Adds on to existing force, ultimately affects position
@@ -100,15 +101,6 @@ namespace PE
 
 		force += r_addOnForce;
 	}
-
-	// Adds on to existing torque, ultimately affects rotation
-	//void RigidBody::ApplyTorque(float r_addOnTorque)
-	//{
-	//	if (m_type != EnumRigidBodyType::DYNAMIC)
-	//		return;
-	//
-	//	m_torque += r_addOnTorque;
-	//}
 
 	// Adds on immediately to object's velocity for burst movement
 	void RigidBody::ApplyLinearImpulse(vec2 const& r_impulseForce)

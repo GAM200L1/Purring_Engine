@@ -878,6 +878,12 @@ namespace PE {
 								ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
 								EntityManager::GetInstance().Get<RigidBody>(entityID).SetMass(mass);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								//linear drag variable
+								float linearDrag = EntityManager::GetInstance().Get<RigidBody>(entityID).GetLinearDrag();
+								ImGui::Text("Linear Drag: "); ImGui::SameLine(); ImGui::InputFloat("##Linear Drag", &linearDrag, 1.0f, 100.f, "%.3f");
+								EntityManager::GetInstance().Get<RigidBody>(entityID).SetLinearDrag(linearDrag);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
 
@@ -1201,17 +1207,17 @@ namespace PE {
 						if (ImGui::Selectable("Add Collision"))
 						{
 							//not allowed to add collision without a rigidbody
-							if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
-							{
+							//if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
+							//{
 								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
 								else
 									AddErrorLog("ALREADY HAS A COLLIDER");
-							}
-							else
+							//}
+							/*else
 							{
 								AddErrorLog("ADD RIGIDBODY FIRST");
-							}
+							}*/
 						}
 						if (ImGui::Selectable("Add Transform"))
 						{
