@@ -28,6 +28,7 @@
 #include "Graphics/RendererManager.h"
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
+#include "GUISystem.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
@@ -1124,6 +1125,39 @@ namespace PE {
 							}
 						}
                         
+						//GUI
+						if (name == EntityManager::GetInstance().GetComponentID<GUI>())
+						{
+							if (ImGui::CollapsingHeader("GUIComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								//get the current collider type using the variant
+								int index = static_cast<int>(EntityManager::GetInstance().Get<GUI>(entityID).m_UIType);
+								const char* types[] = { "Button","TextBox" };
+								ImGui::Text("UI Type: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+								//set combo box for the different collider types
+								if (ImGui::Combo("##UI Types", &index, types, IM_ARRAYSIZE(types)))
+								{
+									EntityManager::GetInstance().Get<GUI>(entityID).m_UIType = static_cast<UIType>(index);
+								}
+							}
+						}
+                        
 						if (hasScripts)
 						{
 							for (auto& [key, val] : LogicSystem::m_scriptContainer)
@@ -1240,6 +1274,13 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
 							else
 								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
+						}
+						if (ImGui::Selectable("Add GUI"))
+						{
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUI>() });
+							else
+								AddErrorLog("ALREADY HAS GUI");
 						}
 						ImGui::EndPopup();
 					}
@@ -1550,6 +1591,12 @@ namespace PE {
 					if (ImGui::MenuItem("Rubrics Test", "f7", m_showTestWindows, !m_showTestWindows))
 					{
 						m_showTestWindows = !m_showTestWindows;
+					}
+					ImGui::Separator();
+					if (ImGui::MenuItem("Reset Default", "", false, true))
+					{
+						m_firstLaunch = false;
+						std::cout << "set false";
 					}
 					ImGui::EndMenu();
 				}

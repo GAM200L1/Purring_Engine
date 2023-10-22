@@ -38,31 +38,45 @@ namespace PE {
 		void OnHover();
 	};
 
+	enum class UIType { Button = 0, TextBox };
+
 	struct GUI
 	{
 		//enum to tell type of UI to make
-		virtual void Init() = 0;
-		virtual void Update() = 0;
-		virtual void Destroy() = 0;
-		virtual void OnHover() = 0;
-		virtual void OnClick() = 0;
+		GUI() {}
+		virtual void Init() {}
+		virtual void Update() {}
+		virtual void Destroy() {}
+		virtual void OnHover() {}
+		virtual void OnClick() {}
 		virtual ~GUI() {};
+
+		std::function<void()> m_onClicked;
+		std::function<void()> m_onHovered;
+		UIType m_UIType{0};
 	};
 
 
 	struct Button : public GUI
 	{
-		virtual void Init() override;
-		virtual void Update() override;
-		virtual void Destroy() override;
+		virtual void Init() override {}
+		virtual void Update() override {}
+		virtual void Destroy() override {}
 		//use this for now idk how are we gonna bind functions later
-		virtual void OnHover() override;
-		virtual void OnClick() override;
+		inline virtual void OnHover() override 
+		{
+			onHovered();
+		}
+		inline virtual void OnClick() override
+		{
+			onClicked();
+		}
 		virtual ~Button() {};
 
 		float clicked;//check this for click
 		float bufferTime;//the amt to add to click 
-		std::function<void (*)(void)> onClicked;
-		std::function<void (*)(void)> onHovered;
+		std::function<void()> onClicked;
+		std::function<void()> onHovered;
+
 	};
 }

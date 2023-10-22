@@ -36,13 +36,17 @@ namespace PE
 
 	void GUISystem::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
+		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		//loop through all objects check for Button Component
 		if (Editor::GetInstance().IsRunTime())
-			for (EntityID objectID : SceneView<Transform,GUI>())
+			for (EntityID objectID : SceneView<Transform, GUI>())
 			{
+				//get the components
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
+
 				//check mouse coordinate against transform here
+				if(transform.position.x == MBPE.x && transform.position.y == MBPE.y)
 				gui.OnClick();
 			}
 	}

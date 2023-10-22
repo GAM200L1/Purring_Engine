@@ -77,14 +77,18 @@ namespace PE
     void InputSystem::check_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
     {
         //unrefereced variables
-        window; mods;
+        mods;
 
         switch (action)
         {
         case GLFW_PRESS:
         {
+            double x, y;
             //creation of event and sending
             PE::MouseButtonPressedEvent mbpe;
+            glfwGetCursorPos(window, &x, &y);
+            mbpe.x = static_cast<int>(x);
+            mbpe.y = static_cast<int>(y);
             PE::MouseButtonHoldEvent mbhe;
             mbpe.button = (int)button;
             mbhe.button = (int)button;

@@ -66,9 +66,9 @@
 
 // Input
 #include "Input/InputSystem.h"
-
 #include "Logic/LogicSystem.h"
 
+#include "GUISystem.h"
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -261,6 +261,7 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Graphics::Renderer);
     REGISTERCOMPONENT(Graphics::Camera);
     REGISTERCOMPONENT(ScriptComponent);
+    REGISTERCOMPONENT(GUI);
 }
 
 void PE::CoreApplication::InitializeLogger()
