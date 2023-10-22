@@ -254,8 +254,8 @@ namespace PE
 		Transform& r_transformA;
 		Transform& r_transformB;
 
-		std::unique_ptr<RigidBody> p_rigidBodyA = nullptr; // this could be nonexistent as trigger/static
-		std::unique_ptr<RigidBody> p_rigidBodyB = nullptr; // collision objects do not always need a rigidbody
+		RigidBody* p_rigidBodyA = nullptr; // this could be nonexistent as trigger/static
+		RigidBody* p_rigidBodyB = nullptr; // collision objects do not always need a rigidbody
 
 		Contact contactData;
 
