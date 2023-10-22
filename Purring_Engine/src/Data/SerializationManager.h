@@ -27,7 +27,8 @@
 #include "Physics/RigidBody.h"
 #include "Physics/Colliders.h"
 #include "Graphics/Renderer.h"
-
+#include <string>
+#include <windows.h>
 struct StructPlayerStats
 {
     int m_health;
@@ -58,6 +59,31 @@ class SerializationManager
 {
     // ----- Public Methods ----- //
 public:
+    /*!***********************************************************************************
+     \brief Opens a file explorer and returns the selected file path as a string.
+    *************************************************************************************/
+    std::string OpenFileExplorer();
+
+    /*!***********************************************************************************
+     \brief Serialize all entities in the scene into a single JSON object.
+    *************************************************************************************/
+    nlohmann::json SerializeAllEntities();
+
+    /*!***********************************************************************************
+     \brief Deserialize a JSON object to recreate all entities in the scene.
+    *************************************************************************************/
+    void DeserializeAllEntities(const nlohmann::json& r_j);
+
+    /*!***********************************************************************************
+     \brief Save the serialized JSON of all entities to a file with the given filename.
+    *************************************************************************************/
+    void SaveAllEntitiesToFile(const std::string& r_filename);
+
+    /*!***********************************************************************************
+     \brief Load all entities from a file with the given filename and deserialize them into the scene.
+    *************************************************************************************/
+    void LoadAllEntitiesFromFile(const std::string& r_filename);
+
     /*!***********************************************************************************
      \brief Serialize the entity with the given ID to a JSON object.
     *************************************************************************************/
