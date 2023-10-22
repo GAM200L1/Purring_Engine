@@ -69,8 +69,29 @@
 
 #include "Logic/LogicSystem.h"
 
+// RTTR includes
+#include <rttr/type.h>
+#include <rttr/registration.h>
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
+
+
+
+using namespace rttr;
+
+struct MyStruct { MyStruct() {}; void func(double) {}; int data; };
+RTTR_REGISTRATION
+{
+    using namespace rttr;
+    rttr::registration::class_<PE::Transform>("Transform")
+        .constructor<>()
+        .property("width", &PE::Transform::width)
+        .property("height", &PE::Transform::height)
+        .property("orientation", &PE::Transform::orientation)
+        .property("position", &PE::Transform::position)
+        .method("GetMtx3x3", &PE::Transform::GetTransformMatrix3x3);
+}
 
 PE::CoreApplication::CoreApplication()
 {
@@ -261,7 +282,18 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Graphics::Renderer);
     REGISTERCOMPONENT(Graphics::Camera);
     REGISTERCOMPONENT(ScriptComponent);
+    rttr::type cls = rttr::type::get<PE::Transform>();
+    for (auto& prop : cls.get_properties())
+    {
+        std::cout << "name: " << prop.get_name() << std::endl;
+    }
+    for (auto& meth : cls.get_methods())
+    {
+        std::cout << "name: " << meth.get_name() << std::endl;
+    }
 }
+
+
 
 void PE::CoreApplication::InitializeLogger()
 {

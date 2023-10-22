@@ -20,6 +20,7 @@ IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
 IncludeDir["FMOD"]          = "vendor/FMOD/core/inc" -- CORE
+IncludeDir["RTTR"]          = "vendor/RTTR/include"
 
 -- external libraries
 group "Library"
@@ -129,7 +130,8 @@ project "Purring_Engine"
         "vendor/stb_image/**.h",
         "vendor/stb_image/**.cpp",
         "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl"
+        "vendor/glm/glm/**.inl",
+        "vendor/RTTR/include/rttr/**.h",
     }
 
     includedirs
@@ -142,14 +144,16 @@ project "Purring_Engine"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.GLEW}",
         "%{IncludeDir.FMOD}",
-        "vendor/freetype/include"
+        "vendor/freetype/include",
+        "%{IncludeDir.RTTR}"
     }
 
     libdirs
     {
         "vendor/GLEW/lib/Release/x64",
         "vendor/FMOD/core/lib/x64",
-        "vendor/freetype/libs"
+        "vendor/freetype/libs",
+        "vendor/RTTR/lib"
     }
 
     links
@@ -158,7 +162,8 @@ project "Purring_Engine"
         "glew32s",
         "ImGui",
         "opengl32",  -- not sure if needed
-        "fmod_vc"
+        "fmod_vc",
+        "rttr_core"
     }
 
     linkoptions { "/ignore:4006" }
@@ -224,8 +229,8 @@ project "Application"
     {
         ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
         ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
-        ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application")
-        
+        ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application"),
+        ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. outputdir .. "/Application"),
     }
 
     filter "system:windows"
