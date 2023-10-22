@@ -291,6 +291,12 @@ void PE::CoreApplication::RegisterComponents()
     {
         std::cout << "name: " << meth.get_name() << std::endl;
     }
+    Transform tmp;
+    property prop = type::get(tmp).get_property("orientation");
+    prop.set_value(tmp, 69.f);
+
+    variant vp = prop.get_value(tmp);
+    std::cout << vp.to_float() << std::endl;
 }
 
 

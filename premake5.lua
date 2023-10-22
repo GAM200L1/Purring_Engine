@@ -230,7 +230,7 @@ project "Application"
         ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
         ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
         ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application"),
-        ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. outputdir .. "/Application"),
+        ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. outputdir .. "/Application")
     }
 
     filter "system:windows"
