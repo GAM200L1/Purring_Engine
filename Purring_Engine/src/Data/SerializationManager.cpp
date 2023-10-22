@@ -58,21 +58,21 @@ std::string SerializationManager::OpenFileExplorer()
     return "";
 }
 
-nlohmann::json SerializationManager::SerializeAllEntities()
-{
-    nlohmann::json allEntitiesJson;
-
-    // Use GetEntitiesInPool with the "ALL" constant to get all entity IDs - JW and Hans
-    std::vector<EntityID>& allEntityIds = PE::EntityManager::GetInstance().GetEntitiesInPool(ALL);
-
-    for (const auto& entityId : allEntityIds)
+    nlohmann::json SerializationManager::SerializeAllEntities()
     {
-        nlohmann::json entityJson = SerializeEntity(entityId);
-        allEntitiesJson["Entities"].push_back(entityJson);
-    }
+        nlohmann::json allEntitiesJson;
 
-    return allEntitiesJson;
-}
+        // Use GetEntitiesInPool with the "ALL" constant to get all entity IDs - JW and Hans
+        std::vector<EntityID>& allEntityIds = PE::EntityManager::GetInstance().GetEntitiesInPool(ALL);
+
+        for (const auto& entityId : allEntityIds)
+        {
+            nlohmann::json entityJson = SerializeEntity(static_cast<int>(entityId));
+            allEntitiesJson["Entities"].push_back(entityJson);
+        }
+
+        return allEntitiesJson;
+    }
 
 void SerializationManager::DeserializeAllEntities(const nlohmann::json& r_j)
 {
