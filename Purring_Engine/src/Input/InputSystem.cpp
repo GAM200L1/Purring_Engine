@@ -27,6 +27,9 @@ namespace PE
     //static declarations
     float InputSystem::m_bufferTime = 0.12f;
     std::vector<KeyPressedEvent> InputSystem::m_KeyDown;
+    std::vector<MouseButtonHoldEvent> InputSystem::m_MouseDown;
+    std::map<int, float> InputSystem::m_KeyTriggered;
+
 
     //system functions
     void InputSystem::InitializeSystem(){}
@@ -82,9 +85,13 @@ namespace PE
         {
             //creation of event and sending
             PE::MouseButtonPressedEvent mbpe;
+            PE::MouseButtonHoldEvent mbhe;
             mbpe.button = (int)button;
-            mbpe.repeat = m_bufferTime; // will implement hold for mouse next time
+            mbhe.button = (int)button;
+            mbhe.repeat = m_bufferTime; // will implement hold for mouse next time
+            m_MouseDown.push_back(mbhe);
             PE::SEND_MOUSE_EVENT(mbpe)
+
                 break;
         }
         case GLFW_RELEASE:
@@ -92,6 +99,18 @@ namespace PE
             //creation of event and sending
             PE::MouseButtonReleaseEvent mbre;
             mbre.button = (int)button;
+            if (!m_MouseDown.empty())
+            {
+                for (std::vector<MouseButtonHoldEvent>::iterator it = std::begin(m_MouseDown); it != std::end(m_MouseDown);)
+                {
+                    if (it->button == mbre.button)
+                    {
+                        it = m_MouseDown.erase(it);
+                    }
+                    else
+                        ++it;
+                }
+            }
             PE::SEND_MOUSE_EVENT(mbre)
                 break;
         }
@@ -149,6 +168,7 @@ namespace PE
             PE::KeyTriggeredEvent kte;
             PE::KeyPressedEvent kpe;
             kte.keycode = kpe.keycode = key;
+            m_KeyTriggered[key] = m_bufferTime;
             //setting a buffer before the keypressed becomes a repeat
             kpe.repeat = m_bufferTime;
             //saving the keypressed event
@@ -207,6 +227,24 @@ namespace PE
                 PE::SEND_KEY_EVENT(kpe)
             }
         }
+
+        for (auto& mhe : m_MouseDown)
+        {
+            if (mhe.repeat >= 0)
+            {
+                mhe.repeat -= deltaTime;
+            }
+            else 
+            {
+                //if buffer is less than 0 send the event as a on hold event
+                PE::SEND_MOUSE_EVENT(mhe)
+            }
+        }
+
+        for (auto& [key, val] : m_KeyTriggered)
+        {
+            val -= deltaTime;
+        }
     }
 
 
@@ -234,4 +272,32 @@ namespace PE
         m_bufferTime = s;
     }
 
+    bool InputSystem::IsKeyTriggered(int keycode)
+    {
+        auto it = m_KeyTriggered.find(keycode);
+        if (it != m_KeyTriggered.end())
+        {
+            if (m_KeyTriggered[keycode] <= 0)
+                return false;
+
+            return true;
+        }
+        else return false;
+    }
+
+    bool InputSystem::IsKeyHeld(int keycode)
+    {
+        if (!m_KeyDown.empty())
+        {
+            for (std::vector<KeyPressedEvent>::iterator it = std::begin(m_KeyDown); it != std::end(m_KeyDown);)
+            {
+                if (it->keycode == keycode)
+                {
+                    return true;
+                }
+                ++it;
+            }
+        }
+        return false;
+    }
 }

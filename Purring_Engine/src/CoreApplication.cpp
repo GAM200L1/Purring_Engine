@@ -67,6 +67,8 @@
 // Input
 #include "Input/InputSystem.h"
 
+#include "Logic/LogicSystem.h"
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -258,6 +260,7 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Transform);
     REGISTERCOMPONENT(Graphics::Renderer);
     REGISTERCOMPONENT(Graphics::Camera);
+    REGISTERCOMPONENT(ScriptComponent);
 }
 
 void PE::CoreApplication::InitializeLogger()
@@ -276,6 +279,8 @@ void PE::CoreApplication::InitializeAudio()
     }
     ResourceManager::GetInstance().LoadAudioFromFile("audio_sound1", "../Assets/Audio/audioSFX_sound1.mp3");
     ResourceManager::GetInstance().LoadAudioFromFile("audio_sound2", "../Assets/Audio/audioSFX_sound2.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound3", "../Assets/Audio/audioSFX_sound3.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("audio_backgroundMusic", "../Assets/Audio/audioSFX_backgroundMusic.mp3");
 }
 
 
@@ -291,12 +296,15 @@ void PE::CoreApplication::InitializeSystems()
     glfwGetWindowSize(m_window, &width, &height);
 
     // Add system to list & assigning memory to them
+
+    LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
+
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
     Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-
+    AddSystem(p_logicSystem);
     AddSystem(p_inputSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);

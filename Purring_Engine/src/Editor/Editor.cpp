@@ -24,6 +24,10 @@
 #include "Data/SerializationManager.h"
 #include "Physics/PhysicsManager.h"
 #include "Logging/Logger.h"
+#include "Logic/LogicSystem.h"
+#include "Graphics/RendererManager.h"
+#include "Logic/testScript.h"
+#include "Logic/PlayerControllerScript.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
@@ -52,7 +56,7 @@ namespace PE {
 			//for the object list
 			m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
-
+		m_mouseInScene = false;
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
@@ -76,6 +80,16 @@ namespace PE {
 	bool Editor::IsRenderingDebug()
 	{
 		return m_renderDebug;
+	}
+
+	bool Editor::IsRunTime()
+	{
+		return m_isRunTime;
+	}
+
+	bool Editor::IsMouseInScene()
+	{
+		return m_mouseInScene;
 	}
 
 	void Editor::ToggleDebugRender()
@@ -106,7 +120,7 @@ namespace PE {
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 2; --n)
+		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 1; --n)
 		{
 			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 		}
@@ -522,17 +536,27 @@ namespace PE {
 			ImGui::Separator();
 			//audio
 			ImGui::Text("Audio Test");
-			if (ImGui::Button("Play Audio 1"))
+			if (ImGui::Button("Play SFX 1"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound1");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Play Audio 2"))
+			if (ImGui::Button("Play SFX 2"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound2");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Stop Audio"))
+			if (ImGui::Button("Play SFX 3"))
+			{
+				AudioManager::GetInstance().PlaySound("audio_sound3");
+			}
+			if (ImGui::Button("Play Background Music"))
+			{
+				AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
+			}
+			ImGui::SameLine();
+
+			if (ImGui::Button("Stop All Audio"))
 			{
 				AudioManager::GetInstance().StopAllSounds();
 			}
@@ -763,6 +787,7 @@ namespace PE {
 					EntityID entityID = EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject];
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
+					bool hasScripts = false;
 					for (const ComponentID& name : components)
 					{
 						++componentCount;//increment unique id
@@ -792,7 +817,7 @@ namespace PE {
 								//each variable in the component
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Position: ");
-								ImGui::Text("x: "); ImGui::SameLine(); ImGui::InputFloat("##x", &EntityManager::GetInstance().Get<Transform>(entityID).position.x, 1.0f, 100.f, "%.3f");
+								ImGui::Text("x: "); ImGui::SameLine(); ImGui::InputFloat("##x", &EntityManager::GetInstance().Get<Transform>(entityID).position.x, 1.0f, 100.f, "%.3f");								
 								ImGui::Text("y: "); ImGui::SameLine(); ImGui::InputFloat("##y", &EntityManager::GetInstance().Get<Transform>(entityID).position.y, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Scale: ");
@@ -812,7 +837,7 @@ namespace PE {
 						//rigidbody component
 						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
 						{
-							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -1016,6 +1041,117 @@ namespace PE {
 							}
 						}
 
+						//Script Component
+						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
+						{
+							hasScripts = true;
+							if (ImGui::CollapsingHeader("ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{							
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//setting textures
+								std::vector<const char*> key;
+								//to get all the keys
+								for (std::map<std::string, Script*>::iterator it = LogicSystem::m_scriptContainer.begin(); it != LogicSystem::m_scriptContainer.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								static int scriptindex{};
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Scripts: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##Scripts", &scriptindex, key.data(), static_cast<int>(key.size()))) {}
+								}
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
+								if (ImGui::Button("Add Script"))
+								{
+									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
+									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
+								}
+								ImGui::PopStyleColor(1);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								static int selectedScript{-1};
+								static std::string selectedScriptName{};
+								ImGui::Text("Scripts List");
+								//loop to show all the items ins the vector
+								if (ImGui::BeginChild("GameObjectList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
+									for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
+									{
+										const bool is_selected = (selectedScript == n);
+
+										if (ImGui::Selectable(EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str(), is_selected)) 
+										{
+											selectedScript = n; //seteting current index to check for selection
+											selectedScriptName = EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str();
+										}//imgui selectable is the function to make the clickable bar of text
+											
+										// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+										if (is_selected) // to show the highlight if selected
+											ImGui::SetItemDefaultFocus();
+									}
+								}
+								ImGui::EndChild();
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
+								if (ImGui::Button("Remove Script"))
+								{
+									if (selectedScript >= 0) 
+									{
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
+										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
+										selectedScript = -1;
+									}
+								}
+								ImGui::PopStyleColor(1);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
+                        
+						if (hasScripts)
+						{
+							for (auto& [key, val] : LogicSystem::m_scriptContainer)
+							{
+								if (key == "test")
+								{
+									testScript* test = dynamic_cast<testScript*>(val);
+									auto it = test->GetScriptData().find(m_currentSelectedObject);
+									if(it != test->GetScriptData().end())
+									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
+									}
+								}
+
+								if (key == "PlayerControllerScript")
+								{
+									PlayerControllerScript* test = dynamic_cast<PlayerControllerScript*>(val);
+									auto it = test->GetScriptData().find(m_currentSelectedObject);
+									if (it != test->GetScriptData().end())
+										if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+										{
+											ImGui::Text("speed: "); ImGui::SameLine(); ImGui::InputFloat("##movespeed", &it->second.speed, 1.0f, 100.f, "%.3f");
+										}
+								}
+							}
+						}
+
 						// Camera component
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
 								if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1039,6 +1175,7 @@ namespace PE {
 						}
 
 					}
+
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 					ImGui::Separator();
@@ -1096,6 +1233,13 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 							else
 								AddErrorLog("ALREADY HAS A RENDERER");
+						}
+						if (ImGui::Selectable("Add ScriptComponent"))
+						{
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
+							else
+								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 						}
 						ImGui::EndPopup();
 					}
@@ -1428,15 +1572,36 @@ namespace PE {
 		//setting the current width and height of the window to be drawn on
 		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 		m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
+		ImGuiStyle& style = ImGui::GetStyle();
+		float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
+		float avail = ImGui::GetContentRegionAvail().x;
 
-		//the graphics rendered onto an image on the imgui window
-		ImGui::Image(
-			reinterpret_cast<void*>(
-				static_cast<intptr_t>(texture_id)),
-			ImVec2(m_renderWindowWidth, m_renderWindowHeight),
-			ImVec2(0, 1),
-			ImVec2(1, 0)
-		);
+		float off = (float)((avail - size) * 0.5);
+		if (off > 0.0f)
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x)/2);
+		//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
+		if(ImGui::Button("Play"))
+		{
+			m_isRunTime = true;
+		}
+		ImGui::SameLine();
+		if (
+			ImGui::Button("Stop")
+			) {
+			m_isRunTime = false; 
+		}
+		if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
+			//the graphics rendered onto an image on the imgui window
+			ImGui::Image(
+				reinterpret_cast<void*>(
+					static_cast<intptr_t>(texture_id)),
+				ImVec2(m_renderWindowWidth, m_renderWindowHeight),
+				ImVec2(0, 1),
+				ImVec2(1, 0)
+			);
+			m_mouseInScene = ImGui::IsWindowHovered();
+		}
+		ImGui::EndChild();
 
 		//end the window
 		ImGui::End();
@@ -1530,5 +1695,6 @@ namespace PE {
 		if (KTE.keycode == GLFW_KEY_F10)
 			ToggleDebugRender();
 	}
+
 }
 

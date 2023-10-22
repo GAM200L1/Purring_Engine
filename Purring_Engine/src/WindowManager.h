@@ -20,7 +20,10 @@
 #include "Graphics/GLHeaders.h"
 #include "Time/FrameRateTargetControl.h"
 #include "Input/InputSystem.h"
-#include "Events/EventHandler.h"
+#include "Events/MouseEvent.h"
+#include "Events/WindowEvent.h"
+#include "Events/KeyEvent.h"
+
 #include "System.h"
 
 namespace PE

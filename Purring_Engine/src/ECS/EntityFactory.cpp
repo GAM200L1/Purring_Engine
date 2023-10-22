@@ -15,6 +15,7 @@
 #include "prpch.h"
 #include "EntityFactory.h"
 #include "Logging/Logger.h"
+#include "Logic/LogicSystem.h"
 extern Logger engine_logger;
 
 
@@ -71,6 +72,7 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Transform>(), &EntityFactory::InitializeTransform);
 		//m_initializeComponent.emplace(p_entityManager->GetComponentID<PlayerStats>(), &EntityFactory::InitializePlayerStats);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(), &EntityFactory::InitializeRenderer);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(), &EntityFactory::InitializeCamera);
 	}
 
@@ -124,6 +126,16 @@ namespace PE
 		return true;
 	}
 
+	bool EntityFactory::InitializeScriptComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<ScriptComponent>(r_id) =
+			(p_data == nullptr) ?
+			ScriptComponent()
+			:
+			*reinterpret_cast<ScriptComponent*>(p_data);
+		return true;
+	}
+    
 	bool EntityFactory::InitializeCamera(const EntityID& r_id, void* p_data)
 	{
 		EntityManager::GetInstance().Get<Graphics::Camera>(r_id) =
