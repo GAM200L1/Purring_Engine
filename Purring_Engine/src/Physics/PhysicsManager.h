@@ -29,20 +29,6 @@ namespace PE
 		
 		// ----- Public Getters and Setters ----- //
 		/*!***********************************************************************************
-		 \brief Get the Linear Drag Coefficient object
-		 
-		 \return float - m_linearDragCoefficient variable
-		*************************************************************************************/
-		float GetLinearDragCoefficient();
-
-		/*!***********************************************************************************
-		 \brief Set the Linear Drag Coefficient object
-		 
-		 \param[in] newCoefficient - new m_linearDragCoefficient value
-		*************************************************************************************/
-		void SetLinearDragCoefficient(float newCoefficient);
-
-		/*!***********************************************************************************
 		 \brief Get the Velocity Negligence object
 		 
 		 \return float - m_velocityNegligence variable
@@ -110,7 +96,6 @@ namespace PE
 
 	private:
 		// ----- Private Variables ----- //
-		float m_linearDragCoefficient{};
 		float m_velocityNegligence{};
 		static bool m_applyStepPhysics;
 		static bool m_advanceStep;
