@@ -138,8 +138,8 @@ namespace PE
 								else
 								{
 									std::stringstream ss;
-									ss << "Error: Missing RigidBody at Collision between Entities " << ColliderID_1 << " & " << ColliderID_2 << '\0';
-									engine_logger.AddLog(false, ss.str(), __FUNCTION__);
+									ss << "Error: Missing RigidBody at Collision between Entities " << ColliderID_1 << " & " << ColliderID_2 << '\n';
+									engine_logger.AddLog(false, ss.str(), "");
 								}
 							}
 							else
