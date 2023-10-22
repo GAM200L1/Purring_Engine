@@ -109,6 +109,9 @@ namespace PE
 
         bool static IsKeyTriggered(int keycode);
         bool static IsKeyHeld(int keycode);
+    private:
+        void static ConvertGLFWToTransform(GLFWwindow* window, double* x, double* y);
+
 
         // ----- Private Variables ----- // 
     private:

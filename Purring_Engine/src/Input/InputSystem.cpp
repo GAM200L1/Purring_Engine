@@ -54,9 +54,11 @@ namespace PE
 
         //creation of event and sending
         PE::MouseMovedEvent mme;
-
-        mme.x = static_cast<int>(xpos);
-        mme.y = static_cast<int>(ypos);
+        double x = xpos;
+        double y = ypos;
+        ConvertGLFWToTransform(window, &x, &y);
+        mme.x = static_cast<int>(x);
+        mme.y = static_cast<int>(y);
 
         PE::SEND_MOUSE_EVENT(mme)
     }
@@ -87,6 +89,7 @@ namespace PE
             //creation of event and sending
             PE::MouseButtonPressedEvent mbpe;
             glfwGetCursorPos(window, &x, &y);
+            ConvertGLFWToTransform(window, &x,&y);
             mbpe.x = static_cast<int>(x);
             mbpe.y = static_cast<int>(y);
             PE::MouseButtonHoldEvent mbhe;
@@ -304,4 +307,18 @@ namespace PE
         }
         return false;
     }
+
+    void InputSystem::ConvertGLFWToTransform(GLFWwindow* window, double* x, double* y)
+    {
+        int windowWidth, windowHeight;
+        glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+        float centerX = windowWidth / 2.0f;
+        float centerY = windowHeight / 2.0f;
+        *x = *x - centerX;
+        *y = centerY - *y; 
+
+
+    }
+
+
 }

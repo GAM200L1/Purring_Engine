@@ -1595,8 +1595,9 @@ namespace PE {
 					ImGui::Separator();
 					if (ImGui::MenuItem("Reset Default", "", false, true))
 					{
-						m_firstLaunch = false;
-						std::cout << "set false";
+						m_firstLaunch = true;
+						m_showResourceWindow = false;
+						m_showPerformanceWindow = false;
 					}
 					ImGui::EndMenu();
 				}
@@ -1630,6 +1631,7 @@ namespace PE {
 		if(ImGui::Button("Play"))
 		{
 			m_isRunTime = true;
+			m_showEditor = false;
 		}
 		ImGui::SameLine();
 		if (
@@ -1734,7 +1736,13 @@ namespace PE {
 			m_showPerformanceWindow = !m_showPerformanceWindow;
 
 		if (KTE.keycode == GLFW_KEY_ESCAPE)
-			m_showEditor = !m_showEditor;
+		{
+			//m_showEditor = !m_showEditor;
+			
+			if (m_showEditor)
+				m_isRunTime = false;
+		}
+
 
 		if (KTE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;

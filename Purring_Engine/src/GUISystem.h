@@ -1,7 +1,7 @@
 #include "System.h"
 #include "Events/MouseEvent.h"
 #include "Events/Event.h"
-
+#include "Math/Transform.h"
 namespace PE {
 	class GUISystem : public System
 	{
@@ -35,7 +35,9 @@ namespace PE {
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
-		void OnHover();
+		bool IsInBound(int x, int y, Transform t);
+
+		void OnMouseHover(const Event<MouseEvents>& r_ME);
 	};
 
 	enum class UIType { Button = 0, TextBox };
@@ -53,6 +55,7 @@ namespace PE {
 
 		std::function<void()> m_onClicked;
 		std::function<void()> m_onHovered;
+		bool m_Hovered;
 		UIType m_UIType{0};
 	};
 
@@ -65,18 +68,15 @@ namespace PE {
 		//use this for now idk how are we gonna bind functions later
 		inline virtual void OnHover() override 
 		{
-			onHovered();
+			std::cout << "Im Hovered" << std::endl;
+			//m_onHovered();
 		}
 		inline virtual void OnClick() override
 		{
-			onClicked();
+			std::cout << "Im Clicked" << std::endl;
+			//m_onClicked();
 		}
 		virtual ~Button() {};
-
-		float clicked;//check this for click
-		float bufferTime;//the amt to add to click 
-		std::function<void()> onClicked;
-		std::function<void()> onHovered;
 
 	};
 }

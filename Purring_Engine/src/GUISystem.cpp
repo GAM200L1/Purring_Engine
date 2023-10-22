@@ -8,11 +8,13 @@ namespace PE
 {
 	GUISystem::~GUISystem()
 	{
-		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GUISystem::OnMouseClick, this)
+
 	}
 
 	void GUISystem::InitializeSystem()
 	{
+		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GUISystem::OnMouseClick, this)
+		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseMoved, GUISystem::OnMouseHover, this)
 	}
 
 	void GUISystem::UpdateSystem(float deltaTime)
@@ -22,6 +24,13 @@ namespace PE
 			{
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 				gui.Update();
+
+				if (gui.m_UIType == UIType::Button)
+				{
+					Button btn = reinterpret_cast<Button&>(gui);
+					if (btn.m_Hovered)
+					btn.OnHover();
+				}
 			}
 	}
 
@@ -44,12 +53,51 @@ namespace PE
 				//get the components
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
+				
+				if (!IsInBound(MBPE.x, MBPE.y, transform))
+					return;
 
-				//check mouse coordinate against transform here
-				if(transform.position.x == MBPE.x && transform.position.y == MBPE.y)
-				gui.OnClick();
+				if (gui.m_UIType == UIType::Button)
+				{
+					Button btn = reinterpret_cast<Button&>(gui);
+					btn.OnClick();
+				}
 			}
 	}
 
+	bool GUISystem::IsInBound(int x, int y, Transform t)
+	{
+		if (x >= t.position.x - t.width / 2 && x <= t.position.x + t.width/2 &&
+			y >= t.position.y - t.height / 2 && y <= t.position.y + t.height/2) 
+		{
+			return true;
+		}
+		else 
+		{
+			return false; 
+		}
+	}
+
+	void GUISystem::OnMouseHover(const Event<MouseEvents>& r_ME)
+	{
+		MouseMovedEvent MME = dynamic_cast<const MouseMovedEvent&>(r_ME);
+		if (Editor::GetInstance().IsRunTime())
+		for (EntityID objectID : SceneView<Transform, GUI>())
+		{
+			//get the components
+			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
+			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
+
+			//check mouse coordinate against transform here
+			if (IsInBound(MME.x, MME.y, transform))
+			{
+				gui.m_Hovered = true;
+			}
+			else
+			{
+				gui.m_Hovered = false;
+			}
+		}
+	}
 
 }
