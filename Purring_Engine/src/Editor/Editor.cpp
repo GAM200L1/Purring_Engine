@@ -54,7 +54,7 @@ namespace PE {
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 			//for the object list
-			m_objectIsSelected = false;
+		m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
 		m_mouseInScene = false;
 		//mapping commands to function calls
