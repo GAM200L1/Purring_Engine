@@ -879,11 +879,14 @@ namespace PE {
 								EntityManager::GetInstance().Get<RigidBody>(entityID).SetMass(mass);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								//linear drag variable
-								float linearDrag = EntityManager::GetInstance().Get<RigidBody>(entityID).GetLinearDrag();
-								ImGui::Text("Linear Drag: "); ImGui::SameLine(); ImGui::InputFloat("##Linear Drag", &linearDrag, 1.0f, 100.f, "%.3f");
-								EntityManager::GetInstance().Get<RigidBody>(entityID).SetLinearDrag(linearDrag);
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								if (EntityManager::GetInstance().Get<RigidBody>(entityID).GetType() == EnumRigidBodyType::DYNAMIC)
+								{
+									//linear drag variable
+									float linearDrag = EntityManager::GetInstance().Get<RigidBody>(entityID).GetLinearDrag();
+									ImGui::Text("Linear Drag: "); ImGui::SameLine(); ImGui::InputFloat("##Linear Drag", &linearDrag, 1.0f, 100.f, "%.3f");
+									EntityManager::GetInstance().Get<RigidBody>(entityID).SetLinearDrag(linearDrag);
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								}
 							}
 						}
 
