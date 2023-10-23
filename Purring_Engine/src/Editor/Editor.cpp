@@ -407,9 +407,26 @@ namespace PE {
 			static int count = 0;
 			if (ImGui::Button("Create Object")) // add a string into vector
 			{
-				AddInfoLog("Object Created");
-				serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+				ImGui::OpenPopup("Object");
 			}
+
+			if (ImGui::BeginPopup("Object"))
+			{
+				if (ImGui::Selectable("Create Empty Object"))
+				{
+					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
+				}
+				if (ImGui::Selectable("Create Default Object"))
+				{
+					serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+				}
+				if (ImGui::Selectable("Create UI Object"))
+				{
+					//serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::SameLine(); // set the buttons on the same line
 			if (ImGui::Button("Delete Object")) // delete a string from the vector
 			{
@@ -715,6 +732,7 @@ namespace PE {
 				ClearObjectList();
 				for (size_t i{}; i < 2500; ++i)
 				{
+					//EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[id]);
 					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
 					EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
@@ -723,7 +741,7 @@ namespace PE {
 					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
-
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey("cat");
 				}
 			}
 			ImGui::SameLine();
@@ -1264,7 +1282,6 @@ namespace PE {
 					ImGui::Separator();
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 
-					static bool isModalOpen;
 					// Set the cursor position to the center of the window
 					//the closest i can get to setting center the button x(
 					//shld look fine
@@ -1274,7 +1291,6 @@ namespace PE {
 					if (m_currentSelectedObject)
 						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
 						{
-							isModalOpen = true;
 							ImGui::OpenPopup("Components");
 						}
 
