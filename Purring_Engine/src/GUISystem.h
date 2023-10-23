@@ -1,0 +1,82 @@
+#include "System.h"
+#include "Events/MouseEvent.h"
+#include "Events/Event.h"
+#include "Math/Transform.h"
+namespace PE {
+	class GUISystem : public System
+	{
+	public:
+		/*!***********************************************************************************
+		 \brief     Virtual destructor for proper cleanup of derived systems.
+		*************************************************************************************/
+		virtual ~GUISystem();
+
+		/*!***********************************************************************************
+		 \brief     Initialize the system. Should be called once before any updates.
+		*************************************************************************************/
+		virtual void InitializeSystem() override;
+
+		/*!***********************************************************************************
+		 \brief     Update the system each frame.
+		 \param     deltaTime Time passed since the last frame, in seconds.
+		*************************************************************************************/
+		virtual void UpdateSystem(float deltaTime) override;
+
+		/*!***********************************************************************************
+		 \brief     Clean up the system resources. Should be called once after all updates.
+		*************************************************************************************/
+		virtual void DestroySystem() override;
+
+		/*!***********************************************************************************
+		 \brief     Get the system's name, useful for debugging and identification.
+		 \return    std::string The name of the system.
+		*************************************************************************************/
+		virtual std::string GetName() override;
+
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
+		bool IsInBound(int x, int y, Transform t);
+
+		void OnMouseHover(const Event<MouseEvents>& r_ME);
+	};
+
+	enum class UIType { Button = 0, TextBox };
+
+	struct GUI
+	{
+		//enum to tell type of UI to make
+		GUI() {}
+		virtual void Init() {}
+		virtual void Update() {}
+		virtual void Destroy() {}
+		virtual void OnHover() {}
+		virtual void OnClick() {}
+		virtual ~GUI() {};
+
+		std::function<void()> m_onClicked;
+		std::function<void()> m_onHovered;
+		bool m_Hovered;
+		UIType m_UIType{0};
+	};
+
+
+	struct Button : public GUI
+	{
+		virtual void Init() override {}
+		virtual void Update() override {}
+		virtual void Destroy() override {}
+		//use this for now idk how are we gonna bind functions later
+		inline virtual void OnHover() override 
+		{
+			std::cout << "Im Hovered" << std::endl;
+			//m_onHovered();
+		}
+		inline virtual void OnClick() override
+		{
+			std::cout << "Im Clicked" << std::endl;
+			//m_onClicked();
+		}
+		virtual ~Button() {};
+
+	};
+}

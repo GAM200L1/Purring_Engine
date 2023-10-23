@@ -16,6 +16,7 @@
 #include "EntityFactory.h"
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
+#include "GUISystem.h"
 extern Logger engine_logger;
 
 
@@ -74,6 +75,7 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(), &EntityFactory::InitializeRenderer);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(), &EntityFactory::InitializeCamera);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(), &EntityFactory::InitializeGUI);
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* p_data)
@@ -143,6 +145,16 @@ namespace PE
 			Graphics::Camera()
 			:
 			*reinterpret_cast<Graphics::Camera*>(p_data);
+		return true;
+	}
+
+	bool EntityFactory::InitializeGUI(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<GUI>(r_id) =
+			(p_data == nullptr) ?
+			GUI()
+			:
+			*reinterpret_cast<GUI*>(p_data);
 		return true;
 	}
 
