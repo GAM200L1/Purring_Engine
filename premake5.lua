@@ -130,8 +130,7 @@ project "Purring_Engine"
         "vendor/stb_image/**.h",
         "vendor/stb_image/**.cpp",
         "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl",
-        "vendor/RTTR/include/rttr/**.h",
+        "vendor/glm/glm/**.inl"
     }
 
     includedirs
