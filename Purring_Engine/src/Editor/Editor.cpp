@@ -1062,7 +1062,7 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
+								//setting keys
 								std::vector<const char*> key;
 								//to get all the keys
 								for (std::map<std::string, Script*>::iterator it = LogicSystem::m_scriptContainer.begin(); it != LogicSystem::m_scriptContainer.end(); ++it)
@@ -1154,6 +1154,55 @@ namespace PE {
 								if (ImGui::Combo("##UI Types", &index, types, IM_ARRAYSIZE(types)))
 								{
 									EntityManager::GetInstance().Get<GUI>(entityID).m_UIType = static_cast<UIType>(index);
+								}
+
+								//set combo box for functions
+								//setting keys
+								std::vector<const char*> key;
+								key.push_back("");
+								//to get all the keys
+								for (auto it = GUISystem::m_uiFunc.begin(); it != GUISystem::m_uiFunc.end(); ++it)
+								{
+									key.push_back(it->first.data());
+								}
+								int onclickfunc{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<GUI>(entityID).m_onClicked)
+										break;
+									onclickfunc++;
+								}
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("On Clicked: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##On Click Function", &onclickfunc, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<GUI>(entityID).m_onClicked = key[onclickfunc];
+									}
+								}
+
+								int onhoverfunc{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<GUI>(entityID).m_onHovered)
+										break;
+									onhoverfunc++;
+								}
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("On Hovered: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##On Hover Function", &onhoverfunc, key.data(), static_cast<int>(key.size())))
+									{
+											EntityManager::GetInstance().Get<GUI>(entityID).m_onHovered = key[onhoverfunc];
+									}
 								}
 							}
 						}
@@ -1737,7 +1786,7 @@ namespace PE {
 
 		if (KTE.keycode == GLFW_KEY_ESCAPE)
 		{
-			//m_showEditor = !m_showEditor;
+			m_showEditor = !false;
 			
 			if (m_showEditor)
 				m_isRunTime = false;

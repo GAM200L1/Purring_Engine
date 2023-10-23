@@ -4,6 +4,12 @@
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
 #include "Editor/Editor.h"
+#define UI_CAST(type, ui) reinterpret_cast<type&>(ui)
+
+std::map<std::string_view, std::function<void(void)>> PE::GUISystem::m_uiFunc;
+
+
+
 namespace PE
 {
 	GUISystem::~GUISystem()
@@ -15,6 +21,9 @@ namespace PE
 	{
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GUISystem::OnMouseClick, this)
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseMoved, GUISystem::OnMouseHover, this)
+
+		REGISTER_UI_FUNCTION(ButtonFunctionOne, GUISystem);
+		REGISTER_UI_FUNCTION(ButtonFunctionTwo, GUISystem);
 	}
 
 	void GUISystem::UpdateSystem(float deltaTime)
@@ -23,11 +32,12 @@ namespace PE
 			for (EntityID objectID : SceneView<GUI>())
 			{
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
+				//gui.m_onClicked = "TestFunction";
 				gui.Update();
-
+				//gui.m_onClicked = m_uiFunc.at("ButtonFunctionOne").target<void()>();
 				if (gui.m_UIType == UIType::Button)
 				{
-					Button btn = reinterpret_cast<Button&>(gui);
+					Button btn = UI_CAST(Button, gui);
 					if (btn.m_Hovered)
 					btn.OnHover();
 				}
@@ -59,7 +69,7 @@ namespace PE
 
 				if (gui.m_UIType == UIType::Button)
 				{
-					Button btn = reinterpret_cast<Button&>(gui);
+					Button btn = UI_CAST(Button, gui);
 					btn.OnClick();
 				}
 			}
@@ -100,4 +110,17 @@ namespace PE
 		}
 	}
 
+	void GUISystem::ButtonFunctionOne()
+	{
+		std::cout << "hi im function 1" << std::endl;
+	}
+
+	void GUISystem::ButtonFunctionTwo()
+	{
+		std::cout << "hi im function 2" << std::endl;
+	}
+	void GUISystem::AddFunction(std::string_view str, const std::function<void(void)>& func)
+	{
+		m_uiFunc[str] = func;
+	}
 }
