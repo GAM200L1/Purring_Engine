@@ -22,9 +22,6 @@ namespace PE
 {
     namespace Graphics
     {
-        // Define static editor camera variables
-        EditorCamera CameraManager::m_editorCamera{};
-
         CameraManager::CameraManager(float const editorViewWidth, float const editorViewHeight)
         {
             // Update the editor camera viewport size
@@ -191,7 +188,7 @@ namespace PE
             {
                 MouseScrolledEvent event;
                 event = dynamic_cast<const MouseScrolledEvent&>(r_event);
-                Graphics::CameraManager::GetEditorCamera().AdjustMagnification(-event.yOffset * 0.5f);
+                GetEditorCamera().AdjustMagnification(-event.yOffset * 0.5f);
 
             }
         }
@@ -207,29 +204,29 @@ namespace PE
                 // Move the editor camera
                 if (event.keycode == GLFW_KEY_UP)
                 {
-                    m_editorCamera.AdjustPosition(0.f, 10.f);
+                    GetEditorCamera().AdjustPosition(0.f, 10.f);
                 }
                 if (event.keycode == GLFW_KEY_DOWN)
                 {
-                    m_editorCamera.AdjustPosition(0.f, -10.f);
+                    GetEditorCamera().AdjustPosition(0.f, -10.f);
                 }
                 if (event.keycode == GLFW_KEY_LEFT)
                 {
-                    m_editorCamera.AdjustPosition(-10.f, 0.f);
+                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
                 }
                 if (event.keycode == GLFW_KEY_RIGHT)
                 {
-                    m_editorCamera.AdjustPosition(10.f, 0.f);
+                    GetEditorCamera().AdjustPosition(10.f, 0.f);
                 }
 
                 // Rotate the editor camera
                 if (event.keycode == GLFW_KEY_COMMA)
                 {
-                    m_editorCamera.AdjustRotationRadians(0.1f);
+                    GetEditorCamera().AdjustRotationRadians(0.1f);
                 }
                 if (event.keycode == GLFW_KEY_PERIOD)
                 {
-                    m_editorCamera.AdjustRotationRadians(-0.1f);
+                    GetEditorCamera().AdjustRotationRadians(-0.1f);
                 }
 
                 // Zoom the main runtime camera in and out

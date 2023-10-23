@@ -79,7 +79,7 @@ namespace PE
              \brief Returns a reference to the camera used in editor mode.
              \return EditorCamera& - A reference to the camera used in editor mode.
             *************************************************************************************/
-            static inline EditorCamera& GetEditorCamera() { return m_editorCamera; }
+            inline EditorCamera& GetEditorCamera() { return m_editorCamera; }
 
             /*!***********************************************************************************
              \brief Get the system's name, useful for debugging and identification.
@@ -148,7 +148,7 @@ namespace PE
             EntityID m_mainCameraId{};
 
             // The camera used in editor mode
-            static EditorCamera m_editorCamera;
+            EditorCamera m_editorCamera{};
         };
     } // End of Graphics namespace
 } // End of PE namespace
