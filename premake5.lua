@@ -20,6 +20,7 @@ IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
 IncludeDir["FMOD"]          = "vendor/FMOD/core/inc" -- CORE
+IncludeDir["mono"]          = "vendor/mono/include"
 
 -- external libraries
 group "Library"
@@ -142,14 +143,17 @@ project "Purring_Engine"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.GLEW}",
         "%{IncludeDir.FMOD}",
-        "vendor/freetype/include"
+        "vendor/freetype/include",
+        "%{IncludeDir.mono}"
     }
 
     libdirs
     {
+        "vendor/",
         "vendor/GLEW/lib/Release/x64",
         "vendor/FMOD/core/lib/x64",
-        "vendor/freetype/libs"
+        "vendor/freetype/libs",
+        "vendor/mono/lib/%{cfg.buildcfg}"
     }
 
     links
@@ -158,7 +162,8 @@ project "Purring_Engine"
         "glew32s",
         "ImGui",
         "opengl32",  -- not sure if needed
-        "fmod_vc"
+        "fmod_vc",
+        "libmono-static-sgen"
     }
 
     linkoptions { "/ignore:4006" }
@@ -224,8 +229,8 @@ project "Application"
     {
         ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
         ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
-        ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application")
-        
+        ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application"),
+        ("{COPYFILE} config.json ../bin/" .. outputdir .. "/Application")        
     }
 
     filter "system:windows"
