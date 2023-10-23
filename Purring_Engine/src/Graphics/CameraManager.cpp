@@ -50,6 +50,90 @@ namespace PE
         }
 
 
+        std::optional<glm::mat4> CameraManager::GetViewToNdcMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetViewToNdcMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetViewToNdcMatrix();
+                }
+
+                return std::nullopt;
+            }
+        }
+
+
+        std::optional<glm::mat4> CameraManager::GetNdcToWorldMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetNdcToWorldMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetNdcToWorldMatrix();
+                }
+
+                return std::nullopt;
+            }
+        }
+
+
+        std::optional<glm::mat4> CameraManager::GetNdcToViewMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetNdcToViewMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetNdcToViewMatrix();
+                }
+
+                return std::nullopt;
+            }
+        }
+
+
+        std::optional<glm::mat4> CameraManager::GetViewToWorldMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetViewToWorldMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetViewToWorldMatrix();
+                }
+
+                return std::nullopt;
+            }
+        }
+
+
         std::optional<std::reference_wrapper<Camera>> CameraManager::GetMainCamera()
         {
             // Check if the main camera ID stored is valid
@@ -95,6 +179,10 @@ namespace PE
         {
             deltaTime; // Prevent warnings
 
+            // Update the editor camera
+            m_editorCamera.UpdateCamera();
+
+
             // Check if the main camera ID stored is valid
             bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
 
@@ -126,7 +214,7 @@ namespace PE
                 Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
                 r_camera.UpdateCamera(r_transform);
 
-                ++i; // @TODO - Remove in the future
+                ++i; // @TODO - Remove in the future. Used to test swapping between cameras
             }
 
             // No runtime cameras exist so just set the id to zero

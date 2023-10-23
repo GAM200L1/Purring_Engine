@@ -61,6 +61,62 @@ namespace PE
             std::optional<glm::mat4> GetWorldToNdcMatrix(bool const editorMode);
 
             /*!***********************************************************************************
+             \brief Returns an optional object initalized with the 4x4 view to NDC matrix 
+                    the editor camera or the main runtime camera.
+
+             \param[in] editorMode Set to true to get the 4x4 view to NDC matrix of 
+                            the editor camera, false to get that of the main runtime camera.
+
+             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
+                        with the 4x4 view to NDC matrix the editor camera or the main 
+                        runtime camera. If editorMode is false and there are no runtime cameras, 
+                        optional::has_value() will return false.
+            *************************************************************************************/
+            std::optional<glm::mat4> GetViewToNdcMatrix(bool const editorMode);
+            
+            /*!***********************************************************************************
+             \brief Returns an optional object initalized with the 4x4 NDC to world matrix 
+                    the editor camera or the main runtime camera.
+
+             \param[in] editorMode Set to true to get the 4x4 NDC to world matrix of 
+                            the editor camera, false to get that of the main runtime camera.
+
+             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
+                        with the 4x4 NDC to world matrix the editor camera or the main 
+                        runtime camera. If editorMode is false and there are no runtime cameras, 
+                        optional::has_value() will return false.
+            *************************************************************************************/
+            std::optional<glm::mat4> GetNdcToWorldMatrix(bool const editorMode);
+
+            /*!***********************************************************************************
+             \brief Returns an optional object initalized with the 4x4 NDC to view matrix 
+                    the editor camera or the main runtime camera.
+
+             \param[in] editorMode Set to true to get the 4x4 NDC to view matrix of 
+                            the editor camera, false to get that of the main runtime camera.
+
+             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
+                        with the 4x4 NDC to view matrix the editor camera or the main 
+                        runtime camera. If editorMode is false and there are no runtime cameras, 
+                        optional::has_value() will return false.
+            *************************************************************************************/
+            std::optional<glm::mat4> GetNdcToViewMatrix(bool const editorMode);
+            
+            /*!***********************************************************************************
+             \brief Returns an optional object initalized with the 4x4 view to world matrix 
+                    the editor camera or the main runtime camera.
+
+             \param[in] editorMode Set to true to get the 4x4 view to world matrix of 
+                            the editor camera, false to get that of the main runtime camera.
+
+             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
+                        with the 4x4 view to world matrix the editor camera or the main 
+                        runtime camera. If editorMode is false and there are no runtime cameras, 
+                        optional::has_value() will return false.
+            *************************************************************************************/
+            std::optional<glm::mat4> GetViewToWorldMatrix(bool const editorMode);
+
+            /*!***********************************************************************************
              \brief Returns an optional object with a reference to the Camera component for 
                     the primary camera used during runtime. 
                     

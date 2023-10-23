@@ -26,33 +26,59 @@ namespace PE
             if (GetHasChanged(r_transform) || hasViewportChanged)
             {
                 ComputeViewMatrix(r_transform);
+                ComputeNDCMatrix();
                 m_cachedWorldToNdcMatrix = GetViewToNdcMatrix() * GetWorldToViewMatrix();
-                hasViewportChanged = false;
+                m_cachedNdcToWorldMatrix = GetViewToWorldMatrix() * GetNdcToViewMatrix();
             }
+        }
+
+
+        void Camera::ComputeNDCMatrix()
+        {
+            float halfWidth{ m_viewportWidth * 0.5f };
+            float halfHeight{ m_viewportHeight * 0.5f };
+
+            m_cachedViewToNdcMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.f, 10.f);
+            m_cachedNdcToViewMatrix = glm::inverse(m_cachedViewToNdcMatrix);
+            hasViewportChanged = false;
         }
 
 
         void Camera::ComputeViewMatrix(Transform const& r_transform)
         {
-            float scaleReciprocal{ 1.f / m_magnification };
-            glm::vec2 up{ GetUpVector(r_transform.orientation) };
-            up *= scaleReciprocal;
+            ComputeViewMatrix(r_transform.position.x, r_transform.position.y, r_transform.orientation, m_magnification);
+        }
+        
+
+        void Camera::ComputeViewMatrix(float positionX, float positionY, float orientation, float magnification)
+        {
+            glm::vec2 up{ GetUpVector(orientation) };
             glm::vec2 right{ up.y, -up.x };
 
-            float upDotPosition{ up.x * r_transform.position.x + up.y * r_transform.position.y };
-            float rightDotPosition{ right.x * r_transform.position.x + right.y * r_transform.position.y };
+            m_cachedViewToWorldMatrix = glm::mat4{
+                right.x, right.y, 0.f, 0.f,
+                up.x, up.y, 0.f, 0.f,
+                0.f,    0.f,   1.f, 0.f,
+                positionX, positionY, 0.f, 1.f
+            };
+
+            float scaleReciprocal{ 1.f / magnification };
+            up *= scaleReciprocal, right *= scaleReciprocal;
+
+            float upDotPosition{ up.x * positionX + up.y * positionY };
+            float rightDotPosition{ right.x * positionX + right.y * positionY };
 
             // Update the cached values
-            m_cachedViewMatrix = glm::mat4{
+            m_cachedWorldToViewMatrix = glm::mat4{
                 right.x, up.x, 0.f, 0.f,
                 right.y, up.y, 0.f, 0.f,
                 0.f,    0.f,   1.f, 0.f,
                 -rightDotPosition, -upDotPosition, 0.f, 1.f
             };
 
-            m_cachedPositionX = r_transform.position.x;
-            m_cachedPositionY = r_transform.position.y;
-            m_cachedOrientation = r_transform.orientation;
+            m_cachedPositionX = positionX;
+            m_cachedPositionY = positionY;
+            m_cachedOrientation = orientation;
             hasTransformChanged = false;
         }
 
