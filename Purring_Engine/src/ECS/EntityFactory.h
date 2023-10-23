@@ -28,6 +28,7 @@
 #include "Graphics/Camera.h"
 #include "Prefabs.h"
 #include "Singleton.h"
+#include "Animation/Animation.h"
 
 // Entity Factory code
 namespace PE
@@ -195,6 +196,7 @@ namespace PE
 		bool InitializeRenderer(const EntityID& r_id, void* p_data);
 		bool InitializeScriptComponent(const EntityID& r_id, void* p_data);
 		bool InitializeCamera(const EntityID& r_id, void* p_data);
+		bool InitializeAnimationComponent(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap

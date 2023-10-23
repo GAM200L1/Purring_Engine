@@ -132,6 +132,30 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+
+
+    // Create animations here for now
+    std::string idleAnimation, walkingAnimation;
+    idleAnimation = AnimationManager::CreateAnimation("idle");
+    walkingAnimation = AnimationManager::CreateAnimation("walking");
+
+    // animation 1
+    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim1", 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim2", 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim3", 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim4", 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim5", 0.1f);
+
+    // animation 2
+    AnimationManager::AddFrameToAnimation(walkingAnimation, "cat", 0.2f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
+
+    // Add animation ID to player component
+    EntityFactory::GetInstance().Assign(1, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationID(idleAnimation);
+    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationID(walkingAnimation);
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -261,6 +285,7 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Graphics::Renderer);
     REGISTERCOMPONENT(Graphics::Camera);
     REGISTERCOMPONENT(ScriptComponent);
+    REGISTERCOMPONENT(AnimationComponent);
 }
 
 void PE::CoreApplication::InitializeLogger()
@@ -304,10 +329,13 @@ void PE::CoreApplication::InitializeSystems()
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
+
     AddSystem(p_logicSystem);
     AddSystem(p_inputSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
+    AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
 }

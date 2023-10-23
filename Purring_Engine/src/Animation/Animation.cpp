@@ -19,6 +19,13 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "Animation.h"
+#include "Logging/Logger.h"
+#include "ECS/SceneView.h"
+#include "ECS/Entity.h"
+#include "Graphics/Renderer.h"
+#include "ResourceManager/ResourceManager.h"
+
+extern Logger engine_logger;
 
 namespace PE
 {
@@ -32,7 +39,7 @@ namespace PE
 		m_animationFrames.emplace_back(AnimationFrame{ textureKey, duration });
 	}
 
-	std::string Animation::UpdateAnimation(float deltaTime)
+	AnimationFrame const& Animation::UpdateAnimation(float deltaTime)
 	{
 		m_elapsedTime += deltaTime;
 		if (m_elapsedTime >= m_animationFrames[m_currentFrameIndex].duration)
@@ -42,28 +49,66 @@ namespace PE
 			m_elapsedTime = 0.f;
 		}
 		
-		return m_animationFrames[m_currentFrameIndex].textureKey;		
+		return m_animationFrames[m_currentFrameIndex];
 	}
 
-	int AnimationManager::CreateAnimation()
+	// AnimationComponent
+	void AnimationComponent::AddAnimationID(std::string key)
 	{
-		m_animations.emplace_back(Animation());
-		return static_cast<int>(m_animations.size() - 1);
+		m_animationsID.emplace_back(key);
 	}
 
-	void AnimationManager::AddFrameToAnimation(int animationID, std::string textureKey, float duration)
+	// AnimationManager
+	void AnimationManager::InitializeSystem()
 	{
-		if (animationID >= 0 && animationID < m_animations.size())
+		// Check if Initialization was successful
+		engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+		engine_logger.SetTime();
+		engine_logger.AddLog(false, "AnimationManager initialized!", __FUNCTION__);
+	}
+
+	void AnimationManager::UpdateSystem(float deltaTime)
+	{
+		AnimationFrame p_currentFrame;
+		for (EntityID const& id : SceneView<AnimationComponent>())
 		{
-			m_animations[animationID].AddFrame(textureKey, duration);
+			AnimationComponent const& animationComponent = EntityManager::GetInstance().Get<AnimationComponent>(id);
+			
+			// update animation and get current frame
+			p_currentFrame = UpdateAnimation(animationComponent.GetAnimationID(), deltaTime);
+
+			// update entity based on frame data
+			// in the future probably check for bools in animation component, then update data accordingly
+			EntityManager::GetInstance().GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.textureKey);
 		}
 	}
 
-	std::string AnimationManager::UpdateAnimation(int animationID, float deltaTime)
+	void AnimationManager::DestroySystem()
 	{
-		if (animationID >= 0 && animationID < m_animations.size()) {
-			return m_animations[animationID].UpdateAnimation(deltaTime);
+
+	}
+
+	std::string AnimationManager::CreateAnimation(std::string key)
+	{
+		ResourceManager::GetInstance().Animations[key] = std::make_shared<Animation>();
+		return key;
+	}
+
+	void AnimationManager::AddFrameToAnimation(std::string animationID, std::string textureKey, float duration)
+	{
+		if (ResourceManager::GetInstance().Animations.find(animationID) != ResourceManager::GetInstance().Animations.end())
+		{
+			ResourceManager::GetInstance().Animations[animationID]->AddFrame(textureKey, duration);
 		}
-		return std::string();
+	}
+
+	AnimationFrame AnimationManager::UpdateAnimation(std::string animationID, float deltaTime)
+	{
+		// store animations in resource manager instead
+		if (ResourceManager::GetInstance().Animations.find(animationID) != ResourceManager::GetInstance().Animations.end())
+		{
+			return ResourceManager::GetInstance().Animations[animationID]->UpdateAnimation(deltaTime);
+		}
+		return AnimationFrame{};
 	}
 }
