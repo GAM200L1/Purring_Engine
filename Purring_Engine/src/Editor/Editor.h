@@ -267,11 +267,15 @@ namespace PE {
 		std::string m_findText;
 		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
 
+		//variables for resource window
+		std::filesystem::path m_parentPath;
+		std::vector<std::string> m_files;
+
 		//variable for objects
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
 
-		//variable for the windows
+		//variable for assets browser
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;

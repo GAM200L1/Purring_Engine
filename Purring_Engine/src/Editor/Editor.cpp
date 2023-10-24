@@ -28,6 +28,7 @@
 #include "Graphics/RendererManager.h"
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
+#include "Utilities/FileUtilities.h"
 #include <random>
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
@@ -35,7 +36,7 @@ SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
 namespace PE {
-	Editor::Editor() {
+	Editor::Editor() : m_parentPath{ "../Assets" } {
 		//initializing variables 
 		//m_firstLaunch needs to be serialized 
 		m_firstLaunch = true;
@@ -53,17 +54,19 @@ namespace PE {
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
-			//for the object list
-			m_objectIsSelected = false;
+		//for the object list
+		m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
 		m_mouseInScene = false;
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
+		GetFileNamesInParentPath(m_parentPath, m_files);
 	}
 
 	Editor::~Editor()
 	{
+		m_files.clear();
 	}
 
 	void Editor::GetWindowSize(float& width, float& height)
@@ -1273,25 +1276,58 @@ namespace PE {
 		{
 			static int draggedItemIndex = -1;
 			static bool isDragging = false;
-			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-				for (int n = 0; n < 9; n++) // loop through resource list here
-				{//resource list needs a list of icons for the texture for the image if possible
-					//else just give a standard object icon here
-					if (n % 3) // to keep it in rows where 3 is max 3 colums
-						ImGui::SameLine();
-					ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)n), ImVec2(30, 20)); //child to hold image n text
-					//ImGui::Image(itemTextures[i], ImVec2(20, 20)); image of resource
-					ImGui::Text("test"); // text
+			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
+				
+				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)1), ImVec2(100, 15));
+				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
+				{
+					ImGui::BeginChild(m_files[n].c_str(), ImVec2(0, 0));
+					ImGui::Text(m_files[n].c_str()); // text
 					// Check if the mouse is over the content item
-					if (ImGui::IsItemHovered()) {
-						// Handle item clicks and drags
+					if (ImGui::IsItemHovered())
+					{
 						if (ImGui::IsMouseClicked(0)) {
-							draggedItemIndex = n; // Start dragging
-							isDragging = true;
+							m_parentPath = std::filesystem::path{ m_parentPath / m_files[n] };
+							GetFileNamesInParentPath(m_parentPath, m_files);
 						}
 					}
 					ImGui::EndChild();
 				}
+				ImGui::EndChild();
+				ImGui::Separator();
+				
+				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
+				{//resource list needs a list of icons for the texture for the image if possible
+					//else just give a standard object icon here
+					//if (n % 3) // to keep it in rows where 3 is max 3 colums
+					//	ImGui::SameLine();
+					ImGui::BeginChild(m_files[n].c_str(), ImVec2(500, 20)); //child to hold image n text
+					//ImGui::Image(itemTextures[i], ImVec2(20, 20)); //image of resource
+					ImGui::Text(m_files[n].c_str()); // text
+					// Check if the mouse is over the content item
+					if (ImGui::IsItemHovered()) 
+					{
+						if (m_files[n].find(".") != std::string::npos)
+						{
+							// Handle item clicks and drags
+							if (ImGui::IsMouseClicked(0)) {
+								draggedItemIndex = n; // Start dragging
+								isDragging = true;
+							}
+						}
+						else
+						{
+							if (ImGui::IsMouseClicked(0)) {
+								m_parentPath = std::filesystem::path{ m_parentPath / m_files[n] };
+								GetFileNamesInParentPath(m_parentPath, m_files);
+							}
+						}
+						
+					}
+					ImGui::EndChild();
+				}
+				ImGui::EndChild();
 			}
 			ImGui::EndChild();
 
