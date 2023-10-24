@@ -90,6 +90,11 @@ RTTR_REGISTRATION
     .property("orientation", &PE::Transform::orientation)
     .property("position", &PE::Transform::position)
     .method("GetMtx3x3", &PE::Transform::GetTransformMatrix3x3);
+    rttr::registration::class_<PE::RigidBody>("RigidBody");
+    rttr::registration::class_<PE::Collider>("Collider");
+    rttr::registration::class_<PE::Graphics::Renderer>("Renderer");
+    rttr::registration::class_<PE::Graphics::Camera>("Camera");
+    rttr::registration::class_<PE::ScriptComponent>("ScriptComponent"); 
 }
 
 PE::CoreApplication::CoreApplication()

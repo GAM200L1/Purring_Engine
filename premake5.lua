@@ -29,7 +29,8 @@ group "Library"
         location "vendor/GLFW"
 
         kind "StaticLib"        
-        staticruntime "on"
+        
+
 
         language "C"
 
@@ -52,17 +53,19 @@ group "Library"
             systemversion "latest"
 
         filter "configurations:Debug"
+            staticruntime "off"
             runtime "Debug"
             symbols "on"
 
         filter "configurations:Release"
+            staticruntime "on"
             runtime "Release"
             optimize "on"
+
     -- imgui
     project "ImGui"
         location "vendor/imgui"
         kind "StaticLib"
-        staticruntime "on"
         
         language "C++"
         cppdialect "C++17"
@@ -97,10 +100,12 @@ group "Library"
 
         filter "configurations:Debug"
             runtime "Debug"
+            staticruntime "off"
             symbols "on"
 
         filter "configurations:Release"
             runtime "Release"
+            staticruntime "on"
             optimize "on"
    
 group ""
@@ -171,10 +176,12 @@ project "Purring_Engine"
 
     filter "configurations:Debug"
 			runtime "Debug"
+            staticruntime "off"
 			symbols "on"
 
     filter "configurations:Release"
 			runtime "Release"
+            staticruntime "on"
 			optimize "on"
 
 -- Application
@@ -182,7 +189,6 @@ project "Application"
     location "Application"
 
     kind "ConsoleApp"
-    staticruntime "on"
 
     language "C++"
     cppdialect "C++17"
@@ -220,8 +226,7 @@ project "Application"
     links
     {
         "Purring_Engine",
-        "freetype",
-        "rttr_core"
+        "freetype"
     }
     
     linkoptions { "/ignore:4006", "/ignore:4098", "/ignore:4099"}
@@ -231,7 +236,6 @@ project "Application"
         ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
         ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
         ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application"),
-        ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. outputdir .. "/Application")
     }
 
     filter "system:windows"
@@ -239,8 +243,27 @@ project "Application"
 
     filter "configurations:Debug"
 			runtime "Debug"
+            staticruntime "off"
 			symbols "on"
+            postbuildcommands
+            {
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core_d.dll ../bin/" .. outputdir .. "/Application"),
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core_d.pdb ../bin/" .. outputdir .. "/Application")
+            }
+            links
+            {
+                "rttr_core_d"
+            }
 
     filter "configurations:Release"
 			runtime "Release"
+            staticruntime "on"
 			optimize "on"
+            postbuildcommands
+            {
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. outputdir .. "/Application"),
+            }
+            links
+            {
+                "rttr_core"
+            }
