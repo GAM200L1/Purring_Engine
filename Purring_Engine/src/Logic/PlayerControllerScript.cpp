@@ -14,21 +14,17 @@ namespace PE
 	{
 		deltaTime;
 		// Movement
-		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
+		CheckState(id);
+		switch (m_ScriptData[id].currentPlayerState)
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed);
-		}
-		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
-		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } * m_ScriptData[id].speed);
-		}
-		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
-		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } * m_ScriptData[id].speed);
-		}
-		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
-		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } * m_ScriptData[id].speed);
+		case PlayerState::IDLE:
+			MovePlayer(id);
+			break;
+		case PlayerState::MOVING:
+			MovePlayer(id);
+			break;
+		case PlayerState::DEAD:
+			break;
 		}
 	}
 	void PlayerControllerScript::Destroy(EntityID id)
@@ -50,6 +46,45 @@ namespace PE
 		auto it = m_ScriptData.find(id);
 		if (it != m_ScriptData.end())
 			m_ScriptData.erase(id);
+	}
+
+	void PlayerControllerScript::MovePlayer(EntityID id)
+	{
+		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
+		{
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } *m_ScriptData[id].speed);
+		}
+		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
+		{
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed);
+		}
+		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
+		{
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed);
+		}
+		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
+		{
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed);
+		}
+	}
+
+	void PlayerControllerScript::CheckState(EntityID id)
+	{
+		if (m_ScriptData[id].HP > 0)
+		{
+			if (EntityManager::GetInstance().Get<RigidBody>(id).velocity.x != 0 || EntityManager::GetInstance().Get<RigidBody>(id).velocity.y != 0)
+			{
+				m_ScriptData[id].currentPlayerState = MOVING;
+			}
+			else
+			{
+				m_ScriptData[id].currentPlayerState = IDLE;
+			}
+		}
+		else
+		{
+			m_ScriptData[id].currentPlayerState = DEAD;
+		}
 	}
 
 	std::map<EntityID, PlayerControllerScriptData>& PlayerControllerScript::GetScriptData()
