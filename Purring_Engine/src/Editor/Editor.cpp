@@ -1279,22 +1279,28 @@ namespace PE {
 			ImGuiStyle& style = ImGui::GetStyle();
 			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
 				
-				//ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)1), ImVec2(0, ImGui::GetTextLineHeight()*2), ImGuiWindowFlags_NoScrollbar);
+				// Displays Header with File Directories
 				for (auto iter = m_parentPath.begin(); iter != m_parentPath.end(); ++iter)
 				{
 					ImGui::SameLine();
-					//ImGui::BeginChild((*iter).string().c_str(), ImVec2(200, 20));
-					ImGui::Text((" > " + (*iter).string()).c_str());
+					ImGui::Text(("> " + (*iter).string()).c_str());
 					if (ImGui::IsItemClicked(0)) {
-						std::cout << (*iter).string()<< " is clicked"  <<std::endl;
+						std::string newPath{};
+						for (auto iter2 = m_parentPath.begin(); iter2 != iter; ++iter2)
+						{
+							newPath += (*iter2).string() + "/";
+						}
+						newPath += (*iter).string();
+						m_parentPath = std::filesystem::path{ newPath };
+						GetFileNamesInParentPath(m_parentPath, m_files);
+						break;
 					}
-					//ImGui::EndChild();
 				}
-				//ImGui::EndChild();
 				ImGui::Separator();				
+				
 				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
-				{//resource list needs a list of icons for the texture for the image if possible
+				{	//resource list needs a list of icons for the texture for the image if possible
 					//else just give a standard object icon here
 					//if (n % 3) // to keep it in rows where 3 is max 3 colums
 					//	ImGui::SameLine();
