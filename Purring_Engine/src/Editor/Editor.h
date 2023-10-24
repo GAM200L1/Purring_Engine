@@ -267,10 +267,6 @@ namespace PE {
 		std::string m_findText;
 		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
 
-		//variables for resource window
-		std::filesystem::path m_parentPath;
-		std::vector<std::string> m_files;
-
 		//variable for objects
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
@@ -280,7 +276,8 @@ namespace PE {
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
-
+		std::filesystem::path m_parentPath;
+		std::vector<std::string> m_files;
 
 	};
 }

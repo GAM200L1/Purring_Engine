@@ -1345,13 +1345,26 @@ namespace PE {
 					ImGui::Begin(test.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 					//put image here
 					ImGui::End();
-
+					
 					// Check if the mouse button is released
-					if (!ImGui::IsMouseDown(0)) {
+					if (ImGui::IsMouseReleased(0))
+					{
+						//do a function call here
+						std::string const& item = m_files[draggedItemIndex];
+						if (item.substr(item.find(".")) == ".png" && m_mouseInScene)
+						{
+							std::string str{ m_parentPath.string() + "/" + item };
+							ResourceManager::GetInstance().LoadTextureFromFile(item.substr(0, item.find(".")), m_parentPath.string() + "/" + item);
+							EntityID id = EntityFactory::GetInstance().CreateEntity();
+							EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+							EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
+							EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(item.substr(0, item.find(".")));
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
+						}
+
 						isDragging = false;
 						draggedItemIndex = -1;
-
-						//do a function call here
 					}
 				}
 			}
@@ -1625,7 +1638,8 @@ namespace PE {
 				ImVec2(0, 1),
 				ImVec2(1, 0)
 			);
-			m_mouseInScene = ImGui::IsWindowHovered();
+			m_mouseInScene = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
+			std::cout << m_mouseInScene;
 		}
 		ImGui::EndChild();
 
