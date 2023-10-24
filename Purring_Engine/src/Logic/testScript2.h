@@ -1,6 +1,7 @@
 #pragma once
 #include "Script.h"
-#include "Events/EventHandler.h"
+#include "Math/MathCustom.h"
+
 namespace PE
 {
 	struct TestScript2Data

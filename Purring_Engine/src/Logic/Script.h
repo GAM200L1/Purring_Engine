@@ -1,9 +1,6 @@
 #pragma once
-#include "ECS/EntityFactory.h"
-#include "ECS/Entity.h"
-#include "ECS/Components.h"
-#include "ECS/Prefabs.h"
-#include "ECS/SceneView.h"
+typedef unsigned long long EntityID;
+
 namespace PE 
 {
 

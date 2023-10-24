@@ -1,6 +1,11 @@
 #include "prpch.h"
 #include "testScript2.h"
 #include "Input/InputSystem.h"
+#include "ECS/EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
+#include "ECS/Prefabs.h"
+#include "ECS/SceneView.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
