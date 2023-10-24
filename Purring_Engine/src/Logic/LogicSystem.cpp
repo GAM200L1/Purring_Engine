@@ -7,7 +7,7 @@
 #include "ECS/SceneView.h"
 #include "testScript.h"
 #include "testScript2.h"
-#include "../../Application/src/Scripts/EnemyTestScript.h"
+#include "EnemyTestScript.h"
 #include "PlayerControllerScript.h"
 #include "Editor/Editor.h"
 

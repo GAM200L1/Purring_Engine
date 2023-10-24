@@ -28,6 +28,7 @@ namespace PE
 
 	void GUISystem::UpdateSystem(float deltaTime)
 	{
+		deltaTime;
 		if (Editor::GetInstance().IsRunTime())
 			for (EntityID objectID : SceneView<GUI>())
 			{

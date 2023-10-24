@@ -414,7 +414,7 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
+					EntityFactory::GetInstance().CreateEntity();
 				}
 				if (ImGui::Selectable("Create Default Object"))
 				{
