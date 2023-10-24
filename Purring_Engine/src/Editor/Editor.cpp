@@ -897,6 +897,15 @@ namespace PE {
 								ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
 								EntityManager::GetInstance().Get<RigidBody>(entityID).SetMass(mass);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								if (EntityManager::GetInstance().Get<RigidBody>(entityID).GetType() == EnumRigidBodyType::DYNAMIC)
+								{
+									//linear drag variable
+									float linearDrag = EntityManager::GetInstance().Get<RigidBody>(entityID).GetLinearDrag();
+									ImGui::Text("Linear Drag: "); ImGui::SameLine(); ImGui::InputFloat("##Linear Drag", &linearDrag, 1.0f, 100.f, "%.3f");
+									EntityManager::GetInstance().Get<RigidBody>(entityID).SetLinearDrag(linearDrag);
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								}
 							}
 						}
 
@@ -1300,17 +1309,17 @@ namespace PE {
 						if (ImGui::Selectable("Add Collision"))
 						{
 							//not allowed to add collision without a rigidbody
-							if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
-							{
+							//if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
+							//{
 								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
 								else
 									AddErrorLog("ALREADY HAS A COLLIDER");
-							}
-							else
+							//}
+							/*else
 							{
 								AddErrorLog("ADD RIGIDBODY FIRST");
-							}
+							}*/
 						}
 						if (ImGui::Selectable("Add Transform"))
 						{
@@ -1550,57 +1559,36 @@ namespace PE {
 
 			}
 
-			nlohmann::json serializedEntity;  // Declaring at higher scope-hans
-
 			//docking port menu bar
 			if (ImGui::BeginMainMenuBar())
 			{
-				//mennu 1
+				//menu 1
 				if (ImGui::BeginMenu("Scenes"))
 				{
 					if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						if (m_currentSelectedObject)
-						{
-							serializationManager.SaveToFile("../Assets/Prefabs/Saved_Data_Testing.json", static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]));
-						}
-
+						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+						// This will save all entities to a file
+						serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/Saved_All_Entities.json");
+						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 					}
 					if (ImGui::MenuItem("Load"))
 					{
-						//to open file explorer
-						OPENFILENAME ofn;
-						wchar_t szFile[260];
-						ZeroMemory(&ofn, static_cast<size_t>(sizeof(ofn)));
-						ofn.lStructSize = sizeof(ofn);
-						ofn.hwndOwner = NULL;
-						ofn.lpstrFile = szFile;
-						ofn.lpstrFile[0] = '\0';
-						ofn.nMaxFile = sizeof(szFile);
-						ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
-						ofn.nFilterIndex = 1;
-						ofn.lpstrFileTitle = NULL;
-						ofn.nMaxFileTitle = 0;
-						ofn.lpstrInitialDir = NULL;
-						ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+						engine_logger.AddLog(false, "Opening file explorer to load entities...", __FUNCTION__);
 
-						if (GetOpenFileNameW(&ofn) == TRUE)
+						// Invoke the file explorer and allow user to choose a JSON file for loading entities.
+						std::string filePath = serializationManager.OpenFileExplorer();
+						if (!filePath.empty())
 						{
-							std::wstring wfp = ofn.lpstrFile;
+							engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
 
-							// Determine the required buffer size for the narrow string
-							int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, nullptr, 0, nullptr, nullptr);
-
-							if (requiredSize > 0)
-							{
-								std::string fp(requiredSize, '\0');
-
-								// Perform the actual conversion
-								if (WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
-								{
-									serializationManager.LoadFromFile(fp);
-								}
-							}
+							// This will load all entities from the file
+							serializationManager.LoadAllEntitiesFromFile(filePath);
+							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						}
+						else
+						{
+							engine_logger.AddLog(false, "File path is empty. Aborted loading entities.", __FUNCTION__);
 						}
 					}
 					ImGui::Separator();

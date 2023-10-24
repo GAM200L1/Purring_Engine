@@ -114,23 +114,32 @@ namespace PE
 							collider2.objectsCollided.emplace(ColliderID_1);
 							if (!collider1.isTrigger && !collider2.isTrigger)
 							{
-								if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
+								if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
 								{
-									m_manifolds.emplace_back
-									(Manifold{ contactPt,
-											   EntityManager::GetInstance().Get<Transform>(ColliderID_2),
-											   EntityManager::GetInstance().Get<Transform>(ColliderID_1),
-											   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2),
-											   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1) });
+									if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
+									{
+										m_manifolds.emplace_back
+										(Manifold{ contactPt,
+												   EntityManager::GetInstance().Get<Transform>(ColliderID_2),
+												   EntityManager::GetInstance().Get<Transform>(ColliderID_1),
+												   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2),
+												   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1) });
+									}
+									else
+									{
+										m_manifolds.emplace_back
+										(Manifold{ contactPt,
+												   EntityManager::GetInstance().Get<Transform>(ColliderID_1),
+												   EntityManager::GetInstance().Get<Transform>(ColliderID_2),
+												   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1),
+												   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2) });
+									}
 								}
 								else
 								{
-									m_manifolds.emplace_back
-									(Manifold{ contactPt,
-											   EntityManager::GetInstance().Get<Transform>(ColliderID_1),
-											   EntityManager::GetInstance().Get<Transform>(ColliderID_2),
-											   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1),
-											   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2) });
+									std::stringstream ss;
+									ss << "Error: Missing RigidBody at Collision between Entities " << ColliderID_1 << " & " << ColliderID_2 << '\n';
+									engine_logger.AddLog(false, ss.str(), "");
 								}
 							}
 							else
