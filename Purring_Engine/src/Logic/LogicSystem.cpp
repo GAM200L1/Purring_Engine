@@ -7,6 +7,7 @@
 #include "ECS/SceneView.h"
 #include "testScript.h"
 #include "testScript2.h"
+#include "../../Application/src/Scripts/EnemyTestScript.h"
 #include "PlayerControllerScript.h"
 #include "Editor/Editor.h"
 
@@ -25,6 +26,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(testScript);
 	REGISTER_SCRIPT(testScript2);
 	REGISTER_SCRIPT(PlayerControllerScript);
+	REGISTER_SCRIPT(EnemyTestScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

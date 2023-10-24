@@ -30,6 +30,7 @@
 #include "Events/MouseEvent.h"
 namespace PE 
 {
+
     class InputSystem : public System
     {
         // ----- Constructors ----- // 

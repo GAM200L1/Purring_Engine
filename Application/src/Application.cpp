@@ -1,5 +1,5 @@
 #include "Purring_Engine.h"
-#include "Scripts/EnemyTestScript.h"
+//#include "Scripts/EnemyTestScript.h"
 //#include "Scripts/testScript.h"
 //#include "Scripts/testScript2.h"
 //#include "Scripts/PlayerControllerScript.h"
@@ -13,7 +13,7 @@ public:
 		//REGISTER_SCRIPT(testScript);
 		//REGISTER_SCRIPT(testScript2);
 		//REGISTER_SCRIPT(PlayerControllerScript);
-		REGISTER_SCRIPT(EnemyTestScript);
+		//REGISTER_SCRIPT(EnemyTestScript);
 	}
 
 	~Application()
