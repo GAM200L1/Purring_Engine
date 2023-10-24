@@ -84,16 +84,12 @@ using namespace rttr;
 RTTR_REGISTRATION
 {
     using namespace rttr;
-#ifndef _DEBUG
     rttr::registration::class_<PE::Transform>("Transform")
     .property("width", &PE::Transform::width)
     .property("height", &PE::Transform::height)
     .property("orientation", &PE::Transform::orientation)
     .property("position", &PE::Transform::position)
     .method("GetMtx3x3", &PE::Transform::GetTransformMatrix3x3);
-#endif // !DEBUG
-
-    
 }
 
 PE::CoreApplication::CoreApplication()
@@ -286,7 +282,6 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Graphics::Camera);
     REGISTERCOMPONENT(ScriptComponent);
 
-#ifndef _DEBUG
     rttr::type cls = rttr::type::get<PE::Transform>();
     for (auto& prop : cls.get_properties())
     {
@@ -302,7 +297,6 @@ void PE::CoreApplication::RegisterComponents()
 
     variant vp = prop.get_value(tmp);
     std::cout << vp.to_float() << std::endl;
-#endif // !DEBUG
 
     
 }

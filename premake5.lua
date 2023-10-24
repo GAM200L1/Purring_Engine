@@ -81,7 +81,7 @@ group "Library"
         }
 
         removefiles
-        { 
+        {
             "vendor/imgui/misc/freetype/*.*"
         }
 
@@ -161,8 +161,7 @@ project "Purring_Engine"
         "glew32s",
         "ImGui",
         "opengl32",  -- not sure if needed
-        "fmod_vc",
-        "rttr_core"
+        "fmod_vc"
     }
 
     linkoptions { "/ignore:4006" }
@@ -208,18 +207,21 @@ project "Application"
         "%{IncludeDir.glm}",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLEW}",
-        "%{IncludeDir.FMOD}"
+        "%{IncludeDir.FMOD}",
+        "%{IncludeDir.RTTR}"
     }
 
     libdirs
     {
-        "vendor/freetype/libs"
+        "vendor/freetype/libs",
+        "vendor/RTTR/lib"
     }
 
     links
     {
         "Purring_Engine",
-        "freetype"
+        "freetype",
+        "rttr_core"
     }
     
     linkoptions { "/ignore:4006", "/ignore:4098", "/ignore:4099"}
