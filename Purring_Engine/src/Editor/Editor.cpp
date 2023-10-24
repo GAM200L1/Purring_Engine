@@ -1278,65 +1278,47 @@ namespace PE {
 			static bool isDragging = false;
 			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
 				
-				// Header directory
 				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)1), ImVec2(100, 20));
 				for (auto iter = m_parentPath.begin(); iter != m_parentPath.end(); ++iter)
 				{
 					//ImGui::SameLine();
 					ImGui::BeginChild((*iter).string().c_str(), ImVec2(300, 20));
 					ImGui::Text((" > " + (*iter).string()).c_str());
-					if (ImGui::IsItemHovered())
-					{
-						if (ImGui::IsMouseClicked(0)) {
-							std::string newPath{};
-							for (auto iter2 = m_parentPath.begin(); iter2 != iter; ++iter2)
-							{
-								newPath += (*iter2).string() + "/";
-							}
-							newPath += (*iter).string();
-							m_parentPath = std::filesystem::path{ newPath };
-							GetFileNamesInParentPath(m_parentPath, m_files);
-							ImGui::EndChild();
-							break;
-						}
-					}
 					ImGui::EndChild();
 				}
 				ImGui::EndChild();
 				ImGui::Separator();
 				
-				// directory contents
-				if (ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar))
-				{
-					for (int n = 0; n < m_files.size(); n++) // loop through resource list here
-					{	//resource list needs a list of icons for the texture for the image if possible
-						//else just give a standard object icon here
-						//if (n % 3) // to keep it in rows where 3 is max 3 colums
-						//	ImGui::SameLine();
-						ImGui::BeginChild(m_files[n].c_str(), ImVec2(300, 20)); //child to hold image n text
-						//ImGui::Image(itemTextures[i], ImVec2(20, 20)); //image of resource
-						ImGui::Text(m_files[n].c_str()); // text
-						// Check if the mouse is over the content item
-						if (ImGui::IsItemHovered())
+				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
+				{//resource list needs a list of icons for the texture for the image if possible
+					//else just give a standard object icon here
+					//if (n % 3) // to keep it in rows where 3 is max 3 colums
+					//	ImGui::SameLine();
+					ImGui::BeginChild(m_files[n].c_str(), ImVec2(300, 20)); //child to hold image n text
+					//ImGui::Image(itemTextures[i], ImVec2(20, 20)); //image of resource
+					ImGui::Text(m_files[n].c_str()); // text
+					// Check if the mouse is over the content item
+					if (ImGui::IsItemHovered()) 
+					{
+						if (m_files[n].find(".") != std::string::npos)
 						{
-							if (m_files[n].find(".") != std::string::npos)
-							{
-								// Handle item clicks and drags
-								if (ImGui::IsMouseClicked(0)) {
-									draggedItemIndex = n; // Start dragging
-									isDragging = true;
-								}
-							}
-							else
-							{
-								if (ImGui::IsMouseClicked(0)) {
-									m_parentPath = std::filesystem::path{ m_parentPath / m_files[n] };
-									GetFileNamesInParentPath(m_parentPath, m_files);
-								}
+							// Handle item clicks and drags
+							if (ImGui::IsMouseClicked(0)) {
+								draggedItemIndex = n; // Start dragging
+								isDragging = true;
 							}
 						}
-						ImGui::EndChild();
+						else
+						{
+							if (ImGui::IsMouseClicked(0)) {
+								m_parentPath = std::filesystem::path{ m_parentPath / m_files[n] };
+								GetFileNamesInParentPath(m_parentPath, m_files);
+							}
+						}
+						
 					}
+					ImGui::EndChild();
 				}
 				ImGui::EndChild();
 			}
@@ -1364,8 +1346,12 @@ namespace PE {
 					}
 				}
 			}
+
+
 			ImGui::End(); //imgui close
 		}
+
+
 	}
 
 	void Editor::ShowPerformanceWindow(bool* Active)
