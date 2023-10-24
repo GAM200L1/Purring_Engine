@@ -84,17 +84,37 @@ using namespace rttr;
 RTTR_REGISTRATION
 {
     using namespace rttr;
+    // test whether we need to register math lib stuff as well...
+    // extra notes, will we need to include the constructor as well?
+    // functionality seems fine without it... maybe needed by scripting side though
+    //rttr::registration::class_<PE::vec2>("vec2")
+    //    .property("x", &PE::vec2::x);
     rttr::registration::class_<PE::Transform>("Transform")
-    .property("width", &PE::Transform::width)
-    .property("height", &PE::Transform::height)
-    .property("orientation", &PE::Transform::orientation)
-    .property("position", &PE::Transform::position)
-    .method("GetMtx3x3", &PE::Transform::GetTransformMatrix3x3);
-    rttr::registration::class_<PE::RigidBody>("RigidBody");
-    rttr::registration::class_<PE::Collider>("Collider");
+        .property("width", &PE::Transform::width)
+        .property("height", &PE::Transform::height)
+        .property("orientation", &PE::Transform::orientation)
+        .property("position", &PE::Transform::position)
+        .method("GetMtx3x3", &PE::Transform::GetTransformMatrix3x3);
+
+    rttr::registration::class_<PE::RigidBody>("RigidBody")
+        .property("prevPosition", &PE::RigidBody::prevPosition)
+        .property("velocity", &PE::RigidBody::velocity)
+        .property("rotationVelocity", &PE::RigidBody::rotationVelocity)
+        .property("force", &PE::RigidBody::force);
+    
+    // objects collided shouldnt be needed right? @yeni
+    rttr::registration::class_<PE::Collider>("Collider")
+        .property("colliderVariant", &PE::Collider::colliderVariant)
+        .property("isTrigger", &PE::Collider::isTrigger);
+
+    // what do i need to register here?? @krystal
     rttr::registration::class_<PE::Graphics::Renderer>("Renderer");
     rttr::registration::class_<PE::Graphics::Camera>("Camera");
-    rttr::registration::class_<PE::ScriptComponent>("ScriptComponent"); 
+
+
+    // is that all i need to register? @jarran
+    rttr::registration::class_<PE::ScriptComponent>("ScriptComponent")
+        .property("scriptKeys", &PE::ScriptComponent::m_scriptKeys);
 }
 
 PE::CoreApplication::CoreApplication()
@@ -286,7 +306,7 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Graphics::Renderer);
     REGISTERCOMPONENT(Graphics::Camera);
     REGISTERCOMPONENT(ScriptComponent);
-
+    std::cout << "TRANSFORM COMPONENT PROPERTIES: \n";
     rttr::type cls = rttr::type::get<PE::Transform>();
     for (auto& prop : cls.get_properties())
     {
@@ -296,14 +316,39 @@ void PE::CoreApplication::RegisterComponents()
     {
         std::cout << "name: " << meth.get_name() << std::endl;
     }
-    Transform tmp;
-    property prop = type::get(tmp).get_property("orientation");
-    prop.set_value(tmp, 69.f);
 
-    variant vp = prop.get_value(tmp);
+    std::cout << "\nTRANSFORM COMPONENT Orientation value: ";
+    Transform tmp;
+    property p = type::get(tmp).get_property("orientation");
+    p.set_value(tmp, 69.f);
+
+    variant vp = p.get_value(tmp);
     std::cout << vp.to_float() << std::endl;
 
-    
+    std::cout << "\nRIGIDBODY COMPONENT PROPERTIES: \n";
+
+    cls = rttr::type::get<PE::RigidBody>();
+    for (auto& prop : cls.get_properties())
+    {
+        std::cout << "name: " << prop.get_name() << std::endl;
+    }
+    for (auto& meth : cls.get_methods())
+    {
+        std::cout << "name: " << meth.get_name() << std::endl;
+    }
+
+    std::cout << "\nCOLLIDER COMPONENT PROPERTIES: \n";
+    cls = rttr::type::get<PE::Collider>();
+    for (auto& prop : cls.get_properties())
+    {
+        std::cout << "name: " << prop.get_name() << std::endl;
+    }
+    for (auto& meth : cls.get_methods())
+    {
+        std::cout << "name: " << meth.get_name() << std::endl;
+    }
+
+    std::cout << std::endl;
 }
 
 
