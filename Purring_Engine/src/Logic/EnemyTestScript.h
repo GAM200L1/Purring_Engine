@@ -2,12 +2,12 @@
 #include "Script.h"
 
 namespace PE {
-	enum EnemyState { IDLE, ALERT, PATROL, TARGET };
+	enum class EnemyState { IDLE, ALERT, PATROL, TARGET };
 
 
 	struct EnemyTestScriptData
 	{
-		EnemyState EnemyCurrentState{ IDLE };
+		EnemyState EnemyCurrentState{ EnemyState::IDLE };
 		EntityID playerID{ 1 };
 		float speed{ 5000 };
 		float alertTimer{ 0 };

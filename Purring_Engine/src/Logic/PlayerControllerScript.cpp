@@ -1,6 +1,11 @@
 #include "prpch.h"
 #include "PlayerControllerScript.h"
 #include "Input/InputSystem.h"
+#include "ECS/EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
+#include "ECS/Prefabs.h"
+#include "ECS/SceneView.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -74,16 +79,16 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Get<RigidBody>(id).velocity.x != 0 || EntityManager::GetInstance().Get<RigidBody>(id).velocity.y != 0)
 			{
-				m_ScriptData[id].currentPlayerState = MOVING;
+				m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			}
 			else
 			{
-				m_ScriptData[id].currentPlayerState = IDLE;
+				m_ScriptData[id].currentPlayerState = PlayerState::IDLE;
 			}
 		}
 		else
 		{
-			m_ScriptData[id].currentPlayerState = DEAD;
+			m_ScriptData[id].currentPlayerState = PlayerState::DEAD;
 		}
 	}
 

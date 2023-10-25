@@ -1,13 +1,12 @@
 #pragma once
 #include "Script.h"
-#include "Events/EventHandler.h"
 namespace PE
 {
-	enum PlayerState { IDLE, MOVING, DEAD };
+	enum class  PlayerState{ IDLE = 0, MOVING, DEAD };
 
 	struct PlayerControllerScriptData
 	{
-		PlayerState currentPlayerState{ IDLE };
+		PlayerState currentPlayerState{ PlayerState::IDLE };
 		int HP{ 100 };
 		float speed{ 5000 };
 	};
