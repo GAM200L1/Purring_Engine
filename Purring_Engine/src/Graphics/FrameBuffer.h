@@ -17,7 +17,6 @@
 *************************************************************************************/
 
 #include "Graphics/GLHeaders.h"
-#include <vector>
 
 #include "VertexData.h"
 

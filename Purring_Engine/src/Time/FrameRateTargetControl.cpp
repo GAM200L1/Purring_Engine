@@ -31,8 +31,6 @@
 #include "prpch.h"
 #include "Time/TimeManager.h"
 #include "FrameRateTargetControl.h"
-#include <thread>
-#include <chrono>
 
 namespace PE
 {

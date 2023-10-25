@@ -17,6 +17,7 @@
 #include "prpch.h"
 #include "CameraManager.h"
 #include "ECS/SceneView.h"
+#include "Editor/Editor.h"
 
 namespace PE 
 {
