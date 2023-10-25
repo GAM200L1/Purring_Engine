@@ -29,6 +29,7 @@
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
 #include <random>
+#include <rttr/type.h>
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
@@ -794,8 +795,59 @@ namespace PE {
 						++componentCount;//increment unique id
 						ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
 
-						//search through each component, create a collapsible header if the component exist
 
+						//search through each component, create a collapsible header if the component exist
+						rttr::type currType = rttr::type::get_by_name(name.to_string());
+						
+						if (ImGui::CollapsingHeader("Dummy", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+						{
+							//setting reset button to open a popup with selectable text
+							ImGui::SameLine();
+							std::string id = "options##", o = "o##";
+							id += std::to_string(componentCount);
+							o += std::to_string(componentCount);
+							if (ImGui::BeginPopup(id.c_str()))
+							{
+								if (ImGui::Selectable("Reset")) {}
+								ImGui::EndPopup();
+							}
+
+							if (ImGui::Button(o.c_str()))
+								ImGui::OpenPopup(id.c_str());
+							for (auto& prop : currType.get_properties())
+							{
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								std::string nm(prop.get_name());
+								nm += ": ";
+								ImGui::Text(nm.c_str());
+								rttr::variant vp;
+								// change to lookup table?
+								if (name == EntityManager::GetInstance().GetComponentID<Transform>())
+								{
+									vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
+									if (prop.get_name() == "Position")
+									{
+										vec2 tmp = vp.get_value<PE::vec2>();
+										ImGui::Text("x: "); ImGui::SameLine(); ImGui::DragFloat("##x", &tmp.x, 1.0f);
+										ImGui::Text("y: "); ImGui::SameLine(); ImGui::DragFloat("##y", &tmp.y, 1.0f);
+										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
+
+									}
+									else
+									{
+										float tmp = vp.get_value<float>();
+										ImGui::SameLine(); ImGui::InputFloat("##Width", &tmp, 1.0f, 100.f, "%.3f");
+										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
+									}
+									
+								}
+							}
+
+						}
+						
+
+
+						/*
 						//transform component
 						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 						{
@@ -815,6 +867,7 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
+								//rttr::type tp = rttr::type::get();
 								//each variable in the component
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Position: ");
@@ -1174,7 +1227,7 @@ namespace PE {
 										EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetMagnification(zoom);
 								}
 						}
-
+						*/
 					}
 
 
