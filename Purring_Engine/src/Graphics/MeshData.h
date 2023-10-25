@@ -19,7 +19,6 @@
 
 #include "Graphics/GLHeaders.h"
 #include <glm/glm.hpp>
-#include <vector>
 
 #include "VertexData.h"
 
