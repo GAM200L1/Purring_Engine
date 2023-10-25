@@ -836,7 +836,8 @@ namespace PE {
 									else
 									{
 										float tmp = vp.get_value<float>();
-										ImGui::SameLine(); ImGui::InputFloat("##Width", &tmp, 1.0f, 100.f, "%.3f");
+										std::string str = "##" + prop.get_name().to_string();
+										ImGui::SameLine(); ImGui::InputFloat(str.c_str(), &tmp, 1.0f, 100.f, "%.3f");
 										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
 									
