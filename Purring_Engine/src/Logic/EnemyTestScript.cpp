@@ -115,16 +115,16 @@ namespace PE {
 
 	void EnemyTestScript::ChangeEnemyState(EntityID id, EnemyState nextState)
 	{
-		//switch (nextState) {
-		//case IDLE:	std::cout << "IDLE state" << std::endl;
-		//	break;
-		//case ALERT:std::cout << "ALERT state" << std::endl;
-		//	break;
-		//case PATROL:std::cout << "PATROL state" << std::endl;
-		//	break;
-		//case TARGET:std::cout << "TARGET state" << std::endl;
-		//	break;
-		//}
+		switch (nextState) {
+		case EnemyState::IDLE:	std::cout << "IDLE state" << std::endl;
+			break;
+		case EnemyState::ALERT:std::cout << "ALERT state" << std::endl;
+			break;
+		case EnemyState::PATROL:std::cout << "PATROL state" << std::endl;
+			break;
+		case EnemyState::TARGET:std::cout << "TARGET state" << std::endl;
+			break;
+		}
 
 		m_ScriptData[id].EnemyCurrentState = nextState;
 

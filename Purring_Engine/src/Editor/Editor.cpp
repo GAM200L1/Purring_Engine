@@ -405,66 +405,8 @@ namespace PE {
 		{
 			//temporary here for counting created objects and add to name
 			static int count = 0;
-			if (ImGui::Button("Create Object")) // add a string into vector
-			{
-				ImGui::OpenPopup("Object");
-			}
-
-			if (ImGui::BeginPopup("Object"))
-			{
-				if (ImGui::Selectable("Create Empty Object"))
-				{
-					EntityFactory::GetInstance().CreateEntity();
-				}
-				if (ImGui::Selectable("Create Default Object"))
-				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
-				}
-				if (ImGui::Selectable("Create UI Object"))
-				{
-					//serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
-				}
-				ImGui::EndPopup();
-			}
-
-			ImGui::SameLine(); // set the buttons on the same line
-			if (ImGui::Button("Delete Object")) // delete a string from the vector
-			{
-				if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
-				{
-					AddInfoLog("Object Deleted");
-
-
-					EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
-
-					//if not first index
-					m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
-
-					//if object selected
-					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
-
-					if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
-
-					count--;
-
-				}
-				else
-				{
-					AddWarningLog("You are not allowed to delete the background or player as of now");
-				}
-			}
-
-			if (ImGui::Button("Clone Object"))
-			{
-				if (m_currentSelectedObject)
-					EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
-				else
-					AddWarningLog("You are not allowed to clone the background");
-			}
-
-			ImGui::Separator();
-
 			//loop to show all the items ins the vector
+			bool isHoveringObject{false};
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
 				{
@@ -484,6 +426,14 @@ namespace PE {
 					}
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
+					if (ImGui::IsItemClicked(1))
+					{
+						m_currentSelectedObject = n;
+						ImGui::OpenPopup("popup");
+					}
+					if (ImGui::IsItemHovered()) {
+						isHoveringObject = true;
+					}
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
@@ -491,7 +441,65 @@ namespace PE {
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 				}
 			}
+			if (ImGui::BeginPopup("popup"))
+			{
+				if (ImGui::Selectable("Delete Object"))
+				{
+					if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
+					{
+						AddInfoLog("Object Deleted");
+
+
+						EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+
+						//if not first index
+						m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
+
+						//if object selected
+						m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+
+						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
+
+						count--;
+
+					}
+						else
+						{
+							AddWarningLog("You are not allowed to delete the background or player as of now");
+						}
+				}
+				if (ImGui::Selectable("Clone Object"))
+				{
+						if (m_currentSelectedObject)
+							EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+						else
+							AddWarningLog("You are not allowed to clone the background");
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::EndChild();
+			if (ImGui::IsItemClicked(1) && !isHoveringObject)
+			{
+				ImGui::OpenPopup("Object");
+			}
+			if (ImGui::BeginPopup("Object"))
+			{
+				if (ImGui::Selectable("Create Empty Object"))
+				{
+					EntityFactory::GetInstance().CreateEntity();
+				}
+				if (ImGui::Selectable("Create Default Object"))
+				{
+					serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+				}
+				if (ImGui::Selectable("Create UI Object"))
+				{
+					//serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::End();
 		}
 	}
