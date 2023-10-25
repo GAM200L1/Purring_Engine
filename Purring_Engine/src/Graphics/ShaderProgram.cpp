@@ -22,7 +22,6 @@
 *************************************************************************************/
 
 #include "prpch.h"
-#include <iostream>
 #include "ShaderProgram.h" 
 #include "Logging/Logger.h" 
 

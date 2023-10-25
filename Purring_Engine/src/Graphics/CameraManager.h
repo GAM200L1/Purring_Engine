@@ -15,7 +15,6 @@
 *************************************************************************************/
 
 #include <glm/glm.hpp>
-#include <optional>
 
 #include "Camera.h"
 #include "EditorCamera.h"
@@ -23,6 +22,7 @@
 #include "Events/EventHandler.h"
 #include "ECS/Entity.h"
 #include "System.h"
+#include <optional>
 
 namespace PE
 {
