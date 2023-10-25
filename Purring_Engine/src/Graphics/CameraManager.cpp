@@ -272,7 +272,7 @@ namespace PE
             }
 
             // Zoom the editor camera in and out on mouse scroll
-            if (r_event.GetType() == MouseEvents::MouseScrolled)
+            if (Editor::GetInstance().IsMouseInScene() && r_event.GetType() == MouseEvents::MouseScrolled)
             {
                 MouseScrolledEvent event;
                 event = dynamic_cast<const MouseScrolledEvent&>(r_event);
