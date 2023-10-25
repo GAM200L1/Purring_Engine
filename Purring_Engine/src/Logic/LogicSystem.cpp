@@ -15,16 +15,16 @@ std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
 PE::LogicSystem::LogicSystem()
 {
 }
-
+	
 PE::LogicSystem::~LogicSystem()
 {
 }
 
 void PE::LogicSystem::InitializeSystem()
 {
-	m_scriptContainer["test"] = new testScript();
-	m_scriptContainer["test2"] = new testScript2();
-	m_scriptContainer["PlayerControllerScript"] = new PlayerControllerScript();
+	REGISTER_SCRIPT(testScript);
+	REGISTER_SCRIPT(testScript2);
+	REGISTER_SCRIPT(PlayerControllerScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

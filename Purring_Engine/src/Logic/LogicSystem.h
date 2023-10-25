@@ -2,6 +2,8 @@
 #include "System.h"
 #include "Script.h"
 #include "ECS/EntityFactory.h"
+#define REGISTER_SCRIPT(name) 	PE::LogicSystem::m_scriptContainer[#name] = new name()
+
 namespace PE {
 	class LogicSystem : public System
 	{

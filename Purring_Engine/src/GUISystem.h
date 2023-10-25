@@ -2,7 +2,10 @@
 #include "Events/MouseEvent.h"
 #include "Events/Event.h"
 #include "Math/Transform.h"
-namespace PE {
+
+#define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this))
+namespace PE 
+{
 	class GUISystem : public System
 	{
 	public:
@@ -38,6 +41,15 @@ namespace PE {
 		bool IsInBound(int x, int y, Transform t);
 
 		void OnMouseHover(const Event<MouseEvents>& r_ME);
+
+		void ButtonFunctionOne();
+
+		void ButtonFunctionTwo();
+
+		static void AddFunction(std::string_view, const std::function<void(void)>& func);
+
+	public:
+			static std::map<std::string_view, std::function<void(void)>> m_uiFunc;
 	};
 
 	enum class UIType { Button = 0, TextBox };
@@ -53,8 +65,8 @@ namespace PE {
 		virtual void OnClick() {}
 		virtual ~GUI() {};
 
-		std::function<void()> m_onClicked;
-		std::function<void()> m_onHovered;
+		std::string m_onClicked{""};
+		std::string m_onHovered{""};
 		bool m_Hovered;
 		UIType m_UIType{0};
 	};
@@ -68,13 +80,13 @@ namespace PE {
 		//use this for now idk how are we gonna bind functions later
 		inline virtual void OnHover() override 
 		{
-			std::cout << "Im Hovered" << std::endl;
-			//m_onHovered();
+			if (m_onHovered != "")
+				GUISystem::m_uiFunc[m_onHovered]();
 		}
 		inline virtual void OnClick() override
 		{
-			std::cout << "Im Clicked" << std::endl;
-			//m_onClicked();
+			if (m_onClicked != "")
+				GUISystem::m_uiFunc[m_onClicked]();
 		}
 		virtual ~Button() {};
 
