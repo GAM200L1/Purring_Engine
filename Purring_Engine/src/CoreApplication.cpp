@@ -105,15 +105,15 @@ RTTR_REGISTRATION
         .method("GetMtx3x3", &PE::Transform::GetTransformMatrix3x3);
 
     rttr::registration::class_<PE::RigidBody>(PE::EntityManager::GetInstance().GetComponentID<PE::RigidBody>().to_string().c_str())
-        .property("prevPosition", &PE::RigidBody::prevPosition)
-        .property("velocity", &PE::RigidBody::velocity)
-        .property("rotationVelocity", &PE::RigidBody::rotationVelocity)
-        .property("force", &PE::RigidBody::force);
+        .property("Previous Position", &PE::RigidBody::prevPosition)
+        .property("Velocity", &PE::RigidBody::velocity)
+        .property("Rotation Velocity", &PE::RigidBody::rotationVelocity)
+        .property("Force", &PE::RigidBody::force);
     
     // objects collided shouldnt be needed right? @yeni
     rttr::registration::class_<PE::Collider>(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string().c_str())
-        .property("colliderVariant", &PE::Collider::colliderVariant)
-        .property("isTrigger", &PE::Collider::isTrigger);
+        .property("Collider Type", &PE::Collider::colliderVariant)
+        .property("Is Trigger", &PE::Collider::isTrigger);
 
     // what do i need to register here?? @krystal
     rttr::registration::class_<PE::Graphics::Renderer>(PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>().to_string().c_str())
@@ -142,8 +142,8 @@ RTTR_REGISTRATION
         .method("AdjustMagnification", &PE::Graphics::Camera::AdjustMagnification);
 
     // is that all i need to register? @jarran
-    rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str())
-        .property("scriptKeys", &PE::ScriptComponent::m_scriptKeys);
+    rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str());
+
 }
 
 PE::CoreApplication::CoreApplication()
@@ -374,6 +374,18 @@ void PE::CoreApplication::RegisterComponents()
     //}
 
     //std::cout << std::endl;
+
+    rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
+    for (auto& prop : cls.get_properties())
+    {
+        std::cout << "name: " << prop.get_name() << std::endl;
+        std::cout << "type: " << prop.get_type().get_name() << std::endl;
+
+    }
+    for (auto& meth : cls.get_methods())
+    {
+        std::cout << "name: " << meth.get_name() << std::endl;
+    }
 }
 
 

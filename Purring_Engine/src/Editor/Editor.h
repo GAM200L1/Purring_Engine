@@ -276,8 +276,6 @@ namespace PE {
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
-
-
 	};
 }
 
