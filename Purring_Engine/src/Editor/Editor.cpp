@@ -794,7 +794,7 @@ namespace PE {
 					{
 						++componentCount;//increment unique id
 
-						if (name == EntityManager::GetInstance().GetComponentID<Transform>() || name == EntityManager::GetInstance().GetComponentID<RigidBody>())
+						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 						{
 							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
 
@@ -802,7 +802,7 @@ namespace PE {
 							//search through each component, create a collapsible header if the component exist
 							rttr::type currType = rttr::type::get_by_name(name.to_string());
 						
-							if (ImGui::CollapsingHeader((name == EntityManager::GetInstance().GetComponentID<Transform>())? "Transform" : "RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -829,10 +829,7 @@ namespace PE {
 									{
 										vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
 									}
-									else if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
-									{
-										vp = prop.get_value(EntityManager::GetInstance().Get<RigidBody>(entityID));
-									}
+
 
 									// handle types
 									if (vp.get_type().get_name() == "structPE::vec2")
@@ -842,8 +839,7 @@ namespace PE {
 										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
 										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-										else if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
-											prop.set_value(EntityManager::GetInstance().Get<RigidBody>(entityID), tmp);
+
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
@@ -852,13 +848,65 @@ namespace PE {
 										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputFloat(str.c_str(), &tmp, 1.0f, 100.f, "%.3f");
 										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-										else if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
-											prop.set_value(EntityManager::GetInstance().Get<RigidBody>(entityID), tmp);
+
 									}
 								}
 							}
 						}
-							
+						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
+						{
+							if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								//open a combo box to select type of rb
+								EnumRigidBodyType bt = EntityManager::GetInstance().Get<RigidBody>(entityID).GetType();
+								int index = static_cast<int>(bt);
+								//hard coded rigidbody types
+								const char* types[] = { "STATIC","DYNAMIC" };
+								ImGui::Text("Rigidbody Type: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+								//combo box of the different rigidbody types
+								if (ImGui::Combo("##Rigidbody Type", &index, types, IM_ARRAYSIZE(types)))
+								{
+									//setting the rigidbody type when selected
+									bt = static_cast<EnumRigidBodyType>(index);
+									EntityManager::GetInstance().Get<RigidBody>(entityID).SetType(bt);
+								}
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator(); // add line to make it neater
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								//mass variable
+								float mass = EntityManager::GetInstance().Get<RigidBody>(entityID).GetMass();
+								ImGui::Text("Mass: "); ImGui::SameLine(); ImGui::InputFloat("##Mass", &mass, 1.0f, 100.f, "%.3f");
+								EntityManager::GetInstance().Get<RigidBody>(entityID).SetMass(mass);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								if (EntityManager::GetInstance().Get<RigidBody>(entityID).GetType() == EnumRigidBodyType::DYNAMIC)
+								{
+									//linear drag variable
+									float linearDrag = EntityManager::GetInstance().Get<RigidBody>(entityID).GetLinearDrag();
+									ImGui::Text("Linear Drag: "); ImGui::SameLine(); ImGui::InputFloat("##Linear Drag", &linearDrag, 1.0f, 100.f, "%.3f");
+									EntityManager::GetInstance().Get<RigidBody>(entityID).SetLinearDrag(linearDrag);
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								}
+							}
+						}
 						//collider component
 						if (name == EntityManager::GetInstance().GetComponentID<Collider>())
 						{

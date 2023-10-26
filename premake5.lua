@@ -150,7 +150,7 @@ project "Purring_Engine"
         "%{IncludeDir.GLEW}",
         "%{IncludeDir.FMOD}",
         "vendor/freetype/include",
-        "%{IncludeDir.RTTR}"
+        "%{IncludeDir.RTTR}",
         "%{IncludeDir.mono}"
     }
 
@@ -160,7 +160,7 @@ project "Purring_Engine"
         "vendor/GLEW/lib/Release/x64",
         "vendor/FMOD/core/lib/x64",
         "vendor/freetype/libs",
-        "vendor/RTTR/lib"
+        "vendor/RTTR/lib",
         "vendor/mono/lib/%{cfg.buildcfg}"
     }
 
