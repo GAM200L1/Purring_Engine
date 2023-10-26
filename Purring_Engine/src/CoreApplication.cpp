@@ -74,6 +74,9 @@
 #include <rttr/property.h>
 #include <rttr/registration.h>
 
+// Scripting
+#include "Scripting/ScriptingEngine.h"
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -206,6 +209,9 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+
+    //ScriptEngine scriptEngine;
+    //scriptEngine.Init();
 }
 
 PE::CoreApplication::~CoreApplication()
