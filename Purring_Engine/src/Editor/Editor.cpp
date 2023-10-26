@@ -32,6 +32,7 @@
 #include <rttr/type.h>
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
+#define HEX(hexcode)    hexcode/255.f * 100.f
 SerializationManager serializationManager;  // Create an instance
 
 extern Logger engine_logger;
@@ -135,7 +136,8 @@ namespace PE {
 		//create imgui context 
 		ImGui::CreateContext();
 		//set to dark mode 
-		ImGui::StyleColorsDark();
+		//ImGui::StyleColorsDark();
+		SetImGUIStyle();
 
 		//setting the flags for imgui 
 		ImGuiIO& io = ImGui::GetIO();
@@ -406,49 +408,8 @@ namespace PE {
 		{
 			//temporary here for counting created objects and add to name
 			static int count = 0;
-			if (ImGui::Button("Create Object")) // add a string into vector
-			{
-				AddInfoLog("Object Created");
-				serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
-			}
-			ImGui::SameLine(); // set the buttons on the same line
-			if (ImGui::Button("Delete Object")) // delete a string from the vector
-			{
-				if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
-				{
-					AddInfoLog("Object Deleted");
-
-
-					EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
-
-					//if not first index
-					m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
-
-					//if object selected
-					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
-
-					if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
-
-					count--;
-
-				}
-				else
-				{
-					AddWarningLog("You are not allowed to delete the background or player as of now");
-				}
-			}
-
-			if (ImGui::Button("Clone Object"))
-			{
-				if (m_currentSelectedObject)
-					EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
-				else
-					AddWarningLog("You are not allowed to clone the background");
-			}
-
-			ImGui::Separator();
-
 			//loop to show all the items ins the vector
+			bool isHoveringObject{ false };
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
 				{
@@ -468,6 +429,14 @@ namespace PE {
 					}
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
+					if (ImGui::IsItemClicked(1))
+					{
+						m_currentSelectedObject = n;
+						ImGui::OpenPopup("popup");
+					}
+					if (ImGui::IsItemHovered()) {
+						isHoveringObject = true;
+					}
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
@@ -475,10 +444,69 @@ namespace PE {
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 				}
 			}
+			if (ImGui::BeginPopup("popup"))
+			{
+				if (ImGui::Selectable("Delete Object"))
+				{
+					if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
+					{
+						AddInfoLog("Object Deleted");
+
+
+						EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+
+						//if not first index
+						m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
+
+						//if object selected
+						m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+
+						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
+
+						count--;
+
+					}
+					else
+					{
+						AddWarningLog("You are not allowed to delete the background or player as of now");
+					}
+				}
+				if (ImGui::Selectable("Clone Object"))
+				{
+					if (m_currentSelectedObject)
+						EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+					else
+						AddWarningLog("You are not allowed to clone the background");
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::EndChild();
+			if (ImGui::IsItemClicked(1) && !isHoveringObject)
+			{
+				ImGui::OpenPopup("Object");
+			}
+			if (ImGui::BeginPopup("Object"))
+			{
+				if (ImGui::Selectable("Create Empty Object"))
+				{
+					EntityFactory::GetInstance().CreateEntity();
+				}
+				if (ImGui::Selectable("Create Default Object"))
+				{
+					serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+				}
+				if (ImGui::Selectable("Create UI Object"))
+				{
+					//serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+				}
+				ImGui::EndPopup();
+			}
+
 			ImGui::End();
 		}
 	}
+
 
 	//temporary for milestone 1
 	void Editor::ShowDemoWindow(bool* Active)
@@ -1609,6 +1637,113 @@ namespace PE {
 
 		//end the window
 		ImGui::End();
+	}
+
+	void Editor::SetImGUIStyle()
+	{
+		ImGuiStyle* style = &ImGui::GetStyle();
+		ImVec4* colors = style->Colors;
+
+		colors[ImGuiCol_Text] = ImVec4(HEX(200), HEX(200), HEX(200), 1.00f);
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+		colors[ImGuiCol_WindowBg] = ImVec4(.15f, .15f, .20f, 1.00f);;
+		colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
+		colors[ImGuiCol_Border] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_FrameBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+		colors[ImGuiCol_TitleBg] = ImVec4(.1f, .1f, .13f, 1.00f);;
+		colors[ImGuiCol_TitleBgActive] = ImVec4(.15f, .15f, .25f, 1.00f);
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_SliderGrab] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_Button] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.70f, 0.53f, 0.98f, 1.00f);
+		colors[ImGuiCol_Header] = ImVec4(0.3f, 0.3f, 0.3f, 0.31f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
+		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
+		colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
+		colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
+		colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+		colors[ImGuiCol_Tab] = ImLerp(colors[ImGuiCol_Header], colors[ImGuiCol_TitleBgActive], 0.80f);
+		colors[ImGuiCol_TabHovered] = colors[ImGuiCol_HeaderHovered];
+		colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
+		colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
+		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
+		colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+		colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+		colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+		colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+		colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+		colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
+		colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
+		colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
+		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+		colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+		colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+
+		//[ImGuiCol_Text] = The color for the text that will be used for the whole menu.
+		//	[ImGuiCol_TextDisabled] = Color for "not active / disabled text".
+		//	[ImGuiCol_WindowBg] = Background color.
+		//	[ImGuiCol_PopupBg] = The color used for the background in ImGui::Combo and ImGui::MenuBar.
+		//	[ImGuiCol_Border] = The color that is used to outline your menu.
+		//	[ImGuiCol_BorderShadow] = Color for the stroke shadow.
+		//	[ImGuiCol_FrameBg] = Color for ImGui::InputText and for background ImGui::Checkbox
+		//	[ImGuiCol_FrameBgHovered] = The color that is used in almost the same way as the one above, except that it changes color when guiding it to ImGui::Checkbox.
+		//	[ImGuiCol_FrameBgActive] = Active color.
+		//	[ImGuiCol_TitleBg] = The color for changing the main place at the very top of the menu(where the name of your "top-of-the-table" is shown.
+		//		ImGuiCol_TitleBgCollapsed = ImguiCol_TitleBgActive
+		//		= The color of the active title window, ie if you have a menu with several windows, this color will be used for the window in which you will be at the moment.
+		//		[ImGuiCol_MenuBarBg] = The color for the bar menu. (Not all sawes saw this, but still)
+		//		[ImGuiCol_ScrollbarBg] = The color for the background of the "strip", through which you can "flip" functions in the software vertically.
+		//		[ImGuiCol_ScrollbarGrab] = Color for the scoll bar, ie for the "strip", which is used to move the menu vertically.
+		//		[ImGuiCol_ScrollbarGrabHovered] = Color for the "minimized / unused" scroll bar.
+		//		[ImGuiCol_ScrollbarGrabActive] = The color for the "active" activity in the window where the scroll bar is located.
+		//		[ImGuiCol_ComboBg] = Color for the background for ImGui::Combo.
+		//		[ImGuiCol_CheckMark] = Color for your ImGui::Checkbox.
+		//		[ImGuiCol_SliderGrab] = Color for the slider ImGui::SliderInt and ImGui::SliderFloat.
+		//		[ImGuiCol_SliderGrabActive] = Color of the slider,
+		//		[ImGuiCol_Button] = the color for the button.
+		//		[ImGuiCol_ButtonHovered] = Color when hovering over the button.
+		//		[ImGuiCol_ButtonActive] = Button color used.
+		//		[ImGuiCol_Header] = Color for ImGui::CollapsingHeader.
+		//		[ImGuiCol_HeaderHovered] = Color, when hovering over ImGui::CollapsingHeader.
+		//		[ImGuiCol_HeaderActive] = Used color ImGui::CollapsingHeader.
+		//		[ImGuiCol_Column] = Color for the "separation strip" ImGui::Column and ImGui::NextColumn.
+		//		[ImGuiCol_ColumnHovered] = Color, when hovering on the "strip strip" ImGui::Column and ImGui::NextColumn.
+		//		[ImGuiCol_ColumnActive] = The color used for the "separation strip" ImGui::Column and ImGui::NextColumn.
+		//		[ImGuiCol_ResizeGrip] = The color for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+		//		[ImGuiCol_ResizeGripHovered] = Color, when hovering to the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+		//		[ImGuiCol_ResizeGripActive] = The color used for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+		//		[ImGuiCol_CloseButton] = The color for the button - closing menu.
+		//		[ImGuiCol_CloseButtonHovered] = Color, when you hover over the button - close menu.
+		//		[ImGuiCol_CloseButtonActive] = The color used for the button - closing menu.
+		//		[ImGuiCol_TextSelectedBg] = The color of the selected text, in ImGui::MenuBar.
+		//		[ImGuiCol_ModalWindowDarkening] = The color of the "Blackout Window" of your menu.
+		//		I rarely see these designations, but still decided to put them here.
+		//		[ImGuiCol_Tab] = The color for tabs in the menu.
+		//		[ImGuiCol_TabActive] = The active color of tabs, ie when you click on the tab you will have this color.
+		//		[ImGuiCol_TabHovered] = The color that will be displayed when hovering on the table.
+		//		[ImGuiCol_TabSelected] = The color that is used when you are in one of the tabs.
+		//		[ImGuiCol_TabText] = Text color that only applies to tabs.
+		//		[ImGuiCol_TabTextActive] = Active text color for tabs.
 	}
 
 	void Editor::AddLog(std::string_view text)
