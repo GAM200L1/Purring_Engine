@@ -26,9 +26,8 @@ namespace PE
 
 		m_ScriptData[id].m_stateMachine.Update(id,deltaTime);
 	}
-	void testScript2::Destroy(EntityID id)
+	void testScript2::Destroy(EntityID)
 	{
-		id;
 	}
 
 	void testScript2::OnAttach(EntityID id)

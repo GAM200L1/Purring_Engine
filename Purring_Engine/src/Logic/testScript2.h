@@ -24,18 +24,18 @@ namespace PE
 	class TestScript2IDLE : public State
 	{
 	public:
-		virtual void StateEnter(EntityID id) override { std::cout << "Enter Idle" << std::endl; }
-		virtual void StateUpdate(EntityID id, float deltaTime) override { std::cout << "Update Idle" << std::endl; }
-		virtual void StateExit(EntityID id) override { std::cout << "Exit Idle" << std::endl; }
+		virtual void StateEnter(EntityID) override { std::cout << "Enter Idle" << std::endl; }
+		virtual void StateUpdate(EntityID, float) override { std::cout << "Update Idle" << std::endl; }
+		virtual void StateExit(EntityID) override { std::cout << "Exit Idle" << std::endl; }
 		virtual std::string_view GetName() override { return "IDLE"; }
 	};
 
 	class TestScript2JIGGLE : public State
 	{
 	public:
-		virtual void StateEnter(EntityID id) override { std::cout << "Enter Jiggle" << std::endl; }
-		virtual void StateUpdate(EntityID id, float deltaTime) override { std::cout << "Update Jiggle" << std::endl; }
-		virtual void StateExit(EntityID id) override { std::cout << "Exit Jiggle" << std::endl; }
+		virtual void StateEnter(EntityID) override { std::cout << "Enter Jiggle" << std::endl; }
+		virtual void StateUpdate(EntityID, float) override { std::cout << "Update Jiggle" << std::endl; }
+		virtual void StateExit(EntityID) override { std::cout << "Exit Jiggle" << std::endl; }
 		virtual std::string_view GetName() override { return "JIGGLE"; }
 	};
 }

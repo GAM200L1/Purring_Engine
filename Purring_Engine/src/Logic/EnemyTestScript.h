@@ -3,11 +3,8 @@
 #include "StateManager.h"
 
 namespace PE {
-	enum class EnemyState { IDLE, ALERT, PATROL, TARGET, ATTACK };
-
 	struct EnemyTestScriptData
 	{
-		EnemyState EnemyCurrentState{ EnemyState::IDLE };
 		EntityID playerID{ 1 };
 		float speed{ 5000 };
 		float idleTimer{ 3.0f };
@@ -18,10 +15,8 @@ namespace PE {
 		float distanceFromPlayer{ 0.0f };
 		float TargetRange{ 200 };
 		bool bounce{ true };
-
 		StateMachine m_StateManager;
 	};
-
 
 	class EnemyTestScript : public PE::Script
 	{
@@ -38,7 +33,6 @@ namespace PE {
 		std::map<EntityID, EnemyTestScriptData> m_ScriptData;
 
 	private:
-		void ChangeEnemyState(EntityID id, EnemyState nextState);
 		float GetDistanceFromPlayer(EntityID id);
 	};
 

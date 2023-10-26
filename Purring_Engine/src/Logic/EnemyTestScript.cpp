@@ -6,7 +6,7 @@
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 #include "LogicSystem.h"
-# define M_PI           3.14159265358979323846 
+# define M_PI   3.14159265358979323846 
 //#include "Input/InputSystem.h"
 
 namespace PE {
@@ -22,9 +22,8 @@ namespace PE {
 		m_ScriptData[id].m_StateManager.Update(id, deltaTime);
 	}
 
-	void EnemyTestScript::Destroy(EntityID id)
+	void EnemyTestScript::Destroy(EntityID)
 	{
-		id;
 	}
 
 	void EnemyTestScript::OnAttach(EntityID id)
@@ -50,12 +49,6 @@ namespace PE {
 
 	EnemyTestScript::~EnemyTestScript()
 	{
-	}
-
-	void EnemyTestScript::ChangeEnemyState(EntityID id, EnemyState nextState)
-	{
-		m_ScriptData[id].EnemyCurrentState = nextState;
-
 	}
 
 	float EnemyTestScript::GetDistanceFromPlayer(EntityID id)
@@ -128,7 +121,7 @@ namespace PE {
 		}
 	}
 
-	void EnemyTestPATROL::StateExit(EntityID id)
+	void EnemyTestPATROL::StateExit(EntityID)
 	{
 	}
 
@@ -158,7 +151,7 @@ namespace PE {
 		}
 	}
 
-	void EnemyTestALERT::StateExit(EntityID id)
+	void EnemyTestALERT::StateExit(EntityID)
 	{
 	}
 
@@ -193,7 +186,7 @@ namespace PE {
 		}
 
 	}
-	void EnemyTestTARGET::StateExit(EntityID id)
+	void EnemyTestTARGET::StateExit(EntityID)
 	{
 	}
 	std::string_view EnemyTestTARGET::GetName()
@@ -204,7 +197,7 @@ namespace PE {
 	{
 		p_data = GETSCRIPTDATA(EnemyTestScript, id);
 	}
-	void EnemyTestATTACK::StateUpdate(EntityID id, float deltaTime)
+	void EnemyTestATTACK::StateUpdate(EntityID id, float)
 	{
 		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->playerID);
@@ -214,7 +207,7 @@ namespace PE {
 
 		p_data->m_StateManager.ChangeState(new EnemyTestTARGET(), id);
 	}
-	void EnemyTestATTACK::StateExit(EntityID id)
+	void EnemyTestATTACK::StateExit(EntityID)
 	{
 	}
 	std::string_view EnemyTestATTACK::GetName()

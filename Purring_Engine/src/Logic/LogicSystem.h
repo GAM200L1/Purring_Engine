@@ -60,12 +60,6 @@ namespace PE {
 			if(itr != m_scriptKeys.end())
 			m_scriptKeys.erase(itr);
 		}
-		//void removeScript(int keycode)
-		//{
-		//	if (!m_scriptKeys.empty())
-		//		m_scriptKeys.erase(m_scriptKeys.begin() + keycode);
-		//}
-
 	};
 
 }
