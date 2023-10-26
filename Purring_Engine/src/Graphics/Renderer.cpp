@@ -52,6 +52,16 @@ namespace PE
             m_textureKey = r_newKey;
         }
 
+        void Renderer::SetUVCoordinatesMin(glm::vec2 const& minUV)
+        {
+            m_minUV = minUV;
+        }
+
+        void Renderer::SetUVCoordinatesMax(glm::vec2 const& maxUV)
+        {
+            m_maxUV = maxUV;
+        }
+
 
         nlohmann::json Renderer::ToJson() const
         {

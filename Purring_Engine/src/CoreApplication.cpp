@@ -101,15 +101,10 @@ PE::CoreApplication::CoreApplication()
 
     // Animation textures
     // Animation 1
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim1", "../Assets/Textures/CatSprite/Cat_Grey_128px1.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim2", "../Assets/Textures/CatSprite/Cat_Grey_128px2.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim3", "../Assets/Textures/CatSprite/Cat_Grey_128px3.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim4", "../Assets/Textures/CatSprite/Cat_Grey_128px4.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim5", "../Assets/Textures/CatSprite/Cat_Grey_128px5.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("catAnim1", "../Assets/Textures/Animation_Tests/Cat_01_FadeOut.png");
 
     // Animation 2
-    ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim1", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_2.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("catAnim2", "../Assets/Textures/Animation_Tests/Cat_02_FadeOut.png");
 
     SerializationManager serializationManager;
     //create background from file
@@ -136,26 +131,29 @@ PE::CoreApplication::CoreApplication()
 
     // Create animations here for now
     std::string idleAnimation, walkingAnimation;
-    idleAnimation = AnimationManager::CreateAnimation("idle");
-    walkingAnimation = AnimationManager::CreateAnimation("walking");
+    idleAnimation = AnimationManager::CreateAnimation("idle", "catAnim2");
+    walkingAnimation = AnimationManager::CreateAnimation("walking", "catAnim1");
 
     // animation 1
-    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim1", 0.1f);
-    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim2", 0.1f);
-    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim3", 0.1f);
-    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim4", 0.1f);
-    AnimationManager::AddFrameToAnimation(idleAnimation, "catAnim5", 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(idleAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 0.1f);
 
     // animation 2
-    AnimationManager::AddFrameToAnimation(walkingAnimation, "cat", 0.2f);
-    AnimationManager::AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
-    AnimationManager::AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
-    AnimationManager::AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 0.1f);
+    AnimationManager::AddFrameToAnimation(walkingAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 0.1f);
 
     // Add animation ID to player component
     EntityFactory::GetInstance().Assign(1, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
-    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationID(idleAnimation);
-    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationID(walkingAnimation);
+    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationToComponent(idleAnimation);
+    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationToComponent(walkingAnimation);
 }
 
 PE::CoreApplication::~CoreApplication()

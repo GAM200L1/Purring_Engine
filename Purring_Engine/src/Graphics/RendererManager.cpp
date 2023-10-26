@@ -97,6 +97,7 @@ namespace PE
             m_isTextured.reserve(3000);
             m_modelToWorldMatrices.reserve(3000);
             m_colors.reserve(3000);
+            m_UV.reserve(3000);
 
             // Load a font
             ResourceManager::GetInstance().LoadShadersFromFile("text", "../Shaders/Text.vert", "../Shaders/Text.frag");
@@ -286,6 +287,7 @@ namespace PE
 
             // Clear the buffers for the 
             m_isTextured.clear();
+            m_UV.clear();
             m_modelToWorldMatrices.clear();
             m_colors.clear();
 
@@ -362,6 +364,11 @@ namespace PE
                     transform.height, transform.orientation, // height, orientation
                     transform.position.x, transform.position.y)); // x, y position
                 m_colors.emplace_back(renderer.GetColor());
+
+                m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
+                m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
+                m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
+                m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
 
                 ++count;
             }
@@ -557,34 +564,47 @@ namespace PE
             size_t sizeOfTexturedVector{ m_isTextured.size() * sizeof(float) };
             size_t sizeOfColorVector{ m_colors.size() * sizeof(glm::vec4) };
             size_t sizeOfMatrixVector{ m_modelToWorldMatrices.size() * sizeof(glm::mat4) };
+            size_t sizeOfUVVector{ m_UV.size() * sizeof(glm::vec2) };
 
 
             // Create buffer object for additional vertex data
             GLuint vertexBufferObject{}, vertexArrayObjectIndex{ m_meshes[meshIndex].GetVertexArrayObjectIndex() };
             glCreateBuffers(1, &vertexBufferObject);
             glNamedBufferStorage(vertexBufferObject,
-                static_cast<GLsizeiptr>(sizeOfTexturedVector + sizeOfColorVector + sizeOfMatrixVector),
+                static_cast<GLsizeiptr>(sizeOfTexturedVector + sizeOfColorVector + sizeOfMatrixVector + sizeOfUVVector),
                 nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 
-            // Store textured bools in VBO
+            // Store UV coordinates in VBO
             glNamedBufferSubData(vertexBufferObject, 0,
-                static_cast<GLsizeiptr>(sizeOfTexturedVector),
-                reinterpret_cast<GLvoid*>(m_isTextured.data())); 
+                static_cast<GLsizeiptr>(sizeOfUVVector),
+                reinterpret_cast<GLvoid*>(m_UV.data())); 
 
-            // Bind the textured bools
+            // Bind the UV coordinates
             GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
             glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
             glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject, 0,
+                static_cast<GLsizei>(sizeof(glm::vec2)));
+            glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 2, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
+
+            // Store textured bools in VBO
+            glNamedBufferSubData(vertexBufferObject, static_cast<GLintptr>(sizeOfUVVector),
+                static_cast<GLsizeiptr>(sizeOfTexturedVector),
+                reinterpret_cast<GLvoid*>(m_isTextured.data()));
+
+            // Bind the textured bools            
+            ++attributeIndex, ++bindingIndex;
+            glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
+            glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject, static_cast<GLintptr>(sizeOfUVVector),
                 static_cast<GLsizei>(sizeof(float)));
             glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 1, GL_FLOAT, GL_FALSE, 0);
             glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
-            glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance
-
+            glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance 
 
             // Store colors in VBO
             glNamedBufferSubData(vertexBufferObject,
-                static_cast<GLintptr>(sizeOfTexturedVector),
+                static_cast<GLintptr>(sizeOfUVVector + sizeOfTexturedVector),
                 static_cast<GLsizeiptr>(sizeOfColorVector),
                 reinterpret_cast<GLvoid*>(m_colors.data()));
 
@@ -592,14 +612,14 @@ namespace PE
             ++attributeIndex, ++bindingIndex;
             glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
             glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject,
-                static_cast<GLintptr>(sizeOfTexturedVector), static_cast<GLsizei>(sizeof(glm::vec4)));
+                static_cast<GLintptr>(sizeOfUVVector + sizeOfTexturedVector), static_cast<GLsizei>(sizeof(glm::vec4)));
             glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
             glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
             glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance
 
             // Store model to NDC matrices in VBO
             glNamedBufferSubData(vertexBufferObject,
-                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLintptr>(sizeOfUVVector + sizeOfTexturedVector + sizeOfColorVector),
                 static_cast<GLsizeiptr>(sizeOfMatrixVector),
                 reinterpret_cast<GLvoid*>(m_modelToWorldMatrices.data()));
 
@@ -607,7 +627,7 @@ namespace PE
             ++attributeIndex, ++bindingIndex;
 
             glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject,
-                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLintptr>(sizeOfUVVector + sizeOfTexturedVector + sizeOfColorVector),
                 static_cast<GLsizei>(sizeof(glm::mat4)));
 
             for (int i{}; i < 4; ++i)
@@ -637,6 +657,7 @@ namespace PE
             // Clear the vectors
             m_isTextured.clear();
             m_colors.clear();
+            m_UV.clear();
             m_modelToWorldMatrices.clear();
         }
 

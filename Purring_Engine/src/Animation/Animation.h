@@ -17,9 +17,8 @@
 #pragma once
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
-#include <vector>
-#include <string>
-#include <System.h>
+#include <glm/glm.hpp>
+#include "System.h"
 
 
 namespace PE
@@ -29,8 +28,11 @@ namespace PE
 	*************************************************************************************/
 	struct AnimationFrame
 	{
-		std::string textureKey;
-		float duration;
+		// un-comment if not using spritesheet
+		//std::string textureKey;
+		glm::vec2 m_minUV;
+		glm::vec2 m_maxUV;
+		float m_duration;
 	};
 
 	/*!***********************************************************************************
@@ -43,14 +45,20 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Default constructor for Animation class.
 		*************************************************************************************/
-		Animation();
+		//Animation();
+
+		/*!***********************************************************************************
+		 \brief Create an animation class with a spritesheet.
+		 \param[in] spriteSheetKey Identifier for spritesheet to be used for this animation
+		*************************************************************************************/
+		Animation(std::string spriteSheetKey);
 
 		/*!***********************************************************************************
 		 \brief Add a new frame to the animation sequence.
 		 \param[in] textureKey Identifier for the texture to display in this frame.
 		 \param[in] duration Duration this frame will be displayed in seconds.
 		*************************************************************************************/
-		void AddFrame(std::string textureKey, float duration);
+		void AddFrame(glm::vec2 const& minUV, glm::vec2 const& maxUV,  float duration);
 
 		/*!***********************************************************************************
 		 \brief Update the animation based on elapsed time.
@@ -59,9 +67,12 @@ namespace PE
 		*************************************************************************************/
 		AnimationFrame const& UpdateAnimation(float deltaTime);
 
+		inline std::string GetSpriteSheetKey() { return m_textureKey; }
+
 		// ----- Private Variables ----- //
 	private:
 		std::vector<AnimationFrame> m_animationFrames;
+		std::string m_textureKey;
 		unsigned m_currentFrameIndex;
 		float m_elapsedTime;
 	};
@@ -77,7 +88,7 @@ namespace PE
         *************************************************************************************/
         inline std::string GetAnimationID() const { return m_animationsID[0]; }
 
-		void AddAnimationID(std::string key);
+		void AddAnimationToComponent(std::string animationID);
 
         ///*!***********************************************************************************
         // \brief Sets the RGBA color of the object. If the object has a texture on it,
@@ -142,7 +153,7 @@ namespace PE
 		 \brief Create a new Animation object and return its ID.
 		 \return Identifier for the newly created animation.
 		*************************************************************************************/
-		static std::string CreateAnimation(std::string key);
+		static std::string CreateAnimation(std::string animationID, std::string textureKey);
 
 		/*!***********************************************************************************
 		 \brief Add a frame to the specified animation.
@@ -150,7 +161,7 @@ namespace PE
 		 \param[in] textureKey Identifier for the texture to display in this frame.
 		 \param[in] duration Duration this frame will be displayed in seconds.
 		*************************************************************************************/
-		static void AddFrameToAnimation(std::string animationID, std::string textureKey, float duration);
+		static void AddFrameToAnimation(std::string animationID, glm::vec2 const& minUV, glm::vec2 const& maxUV, float duration);
 
 		/*!***********************************************************************************
 		 \brief Update the specified animation based on elapsed time.
@@ -159,6 +170,8 @@ namespace PE
 		 \return Current texture key for the frame to display.
 		*************************************************************************************/
 		AnimationFrame UpdateAnimation(std::string animationID, float deltaTime);
+
+		std::string GetAnimationSpriteSheetKey(std::string animationID);
 
 		// ----- Private Variables ----- //
 	private:

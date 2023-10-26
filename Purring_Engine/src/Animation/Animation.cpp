@@ -25,24 +25,25 @@
 #include "Graphics/Renderer.h"
 #include "ResourceManager/ResourceManager.h"
 
+
 extern Logger engine_logger;
 
 namespace PE
 {
-	Animation::Animation() : m_currentFrameIndex{ 0 }, m_elapsedTime{ 0.0f }
+	Animation::Animation(std::string spriteSheetKey) : m_textureKey{ spriteSheetKey }, m_currentFrameIndex { 0 }, m_elapsedTime{ 0.0f }
 	{
 	
 	}
 
-	void Animation::AddFrame(std::string textureKey, float duration)
+	void Animation::AddFrame(glm::vec2 const& minUV, glm::vec2 const& maxUV, float duration)
 	{
-		m_animationFrames.emplace_back(AnimationFrame{ textureKey, duration });
+		m_animationFrames.emplace_back(AnimationFrame{ minUV, maxUV, duration });
 	}
 
 	AnimationFrame const& Animation::UpdateAnimation(float deltaTime)
 	{
 		m_elapsedTime += deltaTime;
-		if (m_elapsedTime >= m_animationFrames[m_currentFrameIndex].duration)
+		if (m_elapsedTime >= m_animationFrames[m_currentFrameIndex].m_duration)
 		{
 			// move on the the next frame when current frame duration is reached
 			m_currentFrameIndex = (m_currentFrameIndex + 1) % m_animationFrames.size();
@@ -53,9 +54,9 @@ namespace PE
 	}
 
 	// AnimationComponent
-	void AnimationComponent::AddAnimationID(std::string key)
+	void AnimationComponent::AddAnimationToComponent(std::string animationID)
 	{
-		m_animationsID.emplace_back(key);
+		m_animationsID.emplace_back(animationID);
 	}
 
 	// AnimationManager
@@ -79,7 +80,9 @@ namespace PE
 
 			// update entity based on frame data
 			// in the future probably check for bools in animation component, then update data accordingly
-			EntityManager::GetInstance().GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.textureKey);
+			EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(animationComponent.GetAnimationID()));
+			EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
+			EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
 		}
 	}
 
@@ -88,17 +91,17 @@ namespace PE
 
 	}
 
-	std::string AnimationManager::CreateAnimation(std::string key)
+	std::string AnimationManager::CreateAnimation(std::string animationID, std::string textureKey)
 	{
-		ResourceManager::GetInstance().Animations[key] = std::make_shared<Animation>();
-		return key;
+		ResourceManager::GetInstance().Animations[animationID] = std::make_shared<Animation>(textureKey);
+		return animationID;
 	}
 
-	void AnimationManager::AddFrameToAnimation(std::string animationID, std::string textureKey, float duration)
+	void AnimationManager::AddFrameToAnimation(std::string animationID, glm::vec2 const& minUV, glm::vec2 const& maxUV, float duration)
 	{
 		if (ResourceManager::GetInstance().Animations.find(animationID) != ResourceManager::GetInstance().Animations.end())
 		{
-			ResourceManager::GetInstance().Animations[animationID]->AddFrame(textureKey, duration);
+			ResourceManager::GetInstance().Animations[animationID]->AddFrame(minUV, maxUV, duration);
 		}
 	}
 
@@ -110,5 +113,15 @@ namespace PE
 			return ResourceManager::GetInstance().Animations[animationID]->UpdateAnimation(deltaTime);
 		}
 		return AnimationFrame{};
+	}
+
+	std::string AnimationManager::GetAnimationSpriteSheetKey(std::string animationID)
+	{
+		// store animations in resource manager instead
+		if (ResourceManager::GetInstance().Animations.find(animationID) != ResourceManager::GetInstance().Animations.end())
+		{
+			return ResourceManager::GetInstance().Animations[animationID]->GetSpriteSheetKey();
+		}
+		return "";
 	}
 }
