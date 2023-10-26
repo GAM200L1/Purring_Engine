@@ -204,6 +204,8 @@ namespace PE {
 		*************************************************************************************/
 		void ShowSceneView(GLuint texture_id, bool* active);
 		
+		void SetImGUIStyle();
+
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
