@@ -5,6 +5,7 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "LogicSystem.h"
 # define M_PI           3.14159265358979323846 
 //#include "Input/InputSystem.h"
 
@@ -12,76 +13,13 @@ namespace PE {
 
 	void EnemyTestScript::Init(EntityID id)
 	{
-		id;
+		m_ScriptData[id].m_StateManager.ChangeState(new EnemyTestIDLE(),id);
 	}
 
 	void EnemyTestScript::Update(EntityID id, float deltaTime)
 	{
-		switch (m_ScriptData[id].EnemyCurrentState)
-		{
-		case EnemyState::IDLE:
-		{
-			PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * 10);
-			m_ScriptData[id].idleTimer -= deltaTime;
-			if (m_ScriptData[id].idleTimer <= 0)
-			{
-				m_ScriptData[id].patrolTimer = m_ScriptData[id].alertBuffer;
-				ChangeEnemyState(id, EnemyState::PATROL);
-				m_ScriptData[id].bounce = true;
-			}
-			break;
-		}
-		case EnemyState::PATROL:
-		{
-			if (m_ScriptData[id].bounce)
-				EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,.25f } *m_ScriptData[id].speed);
-			else
-				EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-.25f } *m_ScriptData[id].speed);
-
-			m_ScriptData[id].patrolTimer -= deltaTime;
-
-
-			if (m_ScriptData[id].patrolTimer < 2.f && m_ScriptData[id].patrolTimer > 0.f)
-			{
-				m_ScriptData[id].bounce = false;
-			}
-			else if (m_ScriptData[id].patrolTimer < 0)
-			{
-				m_ScriptData[id].idleTimer = m_ScriptData[id].alertBuffer;
-				ChangeEnemyState(id, EnemyState::IDLE);
-			}
-
-			if (abs(GetDistanceFromPlayer(id)) <= 100)
-			{
-				m_ScriptData[id].alertTimer = m_ScriptData[id].alertBuffer;
-				ChangeEnemyState(id, EnemyState::ALERT);
-			}
-
-			break;
-		}
-		case EnemyState::TARGET:
-		{
-			RotateToPlayer(id);
-			break;
-		}
-		case EnemyState::ALERT:
-		{
-			m_ScriptData[id].alertTimer -= deltaTime;
-
-			if (m_ScriptData[id].alertTimer <= 0 && abs(GetDistanceFromPlayer(id)) <= 100)
-			{
-				ChangeEnemyState(id, EnemyState::TARGET);
-			}
-			else if (m_ScriptData[id].alertTimer <= 0)
-			{
-				m_ScriptData[id].idleTimer = m_ScriptData[id].alertBuffer;
-				ChangeEnemyState(id, EnemyState::IDLE);
-			}
-
-
-			break;
-		}
-		}
+		m_ScriptData[id].distanceFromPlayer = GetDistanceFromPlayer(id);
+		m_ScriptData[id].m_StateManager.Update(id, deltaTime);
 	}
 
 	void EnemyTestScript::Destroy(EntityID id)
@@ -93,6 +31,7 @@ namespace PE {
 	{
 		if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<RigidBody>()))
 			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
+		EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
 
 		m_ScriptData[id] = EnemyTestScriptData();
 	}
@@ -115,30 +54,8 @@ namespace PE {
 
 	void EnemyTestScript::ChangeEnemyState(EntityID id, EnemyState nextState)
 	{
-		switch (nextState) {
-		case EnemyState::IDLE:	std::cout << "IDLE state" << std::endl;
-			break;
-		case EnemyState::ALERT:std::cout << "ALERT state" << std::endl;
-			break;
-		case EnemyState::PATROL:std::cout << "PATROL state" << std::endl;
-			break;
-		case EnemyState::TARGET:std::cout << "TARGET state" << std::endl;
-			break;
-		}
-
 		m_ScriptData[id].EnemyCurrentState = nextState;
 
-	}
-
-	void EnemyTestScript::RotateToPlayer(EntityID id)
-	{
-		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].playerID);
-		float dx = targetObject.position.x - currentObject.position.x;
-		float dy = targetObject.position.y - currentObject.position.y;
-
-		float rotation = atan2(dy, dx);
-		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation = rotation;
 	}
 
 	float EnemyTestScript::GetDistanceFromPlayer(EntityID id)
@@ -151,9 +68,157 @@ namespace PE {
 
 		distance = sqrt(dx * dx + dy * dy);
 
-		//std::cout << distance << std::endl;
-
 		return distance;
 	}
 
+	void EnemyTestIDLE::StateEnter(EntityID id)
+	{
+		p_data = GETSCRIPTDATA(EnemyTestScript, id);
+		p_data->idleTimer = p_data->timerBuffer;
+	}
+
+	void EnemyTestIDLE::StateUpdate(EntityID id, float deltaTime)
+	{			
+		p_data->idleTimer -= deltaTime;
+		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * 10);
+		if (p_data->idleTimer <= 0)
+		{
+			p_data->patrolTimer = p_data->timerBuffer;
+			p_data->m_StateManager.ChangeState(new EnemyTestPATROL(),id);
+		}
+	}
+
+	void EnemyTestIDLE::StateExit(EntityID)
+	{
+	}
+
+	std::string_view EnemyTestIDLE::GetName()
+	{
+		return "IDLE";
+	}
+
+	void EnemyTestPATROL::StateEnter(EntityID id)
+	{
+		p_data = GETSCRIPTDATA(EnemyTestScript, id);
+		p_data->bounce = true;
+		p_data->patrolTimer = p_data->patrolBuffer;
+	}
+
+	void EnemyTestPATROL::StateUpdate(EntityID id, float deltaTime)
+	{
+		if (p_data->bounce)
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,.25f } *p_data->speed);
+		else
+			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-.25f } *p_data->speed);
+
+		p_data->patrolTimer -= deltaTime;
+
+		if (p_data->patrolTimer < p_data->patrolBuffer/2.0f && p_data->patrolTimer > 0.f)
+		{
+			p_data->bounce = false;
+		}
+		else if (p_data->patrolTimer < 0)
+		{
+			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+		}
+
+		if (abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
+		{
+			p_data->m_StateManager.ChangeState(new EnemyTestALERT(), id);
+		}
+	}
+
+	void EnemyTestPATROL::StateExit(EntityID id)
+	{
+	}
+
+	std::string_view EnemyTestPATROL::GetName()
+	{
+		return "PATROL";
+	}
+
+	void EnemyTestALERT::StateEnter(EntityID id)
+	{
+		p_data = GETSCRIPTDATA(EnemyTestScript, id);
+		p_data->alertTimer = p_data->timerBuffer;
+	}
+
+	void EnemyTestALERT::StateUpdate(EntityID id, float deltaTime)
+	{
+		p_data->alertTimer -= deltaTime;
+
+		if (p_data->alertTimer <= 0 && abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
+		{
+			p_data->m_StateManager.ChangeState(new EnemyTestTARGET(), id);
+		}
+		else if (p_data->alertTimer <= 0)
+		{
+			p_data->idleTimer = p_data->timerBuffer;
+			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+		}
+	}
+
+	void EnemyTestALERT::StateExit(EntityID id)
+	{
+	}
+
+	std::string_view EnemyTestALERT::GetName()
+	{
+		return "ALERT";
+	}
+	void EnemyTestTARGET::StateEnter(EntityID id)
+	{
+		p_data = GETSCRIPTDATA(EnemyTestScript, id);
+		p_data->alertTimer = p_data->timerBuffer/2.f;
+	}
+	void EnemyTestTARGET::StateUpdate(EntityID id, float deltaTime)
+	{
+		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->playerID);
+		float dx = targetObject.position.x - currentObject.position.x;
+		float dy = targetObject.position.y - currentObject.position.y;
+
+		float rotation = atan2(dy, dx);
+		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation = rotation;
+
+		p_data->alertTimer -= deltaTime;
+
+		if (p_data->alertTimer < 0 && p_data->distanceFromPlayer <= p_data->TargetRange)
+		{
+			p_data->m_StateManager.ChangeState(new EnemyTestATTACK(), id);
+		}
+		else if (p_data->alertTimer < 0)
+		{
+			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+		}
+
+	}
+	void EnemyTestTARGET::StateExit(EntityID id)
+	{
+	}
+	std::string_view EnemyTestTARGET::GetName()
+	{
+		return "TARGET";
+	}
+	void EnemyTestATTACK::StateEnter(EntityID id)
+	{
+		p_data = GETSCRIPTDATA(EnemyTestScript, id);
+	}
+	void EnemyTestATTACK::StateUpdate(EntityID id, float deltaTime)
+	{
+		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->playerID);
+		vec2 toPlayer(targetObject.position.x - currentObject.position.x, targetObject.position.y - currentObject.position.y);
+
+		EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(toPlayer * p_data->speed/2);
+
+		p_data->m_StateManager.ChangeState(new EnemyTestTARGET(), id);
+	}
+	void EnemyTestATTACK::StateExit(EntityID id)
+	{
+	}
+	std::string_view EnemyTestATTACK::GetName()
+	{
+		return "ATTACK";
+	}
 }

@@ -1131,14 +1131,14 @@ namespace PE {
 									int n = 0;
 					/*				for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
 									{*/
-									for (auto& [key, state] : EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys)
+									for (auto& [str, state] : EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys)
 									{
 										const bool is_selected = (selectedScript == n);
 
-										if (ImGui::Selectable(key.c_str(), is_selected))
+										if (ImGui::Selectable(str.c_str(), is_selected))
 										{
 											selectedScript = n; //seteting current index to check for selection
-											selectedScriptName = key;
+											selectedScriptName = str;
 										}//imgui selectable is the function to make the clickable bar of text
 
 										// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)

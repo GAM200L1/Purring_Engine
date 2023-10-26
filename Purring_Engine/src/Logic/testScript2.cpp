@@ -12,19 +12,19 @@ namespace PE
 {
 	void testScript2::Init(EntityID id)
 	{
-		m_ScriptData[id].m_stateMachine.ChangeState(new TestScript2IDLE());
+		m_ScriptData[id].m_stateMachine.ChangeState(new TestScript2IDLE(), id);
 	}
 	void testScript2::Update(EntityID id, float deltaTime)
 	{
 		if (InputSystem::IsKeyTriggered(GLFW_KEY_SPACE))
 		{
 			if(m_ScriptData[id].m_stateMachine.GetStateName() != "IDLE")
-				m_ScriptData[id].m_stateMachine.ChangeState(new TestScript2IDLE());
+				m_ScriptData[id].m_stateMachine.ChangeState(new TestScript2IDLE(), id);
 			else
-				m_ScriptData[id].m_stateMachine.ChangeState(new TestScript2JIGGLE());
+				m_ScriptData[id].m_stateMachine.ChangeState(new TestScript2JIGGLE(), id);
 		}
 
-		m_ScriptData[id].m_stateMachine.Update();
+		m_ScriptData[id].m_stateMachine.Update(id,deltaTime);
 	}
 	void testScript2::Destroy(EntityID id)
 	{

@@ -1,20 +1,25 @@
 #pragma once
 #include "Script.h"
+#include "StateManager.h"
 
 namespace PE {
-	enum class EnemyState { IDLE, ALERT, PATROL, TARGET };
-
+	enum class EnemyState { IDLE, ALERT, PATROL, TARGET, ATTACK };
 
 	struct EnemyTestScriptData
 	{
 		EnemyState EnemyCurrentState{ EnemyState::IDLE };
 		EntityID playerID{ 1 };
 		float speed{ 5000 };
-		float alertTimer{ 0 };
-		float alertBuffer{ 3.0f };
-		float patrolTimer{ 5.0f };
-		bool bounce{ true };
 		float idleTimer{ 3.0f };
+		float alertTimer{ 0 };
+		float timerBuffer{ 3.0f };
+		float patrolTimer{ 5.0f };
+		float patrolBuffer{ 3.0f };
+		float distanceFromPlayer{ 0.0f };
+		float TargetRange{ 200 };
+		bool bounce{ true };
+
+		StateMachine m_StateManager;
 	};
 
 
@@ -35,8 +40,56 @@ namespace PE {
 	private:
 		void ChangeEnemyState(EntityID id, EnemyState nextState);
 		float GetDistanceFromPlayer(EntityID id);
-		void RotateToPlayer(EntityID id);
 	};
 
+	class EnemyTestIDLE : public State
+	{
+		virtual void StateEnter(EntityID id) override;
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+		virtual void StateExit(EntityID id) override;
+		virtual std::string_view GetName() override;
+	private:
+		EnemyTestScriptData* p_data;
+	};
 
+	class EnemyTestPATROL : public State
+	{
+		virtual void StateEnter(EntityID id) override;
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+		virtual void StateExit(EntityID id) override;
+		virtual std::string_view GetName() override;
+	private:
+		EnemyTestScriptData* p_data;
+	};
+
+	class EnemyTestALERT : public State
+	{
+		virtual void StateEnter(EntityID id) override;
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+		virtual void StateExit(EntityID id) override;
+		virtual std::string_view GetName() override;
+
+	private:
+		EnemyTestScriptData* p_data;
+	};
+
+	class EnemyTestTARGET : public State
+	{
+		virtual void StateEnter(EntityID id) override;
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+		virtual void StateExit(EntityID id) override;
+		virtual std::string_view GetName() override;
+	private:
+		EnemyTestScriptData* p_data;
+	};
+
+	class EnemyTestATTACK : public State
+	{
+		virtual void StateEnter(EntityID id) override;
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+		virtual void StateExit(EntityID id) override;
+		virtual std::string_view GetName() override;
+	private:
+		EnemyTestScriptData* p_data;
+	};
 }
