@@ -23,6 +23,8 @@
 #include "Data/SerializationManager.h"
 #include "Singleton.h"
 #include <bitset>
+#include <set>
+#include <queue>
 
 // Const expressions
 constexpr unsigned MAX_COMPONENTS = 32;
@@ -552,8 +554,7 @@ namespace PE
 	template<typename T>
 	bool EntityManager::Has(EntityID id) const
 	{
-		// if the return is not a nullptr, it has the component
-		return (GetPointer<T>(id) != nullptr);
+		return m_componentPools.at(GetComponentID<T>())->HasEntity(id);
 	}
 
 	template<typename T>

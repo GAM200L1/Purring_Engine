@@ -19,8 +19,7 @@
 #include "Graphics/GLHeaders.h"
 
 #include <glm/glm.hpp>  // glm::vec4, glm::clamp
-#include <vector>   // vector
-#include <string>   // string
+
 
 #include "Texture.h"
 #include "Math/Transform.h"

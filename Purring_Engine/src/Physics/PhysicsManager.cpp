@@ -32,19 +32,9 @@ namespace PE
 	// ----- Constructor ----- //
 
 	PhysicsManager::PhysicsManager() :
-		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f } {} 
+		m_velocityNegligence{ 2.f } {} 
 	
 	// ----- Public Getters ----- //
-
-	float PhysicsManager::GetLinearDragCoefficient()
-	{
-		return m_linearDragCoefficient;
-	}
-
-	void PhysicsManager::SetLinearDragCoefficient(float newCoefficient)
-	{
-		m_linearDragCoefficient = (newCoefficient < 0.f) ? newCoefficient : -newCoefficient;
-	}
 
 	float PhysicsManager::GetVelocityNegligence()
 	{
@@ -112,18 +102,17 @@ namespace PE
 			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
 			{
 				// Applies drag force
-				rb.ApplyForce(rb.velocity * rb.GetMass() * m_linearDragCoefficient);
+				rb.ApplyForce(rb.velocity * rb.GetMass() * rb.GetLinearDrag() * -1.f);
 				
 				// Update Speed based on total forces
 				rb.velocity += rb.force * rb.GetInverseMass() * deltaTime;
-
-				// at negligible velocity, velocity will set to 0.f
-				rb.velocity.x = (rb.velocity.x < m_velocityNegligence && rb.velocity.x > -m_velocityNegligence) ? 0.f : rb.velocity.x;
-				rb.velocity.y = (rb.velocity.y < m_velocityNegligence && rb.velocity.y > -m_velocityNegligence) ? 0.f : rb.velocity.y;
 			}
 
 			if (rb.GetType() != EnumRigidBodyType::STATIC)
 			{
+				// at negligible velocity, velocity will set to 0.f
+				rb.velocity.x = (rb.velocity.x < m_velocityNegligence && rb.velocity.x > -m_velocityNegligence) ? 0.f : rb.velocity.x;
+				rb.velocity.y = (rb.velocity.y < m_velocityNegligence && rb.velocity.y > -m_velocityNegligence) ? 0.f : rb.velocity.y;
 				rb.prevPosition = transform.position;
 				transform.position += rb.velocity * deltaTime;
 				transform.orientation += rb.rotationVelocity * deltaTime;

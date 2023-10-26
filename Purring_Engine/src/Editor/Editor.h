@@ -16,15 +16,13 @@
 #pragma once
 
 #include "../Events/EventHandler.h"
-#include <vector>
-#include <string>
+
 
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <misc/cpp/imgui_stdlib.h>
-#include <iostream>
 
 #include "Singleton.h"
 

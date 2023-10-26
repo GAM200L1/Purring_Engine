@@ -18,8 +18,7 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Event.h"
-#include <sstream>
-#include <utility>
+
 #include "ECS/EntityFactory.h"
 namespace PE
 {
