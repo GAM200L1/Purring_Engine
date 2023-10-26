@@ -1351,19 +1351,34 @@ namespace PE {
 				{
 					glfwSetDropCallback(p_window, &HotLoadingNewFiles);
 					GetFileNamesInParentPath(m_parentPath, m_files);
+					
+					if (m_parentPath.filename().string() == "Audio")
+					{
+						for (auto const& iter : ResourceManager::GetInstance().Sounds)
+						{
+							for (std::filesystem::path const& filepath : m_files)
+							{
+								if (filepath.filename() == iter.first)
+								{
+									
+								}
+							}
+						}
+					}
 				}
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
 				{	//resource list needs a list of icons for the texture for the image if possible
 					//else just give a standard object icon here
 					//if (n % 3) // to keep it in rows where 3 is max 3 colums
 					//	ImGui::SameLine();
-					ImGui::BeginChild(m_files[n].c_str(), ImVec2(300, 20)); //child to hold image n text
+					ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(300, 20)); //child to hold image n text
 					//ImGui::Image(itemTextures[i], ImVec2(20, 20)); //image of resource
-					ImGui::Text(m_files[n].c_str()); // text
+					ImGui::Text(m_files[n].filename().string().c_str()); // text
 					// Check if the mouse is over the content item
 					if (ImGui::IsItemHovered()) 
 					{
-						if (m_files[n].find(".") != std::string::npos)
+						// if item is a file with extension eg. .txt , .png
+						if (m_files[n].extension() != "")
 						{
 							// Handle item clicks and drags
 							if (ImGui::IsMouseClicked(0)) {
@@ -1374,7 +1389,7 @@ namespace PE {
 						else
 						{
 							if (ImGui::IsMouseClicked(0)) {
-								m_parentPath = std::filesystem::path{ m_parentPath / m_files[n] };
+								m_parentPath = std::filesystem::path{ m_files[n] };
 								GetFileNamesInParentPath(m_parentPath, m_files);
 							}
 						}
@@ -1403,11 +1418,10 @@ namespace PE {
 					if (ImGui::IsMouseReleased(0))
 					{
 						//do a function call here
-						std::string const& item = m_files[draggedItemIndex];
-						if (item.substr(item.find(".")) == ".png" && m_mouseInScene)
+						std::string const& item = m_files[draggedItemIndex].filename().string();
+						if (m_files[draggedItemIndex].extension() == ".png" && m_mouseInScene)
 						{
-							std::string str{ m_parentPath.string() + "/" + item };
-							ResourceManager::GetInstance().LoadTextureFromFile(item.substr(0, item.find(".")), m_parentPath.string() + "/" + item);
+							ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].stem().string(), m_files[draggedItemIndex].string());
 							EntityID id = EntityFactory::GetInstance().CreateEntity();
 							EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 							EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
@@ -1895,7 +1909,12 @@ namespace PE {
 
 	void Editor::HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths)
 	{
-		std::cout << "Drag and drop count - " << count << std::endl;
+		// prints the number of directories / files dragged over
+		std::stringstream sstream;
+		sstream << "Drag and drop count - " << count;
+		engine_logger.AddLog(false, sstream.str(), "");
+		
+
 		std::vector<std::filesystem::path> consolidatedPaths;
 		for (int i{ 0 }; i < count; ++i)
 		{

@@ -20,5 +20,5 @@
 
 namespace PE
 {
-	void GetFileNamesInParentPath(std::filesystem::path const& r_parentPath, std::vector<std::string>& r_fileNames);
+	void GetFileNamesInParentPath(std::filesystem::path const& r_parentPath, std::vector<std::filesystem::path>& r_fileNames);
 }

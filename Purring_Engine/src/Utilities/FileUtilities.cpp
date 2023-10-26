@@ -18,13 +18,13 @@
 
 namespace PE
 {
-	void GetFileNamesInParentPath(std::filesystem::path const& r_parentPath, std::vector<std::string>& r_fileNames)
+	void GetFileNamesInParentPath(std::filesystem::path const& r_parentPath, std::vector<std::filesystem::path>& r_fileNames)
 	{
 		r_fileNames.clear();
 
 		for (std::filesystem::directory_entry const& r_dirEntry : std::filesystem::directory_iterator{ r_parentPath })
 		{
-			r_fileNames.emplace_back(r_dirEntry.path().filename().string());
+			r_fileNames.emplace_back(r_dirEntry.path());
 		}
 	}
 }

@@ -278,7 +278,7 @@ namespace PE {
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
-		std::vector<std::string> m_files;
+		std::vector<std::filesystem::path> m_files;
 
 	};
 }
