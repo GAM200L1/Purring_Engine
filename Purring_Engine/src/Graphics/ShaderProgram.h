@@ -16,7 +16,6 @@
 
 #include "Graphics/GLHeaders.h"
 #include <glm/glm.hpp>
-#include <string>
 
 namespace PE
 {
