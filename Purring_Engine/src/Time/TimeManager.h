@@ -17,9 +17,7 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Singleton.h"
-#include <chrono>
-#include <set>
-#include <array>
+
 
 namespace PE
 {

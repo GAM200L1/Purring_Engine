@@ -17,7 +17,6 @@
 #include "RigidBody.h"
 #include "Logging/Logger.h"
 #include "Physics/PhysicsManager.h"
-#include <sstream>
 
 namespace PE
 {

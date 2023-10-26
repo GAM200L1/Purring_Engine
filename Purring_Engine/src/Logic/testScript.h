@@ -1,6 +1,5 @@
 #pragma once
 #include "Script.h"
-#include <map>
 namespace PE
 {
 	struct TestScriptData

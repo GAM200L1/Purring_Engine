@@ -23,6 +23,8 @@
 #include "Data/SerializationManager.h"
 #include "Singleton.h"
 #include <bitset>
+#include <set>
+#include <queue>
 
 // Const expressions
 constexpr unsigned MAX_COMPONENTS = 32;

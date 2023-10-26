@@ -16,6 +16,7 @@
 #include <Windows.h>
 
 #include <iostream>
+#include <ostream>
 #include <fstream>
 #include <memory>
 #include <algorithm>
@@ -40,3 +41,16 @@
 #include <variant>
 #include <optional>
 #include <functional> // reference_wrapper
+#include <bitset>
+
+#include <cstdio>
+
+#include <chrono>
+
+#include <array>
+
+#include <thread>
+
+#include <random>
+#include <Commdlg.h>
+

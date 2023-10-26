@@ -20,8 +20,7 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> // ortho()
 
-#include <cmath> // sin(), cos()
-#include <utility>
+
 
 #include "Math/Transform.h"
 
