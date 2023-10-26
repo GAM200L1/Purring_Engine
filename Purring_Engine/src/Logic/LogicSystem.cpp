@@ -38,11 +38,23 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 	{
 		ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
 
-		for (auto scripts : sc.m_scriptKeys)
+		for (auto& [key, state] : sc.m_scriptKeys)
 		{
-			if (m_scriptContainer.find(scripts) != m_scriptContainer.end())
+			if (m_scriptContainer.find(key) != m_scriptContainer.end())
 			{
-				m_scriptContainer.find(scripts)->second->Update(objectID, deltaTime);
+				switch (state)
+				{
+				case ScriptState::INIT:
+					m_scriptContainer.find(key)->second->Init(objectID);
+					state = ScriptState::UPDATE;
+					break;
+				case ScriptState::UPDATE:
+					m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
+					break;
+				case ScriptState::EXIT:
+					m_scriptContainer.find(key)->second->Destroy(objectID);
+					break;
+				}
 			}
 		}
 	}

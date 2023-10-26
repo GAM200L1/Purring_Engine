@@ -44,25 +44,25 @@ namespace PE {
 	struct ScriptComponent
 	{
 		ScriptComponent() {}
-		std::vector<std::string> m_scriptKeys;
-
+		//std::vector<std::string> m_scriptKeys;
+		std::map<std::string, ScriptState> m_scriptKeys;
 		void addScript(std::string key)
 		{
-			auto itr = std::find(m_scriptKeys.begin(), m_scriptKeys.end(), key);
+			auto itr = m_scriptKeys.find(key);
 			if (itr == m_scriptKeys.end())
-				m_scriptKeys.push_back(key);
+				m_scriptKeys[key] = ScriptState::INIT;
 		}
 		void removeScript(std::string key)
 		{
-			auto itr = std::find(m_scriptKeys.begin(), m_scriptKeys.end(), key);
+			auto itr = m_scriptKeys.find(key);
 			if(itr != m_scriptKeys.end())
 			m_scriptKeys.erase(itr);
 		}
-		void removeScript(int keycode)
-		{
-			if (!m_scriptKeys.empty())
-				m_scriptKeys.erase(m_scriptKeys.begin() + keycode);
-		}
+		//void removeScript(int keycode)
+		//{
+		//	if (!m_scriptKeys.empty())
+		//		m_scriptKeys.erase(m_scriptKeys.begin() + keycode);
+		//}
 
 	};
 

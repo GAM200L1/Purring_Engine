@@ -1127,21 +1127,27 @@ namespace PE {
 								static std::string selectedScriptName{};
 								ImGui::Text("Scripts List");
 								//loop to show all the items ins the vector
-								if (ImGui::BeginChild("GameObjectList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
-									for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
+								if (ImGui::BeginChild("ScriptList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
+									int n = 0;
+					/*				for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
+									{*/
+									for (auto& [key, state] : EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys)
 									{
 										const bool is_selected = (selectedScript == n);
 
-										if (ImGui::Selectable(EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str(), is_selected)) 
+										if (ImGui::Selectable(key.c_str(), is_selected))
 										{
 											selectedScript = n; //seteting current index to check for selection
-											selectedScriptName = EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str();
+											selectedScriptName = key;
 										}//imgui selectable is the function to make the clickable bar of text
-											
+
 										// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 										if (is_selected) // to show the highlight if selected
 											ImGui::SetItemDefaultFocus();
+
+										++n;
 									}
+									//}
 								}
 								ImGui::EndChild();
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
@@ -1149,7 +1155,7 @@ namespace PE {
 								{
 									if (selectedScript >= 0) 
 									{
-										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName);
 										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
 										selectedScript = -1;
 									}

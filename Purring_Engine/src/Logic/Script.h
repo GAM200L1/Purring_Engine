@@ -3,7 +3,7 @@ typedef unsigned long long EntityID;
 
 namespace PE 
 {
-
+enum class ScriptState {INIT, UPDATE, EXIT};
 //all the scripts will inherit this
 class Script
 {
