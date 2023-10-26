@@ -1294,6 +1294,19 @@ namespace PE {
 							else
 								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 						}
+						std::vector<std::string> test {"test1", "test2", "test3"}; // replace this vector with your not hardcoded way of getting your scripts
+						if (ImGui::BeginMenu("Scripts"))
+						{
+							for (auto str : test) // change to whatever loop you want
+							{
+								if (ImGui::MenuItem(str.c_str())) 
+								{
+									//do whatever script specific stuff here
+								}
+							}
+							ImGui::EndMenu();
+						}
+
 						ImGui::EndPopup();
 					}
 
@@ -1669,7 +1682,7 @@ namespace PE {
 		colors[ImGuiCol_ButtonHovered] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
 		colors[ImGuiCol_ButtonActive] = ImVec4(0.70f, 0.53f, 0.98f, 1.00f);
 		colors[ImGuiCol_Header] = ImVec4(0.3f, 0.3f, 0.3f, 0.31f);
-		colors[ImGuiCol_HeaderHovered] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.70f, 0.59f, 0.98f, 0.4f);
 		colors[ImGuiCol_HeaderActive] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
 		colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
 		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
