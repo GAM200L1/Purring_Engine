@@ -239,6 +239,7 @@ namespace PE {
 		*************************************************************************************/
 		void ClearObjectList();
 
+		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths);
 
 		// ----- Private Variables ----- // 
 	private:
@@ -274,7 +275,7 @@ namespace PE {
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
-		std::filesystem::path m_parentPath;
+		static std::filesystem::path m_parentPath;
 		std::vector<std::string> m_files;
 
 	};

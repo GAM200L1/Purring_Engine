@@ -36,7 +36,10 @@ SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
 namespace PE {
-	Editor::Editor() : m_parentPath{ "../Assets" } {
+
+	std::filesystem::path Editor::m_parentPath{ "../Assets" };
+
+	Editor::Editor() {
 		//initializing variables 
 		//m_firstLaunch needs to be serialized 
 		m_firstLaunch = true;
@@ -1276,7 +1279,7 @@ namespace PE {
 		{
 			static int draggedItemIndex = -1;
 			static bool isDragging = false;
-			ImGuiStyle& style = ImGui::GetStyle();
+			//ImGuiStyle& style = ImGui::GetStyle();
 			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
 				
 				// Displays Header with File Directories
@@ -1298,7 +1301,13 @@ namespace PE {
 				}
 				ImGui::Separator();				
 				
+
 				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+				if (ImGui::IsWindowHovered())
+				{
+					glfwSetDropCallback(p_window, &HotLoadingNewFiles);
+					GetFileNamesInParentPath(m_parentPath, m_files);
+				}
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
 				{	//resource list needs a list of icons for the texture for the image if possible
 					//else just give a standard object icon here
@@ -1339,7 +1348,7 @@ namespace PE {
 				if (draggedItemIndex >= 0)
 				{
 					// Create a floating preview of the dragged item
-					ImGui::SetNextWindowPos(ImGui::GetMousePos());
+					ImGui::SetNextWindowPos(ImVec2(ImGui::GetMousePos().x + 1.f, ImGui::GetMousePos().y - 1.f));
 					ImGui::SetNextWindowSize(ImVec2(50, 50));
 					std::string test = std::to_string(draggedItemIndex);
 					ImGui::Begin(test.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
@@ -1411,8 +1420,6 @@ namespace PE {
 					ImGui::EndTooltip();
 				}
 			}
-
-
 			ImGui::End(); //imgui close
 		}
 
@@ -1638,8 +1645,7 @@ namespace PE {
 				ImVec2(0, 1),
 				ImVec2(1, 0)
 			);
-			m_mouseInScene = ImGui::IsWindowHovered(ImGuiHoveredFlags_AllowWhenBlockedByActiveItem);
-			std::cout << m_mouseInScene;
+			m_mouseInScene = ImGui::IsWindowHovered();
 		}
 		ImGui::EndChild();
 
@@ -1736,5 +1742,18 @@ namespace PE {
 			ToggleDebugRender();
 	}
 
-}
+	void Editor::HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths)
+	{
+		std::cout << "Drag and drop count - " << count << std::endl;
+		std::vector<std::filesystem::path> consolidatedPaths;
+		for (int i{ 0 }; i < count; ++i)
+		{
+			consolidatedPaths.emplace_back(paths[i]);
+		}
+		for (std::filesystem::path const& r_path : consolidatedPaths)
+		{
+			std::filesystem::copy(r_path, std::filesystem::path{ m_parentPath / r_path.filename() }, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
+		}
 
+	}
+}
