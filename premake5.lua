@@ -20,6 +20,7 @@ IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
 IncludeDir["FMOD"]          = "vendor/FMOD/core/inc" -- CORE
+IncludeDir["RTTR"]          = "vendor/RTTR/include"
 IncludeDir["mono"]          = "vendor/mono/include"
 
 -- external libraries
@@ -29,7 +30,8 @@ group "Library"
         location "vendor/GLFW"
 
         kind "StaticLib"        
-        staticruntime "on"
+        
+
 
         language "C"
 
@@ -52,17 +54,19 @@ group "Library"
             systemversion "latest"
 
         filter "configurations:Debug"
+            staticruntime "off"
             runtime "Debug"
             symbols "on"
 
         filter "configurations:Release"
+            staticruntime "on"
             runtime "Release"
             optimize "on"
+
     -- imgui
     project "ImGui"
         location "vendor/imgui"
         kind "StaticLib"
-        staticruntime "on"
         
         language "C++"
         cppdialect "C++17"
@@ -81,7 +85,7 @@ group "Library"
         }
 
         removefiles
-        { 
+        {
             "vendor/imgui/misc/freetype/*.*"
         }
 
@@ -97,10 +101,12 @@ group "Library"
 
         filter "configurations:Debug"
             runtime "Debug"
+            staticruntime "off"
             symbols "on"
 
         filter "configurations:Release"
             runtime "Release"
+            staticruntime "on"
             optimize "on"
    
 group ""
@@ -144,6 +150,7 @@ project "Purring_Engine"
         "%{IncludeDir.GLEW}",
         "%{IncludeDir.FMOD}",
         "vendor/freetype/include",
+        "%{IncludeDir.RTTR}",
         "%{IncludeDir.mono}"
     }
 
@@ -153,6 +160,7 @@ project "Purring_Engine"
         "vendor/GLEW/lib/Release/x64",
         "vendor/FMOD/core/lib/x64",
         "vendor/freetype/libs",
+        "vendor/RTTR/lib",
         "vendor/mono/lib/%{cfg.buildcfg}"
     }
 
@@ -173,10 +181,12 @@ project "Purring_Engine"
 
     filter "configurations:Debug"
 			runtime "Debug"
+            staticruntime "off"
 			symbols "on"
 
     filter "configurations:Release"
 			runtime "Release"
+            staticruntime "on"
 			optimize "on"
 
 -- Application
@@ -184,7 +194,6 @@ project "Application"
     location "Application"
 
     kind "ConsoleApp"
-    staticruntime "on"
 
     language "C++"
     cppdialect "C++17"
@@ -209,12 +218,14 @@ project "Application"
         "%{IncludeDir.glm}",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLEW}",
-        "%{IncludeDir.FMOD}"
+        "%{IncludeDir.FMOD}",
+        "%{IncludeDir.RTTR}"
     }
 
     libdirs
     {
-        "vendor/freetype/libs"
+        "vendor/freetype/libs",
+        "vendor/RTTR/lib"
     }
 
     links
@@ -238,8 +249,27 @@ project "Application"
 
     filter "configurations:Debug"
 			runtime "Debug"
+            staticruntime "off"
 			symbols "on"
+            postbuildcommands
+            {
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core_d.dll ../bin/" .. outputdir .. "/Application"),
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core_d.pdb ../bin/" .. outputdir .. "/Application")
+            }
+            links
+            {
+                "rttr_core_d"
+            }
 
     filter "configurations:Release"
 			runtime "Release"
+            staticruntime "on"
 			optimize "on"
+            postbuildcommands
+            {
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. outputdir .. "/Application"),
+            }
+            links
+            {
+                "rttr_core"
+            }

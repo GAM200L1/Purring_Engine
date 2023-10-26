@@ -29,6 +29,8 @@
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
 #include <random>
+#include <rttr/type.h>
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 SerializationManager serializationManager;  // Create an instance
 
@@ -791,14 +793,15 @@ namespace PE {
 					for (const ComponentID& name : components)
 					{
 						++componentCount;//increment unique id
-						ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
 
-						//search through each component, create a collapsible header if the component exist
-
-						//transform component
 						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 						{
-							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
+
+
+							//search through each component, create a collapsible header if the component exist
+							rttr::type currType = rttr::type::get_by_name(name.to_string());
+						
 							if (ImGui::CollapsingHeader("Transform", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
@@ -814,27 +817,42 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
-								//each variable in the component
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Text("Position: ");
-								ImGui::Text("x: "); ImGui::SameLine(); ImGui::InputFloat("##x", &EntityManager::GetInstance().Get<Transform>(entityID).position.x, 1.0f, 100.f, "%.3f");								
-								ImGui::Text("y: "); ImGui::SameLine(); ImGui::InputFloat("##y", &EntityManager::GetInstance().Get<Transform>(entityID).position.y, 1.0f, 100.f, "%.3f");
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Text("Scale: ");
-								ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##Width", &EntityManager::GetInstance().Get<Transform>(entityID).width, 1.0f, 100.f, "%.3f");
-								ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##Height", &EntityManager::GetInstance().Get<Transform>(entityID).height, 1.0f, 100.f, "%.3f");
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Text("Rotation: ");
-								float rotation = static_cast<float>(EntityManager::GetInstance().Get<Transform>(entityID).orientation * (180 / M_PI));
-								ImGui::Text("Orientation: "); ImGui::SameLine();
-								ImGui::SetNextItemWidth(200.f); ImGui::SliderFloat("##Orientation", &rotation, -180, 180, "%.3f");
-								ImGui::Text("             "); ImGui::SameLine();  ImGui::SetNextItemWidth(200.f); ImGui::InputFloat("##Orientation2", &rotation, 0.0f, 0.0f, "%.3f", ImGuiInputTextFlags_CharsDecimal);
-								ImGui::SetItemTooltip("In Radians");
-								EntityManager::GetInstance().Get<Transform>(entityID).orientation = static_cast<float>(rotation * (M_PI / 180));
+								for (auto& prop : currType.get_properties())
+								{
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+									std::string nm(prop.get_name());
+									nm += ": ";
+									ImGui::Text(nm.c_str());
+									rttr::variant vp;
+									// change to lookup table?
+									if (name == EntityManager::GetInstance().GetComponentID<Transform>())
+									{
+										vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
+									}
+
+
+									// handle types
+									if (vp.get_type().get_name() == "structPE::vec2")
+									{
+										PE::vec2 tmp = vp.get_value<PE::vec2>();
+										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##x" + prop.get_name().to_string()).c_str(), &tmp.x, 1.0f);
+										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
+										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
+											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
+
+									}
+									else if (vp.get_type().get_name() == "float")
+									{
+										float tmp = vp.get_value<float>();
+										std::string str = "##" + prop.get_name().to_string();
+										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputFloat(str.c_str(), &tmp, 1.0f, 100.f, "%.3f");
+										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
+											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
+
+									}
+								}
 							}
 						}
-
-						//rigidbody component
 						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
 						{
 							if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -889,7 +907,6 @@ namespace PE {
 								}
 							}
 						}
-
 						//collider component
 						if (name == EntityManager::GetInstance().GetComponentID<Collider>())
 						{
@@ -1055,7 +1072,7 @@ namespace PE {
 						{
 							hasScripts = true;
 							if (ImGui::CollapsingHeader("ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-							{							
+							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
 								std::string id = "options##", o = "o##";
@@ -1097,21 +1114,21 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								static int selectedScript{-1};
+								static int selectedScript{ -1 };
 								static std::string selectedScriptName{};
 								ImGui::Text("Scripts List");
 								//loop to show all the items ins the vector
-								if (ImGui::BeginChild("GameObjectList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
+								if (ImGui::BeginChild("GameObjectList", ImVec2(-1, 200), true, ImGuiWindowFlags_NoResize)) {
 									for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
 									{
 										const bool is_selected = (selectedScript == n);
 
-										if (ImGui::Selectable(EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str(), is_selected)) 
+										if (ImGui::Selectable(EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str(), is_selected))
 										{
 											selectedScript = n; //seteting current index to check for selection
 											selectedScriptName = EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str();
 										}//imgui selectable is the function to make the clickable bar of text
-											
+
 										// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 										if (is_selected) // to show the highlight if selected
 											ImGui::SetItemDefaultFocus();
@@ -1121,7 +1138,7 @@ namespace PE {
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
 								if (ImGui::Button("Remove Script"))
 								{
-									if (selectedScript >= 0) 
+									if (selectedScript >= 0)
 									{
 										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
 										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
@@ -1132,7 +1149,7 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
-                        
+
 						if (hasScripts)
 						{
 							for (auto& [key, val] : LogicSystem::m_scriptContainer)
@@ -1141,11 +1158,11 @@ namespace PE {
 								{
 									testScript* test = dynamic_cast<testScript*>(val);
 									auto it = test->GetScriptData().find(m_currentSelectedObject);
-									if(it != test->GetScriptData().end())
-									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-									{
-										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
-									}
+									if (it != test->GetScriptData().end())
+										if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+										{
+											ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
+										}
 								}
 
 								if (key == "PlayerControllerScript")
@@ -1163,26 +1180,25 @@ namespace PE {
 
 						// Camera component
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
-								if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-								{
-										float viewportWidth{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportWidth() };
-										float viewportHeight{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportHeight() };
+							if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								float viewportWidth{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportWidth() };
+								float viewportHeight{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportHeight() };
 
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-										ImGui::Text("Viewport Dimensions: ");
-										ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
-										ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Text("Viewport Dimensions: ");
+								ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
+								ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-										float zoom{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetMagnification() };
-										ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
-										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								float zoom{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetMagnification() };
+								ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-										EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetViewDimensions(viewportWidth, viewportHeight);
-										EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetMagnification(zoom);
-								}
+								EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetViewDimensions(viewportWidth, viewportHeight);
+								EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetMagnification(zoom);
+							}
 						}
-
 					}
 
 
