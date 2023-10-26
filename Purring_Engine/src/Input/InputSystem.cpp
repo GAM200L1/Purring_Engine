@@ -175,7 +175,7 @@ namespace PE
             PE::KeyTriggeredEvent kte;
             PE::KeyPressedEvent kpe;
             kte.keycode = kpe.keycode = key;
-            m_KeyTriggered[key] = m_bufferTime;
+            m_KeyTriggered[key] = .1f;
             //setting a buffer before the keypressed becomes a repeat
             kpe.repeat = m_bufferTime;
             //saving the keypressed event
@@ -250,7 +250,7 @@ namespace PE
 
         for (auto& [key, val] : m_KeyTriggered)
         {
-            val -= deltaTime;
+            val = 0;
         }
     }
 

@@ -1,14 +1,11 @@
 #pragma once
 #include "Script.h"
-#include "Math/MathCustom.h"
-
+#include "StateManager.h"
 namespace PE
 {
 	struct TestScript2Data
 	{
-		EntityID targetID{ 1 };
-		EntityID CollisionTarget{ 2 };
-		std::vector<vec2> points;
+		StateMachine m_stateMachine;
 	};
 
 	class testScript2 : public Script
@@ -24,4 +21,21 @@ namespace PE
 		std::map<EntityID, TestScript2Data> m_ScriptData;
 	};
 
+	class TestScript2IDLE : public State
+	{
+	public:
+		virtual void StateEnter() override { std::cout << "Enter Idle" << std::endl; }
+		virtual void StateUpdate() override { std::cout << "Update Idle" << std::endl; }
+		virtual void StateExit() override { std::cout << "Exit Idle" << std::endl; }
+		virtual std::string_view GetName() override { return "IDLE"; }
+	};
+
+	class TestScript2JIGGLE : public State
+	{
+	public:
+		virtual void StateEnter() override { std::cout << "Enter Jiggle" << std::endl; }
+		virtual void StateUpdate() override { std::cout << "Update Jiggle" << std::endl; }
+		virtual void StateExit() override { std::cout << "Exit Jiggle" << std::endl; }
+		virtual std::string_view GetName() override { return "JIGGLE"; }
+	};
 }
