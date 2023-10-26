@@ -36,6 +36,7 @@
 // Graphics Headers
 #include "Graphics/GLHeaders.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/GUIRenderer.h"
 #include "Graphics/CameraManager.h"
 
 // Core Functionality
@@ -94,10 +95,12 @@ PE::CoreApplication::CoreApplication()
 
 
     // Load Textures and Animations
-    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
+    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" }, buttonTextureName{ "buttonTex" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
+
+    ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
 
     // Animation textures
     // Animation 1
@@ -117,13 +120,21 @@ PE::CoreApplication::CoreApplication()
     
     // Creates an entity from file that is attached to the Character Controller
     serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
-    
+    EntityManager::GetInstance().Get<Transform>(1).position.x = -100.f;
+    EntityManager::GetInstance().Get<Transform>(1).position.y = -100.f;
+
+    // Create object to use for testing transformation matrices
+    Graphics::CameraManager::testEntity = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+
+    // Create button objects
+    for (int i{}; i < 5; ++i) 
+    {
+        EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
+        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
+    }
 
     // Make a runtime camera that follows the player
     EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = -100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = -100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
 
     // Make a second runtime camera to test switching
@@ -259,6 +270,7 @@ void PE::CoreApplication::RegisterComponents()
     REGISTERCOMPONENT(Collider);
     REGISTERCOMPONENT(Transform);
     REGISTERCOMPONENT(Graphics::Renderer);
+    REGISTERCOMPONENT(Graphics::GUIRenderer);
     REGISTERCOMPONENT(Graphics::Camera);
     REGISTERCOMPONENT(ScriptComponent);
     REGISTERCOMPONENT(GUI);

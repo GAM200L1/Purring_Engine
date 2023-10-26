@@ -38,8 +38,22 @@ namespace PE
             float halfWidth{ m_viewportWidth * 0.5f };
             float halfHeight{ m_viewportHeight * 0.5f };
 
-            m_cachedViewToNdcMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.f, 10.f);
-            m_cachedNdcToViewMatrix = glm::inverse(m_cachedViewToNdcMatrix);
+            m_cachedViewToNdcMatrix = glm::mat4 {
+                2.f / m_viewportWidth, 0.f, 0.f, 0.f,
+                0.f, 2.f / m_viewportHeight, 0.f, 0.f,
+                0.f, 0.f, 1.f, 0.f,
+                0.f, 0.f, 0.f, 1.f,
+            };
+
+            m_cachedNdcToViewMatrix = glm::mat4 {
+                m_viewportWidth * 0.5f, 0.f, 0.f, 0.f,
+                0.f, m_viewportHeight * 0.5f, 0.f, 0.f,
+                0.f, 0.f, 1.f, 0.f,
+                -1.f, -1.f, 0.f, 1.f,
+            };
+
+            //m_cachedViewToNdcMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.f, 10.f);
+            //m_cachedNdcToViewMatrix = glm::inverse(m_cachedViewToNdcMatrix);
             hasViewportChanged = false;
         }
 
@@ -58,7 +72,7 @@ namespace PE
             m_cachedViewToWorldMatrix = glm::mat4{
                 right.x, right.y, 0.f, 0.f,
                 up.x, up.y, 0.f, 0.f,
-                0.f,    0.f,   1.f, 0.f,
+                0.f, 0.f, 1.f, 0.f,
                 positionX, positionY, 0.f, 1.f
             };
 

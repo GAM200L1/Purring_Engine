@@ -23,6 +23,8 @@
 #include "ECS/Entity.h"
 #include "System.h"
 #include <optional>
+#include <utility>
+
 
 namespace PE
 {
@@ -33,15 +35,18 @@ namespace PE
         *************************************************************************************/
         class CameraManager : public System
         {
+        public:
+            static EntityID testEntity; // ID of the entity to move on click (Temporary variable for testing purposes)
+
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
              \brief Initializes the camera manager.
 
-             \param[in] editorViewWidth Viewport width of the editor camera.
-             \param[in] editorViewHeight Viewport height of the editor camera.
+             \param[in] windowWidth Width of the window. Used to initialize the editor camera.
+             \param[in] windowHeight Height of the window. Used to initialize the editor camera.
             *************************************************************************************/
-            CameraManager(float const editorViewWidth, float const editorViewHeight);
+            CameraManager(float const windowWidth, float const windowHeight);
 
             // ----- Public getters ----- // 
         public:
@@ -117,6 +122,20 @@ namespace PE
             std::optional<glm::mat4> GetViewToWorldMatrix(bool const editorMode);
 
             /*!***********************************************************************************
+             \brief Returns the 4x4 view to NDC matrix of the UI camera.
+
+             \return glm::mat4 - The 4x4 view to NDC matrix of the UI camera.
+            *************************************************************************************/
+            glm::mat4 GetUiViewToNdcMatrix();
+
+            /*!***********************************************************************************
+             \brief Returns the 4x4 NDC to view matrix of the UI camera.
+
+             \return glm::mat4 - The 4x4 NDC to view matrix of the UI camera.
+            *************************************************************************************/
+            glm::mat4 GetUiNdcToViewMatrix();
+
+            /*!***********************************************************************************
              \brief Returns an optional object with a reference to the Camera component for 
                     the primary camera used during runtime. 
                     
@@ -132,10 +151,22 @@ namespace PE
             std::optional <std::reference_wrapper<Camera>> GetMainCamera();
 
             /*!***********************************************************************************
+             \brief Returns a reference to the camera used to render UI.
+             \return Camera& - A reference to the UI camera.
+            *************************************************************************************/
+            Camera& GetUiCamera();
+
+            /*!***********************************************************************************
              \brief Returns a reference to the camera used in editor mode.
              \return EditorCamera& - A reference to the camera used in editor mode.
             *************************************************************************************/
             inline EditorCamera& GetEditorCamera() { return m_editorCamera; }
+
+            /*!***********************************************************************************
+             \brief Returns the entity ID of the UI camera object.
+             \return EntityID - The entity ID of the UI camera object.
+            *************************************************************************************/
+            inline EntityID GetUICameraId() { return m_uiCameraId; }
 
             /*!***********************************************************************************
              \brief Get the system's name, useful for debugging and identification.
@@ -154,6 +185,12 @@ namespace PE
                     to the first runtime camera created.
             *************************************************************************************/
             void SetMainCamera(EntityID const cameraEntityId);
+
+            /*!***********************************************************************************
+             \brief Creates a camera object to use as a UI camera and stores the ID of the UI 
+                    camera in m_uiCameraId.
+            *************************************************************************************/
+            void CreateUiCamera();
 
 
             // ----- Public methods ----- //
@@ -198,10 +235,15 @@ namespace PE
             void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
         private:
+            float m_windowWidth{}, m_windowHeight{};
+
             std::string m_systemName{ "Camera Manager" }; // Name of system
 
             // The entity number of the primary camera used during runtime
             EntityID m_mainCameraId{};
+
+            // The entity number of the UI camera used during runtime
+            EntityID m_uiCameraId{};
 
             // The camera used in editor mode
             EditorCamera m_editorCamera{};

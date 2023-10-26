@@ -2,8 +2,8 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     RendererManager.cpp
- \creation date:       30-08-2023
- \last updated:        16-09-2023
+ \date:       30-08-2023
+
  \author:              Krystal YAMIN
 
  \par      email:      krystal.y@digipen.edu
@@ -211,13 +211,16 @@ namespace PE
                 worldToNdcMatrix = r_cameraManager.GetWorldToNdcMatrix(renderInEditor).value();
             }
 
-            DrawSceneInstanced(worldToNdcMatrix); // Draw objects in the scene
-
+            // Draw objects in the scene
+            DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 
 
             if (Editor::GetInstance().IsRenderingDebug()) 
             {
                 DrawDebug(worldToNdcMatrix); // Draw debug gizmos in the scene
             }
+
+            // Draw UI objects in the scene
+            DrawQuadsInstanced(r_cameraManager.GetUiViewToNdcMatrix(), SceneView<GUIRenderer, Transform>());
 
 
             // Render Text
@@ -261,7 +264,8 @@ namespace PE
         }
 
 
-        void RendererManager::DrawScene(glm::mat4 const& r_worldToNdc)
+        template<typename T>
+        void RendererManager::DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
@@ -275,9 +279,9 @@ namespace PE
             }
 
             // Make draw call for each game object with a renderer component
-            for (const EntityID& id : SceneView<Renderer>())
+            for (const EntityID& id : r_sceneView)
             {
-                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::mat4 glmObjectTransform
@@ -287,12 +291,14 @@ namespace PE
                         transform.position.x, transform.position.y) // x, y position
                 };
 
-                Draw(renderer, *(shaderProgramIterator->second), GL_TRIANGLES,
+                Draw(dynamic_cast<Renderer&>(renderer), *(shaderProgramIterator->second), GL_TRIANGLES,
                     r_worldToNdc * glmObjectTransform);
             }
         }
 
-        void RendererManager::DrawSceneInstanced(glm::mat4 const& r_worldToNdc)
+
+        template<typename T>
+        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
 
@@ -328,9 +334,9 @@ namespace PE
 
             // Make draw call for each game object with a renderer component
 
-            for (const EntityID& id : SceneView<Renderer>())
+            for (const EntityID& id : r_sceneView)
             {
-                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 
                 // Skip drawing this object is the renderer is not enabled
                 if (!renderer.GetEnabled()) { continue; }
@@ -397,6 +403,19 @@ namespace PE
                     transform.height, transform.orientation, // height, orientation
                     transform.position.x, transform.position.y)); // x, y position
                 m_colors.emplace_back(renderer.GetColor());
+
+
+                //// @TODO Testing transform matrix
+                //glm::vec4 localCornerPos{ 0.5f, 0.5f, 0.f, 1.f };
+                //glm::vec4 NdcCornerPos{ r_cameraManager.GetWorldToNdcMatrix(Editor::GetInstance().IsEditorActive()).value() * m_modelToWorldMatrices.back() * localCornerPos};
+                //std::cout << "RendererManager::DrawSceneInstanced " << ", ndc pos: " << transform.position.x << ", " << transform.position.y << "\n";
+
+                //glm::vec4 newPos{
+                //    r_cameraManager.GetNdcToWorldMatrix(Editor::GetInstance().IsEditorActive()).value() * NdcCornerPos
+                //};
+
+                //std::cout << "RendererManager::DrawSceneInstanced " << ", world pos: " << newPos.x << ", " << newPos.y << "\n";
+
 
                 ++count;
             }
@@ -583,6 +602,7 @@ namespace PE
                 p_texture->Unbind();
             }
         }   
+
 
         void RendererManager::DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType)
         {

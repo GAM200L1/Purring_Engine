@@ -23,10 +23,17 @@ namespace PE
 {
     namespace Graphics
     {
-        CameraManager::CameraManager(float const editorViewWidth, float const editorViewHeight)
+        // Initialize static members
+        EntityID CameraManager::testEntity{};
+
+
+        CameraManager::CameraManager(float const windowWidth, float const windowHeight)
         {
             // Update the editor camera viewport size
-            m_editorCamera.SetViewDimensions(editorViewWidth, editorViewHeight);
+            m_editorCamera.SetViewDimensions(windowWidth, windowHeight);
+
+            // Store the window size
+            m_windowWidth = windowWidth, m_windowHeight = windowHeight;
         }
 
 
@@ -69,6 +76,19 @@ namespace PE
 
                 return std::nullopt;
             }
+        }
+
+
+        glm::mat4 CameraManager::GetUiViewToNdcMatrix()
+        {
+            return GetUiCamera().GetViewToNdcMatrix();
+        }
+        
+
+
+        glm::mat4 CameraManager::GetUiNdcToViewMatrix()
+        {
+            return GetUiCamera().GetNdcToViewMatrix();
         }
 
 
@@ -152,12 +172,27 @@ namespace PE
                 foundCamera = true;
             }
 
-            if (foundCamera) 
+            if (foundCamera)
             {
                 return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
             }
 
             return std::nullopt;
+        }
+
+
+        Camera& CameraManager::GetUiCamera()
+        {
+            // Check if the main camera ID stored is valid
+            if (!EntityManager::GetInstance().Has(m_uiCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
+            {
+                CreateUiCamera();
+            }
+
+            return EntityManager::GetInstance().Get<Camera>(m_uiCameraId);
+            // @TODO    what if the camera ui obj exists but the camera component has been removed 
+            //          for some reason? Delete the old obj first?
+
         }
 
 
@@ -167,12 +202,24 @@ namespace PE
         }
 
 
+        void CameraManager::CreateUiCamera()            
+        {
+            // Create a UI camera
+            m_uiCameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+            EntityManager::GetInstance().Get<Graphics::Camera>(m_uiCameraId).SetViewDimensions(m_windowWidth, m_windowHeight);
+            // @TODO Name the gameobject or hide it in the editor
+        }
+
+
         void CameraManager::InitializeSystem()
         {
             // Subscribe listeners to the events
             ADD_ALL_WINDOW_EVENT_LISTENER(CameraManager::OnWindowEvent, this)
             ADD_ALL_MOUSE_EVENT_LISTENER(CameraManager::OnMouseEvent, this)
             ADD_ALL_KEY_EVENT_LISTENER(CameraManager::OnKeyEvent, this)
+
+            // Create a UI camera
+            CreateUiCamera();
         }
 
 
@@ -239,11 +286,15 @@ namespace PE
                 WindowResizeEvent event;
                 event = dynamic_cast<const WindowResizeEvent&>(r_event);
 
+                // Store the window size
+                m_windowWidth = static_cast<float>(event.width);
+                m_windowHeight = static_cast<float>(event.height);
+
+                // Update the size of the viewport of all the cameras
                 for (const EntityID& id : SceneView<Camera>())
                 {
-                    // Update the size of the viewport of the camera
                     Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
-                    r_camera.SetViewDimensions(static_cast<float>(event.width), static_cast<float>(event.height));
+                    r_camera.SetViewDimensions(m_windowWidth, m_windowHeight);
                 }
             }
         }
@@ -251,6 +302,27 @@ namespace PE
 
         void CameraManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
         {
+            // @TODO remove this after testing
+            // Move a gameobject around to indicate the location of the mouse click
+            if (r_event.GetType() == MouseEvents::MouseButtonPressed)
+            {
+                MouseButtonPressedEvent event = dynamic_cast<const MouseButtonPressedEvent&>(r_event);
+
+                if (event.button == 0) // If pressing the left mouse button
+                {
+                    glm::vec4 newPos{
+                        GetNdcToWorldMatrix(true).value() * glm::vec4{static_cast<float>(event.x), static_cast<float>(event.y), 0.f, 1.f}
+                    };
+
+                    std::cout << "CameraManager::OnMouseEvent " << event.ToString() << ", new pos: " << newPos.x << ", " << newPos.y << "\n";
+
+                    // Move the test object to the position of the mouse cursor
+                    EntityManager::GetInstance().Get<Transform>(testEntity).position.x = newPos.x;
+                    EntityManager::GetInstance().Get<Transform>(testEntity).position.y = newPos.y;
+                }
+
+            }
+
             // @TODO remove this after testing
             // Switch the main camera on pressing the MMB
             if (r_event.GetType() == MouseEvents::MouseButtonReleased)

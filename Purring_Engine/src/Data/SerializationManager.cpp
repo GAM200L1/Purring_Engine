@@ -21,6 +21,7 @@
 #include "prpch.h"
 #include "SerializationManager.h"
 #include "ECS/EntityFactory.h"
+#include "ECS/Entity.h"
 #include "Math/MathCustom.h"
 
 std::string SerializationManager::OpenFileExplorer()

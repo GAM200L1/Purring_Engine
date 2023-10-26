@@ -1,3 +1,5 @@
+#pragma once
+
 #include "System.h"
 #include "Events/MouseEvent.h"
 #include "Events/Event.h"

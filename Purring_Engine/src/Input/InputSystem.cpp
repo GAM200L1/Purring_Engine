@@ -54,11 +54,8 @@ namespace PE
 
         //creation of event and sending
         PE::MouseMovedEvent mme;
-        double x = xpos;
-        double y = ypos;
-        ConvertGLFWToTransform(window, &x, &y);
-        mme.x = static_cast<int>(x);
-        mme.y = static_cast<int>(y);
+        mme.x = static_cast<int>(xpos);
+        mme.y = static_cast<int>(ypos);
 
         PE::SEND_MOUSE_EVENT(mme)
     }

@@ -14,7 +14,6 @@
 *************************************************************************************/
 #pragma once
 #include "Math/MathCustom.h"
-#include "ECS/Components.h"
 #include "Data/json.hpp"
 
 namespace PE
