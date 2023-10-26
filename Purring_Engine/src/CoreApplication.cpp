@@ -69,12 +69,82 @@
 
 #include "Logic/LogicSystem.h"
 
+// RTTR includes
+#include <rttr/type.h>
+#include <rttr/property.h>
+#include <rttr/registration.h>
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
-// Scripting
-// #include "ScriptingManager.h"
-// ScriptingManager scriptingManager;
+#define TO_STR(x) #x
+
+
+
+using namespace rttr;
+
+RTTR_REGISTRATION
+{
+    REGISTERCOMPONENT(PE::RigidBody);
+    REGISTERCOMPONENT(PE::Collider);
+    REGISTERCOMPONENT(PE::Transform);
+    REGISTERCOMPONENT(PE::Graphics::Renderer);
+    REGISTERCOMPONENT(PE::Graphics::Camera);
+    REGISTERCOMPONENT(PE::ScriptComponent);
+    using namespace rttr;
+    // test whether we need to register math lib stuff as well...
+    // extra notes, will we need to include the constructor as well?
+    // functionality seems fine without it... maybe needed by scripting side though
+    //rttr::registration::class_<PE::vec2>("vec2")
+    //    .property("x", &PE::vec2::x);
+    rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
+        .property("Position", &PE::Transform::position)
+        .property("Orientation", &PE::Transform::orientation)
+        .property("Width", &PE::Transform::width)
+        .property("Height", &PE::Transform::height)
+        .method("GetMtx3x3", &PE::Transform::GetTransformMatrix3x3);
+
+    rttr::registration::class_<PE::RigidBody>(PE::EntityManager::GetInstance().GetComponentID<PE::RigidBody>().to_string().c_str())
+        .property("Previous Position", &PE::RigidBody::prevPosition)
+        .property("Velocity", &PE::RigidBody::velocity)
+        .property("Rotation Velocity", &PE::RigidBody::rotationVelocity)
+        .property("Force", &PE::RigidBody::force);
+    
+    // objects collided shouldnt be needed right? @yeni
+    rttr::registration::class_<PE::Collider>(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string().c_str())
+        .property("Collider Type", &PE::Collider::colliderVariant)
+        .property("Is Trigger", &PE::Collider::isTrigger);
+
+    // what do i need to register here?? @krystal
+    rttr::registration::class_<PE::Graphics::Renderer>(PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>().to_string().c_str())
+        .method("GetColor", &PE::Graphics::Renderer::GetColor)
+        .method("SetColor", &PE::Graphics::Renderer::SetColor)
+        .method("GetEnabled", &PE::Graphics::Renderer::GetEnabled)
+        .method("SetEnabled", &PE::Graphics::Renderer::SetEnabled)
+        .method("GetTextureKey", &PE::Graphics::Renderer::GetTextureKey)
+        .method("SetTextureKey", &PE::Graphics::Renderer::SetTextureKey);
+
+    rttr::registration::class_<PE::Graphics::Camera>(PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Camera>().to_string().c_str())
+        .method("GetWorldToViewMatrix", &PE::Graphics::Camera::GetWorldToViewMatrix)
+        .method("GetViewToNdcMatrix", &PE::Graphics::Camera::GetViewToNdcMatrix)
+        .method("GetWorldToNdcMatrix", &PE::Graphics::Camera::GetWorldToNdcMatrix)
+        .method("UpdateCamera", &PE::Graphics::Camera::UpdateCamera)
+        .method("GetHasChanged", &PE::Graphics::Camera::GetHasChanged)
+        .method("GetUpVector", &PE::Graphics::Camera::GetUpVector)
+        .method("GetRightVector", &PE::Graphics::Camera::GetRightVector)
+        .method("ComputeViewMatrix", &PE::Graphics::Camera::ComputeViewMatrix)
+        .method("GetAspectRatio", &PE::Graphics::Camera::GetAspectRatio)
+        .method("GetMagnification", &PE::Graphics::Camera::GetMagnification)
+        .method("GetViewportWidth", &PE::Graphics::Camera::GetViewportWidth)
+        .method("GetViewportHeight", &PE::Graphics::Camera::GetViewportHeight)
+        .method("SetViewDimensions", &PE::Graphics::Camera::SetViewDimensions)
+        .method("SetMagnification", &PE::Graphics::Camera::SetMagnification)
+        .method("AdjustMagnification", &PE::Graphics::Camera::AdjustMagnification);
+
+    // is that all i need to register? @jarran
+    rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str());
+
+}
 
 PE::CoreApplication::CoreApplication()
 {
@@ -264,13 +334,66 @@ void PE::CoreApplication::InitializeVariables()
 
 void PE::CoreApplication::RegisterComponents()
 {
-    REGISTERCOMPONENT(RigidBody);
-    REGISTERCOMPONENT(Collider);
-    REGISTERCOMPONENT(Transform);
-    REGISTERCOMPONENT(Graphics::Renderer);
-    REGISTERCOMPONENT(Graphics::Camera);
-    REGISTERCOMPONENT(ScriptComponent);
+
+    //std::cout << "TRANSFORM COMPONENT PROPERTIES: \n";
+    //rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string());
+    //for (auto& prop : cls.get_properties())
+    //{
+    //    std::cout << "name: " << prop.get_name() << std::endl;
+    //}
+    //for (auto& meth : cls.get_methods())
+    //{
+    //    std::cout << "name: " << meth.get_name() << std::endl;
+    //}
+
+    //std::cout << "\nTRANSFORM COMPONENT Orientation value: ";
+    //Transform tmp;
+
+    //property p = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string()).get_property("orientation");
+    //p.set_value(tmp, 69.f);
+
+    //variant vp = p.get_value(tmp);
+    //std::cout << vp.to_float() << std::endl;
+
+    //std::cout << "\nRIGIDBODY COMPONENT PROPERTIES: \n";
+
+    //cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::RigidBody>().to_string());
+    //for (auto& prop : cls.get_properties())
+    //{
+    //    std::cout << "name: " << prop.get_name() << std::endl;
+    //}
+    //for (auto& meth : cls.get_methods())
+    //{
+    //    std::cout << "name: " << meth.get_name() << std::endl;
+    //}
+
+    //std::cout << "\nCOLLIDER COMPONENT PROPERTIES: \n";
+    //cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
+    //for (auto& prop : cls.get_properties())
+    //{
+    //    std::cout << "name: " << prop.get_name() << std::endl;
+    //}
+    //for (auto& meth : cls.get_methods())
+    //{
+    //    std::cout << "name: " << meth.get_name() << std::endl;
+    //}
+
+    //std::cout << std::endl;
+
+    rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
+    for (auto& prop : cls.get_properties())
+    {
+        std::cout << "name: " << prop.get_name() << std::endl;
+        std::cout << "type: " << prop.get_type().get_name() << std::endl;
+
+    }
+    for (auto& meth : cls.get_methods())
+    {
+        std::cout << "name: " << meth.get_name() << std::endl;
+    }
 }
+
+
 
 void PE::CoreApplication::InitializeLogger()
 {
@@ -288,6 +411,8 @@ void PE::CoreApplication::InitializeAudio()
     }
     ResourceManager::GetInstance().LoadAudioFromFile("audio_sound1", "../Assets/Audio/audioSFX_sound1.mp3");
     ResourceManager::GetInstance().LoadAudioFromFile("audio_sound2", "../Assets/Audio/audioSFX_sound2.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound3", "../Assets/Audio/audioSFX_sound3.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("audio_backgroundMusic", "../Assets/Audio/audioSFX_backgroundMusic.mp3");
 }
 
 

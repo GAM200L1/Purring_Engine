@@ -18,17 +18,16 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
+#include "RendererManager.h"
 #include <glm/gtc/constants.hpp>    // pi()
 #include <glm/gtc/matrix_transform.hpp> // ortho()
 
 #include "Logging/Logger.h" 
-#include "RendererManager.h"
 #include "ResourceManager/ResourceManager.h"
 
 // ECS Components
 #include "ECS/Entity.h"
 #include "ECS/EntityFactory.h"
-#include "ECS/SceneView.h"
 
 // ImGui
 #include "Editor/Editor.h"

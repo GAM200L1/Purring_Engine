@@ -16,20 +16,20 @@
 
 #include "GLHeaders.h"
 
-#include <cstddef>
 #include <glm/glm.hpp>
 #include <glm/gtx/compatibility.hpp> // atan2()
-#include <map>
-#include <vector>
+
+
+#include "Renderer.h"
 
 #include "CameraManager.h"
 #include "MeshData.h"
-#include "Renderer.h"
 #include "FrameBuffer.h"
 #include "ShaderProgram.h"
 #include "System.h"
 #include "Physics/Colliders.h"
 
+#include "ECS/SceneView.h"
 #include "Text.h"
 
 namespace PE
