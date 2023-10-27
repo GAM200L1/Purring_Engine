@@ -169,6 +169,7 @@ namespace PE
 
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
+                r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
             } 
 
             // Set background color of the window
@@ -225,10 +226,10 @@ namespace PE
 
             // Render Text
             // text object 1
-            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, worldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Button 1", {-180.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
 
            // text object 2
-            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, worldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Button 2", { 60.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
 
             // Unbind the RBO for rendering to the ImGui window
             m_imguiFrameBuffer.Unbind();

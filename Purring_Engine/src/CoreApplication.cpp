@@ -133,9 +133,9 @@ PE::CoreApplication::CoreApplication()
         EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
         EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
         EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
-        EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -windowWidth * 0.25f + 300.f * i;
-        EntityManager::GetInstance().Get<Transform>(buttonId).position.y = windowHeight * 0.25f;
-        EntityManager::GetInstance().Get<Transform>(buttonId).width = 300.f;
+        EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -125.f + 250.f * i;
+        EntityManager::GetInstance().Get<Transform>(buttonId).position.y = 200.f;
+        EntityManager::GetInstance().Get<Transform>(buttonId).width = 250.f;
         EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
     }
 
