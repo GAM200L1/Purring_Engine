@@ -231,8 +231,13 @@ namespace PE
            // text object 2
             m_font.RenderText("Button 2", { 60.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
 
-            // Unbind the RBO for rendering to the ImGui window
-            m_imguiFrameBuffer.Unbind();
+
+            if (renderInEditor)
+            {
+                // Unbind the RBO for rendering to the ImGui window
+                m_imguiFrameBuffer.Unbind();
+            }
+
             Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
             // Disable alpha blending
             glDisable(GL_BLEND);
