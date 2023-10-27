@@ -1076,7 +1076,9 @@ namespace PE {
 								{
 									ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2(100, 100), { 0,1 }, { 1,0 });
 									if (ImGui::IsItemHovered())
-										m_entityToModify = entityID;
+									{
+										m_entityToModify = static_cast<int>(entityID);
+									}
 
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
@@ -1463,7 +1465,7 @@ namespace PE {
 					}
 				}
 
-				int numItemPerRow = (ImGui::GetWindowSize().x < 100) ? 1 : ImGui::GetWindowSize().x / 100;
+				int numItemPerRow = (ImGui::GetWindowSize().x < 100.f) ? 1 : static_cast<int>(ImGui::GetWindowSize().x / 100.f);
 
 				// list the files in the current showing directory as imgui text
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
@@ -1523,7 +1525,6 @@ namespace PE {
 					if (ImGui::IsMouseReleased(0))
 					{
 						//do a function call here
-						std::string const& item = m_files[draggedItemIndex].filename().string();
 						if (m_entityToModify != -1)
 						{
 							// alters the texture assigned to renderer component in entity
@@ -1537,11 +1538,14 @@ namespace PE {
 						}
 						// add one for scene view if loading prefabs
 
-						m_entityToModify = -1;
 						isDragging = false;
 						draggedItemIndex = -1;
 					}
 				}
+			}
+			else
+			{
+				m_entityToModify = -1;
 			}
 
 
