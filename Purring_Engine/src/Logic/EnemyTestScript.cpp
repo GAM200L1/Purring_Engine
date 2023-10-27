@@ -13,13 +13,14 @@ namespace PE {
 
 	void EnemyTestScript::Init(EntityID id)
 	{
-		m_ScriptData[id].m_StateManager.ChangeState(new EnemyTestIDLE(),id);
+		m_ScriptData[id].m_stateManager = new StateMachine();
+		m_ScriptData[id].m_stateManager->ChangeState(new EnemyTestIDLE(),id);
 	}
 
 	void EnemyTestScript::Update(EntityID id, float deltaTime)
 	{
 		m_ScriptData[id].distanceFromPlayer = GetDistanceFromPlayer(id);
-		m_ScriptData[id].m_StateManager.Update(id, deltaTime);
+		m_ScriptData[id].m_stateManager->Update(id, deltaTime);
 	}
 
 	void EnemyTestScript::Destroy(EntityID)
@@ -29,10 +30,23 @@ namespace PE {
 	void EnemyTestScript::OnAttach(EntityID id)
 	{
 		if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<RigidBody>()))
+		{
 			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
-		EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-
-		m_ScriptData[id] = EnemyTestScriptData();
+			EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+		}
+		else
+		{
+			EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+		}
+		if (m_ScriptData.find(id) == m_ScriptData.end())
+		{
+			m_ScriptData[id] = EnemyTestScriptData();
+		}
+		else
+		{
+			delete m_ScriptData[id].m_stateManager;
+			m_ScriptData[id] = EnemyTestScriptData();
+		}
 	}
 
 	void EnemyTestScript::OnDetach(EntityID id)
@@ -49,6 +63,10 @@ namespace PE {
 
 	EnemyTestScript::~EnemyTestScript()
 	{
+		for (auto& [key, val] : m_ScriptData)
+		{
+			delete val.m_stateManager;
+		}
 	}
 
 	float EnemyTestScript::GetDistanceFromPlayer(EntityID id)
@@ -77,7 +95,7 @@ namespace PE {
 		if (p_data->idleTimer <= 0)
 		{
 			p_data->patrolTimer = p_data->timerBuffer;
-			p_data->m_StateManager.ChangeState(new EnemyTestPATROL(),id);
+			p_data->m_stateManager->ChangeState(new EnemyTestPATROL(),id);
 			return;
 		}
 	}
@@ -109,7 +127,7 @@ namespace PE {
 
 		if (abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
 		{
-			p_data->m_StateManager.ChangeState(new EnemyTestALERT(), id);
+			p_data->m_stateManager->ChangeState(new EnemyTestALERT(), id);
 			return;
 		}
 
@@ -119,7 +137,7 @@ namespace PE {
 		}
 		else if (p_data->patrolTimer < 0)
 		{
-			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+			p_data->m_stateManager->ChangeState(new EnemyTestIDLE(), id);
 			return;
 		}
 	}
@@ -145,13 +163,13 @@ namespace PE {
 
 		if (p_data->alertTimer <= 0 && abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
 		{
-			p_data->m_StateManager.ChangeState(new EnemyTestTARGET(), id);
+			p_data->m_stateManager->ChangeState(new EnemyTestTARGET(), id);
 			return;
 		}
 		else if (p_data->alertTimer <= 0)
 		{
 			p_data->idleTimer = p_data->timerBuffer;
-			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+			p_data->m_stateManager->ChangeState(new EnemyTestIDLE(), id);
 			return;
 		}
 	}
@@ -183,12 +201,12 @@ namespace PE {
 
 		if (p_data->alertTimer < 0 && p_data->distanceFromPlayer <= p_data->TargetRange)
 		{
-			p_data->m_StateManager.ChangeState(new EnemyTestATTACK(), id);
+			p_data->m_stateManager->ChangeState(new EnemyTestATTACK(), id);
 			return;
 		}
 		else if (p_data->alertTimer < 0)
 		{
-			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+			p_data->m_stateManager->ChangeState(new EnemyTestIDLE(), id);
 			return;
 		}
 
@@ -212,7 +230,7 @@ namespace PE {
 
 		EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(toPlayer * p_data->speed/2);
 
-		p_data->m_StateManager.ChangeState(new EnemyTestTARGET(), id);
+		p_data->m_stateManager->ChangeState(new EnemyTestTARGET(), id);
 	}
 	void EnemyTestATTACK::StateExit(EntityID)
 	{

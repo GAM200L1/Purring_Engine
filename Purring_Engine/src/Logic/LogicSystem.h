@@ -60,6 +60,7 @@ namespace PE {
 			if(itr != m_scriptKeys.end())
 			m_scriptKeys.erase(itr);
 		}
+		~ScriptComponent(){}
 	};
 
 }
