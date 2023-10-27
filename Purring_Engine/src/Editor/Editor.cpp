@@ -1054,25 +1054,26 @@ namespace PE {
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								//setting textures
-								std::vector<const char*> key;
-								key.push_back("");
+								std::vector<const char*> loadedTextureKeys;
+								loadedTextureKeys.push_back("");
 
-								//to get all the keys
-								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+								// get the keys of textures already loaded by the resource manager
+								for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
 								{
-									key.push_back(it->first.c_str());
+									// actual key is filepath, this will shorten it to just the file name
+									loadedTextureKeys.push_back(it->first.c_str());
 								}
 								int index{};
-								for (std::string str : key)
+								for (std::string const& r_textureKey : loadedTextureKeys)
 								{
-									if (str == EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())
+									if (r_textureKey == EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())
 										break;
 									index++;
 								}
 
 								//create a combo box of texture ids
 								ImGui::SetNextItemWidth(200.0f);
-								if (!key.empty())
+								if (!loadedTextureKeys.empty())
 								{
 									ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2(100, 100), { 0,1 }, { 1,0 });
 									if (ImGui::IsItemHovered())
@@ -1081,9 +1082,9 @@ namespace PE {
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
 									//set selected texture id
-									if (ImGui::Combo("##Textures", &index, key.data(), static_cast<int>(key.size())))
+									if (ImGui::Combo("##Textures", &index, loadedTextureKeys.data(), static_cast<int>(loadedTextureKeys.size())))
 									{
-										EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetTextureKey(key[index]);
+										EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetTextureKey(loadedTextureKeys[index]);
 									}
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1364,7 +1365,7 @@ namespace PE {
 						{
 							if (ResourceManager::GetInstance().Textures.find(r_filepath.stem().string()) != ResourceManager::GetInstance().Textures.end())
 							{
-								ResourceManager::GetInstance().Textures[r_filepath.stem().string()]->CreateTexture(r_filepath.string());
+								ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
 							}
 						}
 					}
@@ -1436,8 +1437,8 @@ namespace PE {
 							// alters the texture assigned to renderer component in entity
 							if (m_files[draggedItemIndex].extension() == ".png")
 							{
-								ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].stem().string(), m_files[draggedItemIndex].string());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(item.substr(0, item.find(".")));
+								ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(m_files[draggedItemIndex].string());
 								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
 							}
 							// add remaining editable assets
