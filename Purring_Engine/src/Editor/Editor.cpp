@@ -1332,7 +1332,8 @@ namespace PE {
 			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
 				
 				// Displays Header with File Directories
-				for (auto iter = m_parentPath.begin(); iter != m_parentPath.end(); ++iter)
+				// skips ../ portion
+				for (auto iter = std::next(m_parentPath.begin()); iter != m_parentPath.end(); ++iter)
 				{
 					ImGui::SameLine();
 					ImGui::Text(("> " + (*iter).string()).c_str());
@@ -1361,8 +1362,7 @@ namespace PE {
 					{
 						if (r_filepath.extension() == ".png")
 						{
-							auto const& textureIter = ResourceManager::GetInstance().Textures.find(r_filepath.stem().string());
-							if (textureIter != ResourceManager::GetInstance().Textures.end() && textureIter->second->)
+							if (ResourceManager::GetInstance().Textures.find(r_filepath.stem().string()) != ResourceManager::GetInstance().Textures.end())
 							{
 								ResourceManager::GetInstance().Textures[r_filepath.stem().string()]->CreateTexture(r_filepath.string());
 							}
