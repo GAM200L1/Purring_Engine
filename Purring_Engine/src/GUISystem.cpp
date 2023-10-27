@@ -71,7 +71,7 @@ namespace PE
 				InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
 
 				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
-					return;
+					continue;
 
 				if (gui.m_UIType == UIType::Button)
 				{
