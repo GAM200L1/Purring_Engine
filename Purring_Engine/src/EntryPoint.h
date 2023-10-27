@@ -21,7 +21,6 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "CoreApplication.h"
 #include <crtdbg.h>
-#define _CRTDBG_MAP_ALLOC		// detect memory leaks 
 
 
 extern PE::CoreApplication* PE::CreateApplication();
