@@ -66,7 +66,6 @@
 
 // Input
 #include "Input/InputSystem.h"
-
 #include "Logic/LogicSystem.h"
 
 // RTTR includes
@@ -74,6 +73,7 @@
 #include <rttr/property.h>
 #include <rttr/registration.h>
 
+#include "GUISystem.h"
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -91,6 +91,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::Graphics::Renderer);
     REGISTERCOMPONENT(PE::Graphics::Camera);
     REGISTERCOMPONENT(PE::ScriptComponent);
+    REGISTERCOMPONENT(PE::GUI);
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
     // extra notes, will we need to include the constructor as well?
@@ -425,12 +426,13 @@ void PE::CoreApplication::InitializeSystems()
     // Add system to list & assigning memory to them
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
-
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
     Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{};
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    AddSystem(p_guisystem);
     AddSystem(p_logicSystem);
     AddSystem(p_inputSystem);
     AddSystem(p_physicsManager);

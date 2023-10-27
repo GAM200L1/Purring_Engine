@@ -82,6 +82,7 @@ namespace PE
 
 		int button = -1; //lmb 1, mmb 2, rmb 3
 		float repeat = 0;
+		int x = -1, y = -1;
 	};
 
 	class MouseButtonHoldEvent : public Event<MouseEvents>
