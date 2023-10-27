@@ -171,7 +171,7 @@ PE::CoreApplication::CoreApplication()
     std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
-    ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/bg.png");
 
     // Animation textures
     // Animation 1

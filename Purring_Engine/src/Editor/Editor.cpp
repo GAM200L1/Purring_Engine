@@ -69,6 +69,7 @@ namespace PE {
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
 		// loading for assets window
 		GetFileNamesInParentPath(m_parentPath, m_files);
+		m_entityToModify = -1;
 		//m_directoryIcon.CreateTexture("../Assets/Icons/Directory_Icon.png");
 	}
 
@@ -1074,6 +1075,9 @@ namespace PE {
 								if (!key.empty())
 								{
 									ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2(100, 100), { 0,1 }, { 1,0 });
+									if (ImGui::IsItemHovered())
+										m_entityToModify = entityID;
+
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
 									//set selected texture id
@@ -1350,30 +1354,30 @@ namespace PE {
 				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 				if (ImGui::IsWindowHovered())
 				{
+
 					glfwSetDropCallback(p_window, &HotLoadingNewFiles);
 					GetFileNamesInParentPath(m_parentPath, m_files);
-					
-					if (m_parentPath.filename().string() == "Audio")
+					for (std::filesystem::path const& r_filepath : m_files)
 					{
-						for (auto const& iter : ResourceManager::GetInstance().Sounds)
+						if (r_filepath.extension() == ".png")
 						{
-							for (std::filesystem::path const& filepath : m_files)
+							auto const& textureIter = ResourceManager::GetInstance().Textures.find(r_filepath.stem().string());
+							if (textureIter != ResourceManager::GetInstance().Textures.end() && textureIter->second->)
 							{
-								if (filepath.filename() == iter.first)
-								{
-									
-								}
+								ResourceManager::GetInstance().Textures[r_filepath.stem().string()]->CreateTexture(r_filepath.string());
 							}
 						}
 					}
 				}
+
+				int numItemPerRow = (ImGui::GetWindowSize().x < 100) ? 1 : ImGui::GetWindowSize().x / 100;
 
 				// list the files in the current showing directory as imgui text
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
 				{	//resource list needs a list of icons for the texture for the image if possible
 					//else just give a standard object icon here
 					
-					if (n % 3) // to keep it in rows where 3 is max 3 colums
+					if (n % numItemPerRow) // to keep it in rows where 3 is max 3 colums
 						ImGui::SameLine();
 					
 					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(100, 100))) //child to hold image n text
@@ -1427,17 +1431,20 @@ namespace PE {
 					{
 						//do a function call here
 						std::string const& item = m_files[draggedItemIndex].filename().string();
-						if (m_files[draggedItemIndex].extension() == ".png" && m_mouseInScene)
+						if (m_entityToModify != -1)
 						{
-							ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].stem().string(), m_files[draggedItemIndex].string());
-							EntityID id = EntityFactory::GetInstance().CreateEntity();
-							EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
-							EntityManager::GetInstance().Get<Transform>(id).position.x = 0.f;
-							EntityManager::GetInstance().Get<Transform>(id).position.y = 0.f;
-							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(item.substr(0, item.find(".")));
-							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(1.f, 1.f, 1.f, 1.f);
+							// alters the texture assigned to renderer component in entity
+							if (m_files[draggedItemIndex].extension() == ".png")
+							{
+								ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].stem().string(), m_files[draggedItemIndex].string());
+								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(item.substr(0, item.find(".")));
+								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
+							}
+							// add remaining editable assets
 						}
+						// add one for scene view if loading prefabs
 
+						m_entityToModify = -1;
 						isDragging = false;
 						draggedItemIndex = -1;
 					}
