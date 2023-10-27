@@ -281,6 +281,7 @@ namespace PE {
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
 		int m_entityToModify;
+		static bool m_fileDragged;
 		//Graphics::Texture m_directoryIcon;
 
 	};

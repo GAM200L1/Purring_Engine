@@ -42,6 +42,7 @@ extern Logger engine_logger;
 namespace PE {
 
 	std::filesystem::path Editor::m_parentPath{ "../Assets" };
+	bool Editor::m_fileDragged{ false };
 
 	Editor::Editor() {
 		//initializing variables 
@@ -1444,24 +1445,28 @@ namespace PE {
 						break;
 					}
 				}
-				ImGui::Separator();				
+				ImGui::Separator();
 				
 
 				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+
 				if (ImGui::IsWindowHovered())
 				{
-
 					glfwSetDropCallback(p_window, &HotLoadingNewFiles);
-					GetFileNamesInParentPath(m_parentPath, m_files);
-					for (std::filesystem::path const& r_filepath : m_files)
+					if (m_fileDragged)
 					{
-						if (r_filepath.extension() == ".png")
+						GetFileNamesInParentPath(m_parentPath, m_files);
+						for (std::filesystem::path const& r_filepath : m_files)
 						{
-							if (ResourceManager::GetInstance().Textures.find(r_filepath.stem().string()) != ResourceManager::GetInstance().Textures.end())
+							if (r_filepath.extension() == ".png")
 							{
-								ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
+								if (ResourceManager::GetInstance().Textures.find(r_filepath.stem().string()) != ResourceManager::GetInstance().Textures.end())
+								{
+									ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
+								}
 							}
 						}
+						m_fileDragged = false;
 					}
 				}
 
@@ -2036,10 +2041,10 @@ namespace PE {
 	void Editor::HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths)
 	{
 		// prints the number of directories / files dragged over
+		m_fileDragged = true;
 		std::stringstream sstream;
 		sstream << "Drag and drop count - " << count;
 		engine_logger.AddLog(false, sstream.str(), "");
-		
 
 		std::vector<std::filesystem::path> consolidatedPaths;
 		for (int i{ 0 }; i < count; ++i)
