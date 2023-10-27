@@ -169,8 +169,8 @@ namespace PE
 	private:
 		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& r_id, void* p_data);
 		typedef std::map<ComponentID, size_t, Comparer> ComponentMapType; // component map typedef
-		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
-		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
+		ComponentMapType m_componentMap;								  // component map (ID, ptr to creator)
+		PE::EntityManager* p_entityManager{ nullptr };				      // pointer to entity manager
 		std::map<ComponentID, fnptrVoidptrConstruct, Comparer> m_initializeComponent;
 		Prefab m_prefabs;
 

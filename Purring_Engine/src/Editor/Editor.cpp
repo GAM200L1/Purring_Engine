@@ -413,20 +413,23 @@ namespace PE {
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
 				{
-					std::string name;
+					const std::string& name = EntityManager::GetInstance().Get<EntityDescriptor>(n).name;
 					const bool is_selected = (m_currentSelectedObject == n);
-					if (n == 0) //hardcoding
-					{
-						name = "Background";
-					}
-					else if (n == 1)
-					{
-						name = "Player";
-					}
-					else {
-						name = "GameObject";
-						name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
-					}
+					//if (n == 0) //hardcoding
+					//{
+					//	name = "Background";
+					//}
+					//else if (n == 1)
+					//{
+					//	name = "Player";
+					//}
+					//else {
+					//	name = "GameObject";
+					//	name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+					//}
+
+
+
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = n; //seteting current index to check for selection
 					if (ImGui::IsItemClicked(1))

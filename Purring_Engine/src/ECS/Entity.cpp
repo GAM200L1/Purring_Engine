@@ -49,6 +49,10 @@ namespace PE
 			m_removed.pop();
 		m_entities.emplace(id);
 		++m_entityCounter;
+		// Assign Descriptor component
+		Assign(id, GetComponentID<EntityDescriptor>());
+		Get<EntityDescriptor>(id).name = "GameObject";
+		Get<EntityDescriptor>(id).name += std::to_string(id);
 		return id;
 	}
 

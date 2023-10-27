@@ -25,6 +25,7 @@
 #include <bitset>
 #include <set>
 #include <queue>
+#include <optional>
 
 // Const expressions
 constexpr unsigned MAX_COMPONENTS = 32;
@@ -577,4 +578,12 @@ namespace PE
 		--(m_componentPools[componentID]->m_size);
 		UpdateVectors(id, false);
 	}
+
+
+	struct EntityDescriptor
+	{
+		std::optional<EntityID> parent;
+		std::string name;
+	};
+
 }

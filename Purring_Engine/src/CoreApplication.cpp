@@ -85,6 +85,7 @@ using namespace rttr;
 
 RTTR_REGISTRATION
 {
+    REGISTERCOMPONENT(PE::EntityDescriptor);
     REGISTERCOMPONENT(PE::RigidBody);
     REGISTERCOMPONENT(PE::Collider);
     REGISTERCOMPONENT(PE::Transform);
@@ -97,6 +98,10 @@ RTTR_REGISTRATION
     // functionality seems fine without it... maybe needed by scripting side though
     //rttr::registration::class_<PE::vec2>("vec2")
     //    .property("x", &PE::vec2::x);
+    rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
+        .property("Name", &PE::EntityDescriptor::name)
+        .property("Parent", &PE::EntityDescriptor::parent);
+
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
         .property("Orientation", &PE::Transform::orientation)
@@ -187,10 +192,11 @@ PE::CoreApplication::CoreApplication()
 
     SerializationManager serializationManager;
     //create background from file
-    serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json");
+    EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
     
     // Creates an entity from file that is attached to the Character Controller
-    serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
+    EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json")).name = "Player";
+
     
 
     // Make a runtime camera that follows the player
