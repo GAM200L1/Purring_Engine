@@ -19,6 +19,7 @@
 #include "Math/Transform.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
+#include "Editor/Editor.h"
 
 extern Logger engine_logger;
 
@@ -68,10 +69,29 @@ namespace PE
 
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
+		static bool sceneRunning{ false };
+		if (Editor::GetInstance().IsEditorActive())
+		{
+			if (sceneRunning)
+			{	
+				std::cout << "stop";
+				for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
+				{
+					RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
+					rb.ZeroForce();
+					rb.velocity.Zero();
+					rb.rotationVelocity = 0.f;
+				}
+				sceneRunning = false;
+			}
+			return;
+		}
+
+		sceneRunning = true;
 		// In normal physics simulation mode
 		if (!m_applyStepPhysics)
 		{
-				UpdateDynamics(deltaTime);
+			UpdateDynamics(deltaTime);
 		}
 		else
 		{
