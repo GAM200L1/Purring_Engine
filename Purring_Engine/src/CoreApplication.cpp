@@ -200,9 +200,6 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(1).position.x = -100.f;
     EntityManager::GetInstance().Get<Transform>(1).position.y = -100.f;
 
-    // Create object to use for testing transformation matrices
-    Graphics::CameraManager::testEntity = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-
     // Create button objects
     for (int i{}; i < 2; ++i) 
     {

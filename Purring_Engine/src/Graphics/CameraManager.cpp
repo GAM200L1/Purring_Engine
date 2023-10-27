@@ -23,9 +23,6 @@ namespace PE
 {
     namespace Graphics
     {
-        // Initialize static members
-        EntityID CameraManager::testEntity{};
-
 
         CameraManager::CameraManager(float const windowWidth, float const windowHeight)
         {
@@ -305,29 +302,6 @@ namespace PE
 
         void CameraManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
         {
-            // @TODO remove this after testing
-            // Move a gameobject around to indicate the location of the mouse click
-            if (r_event.GetType() == MouseEvents::MouseButtonPressed)
-            {
-                MouseButtonPressedEvent event = dynamic_cast<const MouseButtonPressedEvent&>(r_event);
-
-                if (event.button == 0) // If pressing the left mouse button
-                {
-                    Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(testEntity) };
-
-                    // Transform the coordinates of the mouse click from viewport space to view space to world space
-                    glm::vec4 newPos{
-                        GetViewToWorldMatrix(Editor::GetInstance().IsEditorActive()).value() * glm::vec4{
-                            static_cast<float>(event.x) - m_windowWidth * 0.5f,
-                            m_windowHeight * 0.5f - static_cast<float>(event.y), 0.f, 1.f }
-                    };
-
-                    r_transform.position.x = newPos.x;
-                    r_transform.position.y = newPos.y;
-                }
-
-            }
-
             // @TODO remove this after testing
             // Switch the main camera on pressing the MMB
             if (r_event.GetType() == MouseEvents::MouseButtonReleased)

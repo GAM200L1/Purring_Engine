@@ -35,8 +35,6 @@ namespace PE
         *************************************************************************************/
         class CameraManager : public System
         {
-        public:
-            static EntityID testEntity; // ID of the entity to move on click (Temporary variable for testing purposes)
 
             // ----- Constructors ----- //
         public:
