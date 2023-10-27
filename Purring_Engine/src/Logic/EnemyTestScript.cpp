@@ -78,6 +78,7 @@ namespace PE {
 		{
 			p_data->patrolTimer = p_data->timerBuffer;
 			p_data->m_StateManager.ChangeState(new EnemyTestPATROL(),id);
+			return;
 		}
 	}
 
@@ -109,6 +110,7 @@ namespace PE {
 		if (abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
 		{
 			p_data->m_StateManager.ChangeState(new EnemyTestALERT(), id);
+			return;
 		}
 
 		if (p_data->patrolTimer < p_data->patrolBuffer/2.0f && p_data->patrolTimer > 0.f)
@@ -118,6 +120,7 @@ namespace PE {
 		else if (p_data->patrolTimer < 0)
 		{
 			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+			return;
 		}
 	}
 
@@ -143,11 +146,13 @@ namespace PE {
 		if (p_data->alertTimer <= 0 && abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
 		{
 			p_data->m_StateManager.ChangeState(new EnemyTestTARGET(), id);
+			return;
 		}
 		else if (p_data->alertTimer <= 0)
 		{
 			p_data->idleTimer = p_data->timerBuffer;
 			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+			return;
 		}
 	}
 
@@ -179,10 +184,12 @@ namespace PE {
 		if (p_data->alertTimer < 0 && p_data->distanceFromPlayer <= p_data->TargetRange)
 		{
 			p_data->m_StateManager.ChangeState(new EnemyTestATTACK(), id);
+			return;
 		}
 		else if (p_data->alertTimer < 0)
 		{
 			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
+			return;
 		}
 
 	}
