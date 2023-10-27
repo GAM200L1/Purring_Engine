@@ -94,8 +94,8 @@ namespace PE {
 		*************************************************************************************/
 		bool IsRunTime();
 		/*!***********************************************************************************
-		 \brief get the boolean to know editor is in runtime
-		 \return bool return whether it is editor mode or runtime
+		 \brief get the boolean to know if mouse is hovering in the scene window
+		 \return bool return whether the mouse is hovering in the scene window
 		*************************************************************************************/
 		bool IsMouseInScene();
 
@@ -203,9 +203,10 @@ namespace PE {
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowSceneView(GLuint texture_id, bool* active);
-		
+		/*!***********************************************************************************
+		 \brief Set custom ImGUI style
+		*************************************************************************************/
 		void SetImGUIStyle();
-
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************

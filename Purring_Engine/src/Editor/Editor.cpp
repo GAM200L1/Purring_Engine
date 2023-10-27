@@ -28,12 +28,13 @@
 #include "Graphics/RendererManager.h"
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
+#include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
 #include <rttr/type.h>
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
-#define HEX(hexcode)    hexcode/255.f * 100.f
+#define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
 
 extern Logger engine_logger;
@@ -60,7 +61,7 @@ namespace PE {
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
-		//for the object list
+			//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
 		m_mouseInScene = false;
@@ -144,11 +145,8 @@ namespace PE {
 		IMGUI_CHECKVERSION();
 		//create imgui context 
 		ImGui::CreateContext();
-		//set to dark mode 
-		//ImGui::StyleColorsDark();
 		SetImGUIStyle();
 
-		//setting the flags for imgui 
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
@@ -416,7 +414,7 @@ namespace PE {
 			//temporary here for counting created objects and add to name
 			static int count = 0;
 			//loop to show all the items ins the vector
-			bool isHoveringObject{ false };
+			bool isHoveringObject{false};
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
 				{
@@ -473,17 +471,17 @@ namespace PE {
 						count--;
 
 					}
-					else
-					{
-						AddWarningLog("You are not allowed to delete the background or player as of now");
-					}
+						else
+						{
+							AddWarningLog("You are not allowed to delete the background or player as of now");
+						}
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
-					if (m_currentSelectedObject)
-						EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
-					else
-						AddWarningLog("You are not allowed to clone the background");
+						if (m_currentSelectedObject)
+							EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+						else
+							AddWarningLog("You are not allowed to clone the background");
 				}
 				ImGui::EndPopup();
 			}
@@ -751,6 +749,7 @@ namespace PE {
 				ClearObjectList();
 				for (size_t i{}; i < 2500; ++i)
 				{
+					//EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[id]);
 					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
 					EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
@@ -759,7 +758,7 @@ namespace PE {
 					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
-
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey("cat");
 				}
 			}
 			ImGui::SameLine();
@@ -1127,7 +1126,7 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
+								//setting keys
 								std::vector<const char*> key;
 								//to get all the keys
 								for (std::map<std::string, Script*>::iterator it = LogicSystem::m_scriptContainer.begin(); it != LogicSystem::m_scriptContainer.end(); ++it)
@@ -1158,21 +1157,27 @@ namespace PE {
 								static std::string selectedScriptName{};
 								ImGui::Text("Scripts List");
 								//loop to show all the items ins the vector
-								if (ImGui::BeginChild("GameObjectList", ImVec2(-1, 200), true, ImGuiWindowFlags_NoResize)) {
-									for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
+								if (ImGui::BeginChild("ScriptList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
+									int n = 0;
+					/*				for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
+									{*/
+									for (auto& [str, state] : EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys)
 									{
 										const bool is_selected = (selectedScript == n);
 
-										if (ImGui::Selectable(EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str(), is_selected))
+										if (ImGui::Selectable(str.c_str(), is_selected))
 										{
 											selectedScript = n; //seteting current index to check for selection
-											selectedScriptName = EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys[n].c_str();
+											selectedScriptName = str;
 										}//imgui selectable is the function to make the clickable bar of text
 
 										// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 										if (is_selected) // to show the highlight if selected
 											ImGui::SetItemDefaultFocus();
+
+										++n;
 									}
+									//}
 								}
 								ImGui::EndChild();
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
@@ -1180,7 +1185,7 @@ namespace PE {
 								{
 									if (selectedScript >= 0)
 									{
-										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScript);
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName);
 										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
 										selectedScript = -1;
 									}
@@ -1189,7 +1194,89 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
+                        
+						//GUI
+						if (name == EntityManager::GetInstance().GetComponentID<GUI>())
+						{
+							if (ImGui::CollapsingHeader("GUIComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
 
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								//get the current collider type using the variant
+								int index = static_cast<int>(EntityManager::GetInstance().Get<GUI>(entityID).m_UIType);
+								const char* types[] = { "Button","TextBox" };
+								ImGui::Text("UI Type: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+								//set combo box for the different collider types
+								if (ImGui::Combo("##UI Types", &index, types, IM_ARRAYSIZE(types)))
+								{
+									EntityManager::GetInstance().Get<GUI>(entityID).m_UIType = static_cast<UIType>(index);
+								}
+
+								//set combo box for functions
+								//setting keys
+								std::vector<const char*> key;
+								key.push_back("");
+								//to get all the keys
+								for (auto it = GUISystem::m_uiFunc.begin(); it != GUISystem::m_uiFunc.end(); ++it)
+								{
+									key.push_back(it->first.data());
+								}
+								int onclickfunc{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<GUI>(entityID).m_onClicked)
+										break;
+									onclickfunc++;
+								}
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("On Clicked: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##On Click Function", &onclickfunc, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<GUI>(entityID).m_onClicked = key[onclickfunc];
+									}
+								}
+
+								int onhoverfunc{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<GUI>(entityID).m_onHovered)
+										break;
+									onhoverfunc++;
+								}
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("On Hovered: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##On Hover Function", &onhoverfunc, key.data(), static_cast<int>(key.size())))
+									{
+											EntityManager::GetInstance().Get<GUI>(entityID).m_onHovered = key[onhoverfunc];
+									}
+								}
+							}
+						}
+                        
 						if (hasScripts)
 						{
 							for (auto& [key, val] : LogicSystem::m_scriptContainer)
@@ -1246,7 +1333,6 @@ namespace PE {
 					ImGui::Separator();
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 
-					static bool isModalOpen;
 					// Set the cursor position to the center of the window
 					//the closest i can get to setting center the button x(
 					//shld look fine
@@ -1256,7 +1342,6 @@ namespace PE {
 					if (m_currentSelectedObject)
 						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
 						{
-							isModalOpen = true;
 							ImGui::OpenPopup("Components");
 						}
 
@@ -1305,6 +1390,13 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
 							else
 								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
+						}
+						if (ImGui::Selectable("Add GUI"))
+						{
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUI>() });
+							else
+								AddErrorLog("ALREADY HAS GUI");
 						}
 						ImGui::EndPopup();
 					}
@@ -1671,6 +1763,13 @@ namespace PE {
 					{
 						m_showTestWindows = !m_showTestWindows;
 					}
+					ImGui::Separator();
+					if (ImGui::MenuItem("Reset Default", "", false, true))
+					{
+						m_firstLaunch = true;
+						m_showResourceWindow = false;
+						m_showPerformanceWindow = false;
+					}
 					ImGui::EndMenu();
 				}
 			}
@@ -1703,6 +1802,7 @@ namespace PE {
 		if(ImGui::Button("Play"))
 		{
 			m_isRunTime = true;
+			m_showEditor = false;
 		}
 		ImGui::SameLine();
 		if (
@@ -1757,7 +1857,7 @@ namespace PE {
 		colors[ImGuiCol_ButtonHovered] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
 		colors[ImGuiCol_ButtonActive] = ImVec4(0.70f, 0.53f, 0.98f, 1.00f);
 		colors[ImGuiCol_Header] = ImVec4(0.3f, 0.3f, 0.3f, 0.31f);
-		colors[ImGuiCol_HeaderHovered] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.70f, 0.59f, 0.98f, 0.4f);
 		colors[ImGuiCol_HeaderActive] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
 		colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
 		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
@@ -1914,7 +2014,13 @@ namespace PE {
 			m_showPerformanceWindow = !m_showPerformanceWindow;
 
 		if (KTE.keycode == GLFW_KEY_ESCAPE)
-			m_showEditor = !m_showEditor;
+		{
+			m_showEditor = !false;
+			
+			if (m_showEditor)
+				m_isRunTime = false;
+		}
+
 
 		if (KTE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;
