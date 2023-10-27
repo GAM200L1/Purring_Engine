@@ -38,18 +38,21 @@ namespace PE
             float halfWidth{ m_viewportWidth * 0.5f };
             float halfHeight{ m_viewportHeight * 0.5f };
 
+            float const orthoNear{ -10.f }, orthoFar{ 10.f };
+            float const subFarNear{ orthoFar - orthoNear };
+
             m_cachedViewToNdcMatrix = glm::mat4 {
                 2.f / m_viewportWidth, 0.f, 0.f, 0.f,
                 0.f, 2.f / m_viewportHeight, 0.f, 0.f,
-                0.f, 0.f, 1.f, 0.f,
-                0.f, 0.f, 0.f, 1.f,
+                0.f, 0.f, -2.f / subFarNear, 0.f,
+                0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
             };
 
             m_cachedNdcToViewMatrix = glm::mat4 {
                 m_viewportWidth * 0.5f, 0.f, 0.f, 0.f,
                 0.f, m_viewportHeight * 0.5f, 0.f, 0.f,
-                0.f, 0.f, 1.f, 0.f,
-                -1.f, -1.f, 0.f, 1.f,
+                0.f, 0.f, subFarNear * -0.5f, 0.f,
+                0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
             };
 
             //m_cachedViewToNdcMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.f, 10.f);
