@@ -195,7 +195,8 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
     
     // Creates an entity from file that is attached to the Character Controller
-    EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json")).name = "Player";
+    EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
+    EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
 
     
 
@@ -205,6 +206,9 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).position.x = -100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = -100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
+
 
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
@@ -212,6 +216,11 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+
+
+    //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
+    //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -272,6 +281,8 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
+        
+
         // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
@@ -279,6 +290,8 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
+
+
 
         // Flush log entries
         engine_logger.FlushLog();

@@ -25,6 +25,9 @@ namespace PE
         float width{100}, height{100};
         float orientation{}; // in radians
         vec2 position{};
+
+        float relOrientation{};
+        vec2 relPosition{};
         
         // ----- Getter ----- //
         /*!***********************************************************************************
