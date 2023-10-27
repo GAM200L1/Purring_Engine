@@ -106,6 +106,11 @@ namespace PE {
 
 		p_data->patrolTimer -= deltaTime;
 
+		if (abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
+		{
+			p_data->m_StateManager.ChangeState(new EnemyTestALERT(), id);
+		}
+
 		if (p_data->patrolTimer < p_data->patrolBuffer/2.0f && p_data->patrolTimer > 0.f)
 		{
 			p_data->bounce = false;
@@ -113,11 +118,6 @@ namespace PE {
 		else if (p_data->patrolTimer < 0)
 		{
 			p_data->m_StateManager.ChangeState(new EnemyTestIDLE(), id);
-		}
-
-		if (abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
-		{
-			p_data->m_StateManager.ChangeState(new EnemyTestALERT(), id);
 		}
 	}
 
