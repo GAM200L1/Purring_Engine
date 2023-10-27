@@ -233,14 +233,7 @@ namespace PE
 
             // Unbind the RBO for rendering to the ImGui window
             m_imguiFrameBuffer.Unbind();
-            if (renderInEditor)
-            {
-                // Unbind the RBO for rendering to the ImGui window
-                m_imguiFrameBuffer.Unbind();
-
-                Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
-            }
-
+            Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
             // Disable alpha blending
             glDisable(GL_BLEND);
 
