@@ -15,7 +15,7 @@ namespace PE {
 		float distanceFromPlayer{ 0.0f };
 		float TargetRange{ 200 };
 		bool bounce{ true };
-		StateMachine m_StateManager;
+		StateMachine* m_stateManager;
 	};
 
 	class EnemyTestScript : public PE::Script
@@ -42,6 +42,7 @@ namespace PE {
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 		virtual void StateExit(EntityID id) override;
 		virtual std::string_view GetName() override;
+		virtual ~EnemyTestIDLE() { p_data = nullptr; }
 	private:
 		EnemyTestScriptData* p_data;
 	};
@@ -52,6 +53,7 @@ namespace PE {
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 		virtual void StateExit(EntityID id) override;
 		virtual std::string_view GetName() override;
+		virtual ~EnemyTestPATROL() { p_data = nullptr; }
 	private:
 		EnemyTestScriptData* p_data;
 	};
@@ -62,7 +64,7 @@ namespace PE {
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 		virtual void StateExit(EntityID id) override;
 		virtual std::string_view GetName() override;
-
+		virtual ~EnemyTestALERT() { p_data = nullptr; }
 	private:
 		EnemyTestScriptData* p_data;
 	};
@@ -73,6 +75,7 @@ namespace PE {
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 		virtual void StateExit(EntityID id) override;
 		virtual std::string_view GetName() override;
+		virtual ~EnemyTestTARGET() { p_data = nullptr; }
 	private:
 		EnemyTestScriptData* p_data;
 	};
@@ -83,6 +86,7 @@ namespace PE {
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 		virtual void StateExit(EntityID id) override;
 		virtual std::string_view GetName() override;
+		virtual ~EnemyTestATTACK() { p_data = nullptr; }
 	private:
 		EnemyTestScriptData* p_data;
 	};

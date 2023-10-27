@@ -5,7 +5,7 @@ namespace PE
 {
 	struct TestScript2Data
 	{
-		StateMachine m_stateMachine;
+		StateMachine* m_stateMachine;
 	};
 
 	class testScript2 : public Script
