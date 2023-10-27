@@ -154,6 +154,10 @@ PE::CoreApplication::CoreApplication()
     InitializeVariables();
     RegisterComponents();
 
+    // scripting
+    ScriptEngine scriptEngine;
+    scriptEngine.Init();
+
     // Load Configuration
     std::ifstream configFile("config.json");
     nlohmann::json configJson;
@@ -210,8 +214,7 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
 
-    //ScriptEngine scriptEngine;
-    //scriptEngine.Init();
+
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -302,6 +305,8 @@ void PE::CoreApplication::Run()
     m_windowManager.Cleanup();
     ResourceManager::GetInstance().UnloadResources();
 }
+
+
 
 void PE::CoreApplication::Initialize()
 {

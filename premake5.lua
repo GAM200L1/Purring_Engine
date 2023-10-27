@@ -1,3 +1,5 @@
+include "Dependencies.lua"
+
 -- premake5.lua
 workspace "Purring_Engine"
     architecture "x64"
@@ -171,13 +173,14 @@ project "Purring_Engine"
         "ImGui",
         "opengl32",  -- not sure if needed
         "fmod_vc",
-        "libmono-static-sgen"
+        "libmono-static-sgen",
+        "%{Library.WinSock}",
+        "%{Library.WinMM}",
+        "%{Library.WinVersion}",
+        "%{Library.BCrypt}"
     }
 
     linkoptions { "/ignore:4006" }
-
-    filter "system:windows"
-        systemversion "latest"
 
     filter "configurations:Debug"
 			runtime "Debug"
@@ -188,6 +191,32 @@ project "Purring_Engine"
 			runtime "Release"
             staticruntime "on"
 			optimize "on"
+
+-- PE-ScriptCore -HANS
+project "PE-ScriptCore"
+    location "PE-ScriptCore"
+    kind "SharedLib"   --because this is gonna be a .dll
+    language "C#"
+    dotnetframework "4.7.2"
+
+    targetdir ("Purring_Engine/Resources/Scripts")
+    objdir ("Purring_Engine/Resources/Scripts/Intermediates")
+
+    files 
+    {
+        "%{prj.name}/Source/**.cs",
+        "%{prj.name}/Properties/**.cs"
+    }
+
+	filter "configurations:Debug"
+		optimize "Off"
+		symbols "Default"
+
+	filter "configurations:Release"
+		optimize "On"
+		symbols "Default"
+
+group ""
 
 -- Application
 project "Application"
@@ -273,3 +302,9 @@ project "Application"
             {
                 "rttr_core"
             }
+group ""
+
+-- done by hans for scripting
+group "Core"
+    include "PE-ScriptCore"
+group ""

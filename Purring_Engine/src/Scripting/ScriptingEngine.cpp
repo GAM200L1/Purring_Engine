@@ -13,7 +13,7 @@ namespace PE
         MonoAssembly* CoreAssembly = nullptr;
     };
 
-    static ScriptEngineData* s_Data;
+    static ScriptEngineData* s_Data = nullptr;
 
     void ScriptEngine::Init()
     {
@@ -100,24 +100,37 @@ namespace PE
 
     void ScriptEngine::InitMono()
     {
-        mono_set_assemblies_path("mono/lib");
+        mono_set_assemblies_path("../Purring_Engine/mono/lib");
 
         MonoDomain* rootDomain = mono_jit_init("MyScriptRuntime");
 
         if (rootDomain == nullptr)
         {
-            // Maybe log some error here
+            std::cerr << "Failed to create Mono App Domain.\n";
             return;
         }
-
         // Store the root domain pointer
         s_Data->RootDomain = rootDomain;
 
         // Create an App Domain
         s_Data->AppDomain = mono_domain_create_appdomain("MyAppDomain", nullptr);
+
+        if (s_Data->AppDomain == nullptr)
+        {
+            // Log error here
+            std::cerr << "Failed to create Mono App Domain.\n";
+            return;
+        }
         mono_domain_set(s_Data->AppDomain, true);
 
-        s_Data->CoreAssembly = LoadCSharpAssembly("PE-ScriptCore.dll");
+        s_Data->CoreAssembly = LoadCSharpAssembly("../Purring_Engine/Resources/Scripts/PE-ScriptCore.dll");
+
+        if (s_Data->CoreAssembly == nullptr)
+        {
+            // Log error here
+            std::cerr << "Failed to load Core Assembly.\n";
+            return;
+        }
         PrintAssemblyTypes(s_Data->CoreAssembly);
     }
 
