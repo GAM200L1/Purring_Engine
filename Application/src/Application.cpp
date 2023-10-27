@@ -5,7 +5,6 @@ class Application : public PE::CoreApplication
 public:
 	Application()
 	{
-
 	}
 
 	~Application()
