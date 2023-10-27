@@ -167,6 +167,9 @@ namespace PE
             // Check if there are any runtime cameras
             for (const EntityID& id : SceneView<Camera>())
             {
+                // Skip the UI camera 
+                if (id == m_uiCameraId) { continue; }
+
                 // Return the first camera
                 SetMainCamera(id);
                 foundCamera = true;
@@ -242,7 +245,7 @@ namespace PE
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
                 // Make the first camera that exists the primary camera if a new main camera is needed
-                if (setNewMainCamera) 
+                if (setNewMainCamera && (id != m_uiCameraId))
                 {
                     SetMainCamera(id);
                     setNewMainCamera = false;
@@ -310,15 +313,17 @@ namespace PE
 
                 if (event.button == 0) // If pressing the left mouse button
                 {
+                    Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(testEntity) };
+
+                    // Transform the coordinates of the mouse click from viewport space to view space to world space
                     glm::vec4 newPos{
-                        GetNdcToWorldMatrix(true).value() * glm::vec4{static_cast<float>(event.x), static_cast<float>(event.y), 0.f, 1.f}
+                        GetViewToWorldMatrix(Editor::GetInstance().IsEditorActive()).value() * glm::vec4{
+                            static_cast<float>(event.x) - m_windowWidth * 0.5f,
+                            m_windowHeight * 0.5f - static_cast<float>(event.y), 0.f, 1.f }
                     };
 
-                    std::cout << "CameraManager::OnMouseEvent " << event.ToString() << ", new pos: " << newPos.x << ", " << newPos.y << "\n";
-
-                    // Move the test object to the position of the mouse cursor
-                    EntityManager::GetInstance().Get<Transform>(testEntity).position.x = newPos.x;
-                    EntityManager::GetInstance().Get<Transform>(testEntity).position.y = newPos.y;
+                    r_transform.position.x = newPos.x;
+                    r_transform.position.y = newPos.y;
                 }
 
             }
@@ -334,7 +339,7 @@ namespace PE
                     for (const EntityID& id : SceneView<Camera, Transform>())
                     {
                         // Swap the main cameras
-                        if (m_mainCameraId != id)
+                        if ((m_mainCameraId != id) && (id != m_uiCameraId))
                         {
                             SetMainCamera(id);
                             break;

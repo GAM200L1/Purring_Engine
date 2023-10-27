@@ -84,6 +84,7 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
+    float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     m_fpsController.SetTargetFPS(60);
@@ -127,22 +128,27 @@ PE::CoreApplication::CoreApplication()
     Graphics::CameraManager::testEntity = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
 
     // Create button objects
-    for (int i{}; i < 5; ++i) 
+    for (int i{}; i < 2; ++i) 
     {
         EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
         EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
+        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
+        EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -windowWidth * 0.25f + 300.f * i;
+        EntityManager::GetInstance().Get<Transform>(buttonId).position.y = windowHeight * 0.25f;
+        EntityManager::GetInstance().Get<Transform>(buttonId).width = 300.f;
+        EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
     }
 
     // Make a runtime camera that follows the player
     EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
     EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -313,10 +319,10 @@ void PE::CoreApplication::InitializeSystems()
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
     Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
-    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{};
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
     AddSystem(p_guisystem);
     AddSystem(p_logicSystem);
     AddSystem(p_inputSystem);

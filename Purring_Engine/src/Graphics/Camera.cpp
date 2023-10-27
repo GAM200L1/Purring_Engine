@@ -55,8 +55,6 @@ namespace PE
                 0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
             };
 
-            //m_cachedViewToNdcMatrix = glm::ortho(-halfWidth, halfWidth, -halfHeight, halfHeight, -10.f, 10.f);
-            //m_cachedNdcToViewMatrix = glm::inverse(m_cachedViewToNdcMatrix);
             hasViewportChanged = false;
         }
 

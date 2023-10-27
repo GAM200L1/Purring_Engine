@@ -407,14 +407,15 @@ namespace PE
 
                 //// @TODO Testing transform matrix
                 //glm::vec4 localCornerPos{ 0.5f, 0.5f, 0.f, 1.f };
-                //glm::vec4 NdcCornerPos{ r_cameraManager.GetWorldToNdcMatrix(Editor::GetInstance().IsEditorActive()).value() * m_modelToWorldMatrices.back() * localCornerPos};
-                //std::cout << "RendererManager::DrawSceneInstanced " << ", ndc pos: " << transform.position.x << ", " << transform.position.y << "\n";
+                //glm::vec4 NdcCornerPos{ m_modelToWorldMatrices.back() * localCornerPos};
+                //std::cout << "RendererManager::DrawSceneInstanced, expected pos: " << NdcCornerPos.x << ", " << NdcCornerPos.y;
+                //NdcCornerPos = r_cameraManager.GetWorldToNdcMatrix(Editor::GetInstance().IsEditorActive()).value() * NdcCornerPos;
 
                 //glm::vec4 newPos{
                 //    r_cameraManager.GetNdcToWorldMatrix(Editor::GetInstance().IsEditorActive()).value() * NdcCornerPos
                 //};
 
-                //std::cout << "RendererManager::DrawSceneInstanced " << ", world pos: " << newPos.x << ", " << newPos.y << "\n";
+                //std::cout << ", world pos : " << newPos.x << ", " << newPos.y << "\n";
 
 
                 ++count;

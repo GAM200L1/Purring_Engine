@@ -4,6 +4,8 @@
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
 #include "Editor/Editor.h"
+#include "Input/InputSystem.h"
+
 #define UI_CAST(type, ui) reinterpret_cast<type&>(ui)
 
 std::map<std::string_view, std::function<void(void)>> PE::GUISystem::m_uiFunc;
@@ -12,10 +14,11 @@ std::map<std::string_view, std::function<void(void)>> PE::GUISystem::m_uiFunc;
 
 namespace PE
 {
-	GUISystem::~GUISystem()
-	{
+	GUISystem::GUISystem(GLFWwindow* p_glfwWindow) : p_window{ p_glfwWindow }
+	{ /* Empty by design */ }
 
-	}
+	GUISystem::~GUISystem()
+	{ /* Empty by design */	}
 
 	void GUISystem::InitializeSystem()
 	{
@@ -63,8 +66,11 @@ namespace PE
 				//get the components
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
-				
-				if (!IsInBound(MBPE.x, MBPE.y, transform))
+
+				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
+				InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
+
+				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 					return;
 
 				if (gui.m_UIType == UIType::Button)
@@ -98,8 +104,11 @@ namespace PE
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
+			double mouseX{ static_cast<double>(MME.x) }, mouseY{ static_cast<double>(MME.y) };
+			InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
+
 			//check mouse coordinate against transform here
-			if (IsInBound(MME.x, MME.y, transform))
+			if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 			{
 				gui.m_Hovered = true;
 			}
@@ -112,7 +121,7 @@ namespace PE
 
 	void GUISystem::ButtonFunctionOne()
 	{
-		std::cout << "hi im function 1" << std::endl;
+		std::cout << "function 1" << std::endl;
 	}
 
 	void GUISystem::ButtonFunctionTwo()
