@@ -482,6 +482,9 @@ namespace PE
             // Draw a "+" for every camera component
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
+                // Don't draw a cross for the UI camera
+                if (id == r_cameraManager.GetUICameraId()) { continue; }
+
                 Camera& camera{ EntityManager::GetInstance().Get<Camera>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 

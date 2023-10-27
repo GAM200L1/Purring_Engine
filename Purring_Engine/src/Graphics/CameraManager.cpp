@@ -206,7 +206,16 @@ namespace PE
         {
             // Create a UI camera
             m_uiCameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-            EntityManager::GetInstance().Get<Graphics::Camera>(m_uiCameraId).SetViewDimensions(m_windowWidth, m_windowHeight);
+
+            if (Editor::GetInstance().IsEditorActive()) 
+            {
+                EntityManager::GetInstance().Get<Graphics::Camera>(m_uiCameraId).SetViewDimensions(GetEditorCamera().GetViewportWidth(), GetEditorCamera().GetViewportHeight());
+            }
+            else 
+            {
+                EntityManager::GetInstance().Get<Graphics::Camera>(m_uiCameraId).SetViewDimensions(m_windowWidth, m_windowHeight);
+            }
+            
             // @TODO Name the gameobject or hide it in the editor
         }
 
