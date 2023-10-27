@@ -67,7 +67,9 @@ namespace PE {
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
+		// loading for assets window
 		GetFileNamesInParentPath(m_parentPath, m_files);
+		//m_directoryIcon.CreateTexture("../Assets/Icons/Directory_Icon.png");
 	}
 
 	Editor::~Editor()
@@ -154,7 +156,6 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-
 		p_window = p_window_;
 		//getting the full display size of glfw so that the ui know where to be in
 		int width, height;
@@ -174,7 +175,6 @@ namespace PE {
 		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
 		ImGui_ImplOpenGL3_Init("#version 450");
-
 	}
 
 	void Editor::Render(GLuint texture_id)
@@ -1073,6 +1073,7 @@ namespace PE {
 								ImGui::SetNextItemWidth(200.0f);
 								if (!key.empty())
 								{
+									ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2(100, 100), { 0,1 }, { 1,0 });
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
 									//set selected texture id
@@ -1366,16 +1367,24 @@ namespace PE {
 						}
 					}
 				}
+
+				// list the files in the current showing directory as imgui text
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
 				{	//resource list needs a list of icons for the texture for the image if possible
 					//else just give a standard object icon here
-					//if (n % 3) // to keep it in rows where 3 is max 3 colums
-					//	ImGui::SameLine();
-					ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(300, 20)); //child to hold image n text
-					//ImGui::Image(itemTextures[i], ImVec2(20, 20)); //image of resource
-					ImGui::Text(m_files[n].filename().string().c_str()); // text
-					// Check if the mouse is over the content item
-					if (ImGui::IsItemHovered()) 
+					
+					if (n % 3) // to keep it in rows where 3 is max 3 colums
+						ImGui::SameLine();
+					
+					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(100, 100))) //child to hold image n text
+					{
+						ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture("cat")->GetTextureID(), ImVec2(50, 50), {0,1}, {1,0}); //image of resource
+						ImGui::Text(m_files[n].filename().string().c_str()); // text
+					}
+					ImGui::EndChild();
+
+					// check if the mouse is hovering the asset
+					if (ImGui::IsItemHovered())
 					{
 						// if item is a file with extension eg. .txt , .png
 						if (m_files[n].extension() != "")
@@ -1393,9 +1402,8 @@ namespace PE {
 								GetFileNamesInParentPath(m_parentPath, m_files);
 							}
 						}
-						
+
 					}
-					ImGui::EndChild();
 				}
 				ImGui::EndChild();
 			}

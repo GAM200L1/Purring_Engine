@@ -279,6 +279,7 @@ namespace PE {
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
+		//Graphics::Texture m_directoryIcon;
 
 	};
 }
