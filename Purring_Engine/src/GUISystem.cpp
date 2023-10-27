@@ -31,6 +31,8 @@ namespace PE
 
 	void GUISystem::UpdateSystem(float deltaTime)
 	{
+		deltaTime; // Prevent warnings
+
 		if (Editor::GetInstance().IsRunTime())
 			for (EntityID objectID : SceneView<GUI>())
 			{

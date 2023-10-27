@@ -83,7 +83,7 @@ namespace PE
 
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
-		bool m_Hovered;
+		bool m_Hovered{};
 		UIType m_UIType{0};
 	};
 

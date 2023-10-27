@@ -35,9 +35,6 @@ namespace PE
 
         void Camera::ComputeNDCMatrix()
         {
-            float halfWidth{ m_viewportWidth * 0.5f };
-            float halfHeight{ m_viewportHeight * 0.5f };
-
             float const orthoNear{ -10.f }, orthoFar{ 10.f };
             float const subFarNear{ orthoFar - orthoNear };
 
