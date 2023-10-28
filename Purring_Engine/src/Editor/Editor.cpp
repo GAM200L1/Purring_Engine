@@ -412,7 +412,7 @@ namespace PE {
 			bool isHoveringObject{ false };
 			int from{ -1 }, to{ -1 };
 
-			std::map<EntityID, std::vector<EntityID>> dispMap{};
+			std::unordered_map<EntityID, std::vector<EntityID>> dispMap{};
 			for (const auto& id : SceneView())
 			{
 				if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent)
@@ -912,6 +912,101 @@ namespace PE {
 					{
 						++componentCount;//increment unique id
 
+
+						if (name == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+						{
+							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
+
+
+							//search through each component, create a collapsible header if the component exist
+							rttr::type currType = rttr::type::get_by_name(name.to_string());
+
+							if (ImGui::CollapsingHeader("EntityDescriptor", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								for (auto& prop : currType.get_properties())
+								{
+
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+									std::string nm(prop.get_name());
+									nm += ": ";
+									ImGui::Text(nm.c_str());
+
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID));
+
+									// handle types
+									if (vp.get_type().get_name() == "std::string")
+									{
+										std::string tmp = vp.get_value<std::string>();
+										std::string str = "##" + prop.get_name().to_string();
+										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmp);
+										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+
+									}
+									else if (vp.get_type().get_name() == "classstd::optional<unsigned__int64>")
+									{
+										std::optional<EntityID> tmp = vp.get_value<std::optional<EntityID>>();
+
+										std::string str = "##" + prop.get_name().to_string();
+										if (tmp.has_value())
+										{
+											EntityID tmp2{ tmp.value()};
+											std::string tmpStr{std::to_string(tmp2)};
+											ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmpStr);
+											std::optional<EntityID> op;
+											if (tmpStr != "")
+											{
+												tmp2 = strtoull(tmpStr.c_str(), NULL, 10);
+												if (errno == ERANGE)
+												{
+													errno = 0;
+													engine_logger.AddLog(false, "Invalid input in editor field!", __FUNCTION__);
+												}
+												else
+												{
+													op = tmp2;
+												}
+											}
+											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
+										}
+										else
+										{
+											EntityID tmp2{0};
+											std::string tmpStr{};
+											ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmpStr);
+											std::optional<EntityID> op;
+											if (tmpStr != "")
+											{
+												tmp2 = strtoull(tmpStr.c_str(), NULL, 10);
+												if (errno == ERANGE)
+												{
+													errno = 0;
+													engine_logger.AddLog(false, "Invalid input in editor field!", __FUNCTION__);
+												}
+												else
+												{
+													op = tmp2;
+												}
+											}
+											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
+										}
+									}
+								}
+							}
+						}
+
 						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 						{
 							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
@@ -973,6 +1068,9 @@ namespace PE {
 								}
 							}
 						}
+
+						
+
 						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
 						{
 							if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
