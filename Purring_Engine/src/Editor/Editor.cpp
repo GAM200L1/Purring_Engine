@@ -62,15 +62,16 @@ namespace PE {
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
-			//for the object list
+		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
-		m_mouseInScene = false;
+		m_mouseInObjectWindow = false;
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
 		// loading for assets window
 		GetFileNamesInParentPath(m_parentPath, m_files);
+		m_mouseInScene = false;
 		m_entityToModify = -1;
 	}
 
@@ -412,6 +413,8 @@ namespace PE {
 			//loop to show all the items ins the vector
 			bool isHoveringObject{false};
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+				
+				m_mouseInObjectWindow = ImGui::IsWindowHovered();
 				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
 				{
 					std::string name;
@@ -1644,11 +1647,10 @@ namespace PE {
 							// add remaining editable assets
 						}
 
-						if (m_mouseInScene)
+						if (m_mouseInScene || m_mouseInObjectWindow)
 						{
 							if (m_files[draggedItemIndex].extension() == ".json")
 							{
-								//MouseButtonReleaseEvent event =
 								serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
 							}
 						}

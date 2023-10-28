@@ -270,6 +270,7 @@ namespace PE {
 		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
 
 		//variable for objects
+		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
 
@@ -282,8 +283,6 @@ namespace PE {
 		std::vector<std::filesystem::path> m_files;
 		int m_entityToModify;
 		static bool m_fileDragged;
-		//Graphics::Texture m_directoryIcon;
-
 	};
 }
 
