@@ -164,6 +164,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::Graphics::Renderer>(entityId, "Renderer", j);
     SerializeComponent<PE::RigidBody>(entityId, "RigidBody", j);
     SerializeComponent<PE::Collider>(entityId, "Collider", j);
+    SerializeComponent<PE::Graphics::Camera>(entityId, "Camera", j);
 
 
     return j; 
@@ -249,6 +250,8 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("Collider", &SerializationManager::LoadCollider);
     m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
     m_initializeComponent.emplace("Renderer", &SerializationManager::LoadRenderer);
+    m_initializeComponent.emplace("Camera", &SerializationManager::LoadCamera);
+
 }
 
 bool SerializationManager::LoadRigidBody(const EntityID& r_id, const nlohmann::json& r_json)
@@ -293,5 +296,18 @@ bool SerializationManager::LoadRenderer(const EntityID& r_id, const nlohmann::js
     ren.SetColor(r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>());
     ren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>(), static_cast<void*>(&ren));
+    return true;
+}
+
+bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json& r_json)
+{
+    PE::Graphics::Camera cam;
+    cam.SetMagnification(r_json["Entity"]["components"]["Camera"]["magnification"].get<float>());
+    cam.SetViewDimensions
+    (
+        r_json["Entity"]["components"]["Camera"]["viewportWidth"].get<float>(),
+        r_json["Entity"]["components"]["Camera"]["viewportHeight"].get<float>()
+    );
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Camera>(), static_cast<void*>(&cam));
     return true;
 }

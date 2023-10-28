@@ -123,7 +123,7 @@ namespace PE
             SetMagnification(m_magnification + delta);
         }
 
-        nlohmann::json Camera::Serialize() const
+        nlohmann::json Camera::ToJson() const
         {
             nlohmann::json j;
             j["magnification"] = m_magnification;
