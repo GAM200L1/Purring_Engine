@@ -1548,11 +1548,15 @@ namespace PE {
 								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(m_files[draggedItemIndex].string());
 								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
 							}
-							else if (extension == ".json")
-							{
-								//serializationManager.LoadFromFile();
-							}
 							// add remaining editable assets
+						}
+
+						if (m_mouseInScene)
+						{
+							if (m_files[draggedItemIndex].extension() == ".json")
+							{
+								serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+							}
 						}
 						// add one for scene view if loading prefabs
 
