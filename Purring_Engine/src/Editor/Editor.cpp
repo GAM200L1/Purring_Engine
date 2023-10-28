@@ -124,7 +124,7 @@ namespace PE {
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 1; --n)
+		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 0; --n)
 		{
 			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 		}
@@ -434,8 +434,8 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Delete Object"))
 				{
-					if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
-					{
+					//if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
+					//{
 						AddInfoLog("Object Deleted");
 
 
@@ -451,11 +451,11 @@ namespace PE {
 
 						count--;
 
-					}
-						else
-						{
-							AddWarningLog("You are not allowed to delete the background or player as of now");
-						}
+					//}
+					//	else
+					//	{
+					//		AddWarningLog("You are not allowed to delete the background or player as of now");
+					//	}
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
