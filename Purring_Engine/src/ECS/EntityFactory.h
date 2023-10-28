@@ -196,6 +196,7 @@ namespace PE
 		bool InitializeScriptComponent(const EntityID& r_id, void* p_data);
 		bool InitializeCamera(const EntityID& r_id, void* p_data);
 		bool InitializeGUI(const EntityID& r_id, void* p_data);
+		bool InitializeGUIRenderer(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap

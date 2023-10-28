@@ -18,6 +18,7 @@
 // INCLUDES
 #include "Entity.h"
 
+#include "GUISystem.h"
 
 namespace PE
 {
@@ -50,8 +51,10 @@ namespace PE
 			prefabs.emplace("GameObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), 
 																						  EntityManager::GetInstance().GetComponentID<Collider>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 			
-			prefabs.emplace("CameraObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), 
-																							EntityManager::GetInstance().GetComponentID<Graphics::Camera>() });
-        }
+			prefabs.emplace("CameraObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Camera>() });
+
+			prefabs.emplace("ButtonObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<GUI>(),
+																							EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>() });
+    }
 	};
 }
