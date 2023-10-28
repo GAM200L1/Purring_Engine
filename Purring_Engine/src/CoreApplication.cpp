@@ -179,6 +179,8 @@ PE::CoreApplication::CoreApplication()
 
     ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
 
+    
+
     // Animation textures
     // Animation 1
     ResourceManager::GetInstance().LoadTextureFromFile("catAnim1", "../Assets/Textures/CatSprite/Cat_Grey_128px1.png");

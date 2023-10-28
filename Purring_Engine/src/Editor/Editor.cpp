@@ -72,7 +72,6 @@ namespace PE {
 		// loading for assets window
 		GetFileNamesInParentPath(m_parentPath, m_files);
 		m_entityToModify = -1;
-		//m_directoryIcon.CreateTexture("../Assets/Icons/Directory_Icon.png");
 	}
 
 	Editor::~Editor()
@@ -175,6 +174,14 @@ namespace PE {
 		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
 		ImGui_ImplOpenGL3_Init("#version 450");
+
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Directory_Icon.png", "../Assets/Icons/Directory_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Audio_Icon.png"	, "../Assets/Icons/Audio_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Font_Icon.png", "../Assets/Icons/Font_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Prefabs_Icon.png", "../Assets/Icons/Prefabs_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Other_Icon.png", "../Assets/Icons/Other_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Texture_Icon.png", "../Assets/Icons/Texture_Icon.png");
+
 	}
 
 	void Editor::Render(GLuint texture_id)
@@ -1488,6 +1495,7 @@ namespace PE {
 		{
 			static int draggedItemIndex = -1;
 			static bool isDragging = false;
+			static std::string iconDragged{};
 			//ImGuiStyle& style = ImGui::GetStyle();
 			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
 				
@@ -1546,7 +1554,22 @@ namespace PE {
 					
 					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(100, 100))) //child to hold image n text
 					{
-						ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture("cat")->GetTextureID(), ImVec2(50, 50), {0,1}, {1,0}); //image of resource
+						std::string icon{};
+						std::string const extension{ m_files[n].filename().extension().string() };
+						if (extension == "")
+							icon = "../Assets/Icons/Directory_Icon.png";
+						else if (extension == ".mp3")
+							icon = "../Assets/Icons/Audio_Icon.png";
+						else if (extension == ".ttf")
+							icon = "../Assets/Icons/Font_Icon.png";
+						else if (extension == ".json")
+							icon = "../Assets/Icons/Prefabs_Icon.png";
+						else if (extension == ".png")
+							icon = "../Assets/Icons/Texture_Icon.png";
+						else
+							icon = "../Assets/Icons/Other_Icon.png";
+
+						ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(icon)->GetTextureID(), ImVec2(50, 50), { 0,1 }, { 1,0 });
 						ImGui::Text(m_files[n].filename().string().c_str()); // text
 					}
 					ImGui::EndChild();
@@ -1561,6 +1584,20 @@ namespace PE {
 							if (ImGui::IsMouseClicked(0)) {
 								draggedItemIndex = n; // Start dragging
 								isDragging = true;
+
+								std::string iconDraggedExtension = m_files[n].extension().string();
+								if (iconDraggedExtension == "")
+									iconDragged = "../Assets/Icons/Directory_Icon.png";
+								else if (iconDraggedExtension == ".mp3")
+									iconDragged = "../Assets/Icons/Audio_Icon.png";
+								else if (iconDraggedExtension == ".ttf")
+									iconDragged = "../Assets/Icons/Font_Icon.png";
+								else if (iconDraggedExtension == ".json")
+									iconDragged = "../Assets/Icons/Prefabs_Icon.png";
+								else if (iconDraggedExtension == ".png")
+									iconDragged = "../Assets/Icons/Texture_Icon.png";
+								else
+									iconDragged = "../Assets/Icons/Other_Icon.png";
 							}
 						}
 						else
@@ -1587,7 +1624,7 @@ namespace PE {
 					ImGui::SetNextWindowSize(ImVec2(50, 50));
 					std::string test = std::to_string(draggedItemIndex);
 					ImGui::Begin(test.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-					//put image here
+					ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(iconDragged)->GetTextureID(), ImVec2(34,34), { 0,1 }, { 1,0 });
 					ImGui::End();
 					
 					// Check if the mouse button is released
@@ -1611,6 +1648,7 @@ namespace PE {
 						{
 							if (m_files[draggedItemIndex].extension() == ".json")
 							{
+								//MouseButtonReleaseEvent event =
 								serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
 							}
 						}
