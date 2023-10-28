@@ -142,7 +142,7 @@ namespace PE
             void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
         private:
-            std::string m_systemName{ "Camera Manager" }; // Name of system
+            std::string m_systemName{ "CameraManager" }; // Name of system
 
             // The entity number of the primary camera used during runtime
             EntityID m_mainCameraId{};

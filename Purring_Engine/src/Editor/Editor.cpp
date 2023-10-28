@@ -1382,12 +1382,14 @@ namespace PE {
 		{
 			// TEMPORARY HARD CODED
 			std::vector<float> values{
-				TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
+				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT),
+				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC),
+				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS),
+				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION),
+				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA),
+				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS)
 			};
-			char* names[] = { "Input", "Physics", "Collision", "Graphics" };
+			char* names[] = { "Input", "Logic", "Physics", "Collision", "Camera", "Graphics" };
 			ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
 
 			if (ImGui::IsItemHovered())

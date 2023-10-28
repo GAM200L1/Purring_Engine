@@ -61,8 +61,5 @@ namespace PE
         double m_frameCount;
         float m_timeSinceLastFPSUpdate;
         double m_currentFPS;
-
-        // not needed
-        double m_deltaTime;
     };
 }

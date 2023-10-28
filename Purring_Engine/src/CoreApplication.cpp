@@ -266,13 +266,23 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        // Iterate over and update all systems
-        for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
-        {
-            TimeManager::GetInstance().SystemStartFrame();
-            m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            TimeManager::GetInstance().SystemEndFrame(i);
+        // Update system with fixed time step
+        TimeManager::GetInstance().StartAccumulator();
+        while (TimeManager::GetInstance().UpdateAccumulator())
+        { 
+            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            {
+                TimeManager::GetInstance().SystemStartFrame(systemID);
+                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                TimeManager::GetInstance().SystemEndFrame(systemID);
+            }
+            TimeManager::GetInstance().EndAccumulator();
         }
+
+        // Update Graphics with variable timestep
+        TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
+        m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
+        TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
 
         // Flush log entries
         engine_logger.FlushLog();
@@ -427,12 +437,12 @@ void PE::CoreApplication::InitializeSystems()
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
 
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    AddSystem(p_logicSystem);
     AddSystem(p_inputSystem);
+    AddSystem(p_logicSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
     AddSystem(p_cameraManager);

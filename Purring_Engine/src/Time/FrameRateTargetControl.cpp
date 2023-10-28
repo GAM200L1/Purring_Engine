@@ -45,8 +45,7 @@ namespace PE
         : m_targetFrameTime(1.0 / 60.0),  // Default to 60 FPS
         m_frameCount(0),
         m_timeSinceLastFPSUpdate(0.0),
-        m_currentFPS(0.0),
-        m_deltaTime(0.0)
+        m_currentFPS(0.0)
     {}
 
 
@@ -84,21 +83,23 @@ namespace PE
         ++m_frameCount;
 
         m_timeSinceLastFPSUpdate += TimeManager::GetInstance().GetDeltaTime();
-        if (m_timeSinceLastFPSUpdate > 1.f)  // Update FPS value once per second
+        if (m_timeSinceLastFPSUpdate >= 1.f)  // Update FPS and system frame usage once per second
         {
             m_currentFPS = m_frameCount;
             m_frameCount = 0;
             m_timeSinceLastFPSUpdate = 0.f;
+
+            TimeManager::GetInstance().UpdateSystemFrameUsage();
         }
 
-        // FPS control
-        std::chrono::duration<float> duration;
-        do 
-        {
-            duration = std::chrono::high_resolution_clock::now() - TimeManager::GetInstance().GetStartTime();
-            //std::cout << " Actual: " << glfwGetTime() << '\n';
-        }
-        while (duration.count() < m_targetFrameTime);
+        //// FPS control
+        //std::chrono::duration<float> duration;
+        //do 
+        //{
+        //    duration = std::chrono::high_resolution_clock::now() - TimeManager::GetInstance().GetStartTime();
+        //    //std::cout << " Actual: " << glfwGetTime() << '\n';
+        //}
+        //while (duration.count() < m_targetFrameTime);
     }
 
 

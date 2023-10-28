@@ -17,23 +17,36 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Singleton.h"
+#include "System.h"
 
 
 namespace PE
 {
-	constexpr auto TotalSystems = 6;
+	constexpr auto TotalSystems = 7;
 	/*!***********************************************************************************
 	 \brief Enumeration for identifying different subsystems.
 	*************************************************************************************/
-	enum SystemType
+	enum SystemID
 	{
-		LOGIC = 0,
-		INPUT,
+		INPUT = 0,
+		LOGIC,
 		PHYSICS,
 		COLLISION,
+		CAMERA,
 		GRAPHICS,
 		SYSTEMCOUNT
 	};
+
+	inline SystemID& operator++(SystemID& systemID) {
+		systemID = static_cast<SystemID>(systemID != SystemID::SYSTEMCOUNT ? static_cast<int>(systemID) + 1 : 0);
+		return systemID;
+	}
+
+	inline SystemID operator++(SystemID& systemID, int) {
+		SystemID result = systemID;
+		++systemID;
+		return result;
+	}
 
 	/*!***********************************************************************************
 	 \brief A Singleton class for managing time in the engine.
@@ -48,13 +61,15 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Initialize the frame time for a particular subsystem.
 		*************************************************************************************/
-		void SystemStartFrame();
+		void SystemStartFrame(SystemID system);
 
 		/*!***********************************************************************************
 		 \brief Conclude the frame time for a particular subsystem.
 		 \param[in] system The subsystem to conclude frame time for.
 		*************************************************************************************/
-		void SystemEndFrame(int system);
+		void SystemEndFrame(SystemID system);
+
+		void UpdateSystemFrameUsage();
 
 		/*!***********************************************************************************
 		 \brief Begin global frame timing.
@@ -71,6 +86,15 @@ namespace PE
 		*************************************************************************************/
 		void EngineStart();
 
+		void StartAccumulator();
+
+		bool UpdateAccumulator();
+
+		void EndAccumulator();
+
+		void SetAccumulatorLimit(float value);
+
+		void SetFixedTimeStep(float value);
 
 		// ----- Public Getters ----- //
 	public:
@@ -86,6 +110,8 @@ namespace PE
 		*************************************************************************************/
 		float GetDeltaTime() const { return m_deltaTime; }
 
+		float GetFixedTimeStep() const { return m_fixedTimeStep; }
+
 		/*!***********************************************************************************
 		 \brief Get the total run time of the engine.
 		 \return The run time in seconds.
@@ -99,11 +125,11 @@ namespace PE
 		std::chrono::high_resolution_clock::time_point const& GetStartTime() { return m_startFrame; }
 
 		/*!***********************************************************************************
-		 \brief Get the frame time for a specific subsystem.
+		 \brief Get the frame usage for a specific subsystem.
 		 \param[in] system The subsystem identifier.
-		 \return The frame time for the specified subsystem in seconds.
+		 \return The frame usage for the specified subsystem in seconds.
 		*************************************************************************************/
-		float GetSystemFrameTime(int system) const { return m_systemFrameTime[system]; }
+		float GetSystemFrameUsage(SystemID system) const { return m_systemFrameUsage[system]; }
 
 		// ----- Private Methods and Members ----- //
 	private:
@@ -116,14 +142,20 @@ namespace PE
 		// ----- Private Variables ----- //
 	private:
 		// system time
-		std::array<float, TotalSystems> m_systemFrameTime;		// stores all system frame time, may change to vector
-		std::chrono::high_resolution_clock::time_point m_systemStartFrame, m_systemEndFrame;	// system time
+		std::array<std::chrono::high_resolution_clock::time_point, TotalSystems> m_systemStartFrame;
+		std::array<float, TotalSystems> m_systemFrameTime;					// stores all system frame time
+		std::array<float, TotalSystems> m_systemAccumulatedFrameTime;		// stores all accumulated system frame time
+		std::array<float, TotalSystems> m_systemFrameUsage;					// stores all system frame usage
+		//std::chrono::high_resolution_clock::time_point m_systemStartFrame, m_systemEndFrame;	// system time
 
 		// global time
 		std::chrono::high_resolution_clock::time_point m_startFrame, m_endFrame, m_previousStartFrame, m_engineStartTime;
 		float m_engineRunTime;
 		float m_frameTime;										// total frame time
 		float m_deltaTime;										// time between last and current frame
+		float m_accumulator;
+		float m_accumulatorLimit;
+		float m_fixedTimeStep;
 
 		// holds duration in seconds
 		std::chrono::duration<float> m_durationInSeconds;
