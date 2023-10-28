@@ -217,7 +217,7 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
-
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
 
     //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";

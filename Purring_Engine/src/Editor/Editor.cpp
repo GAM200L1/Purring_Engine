@@ -410,31 +410,67 @@ namespace PE {
 			static int count = 0;
 			//loop to show all the items ins the vector
 			bool isHoveringObject{ false };
-			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
+			int from{ -1 }, to{ -1 };
+
+			std::map<EntityID, std::vector<EntityID>> dispMap{};
+			for (const auto& id : SceneView())
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent)
 				{
-					const std::string& name = EntityManager::GetInstance().Get<EntityDescriptor>(n).name;
-					const bool is_selected = (m_currentSelectedObject == n);
-					//if (n == 0) //hardcoding
-					//{
-					//	name = "Background";
-					//}
-					//else if (n == 1)
-					//{
-					//	name = "Player";
-					//}
-					//else {
-					//	name = "GameObject";
-					//	name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
-					//}
+					dispMap.erase(id);
+					dispMap[EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value()].emplace_back(id);
+				}
+				else // it does not have a parent
+				{
+					dispMap[id];
+				}
+			}
 
-
+			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+				for (auto & n : dispMap)
+				{
+					
+					const std::string& name = EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
+					const bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedObject = n; //seteting current index to check for selection
+						m_currentSelectedObject = static_cast<int>(n.first); //seteting current index to check for selection
+
+					if (!n.second.empty())
+					{
+						ImGui::Indent();
+						for (const auto& id : n.second)
+						{
+							const std::string& name2 = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+							const bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
+
+							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+								m_currentSelectedObject = static_cast<int>(id); //seteting current index to check for selection
+
+							if (ImGui::IsItemClicked(1))
+							{
+								m_currentSelectedObject = static_cast<int>(id);
+								ImGui::OpenPopup("popup");
+							}
+							if (ImGui::IsItemHovered()) {
+								isHoveringObject = true;
+							}
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected) // to show the highlight if selected
+								ImGui::SetItemDefaultFocus();
+
+							m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+
+						}
+
+						ImGui::Unindent();
+					}
+
+						
+
 					if (ImGui::IsItemClicked(1))
 					{
-						m_currentSelectedObject = n;
+						m_currentSelectedObject = static_cast<int>(n.first);
 						ImGui::OpenPopup("popup");
 					}
 					if (ImGui::IsItemHovered()) {
@@ -445,6 +481,57 @@ namespace PE {
 						ImGui::SetItemDefaultFocus();
 
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+
+
+					// DND codes
+					//ImGuiDragDropFlags src_flags = 0;
+					//src_flags |= ImGuiDragDropFlags_SourceNoDisableHover;
+					//src_flags |= ImGuiDragDropFlags_SourceNoHoldToOpenOthers;
+					//if (ImGui::BeginDragDropSource(src_flags))
+					//{
+					//	if (!(src_flags & ImGuiDragDropFlags_AcceptNoPreviewTooltip))
+					//		ImGui::Text("Moving \"%s\"", name.c_str());
+					//	ImGui::SetDragDropPayload("HR", &n, sizeof(int));
+					//	ImGui::EndDragDropSource();
+					//}
+					//if (ImGui::BeginDragDropTarget())
+					//{
+					//	ImGuiDragDropFlags target_flags = 0;
+					//	target_flags |= ImGuiDragDropFlags_AcceptBeforeDelivery;    // Don't wait until the delivery (release mouse button on a target) to do something
+					//	target_flags |= ImGuiDragDropFlags_AcceptNoDrawDefaultRect; // Don't display the yellow rectangle
+					//	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("HR", target_flags))
+					//	{
+					//		from = *(const int*)payload->Data;
+					//		to = n;
+					//	}
+					//	ImGui::EndDragDropTarget();
+					//}
+
+					//if (from != -1 && to != -1)
+					//{
+					//	// Reorder items
+					//	//EntityID idFrom = EntityManager::GetInstance().GetEntitiesInPool(ALL).at(from);
+					//	//EntityID idTo = EntityManager::GetInstance().GetEntitiesInPool(ALL).at(to);
+					//	//EntityManager::GetInstance().GetEntitiesInPool(ALL).at(from) = idTo;
+					//	//EntityManager::GetInstance().GetEntitiesInPool(ALL).at(to) = idFrom;
+					//	
+					//	std::swap(EntityManager::GetInstance().GetEntitiesInPool(ALL).at(from), EntityManager::GetInstance().GetEntitiesInPool(ALL).at(to));
+					//	//ImGui::SetDragDropPayload("HR", &to, sizeof(int)); // Update payload immediately so on the next frame if we move the mouse to an earlier item our index payload will be correct. This is odd and showcase how the DnD api isn't best presented in this example.
+					//}
+
+					//if (from != -1 && to != -1)
+					//{
+					//	// Reorder items
+					//	/*int copy_dst = (from < to) ? from : to + 1;
+					//	int copy_src = (from < to) ? from + 1 : to;
+					//	int copy_count = (from < to) ? to - from : from - to;*/
+					//	//const char* tmp = names[move_from];
+					//	//printf("[%05d] move %d->%d (copy %d..%d to %d..%d)\n", ImGui::GetFrameCount(), move_from, move_to, copy_src, copy_src + copy_count - 1, copy_dst, copy_dst + copy_count - 1);
+					//	//memmove(&names[copy_dst], &names[copy_src], (size_t)copy_count * sizeof(const char*));
+					//	//names[move_to] = tmp;
+					//	ImGui::SetDragDropPayload("HR", &to, sizeof(int)); // Update payload immediately so on the next frame if we move the mouse to an earlier item our index payload will be correct. This is odd and showcase how the DnD api isn't best presented in this example.
+					//}
+					
 				}
 			}
 			if (ImGui::BeginPopup("popup"))
