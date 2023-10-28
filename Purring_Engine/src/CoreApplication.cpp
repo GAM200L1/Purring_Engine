@@ -104,6 +104,7 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
+        .property("Relative Position", &PE::Transform::relPosition)
         .property("Orientation", &PE::Transform::orientation)
         .property("Width", &PE::Transform::width)
         .property("Height", &PE::Transform::height)
@@ -287,11 +288,11 @@ void PE::CoreApplication::Run()
             if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
             {
                 const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-                vec3 tmp{ -100.f + parent.position.x, -100.f + parent.position.y, 1.f };
+                vec3 tmp { trans.relPosition, 1.f };
                 tmp = parent.GetTransformMatrix3x3() * tmp;
                 trans.position.x = tmp.x;
                 trans.position.y = tmp.y;
-                //trans.orientation = parent.orientation;
+                trans.orientation = parent.orientation + trans.relOrientation;
             }
         }
 

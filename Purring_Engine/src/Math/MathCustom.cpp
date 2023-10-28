@@ -535,12 +535,11 @@ namespace PE
 	mat3x3 mat3x3::operator*(mat3x3 const& r_rhs) const
 	{
 		mat3x3 ret{};
-		unsigned cnt{};
 		for (unsigned int j{ 0 }; j < 3; ++j)
 		{
 			for (unsigned int i{ 0 }; i < 9; i += 3)
 			{
-				ret[cnt++] = m[j] * r_rhs[i]
+				ret[i + j] = m[j] * r_rhs[i]
 						 + m[j + 3] * r_rhs[i + 1]
 						 + m[j + 6] * r_rhs[i + 2];
 			}
@@ -589,8 +588,8 @@ namespace PE
 	{
 		this->Identity();
 		_m00 = cosf(angle);
-		_m01 = -sinf(angle);
-		_m10 = sinf(angle);
+		_m01 = sinf(angle);
+		_m10 = -sinf(angle);
 		_m11 = cosf(angle);
 	}
 	// create rotation matrix from angle which is in degrees

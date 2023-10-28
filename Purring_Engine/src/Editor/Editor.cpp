@@ -850,6 +850,9 @@ namespace PE {
 									ImGui::OpenPopup(id.c_str());
 								for (auto& prop : currType.get_properties())
 								{
+									if (prop.get_name() == "Position" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
+										prop.get_name() == "Relative Position" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+										continue;
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
@@ -870,7 +873,6 @@ namespace PE {
 										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
 										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
