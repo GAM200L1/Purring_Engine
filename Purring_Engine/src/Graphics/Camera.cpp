@@ -123,5 +123,24 @@ namespace PE
             SetMagnification(m_magnification + delta);
         }
 
+        nlohmann::json Camera::Serialize() const
+        {
+            nlohmann::json j;
+            j["magnification"] = m_magnification;
+            j["viewportWidth"] = m_viewportWidth;
+            j["viewportHeight"] = m_viewportHeight;
+            return j;
+        }
+
+        Camera Camera::Deserialize(const nlohmann::json& j)
+        {
+            Camera cam;
+            cam.m_magnification = j["magnification"];
+            cam.m_viewportWidth = j["viewportWidth"];
+            cam.m_viewportHeight = j["viewportHeight"];
+            return cam;
+        }
+
+
     } // End of Graphics namespace
 } // End of PE namspace
