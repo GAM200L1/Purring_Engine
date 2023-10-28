@@ -31,7 +31,7 @@
 #include "GUISystem.h"
 #include <random>
 #include <rttr/type.h>
-
+#include "Graphics/CameraManager.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
@@ -64,6 +64,9 @@ namespace PE {
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
+
+		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
+		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
@@ -117,6 +120,16 @@ namespace PE {
 	void Editor::test()
 	{
 		m_showTestWindows = true;
+	}
+
+	void Editor::PlayAudio1()
+	{
+		AudioManager::GetInstance().PlaySound("audio_sound1");
+	}
+
+	void Editor::PlayAudio2()
+	{
+		AudioManager::GetInstance().PlaySound("audio_sound2");
 	}
 
 	void Editor::ClearObjectList()
@@ -401,32 +414,23 @@ namespace PE {
 				{
 					std::string name;
 					const bool is_selected = (m_currentSelectedObject == n);
-					if (n == 0) //hardcoding
-					{
-						name = "Background";
-					}
-					else if (n == 1)
-					{
-						name = "Player";
-					}
-					else {
 						name = "GameObject";
 						name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
-					}
-					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedObject = n; //seteting current index to check for selection
-					if (ImGui::IsItemClicked(1))
-					{
-						m_currentSelectedObject = n;
-						ImGui::OpenPopup("popup");
-					}
-					if (ImGui::IsItemHovered()) {
-						isHoveringObject = true;
-					}
-					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					if (is_selected) // to show the highlight if selected
-						ImGui::SetItemDefaultFocus();
-
+						if (n != Graphics::CameraManager::GetUICameraId()) {
+							if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+								m_currentSelectedObject = n; //seteting current index to check for selection
+							if (ImGui::IsItemClicked(1))
+							{
+								m_currentSelectedObject = n;
+								ImGui::OpenPopup("popup");
+							}
+							if (ImGui::IsItemHovered()) {
+								isHoveringObject = true;
+							}
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected) // to show the highlight if selected
+								ImGui::SetItemDefaultFocus();
+						}
 					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 				}
 			}
@@ -434,10 +438,7 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Delete Object"))
 				{
-					//if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
-					//{
 						AddInfoLog("Object Deleted");
-
 
 						EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
 
@@ -451,11 +452,6 @@ namespace PE {
 
 						count--;
 
-					//}
-					//	else
-					//	{
-					//		AddWarningLog("You are not allowed to delete the background or player as of now");
-					//	}
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
@@ -1383,8 +1379,6 @@ namespace PE {
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
 
-					//other than background, we can add components to objects
-					if (m_currentSelectedObject)
 						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
 						{
 							ImGui::OpenPopup("Components");
@@ -1395,18 +1389,10 @@ namespace PE {
 					{
 						if (ImGui::Selectable("Add Collision"))
 						{
-							//not allowed to add collision without a rigidbody
-							//if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
-							//{
 								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
 								else
 									AddErrorLog("ALREADY HAS A COLLIDER");
-							//}
-							/*else
-							{
-								AddErrorLog("ADD RIGIDBODY FIRST");
-							}*/
 						}
 						if (ImGui::Selectable("Add Transform"))
 						{
@@ -1436,13 +1422,13 @@ namespace PE {
 							else
 								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 						}
-						if (ImGui::Selectable("Add GUI"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUI>() });
-							else
-								AddErrorLog("ALREADY HAS GUI");
-						}
+						//if (ImGui::Selectable("Add GUI"))
+						//{
+						//	if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
+						//		EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUI>() });
+						//	else
+						//		AddErrorLog("ALREADY HAS GUI");
+						//}
 						ImGui::EndPopup();
 					}
 
@@ -1669,6 +1655,7 @@ namespace PE {
 								engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
 
 								// This will load all entities from the file
+								ClearObjectList();
 								serializationManager.LoadAllEntitiesFromFile(filePath);
 								engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 							}
@@ -1989,7 +1976,6 @@ namespace PE {
 			if (m_showEditor)
 				m_isRunTime = false;
 		}
-
 
 		if (KTE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;
