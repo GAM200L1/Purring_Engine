@@ -37,14 +37,14 @@ namespace PE
         *************************************************************************************/
         mat3x3 GetTransformMatrix3x3() const
         {
-            mat3x3 scaleMat;
-            scaleMat.Scale(width, height);
+            //mat3x3 scaleMat;
+            //scaleMat.Scale(width, height);
             mat3x3 rotMat;
             rotMat.RotateRad(orientation);
             mat3x3 transMat;
             transMat.Translate(position.x, position.y);
 
-            return transMat * rotMat * scaleMat;
+            return transMat * rotMat;//* scaleMat;
         }
 
         // ----- Serialization ------ //

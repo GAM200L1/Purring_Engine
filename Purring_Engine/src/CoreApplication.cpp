@@ -203,8 +203,8 @@ PE::CoreApplication::CoreApplication()
     // Make a runtime camera that follows the player
     EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = -100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = -100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
@@ -281,7 +281,20 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        
+        for (const auto& id : SceneView())
+        {
+            Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
+            if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+            {
+                const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
+                vec3 tmp{ -100.f + parent.position.x, -100.f + parent.position.y, 1.f };
+                tmp = parent.GetTransformMatrix3x3() * tmp;
+                trans.position.x = tmp.x;
+                trans.position.y = tmp.y;
+                //trans.orientation = parent.orientation;
+            }
+        }
+
 
         // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
