@@ -23,6 +23,10 @@ namespace PE
 {
     namespace Graphics
     {
+        // Initialize static variables
+        float CameraManager::m_windowWidth{}, CameraManager::m_windowHeight{};
+        EntityID CameraManager::m_uiCameraId{};
+        EditorCamera CameraManager::m_editorCamera{};
 
         CameraManager::CameraManager(float const windowWidth, float const windowHeight)
         {
