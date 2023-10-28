@@ -1075,7 +1075,15 @@ namespace PE {
 								ImGui::SetNextItemWidth(200.0f);
 								if (!loadedTextureKeys.empty())
 								{
-									ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2(100, 100), { 0,1 }, { 1,0 });
+									if (ImGui::BeginChild("currentTexture", ImVec2{116,116}, true))
+									{
+										if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
+										{
+											ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2{ 100,100 }, {0,1}, {1,0});
+										}
+									}
+									ImGui::EndChild();
+
 									if (ImGui::IsItemHovered())
 									{
 										m_entityToModify = static_cast<int>(entityID);
@@ -1533,11 +1541,16 @@ namespace PE {
 						if (m_entityToModify != -1)
 						{
 							// alters the texture assigned to renderer component in entity
-							if (m_files[draggedItemIndex].extension() == ".png")
+							std::string const extension = m_files[draggedItemIndex].extension().string();
+							if (extension == ".png")
 							{
 								ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
 								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(m_files[draggedItemIndex].string());
 								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
+							}
+							else if (extension == ".json")
+							{
+								//serializationManager.LoadFromFile();
 							}
 							// add remaining editable assets
 						}
