@@ -214,11 +214,11 @@ PE::CoreApplication::CoreApplication()
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = 100.f;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
-
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
     //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;

@@ -442,7 +442,7 @@ namespace PE {
 						for (const auto& id : n.second)
 						{
 							const std::string& name2 = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
-							const bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
+							const bool is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
 							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 								m_currentSelectedObject = static_cast<int>(id); //seteting current index to check for selection

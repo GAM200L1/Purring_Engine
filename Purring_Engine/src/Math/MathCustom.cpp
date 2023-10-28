@@ -540,8 +540,8 @@ namespace PE
 			for (unsigned int i{ 0 }; i < 9; i += 3)
 			{
 				ret[i + j] = m[j] * r_rhs[i]
-						 + m[j + 3] * r_rhs[i + 1]
-						 + m[j + 6] * r_rhs[i + 2];
+							+ m[j + 3] * r_rhs[i + 1]
+							+ m[j + 6] * r_rhs[i + 2];
 			}
 		}
 		return ret;
