@@ -28,6 +28,7 @@
 #include "Graphics/RendererManager.h"
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
+#include "Logic/EnemyTestScript.h"
 #include "GUISystem.h"
 #include <random>
 #include <rttr/type.h>
@@ -1324,9 +1325,9 @@ namespace PE {
 							{
 								if (key == "test")
 								{
-									testScript* test = dynamic_cast<testScript*>(val);
-									auto it = test->GetScriptData().find(m_currentSelectedObject);
-									if (it != test->GetScriptData().end())
+									testScript* p_Script = dynamic_cast<testScript*>(val);
+									auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+									if (it != p_Script->GetScriptData().end())
 										if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 										{
 											ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
@@ -1335,13 +1336,34 @@ namespace PE {
 
 								if (key == "PlayerControllerScript")
 								{
-									PlayerControllerScript* test = dynamic_cast<PlayerControllerScript*>(val);
-									auto it = test->GetScriptData().find(m_currentSelectedObject);
-									if (it != test->GetScriptData().end())
+									PlayerControllerScript* p_Script = dynamic_cast<PlayerControllerScript*>(val);
+									auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+									if (it != p_Script->GetScriptData().end())
 										if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 										{
-											ImGui::Text("speed: "); ImGui::SameLine(); ImGui::InputFloat("##movespeed", &it->second.speed, 1.0f, 100.f, "%.3f");
+											ImGui::Text("speed: "); ImGui::SameLine(); ImGui::DragFloat("##movespeed", &it->second.speed);
 										}
+								}
+
+								if (key == "EnemyTestScript")
+								{
+									EnemyTestScript* p_Script = dynamic_cast<EnemyTestScript*>(val);
+									auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+									if (it != p_Script->GetScriptData().end())
+									{
+										if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+										{
+											int id = static_cast<int> (it->second.playerID);
+											ImGui::Text("Player ID: "); ImGui::SameLine(); ImGui::InputInt("##id", &id, 1.0f, 100.f);
+											it->second.playerID = id;
+											ImGui::Text("speed: "); ImGui::SameLine(); ImGui::DragFloat("##enemyspeed", &it->second.speed);
+											ImGui::Text("Idle Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemyidle", &it->second.idleTimer);
+											ImGui::Text("Alert Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemyalert", &it->second.alertTimer);
+											ImGui::Text("Timer Buffer: "); ImGui::SameLine(); ImGui::DragFloat("##enemytimerbuffer", &it->second.timerBuffer);
+											ImGui::Text("Patrol Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemypatrol", &it->second.patrolTimer);
+											ImGui::Text("Target Range: "); ImGui::SameLine(); ImGui::DragFloat("##targettingrange", &it->second.TargetRange);
+										}
+									}
 								}
 							}
 						}
