@@ -24,7 +24,7 @@ namespace PE
 
 		for (std::filesystem::directory_entry const& r_dirEntry : std::filesystem::directory_iterator{ r_parentPath })
 		{
-			r_fileNames.emplace_back(r_dirEntry.path());
+			r_fileNames.emplace_back(r_parentPath.string() + "/" + r_dirEntry.path().filename().string());
 		}
 	}
 }

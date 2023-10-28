@@ -1535,7 +1535,7 @@ namespace PE {
 						{
 							if (r_filepath.extension() == ".png")
 							{
-								if (ResourceManager::GetInstance().Textures.find(r_filepath.stem().string()) != ResourceManager::GetInstance().Textures.end())
+								if (ResourceManager::GetInstance().Textures.find(r_filepath.string()) != ResourceManager::GetInstance().Textures.end())
 								{
 									ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
 								}
@@ -1606,7 +1606,9 @@ namespace PE {
 						else
 						{
 							if (ImGui::IsMouseClicked(0)) {
-								m_parentPath = std::filesystem::path{ m_files[n] };
+								std::string replaceSeparators = m_files[n].string();
+								std::replace(replaceSeparators.begin(), replaceSeparators.end(), '\\', '/');
+								m_parentPath = std::filesystem::path{ replaceSeparators };
 								GetFileNamesInParentPath(m_parentPath, m_files);
 							}
 						}
@@ -1633,7 +1635,6 @@ namespace PE {
 					// Check if the mouse button is released
 					if (ImGui::IsMouseReleased(0))
 					{
-						//do a function call here
 						if (m_entityToModify != -1)
 						{
 							// alters the texture assigned to renderer component in entity
@@ -1644,7 +1645,7 @@ namespace PE {
 								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(m_files[draggedItemIndex].string());
 								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
 							}
-							// add remaining editable assets
+							// add remaining editable assets audio etc
 						}
 
 						if (m_mouseInScene || m_mouseInObjectWindow)
@@ -1652,9 +1653,9 @@ namespace PE {
 							if (m_files[draggedItemIndex].extension() == ".json")
 							{
 								serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+								// change position of loaded prefab based on mouse cursor here
 							}
 						}
-						// add one for scene view if loading prefabs
 
 						isDragging = false;
 						draggedItemIndex = -1;
@@ -2167,7 +2168,8 @@ namespace PE {
 		}
 		for (std::filesystem::path const& r_path : consolidatedPaths)
 		{
-			std::filesystem::copy(r_path, std::filesystem::path{ m_parentPath / r_path.filename() }, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
+			if (!std::filesystem::equivalent(r_path.parent_path(), m_parentPath))
+				std::filesystem::copy(r_path, std::filesystem::path{ m_parentPath.string() + "/" + r_path.filename().string()}, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
 		}
 
 	}

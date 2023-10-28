@@ -172,7 +172,7 @@ PE::CoreApplication::CoreApplication()
 
 
     // Load Textures and Animations
-    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, buttonTextureName{ "../Assets/Textures/Button_White_128px.png" };
+    std::string catTextureName{ "../Assets/Textures/Cat_Grey_128px.png" }, cat2TextureName{ "../Assets/Textures/Cat_Grey_Blink_128px.png" }, buttonTextureName{ "../Assets/Textures/Button_White_128px.png" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/bg.png", "../Assets/Textures/bg.png");
