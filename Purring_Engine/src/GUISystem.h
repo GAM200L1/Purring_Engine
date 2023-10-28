@@ -1,7 +1,10 @@
+#pragma once
+
 #include "System.h"
 #include "Events/MouseEvent.h"
 #include "Events/Event.h"
 #include "Math/Transform.h"
+#include "WindowManager.h"
 
 #define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this))
 namespace PE 
@@ -9,6 +12,15 @@ namespace PE
 	class GUISystem : public System
 	{
 	public:
+		/*!***********************************************************************************
+		 \brief     Single arg constructor for the GUI system that takes in a pointer to the 
+								GLFW window.
+
+		 \param [in,out] p_glfwWindow - Pointer to the GLFW window that the GUI system is 
+														rendering to.
+		*************************************************************************************/
+		GUISystem(GLFWwindow* p_glfwWindow);
+
 		/*!***********************************************************************************
 		 \brief     Virtual destructor for proper cleanup of derived systems.
 		*************************************************************************************/
@@ -38,6 +50,7 @@ namespace PE
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
+		// assumes that all the coordinates are in view space
 		bool IsInBound(int x, int y, Transform t);
 
 		void OnMouseHover(const Event<MouseEvents>& r_ME);
@@ -50,6 +63,9 @@ namespace PE
 
 	public:
 			static std::map<std::string_view, std::function<void(void)>> m_uiFunc;
+
+	private:
+			GLFWwindow* p_window{};
 	};
 
 	enum class UIType { Button = 0, TextBox };
@@ -67,7 +83,7 @@ namespace PE
 
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
-		bool m_Hovered;
+		bool m_Hovered{};
 		UIType m_UIType{0};
 	};
 

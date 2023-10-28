@@ -117,7 +117,6 @@ namespace PE
          \param [In] int keycode to check
         *************************************************************************************/
         bool static IsKeyHeld(int keycode);
-    private:
         void static ConvertGLFWToTransform(GLFWwindow* window, double* x, double* y);
 
 

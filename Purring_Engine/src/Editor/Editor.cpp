@@ -171,14 +171,12 @@ namespace PE {
 
 	void Editor::Render(GLuint texture_id)
 	{
-		//imgui start frame
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
 		//hide the entire editor
-		if (m_showEditor)
-		{
+			//imgui start frame
+			ImGui_ImplOpenGL3_NewFrame();
+			ImGui_ImplGlfw_NewFrame();
+			ImGui::NewFrame();
+
 			//show docking port
 			SetDockingPort(&m_showEditor);
 
@@ -205,34 +203,27 @@ namespace PE {
 
 			//performance window showing time used per system
 			if (m_showPerformanceWindow) ShowPerformanceWindow(&m_showPerformanceWindow);
-		}
 
-		//imgui end frame render functions
-		ImGui::Render();
 
-		ImGuiIO& io = ImGui::GetIO();
+			//imgui end frame render functions
+			ImGui::Render();
 
-		float time = (float)glfwGetTime();
-		io.DeltaTime = m_time > 0.0f ? (time - m_time) : (1.0f / 60.0f);
-		m_time = time;
+			ImGuiIO& io = ImGui::GetIO();
+			ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-		{
-			GLFWwindow* backup_current_context = glfwGetCurrentContext();
-			ImGui::UpdatePlatformWindows();
-			ImGui::RenderPlatformWindowsDefault();
-			glfwMakeContextCurrent(backup_current_context);
-		}
-
+			if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+			{
+				GLFWwindow* backup_current_context = glfwGetCurrentContext();
+				ImGui::UpdatePlatformWindows();
+				ImGui::RenderPlatformWindowsDefault();
+				glfwMakeContextCurrent(backup_current_context);
+			}
 	}
 
 	void Editor::ShowLogsWindow(bool* Active)
 	{
-		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
 		//if active
+		if (IsEditorActive())
 		if (!ImGui::Begin("logwindow", Active))
 		{
 			ImGui::End();			//imgui syntax
@@ -332,9 +323,7 @@ namespace PE {
 
 	void Editor::ShowConsoleWindow(bool* Active)
 	{
-		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
-
+		if (IsEditorActive())
 		if (!ImGui::Begin("consolewindow", Active)) // start drawing
 		{
 			ImGui::End(); //imgui syntax if inactive
@@ -396,8 +385,7 @@ namespace PE {
 
 	void Editor::ShowObjectWindow(bool* Active)
 	{
-		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
+		if (IsEditorActive())
 		if (!ImGui::Begin("objectlistwindow", Active)) // draw object list
 		{
 			ImGui::End(); //imgui close
@@ -509,6 +497,7 @@ namespace PE {
 	//temporary for milestone 1
 	void Editor::ShowDemoWindow(bool* Active)
 	{
+		if (IsEditorActive())
 		if (!ImGui::Begin("debugTests", Active, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
@@ -801,15 +790,14 @@ namespace PE {
 
 	void Editor::ShowComponentWindow(bool* Active)
 	{
-		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
-		if (!ImGui::Begin("componentwindow", Active))
+		if (IsEditorActive())
+		if (!ImGui::Begin("componentwindow", Active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
 		{
 			ImGui::End();
 		}
 		else
 		{
-			if (ImGui::BeginChild("GameComponentList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar))
+			if (ImGui::BeginChild("GameComponentList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar | (IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs)))
 			{
 				if (m_objectIsSelected)
 				{
@@ -1090,6 +1078,75 @@ namespace PE {
 								ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
 
 								EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
+
+						// gui renderer component
+						if (name == EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>())
+						{
+							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("GUIRenderer", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//setting textures
+								std::vector<const char*> key;
+								key.push_back("");
+
+								//to get all the keys
+								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())
+										break;
+									index++;
+								}
+
+								//create a combo box of texture ids
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Textures: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##Textures", &index, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).SetTextureKey(key[index]);
+									}
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//setting colors
+
+								//get and set color variable of the renderer component
+								ImVec4 color;
+								color.x = EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetColor().r;
+								color.y = EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetColor().g;
+								color.z = EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetColor().b;
+								color.w = EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetColor().a;
+
+								ImGui::Text("Change Color: "); ImGui::SameLine();
+								ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
@@ -1398,8 +1455,7 @@ namespace PE {
 
 	void Editor::ShowResourceWindow(bool* Active)
 	{
-		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(150, 100), ImGuiCond_FirstUseEver);
+		if (IsEditorActive())
 		//testing for drag and drop
 		if (!ImGui::Begin("resourcewindow", Active)) // draw resource list
 		{
@@ -1463,9 +1519,7 @@ namespace PE {
 
 	void Editor::ShowPerformanceWindow(bool* Active)
 	{
-		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(100, 100), ImGuiCond_FirstUseEver);
-		//testing for drag and drop
+		if (IsEditorActive())
 		if (!ImGui::Begin("performanceWindow", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close
@@ -1506,237 +1560,240 @@ namespace PE {
 
 	void Editor::SetDockingPort(bool* Active)
 	{
-		//initializing dockspace flags
-		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+		if (IsEditorActive()) {
 
-		//setting centralnode flag
-		dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
+			//initializing dockspace flags
+			ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
-		//initializing window flags
-		ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
+			//setting centralnode flag
+			dockspace_flags &= ~ImGuiDockNodeFlags_PassthruCentralNode;
 
-		//if passthru central node
-		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-			window_flags |= ImGuiWindowFlags_NoBackground;
+			//initializing window flags
+			ImGuiWindowFlags window_flags = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
 
-		//get the current viewport so that i can get the full size of the window
-		ImGuiViewport* viewport = ImGui::GetMainViewport();
+			//if passthru central node
+			if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+				window_flags |= ImGuiWindowFlags_NoBackground;
 
-		//making sure the dockspace will cover the entire window
-		ImGui::SetNextWindowPos(viewport->Pos);
-		ImGui::SetNextWindowSize(viewport->Size);
-		ImGui::SetNextWindowViewport(viewport->ID);
+			//get the current viewport so that i can get the full size of the window
+			ImGuiViewport* viewport = ImGui::GetMainViewport();
 
-		//setting more window flags
-		window_flags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+			//making sure the dockspace will cover the entire window
+			ImGui::SetNextWindowPos(viewport->Pos);
+			ImGui::SetNextWindowSize(viewport->Size);
+			ImGui::SetNextWindowViewport(viewport->ID);
 
-		//begin of dockspace
-		if (!ImGui::Begin("DockSpace", Active, window_flags))
-		{
-			//if not active, just some weird imgui syntax
-			ImGui::End();
-		}
-		else {
-			//get io of imgui to ediit
-			ImGuiIO& io = ImGui::GetIO();
-			//get the id so that we can set the port node
-			ImGuiID dockspace_id = ImGui::GetID("DockSpace");
-			//if docking is enabled
-			if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
+			//setting more window flags
+			window_flags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+
+			//begin of dockspace
+			if (!ImGui::Begin("DockSpace", Active, window_flags))
 			{
-				//initializing dockspace
-				ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
-
-				//set default docking positions, may need to use serialization to set first launch
-				if (m_firstLaunch)
-				{
-					//after setting first dock positions
-					m_firstLaunch = false;
-
-					//start dock
-					ImGui::DockBuilderRemoveNode(dockspace_id);
-					ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
-					ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
-
-					//Imgui docks right side by default
-					ImGui::DockBuilderDockWindow("sceneview", dockspace_id);
-
-					//set the other sides
-					ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.3f, nullptr, &dockspace_id);
-					ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.25f, &dockspace_id, &dockspace_id);
-					ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
-
-					//setting the other dock locations
-					ImGui::DockBuilderDockWindow("objectlistwindow", dock_id_right);
-
-					//set on the save location to dock ontop of eachother
-					ImGui::DockBuilderDockWindow("resourcewindow", dock_id_down);
-					ImGui::DockBuilderDockWindow("consolewindow", dock_id_down);
-
-
-					//set on the save location to dock ontop of eachother
-					ImGui::DockBuilderDockWindow("componentwindow", dock_id_left);
-
-					//split the bottom into 2
-					ImGuiID dock_id_down2 = ImGui::DockBuilderSplitNode(dock_id_down, ImGuiDir_Right, 0.5f, nullptr, &dock_id_down);
-
-					ImGui::DockBuilderDockWindow("logwindow", dock_id_down2);
-
-					//end dock
-					ImGui::DockBuilderFinish(dockspace_id);
-
-				}
-
+				//if not active, just some weird imgui syntax
+				ImGui::End();
 			}
-
-			//docking port menu bar
-			if (ImGui::BeginMainMenuBar())
-			{
-				//menu 1
-				if (ImGui::BeginMenu("Scenes"))
+			else {
+				//get io of imgui to ediit
+				ImGuiIO& io = ImGui::GetIO();
+				//get the id so that we can set the port node
+				ImGuiID dockspace_id = ImGui::GetID("DockSpace");
+				//if docking is enabled
+				if (io.ConfigFlags & ImGuiConfigFlags_DockingEnable)
 				{
-					if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
-					{
-						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-						// This will save all entities to a file
-						serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/Saved_All_Entities.json");
-						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
-					}
-					if (ImGui::MenuItem("Load"))
-					{
-						engine_logger.AddLog(false, "Opening file explorer to load entities...", __FUNCTION__);
+					//initializing dockspace
+					ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
-						// Invoke the file explorer and allow user to choose a JSON file for loading entities.
-						std::string filePath = serializationManager.OpenFileExplorer();
-						if (!filePath.empty())
+					//set default docking positions, may need to use serialization to set first launch
+					if (m_firstLaunch)
+					{
+						//after setting first dock positions
+						m_firstLaunch = false;
+
+						//start dock
+						ImGui::DockBuilderRemoveNode(dockspace_id);
+						ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
+						ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
+
+						//Imgui docks right side by default
+						ImGui::DockBuilderDockWindow("sceneview", dockspace_id);
+
+						//set the other sides
+						ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.3f, nullptr, &dockspace_id);
+						ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.25f, &dockspace_id, &dockspace_id);
+						ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
+
+						//setting the other dock locations
+						ImGui::DockBuilderDockWindow("objectlistwindow", dock_id_right);
+
+						//set on the save location to dock ontop of eachother
+						ImGui::DockBuilderDockWindow("resourcewindow", dock_id_down);
+						ImGui::DockBuilderDockWindow("consolewindow", dock_id_down);
+
+
+						//set on the save location to dock ontop of eachother
+						ImGui::DockBuilderDockWindow("componentwindow", dock_id_left);
+
+						//split the bottom into 2
+						ImGuiID dock_id_down2 = ImGui::DockBuilderSplitNode(dock_id_down, ImGuiDir_Right, 0.5f, nullptr, &dock_id_down);
+
+						ImGui::DockBuilderDockWindow("logwindow", dock_id_down2);
+
+						//end dock
+						ImGui::DockBuilderFinish(dockspace_id);
+
+					}
+
+				}
+
+				//docking port menu bar
+				if (ImGui::BeginMainMenuBar())
+				{
+					//menu 1
+					if (ImGui::BeginMenu("Scenes"))
+					{
+						if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 						{
-							engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
-
-							// This will load all entities from the file
-							serializationManager.LoadAllEntitiesFromFile(filePath);
-							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+							// This will save all entities to a file
+							serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/Saved_All_Entities.json");
+							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 						}
-						else
+						if (ImGui::MenuItem("Load"))
 						{
-							engine_logger.AddLog(false, "File path is empty. Aborted loading entities.", __FUNCTION__);
+							engine_logger.AddLog(false, "Opening file explorer to load entities...", __FUNCTION__);
+
+							// Invoke the file explorer and allow user to choose a JSON file for loading entities.
+							std::string filePath = serializationManager.OpenFileExplorer();
+							if (!filePath.empty())
+							{
+								engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
+
+								// This will load all entities from the file
+								serializationManager.LoadAllEntitiesFromFile(filePath);
+								engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+							}
+							else
+							{
+								engine_logger.AddLog(false, "File path is empty. Aborted loading entities.", __FUNCTION__);
+							}
 						}
+						ImGui::Separator();
+						//remove the false,false if using
+						if (ImGui::MenuItem("Scene 1", "", false, false)) {}
+						if (ImGui::MenuItem("Scene 2", "", false, false)) {}
+						if (ImGui::MenuItem("Scene 3", "", false, false)) {}
+						ImGui::EndMenu();
 					}
-					ImGui::Separator();
-					//remove the false,false if using
-					if (ImGui::MenuItem("Scene 1", "", false, false)) {}
-					if (ImGui::MenuItem("Scene 2", "", false, false)) {}
-					if (ImGui::MenuItem("Scene 3", "", false, false)) {}
-					ImGui::EndMenu();
+					//does not work only for show
+					if (ImGui::BeginMenu("Edit"))
+					{
+						if (ImGui::MenuItem("Undo", "")) {}
+						if (ImGui::MenuItem("Redo", "", false, false)) {}
+						ImGui::Separator();
+						if (ImGui::MenuItem("Cut", "")) {}
+						if (ImGui::MenuItem("Copy", "")) {}
+						if (ImGui::MenuItem("Paste", "")) {}
+						ImGui::EndMenu();
+					}
+					//all the different windows
+					if (ImGui::BeginMenu("Window"))
+					{
+						if (ImGui::MenuItem("console", "f1", m_showConsole, !m_showConsole))
+						{
+							m_showConsole = !m_showConsole;
+						}
+						if (ImGui::MenuItem("object list", "f2", m_showObjectList, !m_showObjectList))
+						{
+							m_showObjectList = !m_showObjectList;
+						}
+						if (ImGui::MenuItem("component list", "f7", m_showComponentWindow, !m_showComponentWindow))
+						{
+							m_showComponentWindow = !m_showComponentWindow;
+						}
+						if (ImGui::MenuItem("logs", "f3", m_showLogs, !m_showLogs))
+						{
+							m_showLogs = !m_showLogs;
+						}
+						if (ImGui::MenuItem("Sceneview", "f4", m_showSceneView, !m_showSceneView))
+						{
+							m_showSceneView = !m_showSceneView;
+						}
+						if (ImGui::MenuItem("ResourceList", "f5", m_showResourceWindow, !m_showResourceWindow))
+						{
+							m_showResourceWindow = !m_showResourceWindow;
+						}
+						if (ImGui::MenuItem("PerformanceWindow", "f6", m_showPerformanceWindow, !m_showPerformanceWindow))
+						{
+							m_showPerformanceWindow = !m_showPerformanceWindow;
+						}
+						ImGui::Separator();
+						if (ImGui::MenuItem("Close Editor", "esc", m_showEditor, true))
+						{
+							m_showEditor = !m_showEditor;
+						}
+						if (ImGui::MenuItem("Rubrics Test", "", m_showTestWindows, !m_showTestWindows))
+						{
+							m_showTestWindows = !m_showTestWindows;
+						}
+						ImGui::Separator();
+						if (ImGui::MenuItem("Reset Default", "", false, true))
+						{
+							m_firstLaunch = true;
+							m_showResourceWindow = false;
+							m_showPerformanceWindow = false;
+						}
+						ImGui::EndMenu();
+					}
 				}
-				//does not work only for show
-				if (ImGui::BeginMenu("Edit"))
-				{
-					if (ImGui::MenuItem("Undo", "")) {}
-					if (ImGui::MenuItem("Redo", "", false, false)) {}
-					ImGui::Separator();
-					if (ImGui::MenuItem("Cut", "")) {}
-					if (ImGui::MenuItem("Copy", "")) {}
-					if (ImGui::MenuItem("Paste", "")) {}
-					ImGui::EndMenu();
-				}
-				//all the different windows
-				if (ImGui::BeginMenu("Window"))
-				{
-					if (ImGui::MenuItem("console", "f1", m_showConsole, !m_showConsole))
-					{
-						m_showConsole = !m_showConsole;
-					}
-					if (ImGui::MenuItem("object list", "f2", m_showObjectList, !m_showObjectList))
-					{
-						m_showObjectList = !m_showObjectList;
-					}
-					if (ImGui::MenuItem("logs", "f3", m_showLogs, !m_showLogs))
-					{
-						m_showLogs = !m_showLogs;
-					}
-					if (ImGui::MenuItem("Sceneview", "f4", m_showSceneView, !m_showSceneView))
-					{
-						m_showSceneView = !m_showSceneView;
-					}
-					if (ImGui::MenuItem("ResourceList", "f5", m_showResourceWindow, !m_showResourceWindow))
-					{
-						m_showResourceWindow = !m_showResourceWindow;
-					}
-					if (ImGui::MenuItem("PerformanceWindow", "f6", m_showPerformanceWindow, !m_showPerformanceWindow))
-					{
-						m_showPerformanceWindow = !m_showPerformanceWindow;
-					}
-					ImGui::Separator();
-					if (ImGui::MenuItem("Close Editor", "esc", m_showEditor, true))
-					{
-						m_showEditor = !m_showEditor;
-					}
-					if (ImGui::MenuItem("Rubrics Test", "f7", m_showTestWindows, !m_showTestWindows))
-					{
-						m_showTestWindows = !m_showTestWindows;
-					}
-					ImGui::Separator();
-					if (ImGui::MenuItem("Reset Default", "", false, true))
-					{
-						m_firstLaunch = true;
-						m_showResourceWindow = false;
-						m_showPerformanceWindow = false;
-					}
-					ImGui::EndMenu();
-				}
+				ImGui::EndMainMenuBar(); // closing of menu begin function
+				ImGui::End(); //finish drawing
 			}
-			ImGui::EndMainMenuBar(); // closing of menu begin function
-			ImGui::End(); //finish drawing
 		}
-
 	}
 
 	void Editor::ShowSceneView(GLuint texture_id, bool* active)
 	{
-		//set default size of the window
-		ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_FirstUseEver);
-		ImGui::SetNextWindowSize(ImVec2(600, 650), ImGuiCond_FirstUseEver);
+		if (IsEditorActive()) {
+			ImGui::Begin("sceneview", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
-		//start the window
-		ImGui::Begin("sceneview", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+			//setting the current width and height of the window to be drawn on
+			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
+			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
+			ImGuiStyle& style = ImGui::GetStyle();
+			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
+			float avail = ImGui::GetContentRegionAvail().x;
 
-		//setting the current width and height of the window to be drawn on
-		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
-		m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
-		ImGuiStyle& style = ImGui::GetStyle();
-		float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
-		float avail = ImGui::GetContentRegionAvail().x;
+			float off = (float)((avail - size) * 0.5);
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
+			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
+			if (ImGui::Button("Play"))
+			{
+				m_isRunTime = true;
+				m_showEditor = false;
+			}
+			ImGui::SameLine();
+			if (
+				ImGui::Button("Stop")
+				) {
+				m_isRunTime = false;
+			}
+			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
+				//the graphics rendered onto an image on the imgui window
+				ImGui::Image(
+					reinterpret_cast<void*>(
+						static_cast<intptr_t>(texture_id)),
+					ImVec2(m_renderWindowWidth, m_renderWindowHeight),
+					ImVec2(0, 1),
+					ImVec2(1, 0)
+				);
+				m_mouseInScene = ImGui::IsWindowHovered();
+			}
+			ImGui::EndChild();
 
-		float off = (float)((avail - size) * 0.5);
-		if (off > 0.0f)
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x)/2);
-		//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
-		if(ImGui::Button("Play"))
-		{
-			m_isRunTime = true;
-			m_showEditor = false;
+			//end the window
+			ImGui::End();
 		}
-		ImGui::SameLine();
-		if (
-			ImGui::Button("Stop")
-			) {
-			m_isRunTime = false; 
-		}
-		if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
-			//the graphics rendered onto an image on the imgui window
-			ImGui::Image(
-				reinterpret_cast<void*>(
-					static_cast<intptr_t>(texture_id)),
-				ImVec2(m_renderWindowWidth, m_renderWindowHeight),
-				ImVec2(0, 1),
-				ImVec2(1, 0)
-			);
-			m_mouseInScene = ImGui::IsWindowHovered();
-		}
-		ImGui::EndChild();
-
-		//end the window
-		ImGui::End();
 	}
 
 	void Editor::SetImGUIStyle()
@@ -1920,14 +1977,14 @@ namespace PE {
 			m_showSceneView = !m_showSceneView;
 
 		if (KTE.keycode == GLFW_KEY_F7)
-			m_showTestWindows = !m_showTestWindows;
+			m_showComponentWindow = !m_showComponentWindow;
 
 		if (KTE.keycode == GLFW_KEY_F6)
 			m_showPerformanceWindow = !m_showPerformanceWindow;
 
 		if (KTE.keycode == GLFW_KEY_ESCAPE)
 		{
-			m_showEditor = !false;
+			m_showEditor = true;
 			
 			if (m_showEditor)
 				m_isRunTime = false;
