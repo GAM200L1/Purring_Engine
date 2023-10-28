@@ -23,6 +23,8 @@
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
+#include <filesystem>
+
 
 std::string SerializationManager::OpenFileExplorer()
 {
@@ -86,28 +88,32 @@ void SerializationManager::DeserializeAllEntities(const nlohmann::json& r_j)
     }
 }
 
-void SerializationManager::SaveAllEntitiesToFile(const std::string& r_filename)
+void SerializationManager::SaveAllEntitiesToFile(const std::filesystem::path& filepath)
 {
     nlohmann::json allEntitiesJson = SerializeAllEntities();
 
-    std::ofstream outFile(r_filename);
-
-    if (outFile.is_open())
+    std::ofstream outFile(filepath);
+    if (outFile)
     {
         outFile << allEntitiesJson.dump(4);
         outFile.close();
     }
     else
     {
-        std::cerr << "Could not open the file for writing: " << r_filename << std::endl;
+        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
     }
 }
 
-void SerializationManager::LoadAllEntitiesFromFile(const std::string& r_filename)
+void SerializationManager::LoadAllEntitiesFromFile(const std::filesystem::path& filepath)
 {
-    std::ifstream inFile(r_filename);
+    if (!std::filesystem::exists(filepath))
+    {
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return;
+    }
 
-    if (inFile.is_open())
+    std::ifstream inFile(filepath);
+    if (inFile)
     {
         nlohmann::json allEntitiesJson;
         inFile >> allEntitiesJson;
@@ -116,16 +122,14 @@ void SerializationManager::LoadAllEntitiesFromFile(const std::string& r_filename
     }
     else
     {
-        std::cerr << "Could not open the file for reading: " << r_filename << std::endl;
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
     }
 }
 
-
 nlohmann::json SerializationManager::SerializeEntity(int entityId)
 {
-    PE::EntityManager* entityManager = &PE::EntityManager::GetInstance();
-
-    EntityID eID = static_cast<EntityID>(entityId);
+    //PE::EntityManager* entityManager = &PE::EntityManager::GetInstance();
+    //EntityID eID = static_cast<EntityID>(entityId);
 
     nlohmann::json j;
     StructEntity& entity = m_entities[entityId];
@@ -156,39 +160,11 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
         }
     }
 
-    if (entityManager->GetInstance().Has(eID, entityManager->GetComponentID<PE::Transform>()))
-    {
-        PE::Transform* transform = static_cast<PE::Transform*>(entityManager->GetComponentPoolPointer(entityManager->GetComponentID<PE::Transform>())->Get(eID));
+    SerializeComponent<PE::Transform>(entityId, "Transform", j);
+    SerializeComponent<PE::Graphics::Renderer>(entityId, "Renderer", j);
+    SerializeComponent<PE::RigidBody>(entityId, "RigidBody", j);
+    SerializeComponent<PE::Collider>(entityId, "Collider", j);
 
-        nlohmann::json jTransform = transform->ToJson();
-
-        j["Entity"]["components"]["Transform"] = jTransform;
-    }
-    if (entityManager->GetInstance().Has(eID, entityManager->GetComponentID<PE::RigidBody>()))
-    {
-        PE::RigidBody* rigidBody = static_cast<PE::RigidBody*>(entityManager->GetComponentPoolPointer(entityManager->GetComponentID<PE::RigidBody>())->Get(eID));
-        if (rigidBody != nullptr)
-        {
-            nlohmann::json jRigidBody = rigidBody->ToJson(); // Make sure your RigidBody class has a ToJson function
-            j["Entity"]["components"]["RigidBody"] = jRigidBody;
-        }
-    }
-    if (entityManager->GetInstance().Has(eID, entityManager->GetComponentID<PE::Collider>()))
-    {
-        PE::Collider* collider = static_cast<PE::Collider*>(entityManager->GetComponentPoolPointer(entityManager->GetComponentID<PE::Collider>())->Get(eID));
-        if (collider != nullptr) {
-            nlohmann::json jCollider = collider->ToJson();
-            j["Entity"]["components"]["Collider"] = jCollider;
-        }
-    }
-    if (entityManager->GetInstance().Has(eID, entityManager->GetComponentID<PE::Graphics::Renderer>()))
-    {
-        PE::Graphics::Renderer* renderer = static_cast<PE::Graphics::Renderer*>(entityManager->GetComponentPoolPointer(entityManager->GetComponentID<PE::Graphics::Renderer>())->Get(eID));
-        if (renderer != nullptr) {
-            nlohmann::json jRenderer = renderer->ToJson();
-            j["Entity"]["components"]["Renderer"] = jRenderer;
-        }
-    }
 
     return j; 
 }
@@ -229,41 +205,42 @@ size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
     return id;
 }
 
-void SerializationManager::SaveToFile(const std::string& r_filename, int entityId)
+void SerializationManager::SaveToFile(const std::filesystem::path& filepath, int entityId)
 {
     nlohmann::json serializedEntity = SerializeEntity(entityId);
-
-    std::ofstream outFile(r_filename);
-
-    if (outFile.is_open())
+    std::ofstream outFile(filepath);
+    if (outFile)
     {
         outFile << serializedEntity.dump(4);
-
         outFile.close();
     }
     else
     {
-        std::cerr << "Could not open the file for writing: " << r_filename << std::endl;
+        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
     }
 }
 
-size_t SerializationManager::LoadFromFile(const std::string& r_filename)
+size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
 {
-    std::ifstream inFile(r_filename);
-
-    if (!inFile.is_open())
+    if (!std::filesystem::exists(filepath))
     {
-        std::cerr << "Could not open the file for reading: " << r_filename << std::endl;
-        return MAXSIZE_T;       
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return MAXSIZE_T;
     }
 
-    nlohmann::json j;
-
-    inFile >> j;
-
-    inFile.close();
-
-    return DeserializeEntity(j);
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        nlohmann::json j;
+        inFile >> j;
+        inFile.close();
+        return DeserializeEntity(j);
+    }
+    else
+    {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+        return MAXSIZE_T;
+    }
 }
 
 void SerializationManager::LoadLoaders()
