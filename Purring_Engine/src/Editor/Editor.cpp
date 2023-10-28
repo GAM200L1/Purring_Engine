@@ -411,7 +411,10 @@ namespace PE {
 			//loop to show all the items ins the vector
 			bool isHoveringObject{ false };
 			int from{ -1 }, to{ -1 };
-
+			static bool drag = false;
+			static std::string dragName;
+			std::optional<EntityID> hoveredObject{};
+			static std::optional<EntityID> dragID{};
 			std::unordered_map<EntityID, std::vector<EntityID>> dispMap{};
 			for (const auto& id : SceneView())
 			{
@@ -434,8 +437,19 @@ namespace PE {
 					const bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedObject = static_cast<int>(n.first); //seteting current index to check for selection
-
+						m_currentSelectedObject = static_cast<int>(n.first);
+					if (ImGui::IsItemHovered()) {
+						m_currentSelectedObject = static_cast<int>(n.first);
+						isHoveringObject = true;
+						hoveredObject = n.first;
+						if (ImGui::IsMouseDragging(0) && drag == false)
+						{
+							//seteting current index to check for selection
+							dragName = name;
+							drag = true;
+							dragID = n.first;
+						}
+					}
 					if (!n.second.empty())
 					{
 						ImGui::Indent();
@@ -445,8 +459,7 @@ namespace PE {
 							const bool is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
 							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-								m_currentSelectedObject = static_cast<int>(id); //seteting current index to check for selection
-
+								m_currentSelectedObject = static_cast<int>(id);
 							if (ImGui::IsItemClicked(1))
 							{
 								m_currentSelectedObject = static_cast<int>(id);
@@ -454,6 +467,15 @@ namespace PE {
 							}
 							if (ImGui::IsItemHovered()) {
 								isHoveringObject = true;
+								hoveredObject = id;
+								if (ImGui::IsMouseDragging(0) && drag == false)
+								{
+									m_currentSelectedObject = static_cast<int>(id); //seteting current index to check for selection
+									dragName = name2;
+									drag = true;
+									dragID = id;
+								
+								}
 							}
 							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 							if (is_selected) // to show the highlight if selected
@@ -472,9 +494,6 @@ namespace PE {
 					{
 						m_currentSelectedObject = static_cast<int>(n.first);
 						ImGui::OpenPopup("popup");
-					}
-					if (ImGui::IsItemHovered()) {
-						isHoveringObject = true;
 					}
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
@@ -533,7 +552,23 @@ namespace PE {
 					//}
 					
 				}
-			}
+
+				if (drag)
+				{
+					ImGui::SetNextWindowPos(ImVec2(ImGui::GetMousePos().x+1,ImGui::GetMousePos().y+1));
+					ImGui::Begin("##test", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+					ImGui::Text(dragName.c_str());
+					ImGui::End();
+
+					if (!ImGui::IsMouseDown(0))
+					{
+						drag = false;
+						if(!hoveredObject || dragID.value() != hoveredObject.value())
+						EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
+						dragID.reset();
+					}
+				}
+}
 			if (ImGui::BeginPopup("popup"))
 			{
 				if (ImGui::Selectable("Delete Object"))
@@ -976,6 +1011,7 @@ namespace PE {
 												}
 												else
 												{
+													if(tmp2 != entityID)
 													op = tmp2;
 												}
 											}
@@ -997,6 +1033,7 @@ namespace PE {
 												}
 												else
 												{
+													if (tmp2 != entityID)
 													op = tmp2;
 												}
 											}
