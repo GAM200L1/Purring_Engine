@@ -109,6 +109,7 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
         .property("Relative Position", &PE::Transform::relPosition)
+        .property("Relative Orientation", &PE::Transform::relOrientation)
         .property("Orientation", &PE::Transform::orientation)
         .property("Width", &PE::Transform::width)
         .property("Height", &PE::Transform::height)

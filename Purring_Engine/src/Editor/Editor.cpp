@@ -936,7 +936,14 @@ namespace PE {
 												else
 												{
 													if(tmp2 != entityID)
-													op = tmp2;
+													{
+														op = tmp2;
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+														{
+															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
+															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
+														}
+													}
 												}
 											}
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
@@ -958,7 +965,14 @@ namespace PE {
 												else
 												{
 													if (tmp2 != entityID)
-													op = tmp2;
+													{
+														op = tmp2;
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+														{
+															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
+															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
+														}
+													}
 												}
 											}
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
@@ -996,35 +1010,29 @@ namespace PE {
 									if (prop.get_name() == "Position" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
 										prop.get_name() == "Relative Position" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
 										continue;
+									if (prop.get_name() == "Orientation" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
+										prop.get_name() == "Relative Orientation" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+										continue;
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
 									ImGui::Text(nm.c_str());
-									rttr::variant vp;
-									// change to lookup table?
-									if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-									{
-										vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
-									}
-
-
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
+									
 									// handle types
 									if (vp.get_type().get_name() == "structPE::vec2")
 									{
 										PE::vec2 tmp = vp.get_value<PE::vec2>();
 										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##x" + prop.get_name().to_string()).c_str(), &tmp.x, 1.0f);
 										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
-										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
+										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
 										float tmp = vp.get_value<float>();
 										std::string str = "##" + prop.get_name().to_string();
 										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputFloat(str.c_str(), &tmp, 1.0f, 100.f, "%.3f");
-										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-
+										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
 								}
 							}
