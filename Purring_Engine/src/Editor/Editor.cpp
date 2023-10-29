@@ -423,7 +423,7 @@ namespace PE {
 					bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedObject = static_cast<int>(n.first) ;
+						m_currentSelectedObject = static_cast<int>(n.first);
 					if (ImGui::IsItemHovered()) {
 						isHoveringObject = true;
 						hoveredObject = n.first;
@@ -434,6 +434,11 @@ namespace PE {
 							drag = true;
 							dragID = n.first;
 						}
+					}
+					if (ImGui::IsItemClicked(1))
+					{
+						//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+						ImGui::OpenPopup("popup");
 					}
 					// if there are children attatched
 					if (!n.second.empty())
@@ -457,18 +462,20 @@ namespace PE {
 									dragID = id;
 								}
 							}
+							if (ImGui::IsItemClicked(1))
+							{
+								//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+								ImGui::OpenPopup("popup");
+							}
 						}
 
 						ImGui::Unindent();
 					}
 
-						
 
-					if (ImGui::IsItemClicked(1))
-					{
-						m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-						ImGui::OpenPopup("popup");
-					}
+					
+
+					
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
@@ -510,7 +517,11 @@ namespace PE {
 					{
 						AddInfoLog("Object Deleted");
 
-
+						for (const auto& id : SceneView())
+						{
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
+								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
+						}
 						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
 
 						//if not first index
@@ -532,10 +543,10 @@ namespace PE {
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
-						if (m_currentSelectedObject)
-							EntityFactory::GetInstance().Clone(m_currentSelectedObject);
-						else
-							AddWarningLog("You are not allowed to clone the background");
+					if (m_currentSelectedObject)
+						EntityFactory::GetInstance().Clone(m_currentSelectedObject);
+					else
+						AddWarningLog("You are not allowed to clone the background");
 				}
 				ImGui::EndPopup();
 			}
