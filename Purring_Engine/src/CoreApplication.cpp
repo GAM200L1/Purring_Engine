@@ -169,7 +169,7 @@ PE::CoreApplication::CoreApplication()
     float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
-    m_fpsController.SetTargetFPS(60);
+    TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
     
     InitializeLogger();
     InitializeAudio();
@@ -272,7 +272,7 @@ void PE::CoreApplication::Run()
             // Update target FPS if a key is pressed
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
             {
-                m_fpsController.UpdateTargetFPSBasedOnKey(key);
+                TimeManager::GetInstance().m_frameRateController.UpdateTargetFPSBasedOnKey(key);
             }
         }
 
@@ -283,7 +283,7 @@ void PE::CoreApplication::Run()
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
-            m_windowManager.UpdateTitle(m_window, m_fpsController.GetFPS());
+            m_windowManager.UpdateTitle(m_window, TimeManager::GetInstance().m_frameRateController.GetFps());
             m_lastFrameTime = currentTime;
         }
 
@@ -303,21 +303,44 @@ void PE::CoreApplication::Run()
 
 
         // Iterate over and update all systems
-        for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
-        {
-            TimeManager::GetInstance().SystemStartFrame();
-            m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            TimeManager::GetInstance().SystemEndFrame(i);
+        //for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
+        //{
+        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
+        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+        //    {
+        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
+        //        vec3 tmp { trans.relPosition, 1.f };
+        //        tmp = parent.GetTransformMatrix3x3() * tmp;
+        //        trans.position.x = tmp.x;
+        //        trans.position.y = tmp.y;
+        //        trans.orientation = parent.orientation + trans.relOrientation;
+        //    }
+        //}
+
+        // Update system with fixed time step
+        TimeManager::GetInstance().StartAccumulator();
+        while (TimeManager::GetInstance().UpdateAccumulator())
+        { 
+            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            {
+                TimeManager::GetInstance().SystemStartFrame(systemID);
+                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                TimeManager::GetInstance().SystemEndFrame(systemID);
+            }
+            TimeManager::GetInstance().EndAccumulator();
         }
 
-
+        // Update Graphics with variable timestep
+        TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
+        m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
+        TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
 
         // Flush log entries
         engine_logger.FlushLog();
 
         TimeManager::GetInstance().EndFrame();
         // Finalize FPS calculations for the current frame
-        m_fpsController.EndFrame();
+        TimeManager::GetInstance().m_frameRateController.EndFrame();
     }
 
     // Cleanup for ImGui
@@ -403,14 +426,14 @@ void PE::CoreApplication::InitializeSystems()
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
+    AddSystem(p_inputSystem);
     AddSystem(p_guisystem);
     AddSystem(p_logicSystem);
-    AddSystem(p_inputSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
     AddSystem(p_cameraManager);
