@@ -160,12 +160,12 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     }
 
     SerializeComponent<PE::Transform>(entityId, "Transform", j);
-    SerializeComponent<PE::Graphics::Renderer>(entityId, "Renderer", j);
+    SerializeComponent<PE::Graphics::Renderer>(entityId, "Renderer", j); //might be issue
     SerializeComponent<PE::RigidBody>(entityId, "RigidBody", j);
     SerializeComponent<PE::Collider>(entityId, "Collider", j);
     SerializeComponent<PE::Graphics::Camera>(entityId, "Camera", j);
     SerializeComponent<PE::GUI>(entityId, "GUI", j);
-    SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); // << idk if this will have error in the future but take note of this - HANS
+    //SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); // << idk if this will have error in the future but take note of this - HANS
 
 
     return j; 
@@ -251,6 +251,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("Collider", &SerializationManager::LoadCollider);
     m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
     m_initializeComponent.emplace("Renderer", &SerializationManager::LoadRenderer);
+    m_initializeComponent.emplace("GUI", &SerializationManager::LoadGUI);
     m_initializeComponent.emplace("Camera", &SerializationManager::LoadCamera);
     //m_initializeComponent.emplace("GUIRenderer", &SerializationManager::LoadGUI);
 
