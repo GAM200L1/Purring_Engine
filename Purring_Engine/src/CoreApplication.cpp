@@ -96,6 +96,8 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::ScriptComponent);
     REGISTERCOMPONENT(PE::GUI);
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
+    REGISTERCOMPONENT(PE::AnimationComponent);
+   
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
     // extra notes, will we need to include the constructor as well?
@@ -179,8 +181,10 @@ PE::CoreApplication::CoreApplication()
 
     // Load Textures and Animations
     std::string catTextureName{ "../Assets/Textures/Cat_Grey_128px.png" }, cat2TextureName{ "../Assets/Textures/Cat_Grey_Blink_128px.png" }, buttonTextureName{ "../Assets/Textures/Button_White_128px.png" };
+    std::string ratTextureName{ "../Assets/Textures/Rat_Brawler_128px.png" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(ratTextureName, "../Assets/Textures/Rat_Gutter_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/bg.png", "../Assets/Textures/bg.png");
 
     ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
@@ -188,16 +192,22 @@ PE::CoreApplication::CoreApplication()
     
 
     // Animation textures
-    // Animation 1
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim1", "../Assets/Textures/CatSprite/Cat_Grey_128px1.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim2", "../Assets/Textures/CatSprite/Cat_Grey_128px2.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim3", "../Assets/Textures/CatSprite/Cat_Grey_128px3.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim4", "../Assets/Textures/CatSprite/Cat_Grey_128px4.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim5", "../Assets/Textures/CatSprite/Cat_Grey_128px5.png");
+    std::string catWalkSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png" };
+    std::string catAttackSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png" };
+    std::string ratAttackSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Attack.png" };
+    std::string ratDeathSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png" };
 
-    // Animation 2
-    ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim1", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_2.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
+    // Spritesheet 1
+    ResourceManager::GetInstance().LoadTextureFromFile(catWalkSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png");
+
+    // Spritesheet 2
+    ResourceManager::GetInstance().LoadTextureFromFile(catAttackSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png");
+
+    // Spritesheet 3
+    ResourceManager::GetInstance().LoadTextureFromFile(ratAttackSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Attack.png");
+
+    // Spritesheet 4
+    ResourceManager::GetInstance().LoadTextureFromFile(ratDeathSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png");
 
     SerializationManager serializationManager;
     //create background from file
@@ -242,6 +252,64 @@ PE::CoreApplication::CoreApplication()
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
+
+    // Create animations here for now
+    std::string playerWalkAnimation, playerAttackAnimation, ratAttackAnimation, ratDeathAnimation;
+    playerWalkAnimation = AnimationManager::CreateAnimation("playerWalk", catWalkSpriteSheet);
+    playerAttackAnimation = AnimationManager::CreateAnimation("playerAttack", catAttackSpriteSheet);
+    ratAttackAnimation = AnimationManager::CreateAnimation("ratAttack", ratAttackSpriteSheet);
+    ratDeathAnimation = AnimationManager::CreateAnimation("ratDeath", ratDeathSpriteSheet);
+
+    // animation 1
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
+    // animation 2
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
+    // animation 3
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
+    // animation 4
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
+    // Add animation ID to player component
+    EntityFactory::GetInstance().Assign(1, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationToComponent(playerAttackAnimation);
+    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationToComponent(playerWalkAnimation);
+
+    // Make NPC for testing animation
+    EntityID npcID = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    EntityManager::GetInstance().Get<Graphics::Renderer>(npcID).SetTextureKey(ratTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(npcID).SetColor();
+    EntityManager::GetInstance().Get<EntityDescriptor>(npcID).name = "NPC";
+    EntityManager::GetInstance().Get<Transform>(npcID).position.x = 150.f;
+    EntityManager::GetInstance().Get<Transform>(npcID).position.y = -150.f;
+    EntityManager::GetInstance().Get<Transform>(npcID).width = 100.f;
+    EntityManager::GetInstance().Get<Transform>(npcID).height = 100.f;
+
+    EntityFactory::GetInstance().Assign(npcID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+    EntityManager::GetInstance().Get<AnimationComponent>(npcID).AddAnimationToComponent(ratAttackAnimation);
+    EntityManager::GetInstance().Get<AnimationComponent>(npcID).AddAnimationToComponent(ratDeathAnimation);
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -433,11 +501,14 @@ void PE::CoreApplication::InitializeSystems()
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
+    AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
+
     AddSystem(p_inputSystem);
     AddSystem(p_guisystem);
     AddSystem(p_logicSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
+    AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
 }

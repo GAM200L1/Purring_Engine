@@ -23,7 +23,7 @@
 
 namespace PE
 {
-	constexpr auto TotalSystems = 7;
+	constexpr auto TotalSystems = 8;
 	/*!***********************************************************************************
 	 \brief Enumeration for identifying different subsystems.
 	*************************************************************************************/
@@ -34,6 +34,7 @@ namespace PE
 		LOGIC,
 		PHYSICS,
 		COLLISION,
+		ANIMATION,
 		CAMERA,
 		GRAPHICS,
 		SYSTEMCOUNT

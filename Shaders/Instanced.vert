@@ -18,10 +18,11 @@
 
 layout (location = 0) in vec2 aVertexPosition; // IN vertex position
 layout (location = 1) in vec2 aTextureCoord;   // IN texture coordinate
+layout (location = 2) in vec2 aTextureCoordDynamic;
 
-layout (location = 2) in float aIsTextured;    // IN texture boolean
-layout (location = 3) in vec4 aColor;          // IN vertex color
-layout (location = 4) in mat4 aModelToWorld;   // IN transformation matrix
+layout (location = 3) in float aIsTextured;    // IN texture boolean
+layout (location = 4) in vec4 aColor;          // IN vertex color
+layout (location = 5) in mat4 aModelToWorld;   // IN transformation matrix
 
 layout (location = 0) out vec4 vColor;         // OUT color
 layout (location = 1) out vec2 vTextureCoord;  // OUT texture coordinate
@@ -32,6 +33,7 @@ uniform mat4 uWorldToNdc;   // World to NDC matrix
 void main(void) {
     gl_Position = uWorldToNdc * aModelToWorld * vec4(aVertexPosition, 0.0, 1.0);
     vColor = aColor;
-	vTextureCoord = aTextureCoord;
+    aTextureCoord;
+	vTextureCoord = aTextureCoordDynamic;
     vIsTextured = aIsTextured;
 }

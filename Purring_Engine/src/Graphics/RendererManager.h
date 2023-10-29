@@ -239,7 +239,7 @@ namespace PE
             std::vector<float> m_isTextured{}; // Container that stores whether the quad is textured
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
             std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
-
+            std::vector<glm::vec2> m_UV{};
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************
