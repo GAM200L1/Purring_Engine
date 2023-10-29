@@ -1246,7 +1246,6 @@ namespace PE {
 							}
 						}
 
-						
 						// ---------- RENDERER ---------- //
 
 
@@ -1269,7 +1268,7 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								
+
 								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
 								std::vector<std::filesystem::path> filepaths;
 								int i{ 0 };
@@ -1366,35 +1365,58 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
-								std::vector<const char*> key;
-								key.push_back("");
 
-								//to get all the keys
-								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+
+								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
+								std::vector<std::filesystem::path> filepaths;
+								int i{ 0 };
+								int guiIndex{ 0 };
+								for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it, ++i)
 								{
-									key.push_back(it->first.c_str());
+									filepaths.emplace_back(it->first);
+									if (it->first == EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())
+										guiIndex = i;
 								}
-								int index{};
-								for (std::string str : key)
+
+								// Vector of the names of textures that have already been loaded
+								std::vector<std::string> loadedTextureKeys;
+
+								// get the keys of textures already loaded by the resource manager
+								for (auto const& r_filepath : filepaths)
 								{
-									if (str == EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())
-										break;
-									index++;
+									loadedTextureKeys.emplace_back(r_filepath.stem().string());
 								}
+
 
 								//create a combo box of texture ids
 								ImGui::SetNextItemWidth(200.0f);
-								if (!key.empty())
+								if (!loadedTextureKeys.empty())
 								{
+									// Displays the current texture set on the object
+									if (ImGui::BeginChild("GUICurrentTexture", ImVec2{ 116,116 }, true))
+									{
+										if (EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey() != "")
+										{
+											ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2{ 100,100 }, { 0,1 }, { 1,0 });
+										}
+									}
+									ImGui::EndChild();
+
+									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									//set selected texture id
-									if (ImGui::Combo("##Textures", &index, key.data(), static_cast<int>(key.size())))
+									if (ImGui::BeginCombo("##GUITextures", loadedTextureKeys[guiIndex].c_str())) // The second parameter is the label previewed before opening the combo.
 									{
-										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).SetTextureKey(key[index]);
+										for (int n{ 0 }; n < loadedTextureKeys.size(); ++n)
+										{
+											if (ImGui::Selectable(loadedTextureKeys[n].c_str()))
+												EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).SetTextureKey(filepaths[n].string());
+										}
+										ImGui::EndCombo();
 									}
 								}
+
+
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
