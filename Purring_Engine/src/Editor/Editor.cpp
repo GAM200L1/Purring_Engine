@@ -486,7 +486,17 @@ namespace PE {
 					{
 						drag = false;
 						if(!hoveredObject || dragID.value() != hoveredObject.value())
-						EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
+						{
+							if (hoveredObject && EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
+								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
+							else
+								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent)
+							{
+								EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
+								EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
+							}
+						}
 						dragID.reset();
 					}
 				}

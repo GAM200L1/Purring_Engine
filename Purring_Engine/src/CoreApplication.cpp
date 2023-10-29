@@ -104,7 +104,7 @@ RTTR_REGISTRATION
     //    .property("x", &PE::vec2::x);
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
-        .property("Parent", &PE::EntityDescriptor::parent);
+        .property_readonly("Parent", &PE::EntityDescriptor::parent);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
