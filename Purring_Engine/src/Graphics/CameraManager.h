@@ -235,7 +235,7 @@ namespace PE
         private:
             static float m_windowWidth, m_windowHeight;
 
-            std::string m_systemName{ "Camera Manager" }; // Name of system
+            std::string m_systemName{ "CameraManager" }; // Name of system
 
             // The entity number of the primary camera used during runtime
             EntityID m_mainCameraId{};

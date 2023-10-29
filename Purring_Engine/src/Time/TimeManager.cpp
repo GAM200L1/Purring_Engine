@@ -24,19 +24,44 @@ namespace PE
 	{
 		// might need to init the other variables
 		m_frameTime = 1.f / 60.f; // default fps
+		m_accumulator = 0.f;
+		m_accumulatorLimit = 1.f;
+		m_fixedTimeStep = 1.f / 60.f;
 	}
-	void TimeManager::SystemStartFrame()
+	void TimeManager::SystemStartFrame(SystemID system)
 	{
-		m_systemStartFrame = std::chrono::high_resolution_clock::now();
+		m_systemStartFrame[system] = std::chrono::high_resolution_clock::now();
 	}
 	
-	void TimeManager::SystemEndFrame(int system)
+	void TimeManager::SystemEndFrame(SystemID system)
 	{
-		m_systemEndFrame = std::chrono::high_resolution_clock::now();
-
 		// frame time for each system
-		m_durationInSeconds = (m_systemEndFrame - m_systemStartFrame);
-		m_systemFrameTime[system] = m_durationInSeconds.count();
+		m_durationInSeconds = (std::chrono::high_resolution_clock::now() - m_systemStartFrame[system]);
+
+		if (system != GRAPHICS)
+		{
+			m_systemAccumulatedFrameTime[system] += m_durationInSeconds.count();
+		}
+		else // Graphics not using fixed time step
+		{
+			m_systemFrameTime[system] += m_durationInSeconds.count();
+		}
+	}
+
+	void TimeManager::UpdateSystemFrameUsage()
+	{
+		// update system frame usage
+		for (SystemID systemID{}; systemID < SYSTEMCOUNT; ++systemID)
+		{
+			m_systemFrameUsage[systemID] = m_systemFrameTime[systemID] / m_frameTime;
+
+			//if ((m_systemPreviousFrameTime[systemID] / m_frameTime) > 1.f)
+			//{
+			//	m_systemPreviousFrameTime[systemID] = m_frameTime;
+			//}
+			m_systemFrameTime[systemID] = 0.f;
+		}
+		m_frameTime = 0.f;
 	}
 
 	void TimeManager::StartFrame()
@@ -61,11 +86,48 @@ namespace PE
 
 		// get total time for frame
 		m_durationInSeconds = (m_endFrame - m_startFrame);
-		m_frameTime = m_durationInSeconds.count();
+		m_frameTime += m_durationInSeconds.count();
 	}
 
 	void TimeManager::EngineStart()
 	{
 		m_engineStartTime = std::chrono::high_resolution_clock::now();
+	}
+
+	void TimeManager::StartAccumulator()
+	{
+		m_accumulator += m_deltaTime;
+		m_accumulator = (m_accumulator > m_accumulatorLimit) ? m_accumulatorLimit : m_accumulator;
+	}
+
+	bool TimeManager::UpdateAccumulator()
+	{
+		return m_accumulator >= m_fixedTimeStep;
+	}
+
+	void TimeManager::EndAccumulator()
+	{
+		m_accumulator -= m_fixedTimeStep;
+
+		// if accumulator last loop iteration
+		if (!(m_accumulator >= m_fixedTimeStep))
+		{
+			// save systemFrametime for fixed time systems and reset
+			for (SystemID systemID{}; systemID < GRAPHICS; ++systemID)
+			{
+				m_systemFrameTime[systemID] += m_systemAccumulatedFrameTime[systemID];
+				m_systemAccumulatedFrameTime[systemID] = 0.f;
+			}
+		}
+	}
+
+	void TimeManager::SetAccumulatorLimit(float value)
+	{
+		m_accumulatorLimit = value;
+	}
+
+	void TimeManager::SetFixedTimeStep(float value)
+	{
+		m_fixedTimeStep = value;
 	}
 }

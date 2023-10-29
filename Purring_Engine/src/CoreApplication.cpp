@@ -104,11 +104,12 @@ RTTR_REGISTRATION
     //    .property("x", &PE::vec2::x);
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
-        .property("Parent", &PE::EntityDescriptor::parent);
+        .property_readonly("Parent", &PE::EntityDescriptor::parent);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
         .property("Relative Position", &PE::Transform::relPosition)
+        .property("Relative Orientation", &PE::Transform::relOrientation)
         .property("Orientation", &PE::Transform::orientation)
         .property("Width", &PE::Transform::width)
         .property("Height", &PE::Transform::height)
@@ -158,7 +159,6 @@ RTTR_REGISTRATION
 PE::CoreApplication::CoreApplication()
 {
     InitializeVariables();
-    RegisterComponents();
 
     // Load Configuration
     std::ifstream configFile("config.json");
@@ -169,7 +169,7 @@ PE::CoreApplication::CoreApplication()
     float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
-    m_fpsController.SetTargetFPS(60);
+    TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
     
     InitializeLogger();
     InitializeAudio();
@@ -232,8 +232,9 @@ PE::CoreApplication::CoreApplication()
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = 100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = 100.f;
+
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
     //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
@@ -271,20 +272,7 @@ void PE::CoreApplication::Run()
             // Update target FPS if a key is pressed
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
             {
-                m_fpsController.UpdateTargetFPSBasedOnKey(key);
-            }
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            try
-            {
-                std::vector testVector = { 1 };
-                testVector[0] = testVector.at(1);
-            }
-            catch (const std::out_of_range& r_err)
-            {
-                engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
-                throw r_err;
+                TimeManager::GetInstance().m_frameRateController.UpdateTargetFPSBasedOnKey(key);
             }
         }
 
@@ -295,7 +283,7 @@ void PE::CoreApplication::Run()
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
-            m_windowManager.UpdateTitle(m_window, m_fpsController.GetFPS());
+            m_windowManager.UpdateTitle(m_window, TimeManager::GetInstance().m_frameRateController.GetFps());
             m_lastFrameTime = currentTime;
         }
 
@@ -315,21 +303,44 @@ void PE::CoreApplication::Run()
 
 
         // Iterate over and update all systems
-        for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
-        {
-            TimeManager::GetInstance().SystemStartFrame();
-            m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            TimeManager::GetInstance().SystemEndFrame(i);
+        //for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
+        //{
+        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
+        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+        //    {
+        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
+        //        vec3 tmp { trans.relPosition, 1.f };
+        //        tmp = parent.GetTransformMatrix3x3() * tmp;
+        //        trans.position.x = tmp.x;
+        //        trans.position.y = tmp.y;
+        //        trans.orientation = parent.orientation + trans.relOrientation;
+        //    }
+        //}
+
+        // Update system with fixed time step
+        TimeManager::GetInstance().StartAccumulator();
+        while (TimeManager::GetInstance().UpdateAccumulator())
+        { 
+            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            {
+                TimeManager::GetInstance().SystemStartFrame(systemID);
+                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                TimeManager::GetInstance().SystemEndFrame(systemID);
+            }
+            TimeManager::GetInstance().EndAccumulator();
         }
 
-
+        // Update Graphics with variable timestep
+        TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
+        m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
+        TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
 
         // Flush log entries
         engine_logger.FlushLog();
 
         TimeManager::GetInstance().EndFrame();
         // Finalize FPS calculations for the current frame
-        m_fpsController.EndFrame();
+        TimeManager::GetInstance().m_frameRateController.EndFrame();
     }
 
     // Cleanup for ImGui
@@ -377,67 +388,6 @@ void PE::CoreApplication::InitializeVariables()
     m_lastFrameTime = 0;
 }
 
-void PE::CoreApplication::RegisterComponents()
-{
-
-    //std::cout << "TRANSFORM COMPONENT PROPERTIES: \n";
-    //rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << "\nTRANSFORM COMPONENT Orientation value: ";
-    //Transform tmp;
-
-    //property p = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string()).get_property("orientation");
-    //p.set_value(tmp, 69.f);
-
-    //variant vp = p.get_value(tmp);
-    //std::cout << vp.to_float() << std::endl;
-
-    //std::cout << "\nRIGIDBODY COMPONENT PROPERTIES: \n";
-
-    //cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::RigidBody>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << "\nCOLLIDER COMPONENT PROPERTIES: \n";
-    //cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << std::endl;
-
-    rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
-    for (auto& prop : cls.get_properties())
-    {
-        std::cout << "name: " << prop.get_name() << std::endl;
-        std::cout << "type: " << prop.get_type().get_name() << std::endl;
-
-    }
-    for (auto& meth : cls.get_methods())
-    {
-        std::cout << "name: " << meth.get_name() << std::endl;
-    }
-}
-
 
 
 void PE::CoreApplication::InitializeLogger()
@@ -476,14 +426,14 @@ void PE::CoreApplication::InitializeSystems()
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
+    AddSystem(p_inputSystem);
     AddSystem(p_guisystem);
     AddSystem(p_logicSystem);
-    AddSystem(p_inputSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
     AddSystem(p_cameraManager);
