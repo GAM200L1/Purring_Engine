@@ -67,6 +67,8 @@ namespace PE
 		*************************************************************************************/
 		AnimationFrame const& UpdateAnimation(float deltaTime);
 
+		void ResetAnimation();
+
 		inline std::string GetSpriteSheetKey() { return m_textureKey; }
 
 		// ----- Private Variables ----- //
@@ -86,9 +88,13 @@ namespace PE
 
         \return glm::vec4 const& - RGBA values of the color of the object.
         *************************************************************************************/
-        inline std::string GetAnimationID() const { return m_animationsID[0]; }
+        inline std::string GetAnimationID() const { return m_currentAnimationIndex; }
+
+		inline bool HasAnimation() const { return !m_animationsID.empty(); }
 
 		void AddAnimationToComponent(std::string animationID);
+
+		void SetCurrentAnimationIndex(std::string animationIndex);
 
         ///*!***********************************************************************************
         // \brief Sets the RGBA color of the object. If the object has a texture on it,
@@ -114,9 +120,9 @@ namespace PE
 
     private:
 
-		std::vector<std::string> m_animationsID; // Stores all animations for the component
-		int m_currentAnimationIndex; // current playing animation
-		int m_startingAnimationIndex; // starting playing animation
+		std::vector<std::string> m_animationsID; // Stores all animations for the component // not in use now
+		std::string m_currentAnimationIndex{}; // current playing animation
+		std::string m_startingAnimationIndex{}; // starting playing animation
     };
 
 	/*!***********************************************************************************

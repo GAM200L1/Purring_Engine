@@ -1547,6 +1547,77 @@ namespace PE {
 								EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetMagnification(zoom);
 							}
 						}
+
+						// Animation component
+						if (name == EntityManager::GetInstance().GetComponentID<AnimationComponent>())
+						{
+							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("Animation", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//setting textures
+								std::vector<const char*> key;
+								key.push_back("");
+
+								//to get all the keys
+								for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationID())
+										break;
+									index++;
+								}
+
+								//create a combo box of texture ids
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Animations: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##Animation", &index, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<AnimationComponent>(entityID).SetCurrentAnimationIndex(key[index]);
+									}
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								////setting colors
+								 
+								////get and set color variable of the renderer component
+								//ImVec4 color;
+								//color.x = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().r;
+								//color.y = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().g;
+								//color.z = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().b;
+								//color.w = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().a;
+
+								//ImGui::Text("Change Color: "); ImGui::SameLine();
+								//ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
 					}
 
 
@@ -1618,6 +1689,13 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUI>() });
 							else
 								AddErrorLog("ALREADY HAS GUI");
+						}
+						if (ImGui::Selectable("Add Animation"))
+						{
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+							else
+								AddErrorLog("ALREADY HAS ANIMATION");
 						}
 						ImGui::EndPopup();
 					}
@@ -1725,6 +1803,9 @@ namespace PE {
 
 			ImGui::Text("Collision: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION) * 100.f);
 			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Animation: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::ANIMATION) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::ANIMATION), ImVec2(400.f, 30.0f), NULL);
 
 			ImGui::Text("Camera: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA) * 100.f);
 			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA), ImVec2(400.f, 30.0f), NULL);

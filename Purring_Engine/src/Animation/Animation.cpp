@@ -24,6 +24,7 @@
 #include "ECS/Entity.h"
 #include "Graphics/Renderer.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Editor/Editor.h"
 
 
 extern Logger engine_logger;
@@ -53,10 +54,21 @@ namespace PE
 		return m_animationFrames[m_currentFrameIndex];
 	}
 
+	void Animation::ResetAnimation()
+	{
+		m_currentFrameIndex = 0;
+	}
+
 	// AnimationComponent
 	void AnimationComponent::AddAnimationToComponent(std::string animationID)
 	{
 		m_animationsID.emplace_back(animationID);
+		m_currentAnimationIndex = animationID;
+	}
+
+	void AnimationComponent::SetCurrentAnimationIndex(std::string animationIndex)
+	{
+		m_currentAnimationIndex = animationIndex;
 	}
 
 	// AnimationManager
@@ -71,18 +83,25 @@ namespace PE
 	void AnimationManager::UpdateSystem(float deltaTime)
 	{
 		AnimationFrame p_currentFrame;
-		for (EntityID const& id : SceneView<AnimationComponent>())
-		{
-			AnimationComponent const& animationComponent = EntityManager::GetInstance().Get<AnimationComponent>(id);
-			
-			// update animation and get current frame
-			p_currentFrame = UpdateAnimation(animationComponent.GetAnimationID(), deltaTime);
 
-			// update entity based on frame data
-			// in the future probably check for bools in animation component, then update data accordingly
-			EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(animationComponent.GetAnimationID()));
-			EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
-			EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+		if (Editor::GetInstance().IsRunTime())
+		{
+			for (EntityID const& id : SceneView<AnimationComponent>())
+			{
+				AnimationComponent const& animationComponent = EntityManager::GetInstance().Get<AnimationComponent>(id);
+
+				if (animationComponent.HasAnimation())
+				{
+					// update animation and get current frame
+					p_currentFrame = UpdateAnimation(animationComponent.GetAnimationID(), deltaTime);
+
+					// update entity based on frame data
+					// in the future probably check for bools in animation component, then update data accordingly
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(animationComponent.GetAnimationID()));
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+				}
+			}
 		}
 	}
 

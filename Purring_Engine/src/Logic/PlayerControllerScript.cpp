@@ -24,9 +24,19 @@ namespace PE
 		{
 		case PlayerState::IDLE:
 			MovePlayer(id);
+
+			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
+			}			
 			break;
 		case PlayerState::MOVING:
 			MovePlayer(id);
+
+			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+			}
 			break;
 		case PlayerState::DEAD:
 			break;
