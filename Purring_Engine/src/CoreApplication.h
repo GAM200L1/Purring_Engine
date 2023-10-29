@@ -112,7 +112,6 @@ namespace PE
 		// Temporary (or additional) components
 		WindowManager m_windowManager;						// Manages the application window
 		GLFWwindow* m_window;								// Pointer to the GLFW window object
-		FrameRateTargetControl m_fpsController;				// Controls the frame rate target
 		float m_time;										// Placeholder for time value
 
 	private:

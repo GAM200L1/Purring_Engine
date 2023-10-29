@@ -159,7 +159,7 @@ PE::CoreApplication::CoreApplication()
     int height = configJson["window"]["height"];
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
-    m_fpsController.SetTargetFPS(60);
+    TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
     
     InitializeLogger();
     InitializeAudio();
@@ -238,7 +238,7 @@ void PE::CoreApplication::Run()
             // Update target FPS if a key is pressed
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
             {
-                m_fpsController.UpdateTargetFPSBasedOnKey(key);
+                TimeManager::GetInstance().m_frameRateController.UpdateTargetFPSBasedOnKey(key);
             }
         }
         if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
@@ -262,7 +262,7 @@ void PE::CoreApplication::Run()
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
-            m_windowManager.UpdateTitle(m_window, m_fpsController.GetFPS());
+            m_windowManager.UpdateTitle(m_window, TimeManager::GetInstance().m_frameRateController.GetFps());
             m_lastFrameTime = currentTime;
         }
 
@@ -289,7 +289,7 @@ void PE::CoreApplication::Run()
 
         TimeManager::GetInstance().EndFrame();
         // Finalize FPS calculations for the current frame
-        m_fpsController.EndFrame();
+        TimeManager::GetInstance().m_frameRateController.EndFrame();
     }
 
     // Cleanup for ImGui

@@ -17,6 +17,7 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Singleton.h"
+#include "FrameRateTargetControl.h"
 #include "System.h"
 
 
@@ -131,6 +132,7 @@ namespace PE
 		*************************************************************************************/
 		float GetSystemFrameUsage(SystemID system) const { return m_systemFrameUsage[system]; }
 
+		FrameRateController m_frameRateController;
 		// ----- Private Methods and Members ----- //
 	private:
 		/*!***********************************************************************************
