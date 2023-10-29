@@ -46,11 +46,13 @@ namespace PE
         m_frameCount(0),
         m_timeSinceLastFpsUpdate(0.f),
         m_currentFps(0.f),
-        m_maxFpsHistory(20),
+        m_maxFpsHistory(60),
         m_averageFps(0.f),
         m_maxFps((std::numeric_limits<float>::min)()),
         m_minFps((std::numeric_limits<float>::max)())
-    {}
+    {
+        m_fpsValues.reserve(m_maxFpsHistory);
+    }
 
 
 
@@ -90,9 +92,9 @@ namespace PE
         ++m_frameCount;
 
         m_timeSinceLastFpsUpdate += TimeManager::GetInstance().GetDeltaTime();
-        if (m_timeSinceLastFpsUpdate >= 1.f)  // Update FPS and system frame usage once per second
+        if (m_timeSinceLastFpsUpdate >= 1.f / 30.f)  // Update FPS and system frame usage once per second
         {
-            m_currentFps = m_frameCount;
+            m_currentFps = m_frameCount / m_timeSinceLastFpsUpdate;
             m_frameCount = 0;
             m_timeSinceLastFpsUpdate = 0.f;
 

@@ -1382,69 +1382,55 @@ namespace PE {
 		else
 		{
 			std::vector<float> const& fpsValues{ TimeManager::GetInstance().m_frameRateController.GetFpsValues() };
-			std::vector<float> averageFpsValues(fpsValues.size(), TimeManager::GetInstance().m_frameRateController.GetAverageFps());
 			ImGui::SeparatorText("FPS Viewer");
 			std::string fpsString{ "FPS: " + std::to_string(static_cast<int>(TimeManager::GetInstance().m_frameRateController.GetFps())) };
 
+			// Plot fps line graph
 			ImGui::Text("Average FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetAverageFps());
 			ImGui::Text("Max FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetMaxFps());
-			ImGui::Text("FPS: %d", static_cast<int>(TimeManager::GetInstance().m_frameRateController.GetFps()));
-			ImGui::PlotLines("##FpsLine", fpsValues.data(), static_cast<int>(fpsValues.size()), 0, fpsString.c_str(), 0.0f, 1000.0f, ImVec2(200, 80.0f));
-			ImGui::PlotLines("##AverageFpsLine", averageFpsValues.data(), static_cast<int>(averageFpsValues.size()), 0, NULL, 0.0f, 1000.0f, ImVec2(200, 80.0f));
-			//ImGui::PlotLines("##FpsLine", fpsValuesData.data(), static_cast<int>(fpsValuesData.size()), 0, fpsString.c_str(), 0.0f, 1000.0f, ImVec2(200, 80.0f));
-			// TEMPORARY HARD CODED
-			std::vector<float> values{
-				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT),
-				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC),
-				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS),
-				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION),
-				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA),
-				TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS)
-			};
+			ImGui::Text("Min FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetMinFps());
+			ImGui::PlotLines("##FpsLine", fpsValues.data(), static_cast<int>(fpsValues.size()), 0, fpsString.c_str(), 0.0f, 1000.0f, ImVec2(400.f, 200.0f));
 
+			// Plot System usage progress bar
 			ImGui::SeparatorText("System Usage");
-			ImGui::Text("Input: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT));
-			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT), ImVec2(200, 20.0f), NULL);
+			ImGui::Text("Input: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT), ImVec2(400.f, 30.0f), NULL);
 
-			ImGui::Text("Logic: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC));
-			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC), ImVec2(200, 20.0f), NULL);
+			ImGui::Text("Logic: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC), ImVec2(400.f, 30.0f), NULL);
 
-			ImGui::Text("Physics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS));
-			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS), ImVec2(200, 20.0f), NULL);
+			ImGui::Text("Physics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS), ImVec2(400.f, 30.0f), NULL);
 
-			ImGui::Text("Collision: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION));
-			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION), ImVec2(200, 20.0f), NULL);
+			ImGui::Text("Collision: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION), ImVec2(400.f, 30.0f), NULL);
 
-			ImGui::Text("Camera: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA));
-			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA), ImVec2(200, 20.0f), NULL);
+			ImGui::Text("Camera: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA), ImVec2(400.f, 30.0f), NULL);
 
-			ImGui::Text("Graphics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS));
-			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS), ImVec2(200, 20.0f), NULL);
+			ImGui::Text("Graphics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS), ImVec2(400.f, 30.0f), NULL);
 
-			char* names[] = { "Input", "Logic", "Physics", "Collision", "Camera", "Graphics" };
-			ImGui::SeparatorText("System Usage");
-			ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
+			//char* names[] = { "Input", "Logic", "Physics", "Collision", "Camera", "Graphics" };
+			//ImGui::SeparatorText("System Usage");
+			//ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
 
-			if (ImGui::IsItemHovered())
-			{
-				//current mouse position - the top left position of the rect to get your actual mouse
-				float MousePositionX = ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x;
-				//so your mouseposition/ rect length * number of values to get your current index
-				int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * values.size());
+			//if (ImGui::IsItemHovered())
+			//{
+			//	//current mouse position - the top left position of the rect to get your actual mouse
+			//	float MousePositionX = ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x;
+			//	//so your mouseposition/ rect length * number of values to get your current index
+			//	int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * values.size());
 
-				if (hoveredIndex > -1 && hoveredIndex < values.size())
-				{
-					ImGui::BeginTooltip();
-					ImGui::Text("%s: %.2f%%", names[hoveredIndex], values[hoveredIndex] * 100);
-					ImGui::EndTooltip();
-				}
-			}
-
-
+			//	if (hoveredIndex > -1 && hoveredIndex < values.size())
+			//	{
+			//		ImGui::BeginTooltip();
+			//		ImGui::Text("%s: %.2f%%", names[hoveredIndex], values[hoveredIndex] * 100);
+			//		ImGui::EndTooltip();
+			//	}
+			//}
 			ImGui::End(); //imgui close
 		}
-
-
 	}
 
 	void Editor::SetDockingPort(bool* Active)
