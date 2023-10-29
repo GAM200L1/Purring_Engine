@@ -29,7 +29,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/GUIRenderer.h"
 #include "Data/JsonUtils.h"
-
+#include "GUISystem.h"
 
 struct StructPlayerStats
 {
@@ -149,6 +149,8 @@ private:
     bool LoadRenderer(const size_t& r_id, const nlohmann::json& r_json);
 
     bool LoadCamera(const size_t& r_id, const nlohmann::json& r_json);
+
+    bool LoadGUI(const size_t& r_id, const nlohmann::json& r_json);
 
 
     // ----- Private Methods ----- //

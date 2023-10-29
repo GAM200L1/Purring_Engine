@@ -25,7 +25,6 @@
 #include "Math/MathCustom.h"
 #include <filesystem>
 
-
 std::string SerializationManager::OpenFileExplorer()
 {
     OPENFILENAME ofn;
@@ -165,6 +164,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::RigidBody>(entityId, "RigidBody", j);
     SerializeComponent<PE::Collider>(entityId, "Collider", j);
     SerializeComponent<PE::Graphics::Camera>(entityId, "Camera", j);
+    SerializeComponent<PE::GUI>(entityId, "GUI", j);
 
 
     return j; 
@@ -251,6 +251,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
     m_initializeComponent.emplace("Renderer", &SerializationManager::LoadRenderer);
     m_initializeComponent.emplace("Camera", &SerializationManager::LoadCamera);
+    m_initializeComponent.emplace("GUI", &SerializationManager::LoadGUI);
 
 }
 
@@ -309,5 +310,15 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
         r_json["Entity"]["components"]["Camera"]["viewportHeight"].get<float>()
     );
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Camera>(), static_cast<void*>(&cam));
+    return true;
+}
+
+bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r_json)
+{
+    PE::GUI gui;
+    gui.m_onClicked = r_json["Entity"]["components"]["GUI"]["m_onClicked"].get<std::string>();
+    gui.m_onHovered = r_json["Entity"]["components"]["GUI"]["m_onHovered"].get<std::string>();
+    gui.m_UIType = static_cast<PE::UIType>(r_json["Entity"]["components"]["GUI"]["m_UIType"].get<int>());
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), static_cast<void*>(&gui));
     return true;
 }
