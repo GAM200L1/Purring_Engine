@@ -243,7 +243,7 @@ namespace PE
             // Check if the main camera ID stored is valid
             bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
 
-            Transform& playerTransform{ EntityManager::GetInstance().Get<Transform>(1) };          
+            //Transform& playerTransform{ EntityManager::GetInstance().Get<Transform>(1) };          
 
             unsigned i{};
 
