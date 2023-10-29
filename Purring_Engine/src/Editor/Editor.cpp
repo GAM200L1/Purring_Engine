@@ -401,7 +401,7 @@ namespace PE {
 			static std::string dragName;
 			std::optional<EntityID> hoveredObject{};
 			static std::optional<EntityID> dragID{};
-			std::unordered_map<EntityID, std::vector<EntityID>> dispMap{};
+			std::map<EntityID, std::vector<EntityID>> dispMap{};
 			for (const auto& id : SceneView())
 			{
 				if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent)
