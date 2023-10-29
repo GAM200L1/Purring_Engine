@@ -74,7 +74,6 @@ namespace PE
 		{
 			if (sceneRunning)
 			{	
-				std::cout << "stop";
 				for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 				{
 					RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
