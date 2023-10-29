@@ -1312,7 +1312,16 @@ namespace PE {
 									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									if (ImGui::BeginCombo("##Textures", loadedTextureKeys[index].c_str())) // The second parameter is the label previewed before opening the combo.
+									bool bl{};
+									if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
+									{
+										bl = ImGui::BeginCombo("##Textures", loadedTextureKeys[index].c_str());
+									}
+									else
+									{
+										bl = ImGui::BeginCombo("##Textures", ""); // The second parameter is the label previewed before opening the combo.
+									}
+									if (bl) // The second parameter is the label previewed before opening the combo.
 									{
 										for (int n{ 0 }; n < loadedTextureKeys.size(); ++n)
 										{
@@ -1405,7 +1414,16 @@ namespace PE {
 									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									if (ImGui::BeginCombo("##GUITextures", loadedTextureKeys[guiIndex].c_str())) // The second parameter is the label previewed before opening the combo.
+									bool bl{};
+									if (EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey() != "")
+									{
+										bl = ImGui::BeginCombo("##GUITextures", loadedTextureKeys[guiIndex].c_str()); // The second parameter is the label previewed before opening the combo.
+									}
+									else
+									{
+										bl = ImGui::BeginCombo("##GUITextures", ""); // The second parameter is the label previewed before opening the combo.
+									}
+									if (bl)
 									{
 										for (int n{ 0 }; n < loadedTextureKeys.size(); ++n)
 										{
