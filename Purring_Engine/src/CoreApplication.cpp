@@ -158,7 +158,6 @@ RTTR_REGISTRATION
 PE::CoreApplication::CoreApplication()
 {
     InitializeVariables();
-    RegisterComponents();
 
     // Load Configuration
     std::ifstream configFile("config.json");

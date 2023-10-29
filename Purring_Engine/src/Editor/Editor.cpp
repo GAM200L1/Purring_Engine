@@ -419,7 +419,7 @@ namespace PE {
 				{
 					
 					const std::string& name = EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
-					const bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
+					bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = static_cast<int>(n.first);
@@ -441,9 +441,9 @@ namespace PE {
 						for (const auto& id : n.second)
 						{
 							const std::string& name2 = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
-							const bool is_selected2 = (m_currentSelectedObject == static_cast<int>(id));
+							is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
-							if (ImGui::Selectable(name2.c_str(), is_selected2)) //imgui selectable is the function to make the clickable bar of text
+							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 								m_currentSelectedObject = static_cast<int>(id);
 							if (ImGui::IsItemClicked(1))
 							{
@@ -462,12 +462,6 @@ namespace PE {
 								
 								}
 							}
-							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-							if (is_selected2) // to show the highlight if selected
-								ImGui::SetItemDefaultFocus();
-
-							m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
-
 						}
 
 						ImGui::Unindent();
