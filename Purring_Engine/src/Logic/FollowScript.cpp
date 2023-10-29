@@ -19,9 +19,9 @@ namespace PE
 		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_data[id].Following);
 
-		// translate to player but this is not what we want
-		//if(currentObject.position.x != targetObject.position.x && currentObject.position.y != targetObject.position.y)
-		//	currentObject.position += normalizedDirection*m_data[id].speed * deltaTime;
+		//translate to player but this is not what we want
+		if(currentObject.position.x != targetObject.position.x && currentObject.position.y != targetObject.position.y)
+			currentObject.position += normalizedDirection*m_data[id].speed * deltaTime;
 	}
 
 	void FollowScript::Destroy(EntityID)

@@ -8,7 +8,7 @@ namespace PE
 	{
 		PlayerState currentPlayerState{ PlayerState::IDLE };
 		int HP{ 100 };
-		float speed{ 5000 };
+		float speed{ 100 };
 	};
 
 	class PlayerControllerScript : public Script
@@ -19,7 +19,7 @@ namespace PE
 		virtual void Destroy(EntityID id);		
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
-		void MovePlayer(EntityID id);
+		void MovePlayer(EntityID id,float deltaTime);
 		void CheckState(EntityID id);
 		std::map<EntityID, PlayerControllerScriptData>& GetScriptData();
 		~PlayerControllerScript();

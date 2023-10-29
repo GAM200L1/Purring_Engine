@@ -17,16 +17,15 @@ namespace PE
 	}
 	void PlayerControllerScript::Update(EntityID id, float deltaTime)
 	{
-		deltaTime;
 		// Movement
 		CheckState(id);
 		switch (m_ScriptData[id].currentPlayerState)
 		{
 		case PlayerState::IDLE:
-			MovePlayer(id);
+			MovePlayer(id,deltaTime);
 			break;
 		case PlayerState::MOVING:
-			MovePlayer(id);
+			MovePlayer(id,deltaTime);
 			break;
 		case PlayerState::DEAD:
 			break;
@@ -53,23 +52,27 @@ namespace PE
 			m_ScriptData.erase(id);
 	}
 
-	void PlayerControllerScript::MovePlayer(EntityID id)
+	void PlayerControllerScript::MovePlayer(EntityID id, float deltaTime)
 	{
 		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } *m_ScriptData[id].speed);
+			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime);
+			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed);
+			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime);
+			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed);
+			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime);
+			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed);
+			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime);
+			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 		}
 	}
 
