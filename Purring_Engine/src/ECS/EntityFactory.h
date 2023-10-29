@@ -188,6 +188,7 @@ namespace PE
 		 \return true 	 Successfully copied/initialized
 		 \return false 	 Failed to copy/initialize
 		*************************************************************************************/
+		bool InitializeED(const EntityID& r_id, void* p_data);
 		bool InitializeRigidBody(const EntityID& r_id, void* p_data);
 		bool InitializeCollider(const EntityID& r_id, void* p_data);
 		bool InitializeTransform(const EntityID& r_id, void* p_data);

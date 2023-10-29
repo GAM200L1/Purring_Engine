@@ -104,11 +104,12 @@ RTTR_REGISTRATION
     //    .property("x", &PE::vec2::x);
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
-        .property("Parent", &PE::EntityDescriptor::parent);
+        .property_readonly("Parent", &PE::EntityDescriptor::parent);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
         .property("Relative Position", &PE::Transform::relPosition)
+        .property("Relative Orientation", &PE::Transform::relOrientation)
         .property("Orientation", &PE::Transform::orientation)
         .property("Width", &PE::Transform::width)
         .property("Height", &PE::Transform::height)
@@ -158,7 +159,6 @@ RTTR_REGISTRATION
 PE::CoreApplication::CoreApplication()
 {
     InitializeVariables();
-    RegisterComponents();
 
     // Load Configuration
     std::ifstream configFile("config.json");
@@ -232,8 +232,9 @@ PE::CoreApplication::CoreApplication()
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = 100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = 100.f;
+
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
     //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
@@ -274,19 +275,6 @@ void PE::CoreApplication::Run()
                 TimeManager::GetInstance().m_frameRateController.UpdateTargetFPSBasedOnKey(key);
             }
         }
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            try
-            {
-                std::vector testVector = { 1 };
-                testVector[0] = testVector.at(1);
-            }
-            catch (const std::out_of_range& r_err)
-            {
-                engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
-                throw r_err;
-            }
-        }
 
         //Audio Stuff - HANS
         AudioManager::GetInstance().Update();
@@ -312,6 +300,22 @@ void PE::CoreApplication::Run()
                 trans.orientation = parent.orientation + trans.relOrientation;
             }
         }
+
+
+        // Iterate over and update all systems
+        //for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
+        //{
+        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
+        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+        //    {
+        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
+        //        vec3 tmp { trans.relPosition, 1.f };
+        //        tmp = parent.GetTransformMatrix3x3() * tmp;
+        //        trans.position.x = tmp.x;
+        //        trans.position.y = tmp.y;
+        //        trans.orientation = parent.orientation + trans.relOrientation;
+        //    }
+        //}
 
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();
@@ -382,67 +386,6 @@ void PE::CoreApplication::InitializeVariables()
 {
     m_Running = true;
     m_lastFrameTime = 0;
-}
-
-void PE::CoreApplication::RegisterComponents()
-{
-
-    //std::cout << "TRANSFORM COMPONENT PROPERTIES: \n";
-    //rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << "\nTRANSFORM COMPONENT Orientation value: ";
-    //Transform tmp;
-
-    //property p = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string()).get_property("orientation");
-    //p.set_value(tmp, 69.f);
-
-    //variant vp = p.get_value(tmp);
-    //std::cout << vp.to_float() << std::endl;
-
-    //std::cout << "\nRIGIDBODY COMPONENT PROPERTIES: \n";
-
-    //cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::RigidBody>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << "\nCOLLIDER COMPONENT PROPERTIES: \n";
-    //cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << std::endl;
-
-    rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
-    for (auto& prop : cls.get_properties())
-    {
-        std::cout << "name: " << prop.get_name() << std::endl;
-        std::cout << "type: " << prop.get_type().get_name() << std::endl;
-
-    }
-    for (auto& meth : cls.get_methods())
-    {
-        std::cout << "name: " << meth.get_name() << std::endl;
-    }
 }
 
 
