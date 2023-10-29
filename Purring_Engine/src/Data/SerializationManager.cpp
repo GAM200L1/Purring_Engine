@@ -252,7 +252,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
     m_initializeComponent.emplace("Renderer", &SerializationManager::LoadRenderer);
     m_initializeComponent.emplace("Camera", &SerializationManager::LoadCamera);
-    m_initializeComponent.emplace("GUIRenderer", &SerializationManager::LoadGUI);
+    //m_initializeComponent.emplace("GUIRenderer", &SerializationManager::LoadGUI);
 
 }
 
