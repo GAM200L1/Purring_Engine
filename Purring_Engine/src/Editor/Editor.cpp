@@ -424,7 +424,6 @@ namespace PE {
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = static_cast<int>(n.first);
 					if (ImGui::IsItemHovered()) {
-						m_currentSelectedObject = static_cast<int>(n.first);
 						isHoveringObject = true;
 						hoveredObject = n.first;
 						if (ImGui::IsMouseDragging(0) && drag == false)
@@ -435,6 +434,7 @@ namespace PE {
 							dragID = n.first;
 						}
 					}
+					// if there are children attatched
 					if (!n.second.empty())
 					{
 						ImGui::Indent();
