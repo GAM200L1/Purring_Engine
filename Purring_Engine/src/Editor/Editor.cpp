@@ -55,7 +55,7 @@ namespace PE {
 		m_showLogs = true;
 		m_showObjectList = true;
 		m_showSceneView = true;
-		m_showTestWindows = true;
+		m_showTestWindows = false;
 		m_showComponentWindow = true;
 		m_showResourceWindow = true;
 		m_showPerformanceWindow = false;
@@ -613,11 +613,7 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-					EntityFactory::GetInstance().CreateEntity();
-				}
-				if (ImGui::Selectable("Create Default Object"))
-				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+					serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
 				}
 				if (ImGui::Selectable("Create UI Object"))
 				{

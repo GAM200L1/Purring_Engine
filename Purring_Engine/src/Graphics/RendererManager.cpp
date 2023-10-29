@@ -190,19 +190,19 @@ namespace PE
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
 
-            // Update Animation here
-            std::string currentTextureKey;
-            if (EntityManager::GetInstance().Get<RigidBody>(1).velocity.x == 0.f &&
-                EntityManager::GetInstance().Get<RigidBody>(1).velocity.y == 0.f)
-            {
-                currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
-            }
-            else
-            {
-                currentTextureKey = animationManager.UpdateAnimation(walkingAnimation, deltaTime);
-            }
-            
-            EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
+            //// Update Animation here
+            //std::string currentTextureKey;
+            //if (EntityManager::GetInstance().Get<RigidBody>(1).velocity.x == 0.f &&
+            //    EntityManager::GetInstance().Get<RigidBody>(1).velocity.y == 0.f)
+            //{
+            //    currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
+            //}
+            //else
+            //{
+            //    currentTextureKey = animationManager.UpdateAnimation(walkingAnimation, deltaTime);
+            //}
+            //
+            //EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
 
             glm::mat4 worldToNdcMatrix{ 0 };
 

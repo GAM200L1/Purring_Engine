@@ -204,8 +204,8 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
     
     // Creates an entity from file that is attached to the Character Controller
-    EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
-    EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
+    //EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
+    //EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
 
     
 
