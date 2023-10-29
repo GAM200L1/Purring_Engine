@@ -223,7 +223,7 @@ namespace PE
 
             Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
 
-            std::string m_systemName{ "Graphics" }; // Name of system
+            std::string m_systemName{ "RendererManager" }; // Name of system
 
             // Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};

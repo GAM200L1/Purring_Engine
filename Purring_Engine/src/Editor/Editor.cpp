@@ -17,6 +17,7 @@
 #include "Editor.h"
 #include "Memory/MemoryManager.h"
 #include "AudioManager/AudioManager.h"
+#include "Time/FrameRateTargetControl.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
 #include <Windows.h>
@@ -411,43 +412,115 @@ namespace PE {
 			//temporary here for counting created objects and add to name
 			static int count = 0;
 			//loop to show all the items ins the vector
-			bool isHoveringObject{false};
-			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-				
-				m_mouseInObjectWindow = ImGui::IsWindowHovered();
-				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
+			bool isHoveringObject{ false };
+			static bool drag = false;
+			static std::string dragName;
+			std::optional<EntityID> hoveredObject{};
+			static std::optional<EntityID> dragID{};
+			std::unordered_map<EntityID, std::vector<EntityID>> dispMap{};
+			for (const auto& id : SceneView())
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent)
 				{
-					std::string name;
-					const bool is_selected = (m_currentSelectedObject == n);
-					if (n == 0) //hardcoding
-					{
-						name = "Background";
-					}
-					else if (n == 1)
-					{
-						name = "Player";
-					}
-					else {
-						name = "GameObject";
-						name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
-					}
+					dispMap.erase(id);
+					dispMap[EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value()].emplace_back(id);
+				}
+				else // it does not have a parent
+				{
+					dispMap[id];
+				}
+			}
+
+			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+				m_mouseInObjectWindow = ImGui::IsWindowHovered();
+				for (auto & n : dispMap)
+				{
+					
+					const std::string& name = EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
+					const bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
+
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedObject = n; //seteting current index to check for selection
+						m_currentSelectedObject = static_cast<int>(n.first);
+					if (ImGui::IsItemHovered()) {
+						m_currentSelectedObject = static_cast<int>(n.first);
+						isHoveringObject = true;
+						hoveredObject = n.first;
+						if (ImGui::IsMouseDragging(0) && drag == false)
+						{
+							//seteting current index to check for selection
+							dragName = name;
+							drag = true;
+							dragID = n.first;
+						}
+					}
+					if (!n.second.empty())
+					{
+						ImGui::Indent();
+						for (const auto& id : n.second)
+						{
+							const std::string& name2 = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+							const bool is_selected2 = (m_currentSelectedObject == static_cast<int>(id));
+
+							if (ImGui::Selectable(name2.c_str(), is_selected2)) //imgui selectable is the function to make the clickable bar of text
+								m_currentSelectedObject = static_cast<int>(id);
+							if (ImGui::IsItemClicked(1))
+							{
+								m_currentSelectedObject = static_cast<int>(id);
+								ImGui::OpenPopup("popup");
+							}
+							if (ImGui::IsItemHovered()) {
+								isHoveringObject = true;
+								hoveredObject = id;
+								if (ImGui::IsMouseDragging(0) && drag == false)
+								{
+									m_currentSelectedObject = static_cast<int>(id); //seteting current index to check for selection
+									dragName = name2;
+									drag = true;
+									dragID = id;
+								
+								}
+							}
+							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+							if (is_selected2) // to show the highlight if selected
+								ImGui::SetItemDefaultFocus();
+
+							m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+
+						}
+
+						ImGui::Unindent();
+					}
+
+						
+
 					if (ImGui::IsItemClicked(1))
 					{
-						m_currentSelectedObject = n;
+						m_currentSelectedObject = static_cast<int>(n.first);
 						ImGui::OpenPopup("popup");
-					}
-					if (ImGui::IsItemHovered()) {
-						isHoveringObject = true;
 					}
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
 
-					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;					
 				}
-			}
+
+				if (drag)
+				{
+					ImGui::SetNextWindowPos(ImVec2(ImGui::GetMousePos().x+1,ImGui::GetMousePos().y+1));
+					ImGui::Begin("##test", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+					ImGui::Text(dragName.c_str());
+					ImGui::End();
+
+					if (!ImGui::IsMouseDown(0))
+					{
+						drag = false;
+						if(!hoveredObject || dragID.value() != hoveredObject.value())
+						EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
+						dragID.reset();
+					}
+				}
+}
 			if (ImGui::BeginPopup("popup"))
 			{
 				if (ImGui::Selectable("Delete Object"))
@@ -827,6 +900,103 @@ namespace PE {
 					{
 						++componentCount;//increment unique id
 
+
+						if (name == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+						{
+							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
+
+
+							//search through each component, create a collapsible header if the component exist
+							rttr::type currType = rttr::type::get_by_name(name.to_string());
+
+							if (ImGui::CollapsingHeader("EntityDescriptor", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								for (auto& prop : currType.get_properties())
+								{
+
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+									std::string nm(prop.get_name());
+									nm += ": ";
+									ImGui::Text(nm.c_str());
+
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID));
+
+									// handle types
+									if (vp.get_type().get_name() == "std::string")
+									{
+										std::string tmp = vp.get_value<std::string>();
+										std::string str = "##" + prop.get_name().to_string();
+										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmp);
+										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+
+									}
+									else if (vp.get_type().get_name() == "classstd::optional<unsigned__int64>")
+									{
+										std::optional<EntityID> tmp = vp.get_value<std::optional<EntityID>>();
+
+										std::string str = "##" + prop.get_name().to_string();
+										if (tmp.has_value())
+										{
+											EntityID tmp2{ tmp.value()};
+											std::string tmpStr{std::to_string(tmp2)};
+											ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmpStr);
+											std::optional<EntityID> op;
+											if (tmpStr != "")
+											{
+												tmp2 = strtoull(tmpStr.c_str(), NULL, 10);
+												if (errno == ERANGE)
+												{
+													errno = 0;
+													engine_logger.AddLog(false, "Invalid input in editor field!", __FUNCTION__);
+												}
+												else
+												{
+													if(tmp2 != entityID)
+													op = tmp2;
+												}
+											}
+											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
+										}
+										else
+										{
+											EntityID tmp2{0};
+											std::string tmpStr{};
+											ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmpStr);
+											std::optional<EntityID> op;
+											if (tmpStr != "")
+											{
+												tmp2 = strtoull(tmpStr.c_str(), NULL, 10);
+												if (errno == ERANGE)
+												{
+													errno = 0;
+													engine_logger.AddLog(false, "Invalid input in editor field!", __FUNCTION__);
+												}
+												else
+												{
+													if (tmp2 != entityID)
+													op = tmp2;
+												}
+											}
+											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
+										}
+									}
+								}
+							}
+						}
+
 						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 						{
 							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
@@ -852,6 +1022,9 @@ namespace PE {
 									ImGui::OpenPopup(id.c_str());
 								for (auto& prop : currType.get_properties())
 								{
+									if (prop.get_name() == "Position" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
+										prop.get_name() == "Relative Position" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+										continue;
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
@@ -872,7 +1045,6 @@ namespace PE {
 										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
 										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
@@ -886,6 +1058,9 @@ namespace PE {
 								}
 							}
 						}
+
+						
+
 						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
 						{
 							if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1683,34 +1858,56 @@ namespace PE {
 		}
 		else
 		{
-			// TEMPORARY HARD CODED
-			std::vector<float> values{
-				TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
-			};
-			char* names[] = { "Input", "Physics", "Collision", "Graphics" };
-			ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
+			std::vector<float> const& fpsValues{ TimeManager::GetInstance().m_frameRateController.GetFpsValues() };
+			ImGui::SeparatorText("FPS Viewer");
+			std::string fpsString{ "FPS: " + std::to_string(static_cast<int>(TimeManager::GetInstance().m_frameRateController.GetFps())) };
 
-			if (ImGui::IsItemHovered())
-			{
-				//current mouse position - the top left position of the rect to get your actual mouse
-				float MousePositionX = ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x;
-				//so your mouseposition/ rect length * number of values to get your current index
-				int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * values.size());
+			// Plot fps line graph
+			ImGui::Text("Average FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetAverageFps());
+			ImGui::Text("Max FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetMaxFps());
+			ImGui::Text("Min FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetMinFps());
+			ImGui::PlotLines("##FpsLine", fpsValues.data(), static_cast<int>(fpsValues.size()), 0, fpsString.c_str(), 0.0f, 1000.0f, ImVec2(400.f, 200.0f));
 
-				if (hoveredIndex > -1 && hoveredIndex < values.size())
-				{
-					ImGui::BeginTooltip();
-					ImGui::Text("%s: %.2f%%", names[hoveredIndex], values[hoveredIndex] * 100);
-					ImGui::EndTooltip();
-				}
-			}
+			// Plot System usage progress bar
+			ImGui::SeparatorText("System Usage");
+			ImGui::Text("Input: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Logic: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Physics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Collision: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Camera: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Graphics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS), ImVec2(400.f, 30.0f), NULL);
+
+			//char* names[] = { "Input", "Logic", "Physics", "Collision", "Camera", "Graphics" };
+			//ImGui::SeparatorText("System Usage");
+			//ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
+
+			//if (ImGui::IsItemHovered())
+			//{
+			//	//current mouse position - the top left position of the rect to get your actual mouse
+			//	float MousePositionX = ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x;
+			//	//so your mouseposition/ rect length * number of values to get your current index
+			//	int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * values.size());
+
+			//	if (hoveredIndex > -1 && hoveredIndex < values.size())
+			//	{
+			//		ImGui::BeginTooltip();
+			//		ImGui::Text("%s: %.2f%%", names[hoveredIndex], values[hoveredIndex] * 100);
+			//		ImGui::EndTooltip();
+			//	}
+			//}
 			ImGui::End(); //imgui close
 		}
-
-
 	}
 
 	void Editor::SetDockingPort(bool* Active)
