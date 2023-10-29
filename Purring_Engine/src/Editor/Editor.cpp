@@ -623,6 +623,10 @@ namespace PE {
 				{
 					serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
 				}
+				if (ImGui::Selectable("Create Camera Object"))
+				{
+					serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
+				}
 				ImGui::EndPopup();
 			}
 
@@ -634,7 +638,7 @@ namespace PE {
 	//temporary for milestone 1
 	void Editor::ShowDemoWindow(bool* Active)
 	{
-		if (IsEditorActive())
+		//if (IsEditorActive())
 		if (!ImGui::Begin("debugTests", Active, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
@@ -1994,7 +1998,7 @@ namespace PE {
 
 	void Editor::ShowPerformanceWindow(bool* Active)
 	{
-		if (IsEditorActive())
+		//if (IsEditorActive())
 		if (!ImGui::Begin("performanceWindow", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close

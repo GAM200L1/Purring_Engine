@@ -210,38 +210,38 @@ PE::CoreApplication::CoreApplication()
     
 
     // Create button objects
-    for (int i{}; i < 2; ++i) 
-    {
-        EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
-        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
-        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
-        EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -125.f + 250.f * i;
-        EntityManager::GetInstance().Get<Transform>(buttonId).position.y = 200.f;
-        EntityManager::GetInstance().Get<Transform>(buttonId).width = 250.f;
-        EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
-    }
+    //for (int i{}; i < 2; ++i) 
+    //{
+    //    EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
+    //    EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
+    //    EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
+    //    EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -125.f + 250.f * i;
+    //    EntityManager::GetInstance().Get<Transform>(buttonId).position.y = 200.f;
+    //    EntityManager::GetInstance().Get<Transform>(buttonId).width = 250.f;
+    //    EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
+    //}
 
     // Make a runtime camera that follows the player
     EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 
-    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
-    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
     //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
 
 
     // Make a second runtime camera to test switching
-    cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+   // cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
-    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
+    //EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
+   // EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
+   // EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
     //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
+   // EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 }
 
 PE::CoreApplication::~CoreApplication()
