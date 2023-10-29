@@ -419,7 +419,9 @@ namespace PE {
 				for (auto & n : dispMap)
 				{
 					
-					const std::string& name = EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
+					std::string name = std::to_string(n.first);
+					name += ". ";
+					name += EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
 					bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
@@ -438,6 +440,8 @@ namespace PE {
 					if (ImGui::IsItemClicked(1))
 					{
 						//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+						if (m_currentSelectedObject < 0)
+							m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 						ImGui::OpenPopup("popup");
 					}
 					// if there are children attatched
@@ -446,7 +450,10 @@ namespace PE {
 						ImGui::Indent();
 						for (const auto& id : n.second)
 						{
-							const std::string& name2 = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+							
+							std::string name2 = std::to_string(id);
+							name2 += ". ";
+							name2 += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
 							is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
 							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
@@ -465,6 +472,8 @@ namespace PE {
 							if (ImGui::IsItemClicked(1))
 							{
 								//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+								if (m_currentSelectedObject < 0)
+									m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 								ImGui::OpenPopup("popup");
 							}
 						}
