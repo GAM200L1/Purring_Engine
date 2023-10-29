@@ -89,6 +89,7 @@ namespace PE
 			EntityDescriptor()
 			:
 			*reinterpret_cast<EntityDescriptor*>(p_data);
+		EntityManager::GetInstance().Get<EntityDescriptor>(r_id).name += "-Copy";
 		return true;
 	}
 
