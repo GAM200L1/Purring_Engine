@@ -377,67 +377,6 @@ void PE::CoreApplication::InitializeVariables()
     m_lastFrameTime = 0;
 }
 
-void PE::CoreApplication::RegisterComponents()
-{
-
-    //std::cout << "TRANSFORM COMPONENT PROPERTIES: \n";
-    //rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << "\nTRANSFORM COMPONENT Orientation value: ";
-    //Transform tmp;
-
-    //property p = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string()).get_property("orientation");
-    //p.set_value(tmp, 69.f);
-
-    //variant vp = p.get_value(tmp);
-    //std::cout << vp.to_float() << std::endl;
-
-    //std::cout << "\nRIGIDBODY COMPONENT PROPERTIES: \n";
-
-    //cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::RigidBody>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << "\nCOLLIDER COMPONENT PROPERTIES: \n";
-    //cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
-    //for (auto& prop : cls.get_properties())
-    //{
-    //    std::cout << "name: " << prop.get_name() << std::endl;
-    //}
-    //for (auto& meth : cls.get_methods())
-    //{
-    //    std::cout << "name: " << meth.get_name() << std::endl;
-    //}
-
-    //std::cout << std::endl;
-
-    rttr::type cls = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string());
-    for (auto& prop : cls.get_properties())
-    {
-        std::cout << "name: " << prop.get_name() << std::endl;
-        std::cout << "type: " << prop.get_type().get_name() << std::endl;
-
-    }
-    for (auto& meth : cls.get_methods())
-    {
-        std::cout << "name: " << meth.get_name() << std::endl;
-    }
-}
-
 
 
 void PE::CoreApplication::InitializeLogger()
