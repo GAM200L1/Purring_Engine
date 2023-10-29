@@ -228,7 +228,7 @@ PE::CoreApplication::CoreApplication()
     //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
     //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
-    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
+    //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
 
 
     // Make a second runtime camera to test switching

@@ -621,7 +621,7 @@ namespace PE {
 				}
 				if (ImGui::Selectable("Create UI Object"))
 				{
-					//serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+					serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
 				}
 				ImGui::EndPopup();
 			}
@@ -1691,7 +1691,7 @@ namespace PE {
 									auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
 									if (it != p_Script->GetScriptData().end())
 									{
-										if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+										if (ImGui::CollapsingHeader("EnemyTestScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 										{
 											int id = static_cast<int> (it->second.playerID);
 											ImGui::Text("Player ID: "); ImGui::SameLine(); ImGui::InputInt("##id", &id, 1.0f, 100.f);

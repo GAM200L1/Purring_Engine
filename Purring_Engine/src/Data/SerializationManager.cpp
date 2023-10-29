@@ -259,7 +259,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("Collider", &SerializationManager::LoadCollider);
     m_initializeComponent.emplace("Camera", &SerializationManager::LoadCamera);
     m_initializeComponent.emplace("GUI", &SerializationManager::LoadGUI);
-    m_initializeComponent.emplace("GUIRenderer", &SerializationManager::LoadGUI);
+    m_initializeComponent.emplace("GUIRenderer", &SerializationManager::LoadGUIRenderer);
     m_initializeComponent.emplace("EntityDescriptor", &SerializationManager::LoadEntityDescriptor);
 
 }
@@ -334,10 +334,10 @@ bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r
 
 bool SerializationManager::LoadGUIRenderer(const EntityID& r_id, const nlohmann::json& r_json)
 {
-    PE::Graphics::Renderer guiren;
-    guiren.SetColor(r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>());
-    guiren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
-    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>(), static_cast<void*>(&guiren));
+    PE::Graphics::GUIRenderer guiren;
+    guiren.SetColor(r_json["Entity"]["components"]["GUIRenderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["GUIRenderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["GUIRenderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["GUIRenderer"]["Color"]["a"].get<float>());
+    guiren.SetTextureKey(r_json["Entity"]["components"]["GUIRenderer"]["TextureKey"].get<std::string>());
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::GUIRenderer>(), static_cast<void*>(&guiren));
     return true;
 }
 
