@@ -101,6 +101,10 @@ namespace PE
         {
             //creation of event and sending
             PE::MouseButtonReleaseEvent mbre;
+            double x, y;
+            glfwGetCursorPos(window, &x, &y);
+            mbre.x = static_cast<int>(x);
+            mbre.y = static_cast<int>(y);
             mbre.button = (int)button;
             if (!m_MouseDown.empty())
             {

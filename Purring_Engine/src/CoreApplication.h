@@ -89,7 +89,6 @@ namespace PE
 	private:
 
 		void InitializeVariables();
-		void RegisterComponents();
 		void InitializeLogger();
 		void InitializeAudio();
 		void InitializeMemoryManager();
