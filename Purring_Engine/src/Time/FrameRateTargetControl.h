@@ -25,19 +25,21 @@ namespace PE
     /*!***********************************************************************************
      \brief     FrameRateTargetControl class for managing target frame rates.
     *************************************************************************************/
-    class FrameRateTargetControl
+    class FrameRateController
     {
     public:
         /*!***********************************************************************************
          \brief     Constructor for initializing frame rate target variables.
         *************************************************************************************/
-        FrameRateTargetControl();
+        FrameRateController();
 
         /*!***********************************************************************************
          \brief     Set the target frames per second.
          \param     fps The desired FPS.
         *************************************************************************************/
         void SetTargetFPS(unsigned int fps);
+
+        void SetMaxFpsHistory(unsigned int count);
 
         /*!***********************************************************************************
          \brief     Ends the current frame and updates FPS counter.
@@ -48,7 +50,15 @@ namespace PE
          \brief     Gets the current frames per second.
          \return    double Current FPS.
         *************************************************************************************/
-        double GetFPS() const;
+        inline float GetFps() const { return m_currentFps; }
+
+        inline float GetMaxFps() const { return m_maxFps; }
+
+        inline float GetMinFps() const { return m_minFps; }
+
+        inline float GetAverageFps() const { return m_averageFps; }
+
+        inline std::vector<float> const& GetFpsValues() const { return m_fpsValues; }
 
         /*!***********************************************************************************
          \brief     Update the target FPS based on a key input.
@@ -57,12 +67,15 @@ namespace PE
         void UpdateTargetFPSBasedOnKey(int key);
 
     private:
-        double m_targetFrameTime;
-        double m_frameCount;
-        float m_timeSinceLastFPSUpdate;
-        double m_currentFPS;
-
-        // not needed
-        double m_deltaTime;
+        float m_targetFrameTime;
+        float m_frameCount;
+        float m_timeSinceLastFpsUpdate;
+        float m_currentFps;
+        
+        std::vector<float> m_fpsValues;
+        unsigned int m_maxFpsHistory;
+        float m_averageFps;
+        float m_maxFps;
+        float m_minFps;
     };
 }
