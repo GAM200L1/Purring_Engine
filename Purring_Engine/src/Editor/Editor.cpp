@@ -57,7 +57,7 @@ namespace PE {
 		m_showSceneView = true;
 		m_showTestWindows = true;
 		m_showComponentWindow = true;
-		m_showResourceWindow = false;
+		m_showResourceWindow = true;
 		m_showPerformanceWindow = false;
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
