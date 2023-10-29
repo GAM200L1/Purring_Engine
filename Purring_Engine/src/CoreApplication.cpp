@@ -287,7 +287,7 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        for (const auto& id : SceneView())
+        for (const auto& id : SceneView<Transform>())
         {
             Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
             if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
