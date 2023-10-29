@@ -127,7 +127,14 @@ private:
      \brief Load the serialization functions for different components.
     *************************************************************************************/
     void LoadLoaders();
-
+    /*!***********************************************************************************
+     \brief Load the Transform component from JSON.
+    *************************************************************************************/
+    bool LoadTransform(const size_t& r_id, const nlohmann::json& r_json);
+    /*!***********************************************************************************
+     \brief Load the Renderer component from JSON.
+    *************************************************************************************/
+    bool LoadRenderer(const size_t& r_id, const nlohmann::json& r_json);
     /*!***********************************************************************************
      \brief Load the RigidBody component from JSON.
     *************************************************************************************/
@@ -138,21 +145,10 @@ private:
     *************************************************************************************/
     bool LoadCollider(const size_t& r_id, const nlohmann::json& r_json);
 
-    /*!***********************************************************************************
-     \brief Load the Transform component from JSON.
-    *************************************************************************************/
-    bool LoadTransform(const size_t& r_id, const nlohmann::json& r_json);
-
-    /*!***********************************************************************************
-     \brief Load the Renderer component from JSON.
-    *************************************************************************************/
-    bool LoadRenderer(const size_t& r_id, const nlohmann::json& r_json);
-
     bool LoadCamera(const size_t& r_id, const nlohmann::json& r_json);
-
     bool LoadGUI(const size_t& r_id, const nlohmann::json& r_json);
     bool LoadGUIRenderer(const size_t& r_id, const nlohmann::json& r_json);
-
+    bool LoadEntityDescriptor(const size_t& r_id, const nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:
