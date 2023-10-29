@@ -386,7 +386,7 @@ namespace PE {
 	void Editor::ShowObjectWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("objectlistwindow", Active)) // draw object list
+		if (!ImGui::Begin("Object List Window", Active)) // draw object list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -512,13 +512,14 @@ namespace PE {
 						AddInfoLog("Object Deleted");
 
 
-						EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
 
 						//if not first index
-						m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
-
+						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
+						m_currentSelectedObject = -1; // just reset it
 						//if object selected
-						m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+						m_objectIsSelected = false;
+						//m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
 						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 
@@ -533,7 +534,7 @@ namespace PE {
 				if (ImGui::Selectable("Clone Object"))
 				{
 						if (m_currentSelectedObject)
-							EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+							EntityFactory::GetInstance().Clone(m_currentSelectedObject);
 						else
 							AddWarningLog("You are not allowed to clone the background");
 				}
@@ -874,7 +875,7 @@ namespace PE {
 			{
 				if (m_objectIsSelected)
 				{
-					EntityID entityID = EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject];
+					EntityID entityID = m_currentSelectedObject;
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
 					bool hasScripts = false;
@@ -1798,7 +1799,7 @@ namespace PE {
 						ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
 
 						//setting the other dock locations
-						ImGui::DockBuilderDockWindow("objectlistwindow", dock_id_right);
+						ImGui::DockBuilderDockWindow("Object List Window", dock_id_right);
 
 						//set on the save location to dock ontop of eachother
 						ImGui::DockBuilderDockWindow("resourcewindow", dock_id_down);
