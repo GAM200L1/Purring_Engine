@@ -920,6 +920,9 @@ namespace PE {
 						++componentCount;//increment unique id
 
 
+						// ---------- ENTITY DESCRIPTOR ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
 						{
 							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
@@ -1030,6 +1033,10 @@ namespace PE {
 							}
 						}
 
+
+						// ---------- TRANSFORM ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 						{
 							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
@@ -1086,7 +1093,9 @@ namespace PE {
 							}
 						}
 
-						
+
+						// ---------- RIGID BODY ---------- //
+
 
 						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
 						{
@@ -1142,7 +1151,11 @@ namespace PE {
 								}
 							}
 						}
-						//collider component
+
+
+						// ---------- COLLIDER ---------- //
+						
+
 						if (name == EntityManager::GetInstance().GetComponentID<Collider>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1233,7 +1246,10 @@ namespace PE {
 							}
 						}
 
-						//renderer component
+						
+						// ---------- RENDERER ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1253,28 +1269,32 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
-								std::vector<const char*> loadedTextureKeys;
-								loadedTextureKeys.push_back("");
+								
+								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
+								std::vector<std::filesystem::path> filepaths;
+								int i{ 0 };
+								int index{ 0 };
+								for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it, ++i)
+								{
+									filepaths.emplace_back(it->first);
+									if (it->first == EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())
+										index = i;
+								}
+
+								// Vector of the names of textures that have already been loaded
+								std::vector<std::string> loadedTextureKeys;
 
 								// get the keys of textures already loaded by the resource manager
-								for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+								for (auto const& r_filepath : filepaths)
 								{
-									// actual key is filepath, this will shorten it to just the file name
-									loadedTextureKeys.push_back(it->first.c_str());
-								}
-								int index{};
-								for (std::string const& r_textureKey : loadedTextureKeys)
-								{
-									if (r_textureKey == EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())
-										break;
-									index++;
+									loadedTextureKeys.emplace_back(r_filepath.stem().string());
 								}
 
 								//create a combo box of texture ids
 								ImGui::SetNextItemWidth(200.0f);
 								if (!loadedTextureKeys.empty())
 								{
+									// Displays the current texture set on the object
 									if (ImGui::BeginChild("currentTexture", ImVec2{116,116}, true))
 									{
 										if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
@@ -1284,24 +1304,30 @@ namespace PE {
 									}
 									ImGui::EndChild();
 
+									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
 									if (ImGui::IsItemHovered())
 									{
 										m_entityToModify = static_cast<int>(entityID);
 									}
 
+									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									//set selected texture id
-									if (ImGui::Combo("##Textures", &index, loadedTextureKeys.data(), static_cast<int>(loadedTextureKeys.size())))
+									if (ImGui::BeginCombo("##Textures", loadedTextureKeys[index].c_str())) // The second parameter is the label previewed before opening the combo.
 									{
-										EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetTextureKey(loadedTextureKeys[index]);
+										for (int n{ 0 }; n < loadedTextureKeys.size(); ++n)
+										{
+											if (ImGui::Selectable(loadedTextureKeys[n].c_str()))
+												EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetTextureKey(filepaths[n].string());
+										}
+										ImGui::EndCombo();
 									}
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting colors
-
+								
+								// Color Setting
 								//get and set color variable of the renderer component
 								ImVec4 color;
 								color.x = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().r;
@@ -1317,7 +1343,10 @@ namespace PE {
 							}
 						}
 
-						// gui renderer component
+						
+						// ---------- GUI RENDERER ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1386,7 +1415,10 @@ namespace PE {
 							}
 						}
 
-						//Script Component
+
+						// ---------- SCRIPT COMPONENT ---------- //
+						
+
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
 						{
 							hasScripts = true;
@@ -1475,7 +1507,10 @@ namespace PE {
 							}
 						}
                         
-						//GUI
+						
+						// ---------- GUI ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<GUI>())
 						{
 							if (ImGui::CollapsingHeader("GUIComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1585,7 +1620,10 @@ namespace PE {
 							}
 						}
 
-						// Camera component
+						
+						// ---------- CAMERA ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
 							if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
@@ -1630,18 +1668,10 @@ namespace PE {
 					{
 						if (ImGui::Selectable("Add Collision"))
 						{
-							//not allowed to add collision without a rigidbody
-							//if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
-							//{
-								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
-									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
-								else
-									AddErrorLog("ALREADY HAS A COLLIDER");
-							//}
-							/*else
-							{
-								AddErrorLog("ADD RIGIDBODY FIRST");
-							}*/
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
+							else
+								AddErrorLog("ALREADY HAS A COLLIDER");
 						}
 						if (ImGui::Selectable("Add Transform"))
 						{
