@@ -178,12 +178,14 @@ PE::CoreApplication::CoreApplication()
 
 
     // Load Textures and Animations
-    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" }, buttonTextureName{ "buttonTex" };
+    std::string catTextureName{ "../Assets/Textures/Cat_Grey_128px.png" }, cat2TextureName{ "../Assets/Textures/Cat_Grey_Blink_128px.png" }, buttonTextureName{ "../Assets/Textures/Button_White_128px.png" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
-    ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/bg.png", "../Assets/Textures/bg.png");
 
     ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
+
+    
 
     // Animation textures
     // Animation 1
@@ -287,7 +289,7 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        for (const auto& id : SceneView())
+        for (const auto& id : SceneView<Transform>())
         {
             Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
             if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
