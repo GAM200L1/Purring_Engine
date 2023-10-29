@@ -24,6 +24,8 @@ namespace PE
 		std::map<EntityID, PlayerControllerScriptData>& GetScriptData();
 		~PlayerControllerScript();
 	private:
+		void CollisionEnter(const Event<CollisionEvents>& r_e);
+	private:
 		std::map<EntityID, PlayerControllerScriptData> m_ScriptData;
 	};
 

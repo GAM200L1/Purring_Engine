@@ -257,19 +257,19 @@ void PE::CoreApplication::Run()
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
             }
         }
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            try
-            {
-                std::vector testVector = { 1 };
-                testVector[0] = testVector.at(1);
-            }
-            catch (const std::out_of_range& r_err)
-            {
-                engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
-                throw r_err;
-            }
-        }
+        //if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        //{
+        //    try
+        //    {
+        //        std::vector testVector = { 1 };
+        //        testVector[0] = testVector.at(1);
+        //    }
+        //    catch (const std::out_of_range& r_err)
+        //    {
+        //        engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
+        //        throw r_err;
+        //    }
+        //}
 
         //Audio Stuff - HANS
         AudioManager::GetInstance().Update();

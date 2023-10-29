@@ -6,6 +6,7 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "Events/EventHandler.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -54,6 +55,7 @@ namespace PE
 
 	void PlayerControllerScript::MovePlayer(EntityID id, float deltaTime)
 	{
+		//movement without force
 		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
 		{
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime);
@@ -102,5 +104,11 @@ namespace PE
 
 	PlayerControllerScript::~PlayerControllerScript()
 	{
+	}
+
+	void PlayerControllerScript::CollisionEnter(const Event<CollisionEvents>& r_e)
+	{
+		const OnCollisionEnterEvent& OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_e);
+		//AHHHHHHHHHHHHHHHHHHHHHHHHHH I CANT GET ID HELP
 	}
 }

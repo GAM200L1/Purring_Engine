@@ -6,9 +6,12 @@ namespace PE
 {
 	struct FollowScriptData
 	{
-		EntityID Following{ 1 };
-		float speed{ 100 };
-		vec2 Direction;
+		EntityID entityToFollow{ 1 };
+		int numberOfFollowingEntities{ 1 };
+		std::vector<EntityID> EntitiesFollowing;
+		std::vector<vec2>	previousLocations;
+		float distanceBeforeSaving{ 100 };
+		vec2 SavedPlayerPosition;
 	};
 
 
