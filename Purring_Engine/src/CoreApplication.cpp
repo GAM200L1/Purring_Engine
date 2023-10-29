@@ -231,8 +231,9 @@ PE::CoreApplication::CoreApplication()
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = 100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = 100.f;
+
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
     //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
@@ -271,19 +272,6 @@ void PE::CoreApplication::Run()
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
             {
                 m_fpsController.UpdateTargetFPSBasedOnKey(key);
-            }
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            try
-            {
-                std::vector testVector = { 1 };
-                testVector[0] = testVector.at(1);
-            }
-            catch (const std::out_of_range& r_err)
-            {
-                engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
-                throw r_err;
             }
         }
 

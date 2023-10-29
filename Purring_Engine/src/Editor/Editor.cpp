@@ -422,7 +422,7 @@ namespace PE {
 					bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedObject = static_cast<int>(n.first);
+						m_currentSelectedObject = static_cast<int>(n.first) ;
 					if (ImGui::IsItemHovered()) {
 						isHoveringObject = true;
 						hoveredObject = n.first;
@@ -445,11 +445,6 @@ namespace PE {
 
 							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 								m_currentSelectedObject = static_cast<int>(id);
-							if (ImGui::IsItemClicked(1))
-							{
-								m_currentSelectedObject = static_cast<int>(id);
-								ImGui::OpenPopup("popup");
-							}
 							if (ImGui::IsItemHovered()) {
 								isHoveringObject = true;
 								hoveredObject = id;
@@ -459,7 +454,6 @@ namespace PE {
 									dragName = name2;
 									drag = true;
 									dragID = id;
-								
 								}
 							}
 						}
@@ -471,7 +465,7 @@ namespace PE {
 
 					if (ImGui::IsItemClicked(1))
 					{
-						m_currentSelectedObject = static_cast<int>(n.first);
+						m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 						ImGui::OpenPopup("popup");
 					}
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -520,10 +514,10 @@ namespace PE {
 						count--;
 
 					}
-						else
-						{
-							AddWarningLog("You are not allowed to delete the background or player as of now");
-						}
+					else
+					{
+						AddWarningLog("You are not allowed to delete the background or player as of now");
+					}
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
