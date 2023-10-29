@@ -14,7 +14,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
-#include "prpch.h"
 #include "System.h"
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
@@ -92,7 +91,7 @@ namespace PE
 
 	private:
 		std::vector<Manifold> m_manifolds;
-		std::string m_systemName{ "Collision" };
+		std::string m_systemName{ "CollisionManager" };
 	};
 
 	// ----- Collision Helper Functions ----- //

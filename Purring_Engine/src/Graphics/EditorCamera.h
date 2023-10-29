@@ -18,6 +18,7 @@
 *************************************************************************************/
 
 #include <glm/glm.hpp>
+#include "Camera.h"
 
 namespace PE
 {
@@ -26,58 +27,8 @@ namespace PE
         /*!***********************************************************************************
         \brief  Contains data and member functions to compute the view transform matrix.
         *************************************************************************************/
-        class EditorCamera
+        class EditorCamera : public Camera
         {
-            // ----- Public getters ----- // 
-        public:
-
-            /*!***********************************************************************************
-            \brief  Gets the matrix to transform coordinates in world space to view space as
-                    a 4x4 matrix.
-
-            \return glm::mat4 - 4x4 matrix to transform coordinates in world space to view space.
-            *************************************************************************************/
-            glm::mat4 GetWorldToViewMatrix();
-
-            /*!***********************************************************************************
-            \brief  Gets the matrix to transform coordinates in view space to NDC space as
-                    a 4x4 matrix.
-
-            \return glm::mat4 - 4x4 matrix to transform coordinates in view space to NDC space.
-            *************************************************************************************/
-            glm::mat4 GetViewToNdcMatrix() const;
-
-            /*!***********************************************************************************
-            \brief  Gets the matrix to transform coordinates in world space to NDC space as
-                    a 4x4 matrix.
-
-            \return glm::mat4 - 4x4 matrix to transform coordinates in world space to NDC space.
-            *************************************************************************************/
-            glm::mat4 GetWorldToNdcMatrix();
-
-            /*!***********************************************************************************
-            \brief  Returns true if the camera's transform has been updated and its matrix 
-                    needs to be recalculated; false otherwise.
-
-            \return true - If the camera's transform has been updated and its matrix needs to be 
-                            recalculated
-            \return false - Camera's transform has not changed, cached camera matrix can be used.
-            *************************************************************************************/
-            bool GetHasChanged() const;
-
-            /*!***********************************************************************************
-            \brief  Compute the matrix to transform coordinates in world space to view space as
-                    a 4x4 matrix and store it as m_cachedViewMatrix.
-            *************************************************************************************/
-            void ComputeViewMatrix();
-
-            /*!***********************************************************************************
-            \brief  Returns the aspect ratio (width / height) of the camera's view frustrum.
-
-            \return float - The aspect ratio (width / height) of the camera's view frustrum.
-            *************************************************************************************/
-            inline float GetAspectRatio() const { return (m_viewportWidth / m_viewportHeight); }
-
             /*!***********************************************************************************
             \brief  Returns the position of center of camera in the world.
 
@@ -95,30 +46,19 @@ namespace PE
             inline float GetOrientation() const { return m_orientation; }
 
             /*!***********************************************************************************
-            \brief  Returns the zoom to apply to the camera.
+            \brief  Returns true if the camera's transform has been updated and its matrix
+                    needs to be recalculated; false otherwise.
 
-            \return float - The zoom to apply to the camera.
+            \param[in] r_transform Reference to the camera's transform component.
+
+            \return true - If the camera's transform has been updated and its matrix needs to be
+                            recalculated
+            \return false - Camera's transform has not changed, cached camera matrix can be used.
             *************************************************************************************/
-            inline float GetMagnification() const { return m_magnification; }
-
+            inline bool GetHasChanged() const { return hasTransformChanged; }
 
             // ----- Public setters ----- // 
         public:
-
-            /*!***********************************************************************************
-            \brief  Sets the dimensions of the viewport that the camera renders to.
-
-            \param[in] width Width of the viewport that the camera renders to.
-            \param[in] height Height of the viewport that the camera renders to.
-            *************************************************************************************/
-            void SetViewDimensions(float const width, float const height);
-
-            /*!***********************************************************************************
-            \brief  Sets the magnification of the camera to the value passed in.
-
-            \param[in] value Value to set the magnification of the camera to.
-            *************************************************************************************/
-            void SetMagnification(float value);
 
             /*!***********************************************************************************
             \brief  Sets the position of the camera to the value passed in.
@@ -147,13 +87,6 @@ namespace PE
             void SetRotationRadians(float const radians);
 
             /*!***********************************************************************************
-            \brief  Changes the magnification of the camera by the amount passed in.
-
-            \param[in] delta Amount to change the magnification of the camera by.
-            *************************************************************************************/
-            void AdjustMagnification(float const delta);
-
-            /*!***********************************************************************************
             \brief  Changes the position of the camera by the amount passed in.
 
             \param[in] deltaX Amount to move the camera along the camera's x-axis.
@@ -180,18 +113,22 @@ namespace PE
             void AdjustRotationRadians(float const delta);
 
 
+            // ----- Public methods ----- // 
+        public:
+
+            /*!***********************************************************************************
+            \brief  Recomputes and caches the world to NDC and NDC to world matrics if the
+                    viewport dimensions or the camera's transform has been updated.
+
+            \param[in] r_transform Reference to the camera's transform component.
+            *************************************************************************************/
+            void UpdateCamera();
+
+
         private:
             glm::vec2 m_position{ 0.f, 0.f }; // Position of center of camera in the world
             float m_orientation{ 0.f };       // Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
-            float m_magnification{ 1.f };     // Zoom to apply to the camera
-            float m_viewportWidth{ 1.f }, m_viewportHeight{ 1.f };  // Height and width of the camera viewport
 
-            // ----- Cached Variables ----- //
-            glm::mat4 m_cachedViewMatrix{}; // To prevent unnecessary recalculation of the view matrix
-            glm::mat4 m_cachedWorldToNdcMatrix{}; // To prevent unnecessary recalculation of the world to NDC matrix
-
-            // Set to true when the world to NDC matrix should be recalculated
-            bool hasTransformChanged{ true }, hasViewportChanged{ true };
         };
     } // End of Graphics namespace
 } // End of PE namespace

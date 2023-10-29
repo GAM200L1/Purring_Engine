@@ -15,9 +15,9 @@
 #pragma once
 
 // INCLUDES
-#include <set>
-#include <queue>
-#include "Math/MathCustom.h"
+//#include <set>
+//#include <queue>
+//#include "Math/MathCustom.h"
 
 // CONSTANT VARIABLES
 constexpr size_t DEFAULT_ENTITY_CNT = 3000;		// default bytes allocated to components pool
@@ -209,4 +209,4 @@ namespace PE
  \brief Registers a component to the component pools
  
 *************************************************************************************/
-#define REGISTERCOMPONENT(type) EntityFactory::GetInstance().AddComponentCreator<type>( EntityManager::GetInstance().GetComponentID<type>(), sizeof(type)  );
+#define REGISTERCOMPONENT(type) PE::EntityFactory::GetInstance().AddComponentCreator<type>( PE::EntityManager::GetInstance().GetComponentID<type>(), sizeof(type)  );

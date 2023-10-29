@@ -31,8 +31,6 @@
 #include "prpch.h"
 #include "Time/TimeManager.h"
 #include "FrameRateTargetControl.h"
-#include <thread>
-#include <chrono>
 
 namespace PE
 {
@@ -43,13 +41,18 @@ namespace PE
      \tparam T          This function does not use a template.
      \return            Does not return a value, as this is a constructor.
     *************************************************************************************/
-    FrameRateTargetControl::FrameRateTargetControl()
-        : m_targetFrameTime(1.0 / 60.0),  // Default to 60 FPS
+    FrameRateController::FrameRateController()
+        : m_targetFrameTime(1.f / 60.f),  // Default to 60 FPS
         m_frameCount(0),
-        m_timeSinceLastFPSUpdate(0.0),
-        m_currentFPS(0.0),
-        m_deltaTime(0.0)
-    {}
+        m_timeSinceLastFpsUpdate(0.f),
+        m_currentFps(0.f),
+        m_maxFpsHistory(60),
+        m_averageFps(0.f),
+        m_maxFps((std::numeric_limits<float>::min)()),
+        m_minFps((std::numeric_limits<float>::max)())
+    {
+        m_fpsValues.reserve(m_maxFpsHistory);
+    }
 
 
 
@@ -60,12 +63,15 @@ namespace PE
      \param[in] fps     The target frames per second.
      \return void       Does not return a value.
     *************************************************************************************/
-    void FrameRateTargetControl::SetTargetFPS(unsigned int fps)
+    void FrameRateController::SetTargetFPS(unsigned int fps)
     {
-        m_targetFrameTime = 1.0 / static_cast<double>(fps);
+        m_targetFrameTime = 1.f / static_cast<float>(fps);
     }
 
-
+    void FrameRateController::SetMaxFpsHistory(unsigned int count)
+    {
+        m_maxFpsHistory = count;
+    }
 
     /*!***********************************************************************************
      \brief     End of frame calculations and FPS control.
@@ -81,42 +87,48 @@ namespace PE
 
      Note: This method relies on TimeManager::GetInstance().GetDeltaTime() for time calculation.
     *************************************************************************************/
-    void FrameRateTargetControl::EndFrame()
+    void FrameRateController::EndFrame()
     {
         ++m_frameCount;
 
-        m_timeSinceLastFPSUpdate += TimeManager::GetInstance().GetDeltaTime();
-        if (m_timeSinceLastFPSUpdate > 1.f)  // Update FPS value once per second
+        m_timeSinceLastFpsUpdate += TimeManager::GetInstance().GetDeltaTime();
+        if (m_timeSinceLastFpsUpdate >= 1.f / 30.f)  // Update FPS and system frame usage once per second
         {
-            m_currentFPS = m_frameCount;
+            m_currentFps = m_frameCount / m_timeSinceLastFpsUpdate;
             m_frameCount = 0;
-            m_timeSinceLastFPSUpdate = 0.f;
+            m_timeSinceLastFpsUpdate = 0.f;
+
+            m_fpsValues.emplace_back(m_currentFps);
+            
+            while (m_fpsValues.size() > m_maxFpsHistory)
+            {
+                m_fpsValues.erase(m_fpsValues.begin());
+            }
+
+            // update min, max and average fps
+            m_minFps = m_currentFps < m_minFps ? m_currentFps : m_minFps;
+            m_maxFps = m_currentFps > m_maxFps ? m_currentFps : m_maxFps;
+
+            m_averageFps = 0.f;
+            for(float val : m_fpsValues)
+            {
+                m_averageFps += val;
+            }
+            m_averageFps /= static_cast<float>(m_fpsValues.size());
+
+            // update system usage
+            TimeManager::GetInstance().UpdateSystemFrameUsage();
         }
 
-        // FPS control
-        std::chrono::duration<float> duration;
-        do 
-        {
-            duration = std::chrono::high_resolution_clock::now() - TimeManager::GetInstance().GetStartTime();
-            //std::cout << " Actual: " << glfwGetTime() << '\n';
-        }
-        while (duration.count() < m_targetFrameTime);
+        //// FPS control
+        //std::chrono::duration<float> duration;
+        //do 
+        //{
+        //    duration = std::chrono::high_resolution_clock::now() - TimeManager::GetInstance().GetStartTime();
+        //    //std::cout << " Actual: " << glfwGetTime() << '\n';
+        //}
+        //while (duration.count() < m_targetFrameTime);
     }
-
-
-
-    /*!***********************************************************************************
-     \brief     Retrieve the current Frames Per Second (FPS).
-
-     \tparam T          This function does not use a template.
-     \return double     The current frames per second.
-    *************************************************************************************/
-    double FrameRateTargetControl::GetFPS() const
-    {
-        return m_currentFPS;
-    }
-
-
 
     /*!***********************************************************************************
      \brief     Update the target FPS based on the pressed key.
@@ -125,7 +137,7 @@ namespace PE
      \param[in] key     The key code of the pressed key.
      \return void       Does not return a value.
     *************************************************************************************/
-    void FrameRateTargetControl::UpdateTargetFPSBasedOnKey(int key)
+    void FrameRateController::UpdateTargetFPSBasedOnKey(int key)
     {
         switch (key)
         {
