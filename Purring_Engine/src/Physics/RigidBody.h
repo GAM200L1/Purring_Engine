@@ -91,12 +91,16 @@ namespace PE
 		*************************************************************************************/
 		float GetInverseMass() const;
 
+		float GetLinearDrag() const;
+
 		/*!***********************************************************************************
 		 \brief Set the Mass and Inverse Mass of object
 		 
 		 \param[in,out] mass - new mass of the object
 		*************************************************************************************/
 		void SetMass(float mass);
+
+		void SetLinearDrag(float drag);
 
 		/*!***********************************************************************************
 		 \brief Set 'force' of RigidBody to zero vec2
@@ -175,6 +179,7 @@ namespace PE
 
 		float m_mass{10.f};
 		float m_inverseMass{1.f/10.f};
+		float m_linearDrag{};
 	};
 
 }

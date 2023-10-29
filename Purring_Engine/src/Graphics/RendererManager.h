@@ -16,20 +16,22 @@
 
 #include "GLHeaders.h"
 
-#include <cstddef>
 #include <glm/glm.hpp>
 #include <glm/gtx/compatibility.hpp> // atan2()
-#include <map>
-#include <vector>
+
+
+#include "Renderer.h"
+
+#include "GUIRenderer.h"
 
 #include "CameraManager.h"
 #include "MeshData.h"
-#include "Renderer.h"
 #include "FrameBuffer.h"
 #include "ShaderProgram.h"
 #include "System.h"
 #include "Physics/Colliders.h"
 
+#include "ECS/SceneView.h"
 #include "Text.h"
 
 namespace PE
@@ -78,27 +80,37 @@ namespace PE
             inline std::string GetName() { return m_systemName; }
 
             /*!***********************************************************************************
-             \brief Loops through all objects with a Renderer component and draws it. Makes a
-                    draw call for each object.
+             \brief Loops through all objects with a Renderer component (or a class that
+                    derives from it) and draws it. Makes a draw call for each object.
 
-             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \tparam T - A component type derived from the Renderer.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
+                                NDC space.
+             \param[in] r_sceneView Only works with SceneView objects that are scoped to
+                                a component derived from the Renderer.
             *************************************************************************************/
-            void DrawScene(glm::mat4 const& r_worldToNdc);
+            template<typename T>
+            void DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
 
             /*!***********************************************************************************
-             \brief Loops through all objects with a Renderer component and draws it. Batches 
-             the colors, transformation matrices and textured status together into a vertex buffer 
-             object and makes an instanced drawcall. The instanced batch is broken when a new 
-             texture is encountered.
+             \brief Loops through all objects with a Renderer component (or a class that
+                    derives from it) and draws it. Batches the colors, transformation matrices 
+                    and textured status together into a vertex buffer object and makes an 
+                    instanced drawcall. The instanced batch is broken when a new texture is encountered.
 
-             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \tparam T - A component type derived from the Renderer.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
+                                NDC space.
+             \param[in] r_sceneView Only works with SceneView objects that are scoped to
+                                a component derived from the Renderer.
             *************************************************************************************/
-            void DrawSceneInstanced(glm::mat4 const& r_worldToNdc);
+            template<typename T>
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
 
             /*!***********************************************************************************
              \brief Loops through all objects with colliders and rigidbody components and draws 
                     shapes to visualise their bounds, direction and magnitude for debug purposes. 
-                    
+
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
             void DrawDebug(glm::mat4 const& r_worldToNdc);
@@ -211,7 +223,7 @@ namespace PE
 
             Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
 
-            std::string m_systemName{ "Graphics" }; // Name of system
+            std::string m_systemName{ "RendererManager" }; // Name of system
 
             // Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};

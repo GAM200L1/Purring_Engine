@@ -54,7 +54,6 @@ namespace PE
 
         //creation of event and sending
         PE::MouseMovedEvent mme;
-
         mme.x = static_cast<int>(xpos);
         mme.y = static_cast<int>(ypos);
 
@@ -77,14 +76,18 @@ namespace PE
     void InputSystem::check_mouse_buttons(GLFWwindow* window, int button, int action, int mods)
     {
         //unrefereced variables
-        window; mods;
+        mods;
 
         switch (action)
         {
         case GLFW_PRESS:
         {
+            double x, y;
             //creation of event and sending
             PE::MouseButtonPressedEvent mbpe;
+            glfwGetCursorPos(window, &x, &y);
+            mbpe.x = static_cast<int>(x);
+            mbpe.y = static_cast<int>(y);
             PE::MouseButtonHoldEvent mbhe;
             mbpe.button = (int)button;
             mbhe.button = (int)button;
@@ -168,7 +171,7 @@ namespace PE
             PE::KeyTriggeredEvent kte;
             PE::KeyPressedEvent kpe;
             kte.keycode = kpe.keycode = key;
-            m_KeyTriggered[key] = m_bufferTime;
+            m_KeyTriggered[key] = .1f;
             //setting a buffer before the keypressed becomes a repeat
             kpe.repeat = m_bufferTime;
             //saving the keypressed event
@@ -243,7 +246,7 @@ namespace PE
 
         for (auto& [key, val] : m_KeyTriggered)
         {
-            val -= deltaTime;
+            val = 0;
         }
     }
 
@@ -300,4 +303,14 @@ namespace PE
         }
         return false;
     }
+
+    void InputSystem::ConvertGLFWToTransform(GLFWwindow* window, double* x, double* y)
+    {
+        int windowWidth, windowHeight;
+        glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
+        *x = *x - static_cast<double>(windowWidth) * 0.5;
+        *y = static_cast<double>(windowHeight) * 0.5 - *y;
+    }
+
+
 }
