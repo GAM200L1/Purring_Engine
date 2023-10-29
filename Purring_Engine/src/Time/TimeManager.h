@@ -30,6 +30,7 @@ namespace PE
 	enum SystemID
 	{
 		INPUT = 0,
+		GUISYSTEM,
 		LOGIC,
 		PHYSICS,
 		COLLISION,

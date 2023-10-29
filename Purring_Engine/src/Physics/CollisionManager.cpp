@@ -57,6 +57,9 @@ namespace PE
 		deltaTime;
 		// Update the Collider's specs
 		UpdateColliders();
+
+		if (Editor::GetInstance().IsEditorActive())
+			return;
 		// Test for Collisions in the scene
 		TestColliders();
 		// Resolve the positions and velocities of the entities

@@ -36,6 +36,7 @@
 // Graphics Headers
 #include "Graphics/GLHeaders.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/GUIRenderer.h"
 #include "Graphics/CameraManager.h"
 
 // Core Functionality
@@ -66,8 +67,9 @@
 
 // Input
 #include "Input/InputSystem.h"
-
 #include "Logic/LogicSystem.h"
+
+#include "GUISystem.h"
 
 // RTTR includes
 #include <rttr/type.h>
@@ -91,6 +93,8 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::Graphics::Renderer);
     REGISTERCOMPONENT(PE::Graphics::Camera);
     REGISTERCOMPONENT(PE::ScriptComponent);
+    REGISTERCOMPONENT(PE::GUI);
+    REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
     // extra notes, will we need to include the constructor as well?
@@ -132,7 +136,6 @@ RTTR_REGISTRATION
         .method("GetHasChanged", &PE::Graphics::Camera::GetHasChanged)
         .method("GetUpVector", &PE::Graphics::Camera::GetUpVector)
         .method("GetRightVector", &PE::Graphics::Camera::GetRightVector)
-        .method("ComputeViewMatrix", &PE::Graphics::Camera::ComputeViewMatrix)
         .method("GetAspectRatio", &PE::Graphics::Camera::GetAspectRatio)
         .method("GetMagnification", &PE::Graphics::Camera::GetMagnification)
         .method("GetViewportWidth", &PE::Graphics::Camera::GetViewportWidth)
@@ -157,6 +160,7 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
+    float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
@@ -168,10 +172,12 @@ PE::CoreApplication::CoreApplication()
 
 
     // Load Textures and Animations
-    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
+    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" }, buttonTextureName{ "buttonTex" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
+
+    ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
 
     // Animation textures
     // Animation 1
@@ -191,21 +197,31 @@ PE::CoreApplication::CoreApplication()
     
     // Creates an entity from file that is attached to the Character Controller
     serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
-    
+    EntityManager::GetInstance().Get<Transform>(1).position.x = -100.f;
+    EntityManager::GetInstance().Get<Transform>(1).position.y = -100.f;
+
+    // Create button objects
+    for (int i{}; i < 2; ++i) 
+    {
+        EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
+        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
+        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
+        EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -125.f + 250.f * i;
+        EntityManager::GetInstance().Get<Transform>(buttonId).position.y = 200.f;
+        EntityManager::GetInstance().Get<Transform>(buttonId).width = 250.f;
+        EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
+    }
 
     // Make a runtime camera that follows the player
     EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = -100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = -100.f;
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
     EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -435,13 +451,14 @@ void PE::CoreApplication::InitializeSystems()
     // Add system to list & assigning memory to them
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
-
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
     Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
     AddSystem(p_inputSystem);
+    AddSystem(p_guisystem);
     AddSystem(p_logicSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
