@@ -24,6 +24,7 @@
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
 #include <filesystem>
+#include "Graphics/CameraManager.h"
 
 std::string SerializationManager::OpenFileExplorer()
 {
@@ -69,8 +70,12 @@ std::string SerializationManager::OpenFileExplorer()
 
         for (const auto& entityId : allEntityIds)
         {
-            nlohmann::json entityJson = SerializeEntity(static_cast<int>(entityId));
-            allEntitiesJson["Entities"].push_back(entityJson);
+            if (entityId != PE::Graphics::CameraManager::GetUICameraId())
+            {
+                nlohmann::json entityJson = SerializeEntity(static_cast<int>(entityId));
+                allEntitiesJson["Entities"].push_back(entityJson);
+            }
+
         }
 
         return allEntitiesJson;
