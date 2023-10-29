@@ -165,12 +165,12 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     }
 
     SerializeComponent<PE::Transform>(entityId, "Transform", j);
-    SerializeComponent<PE::Graphics::Renderer>(entityId, "Renderer", j); //might be issue
+    SerializeComponent<PE::Graphics::Renderer>(entityId, "Renderer", j); 
     SerializeComponent<PE::RigidBody>(entityId, "RigidBody", j);
     SerializeComponent<PE::Collider>(entityId, "Collider", j);
     SerializeComponent<PE::Graphics::Camera>(entityId, "Camera", j);
     SerializeComponent<PE::GUI>(entityId, "GUI", j);
-    SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); // << idk if this will have error in the future but take note of this - HANS
+    SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); 
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
 
 

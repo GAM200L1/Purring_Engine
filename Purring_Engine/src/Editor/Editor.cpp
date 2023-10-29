@@ -1694,7 +1694,7 @@ namespace PE {
 										if (ImGui::CollapsingHeader("EnemyTestScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 										{
 											int id = static_cast<int> (it->second.playerID);
-											ImGui::Text("Player ID: "); ImGui::SameLine(); ImGui::InputInt("##id", &id, 1.0f, 100.f);
+											ImGui::Text("Player ID: "); ImGui::SameLine(); ImGui::InputInt("##id", &id);
 											it->second.playerID = id;
 											ImGui::Text("speed: "); ImGui::SameLine(); ImGui::DragFloat("##enemyspeed", &it->second.speed);
 											ImGui::Text("Idle Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemyidle", &it->second.idleTimer);
