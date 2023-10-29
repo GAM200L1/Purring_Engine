@@ -969,7 +969,7 @@ namespace PE {
 													if(tmp2 != entityID)
 													{
 														op = tmp2;
-														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent && EntityManager::GetInstance().Has<Transform>(entityID))
 														{
 															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
 															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
@@ -998,7 +998,7 @@ namespace PE {
 													if (tmp2 != entityID)
 													{
 														op = tmp2;
-														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent && EntityManager::GetInstance().Has<Transform>(entityID))
 														{
 															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
 															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
