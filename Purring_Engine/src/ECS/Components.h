@@ -137,7 +137,15 @@ namespace PE
         *************************************************************************************/
         void* Get(size_t index)
         {
-            return reinterpret_cast<void*>(&(p_data[idxMap[index]]));
+            try
+            {
+                return reinterpret_cast<void*>(&(p_data[idxMap.at(index)]));
+            }
+            catch (const std::out_of_range& err)
+            {
+                engine_logger.AddLog(false, err.what(), __FUNCTION__);
+                return nullptr;
+            }
         }
         
     // ----- Public methods ----- // 

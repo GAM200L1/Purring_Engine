@@ -417,7 +417,7 @@ namespace PE {
 			static std::string dragName;
 			std::optional<EntityID> hoveredObject{};
 			static std::optional<EntityID> dragID{};
-			std::unordered_map<EntityID, std::vector<EntityID>> dispMap{};
+			std::map<EntityID, std::vector<EntityID>> dispMap{};
 			for (const auto& id : SceneView())
 			{
 				if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent)
@@ -525,11 +525,28 @@ namespace PE {
 								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
 							else
 								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
-							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent)
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent && EntityManager::GetInstance().Has<Transform>(dragID.value()))
 							{
 								EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
 								EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
 							}
+
+							if (hoveredObject)
+								for (const auto& id : SceneView())
+								{
+									if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == dragID.value())
+									{
+										if (EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
+											EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
+										else
+											EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = hoveredObject;
+										if (EntityManager::GetInstance().Has<Transform>(id))
+										{
+											EntityManager::GetInstance().Get<Transform>(id).relPosition = EntityManager::GetInstance().Get<Transform>(id).position;
+											EntityManager::GetInstance().Get<Transform>(id).relOrientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
+										}
+									}
+								}
 						}
 						dragID.reset();
 					}
@@ -989,7 +1006,7 @@ namespace PE {
 													if(tmp2 != entityID)
 													{
 														op = tmp2;
-														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent && EntityManager::GetInstance().Has<Transform>(entityID))
 														{
 															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
 															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
@@ -1018,7 +1035,7 @@ namespace PE {
 													if (tmp2 != entityID)
 													{
 														op = tmp2;
-														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent && EntityManager::GetInstance().Has<Transform>(entityID))
 														{
 															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
 															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
