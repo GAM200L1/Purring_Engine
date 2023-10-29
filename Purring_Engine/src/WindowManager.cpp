@@ -24,7 +24,7 @@
 #include "Math/Transform.h"
 #include "Physics/PhysicsManager.h"
 #include "Graphics/RendererManager.h"
-
+#include "GUISystem.h"
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -100,6 +100,9 @@ namespace PE
 		ADD_ALL_WINDOW_EVENT_LISTENER(WindowManager::OnWindowEvent, this)
 		ADD_ALL_MOUSE_EVENT_LISTENER(WindowManager::OnMouseEvent, this)
 		ADD_ALL_KEY_EVENT_LISTENER(WindowManager::OnKeyEvent, this)
+
+		REGISTER_UI_FUNCTION(TestFunction, WindowManager);
+
 
 		return window;
 	}
@@ -245,6 +248,11 @@ namespace PE
 				}
 			}
 		}
+	}
+
+	void WindowManager::TestFunction()
+	{
+		std::cout << "hi im a test function" << std::endl;
 	}
 
 
