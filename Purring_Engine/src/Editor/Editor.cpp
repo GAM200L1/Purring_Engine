@@ -508,7 +508,7 @@ namespace PE {
 								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
 							else
 								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
-							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent)
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent && EntityManager::GetInstance().Has<Transform>(dragID.value()))
 							{
 								EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
 								EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
