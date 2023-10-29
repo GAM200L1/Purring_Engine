@@ -48,8 +48,7 @@ namespace PE
 		*************************************************************************************/
 		Prefab()
 		{
-			prefabs.emplace("GameObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<RigidBody>(), 
-																						  EntityManager::GetInstance().GetComponentID<Collider>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+			prefabs.emplace("GameObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 			
 			prefabs.emplace("CameraObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Camera>() });
 

@@ -87,6 +87,7 @@ using namespace rttr;
 
 RTTR_REGISTRATION
 {
+    REGISTERCOMPONENT(PE::EntityDescriptor);
     REGISTERCOMPONENT(PE::RigidBody);
     REGISTERCOMPONENT(PE::Collider);
     REGISTERCOMPONENT(PE::Transform);
@@ -101,8 +102,13 @@ RTTR_REGISTRATION
     // functionality seems fine without it... maybe needed by scripting side though
     //rttr::registration::class_<PE::vec2>("vec2")
     //    .property("x", &PE::vec2::x);
+    rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
+        .property("Name", &PE::EntityDescriptor::name)
+        .property("Parent", &PE::EntityDescriptor::parent);
+
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
+        .property("Relative Position", &PE::Transform::relPosition)
         .property("Orientation", &PE::Transform::orientation)
         .property("Width", &PE::Transform::width)
         .property("Height", &PE::Transform::height)
@@ -193,12 +199,13 @@ PE::CoreApplication::CoreApplication()
 
     SerializationManager serializationManager;
     //create background from file
-    serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json");
+    EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
     
     // Creates an entity from file that is attached to the Character Controller
-    serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
-    EntityManager::GetInstance().Get<Transform>(1).position.x = -100.f;
-    EntityManager::GetInstance().Get<Transform>(1).position.y = -100.f;
+    EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
+    EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
+
+    
 
     // Create button objects
     for (int i{}; i < 2; ++i) 
@@ -216,11 +223,21 @@ PE::CoreApplication::CoreApplication()
     EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 
+    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
+    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
+
+
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = 100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = 100.f;
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
+    //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
+    //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 }
 
@@ -282,6 +299,21 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
+        for (const auto& id : SceneView())
+        {
+            Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
+            if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+            {
+                const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
+                vec3 tmp { trans.relPosition, 1.f };
+                tmp = parent.GetTransformMatrix3x3() * tmp;
+                trans.position.x = tmp.x;
+                trans.position.y = tmp.y;
+                trans.orientation = parent.orientation + trans.relOrientation;
+            }
+        }
+
+
         // Iterate over and update all systems
         for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
         {
@@ -289,6 +321,8 @@ void PE::CoreApplication::Run()
             m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
             TimeManager::GetInstance().SystemEndFrame(i);
         }
+
+
 
         // Flush log entries
         engine_logger.FlushLog();

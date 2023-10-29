@@ -247,7 +247,7 @@ namespace PE
             // Check if the main camera ID stored is valid
             bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
 
-            Transform& playerTransform{ EntityManager::GetInstance().Get<Transform>(1) };          
+            //Transform& playerTransform{ EntityManager::GetInstance().Get<Transform>(1) };          
 
             unsigned i{};
 
@@ -264,13 +264,13 @@ namespace PE
                 // Recompute the matrices of all the cameras
                 Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-                if (!i) {
-                    // @TODO - Remove in the future
-                    // For testing, the first camera will follow the player's transform
-                    r_transform.position.x = playerTransform.position.x;
-                    r_transform.position.y = playerTransform.position.y;
-                    r_transform.orientation = playerTransform.orientation;
-                }
+                //if (!i) {
+                //    // @TODO - Remove in the future
+                //    // For testing, the first camera will follow the player's transform
+                //    r_transform.position.x = playerTransform.position.x;
+                //    r_transform.position.y = playerTransform.position.y;
+                //    r_transform.orientation = playerTransform.orientation;
+                //}
 
                 Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
                 r_camera.UpdateCamera(r_transform);
