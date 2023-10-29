@@ -89,7 +89,7 @@ namespace PE
 			EntityDescriptor()
 			:
 			*reinterpret_cast<EntityDescriptor*>(p_data);
-		EntityManager::GetInstance().Get<EntityDescriptor>(r_id).name += "-Copy";
+		EntityManager::GetInstance().Get<EntityDescriptor>(r_id).name += "-Copy-" + std::to_string(r_id);
 		return true;
 	}
 
