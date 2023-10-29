@@ -151,6 +151,7 @@ private:
     bool LoadCamera(const size_t& r_id, const nlohmann::json& r_json);
 
     bool LoadGUI(const size_t& r_id, const nlohmann::json& r_json);
+    bool LoadGUIRenderer(const size_t& r_id, const nlohmann::json& r_json);
 
 
     // ----- Private Methods ----- //

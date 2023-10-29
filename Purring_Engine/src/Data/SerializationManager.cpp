@@ -165,6 +165,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::Collider>(entityId, "Collider", j);
     SerializeComponent<PE::Graphics::Camera>(entityId, "Camera", j);
     SerializeComponent<PE::GUI>(entityId, "GUI", j);
+    SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); // << idk if this will have error in the future but take note of this - HANS
 
 
     return j; 
@@ -251,7 +252,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
     m_initializeComponent.emplace("Renderer", &SerializationManager::LoadRenderer);
     m_initializeComponent.emplace("Camera", &SerializationManager::LoadCamera);
-    m_initializeComponent.emplace("GUI", &SerializationManager::LoadGUI);
+    m_initializeComponent.emplace("GUIRenderer", &SerializationManager::LoadGUI);
 
 }
 
@@ -322,3 +323,12 @@ bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), static_cast<void*>(&gui));
     return true;
 }
+
+//bool SerializationManager::LoadGUIRenderer(const EntityID& r_id, const nlohmann::json& r_json)
+//{
+//    PE::Graphics::Renderer guiren;
+//    guiren.SetColor(r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>());
+//    guiren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
+//    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>(), static_cast<void*>(&guiren));
+//    return true;
+//}
