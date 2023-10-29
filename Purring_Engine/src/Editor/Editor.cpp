@@ -403,7 +403,7 @@ namespace PE {
 	void Editor::ShowObjectWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("objectlistwindow", Active)) // draw object list
+		if (!ImGui::Begin("Object List Window", Active)) // draw object list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -436,13 +436,14 @@ namespace PE {
 				for (auto & n : dispMap)
 				{
 					
-					const std::string& name = EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
-					const bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
+					std::string name = std::to_string(n.first);
+					name += ". ";
+					name += EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
+					bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
 
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 						m_currentSelectedObject = static_cast<int>(n.first);
 					if (ImGui::IsItemHovered()) {
-						m_currentSelectedObject = static_cast<int>(n.first);
 						isHoveringObject = true;
 						hoveredObject = n.first;
 						if (ImGui::IsMouseDragging(0) && drag == false)
@@ -453,21 +454,27 @@ namespace PE {
 							dragID = n.first;
 						}
 					}
+					if (ImGui::IsItemClicked(1))
+					{
+						//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+						if (m_currentSelectedObject < 0)
+							m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+						ImGui::OpenPopup("popup");
+					}
+					// if there are children attatched
 					if (!n.second.empty())
 					{
 						ImGui::Indent();
 						for (const auto& id : n.second)
 						{
-							const std::string& name2 = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
-							const bool is_selected2 = (m_currentSelectedObject == static_cast<int>(id));
+							
+							std::string name2 = std::to_string(id);
+							name2 += ". ";
+							name2 += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+							is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
-							if (ImGui::Selectable(name2.c_str(), is_selected2)) //imgui selectable is the function to make the clickable bar of text
+							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 								m_currentSelectedObject = static_cast<int>(id);
-							if (ImGui::IsItemClicked(1))
-							{
-								m_currentSelectedObject = static_cast<int>(id);
-								ImGui::OpenPopup("popup");
-							}
 							if (ImGui::IsItemHovered()) {
 								isHoveringObject = true;
 								hoveredObject = id;
@@ -477,27 +484,24 @@ namespace PE {
 									dragName = name2;
 									drag = true;
 									dragID = id;
-								
 								}
 							}
-							// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-							if (is_selected2) // to show the highlight if selected
-								ImGui::SetItemDefaultFocus();
-
-							m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
-
+							if (ImGui::IsItemClicked(1))
+							{
+								//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+								if (m_currentSelectedObject < 0)
+									m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+								ImGui::OpenPopup("popup");
+							}
 						}
 
 						ImGui::Unindent();
 					}
 
-						
 
-					if (ImGui::IsItemClicked(1))
-					{
-						m_currentSelectedObject = static_cast<int>(n.first);
-						ImGui::OpenPopup("popup");
-					}
+					
+
+					
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
@@ -516,7 +520,17 @@ namespace PE {
 					{
 						drag = false;
 						if(!hoveredObject || dragID.value() != hoveredObject.value())
-						EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
+						{
+							if (hoveredObject && EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
+								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
+							else
+								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent)
+							{
+								EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
+								EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
+							}
+						}
 						dragID.reset();
 					}
 				}
@@ -529,31 +543,36 @@ namespace PE {
 					{
 						AddInfoLog("Object Deleted");
 
-
-						EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+						for (const auto& id : SceneView())
+						{
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
+								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
+						}
+						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
 
 						//if not first index
-						m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
-
+						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
+						m_currentSelectedObject = -1; // just reset it
 						//if object selected
-						m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+						m_objectIsSelected = false;
+						//m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
 						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 
 						count--;
 
 					}
-						else
-						{
-							AddWarningLog("You are not allowed to delete the background or player as of now");
-						}
+					else
+					{
+						AddWarningLog("You are not allowed to delete the background or player as of now");
+					}
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
-						if (m_currentSelectedObject)
-							EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
-						else
-							AddWarningLog("You are not allowed to clone the background");
+					if (m_currentSelectedObject)
+						EntityFactory::GetInstance().Clone(m_currentSelectedObject);
+					else
+						AddWarningLog("You are not allowed to clone the background");
 				}
 				ImGui::EndPopup();
 			}
@@ -892,7 +911,7 @@ namespace PE {
 			{
 				if (m_objectIsSelected)
 				{
-					EntityID entityID = EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject];
+					EntityID entityID = m_currentSelectedObject;
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
 					bool hasScripts = false;
@@ -965,7 +984,14 @@ namespace PE {
 												else
 												{
 													if(tmp2 != entityID)
-													op = tmp2;
+													{
+														op = tmp2;
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+														{
+															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
+															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
+														}
+													}
 												}
 											}
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
@@ -987,7 +1013,14 @@ namespace PE {
 												else
 												{
 													if (tmp2 != entityID)
-													op = tmp2;
+													{
+														op = tmp2;
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+														{
+															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
+															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
+														}
+													}
 												}
 											}
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
@@ -1025,35 +1058,29 @@ namespace PE {
 									if (prop.get_name() == "Position" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
 										prop.get_name() == "Relative Position" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
 										continue;
+									if (prop.get_name() == "Orientation" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
+										prop.get_name() == "Relative Orientation" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+										continue;
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
 									ImGui::Text(nm.c_str());
-									rttr::variant vp;
-									// change to lookup table?
-									if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-									{
-										vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
-									}
-
-
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
+									
 									// handle types
 									if (vp.get_type().get_name() == "structPE::vec2")
 									{
 										PE::vec2 tmp = vp.get_value<PE::vec2>();
 										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##x" + prop.get_name().to_string()).c_str(), &tmp.x, 1.0f);
 										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
-										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
+										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
 										float tmp = vp.get_value<float>();
 										std::string str = "##" + prop.get_name().to_string();
 										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputFloat(str.c_str(), &tmp, 1.0f, 100.f, "%.3f");
-										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-
+										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
 								}
 							}
@@ -1975,7 +2002,7 @@ namespace PE {
 						ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
 
 						//setting the other dock locations
-						ImGui::DockBuilderDockWindow("objectlistwindow", dock_id_right);
+						ImGui::DockBuilderDockWindow("Object List Window", dock_id_right);
 
 						//set on the save location to dock ontop of eachother
 						ImGui::DockBuilderDockWindow("resourcewindow", dock_id_down);

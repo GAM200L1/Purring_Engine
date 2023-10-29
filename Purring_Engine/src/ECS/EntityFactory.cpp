@@ -69,6 +69,7 @@ namespace PE
 	
 	void EntityFactory::LoadComponents()
 	{
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<EntityDescriptor>(), &EntityFactory::InitializeED);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<RigidBody>(), &EntityFactory::InitializeRigidBody);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Collider>(), &EntityFactory::InitializeCollider);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Transform>(), &EntityFactory::InitializeTransform);
@@ -77,7 +78,19 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(), &EntityFactory::InitializeCamera);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(), &EntityFactory::InitializeGUI);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUI);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
+	}
+
+
+	bool EntityFactory::InitializeED(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<EntityDescriptor>(r_id) =
+			(p_data == nullptr) ?
+			EntityDescriptor()
+			:
+			*reinterpret_cast<EntityDescriptor*>(p_data);
+		//EntityManager::GetInstance().Get<EntityDescriptor>(r_id).name += "-Copy-" + std::to_string(r_id);
+		return true;
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* p_data)
