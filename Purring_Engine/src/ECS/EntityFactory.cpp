@@ -78,6 +78,7 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(), &EntityFactory::InitializeCamera);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(), &EntityFactory::InitializeGUI);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(), &EntityFactory::InitializeAnimationComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
 	}
 
@@ -180,6 +181,17 @@ namespace PE
 			GUI()
 			:
 			*reinterpret_cast<GUI*>(p_data);
+		return true;
+	}
+
+
+	bool EntityFactory::InitializeAnimationComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<AnimationComponent>(r_id) =
+			(p_data == nullptr) ?
+			AnimationComponent()
+			:
+			*reinterpret_cast<AnimationComponent*>(p_data);
 		return true;
 	}
 
