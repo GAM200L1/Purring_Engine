@@ -36,6 +36,7 @@
 // Graphics Headers
 #include "Graphics/GLHeaders.h"
 #include "Graphics/Renderer.h"
+#include "Graphics/GUIRenderer.h"
 #include "Graphics/CameraManager.h"
 
 // Core Functionality
@@ -66,16 +67,100 @@
 
 // Input
 #include "Input/InputSystem.h"
-
 #include "Logic/LogicSystem.h"
+
+#include "GUISystem.h"
+
+// RTTR includes
+#include <rttr/type.h>
+#include <rttr/property.h>
+#include <rttr/registration.h>
 
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
+#define TO_STR(x) #x
+
+
+
+using namespace rttr;
+
+RTTR_REGISTRATION
+{
+    REGISTERCOMPONENT(PE::EntityDescriptor);
+    REGISTERCOMPONENT(PE::RigidBody);
+    REGISTERCOMPONENT(PE::Collider);
+    REGISTERCOMPONENT(PE::Transform);
+    REGISTERCOMPONENT(PE::Graphics::Renderer);
+    REGISTERCOMPONENT(PE::Graphics::Camera);
+    REGISTERCOMPONENT(PE::ScriptComponent);
+    REGISTERCOMPONENT(PE::GUI);
+    REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
+    REGISTERCOMPONENT(PE::AnimationComponent);
+   
+    using namespace rttr;
+    // test whether we need to register math lib stuff as well...
+    // extra notes, will we need to include the constructor as well?
+    // functionality seems fine without it... maybe needed by scripting side though
+    //rttr::registration::class_<PE::vec2>("vec2")
+    //    .property("x", &PE::vec2::x);
+    rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
+        .property("Name", &PE::EntityDescriptor::name)
+        .property_readonly("Parent", &PE::EntityDescriptor::parent);
+
+    rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
+        .property("Position", &PE::Transform::position)
+        .property("Relative Position", &PE::Transform::relPosition)
+        .property("Relative Orientation", &PE::Transform::relOrientation)
+        .property("Orientation", &PE::Transform::orientation)
+        .property("Width", &PE::Transform::width)
+        .property("Height", &PE::Transform::height)
+        .method("GetMtx3x3", &PE::Transform::GetTransformMatrix3x3);
+
+    rttr::registration::class_<PE::RigidBody>(PE::EntityManager::GetInstance().GetComponentID<PE::RigidBody>().to_string().c_str())
+        .property("Previous Position", &PE::RigidBody::prevPosition)
+        .property("Velocity", &PE::RigidBody::velocity)
+        .property("Rotation Velocity", &PE::RigidBody::rotationVelocity)
+        .property("Force", &PE::RigidBody::force);
+    
+    // objects collided shouldnt be needed right? @yeni
+    rttr::registration::class_<PE::Collider>(PE::EntityManager::GetInstance().GetComponentID<PE::Collider>().to_string().c_str())
+        .property("Collider Type", &PE::Collider::colliderVariant)
+        .property("Is Trigger", &PE::Collider::isTrigger);
+
+    // what do i need to register here?? @krystal
+    rttr::registration::class_<PE::Graphics::Renderer>(PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>().to_string().c_str())
+        .method("GetColor", &PE::Graphics::Renderer::GetColor)
+        .method("SetColor", &PE::Graphics::Renderer::SetColor)
+        .method("GetEnabled", &PE::Graphics::Renderer::GetEnabled)
+        .method("SetEnabled", &PE::Graphics::Renderer::SetEnabled)
+        .method("GetTextureKey", &PE::Graphics::Renderer::GetTextureKey)
+        .method("SetTextureKey", &PE::Graphics::Renderer::SetTextureKey);
+
+    rttr::registration::class_<PE::Graphics::Camera>(PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Camera>().to_string().c_str())
+        .method("GetWorldToViewMatrix", &PE::Graphics::Camera::GetWorldToViewMatrix)
+        .method("GetViewToNdcMatrix", &PE::Graphics::Camera::GetViewToNdcMatrix)
+        .method("GetWorldToNdcMatrix", &PE::Graphics::Camera::GetWorldToNdcMatrix)
+        .method("UpdateCamera", &PE::Graphics::Camera::UpdateCamera)
+        .method("GetHasChanged", &PE::Graphics::Camera::GetHasChanged)
+        .method("GetUpVector", &PE::Graphics::Camera::GetUpVector)
+        .method("GetRightVector", &PE::Graphics::Camera::GetRightVector)
+        .method("GetAspectRatio", &PE::Graphics::Camera::GetAspectRatio)
+        .method("GetMagnification", &PE::Graphics::Camera::GetMagnification)
+        .method("GetViewportWidth", &PE::Graphics::Camera::GetViewportWidth)
+        .method("GetViewportHeight", &PE::Graphics::Camera::GetViewportHeight)
+        .method("SetViewDimensions", &PE::Graphics::Camera::SetViewDimensions)
+        .method("SetMagnification", &PE::Graphics::Camera::SetMagnification)
+        .method("AdjustMagnification", &PE::Graphics::Camera::AdjustMagnification);
+
+    // is that all i need to register? @jarran
+    rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str());
+
+}
+
 PE::CoreApplication::CoreApplication()
 {
     InitializeVariables();
-    RegisterComponents();
 
     // Load Configuration
     std::ifstream configFile("config.json");
@@ -83,9 +168,10 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
+    float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
-    m_fpsController.SetTargetFPS(60);
+    TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
     
     InitializeLogger();
     InitializeAudio();
@@ -94,44 +180,136 @@ PE::CoreApplication::CoreApplication()
 
 
     // Load Textures and Animations
-    std::string catTextureName{ "cat" }, cat2TextureName{ "cat2" }, bgTextureName{ "bg" };
+    std::string catTextureName{ "../Assets/Textures/Cat_Grey_128px.png" }, cat2TextureName{ "../Assets/Textures/Cat_Grey_Blink_128px.png" }, buttonTextureName{ "../Assets/Textures/Button_White_128px.png" };
+    std::string ratTextureName{ "../Assets/Textures/Rat_Brawler_128px.png" };
     ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
     ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
-    ResourceManager::GetInstance().LoadTextureFromFile(bgTextureName, "../Assets/Textures/TempFrame.png");
+    ResourceManager::GetInstance().LoadTextureFromFile(ratTextureName, "../Assets/Textures/Rat_Gutter_128px.png");
+    ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/bg.png", "../Assets/Textures/bg.png");
+
+    ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
+
+    
 
     // Animation textures
-    // Animation 1
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim1", "../Assets/Textures/CatSprite/Cat_Grey_128px1.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim2", "../Assets/Textures/CatSprite/Cat_Grey_128px2.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim3", "../Assets/Textures/CatSprite/Cat_Grey_128px3.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim4", "../Assets/Textures/CatSprite/Cat_Grey_128px4.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("catAnim5", "../Assets/Textures/CatSprite/Cat_Grey_128px5.png");
+    std::string catWalkSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png" };
+    std::string catAttackSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png" };
+    std::string ratAttackSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Attack.png" };
+    std::string ratDeathSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png" };
 
-    // Animation 2
-    ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim1", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_2.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("cat2Anim2", "../Assets/Textures/CatSprite2/Cat_Grey_128px_Walk_3.png");
+    // Spritesheet 1
+    ResourceManager::GetInstance().LoadTextureFromFile(catWalkSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png");
+
+    // Spritesheet 2
+    ResourceManager::GetInstance().LoadTextureFromFile(catAttackSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png");
+
+    // Spritesheet 3
+    ResourceManager::GetInstance().LoadTextureFromFile(ratAttackSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Attack.png");
+
+    // Spritesheet 4
+    ResourceManager::GetInstance().LoadTextureFromFile(ratDeathSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png");
 
     SerializationManager serializationManager;
     //create background from file
-    serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json");
+    EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
     
     // Creates an entity from file that is attached to the Character Controller
-    serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
+    EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
+    EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
+
     
+
+    // Create button objects
+    for (int i{}; i < 2; ++i) 
+    {
+        EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
+        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
+        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
+        EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -125.f + 250.f * i;
+        EntityManager::GetInstance().Get<Transform>(buttonId).position.y = 200.f;
+        EntityManager::GetInstance().Get<Transform>(buttonId).width = 250.f;
+        EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
+    }
 
     // Make a runtime camera that follows the player
     EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = -100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = -100.f;
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
+    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
+
 
     // Make a second runtime camera to test switching
     cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
+
     EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(static_cast<float>(width), static_cast<float>(height));
+    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
+    //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
+    //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;
+    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
+
+    // Create animations here for now
+    std::string playerWalkAnimation, playerAttackAnimation, ratAttackAnimation, ratDeathAnimation;
+    playerWalkAnimation = AnimationManager::CreateAnimation("playerWalk", catWalkSpriteSheet);
+    playerAttackAnimation = AnimationManager::CreateAnimation("playerAttack", catAttackSpriteSheet);
+    ratAttackAnimation = AnimationManager::CreateAnimation("ratAttack", ratAttackSpriteSheet);
+    ratDeathAnimation = AnimationManager::CreateAnimation("ratDeath", ratDeathSpriteSheet);
+
+    // animation 1
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
+    // animation 2
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
+    // animation 3
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
+    // animation 4
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
+    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
+    // Add animation ID to player component
+    EntityFactory::GetInstance().Assign(1, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationToComponent(playerAttackAnimation);
+    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationToComponent(playerWalkAnimation);
+
+    // Make NPC for testing animation
+    EntityID npcID = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+    EntityManager::GetInstance().Get<Graphics::Renderer>(npcID).SetTextureKey(ratTextureName);
+    EntityManager::GetInstance().Get<Graphics::Renderer>(npcID).SetColor();
+    EntityManager::GetInstance().Get<EntityDescriptor>(npcID).name = "NPC";
+    EntityManager::GetInstance().Get<Transform>(npcID).position.x = 150.f;
+    EntityManager::GetInstance().Get<Transform>(npcID).position.y = -150.f;
+    EntityManager::GetInstance().Get<Transform>(npcID).width = 100.f;
+    EntityManager::GetInstance().Get<Transform>(npcID).height = 100.f;
+
+    EntityFactory::GetInstance().Assign(npcID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+    EntityManager::GetInstance().Get<AnimationComponent>(npcID).AddAnimationToComponent(ratAttackAnimation);
+    EntityManager::GetInstance().Get<AnimationComponent>(npcID).AddAnimationToComponent(ratDeathAnimation);
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -164,20 +342,7 @@ void PE::CoreApplication::Run()
             // Update target FPS if a key is pressed
             if (glfwGetKey(m_window, key) == GLFW_PRESS)
             {
-                m_fpsController.UpdateTargetFPSBasedOnKey(key);
-            }
-        }
-        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
-        {
-            try
-            {
-                std::vector testVector = { 1 };
-                testVector[0] = testVector.at(1);
-            }
-            catch (const std::out_of_range& r_err)
-            {
-                engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
-                throw r_err;
+                TimeManager::GetInstance().m_frameRateController.UpdateTargetFPSBasedOnKey(key);
             }
         }
 
@@ -188,24 +353,64 @@ void PE::CoreApplication::Run()
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
-            m_windowManager.UpdateTitle(m_window, m_fpsController.GetFPS());
+            m_windowManager.UpdateTitle(m_window, TimeManager::GetInstance().m_frameRateController.GetFps());
             m_lastFrameTime = currentTime;
         }
 
-        // Iterate over and update all systems
-        for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
+        for (const auto& id : SceneView<Transform>())
         {
-            TimeManager::GetInstance().SystemStartFrame();
-            m_systemList[i]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime()); //@TODO: Update delta time value here!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            TimeManager::GetInstance().SystemEndFrame(i);
+            Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
+            if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+            {
+                const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
+                vec3 tmp { trans.relPosition, 1.f };
+                tmp = parent.GetTransformMatrix3x3() * tmp;
+                trans.position.x = tmp.x;
+                trans.position.y = tmp.y;
+                trans.orientation = parent.orientation + trans.relOrientation;
+            }
         }
+
+
+        // Iterate over and update all systems
+        //for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
+        //{
+        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
+        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+        //    {
+        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
+        //        vec3 tmp { trans.relPosition, 1.f };
+        //        tmp = parent.GetTransformMatrix3x3() * tmp;
+        //        trans.position.x = tmp.x;
+        //        trans.position.y = tmp.y;
+        //        trans.orientation = parent.orientation + trans.relOrientation;
+        //    }
+        //}
+
+        // Update system with fixed time step
+        TimeManager::GetInstance().StartAccumulator();
+        while (TimeManager::GetInstance().UpdateAccumulator())
+        { 
+            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            {
+                TimeManager::GetInstance().SystemStartFrame(systemID);
+                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                TimeManager::GetInstance().SystemEndFrame(systemID);
+            }
+            TimeManager::GetInstance().EndAccumulator();
+        }
+
+        // Update Graphics with variable timestep
+        TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
+        m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
+        TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
 
         // Flush log entries
         engine_logger.FlushLog();
 
         TimeManager::GetInstance().EndFrame();
         // Finalize FPS calculations for the current frame
-        m_fpsController.EndFrame();
+        TimeManager::GetInstance().m_frameRateController.EndFrame();
     }
 
     // Cleanup for ImGui
@@ -253,15 +458,7 @@ void PE::CoreApplication::InitializeVariables()
     m_lastFrameTime = 0;
 }
 
-void PE::CoreApplication::RegisterComponents()
-{
-    REGISTERCOMPONENT(RigidBody);
-    REGISTERCOMPONENT(Collider);
-    REGISTERCOMPONENT(Transform);
-    REGISTERCOMPONENT(Graphics::Renderer);
-    REGISTERCOMPONENT(Graphics::Camera);
-    REGISTERCOMPONENT(ScriptComponent);
-}
+
 
 void PE::CoreApplication::InitializeLogger()
 {
@@ -298,16 +495,20 @@ void PE::CoreApplication::InitializeSystems()
     // Add system to list & assigning memory to them
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
-
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Graphics Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    AddSystem(p_logicSystem);
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
+    AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
+
     AddSystem(p_inputSystem);
+    AddSystem(p_guisystem);
+    AddSystem(p_logicSystem);
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
+    AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
 }

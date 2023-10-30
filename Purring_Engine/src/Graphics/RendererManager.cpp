@@ -2,8 +2,8 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     RendererManager.cpp
- \creation date:       30-08-2023
- \last updated:        16-09-2023
+ \date:       30-08-2023
+
  \author:              Krystal YAMIN
 
  \par      email:      krystal.y@digipen.edu
@@ -18,17 +18,16 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 
+#include "RendererManager.h"
 #include <glm/gtc/constants.hpp>    // pi()
 #include <glm/gtc/matrix_transform.hpp> // ortho()
 
 #include "Logging/Logger.h" 
-#include "RendererManager.h"
 #include "ResourceManager/ResourceManager.h"
 
 // ECS Components
 #include "ECS/Entity.h"
 #include "ECS/EntityFactory.h"
-#include "ECS/SceneView.h"
 
 // ImGui
 #include "Editor/Editor.h"
@@ -44,11 +43,6 @@
 #include "Animation/Animation.h"
 
 extern Logger engine_logger;
-
-
-// temp animation manager
-PE::AnimationManager animationManager;
-int idleAnimation, walkingAnimation;
 
 namespace PE
 {
@@ -102,23 +96,7 @@ namespace PE
             m_isTextured.reserve(3000);
             m_modelToWorldMatrices.reserve(3000);
             m_colors.reserve(3000);
-
-            // Create Animation
-            idleAnimation = animationManager.CreateAnimation();
-            walkingAnimation = animationManager.CreateAnimation();
-
-            // animation 1
-            animationManager.AddFrameToAnimation(idleAnimation, "catAnim1", 0.1f);
-            animationManager.AddFrameToAnimation(idleAnimation, "catAnim2", 0.1f);
-            animationManager.AddFrameToAnimation(idleAnimation, "catAnim3", 0.1f);
-            animationManager.AddFrameToAnimation(idleAnimation, "catAnim4", 0.1f);
-            animationManager.AddFrameToAnimation(idleAnimation, "catAnim5", 0.1f);
-
-            // animation 2
-            animationManager.AddFrameToAnimation(walkingAnimation, "cat", 0.2f);
-            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim1", 0.2f);
-            animationManager.AddFrameToAnimation(walkingAnimation, "cat2", 0.2f);
-            animationManager.AddFrameToAnimation(walkingAnimation, "cat2Anim2", 0.2f);
+            m_UV.reserve(3000);
 
             // Load a font
             ResourceManager::GetInstance().LoadShadersFromFile("text", "../Shaders/Text.vert", "../Shaders/Text.frag");
@@ -170,6 +148,7 @@ namespace PE
 
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
+                r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
             } 
 
             // Set background color of the window
@@ -190,20 +169,6 @@ namespace PE
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
 
-            // Update Animation here
-            std::string currentTextureKey;
-            if (EntityManager::GetInstance().Get<RigidBody>(1).velocity.x == 0.f &&
-                EntityManager::GetInstance().Get<RigidBody>(1).velocity.y == 0.f)
-            {
-                currentTextureKey = animationManager.UpdateAnimation(idleAnimation, deltaTime);
-            }
-            else
-            {
-                currentTextureKey = animationManager.UpdateAnimation(walkingAnimation, deltaTime);
-            }
-            
-            EntityManager::GetInstance().Get<Graphics::Renderer>(1).SetTextureKey(currentTextureKey);
-
             glm::mat4 worldToNdcMatrix{ 0 };
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera
@@ -212,32 +177,33 @@ namespace PE
                 worldToNdcMatrix = r_cameraManager.GetWorldToNdcMatrix(renderInEditor).value();
             }
 
-            DrawSceneInstanced(worldToNdcMatrix); // Draw objects in the scene
-
+            // Draw objects in the scene
+            DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 
 
             if (Editor::GetInstance().IsRenderingDebug()) 
             {
                 DrawDebug(worldToNdcMatrix); // Draw debug gizmos in the scene
             }
 
+            // Draw UI objects in the scene
+            DrawQuadsInstanced(r_cameraManager.GetUiViewToNdcMatrix(), SceneView<GUIRenderer, Transform>());
+
 
             // Render Text
             // text object 1
-            m_font.RenderText("Text object 1", {-200.f, 200.f }, 1.f, worldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Button 1", {-180.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
 
            // text object 2
-            m_font.RenderText("Text object 2", { 0.f, -200.f }, 1.f, worldToNdcMatrix, { 0.2f, 0.8f, 0.8f });
+            m_font.RenderText("Button 2", { 60.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
 
-            // Unbind the RBO for rendering to the ImGui window
-            m_imguiFrameBuffer.Unbind();
+
             if (renderInEditor)
             {
                 // Unbind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Unbind();
-
-                Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
             }
 
+            Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
             // Disable alpha blending
             glDisable(GL_BLEND);
 
@@ -262,7 +228,8 @@ namespace PE
         }
 
 
-        void RendererManager::DrawScene(glm::mat4 const& r_worldToNdc)
+        template<typename T>
+        void RendererManager::DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
@@ -276,9 +243,9 @@ namespace PE
             }
 
             // Make draw call for each game object with a renderer component
-            for (const EntityID& id : SceneView<Renderer>())
+            for (const EntityID& id : r_sceneView)
             {
-                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 glm::mat4 glmObjectTransform
@@ -288,12 +255,14 @@ namespace PE
                         transform.position.x, transform.position.y) // x, y position
                 };
 
-                Draw(renderer, *(shaderProgramIterator->second), GL_TRIANGLES,
+                Draw(dynamic_cast<Renderer&>(renderer), *(shaderProgramIterator->second), GL_TRIANGLES,
                     r_worldToNdc * glmObjectTransform);
             }
         }
 
-        void RendererManager::DrawSceneInstanced(glm::mat4 const& r_worldToNdc)
+
+        template<typename T>
+        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
 
@@ -322,6 +291,7 @@ namespace PE
 
             // Clear the buffers for the 
             m_isTextured.clear();
+            m_UV.clear();
             m_modelToWorldMatrices.clear();
             m_colors.clear();
 
@@ -329,9 +299,9 @@ namespace PE
 
             // Make draw call for each game object with a renderer component
 
-            for (const EntityID& id : SceneView<Renderer>())
+            for (const EntityID& id : r_sceneView)
             {
-                Renderer& renderer{ EntityManager::GetInstance().Get<Renderer>(id) };
+                T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 
                 // Skip drawing this object is the renderer is not enabled
                 if (!renderer.GetEnabled()) { continue; }
@@ -399,6 +369,25 @@ namespace PE
                     transform.position.x, transform.position.y)); // x, y position
                 m_colors.emplace_back(renderer.GetColor());
 
+
+                //// @TODO Testing transform matrix
+                //glm::vec4 localCornerPos{ 0.5f, 0.5f, 0.f, 1.f };
+                //glm::vec4 NdcCornerPos{ m_modelToWorldMatrices.back() * localCornerPos};
+                //std::cout << "RendererManager::DrawSceneInstanced, expected pos: " << NdcCornerPos.x << ", " << NdcCornerPos.y;
+                //NdcCornerPos = r_cameraManager.GetWorldToNdcMatrix(Editor::GetInstance().IsEditorActive()).value() * NdcCornerPos;
+
+                //glm::vec4 newPos{
+                //    r_cameraManager.GetNdcToWorldMatrix(Editor::GetInstance().IsEditorActive()).value() * NdcCornerPos
+                //};
+
+                //std::cout << ", world pos : " << newPos.x << ", " << newPos.y << "\n";
+
+
+                m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
+                m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
+                m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
+                m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
+
                 ++count;
             }
 
@@ -464,6 +453,9 @@ namespace PE
             // Draw a "+" for every camera component
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
+                // Don't draw a cross for the UI camera
+                if (id == r_cameraManager.GetUICameraId()) { continue; }
+
                 Camera& camera{ EntityManager::GetInstance().Get<Camera>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
@@ -585,6 +577,7 @@ namespace PE
             }
         }   
 
+
         void RendererManager::DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType)
         {
             if (!count) { return; }
@@ -593,34 +586,47 @@ namespace PE
             size_t sizeOfTexturedVector{ m_isTextured.size() * sizeof(float) };
             size_t sizeOfColorVector{ m_colors.size() * sizeof(glm::vec4) };
             size_t sizeOfMatrixVector{ m_modelToWorldMatrices.size() * sizeof(glm::mat4) };
+            size_t sizeOfUVVector{ m_UV.size() * sizeof(glm::vec2) };
 
 
             // Create buffer object for additional vertex data
             GLuint vertexBufferObject{}, vertexArrayObjectIndex{ m_meshes[meshIndex].GetVertexArrayObjectIndex() };
             glCreateBuffers(1, &vertexBufferObject);
             glNamedBufferStorage(vertexBufferObject,
-                static_cast<GLsizeiptr>(sizeOfTexturedVector + sizeOfColorVector + sizeOfMatrixVector),
+                static_cast<GLsizeiptr>(sizeOfTexturedVector + sizeOfColorVector + sizeOfMatrixVector + sizeOfUVVector),
                 nullptr, GL_DYNAMIC_STORAGE_BIT);
 
 
-            // Store textured bools in VBO
+            // Store UV coordinates in VBO
             glNamedBufferSubData(vertexBufferObject, 0,
-                static_cast<GLsizeiptr>(sizeOfTexturedVector),
-                reinterpret_cast<GLvoid*>(m_isTextured.data())); 
+                static_cast<GLsizeiptr>(sizeOfUVVector),
+                reinterpret_cast<GLvoid*>(m_UV.data())); 
 
-            // Bind the textured bools
+            // Bind the UV coordinates
             GLuint attributeIndex{ 2 }, bindingIndex{ 2 };
             glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
             glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject, 0,
+                static_cast<GLsizei>(sizeof(glm::vec2)));
+            glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 2, GL_FLOAT, GL_FALSE, 0);
+            glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
+
+            // Store textured bools in VBO
+            glNamedBufferSubData(vertexBufferObject, static_cast<GLintptr>(sizeOfUVVector),
+                static_cast<GLsizeiptr>(sizeOfTexturedVector),
+                reinterpret_cast<GLvoid*>(m_isTextured.data()));
+
+            // Bind the textured bools            
+            ++attributeIndex, ++bindingIndex;
+            glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
+            glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject, static_cast<GLintptr>(sizeOfUVVector),
                 static_cast<GLsizei>(sizeof(float)));
             glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 1, GL_FLOAT, GL_FALSE, 0);
             glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
-            glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance
-
+            glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance 
 
             // Store colors in VBO
             glNamedBufferSubData(vertexBufferObject,
-                static_cast<GLintptr>(sizeOfTexturedVector),
+                static_cast<GLintptr>(sizeOfUVVector + sizeOfTexturedVector),
                 static_cast<GLsizeiptr>(sizeOfColorVector),
                 reinterpret_cast<GLvoid*>(m_colors.data()));
 
@@ -628,14 +634,14 @@ namespace PE
             ++attributeIndex, ++bindingIndex;
             glEnableVertexArrayAttrib(vertexArrayObjectIndex, attributeIndex);
             glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject,
-                static_cast<GLintptr>(sizeOfTexturedVector), static_cast<GLsizei>(sizeof(glm::vec4)));
+                static_cast<GLintptr>(sizeOfUVVector + sizeOfTexturedVector), static_cast<GLsizei>(sizeof(glm::vec4)));
             glVertexArrayAttribFormat(vertexArrayObjectIndex, attributeIndex, 4, GL_FLOAT, GL_FALSE, 0);
             glVertexArrayAttribBinding(vertexArrayObjectIndex, attributeIndex, bindingIndex);
             glVertexAttribDivisor(attributeIndex, 1); // Advance once per instance
 
             // Store model to NDC matrices in VBO
             glNamedBufferSubData(vertexBufferObject,
-                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLintptr>(sizeOfUVVector + sizeOfTexturedVector + sizeOfColorVector),
                 static_cast<GLsizeiptr>(sizeOfMatrixVector),
                 reinterpret_cast<GLvoid*>(m_modelToWorldMatrices.data()));
 
@@ -643,7 +649,7 @@ namespace PE
             ++attributeIndex, ++bindingIndex;
 
             glVertexArrayVertexBuffer(vertexArrayObjectIndex, bindingIndex, vertexBufferObject,
-                static_cast<GLintptr>(sizeOfTexturedVector + sizeOfColorVector),
+                static_cast<GLintptr>(sizeOfUVVector + sizeOfTexturedVector + sizeOfColorVector),
                 static_cast<GLsizei>(sizeof(glm::mat4)));
 
             for (int i{}; i < 4; ++i)
@@ -673,6 +679,7 @@ namespace PE
             // Clear the vectors
             m_isTextured.clear();
             m_colors.clear();
+            m_UV.clear();
             m_modelToWorldMatrices.clear();
         }
 

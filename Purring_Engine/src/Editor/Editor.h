@@ -16,15 +16,13 @@
 #pragma once
 
 #include "../Events/EventHandler.h"
-#include <vector>
-#include <string>
+
 
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <misc/cpp/imgui_stdlib.h>
-#include <iostream>
 
 #include "Singleton.h"
 
@@ -96,8 +94,8 @@ namespace PE {
 		*************************************************************************************/
 		bool IsRunTime();
 		/*!***********************************************************************************
-		 \brief get the boolean to know editor is in runtime
-		 \return bool return whether it is editor mode or runtime
+		 \brief get the boolean to know if mouse is hovering in the scene window
+		 \return bool return whether the mouse is hovering in the scene window
 		*************************************************************************************/
 		bool IsMouseInScene();
 
@@ -205,7 +203,10 @@ namespace PE {
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowSceneView(GLuint texture_id, bool* active);
-		
+		/*!***********************************************************************************
+		 \brief Set custom ImGUI style
+		*************************************************************************************/
+		void SetImGUIStyle();
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -241,6 +242,7 @@ namespace PE {
 		*************************************************************************************/
 		void ClearObjectList();
 
+		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths);
 
 		// ----- Private Variables ----- // 
 	private:
@@ -268,16 +270,19 @@ namespace PE {
 		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
 
 		//variable for objects
+		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
 
-		//variable for the windows
+		//variable for assets browser
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
-
-
+		static std::filesystem::path m_parentPath;
+		std::vector<std::filesystem::path> m_files;
+		int m_entityToModify;
+		static bool m_fileDragged;
 	};
 }
 

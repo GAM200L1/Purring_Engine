@@ -15,12 +15,12 @@
 *************************************************************************************/
 
 #pragma once
-
+#include <map>
+#include <functional>
+#include <vector>
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
-#include <string>			// For names
-#include <map>				// To map functions to event typer
-#include <functional>		// To bind functions
+
 
 namespace PE {
 

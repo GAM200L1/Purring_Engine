@@ -23,7 +23,6 @@
 #include "Events/MouseEvent.h"
 #include "Events/WindowEvent.h"
 #include "Events/KeyEvent.h"
-
 #include "System.h"
 
 namespace PE
@@ -122,5 +121,7 @@ namespace PE
          \param     e Event containing keyboard-specific details.
         *************************************************************************************/
         void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
+
+        void TestFunction();
     };
 }

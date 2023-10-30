@@ -13,7 +13,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
-#include "prpch.h"
 #include "System.h"
 namespace PE
 {
@@ -99,6 +98,6 @@ namespace PE
 		float m_velocityNegligence{};
 		static bool m_applyStepPhysics;
 		static bool m_advanceStep;
-		std::string m_systemName{ "Physics" };
+		std::string m_systemName{ "PhysicsManager" };
 	};
 }

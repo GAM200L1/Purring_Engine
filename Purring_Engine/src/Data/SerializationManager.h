@@ -21,14 +21,14 @@
 --------------------------------------------------------------------------------------------------------------------- */
 
 #include "json.hpp"
-#include "ECS/Components.h"
-#include "ECS/Entity.h"
+//#include "ECS/Components.h"
+//#include "ECS/Entity.h"
 #include "Math/Transform.h"
 #include "Physics/RigidBody.h"
 #include "Physics/Colliders.h"
 #include "Graphics/Renderer.h"
-#include <string>
-#include <windows.h>
+#include "Graphics/GUIRenderer.h"
+
 struct StructPlayerStats
 {
     int m_health;

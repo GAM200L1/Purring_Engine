@@ -19,8 +19,7 @@
 #include "Graphics/GLHeaders.h"
 
 #include <glm/glm.hpp>  // glm::vec4, glm::clamp
-#include <vector>   // vector
-#include <string>   // string
+
 
 #include "Texture.h"
 #include "Math/Transform.h"
@@ -84,6 +83,10 @@ namespace PE
             *************************************************************************************/
             inline std::string const& GetTextureKey() const { return m_textureKey; }
 
+            inline glm::vec2 const& GetUVCoordinatesMin() const { return m_minUV; }
+
+            inline glm::vec2 const& GetUVCoordinatesMax() const { return m_maxUV;  }
+
 
             /*!***********************************************************************************
              \brief Sets the RGBA color of the object. If the object has a texture on it, 
@@ -92,7 +95,7 @@ namespace PE
              \param[in] newColor RGBA color to set the object to (the values should be on 
                                     a range of [0, 1]).
             *************************************************************************************/
-            void Renderer::SetColor(glm::vec4 const& newColor);
+            //void Renderer::SetColor(glm::vec4 const& newColor);
 
             /*!***********************************************************************************
              \brief Sets the RGBA color of the object. If the object has a texture on it, 
@@ -121,6 +124,10 @@ namespace PE
             *************************************************************************************/
             void Renderer::SetTextureKey(std::string const& r_newKey);
 
+            void Renderer::SetUVCoordinatesMin(glm::vec2 const& minUV);
+            
+            void Renderer::SetUVCoordinatesMax(glm::vec2 const& maxUV);
+
             /*!***********************************************************************************
              \brief Serializes the data attached to this renderer.
             *************************************************************************************/
@@ -134,11 +141,13 @@ namespace PE
             *************************************************************************************/
             static Renderer FromJson(const nlohmann::json& j);
 
-        private:
+        protected:
             bool m_enabled{ true }; // Set to true to render the object, false not to.
             glm::vec4 m_color{ 0.5f, 0.5f, 0.5f, 0.5f }; // RGBA values of a color in a range of 0 to 1.
             Graphics::EnumMeshType m_meshType{ EnumMeshType::QUAD }; // Type of mesh. 
             std::string m_textureKey{ "" }; // Key for the corresponding texture in the resource manager.
+            glm::vec2 m_minUV{ 0.f, 0.f };
+            glm::vec2 m_maxUV{ 1.f, 1.f };
         };
     } // End of Graphics namespace
 } // End of PE namespace

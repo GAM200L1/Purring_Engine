@@ -37,12 +37,12 @@
 *************************************************************************************/
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
-#include "prpch.h"
 #include "Singleton.h"
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/Texture.h"
 #include "AudioManager/AudioManager.h"
 #include "Graphics/Text.h"
+#include "Animation/Animation.h"
 
 //class Resource
 //{
@@ -68,6 +68,7 @@ namespace PE
         std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;
         std::map<std::string, std::shared_ptr<AudioManager::Audio>> Sounds;
         std::map<std::string, std::shared_ptr<Font>> Fonts;
+        std::map<std::string, std::shared_ptr<Animation>> Animations;
 
         // Unloads all resources that were previously loaded
         void UnloadResources();

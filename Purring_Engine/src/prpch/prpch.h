@@ -16,11 +16,13 @@
 #include <Windows.h>
 
 #include <iostream>
+#include <ostream>
 #include <fstream>
 #include <memory>
 #include <algorithm>
 #include <functional>
 #include <utility>
+#include <filesystem>
 
 
 #include <vector>
@@ -30,6 +32,7 @@
 #include <unordered_map>
 
 #include <iomanip>
+#include <limits>
 
 #include <map>
 #include <set>
@@ -40,3 +43,16 @@
 #include <variant>
 #include <optional>
 #include <functional> // reference_wrapper
+#include <bitset>
+
+#include <cstdio>
+
+#include <chrono>
+
+#include <array>
+
+#include <thread>
+
+#include <random>
+#include <Commdlg.h>
+
