@@ -20,6 +20,7 @@
 
 // INCLUDES
 #include "Components.h"
+#include "Data/json.hpp"
 #include "Data/SerializationManager.h"
 #include "Singleton.h"
 #include <bitset>
@@ -584,6 +585,9 @@ namespace PE
 	{
 		std::optional<EntityID> parent;
 		std::string name;
+
+		nlohmann::json ToJson() const;
+		static EntityDescriptor Deserialize(const nlohmann::json& j);
 	};
 
 }

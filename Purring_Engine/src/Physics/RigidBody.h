@@ -154,6 +154,7 @@ namespace PE
 			nlohmann::json j;
 			j["type"] = static_cast<int>(GetType()); // right now its an enum
 			j["mass"] = m_mass;
+			j["linearDrag"] = m_linearDrag;
 
 			return j;
 		}
@@ -169,6 +170,8 @@ namespace PE
 			RigidBody rb;
 			rb.SetType(static_cast<EnumRigidBodyType>(j["type"].get<int>())); // right now its an enum
 			rb.m_mass = j["mass"];
+			rb.m_linearDrag = j["linearDrag"];
+
 
 			return rb;
 		}

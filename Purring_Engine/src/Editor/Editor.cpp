@@ -29,11 +29,12 @@
 #include "Graphics/RendererManager.h"
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
+#include "Logic/EnemyTestScript.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
 #include <rttr/type.h>
-
+#include "Graphics/CameraManager.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
@@ -54,9 +55,9 @@ namespace PE {
 		m_showLogs = true;
 		m_showObjectList = true;
 		m_showSceneView = true;
-		m_showTestWindows = true;
+		m_showTestWindows = false;
 		m_showComponentWindow = true;
-		m_showResourceWindow = false;
+		m_showResourceWindow = true;
 		m_showPerformanceWindow = false;
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
@@ -74,6 +75,9 @@ namespace PE {
 		GetFileNamesInParentPath(m_parentPath, m_files);
 		m_mouseInScene = false;
 		m_entityToModify = -1;
+
+		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
+		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
@@ -130,14 +134,25 @@ namespace PE {
 		m_showTestWindows = true;
 	}
 
+	void Editor::PlayAudio1()
+	{
+		AudioManager::GetInstance().PlaySound("audio_sound1");
+	}
+
+	void Editor::PlayAudio2()
+	{
+		AudioManager::GetInstance().PlaySound("audio_sound2");
+	}
+
 	void Editor::ClearObjectList()
 	{
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 1; --n)
+		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUICameraId())
+				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 		}
 	}
 
@@ -435,6 +450,8 @@ namespace PE {
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
 				for (auto & n : dispMap)
 				{
+					if (n.first == Graphics::CameraManager::GetUICameraId())
+						continue;
 					
 					std::string name = std::to_string(n.first);
 					name += ". ";
@@ -556,8 +573,6 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Delete Object"))
 				{
-					if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
-					{
 						AddInfoLog("Object Deleted");
 
 						for (const auto& id : SceneView())
@@ -578,11 +593,6 @@ namespace PE {
 
 						count--;
 
-					}
-					else
-					{
-						AddWarningLog("You are not allowed to delete the background or player as of now");
-					}
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
@@ -603,15 +613,15 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-					EntityFactory::GetInstance().CreateEntity();
-				}
-				if (ImGui::Selectable("Create Default Object"))
-				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+					serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
 				}
 				if (ImGui::Selectable("Create UI Object"))
 				{
-					//serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+					serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+				}
+				if (ImGui::Selectable("Create Camera Object"))
+				{
+					serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
 				}
 				ImGui::EndPopup();
 			}
@@ -624,7 +634,7 @@ namespace PE {
 	//temporary for milestone 1
 	void Editor::ShowDemoWindow(bool* Active)
 	{
-		if (IsEditorActive())
+		//if (IsEditorActive())
 		if (!ImGui::Begin("debugTests", Active, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
@@ -1649,33 +1659,6 @@ namespace PE {
 							}
 						}
                         
-						if (hasScripts)
-						{
-							for (auto& [key, val] : LogicSystem::m_scriptContainer)
-							{
-								if (key == "test")
-								{
-									testScript* test = dynamic_cast<testScript*>(val);
-									auto it = test->GetScriptData().find(m_currentSelectedObject);
-									if (it != test->GetScriptData().end())
-										if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-										{
-											ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
-										}
-								}
-
-								if (key == "PlayerControllerScript")
-								{
-									PlayerControllerScript* test = dynamic_cast<PlayerControllerScript*>(val);
-									auto it = test->GetScriptData().find(m_currentSelectedObject);
-									if (it != test->GetScriptData().end())
-										if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-										{
-											ImGui::Text("speed: "); ImGui::SameLine(); ImGui::InputFloat("##movespeed", &it->second.speed, 1.0f, 100.f, "%.3f");
-										}
-								}
-							}
-						}
 
 						
 						// ---------- CAMERA ---------- //
@@ -1774,6 +1757,56 @@ namespace PE {
 						}
 					}
 
+					if (hasScripts)
+					{
+						for (auto& [key, val] : LogicSystem::m_scriptContainer)
+						{
+							if (key == "test")
+							{
+								testScript* p_Script = dynamic_cast<testScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
+									}
+							}
+
+							if (key == "PlayerControllerScript")
+							{
+								PlayerControllerScript* p_Script = dynamic_cast<PlayerControllerScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("speed: "); ImGui::SameLine(); ImGui::DragFloat("##movespeed", &it->second.speed);
+									}
+							}
+
+							if (key == "EnemyTestScript")
+							{
+								EnemyTestScript* p_Script = dynamic_cast<EnemyTestScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("EnemyTestScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int id = static_cast<int> (it->second.playerID);
+										ImGui::Text("Player ID: "); ImGui::SameLine(); ImGui::InputInt("##id", &id);
+										it->second.playerID = id;
+										ImGui::Text("speed: "); ImGui::SameLine(); ImGui::DragFloat("##enemyspeed", &it->second.speed);
+										ImGui::Text("Idle Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemyidle", &it->second.idleTimer);
+										ImGui::Text("Alert Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemyalert", &it->second.alertTimer);
+										ImGui::Text("Timer Buffer: "); ImGui::SameLine(); ImGui::DragFloat("##enemytimerbuffer", &it->second.timerBuffer);
+										ImGui::Text("Patrol Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemypatrol", &it->second.patrolTimer);
+										ImGui::Text("Target Range: "); ImGui::SameLine(); ImGui::DragFloat("##targettingrange", &it->second.TargetRange);
+									}
+								}
+							}
+						}
+					}
+
+
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 					ImGui::Separator();
@@ -1784,8 +1817,6 @@ namespace PE {
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
 
-					//other than background, we can add components to objects
-					if (m_currentSelectedObject)
 						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
 						{
 							ImGui::OpenPopup("Components");
@@ -1828,13 +1859,6 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
 							else
 								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
-						}
-						if (ImGui::Selectable("Add GUI"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUI>() });
-							else
-								AddErrorLog("ALREADY HAS GUI");
 						}
 						if (ImGui::Selectable("Add Animation"))
 						{
@@ -2043,7 +2067,7 @@ namespace PE {
 
 	void Editor::ShowPerformanceWindow(bool* Active)
 	{
-		if (IsEditorActive())
+		//if (IsEditorActive())
 		if (!ImGui::Begin("performanceWindow", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close
@@ -2216,6 +2240,7 @@ namespace PE {
 								engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
 
 								// This will load all entities from the file
+								ClearObjectList();
 								serializationManager.LoadAllEntitiesFromFile(filePath);
 								engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 							}
@@ -2536,7 +2561,6 @@ namespace PE {
 			if (m_showEditor)
 				m_isRunTime = false;
 		}
-
 
 		if (KTE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;
