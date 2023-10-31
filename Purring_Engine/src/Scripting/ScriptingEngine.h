@@ -1,6 +1,7 @@
 #pragma once
 #include <filesystem>
 #include <string>
+#include <memory>
 
 extern "C"
 {
@@ -14,11 +15,7 @@ extern "C"
 
 namespace PE
 {
-	template<typename T, typename ... Args>
-	constexpr Ref<T> CreateRef(Args&& ... args)
-	{
-		return std::make_shared<T>(std::forward<Args>(args)...);
-	}
+
 	class ScriptEngine
 	{
 	public:

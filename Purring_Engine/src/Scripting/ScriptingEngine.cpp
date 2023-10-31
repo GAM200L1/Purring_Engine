@@ -7,6 +7,9 @@
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
 #include <stdio.h>
+#include "Scripting/Base.h"
+#include <memory>
+#include "fmt/core.h"
 
 namespace PE
 {
