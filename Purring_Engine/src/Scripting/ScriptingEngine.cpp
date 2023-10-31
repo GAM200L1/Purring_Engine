@@ -6,6 +6,7 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
+#include <stdio.h>
 
 namespace PE
 {
@@ -80,7 +81,12 @@ namespace PE
 
                 const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
                 const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+                
+                MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
+                MonoClass* entityClass = mono_class_from_name(image, "PE2", "Entity");
 
+                bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
+                printf("Is Entity: %s\n", isEntity ? "true" : "false");
                 printf("%s.%s\n", nameSpace, name);
             }
         }
@@ -98,6 +104,7 @@ namespace PE
 
         ScriptClass EntityClass;
 
+        std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
     };
 
     static ScriptEngineData* s_Data = nullptr;
@@ -110,6 +117,8 @@ namespace PE
 
         InitMono();
         LoadAssembly("../Purring_Engine/Resources/Scripts/PE-ScriptCore.dll");
+        LoadAssemblyClasses(s_Data->CoreAssembly);
+        //Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
 
         ScriptGlue::RegisterFunctions();
 
@@ -195,6 +204,39 @@ namespace PE
         // Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
 
     }
+
+    void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
+    {
+        MonoImage* image = mono_assembly_get_image(assembly);
+        const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
+        int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+
+        for (int32_t i = 0; i < numTypes; i++)
+        {
+            uint32_t cols[MONO_TYPEDEF_SIZE];
+            mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
+
+            const char* nameSpace = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAMESPACE]);
+            const char* name = mono_metadata_string_heap(image, cols[MONO_TYPEDEF_NAME]);
+            std::string fullName;
+            if (strlen(nameSpace) != 0)
+                fullName = fmt::format("{}.{}", nameSpace, name);
+            else
+                fullName = name;
+
+            MonoClass* monoClass = mono_class_from_name(s_Data->CoreAssemblyImage, nameSpace, name);
+            MonoClass* entityClass = mono_class_from_name(s_Data->CoreAssemblyImage, "PE", "Entity");
+
+            bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
+            if (isEntity)
+            {
+                s_Data->EntityClasses["fullName"] = CreateRef<ScriptClass>(nameSpace, name);
+            }
+
+            printf("%s.%s\n", nameSpace, name);
+        }
+    }
+
 
     MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)
     {

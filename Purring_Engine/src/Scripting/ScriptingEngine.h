@@ -7,11 +7,18 @@ extern "C"
 	typedef struct _MonoClass MonoClass;
 	typedef struct _MonoObject MonoObject;
 	typedef struct _MonoMethod MonoMethod;
+	typedef struct _MonoAssembly MonoAssembly;
+	//typedef struct _MonoImage MonoImage;
 
 }
 
 namespace PE
 {
+	template<typename T, typename ... Args>
+	constexpr Ref<T> CreateRef(Args&& ... args)
+	{
+		return std::make_shared<T>(std::forward<Args>(args)...);
+	}
 	class ScriptEngine
 	{
 	public:
@@ -19,11 +26,18 @@ namespace PE
 		static void Shutdown();
 
 		static void LoadAssembly(const std::filesystem::path& filepath);
+
+		template<typename T>
+		using Ref = std::shared_ptr<T>;
+
+
+
 	private:
 		static void InitMono();
 		static void ShutdownMono();
 
 		static MonoObject* InstantiateClass(MonoClass* monoClass);
+		static void LoadAssemblyClasses(MonoAssembly* assembly);
 
 		friend class ScriptClass;
 	};
@@ -44,3 +58,4 @@ namespace PE
 		MonoClass* m_MonoClass = nullptr;
 	};
 }
+
