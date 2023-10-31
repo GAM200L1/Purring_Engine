@@ -134,4 +134,26 @@ namespace PE
 	{
 		m_uiFunc[str] = func;
 	}
+
+
+	// Serialize GUI
+	nlohmann::json GUI::ToJson() const
+	{
+		nlohmann::json j;
+		// Serialize properties
+		j["m_onClicked"] = m_onClicked;
+		j["m_onHovered"] = m_onHovered;
+		j["m_UIType"] = static_cast<int>(m_UIType);
+		return j;
+	}
+
+	// Deserialize GUI
+	GUI GUI::Deserialize(const nlohmann::json& j)
+	{
+		GUI gui;
+		gui.m_onClicked = j["m_onClicked"];
+		gui.m_onHovered = j["m_onHovered"];
+		gui.m_UIType = static_cast<UIType>(j["m_UIType"].get<int>());
+		return gui;
+	}
 }

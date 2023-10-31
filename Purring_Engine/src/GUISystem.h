@@ -85,6 +85,10 @@ namespace PE
 		std::string m_onHovered{""};
 		bool m_Hovered{};
 		UIType m_UIType{0};
+
+	public:
+		virtual nlohmann::json ToJson() const;
+		static GUI Deserialize(const nlohmann::json& j);
 	};
 
 

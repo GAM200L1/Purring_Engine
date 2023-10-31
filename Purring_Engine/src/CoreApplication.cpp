@@ -214,44 +214,43 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
     
     // Creates an entity from file that is attached to the Character Controller
-    EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
-    EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
+    //EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
+    //EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
 
     
 
     // Create button objects
-    for (int i{}; i < 2; ++i) 
-    {
-        EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
-        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
-        EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
-        EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -125.f + 250.f * i;
-        EntityManager::GetInstance().Get<Transform>(buttonId).position.y = 200.f;
-        EntityManager::GetInstance().Get<Transform>(buttonId).width = 250.f;
-        EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
-    }
+    //for (int i{}; i < 2; ++i) 
+    //{
+    //    EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
+    //    EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
+    //    EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
+    //    EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -125.f + 250.f * i;
+    //    EntityManager::GetInstance().Get<Transform>(buttonId).position.y = 200.f;
+    //    EntityManager::GetInstance().Get<Transform>(buttonId).width = 250.f;
+    //    EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
+    //}
 
     // Make a runtime camera that follows the player
     EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
     EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 
-    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
-    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
+    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
-    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
+    //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
 
 
     // Make a second runtime camera to test switching
-    cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+   // cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
 
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
-    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
+    //EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
+   // EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
+   // EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
     //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 
     // Create animations here for now
     std::string playerWalkAnimation, playerAttackAnimation, ratAttackAnimation, ratDeathAnimation;
@@ -291,25 +290,6 @@ PE::CoreApplication::CoreApplication()
     AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
     AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
     AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
-
-    // Add animation ID to player component
-    EntityFactory::GetInstance().Assign(1, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
-    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationToComponent(playerAttackAnimation);
-    EntityManager::GetInstance().Get<AnimationComponent>(1).AddAnimationToComponent(playerWalkAnimation);
-
-    // Make NPC for testing animation
-    EntityID npcID = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-    EntityManager::GetInstance().Get<Graphics::Renderer>(npcID).SetTextureKey(ratTextureName);
-    EntityManager::GetInstance().Get<Graphics::Renderer>(npcID).SetColor();
-    EntityManager::GetInstance().Get<EntityDescriptor>(npcID).name = "NPC";
-    EntityManager::GetInstance().Get<Transform>(npcID).position.x = 150.f;
-    EntityManager::GetInstance().Get<Transform>(npcID).position.y = -150.f;
-    EntityManager::GetInstance().Get<Transform>(npcID).width = 100.f;
-    EntityManager::GetInstance().Get<Transform>(npcID).height = 100.f;
-
-    EntityFactory::GetInstance().Assign(npcID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
-    EntityManager::GetInstance().Get<AnimationComponent>(npcID).AddAnimationToComponent(ratAttackAnimation);
-    EntityManager::GetInstance().Get<AnimationComponent>(npcID).AddAnimationToComponent(ratDeathAnimation);
 }
 
 PE::CoreApplication::~CoreApplication()

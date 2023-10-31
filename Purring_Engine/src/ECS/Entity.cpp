@@ -170,4 +170,38 @@ namespace PE
 			return m_poolsEntity.at(r_pool);
 		}
 	}
+
+	nlohmann::json EntityDescriptor::ToJson() const
+	{
+		nlohmann::json j;
+		j["name"] = name;
+
+		if (parent.has_value())
+		{
+			j["parent"] = parent.value();
+		}
+		else
+		{
+			j["parent"] = nullptr;
+		}
+
+		return j;
+	}
+
+	EntityDescriptor EntityDescriptor::Deserialize(const nlohmann::json& j)
+	{
+		EntityDescriptor desc;
+		desc.name = j["name"];
+
+		if (j["parent"] != nullptr)
+		{
+			desc.parent = j["parent"].get<EntityID>();
+		}
+		else
+		{
+			desc.parent = std::nullopt;
+		}
+
+		return desc;
+	}
 }

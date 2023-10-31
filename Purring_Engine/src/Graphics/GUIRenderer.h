@@ -32,6 +32,34 @@ namespace PE
                      but has been separated so that the render passes of the UI and 
                      gameobjects can be separated. 
               */
+        public:
+              /*!***********************************************************************************
+             \brief Serializes the data attached to this renderer.
+            *************************************************************************************/
+            nlohmann::json ToJson() const
+            {
+                nlohmann::json j;
+                j["TextureKey"] = GetTextureKey();
+                j["Color"]["r"] = GetColor().r;
+                j["Color"]["g"] = GetColor().g;
+                j["Color"]["b"] = GetColor().b;
+                j["Color"]["a"] = GetColor().a;
+                return j;
+            }
+
+            /*!***********************************************************************************
+             \brief Deserializes data from a JSON file and loads it as values to set this
+                    component to.
+
+             \param[in] j JSON object containing the values to load into the renderer component.
+            *************************************************************************************/
+            static GUIRenderer FromJson(const nlohmann::json& j)
+            {
+                GUIRenderer r;
+                r.SetTextureKey(j["TextureKey"]);
+                r.SetColor(j["Color"]["r"], j["Color"]["g"], j["Color"]["b"], j["Color"]["a"]);
+                return r;
+            }
          };
     } // End of Graphics namespace
 } // End of PE namespace
