@@ -24,6 +24,21 @@ constexpr size_t DEFAULT_ENTITY_CNT = 3000;		// default bytes allocated to compo
 
 namespace PE
 {
+    //struct ScriptComponent
+    //{
+    //    std::string ClassName;
+
+    //    ScriptComponent() = default;
+    //    ScriptComponent(const ScriptComponent&) = default;
+    //};
+
+    //template<typename... Component>
+    //struct ComponentGroup
+    //{
+    //};
+
+    //using AllComponents = ComponentGroup<ScriptComponent>;
+
     struct ComponentPool
     {
         // ----- Public Variables ----- //

@@ -138,7 +138,10 @@ project "Purring_Engine"
         "vendor/stb_image/**.h",
         "vendor/stb_image/**.cpp",
         "vendor/glm/glm/**.hpp",
-        "vendor/glm/glm/**.inl"
+        "vendor/glm/glm/**.inl",
+        "vendor/fmt/include/fmt/core.h",
+        "vendor/fmt/include/fmt/format.h",
+        "vendor/fmt/include/fmt/format-inl.h"
     }
 
     includedirs
@@ -153,7 +156,9 @@ project "Purring_Engine"
         "%{IncludeDir.FMOD}",
         "vendor/freetype/include",
         "%{IncludeDir.RTTR}",
-        "%{IncludeDir.mono}"
+        "%{IncludeDir.mono}",
+        "vendor/fmt/include"
+
     }
 
     libdirs

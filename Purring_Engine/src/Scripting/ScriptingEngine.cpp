@@ -9,7 +9,14 @@
 #include <stdio.h>
 #include "Scripting/Base.h"
 #include <memory>
-#include "fmt/core.h"
+#define FMT_HEADER_ONLY
+#include <fmt/format.h>
+
+//#include "fmt/format.h"
+//#include "fmt/core.h"
+//#include "fmt/format-inl.h"
+
+//#define FMT_HEADER_ONLY
 
 namespace PE
 {
@@ -121,10 +128,11 @@ namespace PE
         InitMono();
         LoadAssembly("../Purring_Engine/Resources/Scripts/PE-ScriptCore.dll");
         LoadAssemblyClasses(s_Data->CoreAssembly);
-        //Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
-
         ScriptGlue::RegisterFunctions();
 
+
+#if 0
+        //Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
         // Retrieve and instaitiate class w/ constructor
         s_Data->EntityClass = ScriptClass("PE", "Entity");
 
@@ -155,6 +163,7 @@ namespace PE
         MonoMethod* printCustomMessageFunc = s_Data->EntityClass.GetMethod("PrintCustomMessage", 1);
         void* stringParam = monoString;
         s_Data->EntityClass.InvokeMethod(instance, printCustomMessageFunc, &stringParam);
+#endif
     }
 
 
@@ -208,11 +217,21 @@ namespace PE
 
     }
 
+    std::unordered_map<std::string, Ref<ScriptClass>> ScriptEngine::GetEntityClasses()
+    {
+        return s_Data->EntityClasses;
+    } 
+
+
     void ScriptEngine::LoadAssemblyClasses(MonoAssembly* assembly)
     {
+        s_Data->EntityClasses.clear();
+
         MonoImage* image = mono_assembly_get_image(assembly);
         const MonoTableInfo* typeDefinitionsTable = mono_image_get_table_info(image, MONO_TABLE_TYPEDEF);
         int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
+        MonoClass* entityClass = mono_class_from_name(image, "PE", "Entity");
+
 
         for (int32_t i = 0; i < numTypes; i++)
         {
@@ -227,16 +246,15 @@ namespace PE
             else
                 fullName = name;
 
-            MonoClass* monoClass = mono_class_from_name(s_Data->CoreAssemblyImage, nameSpace, name);
-            MonoClass* entityClass = mono_class_from_name(s_Data->CoreAssemblyImage, "PE", "Entity");
+            MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
+            if (monoClass == entityClass)
+                continue;
 
             bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
             if (isEntity)
-            {
                 s_Data->EntityClasses["fullName"] = CreateRef<ScriptClass>(nameSpace, name);
-            }
 
-            printf("%s.%s\n", nameSpace, name);
+            //printf("%s.%s\n", nameSpace, name);
         }
     }
 
@@ -271,5 +289,33 @@ namespace PE
     {
         return mono_runtime_invoke(method, instance, params, nullptr);
     }
+
+    //ScriptInstance::ScriptClass(Ref<ScriptClass> scriptClass)
+    //    : m_ScriptClass(scriptClass)
+    //{
+    //    m_Instance = scriptClass->Instantiate();
+    //    m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
+    //    m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
+    //}
+
+    ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass)
+        : m_ScriptClass(scriptClass)
+    {
+        m_Instance = scriptClass->Instantiate();
+        m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
+        m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
+    }
+
+    void ScriptInstance::InvokeOnCreate()
+    {
+        m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod);
+    }
+
+    void ScriptInstance::InvokeOnUpdate(float ts)
+    {
+        void* param = &ts;
+        m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
+    }
+
 
 }
