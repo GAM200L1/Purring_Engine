@@ -21,7 +21,6 @@
 #include "MouseEvent.h"
 #include "KeyEvent.h"
 #include "WindowEvent.h"
-#include "CollisionEvent.h"
 #include "Singleton.h"
 
 namespace PE

@@ -98,6 +98,6 @@ namespace PE
 		float m_velocityNegligence{};
 		static bool m_applyStepPhysics;
 		static bool m_advanceStep;
-		std::string m_systemName{ "Physics" };
+		std::string m_systemName{ "PhysicsManager" };
 	};
 }

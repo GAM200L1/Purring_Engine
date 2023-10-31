@@ -20,11 +20,13 @@
 
 // INCLUDES
 #include "Components.h"
+#include "Data/json.hpp"
 #include "Data/SerializationManager.h"
 #include "Singleton.h"
 #include <bitset>
 #include <set>
 #include <queue>
+#include <optional>
 
 // Const expressions
 constexpr unsigned MAX_COMPONENTS = 32;
@@ -577,4 +579,15 @@ namespace PE
 		--(m_componentPools[componentID]->m_size);
 		UpdateVectors(id, false);
 	}
+
+
+	struct EntityDescriptor
+	{
+		std::optional<EntityID> parent;
+		std::string name;
+
+		nlohmann::json ToJson() const;
+		static EntityDescriptor Deserialize(const nlohmann::json& j);
+	};
+
 }

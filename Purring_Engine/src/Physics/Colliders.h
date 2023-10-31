@@ -56,6 +56,10 @@ namespace PE
 			j["min"]["y"] = min.y;
 			j["max"]["x"] = max.x;
 			j["max"]["y"] = max.y;
+			j["positionOffset"]["x"] = positionOffset.x;
+			j["positionOffset"]["y"] = positionOffset.y;
+			j["scaleOffset"]["x"] = scaleOffset.x;
+			j["scaleOffset"]["y"] = scaleOffset.y;
 			return j;
 		}
 
@@ -73,6 +77,10 @@ namespace PE
 			aabb.min.y = r_j["min"]["y"];
 			aabb.max.x = r_j["max"]["x"];
 			aabb.max.y = r_j["max"]["y"];
+			aabb.positionOffset.x = r_j["positionOffset"]["x"];
+			aabb.positionOffset.y = r_j["positionOffset"]["y"];
+			aabb.scaleOffset.x = r_j["scaleOffset"]["x"];
+			aabb.scaleOffset.y = r_j["scaleOffset"]["y"];
 			return aabb;
 		}
 	};
@@ -115,6 +123,9 @@ namespace PE
 			j["center"]["x"] = center.x;
 			j["center"]["y"] = center.y;
 			j["radius"] = radius;
+			j["positionOffset"]["x"] = positionOffset.x;
+			j["positionOffset"]["y"] = positionOffset.y;
+			j["scaleOffset"] = scaleOffset;
 			return j;
 		}
 
@@ -130,6 +141,9 @@ namespace PE
 			circle.center.x = r_j["center"]["x"];
 			circle.center.y = r_j["center"]["y"];
 			circle.radius = r_j["radius"];
+			circle.positionOffset.x = r_j["positionOffset"]["x"];
+			circle.positionOffset.y = r_j["positionOffset"]["y"];
+			circle.scaleOffset = r_j["scaleOffset"];
 			return circle;
 		}
 
@@ -173,11 +187,14 @@ namespace PE
 				if (std::holds_alternative<AABBCollider>(colliderVariant))
 				{
 					j["type"] = "AABBCollider";
+					j["data"] = std::get<AABBCollider>(colliderVariant).ToJson();
 				}
 				else if (std::holds_alternative<CircleCollider>(colliderVariant))
 				{
 					j["type"] = "CircleCollider";
+					j["data"] = std::get<CircleCollider>(colliderVariant).ToJson();
 				}
+				j["isTrigger"] = isTrigger;
 				return j;
 			}
 
@@ -201,6 +218,7 @@ namespace PE
 				{
 					collider.colliderVariant = CircleCollider::FromJson(r_j["data"]);
 				}
+				collider.isTrigger = r_j["isTrigger"];
 				return collider;
 			}
 	};

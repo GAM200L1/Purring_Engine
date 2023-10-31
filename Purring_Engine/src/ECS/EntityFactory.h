@@ -28,6 +28,7 @@
 #include "Graphics/Camera.h"
 #include "Prefabs.h"
 #include "Singleton.h"
+#include "Animation/Animation.h"
 
 // Entity Factory code
 namespace PE
@@ -169,8 +170,8 @@ namespace PE
 	private:
 		typedef bool(EntityFactory::*fnptrVoidptrConstruct)(const EntityID& r_id, void* p_data);
 		typedef std::map<ComponentID, size_t, Comparer> ComponentMapType; // component map typedef
-		ComponentMapType m_componentMap;								   // component map (ID, ptr to creator)
-		PE::EntityManager* p_entityManager{ nullptr };				   // pointer to entity manager
+		ComponentMapType m_componentMap;								  // component map (ID, ptr to creator)
+		PE::EntityManager* p_entityManager{ nullptr };				      // pointer to entity manager
 		std::map<ComponentID, fnptrVoidptrConstruct, Comparer> m_initializeComponent;
 		Prefab m_prefabs;
 
@@ -188,6 +189,7 @@ namespace PE
 		 \return true 	 Successfully copied/initialized
 		 \return false 	 Failed to copy/initialize
 		*************************************************************************************/
+		bool InitializeED(const EntityID& r_id, void* p_data);
 		bool InitializeRigidBody(const EntityID& r_id, void* p_data);
 		bool InitializeCollider(const EntityID& r_id, void* p_data);
 		bool InitializeTransform(const EntityID& r_id, void* p_data);
@@ -195,6 +197,9 @@ namespace PE
 		bool InitializeRenderer(const EntityID& r_id, void* p_data);
 		bool InitializeScriptComponent(const EntityID& r_id, void* p_data);
 		bool InitializeCamera(const EntityID& r_id, void* p_data);
+		bool InitializeGUI(const EntityID& r_id, void* p_data);
+		bool InitializeGUIRenderer(const EntityID& r_id, void* p_data);
+		bool InitializeAnimationComponent(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap

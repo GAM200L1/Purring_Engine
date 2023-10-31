@@ -30,6 +30,7 @@
 #include "Events/MouseEvent.h"
 namespace PE 
 {
+
     class InputSystem : public System
     {
         // ----- Constructors ----- // 
@@ -106,9 +107,18 @@ namespace PE
          \param [In] float buffer time
         *************************************************************************************/
         void SetHoldBufferTime(float s);
-
+        /*!***********************************************************************************
+         \brief Check if a Certain Key was Triggerd
+         \param [In] int keycode to check
+        *************************************************************************************/
         bool static IsKeyTriggered(int keycode);
+        /*!***********************************************************************************
+         \brief Check if a Certain Key was Held
+         \param [In] int keycode to check
+        *************************************************************************************/
         bool static IsKeyHeld(int keycode);
+        void static ConvertGLFWToTransform(GLFWwindow* window, double* x, double* y);
+
 
         // ----- Private Variables ----- // 
     private:

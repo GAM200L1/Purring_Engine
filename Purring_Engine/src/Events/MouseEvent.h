@@ -82,6 +82,7 @@ namespace PE
 
 		int button = -1; //lmb 1, mmb 2, rmb 3
 		float repeat = 0;
+		int x = -1, y = -1;
 	};
 
 	class MouseButtonHoldEvent : public Event<MouseEvents>
@@ -110,6 +111,7 @@ namespace PE
 		}
 
 		int button = -1; //lmb 1, mmb 2, rmb 3
+		int x = -1, y = -1;
 		float repeat = 0;
 	};
 
@@ -131,11 +133,12 @@ namespace PE
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "Button Released: " << button;
+			ss << "Button: " << button << " Released: "  << "At(" << x << ", "<< y << ")";
 			return ss.str();
 		}
 
 		int button = -1; //lmb 1, mmb 2, rmb 3
+		int x = -1, y = -1;
 	};
 
 	class MouseScrolledEvent : public Event<MouseEvents>
