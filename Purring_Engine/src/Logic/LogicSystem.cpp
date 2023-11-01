@@ -79,6 +79,9 @@ void PE::LogicSystem::DeleteScriptData(EntityID id)
 {
 	for (auto& [key, val] : m_scriptContainer)
 	{
+		if (Editor::GetInstance().IsRunTime())
+		m_scriptContainer.find(key)->second->Destroy(id);
+
 		val->OnDetach(id);
 	}
 

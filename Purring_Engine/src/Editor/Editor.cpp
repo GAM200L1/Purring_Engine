@@ -152,7 +152,7 @@ namespace PE {
 		//delete all objects
 		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUICameraId())
+			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
 			{
 				LogicSystem::DeleteScriptData(n);
 				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
@@ -1836,9 +1836,9 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										int id = static_cast<int> (it->second.entityToFollow);
-										ImGui::Text("Player ID: "); ImGui::SameLine(); ImGui::InputInt("##idf", &id);
-										it->second.entityToFollow = id;
+										int id = static_cast<int> (it->second.FollowingObject);
+										ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::InputInt("##idf", &id);
+										it->second.FollowingObject = id;
 									}
 								}
 							}

@@ -5,6 +5,7 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+# define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE
 {
@@ -14,26 +15,32 @@ namespace PE
 
 	void FollowScript::Update(EntityID id, float deltaTime)
 	{
-		LookAt(id);
+		vec2 NewPosition = EntityManager::GetInstance().Get<Transform>(id).position;
 
-		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].entityToFollow);
+		if (!(NewPosition.x == m_ScriptData[id].CurrentPosition.x && NewPosition.y == m_ScriptData[id].CurrentPosition.y)) 
+		{
+			vec2 directionalvector = NewPosition - m_ScriptData[id].CurrentPosition;
+			float newRotation = atan2(directionalvector.y, directionalvector.x);
+			m_ScriptData[id].NextPosition = NewPosition + vec2(m_ScriptData[id].Distance * cosf(newRotation - M_PI), m_ScriptData[id].Distance * sinf(newRotation - M_PI));
 
-		vec2 Direction = vec2(targetObject.position.x - currentObject.position.x, targetObject.position.y - currentObject.position.y);
+			EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).position = m_ScriptData[id].NextPosition;
 
-		vec2 normalizedDirection = Direction.GetNormalized();
+			float rotationOffset = newRotation - m_ScriptData[id].Rotation;
 
+			if (rotationOffset != 0)
+				EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
 
-		//translate to player but this is not what we want
-		if(currentObject.position.x != targetObject.position.x && currentObject.position.y != targetObject.position.y)
-			currentObject.position += normalizedDirection* m_ScriptData[id].speed * deltaTime;
+			EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
 
-		//we want it to keep a certain distance behind the player as the player move.
-		//should keep track of player's position in nodes, each node will be each following player
+			m_ScriptData[id].Rotation = newRotation;
+			m_ScriptData[id].CurrentPosition = EntityManager::GetInstance().Get<Transform>(id).position;
+		}
+
 	}
 
 	void FollowScript::Destroy(EntityID)
 	{
+
 	}
 
 	void FollowScript::OnAttach(EntityID id)
@@ -56,12 +63,7 @@ namespace PE
 
 	void FollowScript::LookAt(EntityID id)
 	{
-		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].entityToFollow);
-		float dx = targetObject.position.x - currentObject.position.x;
-		float dy = targetObject.position.y - currentObject.position.y;
-		float rotation = atan2(dy, dx);
-		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation = rotation;
+
 	}
 
 }
