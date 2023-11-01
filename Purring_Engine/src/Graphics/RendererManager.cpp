@@ -59,14 +59,11 @@ namespace PE
                 throw;
             }
 
+            // Enable debug output
             glEnable(GL_DEBUG_OUTPUT);
             glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-            glDebugMessageCallback(OpenglDebugOutput, nullptr);
+            glDebugMessageCallback(glDebugOutput, nullptr);
             glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
-
-            int width, height;
-            glfwGetWindowSize(p_glfwWindow, &width, &height);
-            m_imguiFrameBuffer.CreateFrameBuffer(width, height);
 
             Editor::GetInstance().Init(p_window);
         }
@@ -982,9 +979,6 @@ namespace PE
         }
 
 
-        /*!***********************************************************************************
-         \brief Prints error messages from OpenGL.
-        *************************************************************************************/
         void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
             GLenum severity, GLsizei length, const char* message, const void* userParam)
         {
