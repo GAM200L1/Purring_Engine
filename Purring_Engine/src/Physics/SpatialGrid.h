@@ -15,19 +15,23 @@
 *************************************************************************************/
 #pragma once
 
-#include "Math/MathCustom.h"
+#include "ECS/Entity.h"
 #include "Colliders.h"
 
 namespace PE
 {
 	using GridID = vec2;
+	
 	struct Cell
 	{
-		AABBCollider bounds;
+		vec2 center;
+		vec2 bounds; // min max
+		float halfWidth;
+
 		void Add(std::unique_ptr<RigidBody> p_body);
 		void Remove(std::unique_ptr<RigidBody> p_body);
 
-		std::vector<std::unique_ptr<Collider>> collidersInCell;
+		std::vector<EntityID> entitiesInCell;
 	};
 
 	class Grid
@@ -35,7 +39,10 @@ namespace PE
 		Grid(float GridWidth, float GridHeight);
 		~Grid();
 		
-		void UpdateCells();
+		void CreateGrid();
+		void UpdateGrid();
+
+		void Clear();
 
 		inline Cell GetCell(float posX, float posY);
 		inline GridID GetIndex(float posX, float posY);

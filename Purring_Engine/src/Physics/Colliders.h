@@ -16,17 +16,17 @@
 *************************************************************************************/
 #pragma once
 
-#include "Math/MathCustom.h"
-#include "Math/Transform.h"
-#include "RigidBody.h"
-#include "SpatialGrid.h"
-#include "Data/json.hpp"
 #include <variant>
 #include <set>
+#include "Math/MathCustom.h"
+#include "Math/Transform.h"
+#include "ECS/Components.h"
+#include "RigidBody.h"
+#include "Data/json.hpp"
 
 namespace PE
 {
-	
+	using GridID = vec2;
 	// ----- AABB Collider ----- //
 	
 	//! Struct containing AABBCollider parameters
@@ -171,7 +171,7 @@ namespace PE
 		std::variant<AABBCollider, CircleCollider> colliderVariant; // contains the different types of colliders
 		std::set<size_t> objectsCollided; // contains the IDs of the entities that each collider has collided with
 		bool isTrigger{ false }; // determines whether the collider will need to resolve its collision
-		std::vector<vec2 GridID> gridIDs;
+		std::vector<GridID> gridIDs;
 
 		// ----- Public Methods ----- //
 		public:

@@ -2059,9 +2059,6 @@ namespace PE {
 						draggedItemIndex = -1;
 					}
 				}
-			}
-			else
-			{
 				m_entityToModify = -1;
 			}
 
