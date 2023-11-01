@@ -65,6 +65,12 @@ namespace PE
             glDebugMessageCallback(glDebugOutput, nullptr);
             glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
+
+            // Enable alpha blending
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
             Editor::GetInstance().Init(p_window);
         }
         
@@ -200,8 +206,6 @@ namespace PE
             }
 
             Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
-            // Disable alpha blending
-            glDisable(GL_BLEND);
 
             // Poll for and process events
             glfwPollEvents(); // should be called before glfwSwapbuffers
