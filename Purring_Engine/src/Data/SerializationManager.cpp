@@ -84,10 +84,10 @@ std::string SerializationManager::OpenFileExplorerRequestPath()
     {
         std::wstring wfp = ofn.lpstrFile;
         // check for extention
-        for (size_t i{ wfp.length() - 6 }, j{}; i < wfp.length(); ++i, ++j)
+        for (size_t i{ wfp.length() - 5 }, j{}; i < wfp.length(); ++i, ++j)
         {
             // add the extention if not match
-            if (wfp[i] != wjsonExt[i])
+            if (wfp[i] != wjsonExt[j])
             {
                 wfp.append(wjsonExt);
                 break;
