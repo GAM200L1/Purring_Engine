@@ -2226,6 +2226,22 @@ namespace PE {
 						{
 							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 							// This will save all entities to a file
+							for (const auto& id : SceneView<EntityDescriptor>())
+							{
+								EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+								for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+								{
+									if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+									{
+										desc.sceneID = i;
+										continue;
+									}
+								}
+								if (desc.parent)
+								{
+									EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace_back(id);
+								}
+							}
 							serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/Saved_All_Entities.json");
 							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 						}

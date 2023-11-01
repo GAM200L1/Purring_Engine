@@ -186,15 +186,15 @@ void SerializationManager::SerializeComponent(int entityId, const std::string& j
     PE::EntityManager& entityManager = PE::EntityManager::GetInstance();
     if (entityManager.Has(static_cast<EntityID>(entityId), entityManager.GetComponentID<ComponentType>()))
     {
-        ComponentType* component = static_cast<ComponentType*>(
+       /* ComponentType* component = static_cast<ComponentType*>(
             entityManager.GetComponentPoolPointer(entityManager.GetComponentID<ComponentType>())->Get(static_cast<EntityID>(entityId))
-            );
+            );*/
+        ComponentType& component = entityManager.Get<ComponentType>(entityId);
 
-        if (component != nullptr)
-        {
-            nlohmann::json jComponent = component->ToJson();
+
+            nlohmann::json jComponent = component.ToJson();
             json["Entity"]["components"][jsonKey] = jComponent;
-        }
+        
     }
 }
 
