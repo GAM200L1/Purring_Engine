@@ -79,5 +79,4 @@ namespace PE {
 		// Destructor 
 		~ScriptComponent(){}
 	};
-
 }

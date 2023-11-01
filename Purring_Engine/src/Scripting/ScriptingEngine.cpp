@@ -109,6 +109,8 @@ namespace PE
         ScriptClass EntityClass;
 
         std::unordered_map<std::string, Ref<ScriptClass>> EntityClasses;
+        std::unordered_map<std::string, MonoObject*> MonoObjectMap;
+
     };
 
     static ScriptEngineData* s_Data = nullptr;
@@ -284,14 +286,6 @@ namespace PE
         return mono_runtime_invoke(method, instance, params, nullptr);
     }
 
-    //ScriptInstance::ScriptClass(Ref<ScriptClass> scriptClass)
-    //    : m_ScriptClass(scriptClass)
-    //{
-    //    m_Instance = scriptClass->Instantiate();
-    //    m_OnCreateMethod = scriptClass->GetMethod("OnCreate", 0);
-    //    m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
-    //}
-
     ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass)
         : m_ScriptClass(scriptClass)
     {
@@ -311,5 +305,61 @@ namespace PE
         m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
     }
 
+    std::string CreateCompositeKey(const std::string& objectID, const std::string& key)
+    {
+        return objectID + "_" + key;
+    }
 
+    MonoClass* ScriptEngine::GetMonoClassByKey(const std::string& key)
+    {
+        auto it = s_Data->EntityClasses.find(key);
+        if (it != s_Data->EntityClasses.end())
+        {
+            return it->second->GetMonoClass();
+        }
+        return nullptr;
+    }
+
+    MonoObject* ScriptEngine::GetOrCreateMonoObject(const EntityID& objectID, const std::string& key)
+    {
+        std::string compositeKey = CreateCompositeKey(std::to_string(objectID), key);
+
+        // First, attempt to find the MonoObject using the compositeKey
+        auto it = s_Data->MonoObjectMap.find(compositeKey);
+        if (it != s_Data->MonoObjectMap.end())
+        {
+            // If found, return the existing MonoObject
+            return it->second;
+        }
+
+        // If not found, create a new MonoObject
+        MonoClass* monoClass = GetMonoClassByKey(key);
+        if (monoClass == nullptr)
+        {
+            // Handle error: Class not found
+            return nullptr;
+        }
+
+        MonoObject* newMonoObject = InstantiateClass(monoClass);
+
+        // Add the new MonoObject to the map and return it
+        s_Data->MonoObjectMap[compositeKey] = newMonoObject;
+
+        return newMonoObject;
+    }
+
+    MonoMethod* PE::ScriptEngine::GetMethodFromMonoObject(MonoObject* obj, const char* methodName, int paramCount)
+    {
+        if (obj == nullptr) {
+            return nullptr;
+        }
+
+        // Get the MonoClass from the MonoObject
+        MonoClass* klass = mono_object_get_class(obj);
+
+        // Search for the method
+        MonoMethod* method = mono_class_get_method_from_name(klass, methodName, paramCount);
+
+        return method;
+    }
 }

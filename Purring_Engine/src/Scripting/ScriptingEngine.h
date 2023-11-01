@@ -4,6 +4,8 @@
 #include <memory>
 #include "Scripting/Base.h"
 #include <map>
+#include "Singleton.h"
+#include "CSharpScriptComponent.h"
 
 extern "C"
 {
@@ -25,6 +27,9 @@ namespace PE
 		MonoObject* Instantiate();
 		MonoMethod* GetMethod(const std::string& name, int parameterCount);
 		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params = nullptr);
+
+		MonoClass* GetMonoClass() const { return m_MonoClass; }
+
 	private:
 		std::string m_ClassNamespace;
 		std::string m_ClassName;
@@ -51,13 +56,19 @@ namespace PE
 
 	};
 
-	class ScriptEngine
+	class ScriptEngine : public Singleton<ScriptEngine>
 	{
 	public:
+		friend class Singleton<ScriptEngine>;
+
 		static void Init();
 		static void Shutdown();
 
 		static void LoadAssembly(const std::filesystem::path& filepath);
+
+		MonoClass* GetMonoClassByKey(const std::string& key);
+		MonoObject* GetOrCreateMonoObject(const EntityID& objectID, const std::string& key);
+		static MonoMethod* GetMethodFromMonoObject(MonoObject* obj, const char* methodName, int paramCount);
 
 		static std::unordered_map<std::string, Ref<ScriptClass>> GetEntityClasses();
 

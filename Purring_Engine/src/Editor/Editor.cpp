@@ -36,6 +36,9 @@
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
 #include "Scripting/ScriptingEngine.h"
+#include "Scripting/CSharpScriptComponent.h"
+#include "Scripting/CSharpLogicSystem.h"
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
@@ -1485,28 +1488,7 @@ namespace PE {
 
 
 						// -------------------- C++ SCRIPT COMPONENT ---------------------- //
-						// +---------------------- Editor -----------------------+
-						// |                                                     |
-						// |  +------------------- Component Panel --------------+ |
-						// |  |                                                  | |
-						// |  | [x] TransformComponent                           | |
-						// |  | [x] PhysicsComponent                             | |
-						// |  | [x] RenderComponent                              | |
-						// |  |                                                  | |
-						// |  | [>] ScriptComponent [Reset Button] ------------+ | |
-						// |  |                                                 || | |
-						// |  | Scripts: [Dropdown:Select Script] --------------||-+ |
-						// |  | [Button:Add Script] ---------------------------||   |
-						// |  |                                                 ||   |
-						// |  |    +------- Script List --------+               ||   |
-						// |  |    | [Selectable:script1]      |               ||   |
-						// |  |    | [Selectable:script2]      |               ||   |
-						// |  |    | ...                       |               ||   |
-						// |  |    +---------------------------+               |+---+
-						// |  |                                                 | |
-						// |  +-------------------------------------------------+ |
-						// |                                                       |
-						// +-------------------------------------------------------+
+
 
 						// This checks if the current component type (name) is the same as the ID of the ScriptComponent - Hans
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
@@ -1514,7 +1496,7 @@ namespace PE {
 							hasScripts = true;
 
 							// This creates a Collapsible header Titled: ScriptComponent - Hans
-							if (ImGui::CollapsingHeader("ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("C++ ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								// Aligns an "o" button next to the header for an additional option to "reset" variables to default settings (Hans requested but yet to implement logic) - Hans
 								ImGui::SameLine();
@@ -1617,27 +1599,70 @@ namespace PE {
 
 						// -------------------- C# SCRIPT COMPONENT ---------------------- //
 
-						//// UI code for C# dropdown
-						//if (ImGui::BeginCombo("C# Scripts", currentCSharpScript.c_str()))
-						//{
-						//	for (auto& [name, scriptClass] : entityClasses)
-						//	{
-						//		bool isSelected = (currentCSharpScript == name);
-						//		if (ImGui::Selectable(name.c_str(), isSelected))
-						//		{
-						//			currentCSharpScript = name;
-						//			// Do something like attaching the script to the entity
-						//		}
 
-						//		if (isSelected)
-						//		{
-						//			ImGui::SetItemDefaultFocus();
-						//		}
-						//	}
-						//	ImGui::EndCombo();
-						//}
-						
+						if (name == EntityManager::GetInstance().GetComponentID<CSharpScriptComponent>())
+						{
+							hasScripts = true;
+
+							// Similar logic as in C++ ScriptComponent
+							if (ImGui::CollapsingHeader("C# ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								// Aligns an "o" button next to the header for an additional option to "reset" variables to default settings (Hans requested but yet to implement logic) - Hans
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+
+								// Popup menu for reset option (logic not yet implemented) - Hans
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								// Button to open the above popup - Hans
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+
+								// This adds some vertical spacing - Hans
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+								// -------------------- Issue ----------------------------
+								std::vector<const char*> cSharpKey;
+
+								// Iterate through all available C# scripts
+								for (auto& entry : ScriptEngine::GetEntityClasses())
+								{
+									cSharpKey.push_back(entry.first.c_str());
+								}
+								static int scriptindex2{};
+
+								// Dropdown box for selecting a C# script to add
+								ImGui::SetNextItemWidth(200.0f);
+								if (!cSharpKey.empty())
+								{
+									ImGui::Text("C# Scripts: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									if (ImGui::Combo("##C# Scripts", &scriptindex2, cSharpKey.data(), static_cast<int>(cSharpKey.size()))) {}
+								}
+
+								// Button to add the selected C# script to the entity
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
+								if (ImGui::Button("Add C# Script"))
+								{
+									std::cout << "HIIIIIIIIIII";
+									//EntityManager::GetInstance().Get<CSharpScriptComponent>(entityID).addCSharpScript(cSharpKey[scriptindex2]);
+									// You can call the C# script's OnAttach equivalent method here.
+								}
+								ImGui::PopStyleColor(1);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								// Additional UI and logic, similar to C++ ScriptComponent, but adapted for C#
+							}
+						}
+
 						// -------------------- GUI ---------------------- //
+
 
 						if (name == EntityManager::GetInstance().GetComponentID<GUI>())
 						{
@@ -1876,7 +1901,7 @@ namespace PE {
 					ImGui::Separator();
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 
-					// -------------------- Add Components Feature in Component Window ---------------------- //
+					// -------------------- + Add Components Feature in Component Window ---------------------- //
 
 					// Set the cursor position to the center of the window
 					//the closest i can get to setting center the button x(
@@ -1921,10 +1946,10 @@ namespace PE {
 						}
 						if (ImGui::Selectable("+ C#  Script Component "))
 						{
-							//if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
-							//	EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
-							//else
-							//	AddErrorLog("ALREADY HAS A C++ SCRIPTCOMPONENT");
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<CSharpScriptComponent>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<CSharpScriptComponent>() });
+							else
+								AddErrorLog("ALREADY HAS A C# SCRIPTCOMPONENT");
 						}
 						if (ImGui::Selectable("+ C++ Script Component "))
 						{
