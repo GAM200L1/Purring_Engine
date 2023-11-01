@@ -23,11 +23,13 @@
 
 extern Logger engine_logger;
 
+#define LONGER
+
 namespace PE
 {
     namespace Graphics
     {
-        bool FrameBuffer::CreateFrameBuffer(int const bufferWidth, int const bufferHeight)
+        bool FrameBuffer::CreateFrameBuffer(int const bufferWidth, int const bufferHeight, ColorAttachmentType const type)
         {
             // Create a frame buffer
             glGenFramebuffers(1, &m_frameBufferObjectIndex);
@@ -41,15 +43,20 @@ namespace PE
             //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
 
+#ifdef LONGER
             glGenTextures(1, &m_textureIndex);
             glBindTexture(GL_TEXTURE_2D, m_textureIndex);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufferWidth, bufferHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufferWidth, bufferHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, GetTextureInternalFormat(m_textureType), bufferWidth, bufferHeight, 0, GetTextureFormat(m_textureType), GetTextureDataType(m_textureType), NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
-            
+#else
+             m_textureType = type;
+             AdjustColorAttachment(bufferWidth, bufferHeight, m_textureType);
+#endif
 
-            unsigned int attachments[1] = { GL_COLOR_ATTACHMENT0 };
+            GLenum const attachments[1] = { GL_COLOR_ATTACHMENT0 };
             glDrawBuffers(1, attachments);
 
             m_bufferWidth = bufferWidth, m_bufferHeight = bufferHeight;
@@ -97,6 +104,48 @@ namespace PE
         }
 
 
+        void FrameBuffer::AdjustColorAttachment(int const bufferWidth, int const bufferHeight,
+            ColorAttachmentType const type)
+        {
+
+#if 0
+            glBindTexture(GL_TEXTURE_2D, m_textureIndex);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
+#else
+            glBindTexture(GL_TEXTURE_2D, m_textureIndex);
+            //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, newWidth, newHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, GetTextureInternalFormat(m_textureType), bufferWidth, bufferHeight, 0, GetTextureFormat(m_textureType), GetTextureDataType(m_textureType), NULL);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
+
+            //// Get the texture details
+            //GLint internalFormat{ GetTextureInternalFormat(type) };
+            //GLenum format{ GetTextureFormat(type) };
+            //GLenum dataType{ GetTextureDataType(type) };
+            //GLenum colorAttachment{ GL_COLOR_ATTACHMENT0 };
+
+            //// Set the values
+            //glBindTexture(GL_TEXTURE_2D, m_textureIndex);
+            //glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, bufferWidth, bufferHeight, 0, format, dataType, NULL);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            ////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            ////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            ////glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            //glFramebufferTexture2D(GL_FRAMEBUFFER, colorAttachment, GL_TEXTURE_2D, m_textureIndex, 0);
+#endif
+            //unsigned int bufs[1]{ GL_COLOR_ATTACHMENT0 };
+            //glDrawBuffers(1, bufs);
+        }
+
+
         void FrameBuffer::Bind() const
         {
             glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
@@ -117,7 +166,6 @@ namespace PE
 
         void FrameBuffer::Resize(int const newWidth, int const newHeight)
         {
-            std::cout << "Run!\n";
             // Resize texture to render to
             //glBindTexture(GL_TEXTURE_2D, m_textureIndex);
             //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newWidth, newHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
@@ -125,20 +173,26 @@ namespace PE
             //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             //glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
 
+#ifdef LONGER
             glBindTexture(GL_TEXTURE_2D, m_textureIndex);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, newWidth, newHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            //glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, newWidth, newHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, GetTextureInternalFormat(m_textureType), newWidth, newHeight, 0, GetTextureFormat(m_textureType), GetTextureDataType(m_textureType), NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
-
-
+#else
+            // Resize the texture to be of the same width and height as that passed in
+            AdjustColorAttachment(newWidth, newHeight, m_textureType);
+#endif
             m_bufferWidth = newWidth, m_bufferHeight = newHeight;
 
-            unsigned int attachments[1] = { GL_COLOR_ATTACHMENT0 };
+            GLenum const attachments[1] = { GL_COLOR_ATTACHMENT0 };
             glDrawBuffers(1, attachments);
+            
+            
         }
 
         
@@ -249,7 +303,7 @@ namespace PE
         {
             //float colorArray[4]{r, g, b, a};
             //glClearTexImage(m_colorTextureId, 0, GL_RGBA, GL_UNSIGNED_BYTE, reinterpret_cast<void*>(colorArray));
-            glDrawBuffer(GL_COLOR_ATTACHMENT0);
+            //glDrawBuffer(GL_COLOR_ATTACHMENT0);
             glClearColor(r, g, b, a);
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -276,6 +330,33 @@ namespace PE
             glDeleteTextures(1, &m_textureIndex);
             //glDeleteTextures(1, &m_entityTextureId);
             glDeleteFramebuffers(1, &m_frameBufferObjectIndex);
+        }
+
+
+        GLint FrameBuffer::GetTextureInternalFormat(ColorAttachmentType const type)
+        {
+            switch (type) {
+            case ColorAttachmentType::RGBA_COLOR: return GL_RGBA;
+            case ColorAttachmentType::RED_INTEGER: default: return GL_R32I;
+            }
+        }
+
+
+        GLenum FrameBuffer::GetTextureFormat(ColorAttachmentType const type)
+        {
+            switch (type) {
+            case ColorAttachmentType::RGBA_COLOR: return GL_RGBA;
+            case ColorAttachmentType::RED_INTEGER: default: return GL_RED_INTEGER;
+            }
+        }
+
+
+        GLenum FrameBuffer::GetTextureDataType(ColorAttachmentType const type)
+        {
+            switch (type) {
+            case ColorAttachmentType::RGBA_COLOR: return GL_UNSIGNED_BYTE;
+            case ColorAttachmentType::RED_INTEGER: default: return GL_INT;
+            }
         }
     } // End of Graphics namespace
 } // End of PE namespace

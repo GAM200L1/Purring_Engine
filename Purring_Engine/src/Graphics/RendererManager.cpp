@@ -141,16 +141,20 @@ namespace PE
                 windowWidth = static_cast<float>(width);
                 windowHeight = static_cast<float>(height);
             }
+
             if (renderInEditor)
             {
                 // Bind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Bind();
                 m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f, 0);
             }
+            else 
+            {
+                // Set background color of the window
+                glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
+                glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+            }
 
-            // Set background color of the window
-            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
-            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             
 
             // If the window size has changed
