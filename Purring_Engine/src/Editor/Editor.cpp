@@ -62,7 +62,7 @@ namespace PE {
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 		m_renderDebug = true; // whether to render debug lines
-		m_currentStyle = GuiStyle::DARK;
+		m_currentStyle = GuiStyle::BLUE;
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 		//for the object list
@@ -2393,6 +2393,32 @@ namespace PE {
 				);
 				m_mouseInScene = ImGui::IsWindowHovered();
 			}
+			static ImVec2 clickedPosition;
+			static ImVec2 currentPosition;
+			static vec2 startPosition;
+			if(ImGui::IsMouseClicked(0))
+			{
+				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
+				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+				if(m_currentSelectedObject >= 0)
+				startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
+				std::cout << "clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y << std::endl;
+			}
+			if (ImGui::IsMouseDown(0))
+			{
+				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
+				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+				ImVec2 offset;
+				offset.x = currentPosition.x - clickedPosition.x;
+				offset.y = currentPosition.y - clickedPosition.y;
+				float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
+
+				if (m_currentSelectedObject >= 0)
+				EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + (offset.x * magnification), startPosition.y + (offset.y * magnification));
+
+			}
+
+
 			ImGui::EndChild();
 
 			//end the window
