@@ -590,7 +590,7 @@ namespace PE
 
 	struct EntityDescriptor
 	{
-		std::string name;
+		std::string name{"GameObject"};
 		std::optional<EntityID> parent;
 		std::set<EntityID> children;
 

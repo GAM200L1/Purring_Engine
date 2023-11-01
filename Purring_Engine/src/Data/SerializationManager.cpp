@@ -173,9 +173,20 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); 
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
 
-
     return j; 
 }
+
+nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
+{
+    PE::EntityDescriptor tmp;
+    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+    nlohmann::json ret = SerializeEntity(entityId);
+    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+    return ret;
+}
+
+
+
 
 size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
 {

@@ -92,6 +92,11 @@ public:
     nlohmann::json SerializeEntity(int entityId);
 
     /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object as a prefab
+    *************************************************************************************/
+    nlohmann::json SerializeEntityPrefab(int entityId);
+
+    /*!***********************************************************************************
      \brief Deserialize a JSON object to create an entity, returning its ID.
     *************************************************************************************/
     size_t DeserializeEntity(const nlohmann::json& r_j);

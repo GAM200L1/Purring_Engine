@@ -474,7 +474,7 @@ namespace PE {
 					if (ImGui::IsItemClicked(1))
 					{
 						//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-						if (m_currentSelectedObject < 0)
+						if (hoveredObject)
 							m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 						ImGui::OpenPopup("popup");
 					}
@@ -506,7 +506,7 @@ namespace PE {
 							if (ImGui::IsItemClicked(1))
 							{
 								//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-								if (m_currentSelectedObject < 0)
+								if (hoveredObject)
 									m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 								ImGui::OpenPopup("popup");
 							}
@@ -571,6 +571,19 @@ namespace PE {
 }
 			if (ImGui::BeginPopup("popup"))
 			{
+				if (ImGui::Selectable("Save As Prefab"))
+				{
+					auto save = serializationManager.SerializeEntityPrefab(static_cast<int>(m_currentSelectedObject));
+					std::string filepath = "../Assets/Prefabs/";
+					filepath += EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).name; // can change to request name or smth
+					filepath += "_Prefab.json";
+					std::ofstream outFile(filepath);
+					if (outFile)
+					{
+						outFile << save.dump(4);
+						outFile.close();
+					}
+				}
 				if (ImGui::Selectable("Delete Object"))
 				{
 						AddInfoLog("Object Deleted");
@@ -866,18 +879,18 @@ namespace PE {
 			if (ImGui::Button("Draw 2500 objects"))
 			{
 				ClearObjectList();
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
 				for (size_t i{}; i < 2500; ++i)
 				{
-					//EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[id]);
-					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-					EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+					
+					EntityID id2 = EntityFactory::GetInstance().Clone(id);
+					//EntityID id2 = EntityFactory::GetInstance().CreateEntity();
+					//EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey("cat");
 				}
 			}
 			ImGui::SameLine();
