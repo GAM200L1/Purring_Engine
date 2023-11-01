@@ -43,23 +43,40 @@ namespace PE {
 	//nevermind each script is its own component
 	//so in each script it will have to register itself as a component
 
+	// The ScriptComponent struct is used to manage multiple scripts in an entity - Hans
 	struct ScriptComponent
 	{
+		// Default constructor
 		ScriptComponent() {}
+
 		//std::vector<std::string> m_scriptKeys;
+
+		// A map to store script keys along with their state (represented by ScriptState enum) - Hans
 		std::map<std::string, ScriptState> m_scriptKeys;
+
+		// This function adds a script to the ScriptComponent by taking the name (key) of the script as an argument. - Hans
 		void addScript(std::string key)
 		{
+			// Search for the script key in the map - Hans
 			auto itr = m_scriptKeys.find(key);
+
+			// If the key is not already in the map, add it with an initial state of ScriptState::INIT - Hans
 			if (itr == m_scriptKeys.end())
 				m_scriptKeys[key] = ScriptState::INIT;
 		}
+
+		// This function removes a script from the ScriptComponent by taking the name (key) of the script as an argument - Hans
 		void removeScript(std::string key)
 		{
+			// Search for the script key in the map - Hans
 			auto itr = m_scriptKeys.find(key);
+
+			// If the key is found, erase it from the map - Hans
 			if(itr != m_scriptKeys.end())
 			m_scriptKeys.erase(itr);
 		}
+
+		// Destructor 
 		~ScriptComponent(){}
 	};
 

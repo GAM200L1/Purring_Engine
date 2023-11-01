@@ -1483,7 +1483,7 @@ namespace PE {
 						}
 
 
-						// ---------- SCRIPT COMPONENT ---------- //
+						// ---------- C++ SCRIPT COMPONENT ---------- //
 
 						// This checks if the current component type (name) is the same as the ID of the ScriptComponent - Hans
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
