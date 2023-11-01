@@ -27,6 +27,7 @@
 #include "Singleton.h"
 
 #include "Graphics/GLHeaders.h"
+#include "Graphics/FrameBuffer.h"
 
 #include "ECS//EntityFactory.h"
 #include "ECS/Entity.h"
@@ -66,9 +67,9 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Render all imgui windows
 
-		 \param[in] GLuint 	the id of the texture to be drawn on the scene view
+		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
 		*************************************************************************************/
-		void Render(GLuint texture_id);
+		void Render(Graphics::FrameBuffer& r_framebuffer);
 
 		// ----- Public Getters ----- // 
 	public:
@@ -143,6 +144,12 @@ namespace PE {
 		// -----Event Callbacks ----- // 
 	public:
 		/*!***********************************************************************************
+		\brief Callback function mouse events.
+		\param[in]  r_event Details about the mouse event called.
+		*************************************************************************************/
+		void OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event);
+
+		/*!***********************************************************************************
 		 \brief the callback function for an onkeyevent
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
@@ -200,9 +207,10 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief render the sceneview window
 
-		 \param[in] bool* reference to the boolean that sets the window active
+		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
+		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowSceneView(GLuint texture_id, bool* active);
+		void ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* active);
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/

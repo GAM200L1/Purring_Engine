@@ -65,6 +65,7 @@ namespace PE {
 		m_currentStyle = GuiStyle::BLUE;
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
+		ADD_ALL_MOUSE_EVENT_LISTENER(Editor::OnMouseEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedObject = 1;
@@ -214,7 +215,7 @@ namespace PE {
 
 	}
 
-	void Editor::Render(GLuint texture_id)
+	void Editor::Render(Graphics::FrameBuffer& r_frameBuffer)
 	{
 		//hide the entire editor
 			//imgui start frame
@@ -238,7 +239,7 @@ namespace PE {
 			if (m_showConsole) ShowConsoleWindow(&m_showConsole);
 
 			//draw scene view
-			if (m_showSceneView) ShowSceneView(texture_id, &m_showSceneView);
+			if (m_showSceneView) ShowSceneView(r_frameBuffer, &m_showSceneView);
 
 			//draw the stuff for ellie to test
 			if (m_showTestWindows) ShowDemoWindow(&m_showTestWindows);
@@ -2362,7 +2363,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowSceneView(GLuint texture_id, bool* active)
+	void Editor::ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* active)
 	{
 		if (IsEditorActive()) {
 			ImGui::Begin("sceneview", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
@@ -2390,14 +2391,17 @@ namespace PE {
 				m_isRunTime = false;
 			}
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
-				//the graphics rendered onto an image on the imgui window
-				ImGui::Image(
-					reinterpret_cast<void*>(
-						static_cast<intptr_t>(texture_id)),
-					ImVec2(m_renderWindowWidth, m_renderWindowHeight),
-					ImVec2(0, 1),
-					ImVec2(1, 0)
-				);
+				if (r_frameBuffer.GetTextureId())
+				{
+					//the graphics rendered onto an image on the imgui window
+					ImGui::Image(
+						reinterpret_cast<void*>(
+							static_cast<intptr_t>(r_frameBuffer.GetTextureId())),
+						ImVec2(m_renderWindowWidth, m_renderWindowHeight),
+						ImVec2(0, 1),
+						ImVec2(1, 0)
+					);
+				}
 				m_mouseInScene = ImGui::IsWindowHovered();
 			}
 			static ImVec2 clickedPosition;
@@ -2409,7 +2413,8 @@ namespace PE {
 				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
 				if(m_currentSelectedObject >= 0)
 				startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
-				std::cout << "clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y << std::endl;
+				std::cout << "clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y 
+						<< ", attempt to retrieve Entity ID: " << r_frameBuffer.ReadEntityId(clickedPosition.x, clickedPosition.y) << "\n";
 			}
 			if (ImGui::IsMouseDown(0))
 			{
@@ -2482,49 +2487,6 @@ namespace PE {
 	void Editor::ClearConsole()
 	{
 		m_consoleOutput.clear();
-	}
-
-	void Editor::OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_event)
-	{
-		PE::KeyTriggeredEvent KTE;
-
-		//dynamic cast
-		if (r_event.GetType() == PE::KeyEvents::KeyTriggered)
-		{
-			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
-		}
-
-		if (KTE.keycode == GLFW_KEY_F1)
-			m_showConsole = !m_showConsole;
-
-		if (KTE.keycode == GLFW_KEY_F2)
-			m_showObjectList = !m_showObjectList;
-
-		if (KTE.keycode == GLFW_KEY_F3)
-			m_showLogs = !m_showLogs;
-
-		if (KTE.keycode == GLFW_KEY_F4)
-			m_showSceneView = !m_showSceneView;
-
-		if (KTE.keycode == GLFW_KEY_F7)
-			m_showComponentWindow = !m_showComponentWindow;
-
-		if (KTE.keycode == GLFW_KEY_F6)
-			m_showPerformanceWindow = !m_showPerformanceWindow;
-
-		if (KTE.keycode == GLFW_KEY_ESCAPE)
-		{
-			m_showEditor = true;
-			
-			if (m_showEditor)
-				m_isRunTime = false;
-		}
-
-		if (KTE.keycode == GLFW_KEY_F5)
-			m_showResourceWindow = !m_showResourceWindow;
-
-		if (KTE.keycode == GLFW_KEY_F10)
-			ToggleDebugRender();
 	}
 
 	void Editor::HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths)

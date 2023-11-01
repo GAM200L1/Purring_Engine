@@ -141,9 +141,20 @@ namespace PE
                 windowWidth = static_cast<float>(width);
                 windowHeight = static_cast<float>(height);
             }
+            if (renderInEditor)
+            {
+                // Bind the RBO for rendering to the ImGui window
+                m_imguiFrameBuffer.Bind();
+                m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f, 0);
+            }
+
+            // Set background color of the window
+            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
+            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+            
 
             // If the window size has changed
-            if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight) 
+            if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight)
             {
                 m_cachedWindowWidth = windowWidth, m_cachedWindowHeight = windowHeight;
 
@@ -156,24 +167,6 @@ namespace PE
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
                 r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
-            } 
-
-            // Set background color of the window
-            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
-            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
-
-            // Enable alpha blending
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            
-            if(renderInEditor)
-            {
-                // Bind the RBO for rendering to the ImGui window
-                m_imguiFrameBuffer.Bind();
-
-                // Set the background color of the ImGui window
-                glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
-                glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera
@@ -195,8 +188,8 @@ namespace PE
             // text object 1
             //m_font.RenderText("Button 1", {-180.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
 
-           // text object 2
-           // m_font.RenderText("Button 2", { 60.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
+            // text object 2
+            //m_font.RenderText("Button 2", { 60.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
 
 
             if (renderInEditor)
@@ -205,7 +198,7 @@ namespace PE
                 m_imguiFrameBuffer.Unbind();
             }
 
-            Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
+            Editor::GetInstance().Render(m_imguiFrameBuffer);
 
             // Poll for and process events
             glfwPollEvents(); // should be called before glfwSwapbuffers
