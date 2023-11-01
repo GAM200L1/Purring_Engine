@@ -206,7 +206,9 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
-		void SetImGUIStyle();
+		void SetImGUIStyle_Dark();
+		void SetImGUIStyle_Pink();
+		void SetImGUIStyle_Blue();
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -236,6 +238,11 @@ namespace PE {
 		*************************************************************************************/
 		void test();
 
+		void PlayAudio1();
+
+		void PlayAudio2();
+
+
 		// ----- Private Functions ----- // 
 		/*!***********************************************************************************
 		 \brief Clear all the objects on the scene
@@ -243,6 +250,16 @@ namespace PE {
 		void ClearObjectList();
 
 		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths);
+
+	private:
+		enum class GuiStyle 
+		{
+			DARK,
+			PINK,
+			BLUE
+		};
+
+		GuiStyle m_currentStyle;
 
 		// ----- Private Variables ----- // 
 	private:

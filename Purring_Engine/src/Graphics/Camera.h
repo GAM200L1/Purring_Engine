@@ -23,6 +23,8 @@
 
 
 #include "Math/Transform.h"
+#include <Data/json.hpp>
+
 
 namespace PE
 {
@@ -193,6 +195,9 @@ namespace PE
             \param[in] r_transform Reference to the camera's transform component.
             *************************************************************************************/
             void UpdateCamera(Transform const& r_transform);
+
+            nlohmann::json ToJson() const;
+            static Camera Deserialize(const nlohmann::json& j);
 
 
             // ----- Protected members ----- // 

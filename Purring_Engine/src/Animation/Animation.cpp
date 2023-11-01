@@ -90,8 +90,6 @@ namespace PE
 			{
 				AnimationComponent const& animationComponent = EntityManager::GetInstance().Get<AnimationComponent>(id);
 
-				if (animationComponent.HasAnimation())
-				{
 					// update animation and get current frame
 					p_currentFrame = UpdateAnimation(animationComponent.GetAnimationID(), deltaTime);
 
@@ -100,7 +98,6 @@ namespace PE
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(animationComponent.GetAnimationID()));
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
-				}
 			}
 		}
 	}
