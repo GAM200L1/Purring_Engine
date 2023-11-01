@@ -891,6 +891,7 @@ namespace PE {
 					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor();
 				}
 			}
 			ImGui::SameLine();

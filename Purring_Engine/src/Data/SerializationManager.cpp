@@ -290,6 +290,7 @@ bool SerializationManager::LoadRenderer(const EntityID& r_id, const nlohmann::js
 {
     PE::Graphics::Renderer ren;
     ren.SetColor(r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>());
+    std::cout << r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>() << std::endl;
     ren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>(), static_cast<void*>(&ren));
     return true;
