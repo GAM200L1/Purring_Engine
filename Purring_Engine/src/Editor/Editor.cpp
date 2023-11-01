@@ -67,7 +67,7 @@ namespace PE {
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
-		m_currentSelectedObject = 0;
+		m_currentSelectedObject = 1;
 		m_mouseInObjectWindow = false;
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
