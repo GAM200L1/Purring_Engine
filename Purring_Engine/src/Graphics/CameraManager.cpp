@@ -38,7 +38,7 @@ namespace PE
         }
 
 
-        std::optional<glm::mat4> CameraManager::GetWorldToNdcMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetWorldToNdcMatrix(bool const editorMode)
         {
             if (editorMode) 
             {
@@ -54,12 +54,12 @@ namespace PE
                     return mainCamera.value().get().GetWorldToNdcMatrix();
                 }
 
-                return std::nullopt;
+                return glm::mat4{ 0 };
             }
         }
 
 
-        std::optional<glm::mat4> CameraManager::GetViewToNdcMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetViewToNdcMatrix(bool const editorMode)
         {
             if (editorMode)
             {
@@ -75,7 +75,7 @@ namespace PE
                     return mainCamera.value().get().GetViewToNdcMatrix();
                 }
 
-                return std::nullopt;
+                return glm::mat4{ 0 };
             }
         }
 
@@ -93,7 +93,7 @@ namespace PE
         }
 
 
-        std::optional<glm::mat4> CameraManager::GetNdcToWorldMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetNdcToWorldMatrix(bool const editorMode)
         {
             if (editorMode)
             {
@@ -109,12 +109,12 @@ namespace PE
                     return mainCamera.value().get().GetNdcToWorldMatrix();
                 }
 
-                return std::nullopt;
+                return glm::mat4{ 0 };
             }
         }
 
 
-        std::optional<glm::mat4> CameraManager::GetNdcToViewMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetNdcToViewMatrix(bool const editorMode)
         {
             if (editorMode)
             {
@@ -130,12 +130,12 @@ namespace PE
                     return mainCamera.value().get().GetNdcToViewMatrix();
                 }
 
-                return std::nullopt;
+                return glm::mat4{ 0 };
             }
         }
 
 
-        std::optional<glm::mat4> CameraManager::GetViewToWorldMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetViewToWorldMatrix(bool const editorMode)
         {
             if (editorMode)
             {
@@ -151,7 +151,7 @@ namespace PE
                     return mainCamera.value().get().GetViewToWorldMatrix();
                 }
 
-                return std::nullopt;
+                return glm::mat4{ 0 };
             }
         }
 
@@ -164,63 +164,32 @@ namespace PE
                 return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
             }
 
-            bool foundCamera{ false };
-            // Check if there are any runtime cameras
-            for (const EntityID& id : SceneView<Camera>())
-            {
-                // Skip the UI camera 
-                if (id == m_uiCameraId) { continue; }
-
-                // Return the first camera
-                SetMainCamera(id);
-                foundCamera = true;
-            }
-
-            if (foundCamera)
-            {
-                return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
-            }
-
             return std::nullopt;
         }
 
 
         Camera& CameraManager::GetUiCamera()
         {
-            // Check if the main camera ID stored is valid
-            if (!EntityManager::GetInstance().Has(m_uiCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
-            {
-                CreateUiCamera();
-            }
-
             return EntityManager::GetInstance().Get<Camera>(m_uiCameraId);
-            // @TODO    what if the camera ui obj exists but the camera component has been removed 
-            //          for some reason? Delete the old obj first?
-
         }
 
 
-        void CameraManager::SetMainCamera(EntityID const cameraEntityId)            
+        bool CameraManager::SetMainCamera(EntityID const cameraEntityId)            
         {
+            // Don't set it if it's the UI camera, or if it doesn't have a camera component on it
+            if (cameraEntityId == m_uiCameraId || !EntityManager::GetInstance().Has(cameraEntityId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
+            {
+                return false;
+            }
+
             m_mainCameraId = cameraEntityId;
+            return true;
         }
 
 
-        void CameraManager::CreateUiCamera()            
+        void CameraManager::SetUiCamera(EntityID const cameraEntityId)
         {
-            // Create a UI camera
-            m_uiCameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-
-            if (Editor::GetInstance().IsEditorActive()) 
-            {
-                EntityManager::GetInstance().Get<Graphics::Camera>(m_uiCameraId).SetViewDimensions(GetEditorCamera().GetViewportWidth(), GetEditorCamera().GetViewportHeight());
-            }
-            else 
-            {
-                EntityManager::GetInstance().Get<Graphics::Camera>(m_uiCameraId).SetViewDimensions(m_windowWidth, m_windowHeight);
-            }
-            
-            // @TODO Name the gameobject or hide it in the editor
+            m_uiCameraId = cameraEntityId;
         }
 
 
@@ -230,9 +199,6 @@ namespace PE
             ADD_ALL_WINDOW_EVENT_LISTENER(CameraManager::OnWindowEvent, this)
             ADD_ALL_MOUSE_EVENT_LISTENER(CameraManager::OnMouseEvent, this)
             ADD_ALL_KEY_EVENT_LISTENER(CameraManager::OnKeyEvent, this)
-
-            // Create a UI camera
-            CreateUiCamera();
         }
 
 
@@ -247,41 +213,29 @@ namespace PE
             // Check if the main camera ID stored is valid
             bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
 
-            //Transform& playerTransform{ EntityManager::GetInstance().Get<Transform>(1) };          
-
-            unsigned i{};
-
             // Loop through all runtime cameras
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
-                // Make the first camera that exists the primary camera if a new main camera is needed
-                if (setNewMainCamera && (id != m_uiCameraId))
+                // Recompute the matrices of all the cameras
+                Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
+                Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
+
+                // If this camera has been set as the main camera in the last frame
+                // or this camera is the first valid runtime camera available 
+                if ((r_camera.GetMainCameraStatusChanged() && r_camera.GetIsMainCamera()) 
+                    || (setNewMainCamera && (id != m_uiCameraId)))
                 {
                     SetMainCamera(id);
                     setNewMainCamera = false;
-                } 
+                }
 
-                // Recompute the matrices of all the cameras
-                Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
-
-                //if (!i) {
-                //    // @TODO - Remove in the future
-                //    // For testing, the first camera will follow the player's transform
-                //    r_transform.position.x = playerTransform.position.x;
-                //    r_transform.position.y = playerTransform.position.y;
-                //    r_transform.orientation = playerTransform.orientation;
-                //}
-
-                Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
-                r_camera.UpdateCamera(r_transform);
-
-                ++i; // @TODO - Remove in the future. Used to test swapping between cameras
+                r_camera.UpdateCamera(r_transform, m_mainCameraId == id);
             }
 
-            // No runtime cameras exist so just set the id to zero
+            // No runtime cameras exist so just set the id to the default ID
             if (setNewMainCamera)
             {
-                SetMainCamera(0);
+                SetMainCamera(defaultId);
             }
         }
 
@@ -315,27 +269,6 @@ namespace PE
 
         void CameraManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
         {
-            // @TODO remove this after testing
-            // Switch the main camera on pressing the MMB
-            if (r_event.GetType() == MouseEvents::MouseButtonReleased)
-            {
-                MouseButtonReleaseEvent event = dynamic_cast<const MouseButtonReleaseEvent&>(r_event);
-
-                if (event.button == 2) 
-                {
-                    for (const EntityID& id : SceneView<Camera, Transform>())
-                    {
-                        // Swap the main cameras
-                        if ((m_mainCameraId != id) && (id != m_uiCameraId))
-                        {
-                            SetMainCamera(id);
-                            break;
-                        }
-                    }
-                }
-                
-            }
-
             // Zoom the editor camera in and out on mouse scroll
             if (Editor::GetInstance().IsMouseInScene() && r_event.GetType() == MouseEvents::MouseScrolled)
             {
