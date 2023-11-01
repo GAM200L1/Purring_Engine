@@ -893,7 +893,7 @@ namespace PE {
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor();
 				}
-			}
+			} 
 			ImGui::SameLine();
 			if (ImGui::Button("Toggle Debug Lines"))
 			{
@@ -2375,12 +2375,41 @@ namespace PE {
 			{
 				m_isRunTime = true;
 				m_showEditor = false;
+
+				engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+				// This will save all entities to a file
+				for (const auto& id : SceneView<EntityDescriptor>())
+				{
+					if (!id) // skip editor camera
+						continue;
+					EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+					for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+					{
+						if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+						{
+							desc.sceneID = i;
+							continue;
+						}
+					}
+					if (desc.parent)
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
+					}
+				}
+				serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+				engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 			}
 			ImGui::SameLine();
 			if (
 				ImGui::Button("Stop")
 				) {
 				m_isRunTime = false;
+				engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
+
+				// This will load all entities from the file
+				ClearObjectList();
+				serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
 				//the graphics rendered onto an image on the imgui window
@@ -2592,6 +2621,11 @@ namespace PE {
 			
 			if (m_showEditor)
 				m_isRunTime = false;
+
+			// This will load all entities from the file
+			ClearObjectList();
+			serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+			engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F5)
