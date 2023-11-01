@@ -67,6 +67,13 @@ public:
     std::string OpenFileExplorer();
 
     /*!***********************************************************************************
+     \brief Opens a file explorer and returns the selected file path as a string.
+            This version is used mainly to save a file with a potentially not existing
+            filename.
+    *************************************************************************************/
+    std::string OpenFileExplorerRequestPath();
+
+    /*!***********************************************************************************
      \brief Serialize all entities in the scene into a single JSON object.
     *************************************************************************************/
     nlohmann::json SerializeAllEntities();

@@ -2258,7 +2258,7 @@ namespace PE {
 									EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
 								}
 							}
-							serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/Saved_All_Entities.json");
+							serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath());
 							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 						}
 						if (ImGui::MenuItem("Load"))

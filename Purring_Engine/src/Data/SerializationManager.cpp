@@ -26,6 +26,8 @@
 #include <filesystem>
 #include "Graphics/CameraManager.h"
 
+const std::wstring wjsonExt = L".json";
+
 std::string SerializationManager::OpenFileExplorer()
 {
     OPENFILENAME ofn;
@@ -60,6 +62,52 @@ std::string SerializationManager::OpenFileExplorer()
 
     return "";
 }
+
+std::string SerializationManager::OpenFileExplorerRequestPath()
+{
+    OPENFILENAME ofn;
+    wchar_t szFile[260];
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = NULL;
+    ofn.lpstrFile = szFile;
+    ofn.lpstrFile[0] = '\0';
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFileTitle = NULL;
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (GetOpenFileNameW(&ofn) == TRUE)
+    {
+        std::wstring wfp = ofn.lpstrFile;
+        // check for extention
+        for (size_t i{ wfp.length() - 6 }, j{}; i < wfp.length(); ++i, ++j)
+        {
+            // add the extention if not match
+            if (wfp[i] != wjsonExt[i])
+            {
+                wfp.append(wjsonExt);
+                break;
+            }
+        }
+        int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, nullptr, 0, nullptr, nullptr);
+
+        if (requiredSize > 0)
+        {
+            std::string fp(requiredSize, '\0');
+            if (WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
+            {
+                return fp;
+            }
+        }
+    }
+
+    return "";
+}
+
 
     nlohmann::json SerializationManager::SerializeAllEntities()
     {
@@ -290,7 +338,6 @@ bool SerializationManager::LoadRenderer(const EntityID& r_id, const nlohmann::js
 {
     PE::Graphics::Renderer ren;
     ren.SetColor(r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>());
-    std::cout << r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>() << std::endl;
     ren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>(), static_cast<void*>(&ren));
     return true;
