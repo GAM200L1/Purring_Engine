@@ -1630,11 +1630,11 @@ namespace PE {
 								// -------------------- Issue ----------------------------
 								std::vector<const char*> cSharpKey;
 
-								// Iterate through all available C# scripts
-								for (auto& entry : ScriptEngine::GetEntityClasses())
-								{
-									cSharpKey.push_back(entry.first.c_str());
-								}
+								//// Iterate through all available C# scripts
+								//for (auto& entry : ScriptEngine::GetEntityClasses())
+								//{
+								//	cSharpKey.push_back(entry.first.c_str());
+								//}
 								static int scriptindex2{};
 
 								// Dropdown box for selecting a C# script to add
