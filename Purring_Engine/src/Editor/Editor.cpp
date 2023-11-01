@@ -35,6 +35,7 @@
 #include <random>
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
+#include "Scripting/ScriptingEngine.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
@@ -1483,30 +1484,29 @@ namespace PE {
 						}
 
 
-						// ---------- C++ SCRIPT COMPONENT ---------- //
-						//+-------------------- - Editor---------------------- +
-						//	|                                                   |
-						//	|   +------------ - Component Panel---------------- + |
-						//	|   |                                              ||
-						//	|   |[x] TransformComponent                       ||
-						//	|   |[x] PhysicsComponent                         ||
-						//	|   |[x] RenderComponent                          ||
-						//	|   |                                              ||
-						//	|   |[> ] ScriptComponent [o]----- - +||
-						//	|   |                               ||             ||
-						//	|   |[Dropdown:Select Script]-- - || -- + ||
-						//	|   |                               ||  ||         ||
-						//	|   |[Button:Add Script]-------- || -- || -------- - +|
-						//	|   |                               ||  ||          |
-						//	|   |   +------Script List------ - +||  ||          |
-						//	|   |   |[Selectable:script1]   |||  ||          |
-						//	|   |   |[Selectable:script2]   |||  ||          |
-						//	|   |   |   ...                   |||  ||          |
-						//	|   |   +------------------------ - +| +-- + ||
-						//	|   |                               ||             ||
-						//	|   +-------------------------------- + ||
-						//	|                                                   ||
-						//	+-------------------------------------------------- - +
+						// -------------------- C++ SCRIPT COMPONENT ---------------------- //
+						// +---------------------- Editor -----------------------+
+						// |                                                     |
+						// |  +------------------- Component Panel --------------+ |
+						// |  |                                                  | |
+						// |  | [x] TransformComponent                           | |
+						// |  | [x] PhysicsComponent                             | |
+						// |  | [x] RenderComponent                              | |
+						// |  |                                                  | |
+						// |  | [>] ScriptComponent [Reset Button] ------------+ | |
+						// |  |                                                 || | |
+						// |  | Scripts: [Dropdown:Select Script] --------------||-+ |
+						// |  | [Button:Add Script] ---------------------------||   |
+						// |  |                                                 ||   |
+						// |  |    +------- Script List --------+               ||   |
+						// |  |    | [Selectable:script1]      |               ||   |
+						// |  |    | [Selectable:script2]      |               ||   |
+						// |  |    | ...                       |               ||   |
+						// |  |    +---------------------------+               |+---+
+						// |  |                                                 | |
+						// |  +-------------------------------------------------+ |
+						// |                                                       |
+						// +-------------------------------------------------------+
 
 						// This checks if the current component type (name) is the same as the ID of the ScriptComponent - Hans
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
@@ -1615,10 +1615,29 @@ namespace PE {
 							}
 						}
 
-                        
-						
-						// ---------- GUI ---------- //
+						// -------------------- C# SCRIPT COMPONENT ---------------------- //
 
+						//// UI code for C# dropdown
+						//if (ImGui::BeginCombo("C# Scripts", currentCSharpScript.c_str()))
+						//{
+						//	for (auto& [name, scriptClass] : entityClasses)
+						//	{
+						//		bool isSelected = (currentCSharpScript == name);
+						//		if (ImGui::Selectable(name.c_str(), isSelected))
+						//		{
+						//			currentCSharpScript = name;
+						//			// Do something like attaching the script to the entity
+						//		}
+
+						//		if (isSelected)
+						//		{
+						//			ImGui::SetItemDefaultFocus();
+						//		}
+						//	}
+						//	ImGui::EndCombo();
+						//}
+						
+						// -------------------- GUI ---------------------- //
 
 						if (name == EntityManager::GetInstance().GetComponentID<GUI>())
 						{
@@ -1703,8 +1722,7 @@ namespace PE {
                         
 
 						
-						// ---------- CAMERA ---------- //
-
+						// -------------------- CAMERA ---------------------- //
 
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
 							if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1727,7 +1745,8 @@ namespace PE {
 							}
 						}
 
-						// Animation component
+						// -------------------- ANIMATION ---------------------- //
+
 						if (name == EntityManager::GetInstance().GetComponentID<AnimationComponent>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1799,17 +1818,22 @@ namespace PE {
 						}
 					}
 
+					// Check if the entity has any attached scripts. - Hans
 					if (hasScripts)
 					{
+						// Iterate through all the registered script types in LogicSystem's script container. - Hans
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
 							if (key == "test")
 							{
-								testScript* p_Script = dynamic_cast<testScript*>(val);
-								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								testScript* p_Script = dynamic_cast<testScript*>(val);							// Dynamic cast is used to safely cast the generic Script object to a specific 'testScript' object.
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);				// Search for this entity's specific data within the script.
+								
+								// If the data exists, render an ImGui interface for it.
 								if (it != p_Script->GetScriptData().end())
 									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+										// Render a UI for editing the 'rotationSpeed' property of the 'testScript'.
 										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
 									}
 							}
@@ -1848,18 +1872,18 @@ namespace PE {
 						}
 					}
 
-
-
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 					ImGui::Separator();
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
+
+					// -------------------- Add Components Feature in Component Window ---------------------- //
 
 					// Set the cursor position to the center of the window
 					//the closest i can get to setting center the button x(
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
 
-						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
+						if (ImGui::Button("+ Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
 						{
 							ImGui::OpenPopup("Components");
 						}
@@ -1867,43 +1891,50 @@ namespace PE {
 					//add different kind of components, however if it already has we cannot add
 					if (ImGui::BeginPopup("Components"))
 					{
-						if (ImGui::Selectable("Add Collision"))
+						if (ImGui::Selectable("+ Collision  Component "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
 							else
 								AddErrorLog("ALREADY HAS A COLLIDER");
 						}
-						if (ImGui::Selectable("Add Transform"))
+						if (ImGui::Selectable("+ Transform  Component "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
 							else
 								AddErrorLog("ALREADY HAS A TRANSFORM");
 						}
-						if (ImGui::Selectable("Add RigidBody"))
+						if (ImGui::Selectable("+ RigidBody  Component "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
 							else
 								AddErrorLog("ALREADY HAS A TRANSFORM");
 						}
-						if (ImGui::Selectable("Add Renderer"))
+						if (ImGui::Selectable("+ Renderer   Component "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 							else
 								AddErrorLog("ALREADY HAS A RENDERER");
 						}
-						if (ImGui::Selectable("Add ScriptComponent"))
+						if (ImGui::Selectable("+ C#  Script Component "))
+						{
+							//if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+							//	EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
+							//else
+							//	AddErrorLog("ALREADY HAS A C++ SCRIPTCOMPONENT");
+						}
+						if (ImGui::Selectable("+ C++ Script Component "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
 							else
-								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
+								AddErrorLog("ALREADY HAS A C++ SCRIPTCOMPONENT");
 						}
 						std::vector<std::string> test {"test1", "test2", "test3"}; // replace this vector with your not hardcoded way of getting your scripts
-						if (ImGui::BeginMenu("Scripts"))
+						if (ImGui::BeginMenu("+ Scripts"))
 						{
 							for (auto str : test) // change to whatever loop you want
 							{
@@ -1914,8 +1945,7 @@ namespace PE {
 							}
 							ImGui::EndMenu();
 						}
-
-						if (ImGui::Selectable("Add Animation"))
+						if (ImGui::Selectable("+ Animation  Component "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
