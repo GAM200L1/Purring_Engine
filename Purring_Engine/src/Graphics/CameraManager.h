@@ -61,7 +61,7 @@ namespace PE
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            std::optional<glm::mat4> GetWorldToNdcMatrix(bool const editorMode);
+            glm::mat4 GetWorldToNdcMatrix(bool const editorMode);
 
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 view to NDC matrix 
@@ -75,7 +75,7 @@ namespace PE
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            std::optional<glm::mat4> GetViewToNdcMatrix(bool const editorMode);
+            glm::mat4 GetViewToNdcMatrix(bool const editorMode);
             
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 NDC to world matrix 
@@ -89,7 +89,7 @@ namespace PE
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            std::optional<glm::mat4> GetNdcToWorldMatrix(bool const editorMode);
+            glm::mat4 GetNdcToWorldMatrix(bool const editorMode);
 
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 NDC to view matrix 
@@ -98,12 +98,12 @@ namespace PE
              \param[in] editorMode Set to true to get the 4x4 NDC to view matrix of 
                             the editor camera, false to get that of the main runtime camera.
 
-             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
+             \return std::optional<glm::mat4> - Returns an optional object initalized 
                         with the 4x4 NDC to view matrix the editor camera or the main 
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            std::optional<glm::mat4> GetNdcToViewMatrix(bool const editorMode);
+            glm::mat4 GetNdcToViewMatrix(bool const editorMode);
             
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 view to world matrix 
@@ -112,12 +112,12 @@ namespace PE
              \param[in] editorMode Set to true to get the 4x4 view to world matrix of 
                             the editor camera, false to get that of the main runtime camera.
 
-             \return std::optional<glm::mat4 const&> - Returns an optional object initalized 
+             \return std::optional<glm::mat4> - Returns an optional object initalized 
                         with the 4x4 view to world matrix the editor camera or the main 
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            std::optional<glm::mat4> GetViewToWorldMatrix(bool const editorMode);
+            glm::mat4 GetViewToWorldMatrix(bool const editorMode);
 
             /*!***********************************************************************************
              \brief Returns the 4x4 view to NDC matrix of the UI camera.
@@ -183,8 +183,12 @@ namespace PE
                     to the first runtime camera created.
 
              \param[in] cameraEntityId The ID to store as the main camera.
+
+             \return true - The main camera has been set successfully.
+             \return false - The main camera has not been set successfully because the entity ID 
+                        passed in is the UI camera, does not exist or 
             *************************************************************************************/
-            void SetMainCamera(EntityID const cameraEntityId);
+            bool SetMainCamera(EntityID const cameraEntityId);
 
             /*!***********************************************************************************
              \brief Stores the argument as the ID of the entity to be used as the UI camera.
@@ -236,12 +240,14 @@ namespace PE
             void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
         private:
+            const EntityID defaultId{ std::numeric_limits<EntityID>::max() };
+
             static float m_windowWidth, m_windowHeight;
 
             std::string m_systemName{ "CameraManager" }; // Name of system
 
             // The entity number of the primary camera used during runtime
-            EntityID m_mainCameraId{};
+            EntityID m_mainCameraId{ defaultId };
 
             // The entity number of the UI camera used during runtime
             static EntityID m_uiCameraId;
