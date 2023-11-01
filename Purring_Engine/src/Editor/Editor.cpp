@@ -151,7 +151,7 @@ namespace PE {
 		//delete all objects
 		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUICameraId())
+			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
 				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 		}
 	}
@@ -450,7 +450,7 @@ namespace PE {
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
 				for (auto & n : dispMap)
 				{
-					if (n.first == Graphics::CameraManager::GetUICameraId())
+					if (n.first == Graphics::CameraManager::GetUiCameraId())
 						continue;
 					
 					std::string name = std::to_string(n.first);
@@ -1667,8 +1667,14 @@ namespace PE {
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
 							if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
-								float viewportWidth{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportWidth() };
-								float viewportHeight{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportHeight() };
+								Graphics::Camera& cameraComponent{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID) };
+								float viewportWidth{ cameraComponent.GetViewportWidth() };
+								float viewportHeight{ cameraComponent.GetViewportHeight() };
+								bool isMainCamera{ cameraComponent.GetIsMainCamera() };
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Checkbox("Is Main Camera: ", &isMainCamera); // bool to set this camera as the main cam
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Viewport Dimensions: ");
@@ -1680,8 +1686,9 @@ namespace PE {
 								ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetViewDimensions(viewportWidth, viewportHeight);
-								EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetMagnification(zoom);
+								cameraComponent.SetViewDimensions(viewportWidth, viewportHeight);
+								cameraComponent.SetMagnification(zoom);
+								cameraComponent.SetMainCamera(isMainCamera);
 							}
 						}
 
