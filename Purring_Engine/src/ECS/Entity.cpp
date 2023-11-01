@@ -226,7 +226,7 @@ namespace PE
 			desc.parent = std::nullopt;
 		}
 
-		desc.children = j["children"].get<std::vector<EntityID>>();
+		desc.children = j["children"].get<std::set<EntityID>>();
 
 		desc.sceneID = j["sceneID"].get<EntityID>();
 

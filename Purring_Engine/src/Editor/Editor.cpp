@@ -2228,6 +2228,8 @@ namespace PE {
 							// This will save all entities to a file
 							for (const auto& id : SceneView<EntityDescriptor>())
 							{
+								if (!id) // skip editor camera
+									continue;
 								EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
 								for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
 								{
@@ -2239,7 +2241,7 @@ namespace PE {
 								}
 								if (desc.parent)
 								{
-									EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace_back(id);
+									EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
 								}
 							}
 							serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/Saved_All_Entities.json");

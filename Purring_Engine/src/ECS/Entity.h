@@ -592,7 +592,7 @@ namespace PE
 	{
 		std::string name;
 		std::optional<EntityID> parent;
-		std::vector<EntityID> children;
+		std::set<EntityID> children;
 
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
 		
