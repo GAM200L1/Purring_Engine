@@ -211,6 +211,10 @@ PE::CoreApplication::CoreApplication()
 
     SerializationManager serializationManager;
     //create background from file
+
+    EntityID uiCameraId{ serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json") };
+    Graphics::CameraManager::SetUiCamera(uiCameraId);
+    EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
     EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
     
     // Creates an entity from file that is attached to the Character Controller

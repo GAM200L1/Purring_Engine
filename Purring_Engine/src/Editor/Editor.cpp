@@ -151,7 +151,7 @@ namespace PE {
 		//delete all objects
 		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUICameraId())
+			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
 				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 		}
 	}
@@ -450,7 +450,7 @@ namespace PE {
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
 				for (auto & n : dispMap)
 				{
-					if (n.first == Graphics::CameraManager::GetUICameraId())
+					if (n.first == Graphics::CameraManager::GetUiCameraId())
 						continue;
 					
 					std::string name = std::to_string(n.first);
