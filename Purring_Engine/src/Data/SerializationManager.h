@@ -67,6 +67,13 @@ public:
     std::string OpenFileExplorer();
 
     /*!***********************************************************************************
+     \brief Opens a file explorer and returns the selected file path as a string.
+            This version is used mainly to save a file with a potentially not existing
+            filename.
+    *************************************************************************************/
+    std::string OpenFileExplorerRequestPath();
+
+    /*!***********************************************************************************
      \brief Serialize all entities in the scene into a single JSON object.
     *************************************************************************************/
     nlohmann::json SerializeAllEntities();
@@ -90,6 +97,11 @@ public:
      \brief Serialize the entity with the given ID to a JSON object.
     *************************************************************************************/
     nlohmann::json SerializeEntity(int entityId);
+
+    /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object as a prefab
+    *************************************************************************************/
+    nlohmann::json SerializeEntityPrefab(int entityId);
 
     /*!***********************************************************************************
      \brief Deserialize a JSON object to create an entity, returning its ID.
@@ -186,15 +198,15 @@ void SerializationManager::SerializeComponent(int entityId, const std::string& j
     PE::EntityManager& entityManager = PE::EntityManager::GetInstance();
     if (entityManager.Has(static_cast<EntityID>(entityId), entityManager.GetComponentID<ComponentType>()))
     {
-        ComponentType* component = static_cast<ComponentType*>(
+       /* ComponentType* component = static_cast<ComponentType*>(
             entityManager.GetComponentPoolPointer(entityManager.GetComponentID<ComponentType>())->Get(static_cast<EntityID>(entityId))
-            );
+            );*/
+        ComponentType& component = entityManager.Get<ComponentType>(entityId);
 
-        if (component != nullptr)
-        {
-            nlohmann::json jComponent = component->ToJson();
+
+            nlohmann::json jComponent = component.ToJson();
             json["Entity"]["components"][jsonKey] = jComponent;
-        }
+        
     }
 }
 

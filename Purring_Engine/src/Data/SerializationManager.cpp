@@ -26,6 +26,8 @@
 #include <filesystem>
 #include "Graphics/CameraManager.h"
 
+const std::wstring wjsonExt = L".json";
+
 std::string SerializationManager::OpenFileExplorer()
 {
     OPENFILENAME ofn;
@@ -60,6 +62,52 @@ std::string SerializationManager::OpenFileExplorer()
 
     return "";
 }
+
+std::string SerializationManager::OpenFileExplorerRequestPath()
+{
+    OPENFILENAME ofn;
+    wchar_t szFile[260];
+    ZeroMemory(&ofn, sizeof(ofn));
+    ofn.lStructSize = sizeof(ofn);
+    ofn.hwndOwner = NULL;
+    ofn.lpstrFile = szFile;
+    ofn.lpstrFile[0] = '\0';
+    ofn.nMaxFile = sizeof(szFile);
+    ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
+    ofn.nFilterIndex = 1;
+    ofn.lpstrFileTitle = NULL;
+    ofn.nMaxFileTitle = 0;
+    ofn.lpstrInitialDir = NULL;
+    ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (GetOpenFileNameW(&ofn) == TRUE)
+    {
+        std::wstring wfp = ofn.lpstrFile;
+        // check for extention
+        for (size_t i{ wfp.length() - 5 }, j{}; i < wfp.length(); ++i, ++j)
+        {
+            // add the extention if not match
+            if (wfp[i] != wjsonExt[j])
+            {
+                wfp.append(wjsonExt);
+                break;
+            }
+        }
+        int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, nullptr, 0, nullptr, nullptr);
+
+        if (requiredSize > 0)
+        {
+            std::string fp(requiredSize, '\0');
+            if (WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
+            {
+                return fp;
+            }
+        }
+    }
+
+    return "";
+}
+
 
     nlohmann::json SerializationManager::SerializeAllEntities()
     {
@@ -173,9 +221,20 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); 
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
 
-
     return j; 
 }
+
+nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
+{
+    PE::EntityDescriptor tmp;
+    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+    nlohmann::json ret = SerializeEntity(entityId);
+    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+    return ret;
+}
+
+
+
 
 size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
 {
@@ -189,9 +248,9 @@ size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
     if (r_j.contains("Entity"))
     {
         const auto& entityJson = r_j["Entity"];
+        PE::EntityDescriptor desc = PE::EntityDescriptor::Deserialize(r_j["Entity"]["components"]["EntityDescriptor"]);
 
-
-        id = PE::EntityFactory::GetInstance().CreateEntity();
+        id = PE::EntityManager::GetInstance().NewEntity(desc.sceneID);
         for (const auto& t : r_j["Entity"].items())
         {
             // to change?
