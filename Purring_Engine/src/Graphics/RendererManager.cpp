@@ -351,7 +351,7 @@ namespace PE
                         currentTexture = renderer.GetTextureKey();
 
                         // Bind the new texture
-                        unsigned int textureUnit{ 0 };
+                        GLint textureUnit{ 0 };
                         p_texture = textureIterator->second;
                         p_texture->Bind(textureUnit);
                         r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
@@ -551,7 +551,7 @@ namespace PE
                 else 
                 {
                     p_texture = textureIterator->second;
-                    unsigned int textureUnit{ 0 };
+                    GLint textureUnit{ 0 };
                     p_texture->Bind(textureUnit);
                     r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
                     r_shaderProgram.SetUniform("uIsTextured", true);
