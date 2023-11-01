@@ -13,7 +13,7 @@ namespace PE
 		std::vector<EntityID> FollowingObject;
 		float Rotation;
 		vec2 CurrentPosition;
-		vec2 NextPosition;
+		std::vector<vec2> NextPosition;
 	};
 
 

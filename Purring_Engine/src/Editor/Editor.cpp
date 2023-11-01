@@ -1836,9 +1836,15 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										int id = static_cast<int> (it->second.FollowingObject);
-										ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::InputInt("##idf", &id);
-										it->second.FollowingObject = id;
+										ImGui::Text("Number of Follower: "); ImGui::SameLine(); ImGui::InputInt("##ff",&it->second.NumberOfFollower);
+
+										for (int i = 0; i < it->second.NumberOfFollower; i++)
+										{
+											int id = static_cast<int> (it->second.FollowingObject[i]);
+											std::string test = std::string("##id") + std::to_string(i);
+											ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::InputInt(test.c_str(), &id);
+											it->second.FollowingObject[i] = id;
+										}
 									}
 								}
 							}
