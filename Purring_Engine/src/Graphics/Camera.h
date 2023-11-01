@@ -87,14 +87,33 @@ namespace PE
             inline glm::mat4 GetNdcToWorldMatrix() const { return m_cachedNdcToWorldMatrix; }
 
             /*!***********************************************************************************
+            \brief  Returns true if this camera is the main camera and is being used to render 
+                    gameobjects in the game scene, false otherwise.
+
+            \return true - This camera is the main camera and is being used to render gameobjects 
+                        in the game scene.
+            \return false - This camera is not the main camera.
+            *************************************************************************************/
+            inline bool GetIsMainCamera() const { return m_isMainCamera; }
+
+            /*!***********************************************************************************
+            \brief  Returns true if Whether this camera is the main camera has been changed in 
+                    the last frame.
+
+            \return true - Whether this camera is the main camera has been changed in the last 
+                        frame.
+            \return false - The status of this camera has not changed.
+            *************************************************************************************/
+            inline bool GetMainCameraStatusChanged() const { return m_isMainCamera != m_cachedIsMainCamera; }
+            
+            /*!***********************************************************************************
             \brief  Returns true if the camera's transform has been updated and its matrix 
                     needs to be recalculated; false otherwise.
 
             \param[in] r_transform Reference to the camera's transform component.
 
-            \return true - If the camera's transform has been updated and its matrix needs to be 
-                            recalculated
-            \return false - Camera's transform has not changed, cached camera matrix can be used.
+            \return true - Use this as the main camera to render the gameobjects through.
+            \return false - This camera is not the main camera. 
             *************************************************************************************/
             inline bool GetHasChanged(Transform const& r_transform) const
             {
@@ -163,6 +182,15 @@ namespace PE
         public:
 
             /*!***********************************************************************************
+            \brief  Sets whether this main camera will be used as the main camera to render 
+                    gameobjects through.
+
+            \param[in] value Set to true to use this camera as the main camera to render the 
+                        gameobjects through, false otherwise.
+            *************************************************************************************/
+            void SetMainCamera(bool const value);
+
+            /*!***********************************************************************************
             \brief  Sets the dimensions of the viewport that the camera renders to.
 
             \param[in] width Width of the viewport that the camera renders to.
@@ -193,8 +221,9 @@ namespace PE
                     viewport dimensions or the camera's transform has been updated.
 
             \param[in] r_transform Reference to the camera's transform component.
+            \param[in] isMainCamera Set to true if this camera is the main camera, false otherwise.
             *************************************************************************************/
-            void UpdateCamera(Transform const& r_transform);
+            void UpdateCamera(Transform const& r_transform, bool const isMainCamera);
 
             nlohmann::json ToJson() const;
             static Camera Deserialize(const nlohmann::json& j);
@@ -202,10 +231,12 @@ namespace PE
 
             // ----- Protected members ----- // 
         protected:
+            bool m_isMainCamera{ false };     // Set to true to use this as the main camera to render the gameobjects through. 
             float m_magnification{ 1.f };     // Zoom to apply to the camera
             float m_viewportWidth{ 1.f }, m_viewportHeight{ 1.f };  // Height and width of the camera viewport
 
             // ----- Cached Variables ----- //
+            bool m_cachedIsMainCamera{ false };     // Whether this camera was the main camera in the previous frame
             float m_cachedPositionX{ -1.f }, m_cachedPositionY{ -1.f }; // Position of center of camera in the world used by the cached matrix
             float m_cachedOrientation{ -1.f };       // Orientation of the camera about the z-axis (in radians, counter-clockwise from the x-axis)
 
