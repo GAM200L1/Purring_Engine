@@ -1484,44 +1484,56 @@ namespace PE {
 
 
 						// ---------- SCRIPT COMPONENT ---------- //
-						
 
+						// This checks if the current component type (name) is the same as the ID of the ScriptComponent - Hans
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
 						{
 							hasScripts = true;
+
+							// This creates a Collapsible header Titled: ScriptComponent - Hans
 							if (ImGui::CollapsingHeader("ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
-								//setting reset button to open a popup with selectable text
+								// Aligns an "o" button next to the header for an additional option to "reset" variables to default settings (Hans requested but yet to implement logic) - Hans
 								ImGui::SameLine();
 								std::string id = "options##", o = "o##";
 								id += std::to_string(componentCount);
 								o += std::to_string(componentCount);
+
+								// Popup menu for reset option (logic not yet implemented) - Hans
 								if (ImGui::BeginPopup(id.c_str()))
 								{
 									if (ImGui::Selectable("Reset")) {}
 									ImGui::EndPopup();
 								}
 
+								// Button to open the above popup - Hans
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting keys
+
+								// This adds some vertical spacing - Hans
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+								//setting keys - Jarran
 								std::vector<const char*> key;
-								//to get all the keys
+
+								// Iterates through all available scripts and stores their names in 'key' - Hans
 								for (std::map<std::string, Script*>::iterator it = LogicSystem::m_scriptContainer.begin(); it != LogicSystem::m_scriptContainer.end(); ++it)
 								{
 									key.push_back(it->first.c_str());
 								}
 								static int scriptindex{};
-								//create a combo box of scripts
+
+								// Dropdown box for selecting a script to add - Hans
 								ImGui::SetNextItemWidth(200.0f);
 								if (!key.empty())
 								{
 									ImGui::Text("Scripts: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
 									//set selected texture id
-									if (ImGui::Combo("##Scripts", &scriptindex, key.data(), static_cast<int>(key.size()))) {}
+									if (ImGui::Combo("##Scripts", &scriptindex, key.data(), static_cast<int>(key.size()))) {}			// This creates a combo box that lists all available scripts - Hans
 								}
+
+								// Button to add the selected script to the entity. When clicked, this button adds the selected script to the entity's ScriptComponent and calls the script's OnAttach method. - Hans
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
 								if (ImGui::Button("Add Script"))
 								{
@@ -1529,17 +1541,21 @@ namespace PE {
 									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
 								}
 								ImGui::PopStyleColor(1);
+
+								// Separator and spacing
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
 								static int selectedScript{ -1 };
 								static std::string selectedScriptName{};
 								ImGui::Text("Scripts List");
-								//loop to show all the items ins the vector
-								if (ImGui::BeginChild("ScriptList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
+
+								// Lists all the scripts currently added to the entity - Hans
+								if (ImGui::BeginChild("ScriptList", ImVec2(-1, 200), true, ImGuiWindowFlags_NoResize)) {
 									int n = 0;
-					/*				for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
-									{*/
+									/*				for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
+													{*/
 									for (auto& [str, state] : EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys)
 									{
 										const bool is_selected = (selectedScript == n);
@@ -1560,6 +1576,8 @@ namespace PE {
 								}
 								ImGui::EndChild();
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
+
+								// Button to remove the selected script from the entity. When clicked, this button removes the selected script from the entity's ScriptComponent and calls the script's OnDetach method - Hans
 								if (ImGui::Button("Remove Script"))
 								{
 									if (selectedScript >= 0)
@@ -1573,6 +1591,7 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
+
                         
 						
 						// ---------- GUI ---------- //
