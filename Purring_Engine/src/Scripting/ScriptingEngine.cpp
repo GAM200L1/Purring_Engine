@@ -12,12 +12,6 @@
 #define FMT_HEADER_ONLY
 #include <fmt/format.h>
 
-//#include "fmt/format.h"
-//#include "fmt/core.h"
-//#include "fmt/format-inl.h"
-
-//#define FMT_HEADER_ONLY
-
 namespace PE
 {
     namespace Utils

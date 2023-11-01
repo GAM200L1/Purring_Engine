@@ -1484,6 +1484,29 @@ namespace PE {
 
 
 						// ---------- C++ SCRIPT COMPONENT ---------- //
+						//+-------------------- - Editor---------------------- +
+						//	|                                                   |
+						//	|   +------------ - Component Panel---------------- + |
+						//	|   |                                              ||
+						//	|   |[x] TransformComponent                       ||
+						//	|   |[x] PhysicsComponent                         ||
+						//	|   |[x] RenderComponent                          ||
+						//	|   |                                              ||
+						//	|   |[> ] ScriptComponent [o]----- - +||
+						//	|   |                               ||             ||
+						//	|   |[Dropdown:Select Script]-- - || -- + ||
+						//	|   |                               ||  ||         ||
+						//	|   |[Button:Add Script]-------- || -- || -------- - +|
+						//	|   |                               ||  ||          |
+						//	|   |   +------Script List------ - +||  ||          |
+						//	|   |   |[Selectable:script1]   |||  ||          |
+						//	|   |   |[Selectable:script2]   |||  ||          |
+						//	|   |   |   ...                   |||  ||          |
+						//	|   |   +------------------------ - +| +-- + ||
+						//	|   |                               ||             ||
+						//	|   +-------------------------------- + ||
+						//	|                                                   ||
+						//	+-------------------------------------------------- - +
 
 						// This checks if the current component type (name) is the same as the ID of the ScriptComponent - Hans
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())

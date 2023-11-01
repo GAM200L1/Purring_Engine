@@ -12,7 +12,6 @@ extern "C"
 	typedef struct _MonoMethod MonoMethod;
 	typedef struct _MonoAssembly MonoAssembly;
 	//typedef struct _MonoImage MonoImage;
-
 }
 
 namespace PE
@@ -72,8 +71,5 @@ namespace PE
 
 		friend class ScriptClass;
 	};
-
-
-
 }
 
