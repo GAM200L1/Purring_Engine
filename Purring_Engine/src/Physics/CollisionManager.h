@@ -94,7 +94,7 @@ namespace PE
 		void TriggerEnter(const Event<CollisionEvents>& r_e);
 	private:
 		std::vector<Manifold> m_manifolds;
-		std::string m_systemName{ "Collision" };
+		std::string m_systemName{ "CollisionManager" };
 	};
 
 	// ----- Collision Helper Functions ----- //

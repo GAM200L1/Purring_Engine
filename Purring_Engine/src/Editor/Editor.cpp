@@ -17,6 +17,7 @@
 #include "Editor.h"
 #include "Memory/MemoryManager.h"
 #include "AudioManager/AudioManager.h"
+#include "Time/FrameRateTargetControl.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
 #include <Windows.h>
@@ -28,10 +29,12 @@
 #include "Graphics/RendererManager.h"
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
+#include "Logic/EnemyTestScript.h"
 #include "GUISystem.h"
+#include "Utilities/FileUtilities.h"
 #include <random>
 #include <rttr/type.h>
-
+#include "Graphics/CameraManager.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
@@ -39,6 +42,10 @@ SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
 namespace PE {
+
+	std::filesystem::path Editor::m_parentPath{ "../Assets" };
+	bool Editor::m_fileDragged{ false };
+
 	Editor::Editor() {
 		//initializing variables 
 		//m_firstLaunch needs to be serialized 
@@ -48,26 +55,34 @@ namespace PE {
 		m_showLogs = true;
 		m_showObjectList = true;
 		m_showSceneView = true;
-		m_showTestWindows = true;
+		m_showTestWindows = false;
 		m_showComponentWindow = true;
-		m_showResourceWindow = false;
+		m_showResourceWindow = true;
 		m_showPerformanceWindow = false;
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 		m_renderDebug = true; // whether to render debug lines
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
-			//for the object list
+		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedObject = 0;
-		m_mouseInScene = false;
+		m_mouseInObjectWindow = false;
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("ping", &PE::Editor::ping));
+		// loading for assets window
+		GetFileNamesInParentPath(m_parentPath, m_files);
+		m_mouseInScene = false;
+		m_entityToModify = -1;
+
+		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
+		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
 	{
+		m_files.clear();
 	}
 
 	void Editor::GetWindowSize(float& width, float& height)
@@ -119,14 +134,25 @@ namespace PE {
 		m_showTestWindows = true;
 	}
 
+	void Editor::PlayAudio1()
+	{
+		AudioManager::GetInstance().PlaySound("audio_sound1");
+	}
+
+	void Editor::PlayAudio2()
+	{
+		AudioManager::GetInstance().PlaySound("audio_sound2");
+	}
+
 	void Editor::ClearObjectList()
 	{
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (size_t n = EntityManager::GetInstance().GetEntitiesInPool(ALL).size() - 1; n > 1; --n)
+		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUICameraId())
+				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
 		}
 	}
 
@@ -145,7 +171,6 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
-
 
 		p_window = p_window_;
 		//getting the full display size of glfw so that the ui know where to be in
@@ -166,6 +191,13 @@ namespace PE {
 		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
 		ImGui_ImplOpenGL3_Init("#version 450");
+
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Directory_Icon.png", "../Assets/Icons/Directory_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Audio_Icon.png"	, "../Assets/Icons/Audio_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Font_Icon.png", "../Assets/Icons/Font_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Prefabs_Icon.png", "../Assets/Icons/Prefabs_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Other_Icon.png", "../Assets/Icons/Other_Icon.png");
+		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Texture_Icon.png", "../Assets/Icons/Texture_Icon.png");
 
 	}
 
@@ -386,7 +418,7 @@ namespace PE {
 	void Editor::ShowObjectWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("objectlistwindow", Active)) // draw object list
+		if (!ImGui::Begin("Object List Window", Active)) // draw object list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -395,74 +427,179 @@ namespace PE {
 			//temporary here for counting created objects and add to name
 			static int count = 0;
 			//loop to show all the items ins the vector
-			bool isHoveringObject{false};
-			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-				for (int n = 0; n < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); n++)
+			bool isHoveringObject{ false };
+			static bool drag = false;
+			static std::string dragName;
+			std::optional<EntityID> hoveredObject{};
+			static std::optional<EntityID> dragID{};
+			std::map<EntityID, std::vector<EntityID>> dispMap{};
+			for (const auto& id : SceneView())
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent)
 				{
-					std::string name;
-					const bool is_selected = (m_currentSelectedObject == n);
-					if (n == 0) //hardcoding
-					{
-						name = "Background";
-					}
-					else if (n == 1)
-					{
-						name = "Player";
-					}
-					else {
-						name = "GameObject";
-						name += std::to_string(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
-					}
+					dispMap.erase(id);
+					dispMap[EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value()].emplace_back(id);
+				}
+				else // it does not have a parent
+				{
+					dispMap[id];
+				}
+			}
+
+			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
+				m_mouseInObjectWindow = ImGui::IsWindowHovered();
+				for (auto & n : dispMap)
+				{
+					if (n.first == Graphics::CameraManager::GetUICameraId())
+						continue;
+					
+					std::string name = std::to_string(n.first);
+					name += ". ";
+					name += EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
+					bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
+
 					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedObject = n; //seteting current index to check for selection
-					if (ImGui::IsItemClicked(1))
-					{
-						m_currentSelectedObject = n;
-						ImGui::OpenPopup("popup");
-					}
+						m_currentSelectedObject = static_cast<int>(n.first);
 					if (ImGui::IsItemHovered()) {
 						isHoveringObject = true;
+						hoveredObject = n.first;
+						if (ImGui::IsMouseDragging(0) && drag == false)
+						{
+							//seteting current index to check for selection
+							dragName = name;
+							drag = true;
+							dragID = n.first;
+						}
 					}
+					if (ImGui::IsItemClicked(1))
+					{
+						//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+						if (m_currentSelectedObject < 0)
+							m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+						ImGui::OpenPopup("popup");
+					}
+					// if there are children attatched
+					if (!n.second.empty())
+					{
+						ImGui::Indent();
+						for (const auto& id : n.second)
+						{
+							
+							std::string name2 = std::to_string(id);
+							name2 += ". ";
+							name2 += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+							is_selected = (m_currentSelectedObject == static_cast<int>(id));
+
+							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+								m_currentSelectedObject = static_cast<int>(id);
+							if (ImGui::IsItemHovered()) {
+								isHoveringObject = true;
+								hoveredObject = id;
+								if (ImGui::IsMouseDragging(0) && drag == false)
+								{
+									m_currentSelectedObject = static_cast<int>(id); //seteting current index to check for selection
+									dragName = name2;
+									drag = true;
+									dragID = id;
+								}
+							}
+							if (ImGui::IsItemClicked(1))
+							{
+								//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+								if (m_currentSelectedObject < 0)
+									m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+								ImGui::OpenPopup("popup");
+							}
+						}
+
+						ImGui::Unindent();
+					}
+
+
+					
+
+					
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
 
-					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;					
 				}
-			}
+
+				if (drag)
+				{
+					ImGui::SetNextWindowPos(ImVec2(ImGui::GetMousePos().x+1,ImGui::GetMousePos().y+1));
+					ImGui::Begin("##test", nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+					ImGui::Text(dragName.c_str());
+					ImGui::End();
+
+					if (!ImGui::IsMouseDown(0))
+					{
+						drag = false;
+						if(!hoveredObject || dragID.value() != hoveredObject.value())
+						{
+							if (hoveredObject && EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
+								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
+							else
+								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent && EntityManager::GetInstance().Has<Transform>(dragID.value()))
+							{
+								EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
+								EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
+							}
+
+							if (hoveredObject)
+								for (const auto& id : SceneView())
+								{
+									if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == dragID.value())
+									{
+										if (EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
+											EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
+										else
+											EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = hoveredObject;
+										if (EntityManager::GetInstance().Has<Transform>(id))
+										{
+											EntityManager::GetInstance().Get<Transform>(id).relPosition = EntityManager::GetInstance().Get<Transform>(id).position;
+											EntityManager::GetInstance().Get<Transform>(id).relOrientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
+										}
+									}
+								}
+						}
+						dragID.reset();
+					}
+				}
+}
 			if (ImGui::BeginPopup("popup"))
 			{
 				if (ImGui::Selectable("Delete Object"))
 				{
-					if (m_currentSelectedObject > 1)  // if vector not empty and item selected not over index
-					{
 						AddInfoLog("Object Deleted");
 
-
-						EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
+						for (const auto& id : SceneView())
+						{
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
+								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
+						}
+						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
 
 						//if not first index
-						m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
-
+						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
+						m_currentSelectedObject = -1; // just reset it
 						//if object selected
-						m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+						m_objectIsSelected = false;
+						//m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
 						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 
 						count--;
 
-					}
-						else
-						{
-							AddWarningLog("You are not allowed to delete the background or player as of now");
-						}
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
-						if (m_currentSelectedObject)
-							EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject]);
-						else
-							AddWarningLog("You are not allowed to clone the background");
+					if (m_currentSelectedObject)
+						EntityFactory::GetInstance().Clone(m_currentSelectedObject);
+					else
+						AddWarningLog("You are not allowed to clone the background");
 				}
 				ImGui::EndPopup();
 			}
@@ -476,15 +613,15 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-					EntityFactory::GetInstance().CreateEntity();
-				}
-				if (ImGui::Selectable("Create Default Object"))
-				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+					serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
 				}
 				if (ImGui::Selectable("Create UI Object"))
 				{
-					//serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
+					serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+				}
+				if (ImGui::Selectable("Create Camera Object"))
+				{
+					serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
 				}
 				ImGui::EndPopup();
 			}
@@ -497,7 +634,7 @@ namespace PE {
 	//temporary for milestone 1
 	void Editor::ShowDemoWindow(bool* Active)
 	{
-		if (IsEditorActive())
+		//if (IsEditorActive())
 		if (!ImGui::Begin("debugTests", Active, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
@@ -801,13 +938,131 @@ namespace PE {
 			{
 				if (m_objectIsSelected)
 				{
-					EntityID entityID = EntityManager::GetInstance().GetEntitiesInPool(ALL)[m_currentSelectedObject];
+					EntityID entityID = m_currentSelectedObject;
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
 					bool hasScripts = false;
 					for (const ComponentID& name : components)
 					{
 						++componentCount;//increment unique id
+
+
+						// ---------- ENTITY DESCRIPTOR ---------- //
+
+
+						if (name == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+						{
+							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
+
+
+							//search through each component, create a collapsible header if the component exist
+							rttr::type currType = rttr::type::get_by_name(name.to_string());
+
+							if (ImGui::CollapsingHeader("EntityDescriptor", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								for (auto& prop : currType.get_properties())
+								{
+
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+									std::string nm(prop.get_name());
+									nm += ": ";
+									ImGui::Text(nm.c_str());
+
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID));
+
+									// handle types
+									if (vp.get_type().get_name() == "std::string")
+									{
+										std::string tmp = vp.get_value<std::string>();
+										std::string str = "##" + prop.get_name().to_string();
+										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmp);
+										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+
+									}
+									else if (vp.get_type().get_name() == "classstd::optional<unsigned__int64>")
+									{
+										std::optional<EntityID> tmp = vp.get_value<std::optional<EntityID>>();
+
+										std::string str = "##" + prop.get_name().to_string();
+										if (tmp.has_value())
+										{
+											EntityID tmp2{ tmp.value()};
+											std::string tmpStr{std::to_string(tmp2)};
+											ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmpStr);
+											std::optional<EntityID> op;
+											if (tmpStr != "")
+											{
+												tmp2 = strtoull(tmpStr.c_str(), NULL, 10);
+												if (errno == ERANGE)
+												{
+													errno = 0;
+													engine_logger.AddLog(false, "Invalid input in editor field!", __FUNCTION__);
+												}
+												else
+												{
+													if(tmp2 != entityID)
+													{
+														op = tmp2;
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent && EntityManager::GetInstance().Has<Transform>(entityID))
+														{
+															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
+															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
+														}
+													}
+												}
+											}
+											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
+										}
+										else
+										{
+											EntityID tmp2{0};
+											std::string tmpStr{};
+											ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmpStr);
+											std::optional<EntityID> op;
+											if (tmpStr != "")
+											{
+												tmp2 = strtoull(tmpStr.c_str(), NULL, 10);
+												if (errno == ERANGE)
+												{
+													errno = 0;
+													engine_logger.AddLog(false, "Invalid input in editor field!", __FUNCTION__);
+												}
+												else
+												{
+													if (tmp2 != entityID)
+													{
+														op = tmp2;
+														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent && EntityManager::GetInstance().Has<Transform>(entityID))
+														{
+															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
+															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
+														}
+													}
+												}
+											}
+											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
+										}
+									}
+								}
+							}
+						}
+
+
+						// ---------- TRANSFORM ---------- //
+
 
 						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
 						{
@@ -834,40 +1089,41 @@ namespace PE {
 									ImGui::OpenPopup(id.c_str());
 								for (auto& prop : currType.get_properties())
 								{
+									if (prop.get_name() == "Position" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
+										prop.get_name() == "Relative Position" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+										continue;
+									if (prop.get_name() == "Orientation" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
+										prop.get_name() == "Relative Orientation" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+										continue;
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
 									ImGui::Text(nm.c_str());
-									rttr::variant vp;
-									// change to lookup table?
-									if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-									{
-										vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
-									}
-
-
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
+									
 									// handle types
 									if (vp.get_type().get_name() == "structPE::vec2")
 									{
 										PE::vec2 tmp = vp.get_value<PE::vec2>();
 										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##x" + prop.get_name().to_string()).c_str(), &tmp.x, 1.0f);
 										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
-										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-
+										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
 										float tmp = vp.get_value<float>();
 										std::string str = "##" + prop.get_name().to_string();
 										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputFloat(str.c_str(), &tmp, 1.0f, 100.f, "%.3f");
-										if (name == EntityManager::GetInstance().GetComponentID<Transform>())
-											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-
+										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
 								}
 							}
 						}
+
+
+						// ---------- RIGID BODY ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
 						{
 							if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -922,7 +1178,11 @@ namespace PE {
 								}
 							}
 						}
-						//collider component
+
+
+						// ---------- COLLIDER ---------- //
+						
+
 						if (name == EntityManager::GetInstance().GetComponentID<Collider>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1013,7 +1273,9 @@ namespace PE {
 							}
 						}
 
-						//renderer component
+						// ---------- RENDERER ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1033,40 +1295,74 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
-								std::vector<const char*> key;
-								key.push_back("");
 
-								//to get all the keys
-								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
+								std::vector<std::filesystem::path> filepaths;
+								int i{ 0 };
+								int index{ 0 };
+								for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it, ++i)
 								{
-									key.push_back(it->first.c_str());
+									filepaths.emplace_back(it->first);
+									if (it->first == EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())
+										index = i;
 								}
-								int index{};
-								for (std::string str : key)
+
+								// Vector of the names of textures that have already been loaded
+								std::vector<std::string> loadedTextureKeys;
+
+								// get the keys of textures already loaded by the resource manager
+								for (auto const& r_filepath : filepaths)
 								{
-									if (str == EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())
-										break;
-									index++;
+									loadedTextureKeys.emplace_back(r_filepath.stem().string());
 								}
 
 								//create a combo box of texture ids
 								ImGui::SetNextItemWidth(200.0f);
-								if (!key.empty())
+								if (!loadedTextureKeys.empty())
 								{
+									// Displays the current texture set on the object
+									if (ImGui::BeginChild("currentTexture", ImVec2{116,116}, true))
+									{
+										if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
+										{
+											ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2{ 100,100 }, {0,1}, {1,0});
+										}
+									}
+									ImGui::EndChild();
+
+									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = static_cast<int>(entityID);
+									}
+
+									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									//set selected texture id
-									if (ImGui::Combo("##Textures", &index, key.data(), static_cast<int>(key.size())))
+									bool bl{};
+									if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
 									{
-										EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetTextureKey(key[index]);
+										bl = ImGui::BeginCombo("##Textures", loadedTextureKeys[index].c_str());
+									}
+									else
+									{
+										bl = ImGui::BeginCombo("##Textures", ""); // The second parameter is the label previewed before opening the combo.
+									}
+									if (bl) // The second parameter is the label previewed before opening the combo.
+									{
+										for (int n{ 0 }; n < loadedTextureKeys.size(); ++n)
+										{
+											if (ImGui::Selectable(loadedTextureKeys[n].c_str()))
+												EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetTextureKey(filepaths[n].string());
+										}
+										ImGui::EndCombo();
 									}
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting colors
-
+								
+								// Color Setting
 								//get and set color variable of the renderer component
 								ImVec4 color;
 								color.x = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().r;
@@ -1082,7 +1378,10 @@ namespace PE {
 							}
 						}
 
-						// gui renderer component
+						
+						// ---------- GUI RENDERER ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1102,35 +1401,67 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
-								std::vector<const char*> key;
-								key.push_back("");
 
-								//to get all the keys
-								for (std::map<std::string, std::shared_ptr<Graphics::Texture>>::iterator it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+
+								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
+								std::vector<std::filesystem::path> filepaths;
+								int i{ 0 };
+								int guiIndex{ 0 };
+								for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it, ++i)
 								{
-									key.push_back(it->first.c_str());
+									filepaths.emplace_back(it->first);
+									if (it->first == EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())
+										guiIndex = i;
 								}
-								int index{};
-								for (std::string str : key)
+
+								// Vector of the names of textures that have already been loaded
+								std::vector<std::string> loadedTextureKeys;
+
+								// get the keys of textures already loaded by the resource manager
+								for (auto const& r_filepath : filepaths)
 								{
-									if (str == EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())
-										break;
-									index++;
+									loadedTextureKeys.emplace_back(r_filepath.stem().string());
 								}
+
 
 								//create a combo box of texture ids
 								ImGui::SetNextItemWidth(200.0f);
-								if (!key.empty())
+								if (!loadedTextureKeys.empty())
 								{
+									// Displays the current texture set on the object
+									if (ImGui::BeginChild("GUICurrentTexture", ImVec2{ 116,116 }, true))
+									{
+										if (EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey() != "")
+										{
+											ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2{ 100,100 }, { 0,1 }, { 1,0 });
+										}
+									}
+									ImGui::EndChild();
+
+									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									//set selected texture id
-									if (ImGui::Combo("##Textures", &index, key.data(), static_cast<int>(key.size())))
+									bool bl{};
+									if (EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey() != "")
 									{
-										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).SetTextureKey(key[index]);
+										bl = ImGui::BeginCombo("##GUITextures", loadedTextureKeys[guiIndex].c_str()); // The second parameter is the label previewed before opening the combo.
+									}
+									else
+									{
+										bl = ImGui::BeginCombo("##GUITextures", ""); // The second parameter is the label previewed before opening the combo.
+									}
+									if (bl)
+									{
+										for (int n{ 0 }; n < loadedTextureKeys.size(); ++n)
+										{
+											if (ImGui::Selectable(loadedTextureKeys[n].c_str()))
+												EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).SetTextureKey(filepaths[n].string());
+										}
+										ImGui::EndCombo();
 									}
 								}
+
+
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1151,7 +1482,10 @@ namespace PE {
 							}
 						}
 
-						//Script Component
+
+						// ---------- SCRIPT COMPONENT ---------- //
+						
+
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
 						{
 							hasScripts = true;
@@ -1240,7 +1574,10 @@ namespace PE {
 							}
 						}
                         
-						//GUI
+						
+						// ---------- GUI ---------- //
+
+
 						if (name == EntityManager::GetInstance().GetComponentID<GUI>())
 						{
 							if (ImGui::CollapsingHeader("GUIComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1322,35 +1659,11 @@ namespace PE {
 							}
 						}
                         
-						if (hasScripts)
-						{
-							for (auto& [key, val] : LogicSystem::m_scriptContainer)
-							{
-								if (key == "test")
-								{
-									testScript* test = dynamic_cast<testScript*>(val);
-									auto it = test->GetScriptData().find(m_currentSelectedObject);
-									if (it != test->GetScriptData().end())
-										if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-										{
-											ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
-										}
-								}
 
-								if (key == "PlayerControllerScript")
-								{
-									PlayerControllerScript* test = dynamic_cast<PlayerControllerScript*>(val);
-									auto it = test->GetScriptData().find(m_currentSelectedObject);
-									if (it != test->GetScriptData().end())
-										if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-										{
-											ImGui::Text("speed: "); ImGui::SameLine(); ImGui::InputFloat("##movespeed", &it->second.speed, 1.0f, 100.f, "%.3f");
-										}
-								}
-							}
-						}
+						
+						// ---------- CAMERA ---------- //
 
-						// Camera component
+
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
 							if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
@@ -1371,7 +1684,128 @@ namespace PE {
 								EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetMagnification(zoom);
 							}
 						}
+
+						// Animation component
+						if (name == EntityManager::GetInstance().GetComponentID<AnimationComponent>())
+						{
+							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("Animation", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//setting textures
+								std::vector<const char*> key;
+								key.push_back("");
+
+								//to get all the keys
+								for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationID())
+										break;
+									index++;
+								}
+
+								//create a combo box of texture ids
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Animations: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##Animation", &index, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<AnimationComponent>(entityID).SetCurrentAnimationIndex(key[index]);
+									}
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								////setting colors
+								 
+								////get and set color variable of the renderer component
+								//ImVec4 color;
+								//color.x = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().r;
+								//color.y = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().g;
+								//color.z = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().b;
+								//color.w = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().a;
+
+								//ImGui::Text("Change Color: "); ImGui::SameLine();
+								//ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
 					}
+
+					if (hasScripts)
+					{
+						for (auto& [key, val] : LogicSystem::m_scriptContainer)
+						{
+							if (key == "test")
+							{
+								testScript* p_Script = dynamic_cast<testScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
+									}
+							}
+
+							if (key == "PlayerControllerScript")
+							{
+								PlayerControllerScript* p_Script = dynamic_cast<PlayerControllerScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("PlayerControllerScriptData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("speed: "); ImGui::SameLine(); ImGui::DragFloat("##movespeed", &it->second.speed);
+									}
+							}
+
+							if (key == "EnemyTestScript")
+							{
+								EnemyTestScript* p_Script = dynamic_cast<EnemyTestScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("EnemyTestScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int id = static_cast<int> (it->second.playerID);
+										ImGui::Text("Player ID: "); ImGui::SameLine(); ImGui::InputInt("##id", &id);
+										it->second.playerID = id;
+										ImGui::Text("speed: "); ImGui::SameLine(); ImGui::DragFloat("##enemyspeed", &it->second.speed);
+										ImGui::Text("Idle Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemyidle", &it->second.idleTimer);
+										ImGui::Text("Alert Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemyalert", &it->second.alertTimer);
+										ImGui::Text("Timer Buffer: "); ImGui::SameLine(); ImGui::DragFloat("##enemytimerbuffer", &it->second.timerBuffer);
+										ImGui::Text("Patrol Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemypatrol", &it->second.patrolTimer);
+										ImGui::Text("Target Range: "); ImGui::SameLine(); ImGui::DragFloat("##targettingrange", &it->second.TargetRange);
+									}
+								}
+							}
+						}
+					}
+
 
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
@@ -1383,8 +1817,6 @@ namespace PE {
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
 
-					//other than background, we can add components to objects
-					if (m_currentSelectedObject)
 						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
 						{
 							ImGui::OpenPopup("Components");
@@ -1395,18 +1827,10 @@ namespace PE {
 					{
 						if (ImGui::Selectable("Add Collision"))
 						{
-							//not allowed to add collision without a rigidbody
-							//if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
-							//{
-								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
-									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
-								else
-									AddErrorLog("ALREADY HAS A COLLIDER");
-							//}
-							/*else
-							{
-								AddErrorLog("ADD RIGIDBODY FIRST");
-							}*/
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
+							else
+								AddErrorLog("ALREADY HAS A COLLIDER");
 						}
 						if (ImGui::Selectable("Add Transform"))
 						{
@@ -1436,12 +1860,12 @@ namespace PE {
 							else
 								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 						}
-						if (ImGui::Selectable("Add GUI"))
+						if (ImGui::Selectable("Add Animation"))
 						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUI>() });
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
 							else
-								AddErrorLog("ALREADY HAS GUI");
+								AddErrorLog("ALREADY HAS ANIMATION");
 						}
 						ImGui::EndPopup();
 					}
@@ -1465,25 +1889,124 @@ namespace PE {
 		{
 			static int draggedItemIndex = -1;
 			static bool isDragging = false;
-			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
-				for (int n = 0; n < 9; n++) // loop through resource list here
-				{//resource list needs a list of icons for the texture for the image if possible
-					//else just give a standard object icon here
-					if (n % 3) // to keep it in rows where 3 is max 3 colums
-						ImGui::SameLine();
-					ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)n), ImVec2(30, 20)); //child to hold image n text
-					//ImGui::Image(itemTextures[i], ImVec2(20, 20)); image of resource
-					ImGui::Text("test"); // text
-					// Check if the mouse is over the content item
-					if (ImGui::IsItemHovered()) {
-						// Handle item clicks and drags
-						if (ImGui::IsMouseClicked(0)) {
-							draggedItemIndex = n; // Start dragging
-							isDragging = true;
+			static std::string iconDragged{};
+			//ImGuiStyle& style = ImGui::GetStyle();
+			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
+				
+				// Displays Header with File Directories
+				// skips ../ portion
+				for (auto iter = std::next(m_parentPath.begin()); iter != m_parentPath.end(); ++iter)
+				{
+					ImGui::SameLine();
+					ImGui::Text(("> " + (*iter).string()).c_str());
+					if (ImGui::IsItemClicked(0)) {
+						std::string newPath{};
+						for (auto iter2 = m_parentPath.begin(); iter2 != iter; ++iter2)
+						{
+							newPath += (*iter2).string() + "/";
 						}
+						newPath += (*iter).string();
+						m_parentPath = std::filesystem::path{ newPath };
+						GetFileNamesInParentPath(m_parentPath, m_files);
+						break;
+					}
+				}
+				ImGui::Separator();
+				
+
+				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
+
+				if (ImGui::IsWindowHovered())
+				{
+					glfwSetDropCallback(p_window, &HotLoadingNewFiles);
+					if (m_fileDragged)
+					{
+						GetFileNamesInParentPath(m_parentPath, m_files);
+						for (std::filesystem::path const& r_filepath : m_files)
+						{
+							if (r_filepath.extension() == ".png")
+							{
+								if (ResourceManager::GetInstance().Textures.find(r_filepath.string()) != ResourceManager::GetInstance().Textures.end())
+								{
+									ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
+								}
+							}
+						}
+						m_fileDragged = false;
+					}
+				}
+
+				int numItemPerRow = (ImGui::GetWindowSize().x < 100.f) ? 1 : static_cast<int>(ImGui::GetWindowSize().x / 100.f);
+
+				// list the files in the current showing directory as imgui text
+				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
+				{	//resource list needs a list of icons for the texture for the image if possible
+					//else just give a standard object icon here
+					
+					if (n % numItemPerRow) // to keep it in rows where 3 is max 3 colums
+						ImGui::SameLine();
+					
+					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(100, 100))) //child to hold image n text
+					{
+						std::string icon{};
+						std::string const extension{ m_files[n].filename().extension().string() };
+						if (extension == "")
+							icon = "../Assets/Icons/Directory_Icon.png";
+						else if (extension == ".mp3")
+							icon = "../Assets/Icons/Audio_Icon.png";
+						else if (extension == ".ttf")
+							icon = "../Assets/Icons/Font_Icon.png";
+						else if (extension == ".json")
+							icon = "../Assets/Icons/Prefabs_Icon.png";
+						else if (extension == ".png")
+							icon = "../Assets/Icons/Texture_Icon.png";
+						else
+							icon = "../Assets/Icons/Other_Icon.png";
+
+						ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(icon)->GetTextureID(), ImVec2(50, 50), { 0,1 }, { 1,0 });
+						ImGui::Text(m_files[n].filename().string().c_str()); // text
 					}
 					ImGui::EndChild();
+
+					// check if the mouse is hovering the asset
+					if (ImGui::IsItemHovered())
+					{
+						// if item is a file with extension eg. .txt , .png
+						if (m_files[n].extension() != "")
+						{
+							// Handle item clicks and drags
+							if (ImGui::IsMouseClicked(0)) {
+								draggedItemIndex = n; // Start dragging
+								isDragging = true;
+
+								std::string iconDraggedExtension = m_files[n].extension().string();
+								if (iconDraggedExtension == "")
+									iconDragged = "../Assets/Icons/Directory_Icon.png";
+								else if (iconDraggedExtension == ".mp3")
+									iconDragged = "../Assets/Icons/Audio_Icon.png";
+								else if (iconDraggedExtension == ".ttf")
+									iconDragged = "../Assets/Icons/Font_Icon.png";
+								else if (iconDraggedExtension == ".json")
+									iconDragged = "../Assets/Icons/Prefabs_Icon.png";
+								else if (iconDraggedExtension == ".png")
+									iconDragged = "../Assets/Icons/Texture_Icon.png";
+								else
+									iconDragged = "../Assets/Icons/Other_Icon.png";
+							}
+						}
+						else
+						{
+							if (ImGui::IsMouseClicked(0)) {
+								std::string replaceSeparators = m_files[n].string();
+								std::replace(replaceSeparators.begin(), replaceSeparators.end(), '\\', '/');
+								m_parentPath = std::filesystem::path{ replaceSeparators };
+								GetFileNamesInParentPath(m_parentPath, m_files);
+							}
+						}
+
+					}
 				}
+				ImGui::EndChild();
 			}
 			ImGui::EndChild();
 
@@ -1493,21 +2016,46 @@ namespace PE {
 				if (draggedItemIndex >= 0)
 				{
 					// Create a floating preview of the dragged item
-					ImGui::SetNextWindowPos(ImGui::GetMousePos());
+					ImGui::SetNextWindowPos(ImVec2(ImGui::GetMousePos().x + 1.f, ImGui::GetMousePos().y - 1.f));
 					ImGui::SetNextWindowSize(ImVec2(50, 50));
 					std::string test = std::to_string(draggedItemIndex);
 					ImGui::Begin(test.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-					//put image here
+					ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(iconDragged)->GetTextureID(), ImVec2(34,34), { 0,1 }, { 1,0 });
 					ImGui::End();
-
+					
 					// Check if the mouse button is released
-					if (!ImGui::IsMouseDown(0)) {
+					if (ImGui::IsMouseReleased(0))
+					{
+						if (m_entityToModify != -1)
+						{
+							// alters the texture assigned to renderer component in entity
+							std::string const extension = m_files[draggedItemIndex].extension().string();
+							if (extension == ".png")
+							{
+								ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(m_files[draggedItemIndex].string());
+								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
+							}
+							// add remaining editable assets audio etc
+						}
+
+						if (m_mouseInScene || m_mouseInObjectWindow)
+						{
+							if (m_files[draggedItemIndex].extension() == ".json")
+							{
+								serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+								// change position of loaded prefab based on mouse cursor here
+							}
+						}
+
 						isDragging = false;
 						draggedItemIndex = -1;
-
-						//do a function call here
 					}
 				}
+			}
+			else
+			{
+				m_entityToModify = -1;
 			}
 
 
@@ -1519,43 +2067,66 @@ namespace PE {
 
 	void Editor::ShowPerformanceWindow(bool* Active)
 	{
-		if (IsEditorActive())
+		//if (IsEditorActive())
 		if (!ImGui::Begin("performanceWindow", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close
 		}
 		else
 		{
-			// TEMPORARY HARD CODED
-			std::vector<float> values{
-				TimeManager::GetInstance().GetSystemFrameTime(0) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(1) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(2) / TimeManager::GetInstance().GetFrameTime(),
-				TimeManager::GetInstance().GetSystemFrameTime(3) / TimeManager::GetInstance().GetFrameTime()
-			};
-			char* names[] = { "Input", "Physics", "Collision", "Graphics" };
-			ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
+			std::vector<float> const& fpsValues{ TimeManager::GetInstance().m_frameRateController.GetFpsValues() };
+			ImGui::SeparatorText("FPS Viewer");
+			std::string fpsString{ "FPS: " + std::to_string(static_cast<int>(TimeManager::GetInstance().m_frameRateController.GetFps())) };
 
-			if (ImGui::IsItemHovered())
-			{
-				//current mouse position - the top left position of the rect to get your actual mouse
-				float MousePositionX = ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x;
-				//so your mouseposition/ rect length * number of values to get your current index
-				int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * values.size());
+			// Plot fps line graph
+			ImGui::Text("Average FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetAverageFps());
+			ImGui::Text("Max FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetMaxFps());
+			ImGui::Text("Min FPS: %.2f", TimeManager::GetInstance().m_frameRateController.GetMinFps());
+			ImGui::PlotLines("##FpsLine", fpsValues.data(), static_cast<int>(fpsValues.size()), 0, fpsString.c_str(), 0.0f, 1000.0f, ImVec2(400.f, 200.0f));
 
-				if (hoveredIndex > -1 && hoveredIndex < values.size())
-				{
-					ImGui::BeginTooltip();
-					ImGui::Text("%s: %.2f%%", names[hoveredIndex], values[hoveredIndex] * 100);
-					ImGui::EndTooltip();
-				}
-			}
+			// Plot System usage progress bar
+			ImGui::SeparatorText("System Usage");
+			ImGui::Text("Input: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::INPUT), ImVec2(400.f, 30.0f), NULL);
 
+			ImGui::Text("Logic: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::LOGIC), ImVec2(400.f, 30.0f), NULL);
 
+			ImGui::Text("Physics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::PHYSICS), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Collision: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::COLLISION), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Animation: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::ANIMATION) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::ANIMATION), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Camera: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::CAMERA), ImVec2(400.f, 30.0f), NULL);
+
+			ImGui::Text("Graphics: %.2f%%", TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS) * 100.f);
+			ImGui::ProgressBar(TimeManager::GetInstance().GetSystemFrameUsage(SystemID::GRAPHICS), ImVec2(400.f, 30.0f), NULL);
+
+			//char* names[] = { "Input", "Logic", "Physics", "Collision", "Camera", "Graphics" };
+			//ImGui::SeparatorText("System Usage");
+			//ImGui::PlotHistogram("##Test", values.data(), static_cast<int>(values.size()), 0, NULL, 0.0f, 1.0f, ImVec2(200, 80.0f));
+
+			//if (ImGui::IsItemHovered())
+			//{
+			//	//current mouse position - the top left position of the rect to get your actual mouse
+			//	float MousePositionX = ImGui::GetIO().MousePos.x - ImGui::GetItemRectMin().x;
+			//	//so your mouseposition/ rect length * number of values to get your current index
+			//	int hoveredIndex = static_cast<int>(MousePositionX / ImGui::GetItemRectSize().x * values.size());
+
+			//	if (hoveredIndex > -1 && hoveredIndex < values.size())
+			//	{
+			//		ImGui::BeginTooltip();
+			//		ImGui::Text("%s: %.2f%%", names[hoveredIndex], values[hoveredIndex] * 100);
+			//		ImGui::EndTooltip();
+			//	}
+			//}
 			ImGui::End(); //imgui close
 		}
-
-
 	}
 
 	void Editor::SetDockingPort(bool* Active)
@@ -1623,7 +2194,7 @@ namespace PE {
 						ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
 
 						//setting the other dock locations
-						ImGui::DockBuilderDockWindow("objectlistwindow", dock_id_right);
+						ImGui::DockBuilderDockWindow("Object List Window", dock_id_right);
 
 						//set on the save location to dock ontop of eachother
 						ImGui::DockBuilderDockWindow("resourcewindow", dock_id_down);
@@ -1669,6 +2240,7 @@ namespace PE {
 								engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
 
 								// This will load all entities from the file
+								ClearObjectList();
 								serializationManager.LoadAllEntitiesFromFile(filePath);
 								engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 							}
@@ -1990,7 +2562,6 @@ namespace PE {
 				m_isRunTime = false;
 		}
 
-
 		if (KTE.keycode == GLFW_KEY_F5)
 			m_showResourceWindow = !m_showResourceWindow;
 
@@ -1998,5 +2569,24 @@ namespace PE {
 			ToggleDebugRender();
 	}
 
-}
+	void Editor::HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths)
+	{
+		// prints the number of directories / files dragged over
+		m_fileDragged = true;
+		std::stringstream sstream;
+		sstream << "Drag and drop count - " << count;
+		engine_logger.AddLog(false, sstream.str(), "");
 
+		std::vector<std::filesystem::path> consolidatedPaths;
+		for (int i{ 0 }; i < count; ++i)
+		{
+			consolidatedPaths.emplace_back(paths[i]);
+		}
+		for (std::filesystem::path const& r_path : consolidatedPaths)
+		{
+			if (!std::filesystem::equivalent(r_path.parent_path(), m_parentPath))
+				std::filesystem::copy(r_path, std::filesystem::path{ m_parentPath.string() + "/" + r_path.filename().string()}, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
+		}
+
+	}
+}

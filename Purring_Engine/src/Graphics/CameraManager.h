@@ -152,19 +152,19 @@ namespace PE
              \brief Returns a reference to the camera used to render UI.
              \return Camera& - A reference to the UI camera.
             *************************************************************************************/
-            Camera& GetUiCamera();
+            static Camera& GetUiCamera();
 
             /*!***********************************************************************************
              \brief Returns a reference to the camera used in editor mode.
              \return EditorCamera& - A reference to the camera used in editor mode.
             *************************************************************************************/
-            inline EditorCamera& GetEditorCamera() { return m_editorCamera; }
+            static inline EditorCamera& GetEditorCamera() { return m_editorCamera; }
 
             /*!***********************************************************************************
              \brief Returns the entity ID of the UI camera object.
              \return EntityID - The entity ID of the UI camera object.
             *************************************************************************************/
-            inline EntityID GetUICameraId() { return m_uiCameraId; }
+            static inline EntityID GetUICameraId() { return m_uiCameraId; }
 
             /*!***********************************************************************************
              \brief Get the system's name, useful for debugging and identification.
@@ -188,7 +188,7 @@ namespace PE
              \brief Creates a camera object to use as a UI camera and stores the ID of the UI 
                     camera in m_uiCameraId.
             *************************************************************************************/
-            void CreateUiCamera();
+            static void CreateUiCamera();
 
 
             // ----- Public methods ----- //
@@ -233,18 +233,18 @@ namespace PE
             void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
         private:
-            float m_windowWidth{}, m_windowHeight{};
+            static float m_windowWidth, m_windowHeight;
 
-            std::string m_systemName{ "Camera Manager" }; // Name of system
+            std::string m_systemName{ "CameraManager" }; // Name of system
 
             // The entity number of the primary camera used during runtime
             EntityID m_mainCameraId{};
 
             // The entity number of the UI camera used during runtime
-            EntityID m_uiCameraId{};
+            static EntityID m_uiCameraId;
 
             // The camera used in editor mode
-            EditorCamera m_editorCamera{};
+            static EditorCamera m_editorCamera;
         };
     } // End of Graphics namespace
 } // End of PE namespace

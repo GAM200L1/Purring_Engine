@@ -223,7 +223,7 @@ namespace PE
 
             Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
 
-            std::string m_systemName{ "Graphics" }; // Name of system
+            std::string m_systemName{ "RendererManager" }; // Name of system
 
             // Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};
@@ -239,7 +239,7 @@ namespace PE
             std::vector<float> m_isTextured{}; // Container that stores whether the quad is textured
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
             std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
-
+            std::vector<glm::vec2> m_UV{};
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************

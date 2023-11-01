@@ -94,7 +94,13 @@ namespace PE {
 	void EnemyTestIDLE::StateUpdate(EntityID id, float deltaTime)
 	{			
 		p_data->idleTimer -= deltaTime;
-		PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * 10);
+		//PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * 10);
+
+		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+		{
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("ratAttack");
+		}
+
 		if (p_data->idleTimer <= 0)
 		{
 			p_data->patrolTimer = p_data->timerBuffer;
@@ -164,6 +170,11 @@ namespace PE {
 	{
 		p_data->alertTimer -= deltaTime;
 
+		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+		{
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("ratAttack");
+		}
+
 		if (p_data->alertTimer <= 0 && abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
 		{
 			p_data->m_stateManager->ChangeState(new EnemyTestTARGET(), id);
@@ -202,6 +213,11 @@ namespace PE {
 
 		p_data->alertTimer -= deltaTime;
 
+		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+		{
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("ratDeath");
+		}
+
 		if (p_data->alertTimer < 0 && p_data->distanceFromPlayer <= p_data->TargetRange)
 		{
 			p_data->m_stateManager->ChangeState(new EnemyTestATTACK(), id);
@@ -230,6 +246,11 @@ namespace PE {
 		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->playerID);
 		vec2 toPlayer(targetObject.position.x - currentObject.position.x, targetObject.position.y - currentObject.position.y);
+
+		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+		{
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("ratDeath");
+		}
 
 		EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(toPlayer * p_data->speed/2);
 

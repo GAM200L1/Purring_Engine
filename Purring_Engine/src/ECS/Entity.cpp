@@ -49,6 +49,10 @@ namespace PE
 			m_removed.pop();
 		m_entities.emplace(id);
 		++m_entityCounter;
+		// Assign Descriptor component
+		Assign(id, GetComponentID<EntityDescriptor>());
+		Get<EntityDescriptor>(id).name = "GameObject";
+		Get<EntityDescriptor>(id).name += std::to_string(id);
 		return id;
 	}
 
@@ -165,5 +169,39 @@ namespace PE
 			}
 			return m_poolsEntity.at(r_pool);
 		}
+	}
+
+	nlohmann::json EntityDescriptor::ToJson() const
+	{
+		nlohmann::json j;
+		j["name"] = name;
+
+		if (parent.has_value())
+		{
+			j["parent"] = parent.value();
+		}
+		else
+		{
+			j["parent"] = nullptr;
+		}
+
+		return j;
+	}
+
+	EntityDescriptor EntityDescriptor::Deserialize(const nlohmann::json& j)
+	{
+		EntityDescriptor desc;
+		desc.name = j["name"];
+
+		if (j["parent"] != nullptr)
+		{
+			desc.parent = j["parent"].get<EntityID>();
+		}
+		else
+		{
+			desc.parent = std::nullopt;
+		}
+
+		return desc;
 	}
 }

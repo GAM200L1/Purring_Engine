@@ -236,12 +236,18 @@ namespace PE {
 		*************************************************************************************/
 		void test();
 
+		void PlayAudio1();
+
+		void PlayAudio2();
+
+
 		// ----- Private Functions ----- // 
 		/*!***********************************************************************************
 		 \brief Clear all the objects on the scene
 		*************************************************************************************/
 		void ClearObjectList();
 
+		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths);
 
 		// ----- Private Variables ----- // 
 	private:
@@ -269,14 +275,19 @@ namespace PE {
 		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
 
 		//variable for objects
+		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
 
-		//variable for the windows
+		//variable for assets browser
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
+		static std::filesystem::path m_parentPath;
+		std::vector<std::filesystem::path> m_files;
+		int m_entityToModify;
+		static bool m_fileDragged;
 	};
 }
 
