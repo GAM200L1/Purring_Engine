@@ -30,6 +30,7 @@
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
 #include "Logic/EnemyTestScript.h"
+#include "Logic/FollowScript.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
@@ -151,8 +152,12 @@ namespace PE {
 		//delete all objects
 		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUICameraId())
+			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUICameraId())
+			{
+				LogicSystem::DeleteScriptData(n);
 				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+			}
+
 		}
 	}
 
@@ -581,7 +586,7 @@ namespace PE {
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
 						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-
+						LogicSystem::DeleteScriptData(m_currentSelectedObject);
 						//if not first index
 						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
@@ -1525,8 +1530,7 @@ namespace PE {
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
 								if (ImGui::Button("Add Script"))
 								{
-									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
-									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
+									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex],m_currentSelectedObject);
 								}
 								ImGui::PopStyleColor(1);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1564,8 +1568,7 @@ namespace PE {
 								{
 									if (selectedScript >= 0)
 									{
-										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName);
-										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName, m_currentSelectedObject);
 										selectedScript = -1;
 									}
 								}
@@ -1800,6 +1803,21 @@ namespace PE {
 										ImGui::Text("Timer Buffer: "); ImGui::SameLine(); ImGui::DragFloat("##enemytimerbuffer", &it->second.timerBuffer);
 										ImGui::Text("Patrol Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemypatrol", &it->second.patrolTimer);
 										ImGui::Text("Target Range: "); ImGui::SameLine(); ImGui::DragFloat("##targettingrange", &it->second.TargetRange);
+									}
+								}
+							}
+
+							if (key == "FollowScript")
+							{
+								FollowScript* p_Script = dynamic_cast<FollowScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int id = static_cast<int> (it->second.entityToFollow);
+										ImGui::Text("Player ID: "); ImGui::SameLine(); ImGui::InputInt("##idf", &id);
+										it->second.entityToFollow = id;
 									}
 								}
 							}

@@ -12,6 +12,7 @@ namespace PE
 		std::vector<vec2>	previousLocations;
 		float distanceBeforeSaving{ 100 };
 		vec2 SavedPlayerPosition;
+		float speed{ 100 };
 	};
 
 
@@ -28,6 +29,6 @@ namespace PE
 	private:
 		void LookAt(EntityID id);
 	private:
-		std::map<EntityID, FollowScriptData> m_data;
+		std::map<EntityID, FollowScriptData> m_ScriptData;
 	};
 }

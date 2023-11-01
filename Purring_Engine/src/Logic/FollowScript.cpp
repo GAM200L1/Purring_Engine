@@ -14,14 +14,19 @@ namespace PE
 
 	void FollowScript::Update(EntityID id, float deltaTime)
 	{
-		//LookAt(id);
-		//vec2 normalizedDirection = m_data[id].Direction.GetNormalized();
-		//Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-		//Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_data[id].entityToFollow);
+		LookAt(id);
 
-		////translate to player but this is not what we want
-		//if(currentObject.position.x != targetObject.position.x && currentObject.position.y != targetObject.position.y)
-		//	currentObject.position += normalizedDirection*m_data[id].speed * deltaTime;
+		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].entityToFollow);
+
+		vec2 Direction = vec2(targetObject.position.x - currentObject.position.x, targetObject.position.y - currentObject.position.y);
+
+		vec2 normalizedDirection = Direction.GetNormalized();
+
+
+		//translate to player but this is not what we want
+		if(currentObject.position.x != targetObject.position.x && currentObject.position.y != targetObject.position.y)
+			currentObject.position += normalizedDirection* m_ScriptData[id].speed * deltaTime;
 
 		//we want it to keep a certain distance behind the player as the player move.
 		//should keep track of player's position in nodes, each node will be each following player
@@ -31,8 +36,9 @@ namespace PE
 	{
 	}
 
-	void FollowScript::OnAttach(EntityID)
+	void FollowScript::OnAttach(EntityID id)
 	{
+		m_ScriptData[id] = FollowScriptData();
 	}
 
 	void FollowScript::OnDetach(EntityID)
@@ -41,7 +47,7 @@ namespace PE
 
 	std::map<EntityID, FollowScriptData>& FollowScript::GetScriptData()
 	{
-		return m_data;
+		return m_ScriptData;
 	}
 
 	FollowScript::~FollowScript()
@@ -51,7 +57,7 @@ namespace PE
 	void FollowScript::LookAt(EntityID id)
 	{
 		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_data[id].entityToFollow);
+		Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].entityToFollow);
 		float dx = targetObject.position.x - currentObject.position.x;
 		float dy = targetObject.position.y - currentObject.position.y;
 		float rotation = atan2(dy, dx);

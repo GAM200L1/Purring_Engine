@@ -74,3 +74,12 @@ std::string PE::LogicSystem::GetName()
 {
 	return "LogicSystem";
 }
+
+void PE::LogicSystem::DeleteScriptData(EntityID id)
+{
+	for (auto& [key, val] : m_scriptContainer)
+	{
+		val->OnDetach(id);
+	}
+
+}
