@@ -9,7 +9,7 @@
  \author               Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
  
- \brief    This file contains the class that manages the editor and runtime cameras.
+ \brief    This file contains the class that manages the editor, UI and runtime cameras.
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -164,7 +164,7 @@ namespace PE
              \brief Returns the entity ID of the UI camera object.
              \return EntityID - The entity ID of the UI camera object.
             *************************************************************************************/
-            static inline EntityID GetUICameraId() { return m_uiCameraId; }
+            static inline EntityID GetUiCameraId() { return m_uiCameraId; }
 
             /*!***********************************************************************************
              \brief Get the system's name, useful for debugging and identification.
@@ -177,18 +177,21 @@ namespace PE
         public:
 
             /*!***********************************************************************************
-             \brief Stores the ID passed in as the ID of the entity to be used as the main camera.
+             \brief Stores the argument as the ID of the entity to be used as the main camera.
                     NOTE: If the ID passed in is invalid (i.e. an entity of that ID does not exist 
                     or the entity does not have a Camera component), the value is instead defaulted 
                     to the first runtime camera created.
+
+             \param[in] cameraEntityId The ID to store as the main camera.
             *************************************************************************************/
             void SetMainCamera(EntityID const cameraEntityId);
 
             /*!***********************************************************************************
-             \brief Creates a camera object to use as a UI camera and stores the ID of the UI 
-                    camera in m_uiCameraId.
+             \brief Stores the argument as the ID of the entity to be used as the UI camera.
+
+             \param[in] cameraEntityId The ID to store as the main camera.
             *************************************************************************************/
-            static void CreateUiCamera();
+            static void SetUiCamera(EntityID const cameraEntityId);
 
 
             // ----- Public methods ----- //

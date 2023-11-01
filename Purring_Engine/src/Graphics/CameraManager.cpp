@@ -187,16 +187,7 @@ namespace PE
 
         Camera& CameraManager::GetUiCamera()
         {
-            // Check if the main camera ID stored is valid
-            if (!EntityManager::GetInstance().Has(m_uiCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
-            {
-                CreateUiCamera();
-            }
-
             return EntityManager::GetInstance().Get<Camera>(m_uiCameraId);
-            // @TODO    what if the camera ui obj exists but the camera component has been removed 
-            //          for some reason? Delete the old obj first?
-
         }
 
 
@@ -206,21 +197,9 @@ namespace PE
         }
 
 
-        void CameraManager::CreateUiCamera()            
+        void CameraManager::SetUiCamera(EntityID const cameraEntityId)
         {
-            // Create a UI camera
-            m_uiCameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-
-            if (Editor::GetInstance().IsEditorActive()) 
-            {
-                EntityManager::GetInstance().Get<Graphics::Camera>(m_uiCameraId).SetViewDimensions(GetEditorCamera().GetViewportWidth(), GetEditorCamera().GetViewportHeight());
-            }
-            else 
-            {
-                EntityManager::GetInstance().Get<Graphics::Camera>(m_uiCameraId).SetViewDimensions(m_windowWidth, m_windowHeight);
-            }
-            
-            // @TODO Name the gameobject or hide it in the editor
+            m_uiCameraId = cameraEntityId;
         }
 
 
@@ -230,9 +209,6 @@ namespace PE
             ADD_ALL_WINDOW_EVENT_LISTENER(CameraManager::OnWindowEvent, this)
             ADD_ALL_MOUSE_EVENT_LISTENER(CameraManager::OnMouseEvent, this)
             ADD_ALL_KEY_EVENT_LISTENER(CameraManager::OnKeyEvent, this)
-
-            // Create a UI camera
-            CreateUiCamera();
         }
 
 
