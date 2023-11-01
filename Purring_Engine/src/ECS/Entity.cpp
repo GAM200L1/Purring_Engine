@@ -61,10 +61,14 @@ namespace PE
 	{
 		if (m_removed.count(id))
 			m_removed.erase(id);
-		else if (id == ULLONG_MAX || !m_entities.count(id))
+		else if (id == ULLONG_MAX || m_entities.count(id)) // if a prefab or the id alread is used
 		{
 			engine_logger.AddLog(false, "Allocating new ID for New Entity!", __FUNCTION__);
-			id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin()); // re-assgin the number
+			id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin()); // re-assgin the id
+
+			// if the removed set was not empty, that means an id was used, remove it.
+			if (!m_removed.empty())
+				m_removed.erase(id);
 		}
 		
 		m_entities.emplace(id);
