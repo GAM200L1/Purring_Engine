@@ -21,7 +21,7 @@ namespace PE
 {
     namespace Graphics
     {
-        void Camera::UpdateCamera(Transform const& r_transform)
+        void Camera::UpdateCamera(Transform const& r_transform, bool const isMainCamera)
         {
             if (GetHasChanged(r_transform) || hasViewportChanged)
             {
@@ -30,6 +30,9 @@ namespace PE
                 m_cachedWorldToNdcMatrix = GetViewToNdcMatrix() * GetWorldToViewMatrix();
                 m_cachedNdcToWorldMatrix = GetViewToWorldMatrix() * GetNdcToViewMatrix();
             }
+
+            m_isMainCamera = isMainCamera;
+            m_cachedIsMainCamera = m_isMainCamera;
         }
 
 
@@ -92,6 +95,12 @@ namespace PE
             m_cachedPositionY = positionY;
             m_cachedOrientation = orientation;
             hasTransformChanged = false;
+        }
+
+
+        void Camera::SetMainCamera(bool const value)
+        {
+            m_isMainCamera = value;
         }
 
 

@@ -169,13 +169,8 @@ namespace PE
                 glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
             }
 
-            glm::mat4 worldToNdcMatrix{ 0 };
-
             // Get the world to NDC matrix of the editor cam or the main runtime camera
-            if (r_cameraManager.GetWorldToNdcMatrix(renderInEditor).has_value())
-            {
-                worldToNdcMatrix = r_cameraManager.GetWorldToNdcMatrix(renderInEditor).value();
-            }
+            glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(renderInEditor) };
 
             // Draw objects in the scene
             DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 
