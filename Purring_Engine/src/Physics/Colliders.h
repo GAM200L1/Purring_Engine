@@ -19,13 +19,13 @@
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
 #include "RigidBody.h"
+#include "SpatialGrid.h"
 #include "Data/json.hpp"
 #include <variant>
 #include <set>
 
 namespace PE
 {
-	// may change this to box collider to combine obb and aabb in the future
 	
 	// ----- AABB Collider ----- //
 	
@@ -171,6 +171,7 @@ namespace PE
 		std::variant<AABBCollider, CircleCollider> colliderVariant; // contains the different types of colliders
 		std::set<size_t> objectsCollided; // contains the IDs of the entities that each collider has collided with
 		bool isTrigger{ false }; // determines whether the collider will need to resolve its collision
+		std::vector<vec2 GridID> gridIDs;
 
 		// ----- Public Methods ----- //
 		public:

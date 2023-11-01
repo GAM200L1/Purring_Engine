@@ -21,6 +21,7 @@
 
 namespace PE
 {
+
 	class CollisionManager : public System
 	{
 	public:
@@ -90,6 +91,7 @@ namespace PE
 		void ResolveCollision();
 
 	private:
+
 		std::vector<Manifold> m_manifolds;
 		std::string m_systemName{ "CollisionManager" };
 	};
