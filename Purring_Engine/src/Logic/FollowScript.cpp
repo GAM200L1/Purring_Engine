@@ -66,7 +66,7 @@ namespace PE
 
 						//saving current position as 
 						savedLocation = m_ScriptData[id].NextPosition[index];
-						m_ScriptData[id].NextPosition[index] = NewPosition2 + vec2(m_ScriptData[id].Distance * cosf(newRotation2 - M_PI), m_ScriptData[id].Distance * sinf(newRotation2 - M_PI));
+						m_ScriptData[id].NextPosition[index] = NewPosition2 + vec2(m_ScriptData[id].Distance * cosf(newRotation2 - static_cast<float>(M_PI)), m_ScriptData[id].Distance * sinf(newRotation2 - static_cast<float>(M_PI)));
 
 						if(m_ScriptData[id].FollowingObject[index] != -1)
 						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).position = m_ScriptData[id].NextPosition[index];

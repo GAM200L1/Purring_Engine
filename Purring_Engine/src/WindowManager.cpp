@@ -30,6 +30,7 @@ Logger event_logger = Logger("EVENT");
 
 namespace PE
 {
+
 	/*!***********************************************************************************
 	 \brief     Default constructor for WindowManager. Initializes GLFW for window creation.
 
@@ -102,7 +103,6 @@ namespace PE
 		ADD_ALL_KEY_EVENT_LISTENER(WindowManager::OnKeyEvent, this)
 
 		REGISTER_UI_FUNCTION(TestFunction, WindowManager);
-
 
 		return window;
 	}
