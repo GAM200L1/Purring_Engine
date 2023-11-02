@@ -78,6 +78,7 @@ namespace PE
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+			m_mouseClicked = false;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
 		{
@@ -85,6 +86,7 @@ namespace PE
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+			m_mouseClicked = false;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 		{
@@ -92,6 +94,7 @@ namespace PE
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+			m_mouseClicked = false;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
 		{
@@ -99,6 +102,7 @@ namespace PE
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+			m_mouseClicked = false;
 		}
 		if(!hasMoved)
 			m_ScriptData[id].currentPlayerState = PlayerState::IDLE;
