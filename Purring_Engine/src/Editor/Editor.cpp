@@ -2384,9 +2384,13 @@ namespace PE {
 			glfwGetWindowPos(p_window, &glfwWindowX, &glfwWindowY);
 			int glfwWindowSizeX, glfwWindowSizeY;
 			glfwGetWindowSize(p_window, &glfwWindowSizeX, &glfwWindowSizeY);
+			const ImGuiViewport* mainViewport = ImGui::GetMainViewport();
+			int offsetX = static_cast<int>(mainViewport->Pos.x);
+			int offsetY = static_cast<int>(mainViewport->Pos.y);
 
-			m_sceneWindowOffsetX = ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2) - glfwWindowX - glfwWindowSizeX / 2;
-			m_sceneWindowOffsetY = ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2) - glfwWindowY - glfwWindowSizeY / 2;
+
+			m_sceneWindowOffsetX = ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2) - glfwWindowX - glfwWindowSizeX / 2 + 5*offsetX;
+			m_sceneWindowOffsetY = ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2) - glfwWindowY - glfwWindowSizeY / 2 + offsetY;
 
 			ImGuiStyle& style = ImGui::GetStyle();
 			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
