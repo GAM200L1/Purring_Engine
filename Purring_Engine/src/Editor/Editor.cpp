@@ -2389,8 +2389,8 @@ namespace PE {
 			int offsetY = static_cast<int>(mainViewport->Pos.y);
 
 
-			m_sceneWindowOffsetX = ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2) - glfwWindowX - glfwWindowSizeX / 2 + 5*offsetX;
-			m_sceneWindowOffsetY = ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2) - glfwWindowY - glfwWindowSizeY / 2 + offsetY;
+			m_sceneWindowOffsetX = ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2) - glfwWindowX - glfwWindowSizeX / 2;// +5 * offsetX;
+			m_sceneWindowOffsetY = ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2) - glfwWindowY - glfwWindowSizeY / 2;// +offsetY;
 
 			ImGuiStyle& style = ImGui::GetStyle();
 			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
@@ -2426,14 +2426,19 @@ namespace PE {
 				m_mouseInScene = ImGui::IsWindowHovered();
 			}
 			static ImVec2 clickedPosition;
+			static ImVec2 screenPosition; // coordinates from the top left corner
 			static ImVec2 currentPosition;
 			static vec2 startPosition;
 			if(ImGui::IsMouseClicked(0))
 			{
-				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // in screen space
-				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // in screen space
-				std::cout << "clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y << "\n";
+				std::cout << "-----mouse click-------------------------------------------------------------------------\n";
+				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
+				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // from bottom left corner
+				std::cout << "clicked position: x: " << clickedPosition.x << ", y: " << clickedPosition.y << "\n";
 
+				screenPosition.x = clickedPosition.x - m_renderWindowWidth * 0.5f; // in viewport space, origin in the center
+				screenPosition.y = clickedPosition.y - m_renderWindowHeight * 0.5f; // in viewport space, origin in the center
+				std::cout << "screen position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
 
 				// Check that position is within the viewport
 				if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
@@ -2441,41 +2446,47 @@ namespace PE {
 				{
 						std::cout << "is outside viewport";
 				}
+				else 
+				{
+						// subtract the offset of the scene window 
+						screenPosition.x += m_sceneWindowOffsetX; // in viewport space + offset
+						screenPosition.y += m_sceneWindowOffsetY; // in viewport space + offset
 
-				clickedPosition.x += m_sceneWindowOffsetX; // in screen space + offset
-				clickedPosition.y += m_sceneWindowOffsetY; // in screen space + offset
+						std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << " y : " << m_sceneWindowOffsetY;
+						std::cout << ", offset clicked position: x: " << screenPosition.x << "y: " << screenPosition.y;
 
-				std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << " y : " << m_sceneWindowOffsetY;
-				std::cout << ", offset clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y;
+						m_currentSelectedObject = -1;
+						// Loop through all objects
+						for (long i{ static_cast<long>(Graphics::RendererManager::renderedEntities.size() - 1) }; i >= 0; --i)
+						{	
+								EntityID id{ Graphics::RendererManager::renderedEntities[i] };
 
-				// get center position of the 
+								// Get the transform component of the entity
+								Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-				//else 
-				//{
-				//		long long selectedObjectRenderOrder{ -1 };
-				//		// Loop through all objects
-				//		for (const EntityID& id : SceneView<Transform>())
-				//		{
-				//			// subtract the offset of the scene window 
-				//					// transform the position of the mouse cursor from screen space to model space
-				//				// Check if the cursor position is within the bounds of the object
-				//				if () { continue; }
+								// Transform the position of the mouse cursor from screen space to model space
+								glm::vec4 modelSpacePosition{
+										Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+										* Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
+										* glm::vec4{screenPosition.x, screenPosition.y, 0.f, 1.f} // screen position
+								};
+									
+								// Check if the cursor position is within the bounds of the object
+								if (!(screenPosition.x < -0.5f || screenPosition.x > 0.5f
+										|| screenPosition.y < -0.5f || screenPosition.y > 0.5f))
+								{
+										// It is within the bounds, break out of the loop
+										m_currentSelectedObject = id;
+										break;
+								}
+						}
 
-				//				// It is within the bounds, so check if this was rendered later than the previous selected obj
-				//				long long thisObjectRenderOrder{ EntityManager::GetInstance().Get<EntityDescriptor>(id).renderOrder };
-				//				if (thisObjectRenderOrder > selectedObjectRenderOrder)
-				//				{
-				//						m_currentSelectedObject = id;
-				//						selectedObjectRenderOrder = thisObjectRenderOrder;
-				//				}
-				//		}
-
-				//		if (m_currentSelectedObject >= 0)
-				//		{
-				//				startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
-				//				std::cout << ", attempt to retrieve Entity ID: " << r_frameBuffer.ReadEntityId(clickedPosition.x, clickedPosition.y);
-				//		}
-				//}
+						if (m_currentSelectedObject >= 0)
+						{
+								startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
+								std::cout << ", selected Entity ID: " << m_currentSelectedObject;
+						}
+				}
 				
 				std::cout << "\n";
 			}
@@ -2483,13 +2494,19 @@ namespace PE {
 			{
 				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-				ImVec2 offset;
-				offset.x = currentPosition.x - clickedPosition.x;
-				offset.y = currentPosition.y - clickedPosition.y;
-				float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
 
-				if (m_currentSelectedObject >= 0)
-				EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + (offset.x * magnification), startPosition.y + (offset.y * magnification));
+				// Check that position is within the viewport
+				if (!(clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
+						|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight))
+				{
+						ImVec2 offset;
+						offset.x = currentPosition.x - clickedPosition.x;
+						offset.y = currentPosition.y - clickedPosition.y;
+						float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
+
+						if (m_currentSelectedObject >= 0)
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + (offset.x * magnification), startPosition.y + (offset.y * magnification));
+				}
 
 			}
 

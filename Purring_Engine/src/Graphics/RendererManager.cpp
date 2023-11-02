@@ -47,6 +47,9 @@ namespace PE
 {
     namespace Graphics
     {
+        // Initialize static variables
+        std::vector<EntityID> RendererManager::renderedEntities{};
+
         RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
             : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
         {
@@ -104,6 +107,7 @@ namespace PE
             m_modelToWorldMatrices.reserve(3000);
             m_colors.reserve(3000);
             m_UV.reserve(3000);
+            renderedEntities.reserve(3000);
 
             // Load a font
             ResourceManager::GetInstance().LoadShadersFromFile("text", "../Shaders/Text.vert", "../Shaders/Text.frag");
@@ -129,6 +133,8 @@ namespace PE
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
 
+            // Reset the render order container
+            renderedEntities.clear();
 
             if (renderInEditor)
             {
@@ -141,6 +147,7 @@ namespace PE
                 windowWidth = static_cast<float>(width);
                 windowHeight = static_cast<float>(height);
             }
+
             if (renderInEditor)
             {
                 // Bind the RBO for rendering to the ImGui window
@@ -163,8 +170,9 @@ namespace PE
                 // Update the frame buffer
                 GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
-                m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
+
+                m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
 
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
@@ -243,6 +251,9 @@ namespace PE
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
+                // Store the index of the rendered entity
+                renderedEntities.emplace_back(id);
+
                 glm::mat4 glmObjectTransform
                 {
                     GenerateTransformMatrix(transform.width, // width
@@ -300,6 +311,9 @@ namespace PE
                 
                 // Skip drawing this object is the renderer is not enabled
                 if (!renderer.GetEnabled()) { continue; }
+
+                // Store the index of the rendered entity
+                renderedEntities.emplace_back(id);
                 
                 const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
@@ -918,7 +932,7 @@ namespace PE
         glm::mat4 RendererManager::GenerateTransformMatrix(float const width, float const height,
             float const orientation, float const positionX, float const positionY) 
         {
-            // Get rotation matrix
+            // Get rotation
             GLfloat sin_angle{ glm::sin(orientation) };
             GLfloat cos_angle{ glm::cos(orientation) };
 
@@ -939,6 +953,26 @@ namespace PE
                 upVector.x,   upVector.y,   0.f,    0.f,
                 0.f,    0.f,    1.f,    0.f,
                 centerPosition.x, centerPosition.y, 0.f, 1.f
+            };
+        }
+
+
+        glm::mat4 RendererManager::GenerateInverseTransformMatrix(float const width, float const height,
+            float const orientation, float const positionX, float const positionY)
+        {
+            glm::vec2 up{ -glm::sin(orientation), glm::cos(orientation) };
+            glm::vec2 right{ up.y, -up.x };
+            up *= 1.f / width, right *= 1.f / height;
+
+            float upDotPosition{ up.x * positionX + up.y * positionY };
+            float rightDotPosition{ right.x * positionX + right.y * positionY };
+
+            // Return the inverse transform matrix (world to model)
+            return glm::mat4{
+                right.x, up.x, 0.f, 0.f,
+                right.y, up.y, 0.f, 0.f,
+                0.f,    0.f,   1.f, 0.f,
+                -rightDotPosition, -upDotPosition, 0.f, 1.f
             };
         }
 

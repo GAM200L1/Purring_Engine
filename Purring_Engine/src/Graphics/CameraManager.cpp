@@ -292,12 +292,21 @@ namespace PE
                     Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(testEntity) };
 
                     // Transform the coordinates of the mouse click from viewport space to view space to world space
-                    glm::vec4 newPos{
-                        GetViewToWorldMatrix(Editor::GetInstance().IsEditorActive()) * glm::vec4{
-                            static_cast<float>(event.x) - m_windowWidth * 0.5f + windowWidthOffset,
-                            m_windowHeight * 0.5f - static_cast<float>(event.y) + windowHeightOffset, 0.f, 1.f }
+                    glm::mat4 ViewToWorlMtx{
+                        GetViewToWorldMatrix(Editor::GetInstance().IsEditorActive())
                     };
 
+                    glm::vec4 newPos{};
+
+                    glm::vec4 vpPos{ // mouse is from top left corner
+                            static_cast<float>(event.x) - m_windowWidth * 0.5f + windowWidthOffset, // viewport coords, origin is in the center
+                            m_windowHeight * 0.5f - static_cast<float>(event.y) + windowHeightOffset, 0.f, 1.f };
+
+                    newPos = ViewToWorlMtx * vpPos;
+
+                    std::cout << "EVENT: " << event.x << ", Y: " << event.y << std::endl;
+                    std::cout << "vpPos: " << vpPos.x << ", Y: " << vpPos.y << std::endl;
+                    std::cout << "New: " << newPos.x << ", Y: " << newPos.y << std::endl;
                     r_transform.position.x = newPos.x;
                     r_transform.position.y = newPos.y;
                 }
