@@ -80,6 +80,13 @@ namespace PE {
 		*************************************************************************************/
 		void GetWindowSize(float&, float&);
 		/*!***********************************************************************************
+		 \brief Return the offset of the center of the scene window from the center of the 
+						app window along the x and y axes.
+		 \param[out] float x value
+		 \param[out] float y value
+		*************************************************************************************/
+		void GetSceneWindowOffset(float&, float&);
+		/*!***********************************************************************************
 		 \brief get the boolean to show if the editor is active
 		 \return bool whether editor is active so we know we need to transfer the buffer
 		*************************************************************************************/
@@ -302,6 +309,7 @@ namespace PE {
 		//variable for assets browser
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight;
+		float m_sceneWindowOffsetX, m_sceneWindowOffsetY; // Cached offset of the center of the scene window from the center of the app window
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;

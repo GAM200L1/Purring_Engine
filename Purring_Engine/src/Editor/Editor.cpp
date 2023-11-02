@@ -92,6 +92,13 @@ namespace PE {
 		width = m_renderWindowWidth;
 		height = m_renderWindowHeight;
 	}
+	
+
+	void Editor::GetSceneWindowOffset(float& xOffset, float& yOffset)
+	{
+		xOffset = m_sceneWindowOffsetX;
+		yOffset = m_sceneWindowOffsetY;
+	}
 
 	bool Editor::IsEditorActive()
 	{
@@ -2371,6 +2378,16 @@ namespace PE {
 			//setting the current width and height of the window to be drawn on
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
+
+			// Get the position of the cursor offset by the position of the scene window in the app window
+			int glfwWindowX, glfwWindowY;
+			glfwGetWindowPos(p_window, &glfwWindowX, &glfwWindowY);
+			int glfwWindowSizeX, glfwWindowSizeY;
+			glfwGetWindowSize(p_window, &glfwWindowSizeX, &glfwWindowSizeY);
+
+			m_sceneWindowOffsetX = ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2) - glfwWindowX - glfwWindowSizeX / 2;
+			m_sceneWindowOffsetY = ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2) - glfwWindowY - glfwWindowSizeY / 2;
+
 			ImGuiStyle& style = ImGui::GetStyle();
 			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
 			float avail = ImGui::GetContentRegionAvail().x;
@@ -2409,12 +2426,54 @@ namespace PE {
 			static vec2 startPosition;
 			if(ImGui::IsMouseClicked(0))
 			{
-				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
-				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-				if(m_currentSelectedObject >= 0)
-				startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
-				std::cout << "clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y 
-						<< ", attempt to retrieve Entity ID: " << r_frameBuffer.ReadEntityId(clickedPosition.x, clickedPosition.y) << "\n";
+				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // in screen space
+				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // in screen space
+				std::cout << "clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y << "\n";
+
+
+				// Check that position is within the viewport
+				if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
+						|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight)
+				{
+						std::cout << "is outside viewport";
+				}
+
+				clickedPosition.x += m_sceneWindowOffsetX; // in screen space + offset
+				clickedPosition.y += m_sceneWindowOffsetY; // in screen space + offset
+
+				std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << " y : " << m_sceneWindowOffsetY;
+				std::cout << ", offset clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y;
+
+				// get center position of the 
+
+				//else 
+				//{
+				//		long long selectedObjectRenderOrder{ -1 };
+				//		// Loop through all objects
+				//		for (const EntityID& id : SceneView<Transform>())
+				//		{
+				//			// subtract the offset of the scene window 
+				//					// transform the position of the mouse cursor from screen space to model space
+				//				// Check if the cursor position is within the bounds of the object
+				//				if () { continue; }
+
+				//				// It is within the bounds, so check if this was rendered later than the previous selected obj
+				//				long long thisObjectRenderOrder{ EntityManager::GetInstance().Get<EntityDescriptor>(id).renderOrder };
+				//				if (thisObjectRenderOrder > selectedObjectRenderOrder)
+				//				{
+				//						m_currentSelectedObject = id;
+				//						selectedObjectRenderOrder = thisObjectRenderOrder;
+				//				}
+				//		}
+
+				//		if (m_currentSelectedObject >= 0)
+				//		{
+				//				startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
+				//				std::cout << ", attempt to retrieve Entity ID: " << r_frameBuffer.ReadEntityId(clickedPosition.x, clickedPosition.y);
+				//		}
+				//}
+				
+				std::cout << "\n";
 			}
 			if (ImGui::IsMouseDown(0))
 			{
