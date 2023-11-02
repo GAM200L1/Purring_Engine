@@ -126,7 +126,7 @@ namespace PE {
 		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
 		//show the entire gui 
-		configJson["Editor"]["showEditor"] = m_showEditor; // depends on the mode, whether we want to see the scene or the editor
+		configJson["Editor"]["showEditor"] = false; // depends on the mode, whether we want to see the scene or the editor
 		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
 
 
