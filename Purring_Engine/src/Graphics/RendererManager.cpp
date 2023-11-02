@@ -787,12 +787,18 @@ namespace PE
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
 
-                // get width and height of text
-                glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
-                textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
-                textSize.y *= textComponent.GetSize();
-                EntityManager::GetInstance().Get<Transform>(id).width = textSize.x;
-                EntityManager::GetInstance().Get<Transform>(id).height = textSize.y;
+                // Resize the transform if the entity does not have other renderer components
+                if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<GUIRenderer>())
+                && !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Renderer>()))
+                {
+                    // get width and height of text
+                    glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
+                    textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
+                    textSize.y *= textComponent.GetSize();
+
+                    EntityManager::GetInstance().Get<Transform>(id).width = textSize.x;
+                    EntityManager::GetInstance().Get<Transform>(id).height = textSize.y;
+                }
 
                 // activate corresponding render state	
                 p_textShader->Use();

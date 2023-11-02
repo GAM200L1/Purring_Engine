@@ -2690,6 +2690,11 @@ namespace PE {
 								{
 										transformedCursor = worldSpacePosition;
 								}
+								else 
+								{
+										transformedCursor /= Graphics::CameraManager::GetEditorCamera().GetMagnification();
+										std::cout << "checking text component\n";
+								}
 
 								transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
 										* transformedCursor;
@@ -2725,7 +2730,7 @@ namespace PE {
 				
 				std::cout << "\n";
 			}
-			if (ImGui::IsMouseDown(0))
+			if (ImGui::IsMouseDown(0) && (m_currentSelectedObject >= 0))
 			{
 				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
@@ -2739,8 +2744,14 @@ namespace PE {
 						offset.y = currentPosition.y - clickedPosition.y;
 						float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
 
-						if (m_currentSelectedObject >= 0)
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + (offset.x * magnification), startPosition.y + (offset.y * magnification));
+						if (!EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<TextComponent>())
+								&& !EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+						{ 
+								offset.x *= magnification;
+								offset.y *= magnification;
+						}
+						
+						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
 				}
 
 			}
