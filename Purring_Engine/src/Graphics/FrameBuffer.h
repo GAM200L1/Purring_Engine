@@ -10,8 +10,7 @@
  \par      email:      krystal.y@digipen.edu
  
  \brief     This file contains the declaration of the FrameBuffer class, 
-            which creates and manages a framebuffer with a texture bound 
-            to color attachment point 0.
+            which creates and manages a framebuffer with a texture bound to it.
             
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -26,16 +25,6 @@ namespace PE
 {
     namespace Graphics
     {
-        /*!***********************************************************************************
-         \brief Types of textures to attach to the framebuffer. This enum is used to 
-                configure how to set up the format of the texture.                
-        *************************************************************************************/
-        enum class ColorAttachmentType : unsigned char
-        {
-            RGBA_COLOR,
-            RED_INTEGER
-        };
-
         /*!***********************************************************************************
         \brief  Creates and manages a framebuffer with a texture bound to it.
         *************************************************************************************/
@@ -70,26 +59,11 @@ namespace PE
 
              \param[in] bufferWidth Width the buffer should be set to.
              \param[in] bufferHeight Height the buffer should be set to.
-             \param[in] type Type of the color attachment. Will be used to determine the 
-                            internal format, format, and data type of the attachment.
 
              \return true - FrameBuffer created successfully.
              \return false - FrameBuffer was not created.
             *************************************************************************************/
-            bool CreateFrameBuffer(int const bufferWidth, int const bufferHeight, 
-                ColorAttachmentType const type);
-
-            /*!***********************************************************************************
-             \brief Adjusts the size and settings of the texture to attach to color attachment 
-                    point 0.
-
-             \param[in] bufferWidth Width the attachment should be set to.
-             \param[in] bufferHeight Height the attachment should be set to.
-             \param[in] type Type of the color attachment. Will be used to determine the 
-                            internal format, format, and data type of the attachment.
-            *************************************************************************************/
-            void AdjustColorAttachment(int const bufferWidth, int const bufferHeight, 
-                ColorAttachmentType const type);
+            bool CreateFrameBuffer(int const bufferWidth, int const bufferHeight);
 
             /*!***********************************************************************************
              \brief Binds the framebuffer.
@@ -142,42 +116,13 @@ namespace PE
             *************************************************************************************/
             void Cleanup();
 
-
             // ----- Private variables ----- // 
         private:
             GLuint m_frameBufferObjectIndex{}; // Frame buffer object to draw to
-            GLuint m_textureIndex{}; // Texture ID of the texture generated to attach to the framebuffer
+            GLuint m_textureIndex{}; // ID of texture attachment that the scene window content is drawn to
             GLuint m_entityTextureId{}; // ID of texture attachment that the entity IDs are written to (for screen picking)
 
-            int m_bufferWidth{}, m_bufferHeight{}; // Width and height of the buffer object
-            ColorAttachmentType m_textureType{ ColorAttachmentType::RGBA_COLOR }; // Type used to determine the texture settings
-
-
-            // ----- Private methods ----- // 
-        private:
-            /*!***********************************************************************************
-             \brief Gets thenumber of color components in the texture based on the type argument.
-                    See: https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
-
-             \param[in] type Type of texture to attach to the framebuffer.
-            *************************************************************************************/
-            GLint GetTextureInternalFormat(ColorAttachmentType const type);
-
-            /*!***********************************************************************************
-             \brief Gets the format of the pixel data of the texture based on the type argument.
-                    See: https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
-
-             \param[in] type Type of texture to attach to the framebuffer.
-            *************************************************************************************/
-            GLenum GetTextureFormat(ColorAttachmentType const type);
-
-            /*!***********************************************************************************
-             \brief Gets the data type of the pixel data of the texture based on the type argument.
-                    See: https://registry.khronos.org/OpenGL-Refpages/gl4/html/glTexImage2D.xhtml
-
-             \param[in] type Type of texture to attach to the framebuffer.
-            *************************************************************************************/
-            GLenum GetTextureDataType(ColorAttachmentType const type);
+            int m_bufferWidth{}, m_bufferHeight{}; // Width and height of the buffer object            
         };
     } // End of Graphics namespace
 } // End of PE namespace
