@@ -36,6 +36,7 @@
 #include <random>
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
+#include "Graphics/Text.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
@@ -2661,15 +2662,8 @@ namespace PE {
 						screenPosition.x += m_sceneWindowOffsetX; // in viewport space + offset
 						screenPosition.y += m_sceneWindowOffsetY; // in viewport space + offset
 
-						// Transform the position of the mouse cursor from screen space to model space
-						glm::vec4 worldSpacePosition{
-								Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
-								* glm::vec4{screenPosition.x, screenPosition.y, 0.f, 1.f} // screen position
-						};
-
 						std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << ", y : " << m_sceneWindowOffsetY;
 						std::cout << ", offset clicked position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
-						std::cout << "worldSpacePosition: x: " << worldSpacePosition.x << ", y: " << worldSpacePosition.y << "\n";
 
 						m_currentSelectedObject = -1;
 						// Loop through all objects
@@ -2679,17 +2673,32 @@ namespace PE {
 
 								// Get the transform component of the entity
 								Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
-										
-								glm::vec4 modelSpacePosition{
-										Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
-										* worldSpacePosition
+
+								glm::vec4 transformedCursor{ screenPosition.x, screenPosition.y, 0.f, 1.f };
+
+								// Transform the position of the mouse cursor from screen space to model space
+								glm::vec4 worldSpacePosition{
+										Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
+										* transformedCursor // screen position
 								};
 
-								std::cout << "modelSpacePosition: x: " << modelSpacePosition.x << ", y: " << modelSpacePosition.y << "\n";
+								std::cout << "worldSpacePosition: x: " << worldSpacePosition.x << ", y: " << worldSpacePosition.y << "\n";
+									
+								// If trying to pick text or UI, don't transform to world space
+								if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<TextComponent>())
+										&& !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+								{
+										transformedCursor = worldSpacePosition;
+								}
+
+								transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+										* transformedCursor;
+
+								std::cout << "modelSpacePosition: x: " << transformedCursor.x << ", y: " << transformedCursor.y << "\n";
 
 								glm::vec4 backToWorldSpacePosition{
 										Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
-										* modelSpacePosition
+										* transformedCursor
 								};
 
 								Transform& r_transform2{ EntityManager::GetInstance().Get<Transform>(Graphics::CameraManager::testEntity) };
@@ -2698,8 +2707,8 @@ namespace PE {
 								std::cout << "backToWorldSpacePosition: x: " << backToWorldSpacePosition.x << ", y: " << backToWorldSpacePosition.y << "\n";
 
 								// Check if the cursor position is within the bounds of the object
-								if (!(modelSpacePosition.x < -0.5f || modelSpacePosition.x > 0.5f
-										|| modelSpacePosition.y < -0.5f || modelSpacePosition.y > 0.5f))
+								if (!(transformedCursor.x < -0.5f || transformedCursor.x > 0.5f
+										|| transformedCursor.y < -0.5f || transformedCursor.y > 0.5f))
 								{
 										// It is within the bounds, break out of the loop
 										m_currentSelectedObject = id;

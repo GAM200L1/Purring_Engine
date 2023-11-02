@@ -784,6 +784,9 @@ namespace PE
                     break;
                 }
 
+                // Store the index of the rendered entity
+                renderedEntities.emplace_back(id);
+
                 // get width and height of text
                 glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
                 textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
