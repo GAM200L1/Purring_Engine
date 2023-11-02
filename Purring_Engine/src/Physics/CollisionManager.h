@@ -18,7 +18,6 @@
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
 #include "Colliders.h"
-#include "Events/EventHandler.h"
 namespace PE
 {
 	class CollisionManager : public System
@@ -89,9 +88,6 @@ namespace PE
 		*************************************************************************************/
 		void ResolveCollision();
 
-	private:
-		void CollisionEnter(const Event<CollisionEvents>& r_e);
-		void TriggerEnter(const Event<CollisionEvents>& r_e);
 	private:
 		std::vector<Manifold> m_manifolds;
 		std::string m_systemName{ "CollisionManager" };
