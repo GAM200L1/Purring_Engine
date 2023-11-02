@@ -197,6 +197,16 @@ RTTR_REGISTRATION
         .property("rotation", &PE::FollowScriptData::Rotation)
         .property("CurrentPosition", &PE::FollowScriptData::CurrentPosition)
         .property("NextPosition", &PE::FollowScriptData::NextPosition);
+
+    rttr::registration::class_<PE::TextComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>().to_string().c_str())
+        .property_readonly("Font", &PE::TextComponent::GetFontKey)
+        .property_readonly("Size", &PE::TextComponent::GetSize)
+        .property_readonly("Text", &PE::TextComponent::GetText)
+        .property_readonly("Color", &PE::TextComponent::GetColor)
+        .method("Color", &PE::TextComponent::SetColor)
+        .method("Text", &PE::TextComponent::SetText)
+        .method("Size", &PE::TextComponent::SetSize)
+        .method("Font", &PE::TextComponent::SetFont);
 }
 
 PE::CoreApplication::CoreApplication()

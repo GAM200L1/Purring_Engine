@@ -27,6 +27,7 @@
 #include "Graphics/CameraManager.h"
 #include "Logic/LogicSystem.h"
 #include "Logic/PlayerControllerScript.h"
+#include "Graphics/Text.h"
 
 // RTTR stuff
 #include <rttr/variant.h>
@@ -228,6 +229,8 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
     SerializeComponent<PE::ScriptComponent>(entityId, "ScriptComponent", j);
     SerializeComponent<PE::AnimationComponent>(entityId, "AnimationComponent", j);
+    SerializeComponent<PE::TextComponent>(entityId, "TextComponent", j);
+
     return j; 
 }
 
@@ -329,6 +332,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("EntityDescriptor", &SerializationManager::LoadEntityDescriptor);
     m_initializeComponent.emplace("ScriptComponent", &SerializationManager::LoadScriptComponent);
     m_initializeComponent.emplace("AnimationComponent", &SerializationManager::LoadAnimationComponent);
+    m_initializeComponent.emplace("TextComponent", &SerializationManager::LoadTextComponent);
 }
 
 bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
@@ -429,6 +433,13 @@ bool SerializationManager::LoadAnimationComponent(const size_t& r_id, const nloh
 {
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>(),
         static_cast<void*>(&(PE::AnimationComponent().Deserialize(r_json["Entity"]["components"]["AnimationComponent"]))));
+    return true;
+}
+
+bool SerializationManager::LoadTextComponent(const size_t& r_id, const nlohmann::json& r_json)
+{
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>(),
+        static_cast<void*>(&(PE::TextComponent().Deserialize(r_json["Entity"]["components"]["TextComponent"]))));
     return true;
 }
 

@@ -163,6 +163,7 @@ private:
     bool LoadGUIRenderer(const size_t& r_id, const nlohmann::json& r_json);
     bool LoadEntityDescriptor(const size_t& r_id, const nlohmann::json& r_json);
     bool LoadAnimationComponent(const size_t& r_id, const nlohmann::json& r_json);
+    bool LoadTextComponent(const size_t& r_id, const nlohmann::json& r_json);
 
     bool LoadScriptComponent(const size_t& r_id, const nlohmann::json& r_json);
 
