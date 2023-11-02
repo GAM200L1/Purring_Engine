@@ -92,6 +92,7 @@ namespace PE
 
 	private:
 
+		Grid m_grid;
 		std::vector<Manifold> m_manifolds;
 		std::string m_systemName{ "CollisionManager" };
 	};

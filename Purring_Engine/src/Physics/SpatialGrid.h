@@ -1,14 +1,13 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     RigidBody.cpp
- \date     10-09-2023
+ \file     SpatialGrid.h
+ \date     01-11-2023
 
  \author               Liew Yeni
  \par      email:      yeni.l/@digipen.edu.sg
 
- \brief This function contains the declarations for the RigidBody class and EnumRigidBodyType enum class.
-		Changes: Added in Serialization and Deserialization functions for RigidBody Component
+ \brief 
 
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -22,36 +21,39 @@ namespace PE
 {
 	using GridID = vec2;
 	
-	struct Cell
+	class Cell
 	{
-		vec2 center;
-		vec2 bounds; // min max
-		float halfWidth;
+	public:
+		inline void Add(EntityID id);
+		inline void Remove(EntityID id);
+		inline void ClearCell();
+		inline std::vector<EntityID> const& GetEntityIDs();
 
-		void Add(std::unique_ptr<RigidBody> p_body);
-		void Remove(std::unique_ptr<RigidBody> p_body);
-
-		std::vector<EntityID> entitiesInCell;
+	private:
+		//vec2 m_center;
+		//vec2 m_bounds; // min max
+		//float m_halfWidth;
+		std::vector<EntityID> m_entitiesInCell;
 	};
 
 	class Grid
 	{
-		Grid(float GridWidth, float GridHeight);
+		Grid();
 		~Grid();
 		
-		void CreateGrid();
+		void SetupGrid(float gridWidth, float gridHeight);
 		void UpdateGrid();
+		void ClearGrid();
 
-		void Clear();
-
-		inline Cell GetCell(float posX, float posY);
-		inline GridID GetIndex(float posX, float posY);
+		inline std::unique_ptr<Cell>& GetCell(std::unique_ptr<Cell>& r_colliderCell, float posX, float posY, AABBCollider const& r_collider);
+		inline std::unique_ptr<Cell>& GetCell(std::unique_ptr<Cell>& r_colliderCell, float posX, float posY, CircleCollider const& r_collider);
+		//inline GridID GetIndex(float posX, float posY);
 
 
 	private:
-		float columns, rows; // contain the number of columns and rows the grid has
-		vec2 gridSize{ 0.f, 0.f };
-		vec2 cellSize; // contain the height and width each cell wil be
+		size_t columns, rows; // contain the number of columns and rows the grid has
+		vec2 gridSize;
+		float cellWidth; // contain the half width of a cell, given a cell is a square
 		std::vector<std::vector<std::unique_ptr<Cell>>> m_cells;
 	};
 }
