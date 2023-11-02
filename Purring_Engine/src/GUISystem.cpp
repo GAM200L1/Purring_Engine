@@ -72,6 +72,8 @@ namespace PE
 				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
 				InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
 
+				std::cout << mouseX << " " << mouseY << std::endl;
+
 				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 					continue;
 

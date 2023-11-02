@@ -1,6 +1,8 @@
 #pragma once
 #include "Script.h"
 #include "Events/EventHandler.h"
+#include "Math/MathCustom.h"
+
 namespace PE
 {
 	enum class  PlayerState{ IDLE = 0, MOVING, DEAD };
@@ -9,7 +11,7 @@ namespace PE
 	{
 		PlayerState currentPlayerState{ PlayerState::IDLE };
 		int HP{ 100 };
-		float speed{ 100 };
+		float speed{ 500 };
 	};
 
 	class PlayerControllerScript : public Script
@@ -26,9 +28,12 @@ namespace PE
 		rttr::instance GetScriptData(EntityID id);
 		~PlayerControllerScript();
 	private:
-		void CollisionEnter(const Event<CollisionEvents>& r_e);
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		void MoveTowardsClicked(EntityID id, float deltaTime);
 	private:
 		std::map<EntityID, PlayerControllerScriptData> m_ScriptData;
+		vec2 m_currentMousePos;
+		bool m_mouseClicked;
 	};
 
 }
