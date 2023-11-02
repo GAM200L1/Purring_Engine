@@ -88,6 +88,9 @@ namespace PE
             glfwGetCursorPos(window, &x, &y);
             mbpe.x = static_cast<int>(x);
             mbpe.y = static_cast<int>(y);
+            ConvertGLFWToTransform(window,&x,&y);
+            mbpe.transX = static_cast<int>(x);
+            mbpe.transY = static_cast<int>(y);
             PE::MouseButtonHoldEvent mbhe;
             mbpe.button = (int)button;
             mbhe.button = (int)button;
@@ -314,6 +317,7 @@ namespace PE
         glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
         *x = *x - static_cast<double>(windowWidth) * 0.5;
         *y = static_cast<double>(windowHeight) * 0.5 - *y;
+
     }
 
 

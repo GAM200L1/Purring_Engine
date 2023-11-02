@@ -7,19 +7,23 @@
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 #include "Events/EventHandler.h"
+#include "WindowManager.h"
+#include "Graphics/CameraManager.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
 {
 
-	void PlayerControllerScript::Init(EntityID id)
+	void PlayerControllerScript::Init(EntityID)
 	{
-		id;
+		m_mouseClicked = false;
+		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, PlayerControllerScript::OnMouseClick, this)
 	}
 	void PlayerControllerScript::Update(EntityID id, float deltaTime)
 	{
-		// Movement
-		CheckState(id);
+		if (m_mouseClicked)
+			MoveTowardsClicked(id, deltaTime);
+
 		switch (m_ScriptData[id].currentPlayerState)
 		{
 		case PlayerState::IDLE:
@@ -67,27 +71,42 @@ namespace PE
 
 	void PlayerControllerScript::MovePlayer(EntityID id, float deltaTime)
 	{
+		bool hasMoved = false;
 		//movement without force
 		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
 		{
+			hasMoved = true;
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+			m_mouseClicked = false;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
 		{
+			hasMoved = true;
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+			m_mouseClicked = false;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 		{
+			hasMoved = true;
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+			m_mouseClicked = false;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
 		{
+			hasMoved = true;
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+			m_mouseClicked = false;
 		}
+		if(!hasMoved)
+			m_ScriptData[id].currentPlayerState = PlayerState::IDLE;
 	}
 
 	void PlayerControllerScript::CheckState(EntityID id)
@@ -118,9 +137,50 @@ namespace PE
 	{
 	}
 
-	void PlayerControllerScript::CollisionEnter(const Event<CollisionEvents>& r_e)
+	void PlayerControllerScript::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
-		const OnCollisionEnterEvent& OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_e);
-		//AHHHHHHHHHHHHHHHHHHHHHHHHHH I CANT GET ID HELP
+		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+
+		float xOffset{}, yOffset{};
+
+		for (EntityID objectID : SceneView<Graphics::Camera>())
+		{
+			if (EntityManager::GetInstance().Get<Graphics::Camera>(objectID).GetIsMainCamera()) 
+			{
+				xOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.x;
+				yOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.y;
+			}
+		}
+
+
+		m_currentMousePos.x = static_cast<float>(MBPE.transX) + xOffset;
+		m_currentMousePos.y = static_cast<float>(MBPE.transY) + yOffset;
+
+		m_mouseClicked = true;
+	}
+
+	void PlayerControllerScript::MoveTowardsClicked(EntityID id, float deltaTime)
+	{
+		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+		//Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].entityToFollow);
+
+		vec2 Direction = vec2(m_currentMousePos.x - currentObject.position.x, m_currentMousePos.y - currentObject.position.y);
+
+		vec2 normalizedDirection = Direction.GetNormalized();
+
+
+		//translate to player but this is not what we want
+		if ((currentObject.position.x > m_currentMousePos.x + 1.5f || currentObject.position.x < m_currentMousePos.x - 1.5f) && (currentObject.position.y > m_currentMousePos.y + 1.5f || currentObject.position.y < m_currentMousePos.y - 1.5f))
+		{
+			currentObject.position += normalizedDirection * m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
+		}
+		else
+		{
+			m_mouseClicked = false;
+			m_ScriptData[id].currentPlayerState = PlayerState::IDLE;
+		}
+
+
 	}
 }

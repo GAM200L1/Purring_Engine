@@ -1961,8 +1961,16 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										
-										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&it->second.NumberOfFollower);
+										int j = it->second.NumberOfFollower;
+										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
+										if (j <= 5 && j >= 0)
+										{
+											it->second.NumberOfFollower = j;
+										}
+										else
+										{
+											it->second.NumberOfFollower = 5;
+										}
 
 										for (int i = 0; i < it->second.NumberOfFollower; i++)
 										{
