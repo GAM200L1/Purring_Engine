@@ -25,6 +25,7 @@
 #include "Math/MathCustom.h"
 #include <filesystem>
 #include "Graphics/CameraManager.h"
+#include "Logic/LogicSystem.h"
 
 const std::wstring wjsonExt = L".json";
 
@@ -220,6 +221,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::GUI>(entityId, "GUI", j);
     SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); 
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
+    SerializeComponent<PE::ScriptComponent>(entityId, "ScriptComponent", j);
 
     return j; 
 }
@@ -320,6 +322,8 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("GUI", &SerializationManager::LoadGUI);
     m_initializeComponent.emplace("GUIRenderer", &SerializationManager::LoadGUIRenderer);
     m_initializeComponent.emplace("EntityDescriptor", &SerializationManager::LoadEntityDescriptor);
+    m_initializeComponent.emplace("ScriptComponent", &SerializationManager::LoadScriptComponent);
+
 
 }
 
@@ -414,5 +418,12 @@ bool SerializationManager::LoadEntityDescriptor(const EntityID& r_id, const nloh
     // Pass the descriptor to the EntityFactory to create/update the EntityDescriptor component for the entity with id 'r_id'
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>(), static_cast<void*>(&descriptor));
 
+    return true;
+}
+
+bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohmann::json& r_json)
+{
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>(),
+        static_cast<void*>(&(PE::ScriptComponent().Deserialize(r_json["Entity"]["components"]["ScriptComponent"]))));
     return true;
 }

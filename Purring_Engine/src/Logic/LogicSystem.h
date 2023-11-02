@@ -1,6 +1,7 @@
 #pragma once
 #include "System.h"
 #include "Script.h"
+#include "Data/json.hpp"
 
 #define REGISTER_SCRIPT(name) 	PE::LogicSystem::m_scriptContainer[#name] = new name()
 #define GETSCRIPTDATA(script,id) &reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData()[id]
@@ -60,6 +61,33 @@ namespace PE {
 			if(itr != m_scriptKeys.end())
 			m_scriptKeys.erase(itr);
 		}
+
+		nlohmann::json ToJson() const
+		{
+			nlohmann::json ret;
+			/*rttr::type currType = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<ScriptComponent>().to_string());
+			for (auto& prop : currType.get_properties())
+			{
+				std::string nm(prop.get_name());	
+				rttr::variant vp = prop.get_value(m_scriptKeys);
+			}*/
+			for (auto [k, v] : m_scriptKeys)
+			{
+				ret[k.c_str()] = v;
+			}
+		
+			return ret;
+		}
+
+		ScriptComponent& Deserialize(const nlohmann::json& j)
+		{
+			for (const auto& k : j)
+			{
+				m_scriptKeys[k.type_name()] = k.get<ScriptState>();
+			}
+			return *this;
+		}
+
 		~ScriptComponent(){}
 	};
 
