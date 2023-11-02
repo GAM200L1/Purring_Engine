@@ -1114,12 +1114,28 @@ namespace PE {
 									if (prop.get_name() == "Orientation" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
 										prop.get_name() == "Relative Orientation" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
 										continue;
+
+									// hide properties if entity has a certain component
+									if (prop.get_name() == "Orientation")
+									{
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
+											continue;
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+											continue;
+									}
+
+									if (prop.get_name() == "Width" || prop.get_name() == "Height")
+									{
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
+											continue;
+									}
+
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
 									ImGui::Text(nm.c_str());
-									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
-									
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));									
+
 									// handle types
 									if (vp.get_type().get_name() == "structPE::vec2")
 									{
@@ -1693,11 +1709,12 @@ namespace PE {
 								ImGui::Checkbox("Is Main Camera: ", &isMainCamera); // bool to set this camera as the main cam
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Text("Viewport Dimensions: ");
-								ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
-								ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								// commented out for now
+								//ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//ImGui::Text("Viewport Dimensions: ");
+								//ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
+								//ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
+								//ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
 								float zoom{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetMagnification() };
 								ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");

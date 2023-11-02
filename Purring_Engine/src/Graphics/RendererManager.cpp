@@ -768,6 +768,13 @@ namespace PE
                     break;
                 }
 
+                // get width and height of text
+                glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
+                textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
+                textSize.y *= textComponent.GetSize();
+                EntityManager::GetInstance().Get<Transform>(id).width = textSize.x;
+                EntityManager::GetInstance().Get<Transform>(id).height = textSize.y;
+
                 // activate corresponding render state	
                 p_textShader->Use();
                 p_textShader->SetUniform("u_ViewProjection", r_worldToNdc);
