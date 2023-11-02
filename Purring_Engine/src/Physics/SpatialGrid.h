@@ -54,7 +54,7 @@ namespace PE
 	{
 	public:
 		// ----- Public Variables ----- //
-		std::vector<std::vector<Cell*>> m_cells;
+		std::vector<std::vector<std::unique_ptr<Cell>>> m_cells;
 
 	public:
 		// ----- Constructor/Destructor ----- //

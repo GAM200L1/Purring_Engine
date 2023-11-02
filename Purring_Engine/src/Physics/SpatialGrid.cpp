@@ -120,7 +120,8 @@ namespace PE
 			for (size_t j{ 0 }; j < m_rows; ++j)
 			{
 				vec2 cellCenter{ bottomCellInColCenter.x, m_min.y + (m_cellWidth * 0.5f * (j+1)) };
-				temp.emplace_back(Cell{cellCenter, m_cellWidth});
+				Cell tempCell{ cellCenter, m_cellWidth };
+				temp.emplace_back(&tempCell);
 			}
 			m_cells.emplace_back(temp);
 		}
