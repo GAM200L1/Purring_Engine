@@ -20,17 +20,12 @@
 #include "ECS/SceneView.h"
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
-#include "Events/EventHandler.h"
 extern Logger engine_logger;
 
 namespace PE
 {
 	// ----- Constructor ----- //
-	CollisionManager::CollisionManager() 
-	{
-		ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CollisionManager::CollisionEnter,this);
-		ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CollisionManager::TriggerEnter,this);
-	}
+	CollisionManager::CollisionManager(){}
 
 	// ----- Public Getters ----- //
 	Manifold* CollisionManager::GetManifoldVector()
@@ -181,20 +176,6 @@ namespace PE
 			r_manifold.ResolveCollision();
 		}
 		m_manifolds.clear();
-	}
-
-	void CollisionManager::CollisionEnter(const Event<CollisionEvents>& r_e)
-	{
-		const OnCollisionEnterEvent& OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_e);
-
-		Editor::GetInstance().AddEventLog(r_e.ToString());
-	}
-
-	void CollisionManager::TriggerEnter(const Event<CollisionEvents>& r_e)
-	{
-		const OnTriggerEnterEvent& OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_e);
-
-		Editor::GetInstance().AddEventLog(r_e.ToString());
 	}
 
 	// ----- Collision Helper Functions ----- //

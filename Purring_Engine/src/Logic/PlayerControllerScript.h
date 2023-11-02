@@ -9,7 +9,7 @@ namespace PE
 	{
 		PlayerState currentPlayerState{ PlayerState::IDLE };
 		int HP{ 100 };
-		float speed{ 100 };
+		float speed{ 500 };
 	};
 
 	class PlayerControllerScript : public Script

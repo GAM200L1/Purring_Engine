@@ -19,7 +19,7 @@ namespace PE
 	void PlayerControllerScript::Update(EntityID id, float deltaTime)
 	{
 		// Movement
-		CheckState(id);
+		//CheckState(id);
 		switch (m_ScriptData[id].currentPlayerState)
 		{
 		case PlayerState::IDLE:
@@ -67,27 +67,38 @@ namespace PE
 
 	void PlayerControllerScript::MovePlayer(EntityID id, float deltaTime)
 	{
+		bool hasMoved = false;
 		//movement without force
 		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
 		{
+			hasMoved = true;
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
 		{
+			hasMoved = true;
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 		{
+			hasMoved = true;
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
 		{
+			hasMoved = true;
 			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime;
+			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 		}
+		if(!hasMoved)
+			m_ScriptData[id].currentPlayerState = PlayerState::IDLE;
 	}
 
 	void PlayerControllerScript::CheckState(EntityID id)
