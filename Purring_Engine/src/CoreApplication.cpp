@@ -181,6 +181,11 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::TestScriptData>("TestScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
+
+    rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
+        .method("GetCurrentAnimation", &PE::AnimationComponent::GetAnimationID)
+        .method("SetCurrentAntimation", &PE::AnimationComponent::SetAnimationID);
+
 }
 
 PE::CoreApplication::CoreApplication()
