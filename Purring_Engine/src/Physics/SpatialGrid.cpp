@@ -47,7 +47,8 @@ namespace PE
 		if (m_entitiesInCell.empty())
 			return;
 		
-		std::remove(m_entitiesInCell.begin(), m_entitiesInCell.end(), id);
+		auto iter = std::remove(m_entitiesInCell.begin(), m_entitiesInCell.end(), id);
+		iter;
 	}
 
 	bool Cell::CheckForID(EntityID id)
@@ -75,7 +76,7 @@ namespace PE
 	Grid::Grid() : 
 		m_columns{ 0 }, m_rows{ 0 }, 
 		m_min{ 0.f,0.f }, m_max{ 0.f, 0.f }, 
-		m_cellWidth{ 0.f }, m_cells{} {}
+		m_cellWidth{ 0.f }, m_gridHasSetup{false} {}
 
 	Grid::~Grid()
 	{
@@ -84,11 +85,22 @@ namespace PE
 
 	void Grid::SetupGrid(float gridWidth, float gridHeight)
 	{
-		for (EntityID colliderID : SceneView<Collider, Transform>())
+		m_gridHasSetup = true;
+
+		auto checkForComponents = SceneView<Collider>();
+		if (checkForComponents.begin() != checkForComponents.end())
 		{
-			Transform const& r_transform = EntityManager::GetInstance().Get<Transform>(colliderID);
-			m_cellWidth = (m_cellWidth < r_transform.height) ? m_cellWidth : r_transform.height;
-			m_cellWidth = (m_cellWidth < r_transform.width) ? m_cellWidth : r_transform.width;
+			for (EntityID colliderID : checkForComponents)
+			{
+				Transform const& r_transform = EntityManager::GetInstance().Get<Transform>(colliderID);
+				m_cellWidth = (m_cellWidth < r_transform.height) ? m_cellWidth : r_transform.height;
+				m_cellWidth = (m_cellWidth < r_transform.width) ? m_cellWidth : r_transform.width;
+			}
+		}
+		else
+		{
+			// set arbitrary value for cellWidth
+			m_cellWidth = std::min(gridWidth * 0.1f, gridHeight * 0.1f);
 		}
 		
 		m_min = vec2{ 0.f - (gridWidth * 0.5f), 0.f - (gridHeight * 0.5f) };
@@ -96,13 +108,11 @@ namespace PE
 
 		m_cellWidth *= 2.f;
 		
-		m_columns = ceil(gridWidth / m_cellWidth);
-		m_rows = ceil(gridHeight / m_cellWidth);
-
+		m_columns = static_cast<size_t>(ceil(gridWidth / m_cellWidth));
+		m_rows = static_cast<size_t>(ceil(gridHeight / m_cellWidth));
 
 		// setup the vector that represents the grid. When accessing
 		// an element it will be m_cells[col][row];
-
 		for (size_t i{ 0 }; i < m_columns; ++i)
 		{
 			std::vector<std::unique_ptr<Cell>> temp;
@@ -125,15 +135,15 @@ namespace PE
 			Collider const& r_collider = EntityManager::GetInstance().Get<Collider>(colliderID);
 			vec2 const& r_position = EntityManager::GetInstance().Get<Transform>(colliderID).position;
 			
-			std::pair<GridID, GridID> colliderMinMaxID;
+			std::pair<GridID, GridID> colliderMinMaxID{ {0,0}, {0,0} };
 			std::visit([&](auto const& r_col)
 			{
 				colliderMinMaxID = GetMinMaxIDs(r_col);
 			}, r_collider.colliderVariant);
 
-			for (size_t col{ colliderMinMaxID.first.x }; col <= colliderMinMaxID.second.x; ++col)
+			for (int col{ colliderMinMaxID.first.x }; col <= colliderMinMaxID.second.x; ++col)
 			{
-				for (size_t row{ colliderMinMaxID.first.y }; row <= colliderMinMaxID.second.y; ++row)
+				for (int row{ colliderMinMaxID.first.y }; row <= colliderMinMaxID.second.y; ++row)
 				{
 					m_cells[col][row]->Add(colliderID);
 				}
@@ -143,6 +153,7 @@ namespace PE
 
 	void Grid::ClearGrid()
 	{
+		m_gridHasSetup = false;
 		// clear each column of the row no. of cells it has
 		for (auto& r_column : m_cells)
 		{
@@ -155,16 +166,16 @@ namespace PE
 		m_cells.clear();
 	}
 
-	std::unique_ptr<Cell>& Grid::GetCell(int col, int row)
+	bool Grid::GridExists() const
 	{
-		return m_cells[col][row];
+		return m_gridHasSetup;
 	}
 
 	std::pair<GridID, GridID>& Grid::GetMinMaxIDs(AABBCollider const& r_collider)
 	{
 		GridID maxID = GetIndex(r_collider.max.x, r_collider.max.y);
 		GridID minID = GetIndex(r_collider.min.x, r_collider.min.y);
-		return std::make_pair(minID, maxID);
+		return std::pair<GridID, GridID>{ minID, maxID };
 	}
 
 	std::pair<GridID, GridID>& Grid::GetMinMaxIDs(CircleCollider const& r_collider)
@@ -173,7 +184,7 @@ namespace PE
 		vec2 min{ r_collider.center.x - r_collider.radius, r_collider.center.y - r_collider.radius };
 		GridID maxID = GetIndex(max.x, max.y);
 		GridID minID = GetIndex(min.x, min.y);
-		return std::make_pair(minID, maxID);
+		return std::pair<GridID, GridID>{ minID, maxID };
 	}
 
 	GridID Grid::GetIndex(float posX, float posY)

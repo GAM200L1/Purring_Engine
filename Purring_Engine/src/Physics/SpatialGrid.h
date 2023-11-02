@@ -30,10 +30,11 @@ namespace PE
 	class Cell
 	{
 	public:
-
+		// ----- Constructor/Destructor ----- //
 		Cell(vec2 const& r_center, float cellWidth);
 		~Cell();
 
+		// ----- Public Methods ----- //
 		inline void Add(EntityID id);
 		inline void Remove(EntityID id);
 		inline bool CheckForID(EntityID id);
@@ -42,6 +43,7 @@ namespace PE
 		inline std::vector<EntityID> const& GetEntityIDs();
 
 	private:
+		// ----- Public Methods ----- //
 		vec2 m_center;
 		vec2 m_min;
 		vec2 m_max;
@@ -50,23 +52,34 @@ namespace PE
 
 	class Grid
 	{
+	public:
+		// ----- Public Variables ----- //
+		std::vector<std::vector<Cell*>> m_cells;
+
+	public:
+		// ----- Constructor/Destructor ----- //
 		Grid();
 		~Grid();
 		
+		// ----- Public Methods ----- //
 		void SetupGrid(float gridWidth, float gridHeight);
 		void UpdateGrid();
 		void ClearGrid();
 
-		inline std::unique_ptr<Cell>& GetCell(int col, int row);
+		// ----- Public Checks ----- //
+		inline bool GridExists() const;
+
+		// ----- Public Methods ----- //
 		inline std::pair<GridID, GridID>& GetMinMaxIDs(AABBCollider const& r_collider);
 		inline std::pair<GridID, GridID>& GetMinMaxIDs(CircleCollider const& r_collider);
 		inline GridID GetIndex(float posX, float posY);
 
 	private:
+	// ----- Private Variables ----- //
 		size_t m_columns, m_rows; // contain the number of columns and rows the grid has
 		vec2 m_min;
 		vec2 m_max;
 		float m_cellWidth; // contain the half width of a cell, given a cell is a square
-		std::vector<std::vector<std::unique_ptr<Cell>>> m_cells;
+		bool m_gridHasSetup;
 	};
 }
