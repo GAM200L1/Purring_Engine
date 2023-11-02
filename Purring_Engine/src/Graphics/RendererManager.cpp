@@ -147,10 +147,12 @@ namespace PE
                 m_imguiFrameBuffer.Bind();
                 m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f, 0);
             }
-
-            // Set background color of the window
-            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
-            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+            else
+            {
+                // Set background color of the window
+                glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
+                glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+            }
             
 
             // If the window size has changed
