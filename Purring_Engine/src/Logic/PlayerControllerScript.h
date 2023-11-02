@@ -1,6 +1,5 @@
 #pragma once
 #include "Script.h"
-#include <rttr/variant.h>
 namespace PE
 {
 	enum class  PlayerState{ IDLE = 0, MOVING, DEAD };

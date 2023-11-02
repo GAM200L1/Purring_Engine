@@ -6,6 +6,9 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+
+#include <limits>
+
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -54,7 +57,7 @@ namespace PE
 
 	rttr::instance testScript2::GetScriptData(EntityID id)
 	{
-		return rttr::instance(m_ScriptData.at(id));
+		return rttr::instance();
 	}
 
 	

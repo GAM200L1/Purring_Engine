@@ -13,6 +13,8 @@
 *************************************************************************************/
 #pragma once
 
+#define NOMINMAX
+
 #include <Windows.h>
 
 #include <iostream>
@@ -32,7 +34,7 @@
 #include <unordered_map>
 
 #include <iomanip>
-#include <limits>
+//#include <limits>
 
 #include <map>
 #include <set>

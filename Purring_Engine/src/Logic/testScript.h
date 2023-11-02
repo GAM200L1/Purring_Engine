@@ -1,6 +1,5 @@
 #pragma once
 #include "Script.h"
-#include <rttr/variant.h>
 namespace PE
 {
 	struct TestScriptData

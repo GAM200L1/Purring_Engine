@@ -1,7 +1,6 @@
 #pragma once
 #include "Script.h"
 #include "StateManager.h"
-#include <rttr/variant.h>
 
 namespace PE {
 	struct EnemyTestScriptData

@@ -5,6 +5,10 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+
+#include <limits>
+
+
 # define M_PI           3.14159265358979323846 
 
 namespace PE 

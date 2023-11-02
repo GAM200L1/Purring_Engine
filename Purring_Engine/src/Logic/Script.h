@@ -1,5 +1,5 @@
 #pragma once
-#include <rttr/variant.h>
+#include <rttr/registration.h>
 typedef unsigned long long EntityID;
 
 namespace PE 

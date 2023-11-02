@@ -26,6 +26,7 @@
 #include <filesystem>
 #include "Graphics/CameraManager.h"
 #include "Logic/LogicSystem.h"
+#include "Logic/PlayerControllerScript.h"
 
 // RTTR stuff
 #include <rttr/variant.h>
@@ -433,14 +434,46 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
     for (const auto& k : r_json["Entity"]["components"]["ScriptComponent"].items())
     {
         auto str = k.key().c_str();
-        //if (PE::LogicSystem::m_scriptContainer.count(str))
-        //{
-        //    rttr::type type = rttr::type::get_by_name(str);
-        //    if (type.is_valid())
-        //    {
-        //        //for ()
-        //    }
-        //}
+        PE::LogicSystem::m_scriptContainer[str]->OnAttach(r_id);
+        if (PE::LogicSystem::m_scriptContainer.count(str))
+        {
+            rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(str)->GetScriptData(r_id);
+            if (k.value().contains("data"))
+            {
+                const auto& data = k.value()["data"];
+                if (inst.is_valid())
+                {
+                    for (auto& prop : rttr::type::get_by_name(str).get_properties())
+                    {
+                        if (prop.get_type().get_name() == "float")
+                        {
+                            float val = data[prop.get_name().to_string().c_str()].get<float>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "enumPE::PlayerState")
+                        {
+                            PE::PlayerState val = data[prop.get_name().to_string().c_str()].get<PE::PlayerState>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "int")
+                        {
+                            int val = data[prop.get_name().to_string().c_str()].get<int>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "unsigned__int64")
+                        {
+                            EntityID val = data[prop.get_name().to_string().c_str()].get<EntityID>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "bool")
+                        {
+                            bool val = data[prop.get_name().to_string().c_str()].get<bool>();
+                            prop.set_value(inst, val);
+                        }
+                    }
+                }
+            }
+        }
     }
 
     return true;
