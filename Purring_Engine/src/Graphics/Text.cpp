@@ -21,10 +21,9 @@
 
 namespace PE
 {
-    void Font::Init(std::shared_ptr<Graphics::ShaderProgram> shaderProgram)
+    bool Font::Initialize(const std::string& r_fontPath, unsigned int fontSize)
     {
-        TextShader = shaderProgram;
-        Load("../Assets/fonts/Kalam/Kalam-Regular.ttf");
+        Load(r_fontPath, fontSize);
 
         glGenVertexArrays(1, &m_vertexArrayObject);
         glGenBuffers(1, &m_vertexBufferObject);
@@ -35,6 +34,8 @@ namespace PE
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
+        
+        return true;
     }
 
     bool Font::Load(const std::string& r_fontPath, unsigned int fontSize)
@@ -114,48 +115,24 @@ namespace PE
         return true;
     }
 
-    void Font::RenderText(std::string const& r_text, glm::vec2 position, float scale, glm::mat4 const& r_worldToNdc, glm::vec3 const& r_color)
+    void TextComponent::SetFont(std::string fontKey)
     {
-        // activate corresponding render state	
-        TextShader->Use();
-        TextShader->SetUniform("u_ViewProjection", r_worldToNdc);
-        TextShader->SetUniform("textColor", r_color);
-        glActiveTexture(GL_TEXTURE0);
-        glBindVertexArray(m_vertexArrayObject);
+        m_fontKey = fontKey;
+        m_font = ResourceManager::GetInstance().Fonts[fontKey];
+    }
 
-        // iterate through all characters
-        std::string::const_iterator c;
-        for (c = r_text.begin(); c != r_text.end(); c++)
-        {
-            Character ch = Characters[*c];
-            float w = ch.Size.x * scale;
-            float h = ch.Size.y * scale;
-            // update VBO for each character
-            float vertices[6][4] = {
-                { position.x,     position.y + h,   0.0f, 0.0f },
-                { position.x ,    position.y,       0.0f, 1.0f },
-                { position.x + w, position.y,       1.0f, 1.0f },
+    void TextComponent::SetText(std::string const& r_text)
+    {
+        m_text = r_text;
+    }
 
-                { position.x,     position.y + h,   0.0f, 0.0f },
-                { position.x + w, position.y ,      1.0f, 1.0f },
-                { position.x + w, position.y + h,   1.0f, 0.0f }
-            };
+    void TextComponent::SetSize(float size)
+    {
+        m_size = size;
+    }
 
-            // render glyph texture over quad
-            glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-
-            // update content of VBO memory
-            glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObject);
-            glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-            // render quad
-            glDrawArrays(GL_TRIANGLES, 0, 6);
-
-            // now advance cursors for next glyph
-            position.x += (ch.Advance >> 6) * scale; // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
-        }
-        glBindTexture(GL_TEXTURE_2D, 0);
-        glBindVertexArray(0);
+    void TextComponent::SetColor(glm::vec4 const& r_color)
+    {
+        m_color = r_color;
     }
 }

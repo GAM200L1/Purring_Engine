@@ -1,5 +1,6 @@
 #pragma once
 #include "Script.h"
+#include "Events/EventHandler.h"
 namespace PE
 {
 	enum class  PlayerState{ IDLE = 0, MOVING, DEAD };
@@ -8,7 +9,7 @@ namespace PE
 	{
 		PlayerState currentPlayerState{ PlayerState::IDLE };
 		int HP{ 100 };
-		float speed{ 5000 };
+		float speed{ 100 };
 	};
 
 	class PlayerControllerScript : public Script
@@ -19,10 +20,12 @@ namespace PE
 		virtual void Destroy(EntityID id);		
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
-		void MovePlayer(EntityID id);
+		void MovePlayer(EntityID id,float deltaTime);
 		void CheckState(EntityID id);
 		std::map<EntityID, PlayerControllerScriptData>& GetScriptData();
 		~PlayerControllerScript();
+	private:
+		void CollisionEnter(const Event<CollisionEvents>& r_e);
 	private:
 		std::map<EntityID, PlayerControllerScriptData> m_ScriptData;
 	};

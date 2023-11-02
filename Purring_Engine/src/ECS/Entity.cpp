@@ -44,18 +44,42 @@ namespace PE
 
 	EntityID EntityManager::NewEntity()
 	{
-		size_t id = (m_removed.empty()) ? m_entities.size() : (m_removed.front());
+		size_t id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin());
 		if (!m_removed.empty())
-			m_removed.pop();
+			m_removed.erase(id);
 		m_entities.emplace(id);
 		++m_entityCounter;
 		// Assign Descriptor component
 		Assign(id, GetComponentID<EntityDescriptor>());
 		Get<EntityDescriptor>(id).name = "GameObject";
 		Get<EntityDescriptor>(id).name += std::to_string(id);
+		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
 		return id;
 	}
 
+	EntityID EntityManager::NewEntity(EntityID id)
+	{
+		if (m_removed.count(id))
+			m_removed.erase(id);
+		else if (id == ULLONG_MAX || m_entities.count(id)) // if a prefab or the id alread is used
+		{
+			engine_logger.AddLog(false, "Allocating new ID for New Entity!", __FUNCTION__);
+			id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin()); // re-assgin the id
+
+			// if the removed set was not empty, that means an id was used, remove it.
+			if (!m_removed.empty())
+				m_removed.erase(id);
+		}
+		
+		m_entities.emplace(id);
+		++m_entityCounter;
+		// Assign Descriptor component
+		Assign(id, GetComponentID<EntityDescriptor>());
+		Get<EntityDescriptor>(id).name = "GameObject";
+		Get<EntityDescriptor>(id).name += std::to_string(id);
+		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
+		return id;
+	}
 
 	//void EntityManager::Assign(const EntityID& r_id, const char* p_componentID)
 	//{
@@ -185,6 +209,10 @@ namespace PE
 			j["parent"] = nullptr;
 		}
 
+		j["children"] = children;
+
+		j["sceneID"] = sceneID;
+
 		return j;
 	}
 
@@ -201,6 +229,10 @@ namespace PE
 		{
 			desc.parent = std::nullopt;
 		}
+
+		desc.children = j["children"].get<std::set<EntityID>>();
+
+		desc.sceneID = j["sceneID"].get<EntityID>();
 
 		return desc;
 	}

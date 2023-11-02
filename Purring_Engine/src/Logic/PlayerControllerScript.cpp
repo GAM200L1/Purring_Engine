@@ -6,6 +6,7 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "Events/EventHandler.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -17,26 +18,25 @@ namespace PE
 	}
 	void PlayerControllerScript::Update(EntityID id, float deltaTime)
 	{
-		deltaTime;
 		// Movement
 		CheckState(id);
 		switch (m_ScriptData[id].currentPlayerState)
 		{
 		case PlayerState::IDLE:
-			MovePlayer(id);
 
 			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
 			}			
+			MovePlayer(id,deltaTime);
 			break;
 		case PlayerState::MOVING:
-			MovePlayer(id);
 
 			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
 			}
+			MovePlayer(id,deltaTime);
 			break;
 		case PlayerState::DEAD:
 			break;
@@ -52,6 +52,8 @@ namespace PE
 		if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<RigidBody>()))
 			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
 
+		EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+
 		m_ScriptData[id] = PlayerControllerScriptData();
 
 	}
@@ -63,23 +65,28 @@ namespace PE
 			m_ScriptData.erase(id);
 	}
 
-	void PlayerControllerScript::MovePlayer(EntityID id)
+	void PlayerControllerScript::MovePlayer(EntityID id, float deltaTime)
 	{
+		//movement without force
 		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } *m_ScriptData[id].speed);
+			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime);
+			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed);
+			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime);
+			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed);
+			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime);
+			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime;
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
 		{
-			EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed);
+			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime);
+			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 		}
 	}
 
@@ -109,5 +116,11 @@ namespace PE
 
 	PlayerControllerScript::~PlayerControllerScript()
 	{
+	}
+
+	void PlayerControllerScript::CollisionEnter(const Event<CollisionEvents>& r_e)
+	{
+		const OnCollisionEnterEvent& OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_e);
+		//AHHHHHHHHHHHHHHHHHHHHHHHHHH I CANT GET ID HELP
 	}
 }

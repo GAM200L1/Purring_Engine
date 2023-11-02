@@ -261,6 +261,17 @@ namespace PE
             *************************************************************************************/
             static glm::mat4 GenerateInverseTransformMatrix(float const width, float const height,
                 float const orientation, float const positionX, float const positionY);
+            /*!***********************************************************************************
+             \brief Renders text from r_text parameter. Retrieves glyph information from map
+                   and renders a quad with the data.
+
+             \param[in] r_text String to render.
+             \param[in] position Position of text to render onto the screen.s
+             \param[in] scale Amount to scale text size.
+             \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
+             \param[in] r_color Color to render text as.
+            *************************************************************************************/
+            void RenderText(glm::mat4 const& r_worldToNdc);
 
             // ----- Private variables ----- //
         private:
@@ -274,11 +285,11 @@ namespace PE
             // Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};
             std::string m_instancedShaderProgramKey{"Instanced"};
+            std::string m_textShaderProgramKey{ "Text" };
 
             // Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
 
-            Font m_font;
             //! Width and height of the ImGui window the last time the framebuffer was resized
             float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
                         

@@ -101,17 +101,14 @@ namespace PE
             // Load a shader program
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
-
+            ResourceManager::GetInstance().LoadShadersFromFile(m_textShaderProgramKey, "../Shaders/Text.vert", "../Shaders/Text.frag");
+            
             // Reserve memory for the vectors to build the buffer with
             m_isTextured.reserve(3000);
             m_modelToWorldMatrices.reserve(3000);
             m_colors.reserve(3000);
             m_UV.reserve(3000);
             renderedEntities.reserve(3000);
-
-            // Load a font
-            ResourceManager::GetInstance().LoadShadersFromFile("text", "../Shaders/Text.vert", "../Shaders/Text.frag");
-            m_font.Init(ResourceManager::GetInstance().ShaderPrograms["text"]);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -197,12 +194,7 @@ namespace PE
 
 
             // Render Text
-            // text object 1
-            //m_font.RenderText("Button 1", {-180.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
-
-            // text object 2
-            //m_font.RenderText("Button 2", { 60.f, 195.f }, 0.7f, r_cameraManager.GetUiViewToNdcMatrix(), { 0.25f, 0.25f, 0.25f });
-
+            RenderText(r_cameraManager.GetUiViewToNdcMatrix());
 
             if (renderInEditor)
             {
@@ -775,6 +767,83 @@ namespace PE
             DrawDebugLine(r_upVector, r_position - r_upVector * 0.5f, r_worldToNdc, r_shaderProgram, r_color);
             DrawDebugLine(r_rightVector, r_position - r_rightVector * 0.5f, r_worldToNdc, r_shaderProgram, r_color);
         }
+
+        
+        void RendererManager::RenderText(glm::mat4 const& r_worldToNdc)
+        {
+            std::shared_ptr<ShaderProgram> p_textShader{ ResourceManager::GetInstance().ShaderPrograms[m_textShaderProgramKey] };
+
+            for (const EntityID& id : SceneView<TextComponent, Transform>())
+            {
+                TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
+                vec2 position{ EntityManager::GetInstance().Get<Transform>(id).position };
+
+                // if component has no font
+                if (textComponent.GetFont() == nullptr)
+                {
+                    break;
+                }
+
+                // get width and height of text
+                glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
+                textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
+                textSize.y *= textComponent.GetSize();
+                EntityManager::GetInstance().Get<Transform>(id).width = textSize.x;
+                EntityManager::GetInstance().Get<Transform>(id).height = textSize.y;
+
+                // activate corresponding render state	
+                p_textShader->Use();
+                p_textShader->SetUniform("u_ViewProjection", r_worldToNdc);
+                p_textShader->SetUniform("textColor", textComponent.GetColor());
+
+                glActiveTexture(GL_TEXTURE0);
+                glBindVertexArray(textComponent.GetFont()->m_vertexArrayObject);
+
+                // iterate through all characters
+                std::string::const_iterator c;
+                for (c = textComponent.GetText().begin(); c != textComponent.GetText().end(); c++)
+                {
+                    Character ch = textComponent.GetFont()->Characters.at(*c);
+
+                    float xPosition = position.x + ch.Bearing.x * textComponent.GetSize();
+                    float yPosition = position.y - (ch.Size.y - ch.Bearing.y) * textComponent.GetSize();
+
+                    float w = ch.Size.x * textComponent.GetSize();
+                    float h = ch.Size.y * textComponent.GetSize();
+                    // update VBO for each character
+                    float vertices[6][4] = {
+                        { xPosition,     yPosition + h,   0.0f, 0.0f },
+                        { xPosition ,    yPosition,       0.0f, 1.0f },
+                        { xPosition + w, yPosition,       1.0f, 1.0f },
+
+                        { xPosition,     yPosition + h,   0.0f, 0.0f },
+                        { xPosition + w, yPosition ,      1.0f, 1.0f },
+                        { xPosition + w, yPosition + h,   1.0f, 0.0f }
+                    };
+
+                    // render glyph texture over quad
+                    glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+
+                    // update content of VBO memory
+                    glBindBuffer(GL_ARRAY_BUFFER, textComponent.GetFont()->m_vertexArrayObject);
+                    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+                    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+                    // render quad
+                    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+                    // now advance cursors for next glyph
+                    position.x += (ch.Advance >> 6) * textComponent.GetSize(); // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
+                }
+
+                glBindTexture(GL_TEXTURE_2D, 0);
+                glBindVertexArray(0);
+
+                p_textShader->UnUse();
+            }
+
+        }
+
 
         void RendererManager::InitializeCircleMesh(std::size_t const segments, MeshData& r_mesh)
         { 

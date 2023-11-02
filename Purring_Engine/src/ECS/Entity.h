@@ -27,6 +27,7 @@
 #include <set>
 #include <queue>
 #include <optional>
+#include <climits>
 
 // Const expressions
 constexpr unsigned MAX_COMPONENTS = 32;
@@ -41,7 +42,6 @@ const auto ALL = std::move(std::bitset<MAX_COMPONENTS>{}.set());
 
 namespace PE
 {
-
 	struct Comparer {
 		bool operator() (const std::bitset<MAX_COMPONENTS>& b1, const std::bitset<MAX_COMPONENTS>& b2) const {
 			return b1.to_ulong() < b2.to_ulong();
@@ -178,6 +178,13 @@ namespace PE
 		 \return EntityID ID of the generated entity
 		*************************************************************************************/
 		EntityID NewEntity();
+
+		/*!***********************************************************************************
+		 \brief Creates a new with request for specific ID entity and returns its' ID
+
+		 \return EntityID ID of the generated entity
+		*************************************************************************************/
+		EntityID NewEntity(EntityID id);
 		
 		/*!************************************************************************
 		 \brief 	Assigns components to an entity
@@ -402,7 +409,7 @@ namespace PE
 		// map of to store pointers to individual componnet pools
 		std::map<ComponentID, ComponentPool*, Comparer> m_componentPools;
 		// a queue of entity IDs to handle removed entities
-		std::queue<EntityID> m_removed;
+		std::set<EntityID> m_removed;
 		// a map to a vector of entity IDs used to keep track of entity components (used to iterate in SceneView)
 		std::map<ComponentID, std::vector<EntityID>, Comparer> m_poolsEntity;
 		// a counter to help keep track of the entities "absolute" count
@@ -442,36 +449,36 @@ namespace PE
 	}
 
 
-	template<typename T>
-	T* EntityManager::Assign(EntityID id, T const& r_val)
-	{
-		static ComponentID componentID = GetComponentID<T>();
+	//template<typename T>
+	//T* EntityManager::Assign(EntityID id, T const& r_val)
+	//{
+	//	static ComponentID componentID = GetComponentID<T>();
 
-		// if component is not found
-		if (m_componentPools.find(componentID) == m_componentPools.end())
-		{
-			throw;
-		}
-		if (m_componentPools[componentID]->HasEntity(id))
-		{
-			return;
-		}
-		// add to component pool's map keeping track of index
-		m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
+	//	// if component is not found
+	//	if (m_componentPools.find(componentID) == m_componentPools.end())
+	//	{
+	//		throw;
+	//	}
+	//	if (m_componentPools[componentID]->HasEntity(id))
+	//	{
+	//		return nullptr;
+	//	}
+	//	// add to component pool's map keeping track of index
+	//	m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
 
-		// initialize that region of memory
-		if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
-		{
-			m_componentPools[componentID]->Resize(m_componentPools[componentID]->capacity * 2);
-		}
+	//	// initialize that region of memory
+	//	if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
+	//	{
+	//		m_componentPools[componentID]->Resize(m_componentPools[componentID]->capacity * 2);
+	//	}
 
 
-		// if you new at an existing region of allocated memory, and you specify where, like in this case
-		// it will call the constructor at this position instead of allocating more memory
-		m_componentPools[componentID]->Get(id) = T(r_val);
-		++(m_componentPools[componentID]->size);
-		return p_component;
-	}
+	//	// if you new at an existing region of allocated memory, and you specify where, like in this case
+	//	// it will call the constructor at this position instead of allocating more memory
+	//	m_componentPools[componentID]->Get(id) = T(r_val);
+	//	++(m_componentPools[componentID]->size);
+	//	return p_component;
+	//}
 
 	//-------------------- Templated function implementations --------------------//
 
@@ -583,8 +590,12 @@ namespace PE
 
 	struct EntityDescriptor
 	{
+		std::string name{"GameObject"};
 		std::optional<EntityID> parent;
-		std::string name;
+		std::set<EntityID> children;
+
+		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
+		
 
 		nlohmann::json ToJson() const;
 		static EntityDescriptor Deserialize(const nlohmann::json& j);
