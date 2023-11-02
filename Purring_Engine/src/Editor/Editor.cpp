@@ -30,6 +30,7 @@
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
 #include "Logic/EnemyTestScript.h"
+#include "Logic/FollowScript.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
@@ -151,8 +152,12 @@ namespace PE {
 		//delete all objects
 		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUICameraId())
+			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			{
+				LogicSystem::DeleteScriptData(n);
 				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+			}
+
 		}
 	}
 
@@ -450,7 +455,7 @@ namespace PE {
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
 				for (auto & n : dispMap)
 				{
-					if (n.first == Graphics::CameraManager::GetUICameraId())
+					if (n.first == Graphics::CameraManager::GetUiCameraId())
 						continue;
 					
 					std::string name = std::to_string(n.first);
@@ -474,7 +479,7 @@ namespace PE {
 					if (ImGui::IsItemClicked(1))
 					{
 						//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-						if (m_currentSelectedObject < 0)
+						if (hoveredObject)
 							m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 						ImGui::OpenPopup("popup");
 					}
@@ -506,7 +511,7 @@ namespace PE {
 							if (ImGui::IsItemClicked(1))
 							{
 								//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-								if (m_currentSelectedObject < 0)
+								if (hoveredObject)
 									m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 								ImGui::OpenPopup("popup");
 							}
@@ -571,6 +576,19 @@ namespace PE {
 }
 			if (ImGui::BeginPopup("popup"))
 			{
+				if (ImGui::Selectable("Save As Prefab"))
+				{
+					auto save = serializationManager.SerializeEntityPrefab(static_cast<int>(m_currentSelectedObject));
+					std::string filepath = "../Assets/Prefabs/";
+					filepath += EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).name; // can change to request name or smth
+					filepath += "_Prefab.json";
+					std::ofstream outFile(filepath);
+					if (outFile)
+					{
+						outFile << save.dump(4);
+						outFile.close();
+					}
+				}
 				if (ImGui::Selectable("Delete Object"))
 				{
 						AddInfoLog("Object Deleted");
@@ -581,7 +599,7 @@ namespace PE {
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
 						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-
+						LogicSystem::DeleteScriptData(m_currentSelectedObject);
 						//if not first index
 						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
@@ -866,20 +884,21 @@ namespace PE {
 			if (ImGui::Button("Draw 2500 objects"))
 			{
 				ClearObjectList();
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
 				for (size_t i{}; i < 2500; ++i)
 				{
-					//EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[id]);
-					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-					EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+					
+					EntityID id2 = EntityFactory::GetInstance().Clone(id);
+					//EntityID id2 = EntityFactory::GetInstance().CreateEntity();
+					//EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey("cat");
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor();
 				}
-			}
+			} 
 			ImGui::SameLine();
 			if (ImGui::Button("Toggle Debug Lines"))
 			{
@@ -1525,8 +1544,7 @@ namespace PE {
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
 								if (ImGui::Button("Add Script"))
 								{
-									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
-									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
+									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex],m_currentSelectedObject);
 								}
 								ImGui::PopStyleColor(1);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1564,8 +1582,7 @@ namespace PE {
 								{
 									if (selectedScript >= 0)
 									{
-										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName);
-										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName, m_currentSelectedObject);
 										selectedScript = -1;
 									}
 								}
@@ -1667,8 +1684,14 @@ namespace PE {
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
 							if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
-								float viewportWidth{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportWidth() };
-								float viewportHeight{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetViewportHeight() };
+								Graphics::Camera& cameraComponent{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID) };
+								float viewportWidth{ cameraComponent.GetViewportWidth() };
+								float viewportHeight{ cameraComponent.GetViewportHeight() };
+								bool isMainCamera{ cameraComponent.GetIsMainCamera() };
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Checkbox("Is Main Camera: ", &isMainCamera); // bool to set this camera as the main cam
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Viewport Dimensions: ");
@@ -1680,8 +1703,9 @@ namespace PE {
 								ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetViewDimensions(viewportWidth, viewportHeight);
-								EntityManager::GetInstance().Get<Graphics::Camera>(entityID).SetMagnification(zoom);
+								cameraComponent.SetViewDimensions(viewportWidth, viewportHeight);
+								cameraComponent.SetMagnification(zoom);
+								cameraComponent.SetMainCamera(isMainCamera);
 							}
 						}
 
@@ -1887,6 +1911,32 @@ namespace PE {
 										ImGui::Text("Timer Buffer: "); ImGui::SameLine(); ImGui::DragFloat("##enemytimerbuffer", &it->second.timerBuffer);
 										ImGui::Text("Patrol Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemypatrol", &it->second.patrolTimer);
 										ImGui::Text("Target Range: "); ImGui::SameLine(); ImGui::DragFloat("##targettingrange", &it->second.TargetRange);
+									}
+								}
+							}
+
+							if (key == "FollowScript")
+							{
+								FollowScript* p_Script = dynamic_cast<FollowScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										
+										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&it->second.NumberOfFollower);
+
+										for (int i = 0; i < it->second.NumberOfFollower; i++)
+										{
+											if (i != 0)
+											{
+												int id = static_cast<int> (it->second.FollowingObject[i]);
+												std::string test = std::string("##id") + std::to_string(i);
+												ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												if(id != m_currentSelectedObject)
+												it->second.FollowingObject[i] = id;
+											}
+										}
 									}
 								}
 							}
@@ -2320,7 +2370,25 @@ namespace PE {
 						{
 							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 							// This will save all entities to a file
-							serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/Saved_All_Entities.json");
+							for (const auto& id : SceneView<EntityDescriptor>())
+							{
+								if (!id) // skip editor camera
+									continue;
+								EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+								for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+								{
+									if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+									{
+										desc.sceneID = i;
+										continue;
+									}
+								}
+								if (desc.parent)
+								{
+									EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
+								}
+							}
+							serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath());
 							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 						}
 						if (ImGui::MenuItem("Load"))
@@ -2437,12 +2505,41 @@ namespace PE {
 			{
 				m_isRunTime = true;
 				m_showEditor = false;
+
+				engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+				// This will save all entities to a file
+				for (const auto& id : SceneView<EntityDescriptor>())
+				{
+					if (!id) // skip editor camera
+						continue;
+					EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+					for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+					{
+						if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+						{
+							desc.sceneID = i;
+							continue;
+						}
+					}
+					if (desc.parent)
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
+					}
+				}
+				serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+				engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 			}
 			ImGui::SameLine();
 			if (
 				ImGui::Button("Stop")
 				) {
 				m_isRunTime = false;
+				engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
+
+				// This will load all entities from the file
+				ClearObjectList();
+				serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
 				//the graphics rendered onto an image on the imgui window
@@ -2654,6 +2751,11 @@ namespace PE {
 			
 			if (m_showEditor)
 				m_isRunTime = false;
+
+			// This will load all entities from the file
+			ClearObjectList();
+			serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+			engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F5)
