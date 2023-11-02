@@ -8,6 +8,7 @@
 #include "ECS/SceneView.h"
 #include "Events/EventHandler.h"
 #include "WindowManager.h"
+#include "Graphics/CameraManager.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -140,8 +141,20 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 
-		m_currentMousePos.x = static_cast<float>(MBPE.transX);
-		m_currentMousePos.y = static_cast<float>(MBPE.transY);
+		float xOffset, yOffset;
+
+		for (EntityID objectID : SceneView<Graphics::Camera>())
+		{
+			if (EntityManager::GetInstance().Get<Graphics::Camera>(objectID).GetIsMainCamera()) 
+			{
+				xOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.x;
+				yOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.y;
+			}
+		}
+
+
+		m_currentMousePos.x = static_cast<float>(MBPE.transX) + xOffset;
+		m_currentMousePos.y = static_cast<float>(MBPE.transY) + yOffset;
 
 		m_mouseClicked = true;
 	}
