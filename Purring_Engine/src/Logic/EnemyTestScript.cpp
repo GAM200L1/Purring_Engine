@@ -60,7 +60,10 @@ namespace PE {
 	{
 		auto it = m_ScriptData.find(id);
 		if (it != m_ScriptData.end())
+		{
+			delete m_ScriptData.at(id).m_stateManager;
 			m_ScriptData.erase(id);
+		}
 	}
 
 	std::map<EntityID, EnemyTestScriptData>& EnemyTestScript::GetScriptData()

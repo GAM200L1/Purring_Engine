@@ -52,7 +52,10 @@ namespace PE
 	{
 		auto it = m_ScriptData.find(id);
 		if (it != m_ScriptData.end())
+		{
+			delete m_ScriptData.at(id).m_stateMachine;
 			m_ScriptData.erase(id);
+		}
 	}
 
 	rttr::instance testScript2::GetScriptData(EntityID id)

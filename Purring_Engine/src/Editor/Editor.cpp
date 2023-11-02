@@ -68,7 +68,7 @@ namespace PE {
 			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
 			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
 			//show the entire gui 
-			m_showEditor = configJson["Editor"]["showEditor"].get<bool>(); // depends on the mode, whether we want to see the scene or the editor
+			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
 		}
 		else
@@ -88,6 +88,8 @@ namespace PE {
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = true; // whether to render debug lines
 		}
+
+		configFile.close();
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 		//for the object list
@@ -126,7 +128,7 @@ namespace PE {
 		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
 		//show the entire gui 
-		configJson["Editor"]["showEditor"] = false; // depends on the mode, whether we want to see the scene or the editor
+		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
 		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
 
 
