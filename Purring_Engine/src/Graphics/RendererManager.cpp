@@ -148,19 +148,15 @@ namespace PE
                 windowHeight = static_cast<float>(height);
             }
 
+            // Set background color of the window
+            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
+            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+
             if (renderInEditor)
             {
                 // Bind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Bind();
-                m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f, 0);
-            }
-            else
-            {
-                // Set background color of the window
-                glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
-                glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
-            }
-            
+            }            
 
             // If the window size has changed
             if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight)
@@ -177,6 +173,12 @@ namespace PE
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
                 r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+            }
+
+            if (renderInEditor)
+            {
+                // Bind the RBO for rendering to the ImGui window
+                m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f, 0);
             }
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera
