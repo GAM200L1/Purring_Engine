@@ -113,9 +113,9 @@ namespace PE
 		{
 			for (auto& r_cell : r_col)
 			{
-				if (r_cell->CheckToTest())
+				if (r_cell.CheckToTest())
 					continue;
-				std::vector<EntityID> const IDs = r_cell->GetEntityIDs();
+				std::vector<EntityID> const IDs = r_cell.GetEntityIDs();
 				
 				for (EntityID ColliderID_1 : IDs)
 				{
