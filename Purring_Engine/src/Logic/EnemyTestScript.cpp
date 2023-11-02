@@ -61,6 +61,11 @@ namespace PE {
 		return m_ScriptData;
 	}
 
+	rttr::instance EnemyTestScript::GetScriptData(EntityID id)
+	{
+		return rttr::instance(m_ScriptData.at(id));
+	}
+
 	EnemyTestScript::~EnemyTestScript()
 	{
 		for (auto& [key, val] : m_ScriptData)

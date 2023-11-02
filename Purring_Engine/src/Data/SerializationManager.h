@@ -30,6 +30,7 @@
 #include "Graphics/GUIRenderer.h"
 #include "Data/JsonUtils.h"
 #include "GUISystem.h"
+#include <type_traits>
 
 struct StructPlayerStats
 {
@@ -205,9 +206,7 @@ void SerializationManager::SerializeComponent(int entityId, const std::string& j
             );*/
         ComponentType& component = entityManager.Get<ComponentType>(entityId);
 
-
-            nlohmann::json jComponent = component.ToJson();
-            json["Entity"]["components"][jsonKey] = jComponent;
+        json["Entity"]["components"][jsonKey] = component.ToJson(static_cast<EntityID>(entityId));
         
     }
 }

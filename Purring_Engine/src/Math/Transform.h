@@ -55,8 +55,9 @@ namespace PE
 
         \return The JSON representation of the Transform object.
         *************************************************************************************/        
-        nlohmann::json ToJson() const
+        nlohmann::json ToJson(size_t id) const
         {
+            id;
             nlohmann::json j;
             j["width"] = width;
             j["height"] = height;

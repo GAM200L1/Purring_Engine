@@ -62,7 +62,7 @@ namespace PE {
 			m_scriptKeys.erase(itr);
 		}
 
-		nlohmann::json ToJson() const
+		nlohmann::json ToJson(EntityID id) const
 		{
 			nlohmann::json ret;
 			/*rttr::type currType = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<ScriptComponent>().to_string());
@@ -78,7 +78,12 @@ namespace PE {
 				rttr::type scriptDataType = rttr::type::get_by_name(k.c_str());
 				for (auto& prop : scriptDataType.get_properties())
 				{
-					rttr::variant var = prop.get_value(&(PE::LogicSystem::m_scriptContainer[k.c_str()]));
+					rttr::variant var = prop.get_value((PE::LogicSystem::m_scriptContainer[k.c_str()]->GetScriptData(id)));
+					if (var.get_type().get_name() == "float")
+					{
+						float val = var.get_value<float>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
 				}
 			}
 		

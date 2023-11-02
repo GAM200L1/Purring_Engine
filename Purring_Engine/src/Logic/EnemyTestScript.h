@@ -1,6 +1,7 @@
 #pragma once
 #include "Script.h"
 #include "StateManager.h"
+#include <rttr/variant.h>
 
 namespace PE {
 	struct EnemyTestScriptData
@@ -27,6 +28,7 @@ namespace PE {
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
 		std::map<EntityID, EnemyTestScriptData>& GetScriptData();
+		rttr::instance GetScriptData(EntityID id);
 		virtual ~EnemyTestScript();
 
 	public:

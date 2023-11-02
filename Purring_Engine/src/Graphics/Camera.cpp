@@ -132,8 +132,10 @@ namespace PE
             SetMagnification(m_magnification + delta);
         }
 
-        nlohmann::json Camera::ToJson() const
+        nlohmann::json Camera::ToJson(size_t id) const
         {
+            UNREFERENCED_PARAMETER(id);
+
             nlohmann::json j;
             j["magnification"] = m_magnification;
             j["viewportWidth"] = m_viewportWidth;

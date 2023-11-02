@@ -52,6 +52,13 @@ namespace PE
 			m_ScriptData.erase(id);
 	}
 
+	rttr::instance testScript2::GetScriptData(EntityID id)
+	{
+		return rttr::instance(m_ScriptData.at(id));
+	}
+
+	
+
 	testScript2::~testScript2()
 	{
 		for (auto& [key, val] : m_ScriptData)

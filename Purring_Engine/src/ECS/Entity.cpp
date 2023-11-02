@@ -195,8 +195,10 @@ namespace PE
 		}
 	}
 
-	nlohmann::json EntityDescriptor::ToJson() const
+	nlohmann::json EntityDescriptor::ToJson(size_t id) const
 	{
+		UNREFERENCED_PARAMETER(id);
+
 		nlohmann::json j;
 		j["name"] = name;
 

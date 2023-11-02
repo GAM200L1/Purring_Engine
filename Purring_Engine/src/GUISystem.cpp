@@ -137,8 +137,10 @@ namespace PE
 
 
 	// Serialize GUI
-	nlohmann::json GUI::ToJson() const
+	nlohmann::json GUI::ToJson(size_t id) const
 	{
+		UNREFERENCED_PARAMETER(id);
+
 		nlohmann::json j;
 		// Serialize properties
 		j["m_onClicked"] = m_onClicked;
