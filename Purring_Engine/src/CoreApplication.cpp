@@ -242,9 +242,6 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
     EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
-
-    EntityFactory::GetInstance().Assign(cameraId, { EntityManager::GetInstance().GetComponentID<TextComponent>(), EntityManager::GetInstance().GetComponentID<TextComponent>() });
-    EntityManager::GetInstance().Get<TextComponent>(cameraId).SetFont(fontBody);
     //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
 
 

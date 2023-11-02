@@ -131,7 +131,7 @@ namespace PE
         m_size = size;
     }
 
-    void TextComponent::SetColor(glm::vec3 const& r_color)
+    void TextComponent::SetColor(glm::vec4 const& r_color)
     {
         m_color = r_color;
     }

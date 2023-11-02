@@ -71,7 +71,7 @@ namespace PE
 
 		inline float GetSize() const { return m_size; }
 
-		inline glm::vec3 const& GetColor() const { return m_color; }
+		inline glm::vec4 const& GetColor() const { return m_color; }
 
 		void SetFont(std::string fontKey);
 
@@ -79,20 +79,20 @@ namespace PE
 
 		void SetSize(float size);
 
-		void SetColor(glm::vec3 const& color);
+		void SetColor(glm::vec4 const& color);
 
 	private:
 		std::string m_text;
 		std::string m_fontKey;
 		std::shared_ptr<Font> m_font;
 		// font style
-		float m_size;
+		float m_size{ 1.f };
 		// line spacing
 		// paragraph
 		// alignment
 		// h_overflow
 		// v_overflow
-		glm::vec3 m_color;
+		glm::vec4 m_color{ 0.f, 0.f, 0.f, 1.f};
 		// material
 	};
 }

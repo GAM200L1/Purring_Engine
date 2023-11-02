@@ -1777,6 +1777,14 @@ namespace PE {
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
+								// Text Box
+								std::string stringBuffer{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetText() };
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Text("Text: ");
+								ImGui::InputTextMultiline("##Text", &stringBuffer, ImVec2(300.0f, 100.0f));
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetText(stringBuffer);
+
 								// Setting fonts
 								std::vector<const char*> key;
 								key.push_back("");
@@ -1794,13 +1802,13 @@ namespace PE {
 									index++;
 								}
 
-								//create a combo box of texture ids
+								// create a combo box of texture ids
 								ImGui::SetNextItemWidth(200.0f);
 								if (!key.empty())
 								{
 									ImGui::Text("Font: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									//set selected texture id
+									// set selected texture id
 									if (ImGui::Combo("##Font", &index, key.data(), static_cast<int>(key.size())))
 									{
 										EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(key[index]);
@@ -1810,19 +1818,25 @@ namespace PE {
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								////setting colors
+								float size{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetSize() };
+								ImGui::Text("Font Size: "); ImGui::SameLine(); ImGui::InputFloat("##FontSize", &size, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								////get and set color variable of the renderer component
-								//ImVec4 color;
-								//color.x = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().r;
-								//color.y = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().g;
-								//color.z = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().b;
-								//color.w = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().a;
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetSize(size);
 
-								//ImGui::Text("Change Color: "); ImGui::SameLine();
-								//ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+								// Color
 
-								//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
+								// get and set color variable of the text component
+								ImVec4 color;
+								color.x = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().r;
+								color.y = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().g;
+								color.z = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().b;
+								color.w = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().a;
+
+								ImGui::Text("Change Color: "); ImGui::SameLine();
+								ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor({ color.x, color.y, color.z, color.w });
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
@@ -1939,6 +1953,13 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
 							else
 								AddErrorLog("ALREADY HAS ANIMATION");
+						}
+						if (ImGui::Selectable("Add Text"))
+						{
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
+							else
+								AddErrorLog("ALREADY HAS TEXT");
 						}
 						ImGui::EndPopup();
 					}

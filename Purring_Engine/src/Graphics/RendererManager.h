@@ -226,7 +226,7 @@ namespace PE
              \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
              \param[in] r_color Color to render text as.
             *************************************************************************************/
-            void RenderText(std::string const& r_text, glm::vec2 position, float scale, glm::mat4 const& r_worldToNdc, glm::vec3 const& r_color = glm::vec3(0.f));
+            void RenderText(glm::mat4 const& r_worldToNdc);
 
             // ----- Private variables ----- //
         private:
