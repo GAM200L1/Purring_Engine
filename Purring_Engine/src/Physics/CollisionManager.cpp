@@ -19,7 +19,6 @@
 #include "CollisionManager.h"
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
-
 extern Logger engine_logger;
 
 namespace PE
@@ -144,6 +143,10 @@ namespace PE
 											{
 												if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
 												{
+                                                    OnCollisionEnterEvent OCEE;
+									                OCEE.Entity1 = ColliderID_1;
+									                OCEE.Entity2 = ColliderID_2;
+									                SEND_COLLISION_EVENT(OCEE);
 													if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
 													{
 														m_manifolds.emplace_back
@@ -174,6 +177,11 @@ namespace PE
 											{
 												// else send message to trigger event associated with this entity
 												Editor::GetInstance().AddEventLog("Collided with Trigger.\n");
+                                                //sending collision enter event
+                                                OnTriggerEnterEvent OTEE;
+				                				OTEE.Entity1 = ColliderID_1;
+								                OTEE.Entity2 = ColliderID_2;
+                                                SEND_COLLISION_EVENT(OTEE);
 											}
 
 										}
@@ -402,4 +410,6 @@ namespace PE
 		}
 		return 0;
 	}
+
+
 }

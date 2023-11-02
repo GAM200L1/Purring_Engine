@@ -72,6 +72,8 @@ namespace PE
 				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
 				InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
 
+				std::cout << mouseX << " " << mouseY << std::endl;
+
 				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 					continue;
 
@@ -137,8 +139,10 @@ namespace PE
 
 
 	// Serialize GUI
-	nlohmann::json GUI::ToJson() const
+	nlohmann::json GUI::ToJson(size_t id) const
 	{
+		UNREFERENCED_PARAMETER(id);
+
 		nlohmann::json j;
 		// Serialize properties
 		j["m_onClicked"] = m_onClicked;

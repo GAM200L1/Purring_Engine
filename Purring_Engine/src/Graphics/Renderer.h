@@ -131,7 +131,7 @@ namespace PE
             /*!***********************************************************************************
              \brief Serializes the data attached to this renderer.
             *************************************************************************************/
-            nlohmann::json ToJson() const;
+            nlohmann::json ToJson(size_t id) const;
 
             /*!***********************************************************************************
              \brief Deserializes data from a JSON file and loads it as values to set this 

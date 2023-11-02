@@ -16,6 +16,7 @@ namespace PE
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
 		std::map<EntityID, TestScriptData>& GetScriptData();
+		rttr::instance GetScriptData(EntityID id);
 		~testScript();
 	private:
 		std::map<EntityID, TestScriptData> m_ScriptData;

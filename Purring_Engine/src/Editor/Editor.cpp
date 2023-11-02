@@ -30,11 +30,13 @@
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
 #include "Logic/EnemyTestScript.h"
+#include "Logic/FollowScript.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
+#include "Data/json.hpp"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
@@ -47,21 +49,47 @@ namespace PE {
 	bool Editor::m_fileDragged{ false };
 
 	Editor::Editor() {
+		std::ifstream configFile("../Assets/Settings/config.json");
+		nlohmann::json configJson;
+		configFile >> configJson;
 		//initializing variables 
-		//m_firstLaunch needs to be serialized 
-		m_firstLaunch = true;
-		//serialize based on what was deserialized
-		m_showConsole = true;
-		m_showLogs = true;
-		m_showObjectList = true;
-		m_showSceneView = true;
-		m_showTestWindows = false;
-		m_showComponentWindow = true;
-		m_showResourceWindow = true;
-		m_showPerformanceWindow = false;
-		//show the entire gui 
-		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
-		m_renderDebug = true; // whether to render debug lines
+
+		if (configJson.contains("Editor"))
+		{
+			//m_firstLaunch needs to be serialized 
+			m_firstLaunch = configJson["Editor"]["firstLaunch"].get<bool>();
+			//serialize based on what was deserialized
+			m_showConsole = configJson["Editor"]["showConsole"].get<bool>();
+			m_showLogs = configJson["Editor"]["showLogs"].get<bool>();
+			m_showObjectList = configJson["Editor"]["showObjectList"].get<bool>();
+			m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
+			m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
+			m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
+			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
+			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
+			//show the entire gui 
+			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
+			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
+		}
+		else
+		{
+			//m_firstLaunch needs to be serialized 
+			m_firstLaunch = true;
+			//serialize based on what was deserialized
+			m_showConsole = true;
+			m_showLogs = true;
+			m_showObjectList = true;
+			m_showSceneView = true;
+			m_showTestWindows = false;
+			m_showComponentWindow = true;
+			m_showResourceWindow = true;
+			m_showPerformanceWindow = false;
+			//show the entire gui 
+			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
+			m_renderDebug = true; // whether to render debug lines
+		}
+
+		configFile.close();
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 		//for the object list
@@ -82,6 +110,39 @@ namespace PE {
 
 	Editor::~Editor()
 	{
+		const char* filepath = "../Assets/Settings/config.json";
+		std::ifstream configFile(filepath);
+		nlohmann::json configJson;
+		configFile >> configJson;
+
+		// save the stuff
+		//m_firstLaunch needs to be serialized 
+		configJson["Editor"]["firstLaunch"] = m_firstLaunch;
+		//serialize based on what was deserialized
+		configJson["Editor"]["showConsole"] = m_showConsole;
+		configJson["Editor"]["showLogs"] = m_showLogs;
+		configJson["Editor"]["showObjectList"] = m_showObjectList;
+		configJson["Editor"]["showSceneView"] = m_showSceneView;
+		configJson["Editor"]["showTestWindows"] = m_showTestWindows;
+		configJson["Editor"]["showComponentWindow"] = m_showComponentWindow;
+		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
+		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
+		//show the entire gui 
+		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
+		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
+
+
+		std::ofstream outFile(filepath);
+		if (outFile)
+		{
+			outFile << configJson.dump(4);
+			outFile.close();
+		}
+		else
+		{
+			std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+		}
+
 		m_files.clear();
 	}
 
@@ -151,8 +212,12 @@ namespace PE {
 		//delete all objects
 		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			{
+				LogicSystem::DeleteScriptData(n);
 				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+			}
+
 		}
 	}
 
@@ -594,7 +659,7 @@ namespace PE {
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
 						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-
+						LogicSystem::DeleteScriptData(m_currentSelectedObject);
 						//if not first index
 						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
@@ -1539,8 +1604,7 @@ namespace PE {
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
 								if (ImGui::Button("Add Script"))
 								{
-									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
-									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
+									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex],m_currentSelectedObject);
 								}
 								ImGui::PopStyleColor(1);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1578,8 +1642,7 @@ namespace PE {
 								{
 									if (selectedScript >= 0)
 									{
-										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName);
-										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName, m_currentSelectedObject);
 										selectedScript = -1;
 									}
 								}
@@ -1725,8 +1788,8 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
+								ImGui::Dummy(ImVec2(0.0f, 5.0f)); //add space
+								// setting textures
 								std::vector<const char*> key;
 								key.push_back("");
 
@@ -1776,6 +1839,93 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
+
+						// ---------- Text Component ---------- //
+
+						if (name == EntityManager::GetInstance().GetComponentID<TextComponent>())
+						{
+							if (ImGui::CollapsingHeader("Text", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								// Text Box
+								std::string stringBuffer{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetText() };
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Text("Text: ");
+								ImGui::InputTextMultiline("##Text", &stringBuffer, ImVec2(300.0f, 100.0f));
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetText(stringBuffer);
+
+								// Setting fonts
+								std::vector<const char*> key;
+								key.push_back("");
+
+								//to get all the keys
+								for (std::map<std::string, std::shared_ptr<Font>>::iterator it = ResourceManager::GetInstance().Fonts.begin(); it != ResourceManager::GetInstance().Fonts.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey())
+										break;
+									index++;
+								}
+
+								// create a combo box of texture ids
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Font: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									// set selected texture id
+									if (ImGui::Combo("##Font", &index, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(key[index]);
+									}
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								float size{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetSize() };
+								ImGui::Text("Font Size: "); ImGui::SameLine(); ImGui::InputFloat("##FontSize", &size, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetSize(size);
+
+								// Color
+
+								// get and set color variable of the text component
+								ImVec4 color;
+								color.x = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().r;
+								color.y = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().g;
+								color.z = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().b;
+								color.w = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().a;
+
+								ImGui::Text("Change Color: "); ImGui::SameLine();
+								ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor({ color.x, color.y, color.z, color.w });
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+							}
+						}
 					}
 
 					if (hasScripts)
@@ -1821,6 +1971,40 @@ namespace PE {
 										ImGui::Text("Timer Buffer: "); ImGui::SameLine(); ImGui::DragFloat("##enemytimerbuffer", &it->second.timerBuffer);
 										ImGui::Text("Patrol Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemypatrol", &it->second.patrolTimer);
 										ImGui::Text("Target Range: "); ImGui::SameLine(); ImGui::DragFloat("##targettingrange", &it->second.TargetRange);
+									}
+								}
+							}
+
+							if (key == "FollowScript")
+							{
+								FollowScript* p_Script = dynamic_cast<FollowScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int j = it->second.NumberOfFollower;
+										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
+										if (j <= 5 && j >= 0)
+										{
+											it->second.NumberOfFollower = j;
+										}
+										else
+										{
+											it->second.NumberOfFollower = 5;
+										}
+
+										for (int i = 0; i < it->second.NumberOfFollower; i++)
+										{
+											if (i != 0)
+											{
+												int id = static_cast<int> (it->second.FollowingObject[i]);
+												std::string test = std::string("##id") + std::to_string(i);
+												ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												if(id != m_currentSelectedObject)
+												it->second.FollowingObject[i] = id;
+											}
+										}
 									}
 								}
 							}
@@ -1887,6 +2071,13 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
 							else
 								AddErrorLog("ALREADY HAS ANIMATION");
+						}
+						if (ImGui::Selectable("Add Text"))
+						{
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
+							else
+								AddErrorLog("ALREADY HAS TEXT");
 						}
 						ImGui::EndPopup();
 					}
@@ -2623,13 +2814,18 @@ namespace PE {
 		{
 			m_showEditor = true;
 			
+			if (m_isRunTime)
+			{
+				ClearObjectList();
+				serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+			}
+
 			if (m_showEditor)
 				m_isRunTime = false;
 
 			// This will load all entities from the file
-			ClearObjectList();
-			serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-			engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+			
 		}
 
 		if (KTE.keycode == GLFW_KEY_F5)

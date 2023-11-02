@@ -67,7 +67,6 @@
 
 // Input
 #include "Input/InputSystem.h"
-#include "Logic/LogicSystem.h"
 
 #include "GUISystem.h"
 
@@ -75,6 +74,14 @@
 #include <rttr/type.h>
 #include <rttr/property.h>
 #include <rttr/registration.h>
+
+// Logic
+#include "Logic/LogicSystem.h"
+#include "Logic/PlayerControllerScript.h"
+#include "Logic/EnemyTestScript.h"
+#include "Logic/testScript.h"
+#include "Logic/testScript2.h"
+#include "Logic/FollowScript.h"
 
 // Testing
 Logger engine_logger = Logger("ENGINE");
@@ -97,6 +104,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::GUI);
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
+    REGISTERCOMPONENT(PE::TextComponent);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -154,8 +162,51 @@ RTTR_REGISTRATION
         .method("AdjustMagnification", &PE::Graphics::Camera::AdjustMagnification);
 
     // is that all i need to register? @jarran
-    rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str());
+    rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str())
+        .property("ScriptKeys", &PE::ScriptComponent::m_scriptKeys);
 
+    rttr::registration::class_<PE::PlayerControllerScriptData>("PlayerControllerScript")
+        .property("PlayerState", &PE::PlayerControllerScriptData::currentPlayerState)
+        .property("HP", &PE::PlayerControllerScriptData::HP)
+        .property("speed", &PE::PlayerControllerScriptData::speed);
+
+    rttr::registration::class_<PE::EnemyTestScriptData>("EnemyTestScript")
+        .property("PlayerID", &PE::EnemyTestScriptData::playerID)
+        .property("speed", &PE::EnemyTestScriptData::speed)
+        .property("idleTimer", &PE::EnemyTestScriptData::idleTimer)
+        .property("alertTimer", &PE::EnemyTestScriptData::alertTimer)
+        .property("timerBuffer", &PE::EnemyTestScriptData::timerBuffer)
+        .property("patrolTimer", &PE::EnemyTestScriptData::patrolBuffer)
+        .property("distanceFromPlayer", &PE::EnemyTestScriptData::distanceFromPlayer)
+        .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
+        .property("bounce", &PE::EnemyTestScriptData::bounce);
+
+    rttr::registration::class_<PE::TestScriptData>("TestScript")
+        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
+
+    rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
+        .method("GetCurrentAnimation", &PE::AnimationComponent::GetAnimationID)
+        .method("SetCurrentAntimation", &PE::AnimationComponent::SetAnimationID);
+
+    rttr::registration::class_<PE::FollowScriptData>("FollowScript")
+        .property("Size", &PE::FollowScriptData::Size)
+        .property("Distance", &PE::FollowScriptData::Distance)
+        .property("Speed", &PE::FollowScriptData::Speed)
+        .property("NumberOfFollower", &PE::FollowScriptData::NumberOfFollower)
+        .property("FollowingObject", &PE::FollowScriptData::FollowingObject)
+        .property("rotation", &PE::FollowScriptData::Rotation)
+        .property("CurrentPosition", &PE::FollowScriptData::CurrentPosition)
+        .property("NextPosition", &PE::FollowScriptData::NextPosition);
+
+    rttr::registration::class_<PE::TextComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>().to_string().c_str())
+        .property_readonly("Font", &PE::TextComponent::GetFontKey)
+        .property_readonly("Size", &PE::TextComponent::GetSize)
+        .property_readonly("Text", &PE::TextComponent::GetText)
+        .property_readonly("Color", &PE::TextComponent::GetColor)
+        .method("Color", &PE::TextComponent::SetColor)
+        .method("Text", &PE::TextComponent::SetText)
+        .method("Size", &PE::TextComponent::SetSize)
+        .method("Font", &PE::TextComponent::SetFont);
 }
 
 PE::CoreApplication::CoreApplication()
@@ -163,7 +214,7 @@ PE::CoreApplication::CoreApplication()
     InitializeVariables();
 
     // Load Configuration
-    std::ifstream configFile("config.json");
+    std::ifstream configFile("../Assets/Settings/config.json");
     nlohmann::json configJson;
     configFile >> configJson;
     int width = configJson["window"]["width"];
@@ -189,7 +240,10 @@ PE::CoreApplication::CoreApplication()
 
     ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
 
-    
+    // Load Fonts
+    std::string fontHeader{ "../Assets/Fonts/Kalam/Kalam-Regular.ttf" }, fontBody{ "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf" };
+    ResourceManager::GetInstance().LoadFontFromFile(fontHeader, "../Assets/fonts/Kalam/Kalam-Regular.ttf");
+    ResourceManager::GetInstance().LoadFontFromFile(fontBody, "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf");    
 
     // Animation textures
     std::string catWalkSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png" };

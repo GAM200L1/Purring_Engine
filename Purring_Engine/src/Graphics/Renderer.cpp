@@ -63,8 +63,10 @@ namespace PE
         }
 
 
-        nlohmann::json Renderer::ToJson() const
+        nlohmann::json Renderer::ToJson(size_t id) const
         {
+            UNREFERENCED_PARAMETER(id);
+
             nlohmann::json j;
             j["TextureKey"] = GetTextureKey();
             j["Color"]["r"] = GetColor().r;

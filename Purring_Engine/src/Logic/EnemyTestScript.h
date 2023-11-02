@@ -14,6 +14,7 @@ namespace PE {
 		float patrolBuffer{ 3.0f };
 		float distanceFromPlayer{ 0.0f };
 		float TargetRange{ 200 };
+		float Health{ 1 };
 		bool bounce{ true };
 		StateMachine* m_stateManager;
 	};
@@ -27,6 +28,7 @@ namespace PE {
 		virtual void OnAttach(EntityID id);
 		virtual void OnDetach(EntityID id);
 		std::map<EntityID, EnemyTestScriptData>& GetScriptData();
+		rttr::instance GetScriptData(EntityID id);
 		virtual ~EnemyTestScript();
 
 	public:

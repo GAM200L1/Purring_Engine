@@ -1,4 +1,4 @@
-#include "prpch.h"
+ #include "prpch.h"
 #include "EnemyTestScript.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
@@ -6,6 +6,10 @@
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 #include "LogicSystem.h"
+
+#include <limits>
+
+
 # define M_PI   3.14159265358979323846 
 //#include "Input/InputSystem.h"
 
@@ -21,6 +25,9 @@ namespace PE {
 	{
 		m_ScriptData[id].distanceFromPlayer = GetDistanceFromPlayer(id);
 		m_ScriptData[id].m_stateManager->Update(id, deltaTime);
+
+		if (m_ScriptData[id].Health <= 0)
+			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[id]);
 	}
 
 	void EnemyTestScript::Destroy(EntityID)
@@ -53,12 +60,20 @@ namespace PE {
 	{
 		auto it = m_ScriptData.find(id);
 		if (it != m_ScriptData.end())
+		{
+			delete m_ScriptData.at(id).m_stateManager;
 			m_ScriptData.erase(id);
+		}
 	}
 
 	std::map<EntityID, EnemyTestScriptData>& EnemyTestScript::GetScriptData()
 	{
 		return m_ScriptData;
+	}
+
+	rttr::instance EnemyTestScript::GetScriptData(EntityID id)
+	{
+		return rttr::instance(m_ScriptData.at(id));
 	}
 
 	EnemyTestScript::~EnemyTestScript()

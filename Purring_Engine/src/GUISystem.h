@@ -87,7 +87,7 @@ namespace PE
 		UIType m_UIType{0};
 
 	public:
-		virtual nlohmann::json ToJson() const;
+		virtual nlohmann::json ToJson(size_t id) const;
 		static GUI Deserialize(const nlohmann::json& j);
 	};
 

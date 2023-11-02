@@ -71,6 +71,20 @@ namespace PE
 		m_currentAnimationIndex = animationIndex;
 	}
 
+	nlohmann::json AnimationComponent::ToJson(size_t id) const
+	{
+		id;
+		nlohmann::json j;
+		j["CurrentAnimationIndex"] = m_currentAnimationIndex;
+		return j;
+	}
+
+	AnimationComponent& AnimationComponent::Deserialize(const nlohmann::json& j)
+	{
+		m_currentAnimationIndex = j["CurrentAnimationIndex"].get<std::string>();
+		return *this;
+	}
+
 	// AnimationManager
 	void AnimationManager::InitializeSystem()
 	{
