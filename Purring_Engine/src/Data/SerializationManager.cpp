@@ -330,6 +330,10 @@ bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::j
     trans.width = r_json["Entity"]["components"]["Transform"]["width"].get<float>();
     trans.orientation = r_json["Entity"]["components"]["Transform"]["orientation"].get<float>();
     trans.position = PE::vec2{ r_json["Entity"]["components"]["Transform"]["position"]["x"].get<float>(), r_json["Entity"]["components"]["Transform"]["position"]["y"].get<float>() };
+    if (r_json["Entity"]["components"]["Transform"].contains("relativeposition"))
+        trans.relPosition = PE::vec2{ r_json["Entity"]["components"]["Transform"]["relativeposition"]["x"].get<float>(), r_json["Entity"]["components"]["Transform"]["relativeposition"]["y"].get<float>() };
+    if (r_json["Entity"]["components"]["Transform"].contains("relorientation"))
+        trans.orientation = r_json["Entity"]["components"]["Transform"]["relorientation"].get<float>();
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Transform>(), static_cast<void*>(&trans));
     return true;
 }
