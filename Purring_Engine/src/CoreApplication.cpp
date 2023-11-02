@@ -97,6 +97,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::GUI);
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
+    REGISTERCOMPONENT(PE::TextComponent);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -189,7 +190,10 @@ PE::CoreApplication::CoreApplication()
 
     ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
 
-    
+    // Load Fonts
+    std::string fontHeader{ "../Assets/Fonts/Kalam/Kalam-Regular.ttf" }, fontBody{ "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf" };
+    ResourceManager::GetInstance().LoadFontFromFile(fontHeader, "../Assets/fonts/Kalam/Kalam-Regular.ttf");
+    ResourceManager::GetInstance().LoadFontFromFile(fontBody, "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf");    
 
     // Animation textures
     std::string catWalkSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png" };
