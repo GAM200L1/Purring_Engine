@@ -71,10 +71,12 @@ namespace PE
 						if(m_ScriptData[id].FollowingObject[index] != -1)
 						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).position = m_ScriptData[id].NextPosition[index];
 						//checking rotation to set can ignore this for now lets get position to work
-						float rotationOffset = newRotation - m_ScriptData[id].Rotation;
-
-						if (m_ScriptData[id].FollowingObject[index] != -1)
-						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
+						if (m_ScriptData[id].FollowingObject[index] != -1) 
+						{
+							vec2 directionalvector = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
+							float newRot = atan2(directionalvector.y, directionalvector.x);
+							EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = newRot;
+						}
 					}
 
 				}
