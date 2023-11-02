@@ -160,6 +160,7 @@ namespace PE
         void* stringParam = monoString;
         s_Data->EntityClass.InvokeMethod(instance, printCustomMessageFunc, &stringParam);
 
+
     }
 
 
@@ -203,9 +204,17 @@ namespace PE
     {
         // Create an App Domain
         s_Data->AppDomain = mono_domain_create_appdomain("MyAppDomain", nullptr);
+        if (!s_Data->AppDomain) {
+            std::cout << "myappdoman test";
+            return;
+        }
         mono_domain_set(s_Data->AppDomain, true);
 
         s_Data->CoreAssembly = Utils::LoadMonoAssembly(filepath);
+        if (!s_Data->CoreAssembly) {
+            std::cout << "LoadMonoAssembly filepath test";
+            return;
+        }
         // assemblyImage is to get classes by its name
         s_Data->CoreAssemblyImage = mono_assembly_get_image(s_Data->CoreAssembly);
 
@@ -228,8 +237,14 @@ namespace PE
         int32_t numTypes = mono_table_info_get_rows(typeDefinitionsTable);
         MonoClass* entityClass = mono_class_from_name(image, "PE", "Entity");
 
+        // Check if entityClass is nullptr before proceeding.
+        if (!entityClass) {
+            // Log the error or handle it as needed.
+            std::cerr << "Failed to find PE.Entity class." << std::endl;
+            return; // Exit the function as we can't proceed without this class.
+        }
 
-        for (int32_t i = 0; i < numTypes; i++)
+        for (int32_t i = 0; i < numTypes; ++i)
         {
             uint32_t cols[MONO_TYPEDEF_SIZE];
             mono_metadata_decode_row(typeDefinitionsTable, i, cols, MONO_TYPEDEF_SIZE);
@@ -243,16 +258,28 @@ namespace PE
                 fullName = name;
 
             MonoClass* monoClass = mono_class_from_name(image, nameSpace, name);
+
+            // Check if monoClass is nullptr before using it.
+            if (!monoClass) {
+                // Optionally, log the full name of the class that couldn't be loaded.
+                std::cerr << "Failed to find class: " << fullName << std::endl;
+                continue; // Skip this iteration as the class was not found.
+            }
+
             if (monoClass == entityClass)
                 continue;
 
             bool isEntity = mono_class_is_subclass_of(monoClass, entityClass, false);
-            if (isEntity)
-                s_Data->EntityClasses["fullName"] = CreateRef<ScriptClass>(nameSpace, name);
+            if (isEntity) {
+                // Make sure to use fullName in the map, not the string "fullName".
+                s_Data->EntityClasses[fullName] = CreateRef<ScriptClass>(nameSpace, name);
+            }
 
-            //printf("%s.%s\n", nameSpace, name);
+            // Debug print can be enabled if needed to check class names being loaded.
+            // std::cout << fullName << std::endl;
         }
     }
+
 
 
     MonoObject* ScriptEngine::InstantiateClass(MonoClass* monoClass)

@@ -6,6 +6,8 @@
 #include <map>
 #include "Singleton.h"
 #include "CSharpScriptComponent.h"
+#include <glm/glm.hpp>
+#include "ScriptGlue.h"
 
 extern "C"
 {
@@ -18,6 +20,13 @@ extern "C"
 
 namespace PE
 {
+	//struct Vector3 {
+	//	float X, Y, Z;
+
+	//	// Provide a constructor for easy conversion from glm::vec3 if you use glm in the rest of your engine
+	//	Vector3(const glm::vec3& vec) : X(vec.x), Y(vec.y), Z(vec.z) {}
+	//};
+
 	class ScriptClass
 	{
 	public:

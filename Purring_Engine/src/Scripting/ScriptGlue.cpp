@@ -6,7 +6,7 @@ namespace PE
 {
 #define PE_ADD_INTERNAL_CALL(Name) mono_add_internal_call("PE.InternalCalls::" #Name, Name)
 
-    static void NativeLog(MonoString* string, int parameter)
+    void ScriptGlue::NativeLog(MonoString* string, int parameter)
     {
         char* cStr = mono_string_to_utf8(string);
         std::string str(cStr);
@@ -14,17 +14,25 @@ namespace PE
         std::cout << str << "," << parameter << std::endl;
     }
 
-    //static void NativeLogVector(glm::vec3* parameter)
-    //{
-    //    std::cout << str << "," << parameter << std::endl;
-    //}
+    void ScriptGlue::NativeLogVector(PE::Vector3* vector)
+    {
+        std::cout << "Vector3: (" << vector->x << ", " << vector->y << ", " << vector->z << ")" << std::endl;
+    }
 
-	void ScriptGlue::RegisterFunctions()
-	{
+    int ScriptGlue::NativeSumIntArray(MonoArray* array)
+    {
+        long sum = 0;
+        int len = mono_array_length(array);
+        for (int i = 0; i < len; ++i) {
+            sum += mono_array_get(array, int, i);
+        }
+        return sum;
+    }
+
+    void ScriptGlue::RegisterFunctions()
+    {
         PE_ADD_INTERNAL_CALL(NativeLog);
-        //PE_ADD_INTERNAL_CALL(NativeLogVector);
-
-		//mono_add_internal_call("PE.InternalCalls::NativeLog", NativeLog);
-		//mono_add_internal_call("PE.InternalCalls::NativeLogVector", NativeLogVector);
-	}
+        PE_ADD_INTERNAL_CALL(NativeLogVector);
+        PE_ADD_INTERNAL_CALL(NativeSumIntArray);
+    }
 }
