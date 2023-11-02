@@ -141,7 +141,7 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 
-		float xOffset, yOffset;
+		float xOffset{}, yOffset{};
 
 		for (EntityID objectID : SceneView<Graphics::Camera>())
 		{
