@@ -2659,8 +2659,8 @@ namespace PE {
 				else 
 				{
 						// subtract the offset of the scene window 
-						screenPosition.x += m_sceneWindowOffsetX; // in viewport space + offset
-						screenPosition.y += m_sceneWindowOffsetY; // in viewport space + offset
+						//screenPosition.x += m_sceneWindowOffsetX; // in viewport space + offset
+						//screenPosition.y += m_sceneWindowOffsetY; // in viewport space + offset
 
 						std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << ", y : " << m_sceneWindowOffsetY;
 						std::cout << ", offset clicked position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
