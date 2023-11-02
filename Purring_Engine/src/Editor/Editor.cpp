@@ -1704,8 +1704,8 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
+								ImGui::Dummy(ImVec2(0.0f, 5.0f)); //add space
+								// setting textures
 								std::vector<const char*> key;
 								key.push_back("");
 
@@ -1753,6 +1753,79 @@ namespace PE {
 								//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
+
+						// ---------- Text Component ---------- //
+
+						if (name == EntityManager::GetInstance().GetComponentID<TextComponent>())
+						{
+							if (ImGui::CollapsingHeader("Text", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								// Setting fonts
+								std::vector<const char*> key;
+								key.push_back("");
+
+								//to get all the keys
+								for (std::map<std::string, std::shared_ptr<Font>>::iterator it = ResourceManager::GetInstance().Fonts.begin(); it != ResourceManager::GetInstance().Fonts.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey())
+										break;
+									index++;
+								}
+
+								//create a combo box of texture ids
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Font: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##Font", &index, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(key[index]);
+									}
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								////setting colors
+
+								////get and set color variable of the renderer component
+								//ImVec4 color;
+								//color.x = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().r;
+								//color.y = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().g;
+								//color.z = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().b;
+								//color.w = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().a;
+
+								//ImGui::Text("Change Color: "); ImGui::SameLine();
+								//ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
 							}
 						}
 					}
