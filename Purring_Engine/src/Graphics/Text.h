@@ -34,6 +34,7 @@ namespace PE
 	{
 	public:
 		std::map<char, Character> Characters;
+		unsigned int m_vertexArrayObject{ 0 }, m_vertexBufferObject{ 0 };
 
 		/*!***********************************************************************************
 			\brief default constructor of the font class
@@ -45,7 +46,7 @@ namespace PE
 
 			\param[in] shaderProgram Shader program for rendering text.
 		*************************************************************************************/
-		void Init(std::shared_ptr<Graphics::ShaderProgram> shaderProgram);
+		bool Initialize(std::string const& r_fontPath, unsigned int fontSize = 45);
 
 		/*!***********************************************************************************
 			\brief Loads character glyph from font into map of characters.
@@ -56,22 +57,42 @@ namespace PE
 			return
 		*************************************************************************************/
 		bool Load(std::string const& r_fontPath, unsigned int fontSize = 45);
+		};
 
-		/*!***********************************************************************************
-			\brief Renders text from r_text parameter. Retrieves glyph information from map
-				   and renders a quad with the data.
+	class TextComponent
+	{
 
-			\param[in] r_text String to render.
-			\param[in] position Position of text to render onto the screen.
-			\param[in] scale Amount to scale text size.
-			\param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
-			\param[in] r_color Color to render text as.
-		*************************************************************************************/
-		void RenderText(std::string const& r_text, glm::vec2 position, float scale, glm::mat4 const& r_worldToNdc, glm::vec3 const& r_color = glm::vec3(0.f));
+	public:
+		inline std::shared_ptr<const Font> GetFont() const { return m_font; }
+
+		inline std::string const& GetFontKey() const { return m_fontKey; }
+
+		inline std::string const& GetText() const { return m_text; }
+
+		inline float GetSize() const { return m_size; }
+
+		inline glm::vec4 const& GetColor() const { return m_color; }
+
+		void SetFont(std::string fontKey);
+
+		void SetText(std::string const& text);
+
+		void SetSize(float size);
+
+		void SetColor(glm::vec4 const& color);
 
 	private:
-		std::shared_ptr<Graphics::ShaderProgram> TextShader;
-		unsigned int m_vertexArrayObject{ 0 }, m_vertexBufferObject{ 0 };
-
+		std::string m_text;
+		std::string m_fontKey;
+		std::shared_ptr<Font> m_font;
+		// font style
+		float m_size{ 1.f };
+		// line spacing
+		// paragraph
+		// alignment
+		// h_overflow
+		// v_overflow
+		glm::vec4 m_color{ 0.f, 0.f, 0.f, 1.f};
+		// material
 	};
 }

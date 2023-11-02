@@ -36,6 +36,12 @@ namespace PE {
 		 \return    std::string The name of the system.
 		*************************************************************************************/
 		std::string GetName() override;
+	
+		/*!***********************************************************************************
+		 \brief						To be called when deleting an object to delete all related data
+		 \param [In] EntityID id	The ID to delete data from
+		*************************************************************************************/
+		static void DeleteScriptData(EntityID id);
 	};
 
 	//holds script on an object
@@ -53,20 +59,19 @@ namespace PE {
 
 		// A map to store script keys along with their state (represented by ScriptState enum) - Hans
 		std::map<std::string, ScriptState> m_scriptKeys;
-
-		// This function adds a script to the ScriptComponent by taking the name (key) of the script as an argument. - Hans
-		void addScript(std::string key)
+		void addScript(std::string key, EntityID id)
 		{
 			// Search for the script key in the map - Hans
 			auto itr = m_scriptKeys.find(key);
 
 			// If the key is not already in the map, add it with an initial state of ScriptState::INIT - Hans
 			if (itr == m_scriptKeys.end())
+			{
 				m_scriptKeys[key] = ScriptState::INIT;
+				LogicSystem::m_scriptContainer[key]->OnAttach(id);
+			}
 		}
-
-		// This function removes a script from the ScriptComponent by taking the name (key) of the script as an argument - Hans
-		void removeScript(std::string key)
+		void removeScript(std::string key, EntityID id)
 		{
 			// Search for the script key in the map - Hans
 			auto itr = m_scriptKeys.find(key);
@@ -74,6 +79,7 @@ namespace PE {
 			// If the key is found, erase it from the map - Hans
 			if(itr != m_scriptKeys.end())
 			m_scriptKeys.erase(itr);
+			LogicSystem::m_scriptContainer[key]->OnDetach(id);
 		}
 
 		// Destructor 

@@ -18,6 +18,7 @@
 #include "Logic/LogicSystem.h"
 #include "GUISystem.h"
 #include "Graphics/GUIRenderer.h"
+#include "Graphics/Text.h"
 extern Logger engine_logger;
 
 
@@ -80,6 +81,7 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(), &EntityFactory::InitializeGUI);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(), &EntityFactory::InitializeAnimationComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(), &EntityFactory::InitializeTextComponent);
 	}
 
 
@@ -195,6 +197,15 @@ namespace PE
 		return true;
 	}
 
+	bool EntityFactory::InitializeTextComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<TextComponent>(r_id) =
+			(p_data == nullptr) ?
+			TextComponent()
+			:
+			*reinterpret_cast<TextComponent*>(p_data);
+		return true;
+	}
 
 	bool EntityFactory::InitializeCSharpScriptComponent(const EntityID& r_id, void* p_data)
 	{

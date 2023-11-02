@@ -202,6 +202,7 @@ namespace PE
 		bool InitializeGUIRenderer(const EntityID& r_id, void* p_data);
 		bool InitializeAnimationComponent(const EntityID& r_id, void* p_data);
 		bool InitializeCSharpScriptComponent(const EntityID& r_id, void* p_data);
+		bool InitializeTextComponent(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap

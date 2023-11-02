@@ -30,6 +30,7 @@
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
 #include "Logic/EnemyTestScript.h"
+#include "Logic/FollowScript.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
@@ -155,8 +156,12 @@ namespace PE {
 		//delete all objects
 		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			{
+				LogicSystem::DeleteScriptData(n);
 				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+			}
+
 		}
 	}
 
@@ -598,7 +603,7 @@ namespace PE {
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
 						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-
+						LogicSystem::DeleteScriptData(m_currentSelectedObject);
 						//if not first index
 						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
@@ -1557,8 +1562,7 @@ namespace PE {
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 0.3f, 1.0f));
 								if (ImGui::Button("+ Add Script"))
 								{
-									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
-									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
+									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex],m_currentSelectedObject);
 								}
 								ImGui::PopStyleColor(1);
 
@@ -1601,8 +1605,7 @@ namespace PE {
 								{
 									if (selectedScript >= 0)
 									{
-										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName);
-										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName, m_currentSelectedObject);
 										selectedScript = -1;
 									}
 								}
@@ -1817,8 +1820,8 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
+								ImGui::Dummy(ImVec2(0.0f, 5.0f)); //add space
+								// setting textures
 								std::vector<const char*> key;
 								key.push_back("");
 
@@ -1866,6 +1869,93 @@ namespace PE {
 								//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
+
+						// ---------- Text Component ---------- //
+
+						if (name == EntityManager::GetInstance().GetComponentID<TextComponent>())
+						{
+							if (ImGui::CollapsingHeader("Text", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								// Text Box
+								std::string stringBuffer{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetText() };
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Text("Text: ");
+								ImGui::InputTextMultiline("##Text", &stringBuffer, ImVec2(300.0f, 100.0f));
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetText(stringBuffer);
+
+								// Setting fonts
+								std::vector<const char*> key;
+								key.push_back("");
+
+								//to get all the keys
+								for (std::map<std::string, std::shared_ptr<Font>>::iterator it = ResourceManager::GetInstance().Fonts.begin(); it != ResourceManager::GetInstance().Fonts.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey())
+										break;
+									index++;
+								}
+
+								// create a combo box of texture ids
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Font: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									// set selected texture id
+									if (ImGui::Combo("##Font", &index, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(key[index]);
+									}
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								float size{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetSize() };
+								ImGui::Text("Font Size: "); ImGui::SameLine(); ImGui::InputFloat("##FontSize", &size, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetSize(size);
+
+								// Color
+
+								// get and set color variable of the text component
+								ImVec4 color;
+								color.x = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().r;
+								color.y = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().g;
+								color.z = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().b;
+								color.w = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().a;
+
+								ImGui::Text("Change Color: "); ImGui::SameLine();
+								ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor({ color.x, color.y, color.z, color.w });
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
 							}
 						}
 					}
@@ -1918,6 +2008,32 @@ namespace PE {
 										ImGui::Text("Timer Buffer: "); ImGui::SameLine(); ImGui::DragFloat("##enemytimerbuffer", &it->second.timerBuffer);
 										ImGui::Text("Patrol Timer: "); ImGui::SameLine(); ImGui::DragFloat("##enemypatrol", &it->second.patrolTimer);
 										ImGui::Text("Target Range: "); ImGui::SameLine(); ImGui::DragFloat("##targettingrange", &it->second.TargetRange);
+									}
+								}
+							}
+
+							if (key == "FollowScript")
+							{
+								FollowScript* p_Script = dynamic_cast<FollowScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										
+										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&it->second.NumberOfFollower);
+
+										for (int i = 0; i < it->second.NumberOfFollower; i++)
+										{
+											if (i != 0)
+											{
+												int id = static_cast<int> (it->second.FollowingObject[i]);
+												std::string test = std::string("##id") + std::to_string(i);
+												ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												if(id != m_currentSelectedObject)
+												it->second.FollowingObject[i] = id;
+											}
+										}
 									}
 								}
 							}
@@ -2003,6 +2119,13 @@ namespace PE {
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
 							else
 								AddErrorLog("ALREADY HAS ANIMATION");
+						}
+						if (ImGui::Selectable("Add Text"))
+						{
+							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
+							else
+								AddErrorLog("ALREADY HAS TEXT");
 						}
 						ImGui::EndPopup();
 					}
