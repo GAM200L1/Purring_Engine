@@ -214,7 +214,7 @@ PE::CoreApplication::CoreApplication()
     InitializeVariables();
 
     // Load Configuration
-    std::ifstream configFile("config.json");
+    std::ifstream configFile("../Assets/Settings/config.json");
     nlohmann::json configJson;
     configFile >> configJson;
     int width = configJson["window"]["width"];
