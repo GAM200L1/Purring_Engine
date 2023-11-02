@@ -11,12 +11,14 @@
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
-// ... other includes ...
+#include "Scripting/ScriptingEngine.h"
 
-std::map<std::string, PE::CSharpScript*> PE::CSharpLogicSystem::m_cSharpScriptContainer;
+std::map<std::string, PE::ScriptInstance> PE::CSharpLogicSystem::m_cSharpScriptContainer;
 
 PE::CSharpLogicSystem::CSharpLogicSystem()
 {
+    LoadScripts();
+
 }
 
 PE::CSharpLogicSystem::~CSharpLogicSystem()
@@ -74,6 +76,22 @@ void PE::CSharpLogicSystem::UpdateSystem(float deltaTime)
                 break;
             }
         }
+    }
+}
+
+void PE::CSharpLogicSystem::LoadScripts() {
+    std::cout << "LoadScripts is being called" << std::endl;
+
+    // Get all the script classes from the scripting engine
+    auto scriptClasses = PE::ScriptEngine::GetEntityClasses();
+
+    // Iterate over all the script classes
+    for (const auto& [className, scriptClass] : scriptClasses) {
+        // Instantiate the script class
+        PE::ScriptInstance scriptInstance(scriptClass);
+
+        // Store the script instance in the container
+        m_cSharpScriptContainer[className] = scriptInstance;
     }
 }
 

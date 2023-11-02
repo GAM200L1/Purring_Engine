@@ -165,6 +165,7 @@ RTTR_REGISTRATION
 PE::CoreApplication::CoreApplication()
 {
     InitializeVariables();
+    //PE::CSharpLogicSystem cSharpLogicSystem;
 
     // scripting
     ScriptEngine scriptEngine;

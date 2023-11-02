@@ -1541,6 +1541,7 @@ namespace PE {
 									key.push_back(it->first.c_str());
 								}
 								static int scriptindex{};
+								//std::cout << "Number of C# Scripts: " << key.size() << std::endl;
 
 								// Dropdown box for selecting a script to add - Hans
 								ImGui::SetNextItemWidth(200.0f);
@@ -1553,8 +1554,8 @@ namespace PE {
 								}
 
 								// Button to add the selected script to the entity. When clicked, this button adds the selected script to the entity's ScriptComponent and calls the script's OnAttach method. - Hans
-								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
-								if (ImGui::Button("Add Script"))
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 0.3f, 1.0f));
+								if (ImGui::Button("+ Add Script"))
 								{
 									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
 									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
@@ -1594,10 +1595,9 @@ namespace PE {
 									//}
 								}
 								ImGui::EndChild();
-								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
-
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.3f, 0.3f, 1.0f));
 								// Button to remove the selected script from the entity. When clicked, this button removes the selected script from the entity's ScriptComponent and calls the script's OnDetach method - Hans
-								if (ImGui::Button("Remove Script"))
+								if (ImGui::Button("- Remove Script"))
 								{
 									if (selectedScript >= 0)
 									{
@@ -1644,12 +1644,12 @@ namespace PE {
 								// -------------------- Issue ----------------------------
 								std::vector<const char*> cSharpKey;
 
-								//// Iterate through all available C# scripts
-								//for (auto& entry : ScriptEngine::GetEntityClasses())
-								//{
-								//	cSharpKey.push_back(entry.first.c_str());
-								//}
-								static int scriptindex2{};
+								//// TODO: Iterate through all available C# scripts
+								for (const auto& entry : PE::CSharpLogicSystem::m_cSharpScriptContainer) {
+									cSharpKey.push_back(entry.first.c_str());
+								}
+								static int scriptIndex2{};
+								std::cout << "Number of C# Scripts: " << cSharpKey.size() << std::endl;
 
 								// Dropdown box for selecting a C# script to add
 								ImGui::SetNextItemWidth(200.0f);
@@ -1657,16 +1657,22 @@ namespace PE {
 								{
 									ImGui::Text("C# Scripts: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									if (ImGui::Combo("##C# Scripts", &scriptindex2, cSharpKey.data(), static_cast<int>(cSharpKey.size()))) {}
+									if (ImGui::Combo("##C# Scripts", &scriptIndex2, cSharpKey.data(), static_cast<int>(cSharpKey.size()))) {}
 								}
 
-								// Button to add the selected C# script to the entity
+								// TODO: Button to add the selected C# script to the entity
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
-								if (ImGui::Button("Add C# Script"))
+								if (ImGui::Button("Add C# Script") && !cSharpKey.empty())
 								{
-									std::cout << "HIIIIIIIIIII";
-									//EntityManager::GetInstance().Get<CSharpScriptComponent>(entityID).addCSharpScript(cSharpKey[scriptindex2]);
-									// You can call the C# script's OnAttach equivalent method here.
+									auto scriptKey = cSharpKey[scriptIndex2];
+									auto& cSharpScriptComponent = EntityManager::GetInstance().Get<PE::CSharpScriptComponent>(entityID);
+									cSharpScriptComponent.addCSharpScript(scriptKey);
+
+									MonoObject* scriptInstance = ScriptEngine::GetInstance().GetOrCreateMonoObject(entityID, scriptKey);
+									MonoMethod* onAttachMethod = ScriptEngine::GetMethodFromMonoObject(scriptInstance, "OnAttach", 0);
+									if (onAttachMethod != nullptr) {
+										ScriptClass::InvokeMethod(scriptInstance, onAttachMethod, nullptr);
+									}
 								}
 								ImGui::PopStyleColor(1);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1937,61 +1943,61 @@ namespace PE {
 					//add different kind of components, however if it already has we cannot add
 					if (ImGui::BeginPopup("Components"))
 					{
-						if (ImGui::Selectable("+ Collision  Component "))
+						if (ImGui::Selectable("+ Collider "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
 							else
 								AddErrorLog("ALREADY HAS A COLLIDER");
 						}
-						if (ImGui::Selectable("+ Transform  Component "))
+						if (ImGui::Selectable("+ Transform "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
 							else
 								AddErrorLog("ALREADY HAS A TRANSFORM");
 						}
-						if (ImGui::Selectable("+ RigidBody  Component "))
+						if (ImGui::Selectable("+ RigidBody "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
 							else
 								AddErrorLog("ALREADY HAS A TRANSFORM");
 						}
-						if (ImGui::Selectable("+ Renderer   Component "))
+						if (ImGui::Selectable("+ Renderer "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 							else
 								AddErrorLog("ALREADY HAS A RENDERER");
 						}
-						if (ImGui::Selectable("+ C#  Script Component "))
+						if (ImGui::Selectable("+ C#  Script "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<CSharpScriptComponent>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<CSharpScriptComponent>() });
 							else
 								AddErrorLog("ALREADY HAS A C# SCRIPTCOMPONENT");
 						}
-						if (ImGui::Selectable("+ C++ Script Component "))
+						if (ImGui::Selectable("+ C++ Script "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
 							else
 								AddErrorLog("ALREADY HAS A C++ SCRIPTCOMPONENT");
 						}
-						std::vector<std::string> test {"test1", "test2", "test3"}; // replace this vector with your not hardcoded way of getting your scripts
-						if (ImGui::BeginMenu("+ Scripts"))
-						{
-							for (auto str : test) // change to whatever loop you want
-							{
-								if (ImGui::MenuItem(str.c_str())) 
-								{
-									//do whatever script specific stuff here
-								}
-							}
-							ImGui::EndMenu();
-						}
-						if (ImGui::Selectable("+ Animation  Component "))
+						//std::vector<std::string> test {"test1", "test2", "test3"}; // replace this vector with your not hardcoded way of getting your scripts
+						//if (ImGui::BeginMenu("+ Scripts"))
+						//{
+						//	for (auto str : test) // change to whatever loop you want
+						//	{
+						//		if (ImGui::MenuItem(str.c_str())) 
+						//		{
+						//			//do whatever script specific stuff here
+						//		}
+						//	}
+						//	ImGui::EndMenu();
+						//}
+						if (ImGui::Selectable("+ Animation "))
 						{
 							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
@@ -2551,107 +2557,197 @@ namespace PE {
 		ImGuiStyle* style = &ImGui::GetStyle();
 		ImVec4* colors = style->Colors;
 
-		colors[ImGuiCol_Text] = ImVec4(HEX(200), HEX(200), HEX(200), 1.00f);
+		// Base Dark Color
+		ImVec4 darkColor = ImVec4(0.1216f, 0.1216f, 0.1216f, 1.0f);
+
+		// Darker Element
+		ImVec4 darkerElement = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
+
+		// Lighter Text
+		ImVec4 lighterText = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
+
+		// Highlight Color
+		ImVec4 highlightColor = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+
+		// Subtle Highlight
+		ImVec4 subtleHighlight = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+
+		// Subtle Hover
+		ImVec4 subtleHover = ImVec4(0.3f, 0.3f, 0.3f, 0.40f);
+
+		colors[ImGuiCol_Text] = lighterText;
 		colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-		colors[ImGuiCol_WindowBg] = ImVec4(.15f, .15f, .20f, 1.00f);;
-		colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_WindowBg] = darkColor;
+		colors[ImGuiCol_ChildBg] = darkColor;
 		colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
-		colors[ImGuiCol_Border] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_Border] = darkerElement;
 		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_FrameBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-		colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-		colors[ImGuiCol_TitleBg] = ImVec4(.1f, .1f, .13f, 1.00f);;
-		colors[ImGuiCol_TitleBgActive] = ImVec4(.15f, .15f, .25f, 1.00f);
+		colors[ImGuiCol_FrameBg] = darkerElement;
+		colors[ImGuiCol_FrameBgHovered] = subtleHover;
+		colors[ImGuiCol_FrameBgActive] = subtleHighlight;
+		colors[ImGuiCol_TitleBg] = darkerElement;
+		colors[ImGuiCol_TitleBgActive] = darkerElement;
 		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-		colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
-		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
-		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
-		colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-		colors[ImGuiCol_SliderGrab] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
-		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
-		colors[ImGuiCol_Button] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
-		colors[ImGuiCol_ButtonHovered] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
-		colors[ImGuiCol_ButtonActive] = ImVec4(0.70f, 0.53f, 0.98f, 1.00f);
-		colors[ImGuiCol_Header] = ImVec4(0.3f, 0.3f, 0.3f, 0.31f);
-		colors[ImGuiCol_HeaderHovered] = ImVec4(0.70f, 0.59f, 0.98f, 0.4f);
-		colors[ImGuiCol_HeaderActive] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-		colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
-		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
-		colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
-		colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
-		colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
-		colors[ImGuiCol_Tab] = ImLerp(colors[ImGuiCol_Header], colors[ImGuiCol_TitleBgActive], 0.80f);
-		colors[ImGuiCol_TabHovered] = colors[ImGuiCol_HeaderHovered];
-		colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
-		colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
-		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
-		colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-		colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
-		colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
-		colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-		colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-		colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
-		colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
-		colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
+		colors[ImGuiCol_MenuBarBg] = darkerElement;
+		colors[ImGuiCol_ScrollbarBg] = darkerElement;
+		colors[ImGuiCol_ScrollbarGrab] = subtleHighlight;
+		colors[ImGuiCol_ScrollbarGrabHovered] = subtleHover;
+		colors[ImGuiCol_ScrollbarGrabActive] = subtleHighlight;
+		colors[ImGuiCol_CheckMark] = highlightColor;
+		colors[ImGuiCol_SliderGrab] = subtleHighlight;
+		colors[ImGuiCol_SliderGrabActive] = highlightColor;
+		colors[ImGuiCol_Button] = subtleHighlight;
+		colors[ImGuiCol_ButtonHovered] = subtleHover;
+		colors[ImGuiCol_ButtonActive] = highlightColor;
+		colors[ImGuiCol_Header] = darkerElement;
+		colors[ImGuiCol_HeaderHovered] = subtleHover;
+		colors[ImGuiCol_HeaderActive] = subtleHighlight;
+		colors[ImGuiCol_Separator] = darkerElement;
+		colors[ImGuiCol_SeparatorHovered] = subtleHover;
+		colors[ImGuiCol_SeparatorActive] = subtleHighlight;
+		colors[ImGuiCol_ResizeGrip] = subtleHighlight;
+		colors[ImGuiCol_ResizeGripHovered] = subtleHover;
+		colors[ImGuiCol_ResizeGripActive] = highlightColor;
+		colors[ImGuiCol_Tab] = darkerElement;
+		colors[ImGuiCol_TabHovered] = subtleHover;
+		colors[ImGuiCol_TabActive] = subtleHighlight;
+		colors[ImGuiCol_TabUnfocused] = darkerElement;
+		colors[ImGuiCol_TabUnfocusedActive] = subtleHighlight;
+		colors[ImGuiCol_DockingEmptyBg] = darkColor;
+		colors[ImGuiCol_PlotLines] = lighterText;
+		colors[ImGuiCol_PlotLinesHovered] = highlightColor;
+		colors[ImGuiCol_PlotHistogram] = subtleHighlight;
+		colors[ImGuiCol_PlotHistogramHovered] = highlightColor;
+		colors[ImGuiCol_TableHeaderBg] = darkerElement;
+		colors[ImGuiCol_TableBorderStrong] = darkerElement;
+		colors[ImGuiCol_TableBorderLight] = darkerElement;
 		colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
-		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
-		colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
-		colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+		colors[ImGuiCol_TableRowBgAlt] = darkerElement;
+		colors[ImGuiCol_TextSelectedBg] = subtleHighlight;
+		colors[ImGuiCol_DragDropTarget] = highlightColor;
+		colors[ImGuiCol_NavHighlight] = highlightColor;
+		colors[ImGuiCol_NavWindowingHighlight] = highlightColor;
 		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
 
-		//[ImGuiCol_Text] = The color for the text that will be used for the whole menu.
-		//	[ImGuiCol_TextDisabled] = Color for "not active / disabled text".
-		//	[ImGuiCol_WindowBg] = Background color.
-		//	[ImGuiCol_PopupBg] = The color used for the background in ImGui::Combo and ImGui::MenuBar.
-		//	[ImGuiCol_Border] = The color that is used to outline your menu.
-		//	[ImGuiCol_BorderShadow] = Color for the stroke shadow.
-		//	[ImGuiCol_FrameBg] = Color for ImGui::InputText and for background ImGui::Checkbox
-		//	[ImGuiCol_FrameBgHovered] = The color that is used in almost the same way as the one above, except that it changes color when guiding it to ImGui::Checkbox.
-		//	[ImGuiCol_FrameBgActive] = Active color.
-		//	[ImGuiCol_TitleBg] = The color for changing the main place at the very top of the menu(where the name of your "top-of-the-table" is shown.
-		//		ImGuiCol_TitleBgCollapsed = ImguiCol_TitleBgActive
-		//		= The color of the active title window, ie if you have a menu with several windows, this color will be used for the window in which you will be at the moment.
-		//		[ImGuiCol_MenuBarBg] = The color for the bar menu. (Not all sawes saw this, but still)
-		//		[ImGuiCol_ScrollbarBg] = The color for the background of the "strip", through which you can "flip" functions in the software vertically.
-		//		[ImGuiCol_ScrollbarGrab] = Color for the scoll bar, ie for the "strip", which is used to move the menu vertically.
-		//		[ImGuiCol_ScrollbarGrabHovered] = Color for the "minimized / unused" scroll bar.
-		//		[ImGuiCol_ScrollbarGrabActive] = The color for the "active" activity in the window where the scroll bar is located.
-		//		[ImGuiCol_ComboBg] = Color for the background for ImGui::Combo.
-		//		[ImGuiCol_CheckMark] = Color for your ImGui::Checkbox.
-		//		[ImGuiCol_SliderGrab] = Color for the slider ImGui::SliderInt and ImGui::SliderFloat.
-		//		[ImGuiCol_SliderGrabActive] = Color of the slider,
-		//		[ImGuiCol_Button] = the color for the button.
-		//		[ImGuiCol_ButtonHovered] = Color when hovering over the button.
-		//		[ImGuiCol_ButtonActive] = Button color used.
-		//		[ImGuiCol_Header] = Color for ImGui::CollapsingHeader.
-		//		[ImGuiCol_HeaderHovered] = Color, when hovering over ImGui::CollapsingHeader.
-		//		[ImGuiCol_HeaderActive] = Used color ImGui::CollapsingHeader.
-		//		[ImGuiCol_Column] = Color for the "separation strip" ImGui::Column and ImGui::NextColumn.
-		//		[ImGuiCol_ColumnHovered] = Color, when hovering on the "strip strip" ImGui::Column and ImGui::NextColumn.
-		//		[ImGuiCol_ColumnActive] = The color used for the "separation strip" ImGui::Column and ImGui::NextColumn.
-		//		[ImGuiCol_ResizeGrip] = The color for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-		//		[ImGuiCol_ResizeGripHovered] = Color, when hovering to the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-		//		[ImGuiCol_ResizeGripActive] = The color used for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-		//		[ImGuiCol_CloseButton] = The color for the button - closing menu.
-		//		[ImGuiCol_CloseButtonHovered] = Color, when you hover over the button - close menu.
-		//		[ImGuiCol_CloseButtonActive] = The color used for the button - closing menu.
-		//		[ImGuiCol_TextSelectedBg] = The color of the selected text, in ImGui::MenuBar.
-		//		[ImGuiCol_ModalWindowDarkening] = The color of the "Blackout Window" of your menu.
-		//		I rarely see these designations, but still decided to put them here.
-		//		[ImGuiCol_Tab] = The color for tabs in the menu.
-		//		[ImGuiCol_TabActive] = The active color of tabs, ie when you click on the tab you will have this color.
-		//		[ImGuiCol_TabHovered] = The color that will be displayed when hovering on the table.
-		//		[ImGuiCol_TabSelected] = The color that is used when you are in one of the tabs.
-		//		[ImGuiCol_TabText] = Text color that only applies to tabs.
-		//		[ImGuiCol_TabTextActive] = Active text color for tabs.
+		style->ChildRounding = 8.0f;
+		style->FrameBorderSize = 0.0f;
+		style->FrameRounding = 6.0f;
+		style->GrabMinSize = 10.0f;
+		style->PopupRounding = 6.0f;
+		style->ScrollbarRounding = 8.0f;
+		style->ScrollbarSize = 10.0f;
+		style->TabBorderSize = 0.0f;
+		style->TabRounding = 6.0f;
 	}
+
+
+	//void Editor::SetImGUIStyle()
+	//{
+	//	ImGuiStyle* style = &ImGui::GetStyle();
+	//	ImVec4* colors = style->Colors;
+
+	//	colors[ImGuiCol_Text] = ImVec4(HEX(200), HEX(200), HEX(200), 1.00f);
+	//	colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+	//	colors[ImGuiCol_WindowBg] = ImVec4(.15f, .15f, .20f, 1.00f);
+	//	colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	//	colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
+	//	colors[ImGuiCol_Border] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+	//	colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	//	colors[ImGuiCol_FrameBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+	//	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+	//	colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+	//	colors[ImGuiCol_TitleBg] = ImVec4(.1f, .1f, .13f, 1.00f);;
+	//	colors[ImGuiCol_TitleBgActive] = ImVec4(.15f, .15f, .25f, 1.00f);
+	//	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+	//	colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+	//	colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+	//	colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+	//	colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+	//	colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
+	//	colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	//	colors[ImGuiCol_SliderGrab] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
+	//	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
+	//	colors[ImGuiCol_Button] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
+	//	colors[ImGuiCol_ButtonHovered] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
+	//	colors[ImGuiCol_ButtonActive] = ImVec4(0.70f, 0.53f, 0.98f, 1.00f);
+	//	colors[ImGuiCol_Header] = ImVec4(0.3f, 0.3f, 0.3f, 0.31f);
+	//	colors[ImGuiCol_HeaderHovered] = ImVec4(0.70f, 0.59f, 0.98f, 0.4f);
+	//	colors[ImGuiCol_HeaderActive] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+	//	colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
+	//	colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
+	//	colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
+	//	colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
+	//	colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+	//	colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+	//	colors[ImGuiCol_Tab] = ImLerp(colors[ImGuiCol_Header], colors[ImGuiCol_TitleBgActive], 0.80f);
+	//	colors[ImGuiCol_TabHovered] = colors[ImGuiCol_HeaderHovered];
+	//	colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
+	//	colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
+	//	colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
+	//	colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+	//	colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+	//	colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+	//	colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+	//	colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+	//	colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+	//	colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
+	//	colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
+	//	colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+	//	colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
+	//	colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+	//	colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+	//	colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+	//	colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+	//	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+	//	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+
+	//	//[ImGuiCol_Text] = The color for the text that will be used for the whole menu.
+	//	//	[ImGuiCol_TextDisabled] = Color for "not active / disabled text".
+	//	//	[ImGuiCol_WindowBg] = Background color.
+	//	//	[ImGuiCol_PopupBg] = The color used for the background in ImGui::Combo and ImGui::MenuBar.
+	//	//	[ImGuiCol_Border] = The color that is used to outline your menu.
+	//	//	[ImGuiCol_BorderShadow] = Color for the stroke shadow.
+	//	//	[ImGuiCol_FrameBg] = Color for ImGui::InputText and for background ImGui::Checkbox
+	//	//	[ImGuiCol_FrameBgHovered] = The color that is used in almost the same way as the one above, except that it changes color when guiding it to ImGui::Checkbox.
+	//	//	[ImGuiCol_FrameBgActive] = Active color.
+	//	//	[ImGuiCol_TitleBg] = The color for changing the main place at the very top of the menu(where the name of your "top-of-the-table" is shown.
+	//	//		ImGuiCol_TitleBgCollapsed = ImguiCol_TitleBgActive
+	//	//		= The color of the active title window, ie if you have a menu with several windows, this color will be used for the window in which you will be at the moment.
+	//	//		[ImGuiCol_MenuBarBg] = The color for the bar menu. (Not all sawes saw this, but still)
+	//	//		[ImGuiCol_ScrollbarBg] = The color for the background of the "strip", through which you can "flip" functions in the software vertically.
+	//	//		[ImGuiCol_ScrollbarGrab] = Color for the scoll bar, ie for the "strip", which is used to move the menu vertically.
+	//	//		[ImGuiCol_ScrollbarGrabHovered] = Color for the "minimized / unused" scroll bar.
+	//	//		[ImGuiCol_ScrollbarGrabActive] = The color for the "active" activity in the window where the scroll bar is located.
+	//	//		[ImGuiCol_ComboBg] = Color for the background for ImGui::Combo.
+	//	//		[ImGuiCol_CheckMark] = Color for your ImGui::Checkbox.
+	//	//		[ImGuiCol_SliderGrab] = Color for the slider ImGui::SliderInt and ImGui::SliderFloat.
+	//	//		[ImGuiCol_SliderGrabActive] = Color of the slider,
+	//	//		[ImGuiCol_Button] = the color for the button.
+	//	//		[ImGuiCol_ButtonHovered] = Color when hovering over the button.
+	//	//		[ImGuiCol_ButtonActive] = Button color used.
+	//	//		[ImGuiCol_Header] = Color for ImGui::CollapsingHeader.
+	//	//		[ImGuiCol_HeaderHovered] = Color, when hovering over ImGui::CollapsingHeader.
+	//	//		[ImGuiCol_HeaderActive] = Used color ImGui::CollapsingHeader.
+	//	//		[ImGuiCol_Column] = Color for the "separation strip" ImGui::Column and ImGui::NextColumn.
+	//	//		[ImGuiCol_ColumnHovered] = Color, when hovering on the "strip strip" ImGui::Column and ImGui::NextColumn.
+	//	//		[ImGuiCol_ColumnActive] = The color used for the "separation strip" ImGui::Column and ImGui::NextColumn.
+	//	//		[ImGuiCol_ResizeGrip] = The color for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+	//	//		[ImGuiCol_ResizeGripHovered] = Color, when hovering to the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+	//	//		[ImGuiCol_ResizeGripActive] = The color used for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+	//	//		[ImGuiCol_CloseButton] = The color for the button - closing menu.
+	//	//		[ImGuiCol_CloseButtonHovered] = Color, when you hover over the button - close menu.
+	//	//		[ImGuiCol_CloseButtonActive] = The color used for the button - closing menu.
+	//	//		[ImGuiCol_TextSelectedBg] = The color of the selected text, in ImGui::MenuBar.
+	//	//		[ImGuiCol_ModalWindowDarkening] = The color of the "Blackout Window" of your menu.
+	//	//		I rarely see these designations, but still decided to put them here.
+	//	//		[ImGuiCol_Tab] = The color for tabs in the menu.
+	//	//		[ImGuiCol_TabActive] = The active color of tabs, ie when you click on the tab you will have this color.
+	//	//		[ImGuiCol_TabHovered] = The color that will be displayed when hovering on the table.
+	//	//		[ImGuiCol_TabSelected] = The color that is used when you are in one of the tabs.
+	//	//		[ImGuiCol_TabText] = Text color that only applies to tabs.
+	//	//		[ImGuiCol_TabTextActive] = Active text color for tabs.
+	//}
 
 	void Editor::AddLog(std::string_view text)
 	{

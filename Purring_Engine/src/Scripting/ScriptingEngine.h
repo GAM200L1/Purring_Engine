@@ -26,7 +26,8 @@ namespace PE
 
 		MonoObject* Instantiate();
 		MonoMethod* GetMethod(const std::string& name, int parameterCount);
-		MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params = nullptr);
+		//MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params = nullptr);
+		static MonoObject* InvokeMethod(MonoObject* instance, MonoMethod* method, void** params);
 
 		MonoClass* GetMonoClass() const { return m_MonoClass; }
 
@@ -40,6 +41,7 @@ namespace PE
 	class ScriptInstance
 	{
 	public:
+		ScriptInstance() = default;  // Default constructor
 		ScriptInstance(Ref<ScriptClass> scriptClass);
 
 
@@ -65,6 +67,8 @@ namespace PE
 		static void Shutdown();
 
 		static void LoadAssembly(const std::filesystem::path& filepath);
+
+		//static std::string CreateCompositeKey(const std::string& objectID, const std::string& key);
 
 		MonoClass* GetMonoClassByKey(const std::string& key);
 		MonoObject* GetOrCreateMonoObject(const EntityID& objectID, const std::string& key);

@@ -284,7 +284,12 @@ namespace PE
     MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
     {
         return mono_runtime_invoke(method, instance, params, nullptr);
+
     }
+    //MonoObject* ScriptClass::InvokeMethod(MonoObject* instance, MonoMethod* method, void** params)
+    //{
+    //    return mono_runtime_invoke(method, instance, params, nullptr);
+    //}
 
     ScriptInstance::ScriptInstance(Ref<ScriptClass> scriptClass)
         : m_ScriptClass(scriptClass)
@@ -294,16 +299,16 @@ namespace PE
         m_OnUpdateMethod = scriptClass->GetMethod("OnUpdate", 1);
     }
 
-    void ScriptInstance::InvokeOnCreate()
-    {
-        m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod);
-    }
+    //void ScriptInstance::InvokeOnCreate()
+    //{
+    //    m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod);
+    //}
 
-    void ScriptInstance::InvokeOnUpdate(float ts)
-    {
-        void* param = &ts;
-        m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
-    }
+    //void ScriptInstance::InvokeOnUpdate(float ts)
+    //{
+    //    void* param = &ts;
+    //    m_ScriptClass->InvokeMethod(m_Instance, m_OnUpdateMethod, &param);
+    //}
 
     std::string CreateCompositeKey(const std::string& objectID, const std::string& key)
     {

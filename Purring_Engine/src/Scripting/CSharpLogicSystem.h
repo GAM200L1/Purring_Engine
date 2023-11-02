@@ -1,7 +1,8 @@
 #pragma once
 #include "System.h"
 #include "CSharpScriptComponent.h"
-
+#include <map>
+#include "ScriptingEngine.h"
 #define REGISTER_CSHARPSCRIPT(name) 	PE::CSharpLogicSystem::m_csharpScriptContainer[#name] = new name()
 
 namespace PE
@@ -9,7 +10,7 @@ namespace PE
     class CSharpLogicSystem : public System
     {
     public:
-        static std::map<std::string, CSharpScript*> m_cSharpScriptContainer;
+        static std::map<std::string, ScriptInstance> m_cSharpScriptContainer;
 
         CSharpLogicSystem();
         virtual ~CSharpLogicSystem();
@@ -19,6 +20,8 @@ namespace PE
         void DestroySystem() override;
 
         std::string GetName() override;
+
+        void LoadScripts();
 
     };
 
