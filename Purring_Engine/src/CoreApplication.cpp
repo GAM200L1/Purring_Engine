@@ -100,7 +100,8 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::GUI);
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
-   
+    REGISTERCOMPONENT(PE::CSharpScriptComponent);
+
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
     // extra notes, will we need to include the constructor as well?

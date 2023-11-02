@@ -196,6 +196,18 @@ namespace PE
 	}
 
 
+	bool EntityFactory::InitializeCSharpScriptComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<CSharpScriptComponent>(r_id) =
+			(p_data == nullptr) ?
+			CSharpScriptComponent()
+			:
+			*reinterpret_cast<CSharpScriptComponent*>(p_data);
+		return true;
+	}
+
+
+
 	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)
 	{
 		EntityID id = CreateEntity();

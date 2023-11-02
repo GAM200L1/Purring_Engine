@@ -29,6 +29,7 @@
 #include "Prefabs.h"
 #include "Singleton.h"
 #include "Animation/Animation.h"
+#include "Scripting/CSharpLogicSystem.h"
 
 // Entity Factory code
 namespace PE
@@ -200,6 +201,7 @@ namespace PE
 		bool InitializeGUI(const EntityID& r_id, void* p_data);
 		bool InitializeGUIRenderer(const EntityID& r_id, void* p_data);
 		bool InitializeAnimationComponent(const EntityID& r_id, void* p_data);
+		bool InitializeCSharpScriptComponent(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap
