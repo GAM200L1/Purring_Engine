@@ -73,7 +73,13 @@ namespace PE {
 			}*/
 			for (auto [k, v] : m_scriptKeys)
 			{
-				ret[k.c_str()] = v;
+				ret[k.c_str()]["state"] = v;
+				//ret[k.c_str()]["data"] = 69;
+				rttr::type scriptDataType = rttr::type::get_by_name(k.c_str());
+				for (auto& prop : scriptDataType.get_properties())
+				{
+					rttr::variant var = prop.get_value(&(PE::LogicSystem::m_scriptContainer[k.c_str()]));
+				}
 			}
 		
 			return ret;
@@ -81,9 +87,19 @@ namespace PE {
 
 		ScriptComponent& Deserialize(const nlohmann::json& j)
 		{
-			for (const auto& k : j)
+			for (const auto& k : j.items())
 			{
-				m_scriptKeys[k.type_name()] = k.get<ScriptState>();
+				for (const auto& l : k.value().items())
+				{
+					if (l.key() == "state")
+					{
+						m_scriptKeys[k.key().c_str()] = l.value().get<ScriptState>();
+					}
+					else // key == "data"
+					{
+						// handle data
+					}
+				}
 			}
 			return *this;
 		}

@@ -163,12 +163,12 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str())
         .property("ScriptKeys", &PE::ScriptComponent::m_scriptKeys);
 
-    rttr::registration::class_<PE::PlayerControllerScriptData>("PlayerControllerScriptData")
+    rttr::registration::class_<PE::PlayerControllerScriptData>("PlayerControllerScript")
         .property("PlayerState", &PE::PlayerControllerScriptData::currentPlayerState)
         .property("HP", &PE::PlayerControllerScriptData::HP)
         .property("speed", &PE::PlayerControllerScriptData::speed);
 
-    rttr::registration::class_<PE::EnemyTestScriptData>("EnemyTestScriptData")
+    rttr::registration::class_<PE::EnemyTestScriptData>("EnemyTestScript")
         .property("PlayerID", &PE::EnemyTestScriptData::playerID)
         .property("speed", &PE::EnemyTestScriptData::speed)
         .property("idleTimer", &PE::EnemyTestScriptData::idleTimer)
@@ -179,7 +179,7 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
-    rttr::registration::class_<PE::TestScriptData>("TestScriptData")
+    rttr::registration::class_<PE::TestScriptData>("TestScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
 }
 

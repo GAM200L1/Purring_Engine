@@ -27,6 +27,10 @@
 #include "Graphics/CameraManager.h"
 #include "Logic/LogicSystem.h"
 
+// RTTR stuff
+#include <rttr/variant.h>
+#include <rttr/type.h>
+
 const std::wstring wjsonExt = L".json";
 
 std::string SerializationManager::OpenFileExplorer()
@@ -425,5 +429,19 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
 {
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>(),
         static_cast<void*>(&(PE::ScriptComponent().Deserialize(r_json["Entity"]["components"]["ScriptComponent"]))));
+    //auto& scriptsRef = PE::EntityManager::GetInstance().Get<PE::ScriptComponent>(r_id).m_scriptKeys;
+    for (const auto& k : r_json["Entity"]["components"]["ScriptComponent"].items())
+    {
+        auto str = k.key().c_str();
+        if (PE::LogicSystem::m_scriptContainer.count(str))
+        {
+            rttr::type type = rttr::type::get_by_name(str);
+            if (type.is_valid())
+            {
+                //for ()
+            }
+        }
+    }
+
     return true;
 }
