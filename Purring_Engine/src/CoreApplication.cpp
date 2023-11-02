@@ -81,6 +81,7 @@
 #include "Logic/EnemyTestScript.h"
 #include "Logic/testScript.h"
 #include "Logic/testScript2.h"
+#include "Logic/FollowScript.h"
 
 // Testing
 Logger engine_logger = Logger("ENGINE");
@@ -187,6 +188,15 @@ RTTR_REGISTRATION
         .method("GetCurrentAnimation", &PE::AnimationComponent::GetAnimationID)
         .method("SetCurrentAntimation", &PE::AnimationComponent::SetAnimationID);
 
+    rttr::registration::class_<PE::FollowScriptData>("FollowScript")
+        .property("Size", &PE::FollowScriptData::Size)
+        .property("Distance", &PE::FollowScriptData::Distance)
+        .property("Speed", &PE::FollowScriptData::Speed)
+        .property("NumberOfFollower", &PE::FollowScriptData::NumberOfFollower)
+        .property("FollowingObject", &PE::FollowScriptData::FollowingObject)
+        .property("rotation", &PE::FollowScriptData::Rotation)
+        .property("CurrentPosition", &PE::FollowScriptData::CurrentPosition)
+        .property("NextPosition", &PE::FollowScriptData::NextPosition);
 }
 
 PE::CoreApplication::CoreApplication()

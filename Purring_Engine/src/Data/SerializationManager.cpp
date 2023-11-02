@@ -476,6 +476,28 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                             bool val = data[prop.get_name().to_string().c_str()].get<bool>();
                             prop.set_value(inst, val);
                         }
+                        else if (prop.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
+                        {
+                            std::vector<EntityID> val = data[prop.get_name().to_string().c_str()].get<std::vector<EntityID>>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "structPE::vec2")
+                        {
+                            PE::vec2 val;
+
+
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+                        {
+                            std::vector<PE::vec2> val;
+
+                            for (size_t cnt{}; data[prop.get_name().to_string().c_str()].contains(std::to_string(cnt)); ++cnt)
+                            {
+                                val.emplace_back(PE::vec2{ data[prop.get_name().to_string().c_str()][std::to_string(cnt)]["x"].get<float>() , data[prop.get_name().to_string().c_str()][std::to_string(cnt)]["y"].get<float>() });
+                            }
+                            prop.set_value(inst, val);
+                        }
                     }
                 }
             }

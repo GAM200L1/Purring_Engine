@@ -26,6 +26,7 @@ namespace PE
 		virtual void OnAttach(EntityID) override;
 		virtual void OnDetach(EntityID) override;
 		std::map<EntityID, FollowScriptData>& GetScriptData();
+		rttr::instance GetScriptData(EntityID id);
 		virtual ~FollowScript();
 	private:
 		std::map<EntityID, FollowScriptData> m_ScriptData;

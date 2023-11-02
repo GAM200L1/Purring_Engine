@@ -3,6 +3,7 @@
 #include "Script.h"
 #include "Data/json.hpp"
 #include "PlayerControllerScript.h"
+#include "Math/MathCustom.h"
 
 #define REGISTER_SCRIPT(name) 	PE::LogicSystem::m_scriptContainer[#name] = new name()
 #define GETSCRIPTDATA(script,id) &reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData()[id]
@@ -93,7 +94,7 @@ namespace PE {
 					if (!inst.is_valid()) // if no data for this script type, just break out of this loop
 						break;
 					rttr::variant var = prop.get_value(inst);
-
+					std::cout << var.get_type().get_name().to_string() << std::endl;
 					if (var.get_type().get_name() == "float")
 					{
 						float val = var.get_value<float>();
@@ -119,6 +120,29 @@ namespace PE {
 						bool val = var.get_value<bool>();
 						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
 					}
+					else if (var.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
+					{
+						std::vector<EntityID> val = var.get_value<std::vector<EntityID>>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "structPE::vec2")
+					{
+						PE::vec2 val = var.get_value<PE::vec2>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
+					}
+					else if (var.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+					{
+						std::vector<PE::vec2> val = var.get_value<std::vector<PE::vec2>>();
+						size_t cnt{};
+						for (const auto& vec : val)
+						{
+							ret[k.c_str()]["data"][prop.get_name().to_string().c_str()][std::to_string(cnt)]["x"] = vec.x;
+							ret[k.c_str()]["data"][prop.get_name().to_string().c_str()][std::to_string(cnt)]["y"] = vec.y;
+							++cnt;
+						}
+					}
+					
 				}
 			}
 		
