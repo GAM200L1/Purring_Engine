@@ -67,7 +67,6 @@
 
 // Input
 #include "Input/InputSystem.h"
-#include "Logic/LogicSystem.h"
 
 #include "GUISystem.h"
 
@@ -75,6 +74,13 @@
 #include <rttr/type.h>
 #include <rttr/property.h>
 #include <rttr/registration.h>
+
+// Logic
+#include "Logic/LogicSystem.h"
+#include "Logic/PlayerControllerScript.h"
+#include "Logic/EnemyTestScript.h"
+#include "Logic/testScript.h"
+#include "Logic/testScript2.h"
 
 // Testing
 Logger engine_logger = Logger("ENGINE");
@@ -154,8 +160,27 @@ RTTR_REGISTRATION
         .method("AdjustMagnification", &PE::Graphics::Camera::AdjustMagnification);
 
     // is that all i need to register? @jarran
-    rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str());
+    rttr::registration::class_<PE::ScriptComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>().to_string().c_str())
+        .property("ScriptKeys", &PE::ScriptComponent::m_scriptKeys);
 
+    rttr::registration::class_<PE::PlayerControllerScriptData>("PlayerControllerScriptData")
+        .property("PlayerState", &PE::PlayerControllerScriptData::currentPlayerState)
+        .property("HP", &PE::PlayerControllerScriptData::HP)
+        .property("speed", &PE::PlayerControllerScriptData::speed);
+
+    rttr::registration::class_<PE::EnemyTestScriptData>("EnemyTestScriptData")
+        .property("PlayerID", &PE::EnemyTestScriptData::playerID)
+        .property("speed", &PE::EnemyTestScriptData::speed)
+        .property("idleTimer", &PE::EnemyTestScriptData::idleTimer)
+        .property("alertTimer", &PE::EnemyTestScriptData::alertTimer)
+        .property("timerBuffer", &PE::EnemyTestScriptData::timerBuffer)
+        .property("patrolTimer", &PE::EnemyTestScriptData::patrolBuffer)
+        .property("distanceFromPlayer", &PE::EnemyTestScriptData::distanceFromPlayer)
+        .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
+        .property("bounce", &PE::EnemyTestScriptData::bounce);
+
+    rttr::registration::class_<PE::TestScriptData>("TestScriptData")
+        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
 }
 
 PE::CoreApplication::CoreApplication()
