@@ -15,9 +15,7 @@
 *************************************************************************************/
 #pragma once
 #include "System.h"
-#include "ECS/Entity.h"
-#include "Math/MathCustom.h"
-#include "Colliders.h"
+#include "SpatialGrid.h"
 
 namespace PE
 {

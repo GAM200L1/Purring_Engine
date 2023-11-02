@@ -21,22 +21,43 @@ namespace PE
 {
 	// ----- Cell Class Member Function Definitons ----- //
 
+	Cell::Cell(vec2 const& r_center, float cellWidth) : 
+		m_center{ r_center }, 
+		m_min{ r_center.x - (cellWidth * 0.5f), r_center.y - (cellWidth * 0.5f) },
+		m_max{ r_center.x + (cellWidth * 0.5f), r_center.y + (cellWidth * 0.5f) }, 
+		m_entitiesInCell {} {}
+
+	Cell::~Cell()
+	{
+		ClearCell();
+	}
+	
 	void Cell::Add(EntityID id)
 	{
+		// if id already exists in the cell don't need to add again
+		if (CheckForID(id))
+			return;
+
 		m_entitiesInCell.emplace_back(id);
 	}
 
 	void Cell::Remove(EntityID id)
 	{
-		for (auto iter = m_entitiesInCell.begin(); iter != m_entitiesInCell.end(); ++iter)
-		{
-			if (*iter == id)
-			{
-				m_entitiesInCell.erase(iter);
-				return;
-			}
-		}
-		// some debug message
+		// there is nothing to remove
+		if (m_entitiesInCell.empty())
+			return;
+		
+		std::remove(m_entitiesInCell.begin(), m_entitiesInCell.end(), id);
+	}
+
+	bool Cell::CheckForID(EntityID id)
+	{
+		return (std::find(m_entitiesInCell.begin(), m_entitiesInCell.end(), id) != m_entitiesInCell.end());
+	}
+
+	bool Cell::CheckToTest() const
+	{
+		return (m_entitiesInCell.size() > 1);
 	}
 
 	void Cell::ClearCell()
@@ -51,7 +72,10 @@ namespace PE
 
 	// ----- Grid Class Member Function Declarations ----- //
 
-	Grid::Grid() : columns{ 0 }, rows{ 0 }, gridSize{ 0.f, 0.f }, cellWidth{ 0.f } {}
+	Grid::Grid() : 
+		m_columns{ 0 }, m_rows{ 0 }, 
+		m_min{ 0.f,0.f }, m_max{ 0.f, 0.f }, 
+		m_cellWidth{ 0.f }, m_cells{} {}
 
 	Grid::~Grid()
 	{
@@ -63,24 +87,31 @@ namespace PE
 		for (EntityID colliderID : SceneView<Collider, Transform>())
 		{
 			Transform const& r_transform = EntityManager::GetInstance().Get<Transform>(colliderID);
-			cellWidth = (cellWidth < r_transform.height) ? cellWidth : r_transform.height;
-			cellWidth = (cellWidth < r_transform.width) ? cellWidth : r_transform.width;
+			m_cellWidth = (m_cellWidth < r_transform.height) ? m_cellWidth : r_transform.height;
+			m_cellWidth = (m_cellWidth < r_transform.width) ? m_cellWidth : r_transform.width;
 		}
 		
-		cellWidth *= 2.f;
-		gridSize = vec2{ gridWidth, gridHeight };
+		m_min = vec2{ 0.f - (gridWidth * 0.5f), 0.f - (gridHeight * 0.5f) };
+		m_max = vec2{ 0.f + (gridWidth * 0.5f), 0.f + (gridHeight * 0.5f) };
+
+		m_cellWidth *= 2.f;
 		
-		columns = ceil(gridWidth / cellWidth);
-		rows = ceil(gridHeight / cellWidth);
+		m_columns = ceil(gridWidth / m_cellWidth);
+		m_rows = ceil(gridHeight / m_cellWidth);
 
 
 		// setup the vector that represents the grid. When accessing
 		// an element it will be m_cells[col][row];
-		std::vector<std::unique_ptr<Cell>> temp;
-		temp.reserve(rows);
 
-		for (size_t i{ 0 }; i < columns; ++i)
+		for (size_t i{ 0 }; i < m_columns; ++i)
 		{
+			std::vector<std::unique_ptr<Cell>> temp;
+			vec2 bottomCellInColCenter{ m_min.x + (m_cellWidth * 0.5f * (i + 1)), m_min.y + (m_cellWidth * 0.5f) };
+			for (size_t j{ 0 }; j < m_rows; ++j)
+			{
+				vec2 cellCenter{ bottomCellInColCenter.x, m_min.y + (m_cellWidth * 0.5f * (j+1)) };
+				temp.emplace_back(Cell{cellCenter, m_cellWidth});
+			}
 			m_cells.emplace_back(temp);
 		}
 	}
@@ -88,17 +119,25 @@ namespace PE
 
 	void Grid::UpdateGrid()
 	{
+		ClearGrid();
 		for (EntityID colliderID : SceneView<Collider, Transform>())
 		{
 			Collider const& r_collider = EntityManager::GetInstance().Get<Collider>(colliderID);
 			vec2 const& r_position = EntityManager::GetInstance().Get<Transform>(colliderID).position;
-			std::unique_ptr<Cell> p_colliderCell;
+			
+			std::pair<GridID, GridID> colliderMinMaxID;
 			std::visit([&](auto const& r_col)
 			{
-				GetCell(p_colliderCell, r_position.x, r_position.y, r_col);
+				colliderMinMaxID = GetMinMaxIDs(r_col);
 			}, r_collider.colliderVariant);
 
-			p_colliderCell->Add(colliderID);
+			for (size_t col{ colliderMinMaxID.first.x }; col <= colliderMinMaxID.second.x; ++col)
+			{
+				for (size_t row{ colliderMinMaxID.first.y }; row <= colliderMinMaxID.second.y; ++row)
+				{
+					m_cells[col][row]->Add(colliderID);
+				}
+			}
 		}
 	}
 
@@ -107,18 +146,39 @@ namespace PE
 		// clear each column of the row no. of cells it has
 		for (auto& r_column : m_cells)
 		{
+			for (auto& r_cell : r_column)
+			{
+				r_cell->ClearCell();
+			}
 			r_column.clear();
 		}
 		m_cells.clear();
 	}
 
-	std::unique_ptr<Cell>& Grid::GetCell(std::unique_ptr<Cell>& r_colliderCell, float posX, float posY, AABBCollider const& r_collider)
+	std::unique_ptr<Cell>& Grid::GetCell(int col, int row)
 	{
-		*r_colliderCell = *m_cells[1][1];
+		return m_cells[col][row];
 	}
 
-	std::unique_ptr<Cell>& Grid::GetCell(std::unique_ptr<Cell>& r_colliderCell, float posX, float posY, CircleCollider const& r_collider)
+	std::pair<GridID, GridID>& Grid::GetMinMaxIDs(AABBCollider const& r_collider)
 	{
+		GridID maxID = GetIndex(r_collider.max.x, r_collider.max.y);
+		GridID minID = GetIndex(r_collider.min.x, r_collider.min.y);
+		return std::make_pair(minID, maxID);
+	}
 
+	std::pair<GridID, GridID>& Grid::GetMinMaxIDs(CircleCollider const& r_collider)
+	{
+		vec2 max{ r_collider.center.x + r_collider.radius, r_collider.center.y + r_collider.radius };
+		vec2 min{ r_collider.center.x - r_collider.radius, r_collider.center.y - r_collider.radius };
+		GridID maxID = GetIndex(max.x, max.y);
+		GridID minID = GetIndex(min.x, min.y);
+		return std::make_pair(minID, maxID);
+	}
+
+	GridID Grid::GetIndex(float posX, float posY)
+	{
+		vec2 center{ m_min + ((m_max - m_min) * 0.5f) };
+		return GridID{ static_cast<int>(center.x + posX), static_cast<int>(center.y + posY) };
 	}
 }

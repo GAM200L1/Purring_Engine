@@ -15,9 +15,8 @@
 *************************************************************************************/
 
 #include "prpch.h"
-#include "CollisionManager.h"
-#include "ECS/Entity.h"
 #include "ECS/SceneView.h"
+#include "CollisionManager.h"
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
 
@@ -60,6 +59,7 @@ namespace PE
 
 		if (Editor::GetInstance().IsEditorActive())
 			return;
+
 		// Test for Collisions in the scene
 		TestColliders();
 		// Resolve the positions and velocities of the entities

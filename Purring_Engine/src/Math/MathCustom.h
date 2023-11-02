@@ -183,6 +183,20 @@ namespace PE
 		vec2 operator-() const;
 
 		/*!***********************************************************************************
+		 \brief equivalent check operator
+
+		 \return bool both elements in both vec2 are the same
+		*************************************************************************************/
+		bool operator==(vec2 const& r_rhs) const;
+
+		/*!***********************************************************************************
+		 \brief not equal check operator
+
+		 \return bool one of the elements is not equal to the other
+		*************************************************************************************/
+		bool operator!=(vec2 const& r_rhs) const;
+
+		/*!***********************************************************************************
 		 \brief Zeroes out the x and y values of the vec2
 		 
 		*************************************************************************************/

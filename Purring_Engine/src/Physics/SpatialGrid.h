@@ -14,25 +14,37 @@
 *************************************************************************************/
 #pragma once
 
+#include <vector>
+#include <memory>
 #include "ECS/Entity.h"
 #include "Colliders.h"
 
 namespace PE
 {
-	using GridID = vec2;
+	struct GridID
+	{
+		GridID(int newX, int newY) : x{newX}, y{newY}{}
+		int x, y;
+	};
 	
 	class Cell
 	{
 	public:
+
+		Cell(vec2 const& r_center, float cellWidth);
+		~Cell();
+
 		inline void Add(EntityID id);
 		inline void Remove(EntityID id);
+		inline bool CheckForID(EntityID id);
+		inline bool CheckToTest() const;
 		inline void ClearCell();
 		inline std::vector<EntityID> const& GetEntityIDs();
 
 	private:
-		//vec2 m_center;
-		//vec2 m_bounds; // min max
-		//float m_halfWidth;
+		vec2 m_center;
+		vec2 m_min;
+		vec2 m_max;
 		std::vector<EntityID> m_entitiesInCell;
 	};
 
@@ -45,15 +57,16 @@ namespace PE
 		void UpdateGrid();
 		void ClearGrid();
 
-		inline std::unique_ptr<Cell>& GetCell(std::unique_ptr<Cell>& r_colliderCell, float posX, float posY, AABBCollider const& r_collider);
-		inline std::unique_ptr<Cell>& GetCell(std::unique_ptr<Cell>& r_colliderCell, float posX, float posY, CircleCollider const& r_collider);
-		//inline GridID GetIndex(float posX, float posY);
-
+		inline std::unique_ptr<Cell>& GetCell(int col, int row);
+		inline std::pair<GridID, GridID>& GetMinMaxIDs(AABBCollider const& r_collider);
+		inline std::pair<GridID, GridID>& GetMinMaxIDs(CircleCollider const& r_collider);
+		inline GridID GetIndex(float posX, float posY);
 
 	private:
-		size_t columns, rows; // contain the number of columns and rows the grid has
-		vec2 gridSize;
-		float cellWidth; // contain the half width of a cell, given a cell is a square
+		size_t m_columns, m_rows; // contain the number of columns and rows the grid has
+		vec2 m_min;
+		vec2 m_max;
+		float m_cellWidth; // contain the half width of a cell, given a cell is a square
 		std::vector<std::vector<std::unique_ptr<Cell>>> m_cells;
 	};
 }

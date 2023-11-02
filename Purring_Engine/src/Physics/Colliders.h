@@ -22,7 +22,6 @@
 #include "Math/Transform.h"
 #include "ECS/Components.h"
 #include "RigidBody.h"
-#include "Data/json.hpp"
 
 namespace PE
 {
