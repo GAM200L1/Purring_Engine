@@ -23,6 +23,10 @@ namespace PE
 	class CollisionManager : public System
 	{
 	public:
+
+		// ----- Public Variable ----- //
+		static vec2 gridSize;
+
 		// ----- Constructors/Destructors ----- //
 		/*!***********************************************************************************
 		 \brief Construct a new Collision Manager object

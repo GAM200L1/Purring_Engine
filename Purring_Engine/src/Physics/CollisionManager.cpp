@@ -23,6 +23,8 @@ extern Logger engine_logger;
 
 namespace PE
 {
+	vec2 CollisionManager::gridSize{ 5000.f, 5000.f };
+	
 	// ----- Constructor/Destructors ----- //
 	CollisionManager::CollisionManager() 
 	{
@@ -72,7 +74,7 @@ namespace PE
 		if (!m_grid.GridExists())
 		{
 			// sets up the grid if it did not exist during runtime
-			m_grid.SetupGrid(5000.f, 5000.f);
+			m_grid.SetupGrid(gridSize.x, gridSize.y);
 		}
 
 		m_grid.UpdateGrid();

@@ -7,7 +7,8 @@
  \author               Liew Yeni
  \par      email:      yeni.l/@digipen.edu.sg
 
- \brief 
+ \brief	   This file contains function declarations for classes Cell and Grid
+		   and defines the struct GridID.
 
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -21,6 +22,7 @@
 
 namespace PE
 {
+	//! struct that is used to hold the column and row that a collider would be on
 	struct GridID
 	{
 		GridID(int newX, int newY) : x{newX}, y{newY}{}
@@ -71,6 +73,8 @@ namespace PE
 		bool GridExists() const;
 
 		// ----- Public Methods ----- //
+		bool CheckInGridArea(AABBCollider const& r_collider);
+		bool CheckInGridArea(CircleCollider const& r_collider);
 		std::pair<GridID, GridID> GetMinMaxIDs(AABBCollider const& r_collider);
 		std::pair<GridID, GridID> GetMinMaxIDs(CircleCollider const& r_collider);
 		GridID GetIndex(float posX, float posY);

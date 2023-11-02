@@ -16,6 +16,9 @@
 #include "prpch.h"
 #include "ECS/SceneView.h"
 #include "SpatialGrid.h"
+#include "Logging/Logger.h"
+
+extern Logger engine_logger;
 
 namespace PE
 {
@@ -123,8 +126,8 @@ namespace PE
 
 		m_cellWidth *= 2.f;
 		
-		m_columns = (ceil(gridWidth / m_cellWidth));
-		m_rows = (ceil(gridHeight / m_cellWidth));
+		m_columns = static_cast<int>(ceil(gridWidth / m_cellWidth));
+		m_rows = static_cast<int>(ceil(gridHeight / m_cellWidth));
 		m_cells.resize(m_columns);
 		// setup the vector that represents the grid. When accessing
 		// an element it will be m_cells[col][row];
@@ -154,6 +157,21 @@ namespace PE
 		for (EntityID colliderID : SceneView<Collider, Transform>())
 		{
 			Collider const& r_collider = EntityManager::GetInstance().Get<Collider>(colliderID);
+			bool inGrid{false};
+			std::visit([&](auto const& r_col)
+			{
+					inGrid = CheckInGridArea(r_col);
+			}, r_collider.colliderVariant);
+
+			if (!inGrid)
+			{
+				// if any part of the collider is outside the grid size, don't include in collision check
+				std::stringstream ss;
+				ss << "Error: Collider of Entity " << colliderID << " is Out of Bounds and won't be counted for collision " << '\n';
+				engine_logger.AddLog(false, ss.str(), "");
+				continue;
+			}
+
 			std::pair<GridID, GridID> colliderMinMaxID{ {0,0}, {0,0} };
 			std::visit([&](auto const& r_col)
 			{
@@ -188,6 +206,24 @@ namespace PE
 	bool Grid::GridExists() const
 	{
 		return m_gridHasSetup;
+	}
+
+	bool Grid::CheckInGridArea(AABBCollider const& r_collider)
+	{
+		if (r_collider.max.x >= m_max.x || r_collider.min.x <= m_min.x) { return false; }
+		if (r_collider.max.y >= m_max.y || r_collider.min.y <= m_min.y) { return false; }
+		// else
+		return true;
+	}
+	bool Grid::CheckInGridArea(CircleCollider const& r_collider)
+	{
+		vec2 colliderMax{ r_collider.center.x + r_collider.radius, r_collider.center.y + r_collider.radius };
+		vec2 colliderMin{ r_collider.center.x - r_collider.radius, r_collider.center.y - r_collider.radius };
+		std::cout << colliderMax.x << '\n';
+		if (colliderMax.x >= m_max.x || colliderMin.x <= m_min.x) { return false; }
+		if (colliderMax.y >= m_max.y || colliderMin.y <= m_min.y) { return false; }
+		// else
+		return true;
 	}
 
 	std::pair<GridID, GridID> Grid::GetMinMaxIDs(AABBCollider const& r_collider)
