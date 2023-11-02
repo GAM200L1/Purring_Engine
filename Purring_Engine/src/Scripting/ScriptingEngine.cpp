@@ -127,7 +127,7 @@ namespace PE
         ScriptGlue::RegisterFunctions();
 
 
-#if 0
+
         //Utils::PrintAssemblyTypes(s_Data->CoreAssembly);
         // Retrieve and instaitiate class w/ constructor
         s_Data->EntityClass = ScriptClass("PE", "Entity");
@@ -136,7 +136,7 @@ namespace PE
 
         // 2. call method
         MonoMethod* printMessageFunc = s_Data->EntityClass.GetMethod("PrintMessage", 0);
-        s_Data->EntityClass.InvokeMethod(instance, printMessageFunc);
+        s_Data->EntityClass.InvokeMethod(instance, printMessageFunc, nullptr);
 
         // 3. call method w/ param 
         MonoMethod* printIntFunc = s_Data->EntityClass.GetMethod("PrintInt", 1);
@@ -159,7 +159,7 @@ namespace PE
         MonoMethod* printCustomMessageFunc = s_Data->EntityClass.GetMethod("PrintCustomMessage", 1);
         void* stringParam = monoString;
         s_Data->EntityClass.InvokeMethod(instance, printCustomMessageFunc, &stringParam);
-#endif
+
     }
 
 
