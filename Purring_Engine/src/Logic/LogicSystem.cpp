@@ -9,6 +9,7 @@
 #include "testScript2.h"
 #include "EnemyTestScript.h"
 #include "PlayerControllerScript.h"
+#include "FollowScript.h"
 #include "Editor/Editor.h"
 
 
@@ -29,6 +30,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(testScript2);
 	REGISTER_SCRIPT(PlayerControllerScript);
 	REGISTER_SCRIPT(EnemyTestScript);
+	REGISTER_SCRIPT(FollowScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
@@ -73,4 +75,16 @@ void PE::LogicSystem::DestroySystem()
 std::string PE::LogicSystem::GetName()
 {
 	return "LogicSystem";
+}
+
+void PE::LogicSystem::DeleteScriptData(EntityID id)
+{
+	for (auto& [key, val] : m_scriptContainer)
+	{
+		if (Editor::GetInstance().IsRunTime())
+		m_scriptContainer.find(key)->second->Destroy(id);
+
+		val->OnDetach(id);
+	}
+
 }

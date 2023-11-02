@@ -14,6 +14,7 @@ namespace PE {
 		float patrolBuffer{ 3.0f };
 		float distanceFromPlayer{ 0.0f };
 		float TargetRange{ 200 };
+		float Health{ 1 };
 		bool bounce{ true };
 		StateMachine* m_stateManager;
 	};

@@ -25,6 +25,9 @@ namespace PE {
 	{
 		m_ScriptData[id].distanceFromPlayer = GetDistanceFromPlayer(id);
 		m_ScriptData[id].m_stateManager->Update(id, deltaTime);
+
+		if (m_ScriptData[id].Health <= 0)
+			EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[id]);
 	}
 
 	void EnemyTestScript::Destroy(EntityID)

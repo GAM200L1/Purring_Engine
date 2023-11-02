@@ -20,7 +20,7 @@
 #include "ECS/SceneView.h"
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
-
+#include "Events/EventHandler.h"
 extern Logger engine_logger;
 
 namespace PE
@@ -28,7 +28,8 @@ namespace PE
 	// ----- Constructor ----- //
 	CollisionManager::CollisionManager() 
 	{
-		// empty by design
+		ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CollisionManager::CollisionEnter,this);
+		ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CollisionManager::TriggerEnter,this);
 	}
 
 	// ----- Public Getters ----- //
@@ -115,10 +116,17 @@ namespace PE
 							// adds collided objects so that it won't be checked again
 							collider1.objectsCollided.emplace(ColliderID_2);
 							collider2.objectsCollided.emplace(ColliderID_1);
+							
 							if (!collider1.isTrigger && !collider2.isTrigger)
 							{
 								if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
 								{
+									//sending collision enter event
+									OnCollisionEnterEvent OCEE;
+									OCEE.Entity1 = ColliderID_1;
+									OCEE.Entity2 = ColliderID_2;
+									SEND_COLLISION_EVENT(OCEE);
+
 									if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
 									{
 										m_manifolds.emplace_back
@@ -149,6 +157,11 @@ namespace PE
 							{
 								// else send message to trigger event associated with this entity
 								Editor::GetInstance().AddEventLog("Collided with Trigger.\n");
+								//sending collision enter event
+								OnTriggerEnterEvent OTEE;
+								OTEE.Entity1 = ColliderID_1;
+								OTEE.Entity2 = ColliderID_2;
+								SEND_COLLISION_EVENT(OTEE);
 							}
 							
 						}
@@ -168,6 +181,20 @@ namespace PE
 			r_manifold.ResolveCollision();
 		}
 		m_manifolds.clear();
+	}
+
+	void CollisionManager::CollisionEnter(const Event<CollisionEvents>& r_e)
+	{
+		const OnCollisionEnterEvent& OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_e);
+
+		Editor::GetInstance().AddEventLog(r_e.ToString());
+	}
+
+	void CollisionManager::TriggerEnter(const Event<CollisionEvents>& r_e)
+	{
+		const OnTriggerEnterEvent& OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_e);
+
+		Editor::GetInstance().AddEventLog(r_e.ToString());
 	}
 
 	// ----- Collision Helper Functions ----- //
@@ -376,4 +403,6 @@ namespace PE
 		}
 		return 0;
 	}
+
+
 }
