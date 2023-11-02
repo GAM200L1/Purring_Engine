@@ -1846,6 +1846,7 @@ namespace PE {
 												int id = static_cast<int> (it->second.FollowingObject[i]);
 												std::string test = std::string("##id") + std::to_string(i);
 												ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												if(id != m_currentSelectedObject)
 												it->second.FollowingObject[i] = id;
 											}
 										}
