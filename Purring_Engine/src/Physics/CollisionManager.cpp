@@ -130,65 +130,65 @@ namespace PE
 						if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
 
 						std::visit([&](auto& col1)
-							{
-								std::visit([&](auto& col2)
+						{
+							std::visit([&](auto& col2)
+								{
+									Contact contactPt;
+									if (CollisionIntersection(col1, col2, contactPt))
 									{
-										Contact contactPt;
-										if (CollisionIntersection(col1, col2, contactPt))
+										// adds collided objects so that it won't be checked again
+										collider1.objectsCollided.emplace(ColliderID_2);
+										collider2.objectsCollided.emplace(ColliderID_1);
+										if (!collider1.isTrigger && !collider2.isTrigger)
 										{
-											// adds collided objects so that it won't be checked again
-											collider1.objectsCollided.emplace(ColliderID_2);
-											collider2.objectsCollided.emplace(ColliderID_1);
-											if (!collider1.isTrigger && !collider2.isTrigger)
+											if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
 											{
-												if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
+                                                OnCollisionEnterEvent OCEE;
+									            OCEE.Entity1 = ColliderID_1;
+									            OCEE.Entity2 = ColliderID_2;
+									            SEND_COLLISION_EVENT(OCEE);
+												if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
 												{
-                                                    OnCollisionEnterEvent OCEE;
-									                OCEE.Entity1 = ColliderID_1;
-									                OCEE.Entity2 = ColliderID_2;
-									                SEND_COLLISION_EVENT(OCEE);
-													if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
-													{
-														m_manifolds.emplace_back
-														(Manifold{ contactPt,
-																   EntityManager::GetInstance().Get<Transform>(ColliderID_2),
-																   EntityManager::GetInstance().Get<Transform>(ColliderID_1),
-																   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2),
-																   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1) });
-													}
-													else
-													{
-														m_manifolds.emplace_back
-														(Manifold{ contactPt,
-																   EntityManager::GetInstance().Get<Transform>(ColliderID_1),
-																   EntityManager::GetInstance().Get<Transform>(ColliderID_2),
-																   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1),
-																   EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2) });
-													}
+													m_manifolds.emplace_back
+													(Manifold{ contactPt,
+																EntityManager::GetInstance().Get<Transform>(ColliderID_2),
+																EntityManager::GetInstance().Get<Transform>(ColliderID_1),
+																EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2),
+																EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1) });
 												}
 												else
 												{
-													std::stringstream ss;
-													ss << "Error: Missing RigidBody at Collision between Entities " << ColliderID_1 << " & " << ColliderID_2 << '\n';
-													engine_logger.AddLog(false, ss.str(), "");
+													m_manifolds.emplace_back
+													(Manifold{ contactPt,
+																EntityManager::GetInstance().Get<Transform>(ColliderID_1),
+																EntityManager::GetInstance().Get<Transform>(ColliderID_2),
+																EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1),
+																EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2) });
 												}
 											}
 											else
 											{
-												// else send message to trigger event associated with this entity
-												Editor::GetInstance().AddEventLog("Collided with Trigger.\n");
-                                                //sending collision enter event
-                                                OnTriggerEnterEvent OTEE;
-				                				OTEE.Entity1 = ColliderID_1;
-								                OTEE.Entity2 = ColliderID_2;
-                                                SEND_COLLISION_EVENT(OTEE);
+												std::stringstream ss;
+												ss << "Error: Missing RigidBody at Collision between Entities " << ColliderID_1 << " & " << ColliderID_2 << '\n';
+												engine_logger.AddLog(false, ss.str(), "");
 											}
-
+										}
+										else
+										{
+											// else send message to trigger event associated with this entity
+											Editor::GetInstance().AddEventLog("Collided with Trigger.\n");
+                                            //sending collision enter event
+                                            OnTriggerEnterEvent OTEE;
+				                			OTEE.Entity1 = ColliderID_1;
+								            OTEE.Entity2 = ColliderID_2;
+                                            SEND_COLLISION_EVENT(OTEE);
 										}
 
-									}, collider2.colliderVariant);
+									}
 
-							}, collider1.colliderVariant);
+								}, collider2.colliderVariant);
+
+						}, collider1.colliderVariant);
 					}
 				}
 			}
