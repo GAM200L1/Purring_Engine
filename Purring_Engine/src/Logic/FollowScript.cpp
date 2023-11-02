@@ -35,8 +35,8 @@ namespace PE
 				vec2 savedLocation = m_ScriptData[id].NextPosition[0];
 
 				//setting current new position for the next object
-				m_ScriptData[id].NextPosition[0] = NewPosition + vec2(m_ScriptData[id].Distance * cosf(newRotation - M_PI), m_ScriptData[id].Distance * sinf(newRotation - M_PI));
-				EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).position = m_ScriptData[id].NextPosition[0];
+				m_ScriptData[id].NextPosition[0] = EntityManager::GetInstance().Get<Transform>(id).position; //NewPosition + vec2(m_ScriptData[id].Distance * cosf(newRotation - M_PI), m_ScriptData[id].Distance * sinf(newRotation - M_PI));
+				//EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).position = m_ScriptData[id].NextPosition[0];
 				
 
 
@@ -46,7 +46,7 @@ namespace PE
 				if (rotationOffset != 0)
 				EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
 
-				EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
+				//EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
 
 				m_ScriptData[id].Rotation = newRotation;
 				m_ScriptData[id].CurrentPosition = EntityManager::GetInstance().Get<Transform>(id).position;
@@ -58,7 +58,10 @@ namespace PE
 						//to get rotation new position - current position which we set previously
 						vec2 NewPosition = savedLocation; //new position is the position of the previous mouse
 						//calculate new rotation since previous location
+
 						vec2 directionalvector = m_ScriptData[id].NextPosition[index-1] - m_ScriptData[id].NextPosition[index];
+						
+
 						float newRotation = atan2(directionalvector.y, directionalvector.x);
 
 						//saving current position as 

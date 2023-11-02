@@ -1837,14 +1837,17 @@ namespace PE {
 									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
 										
-										ImGui::Text("Number of Follower: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&it->second.NumberOfFollower);
+										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&it->second.NumberOfFollower);
 
 										for (int i = 0; i < it->second.NumberOfFollower; i++)
 										{
-											int id = static_cast<int> (it->second.FollowingObject[i]);
-											std::string test = std::string("##id") + std::to_string(i);
-											ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
-											it->second.FollowingObject[i] = id;
+											if (i != 0)
+											{
+												int id = static_cast<int> (it->second.FollowingObject[i]);
+												std::string test = std::string("##id") + std::to_string(i);
+												ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												it->second.FollowingObject[i] = id;
+											}
 										}
 									}
 								}
