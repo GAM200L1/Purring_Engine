@@ -31,12 +31,14 @@ namespace PE
 				vec2 directionalvector = NewPosition - m_ScriptData[id].CurrentPosition;
 				float newRotation = atan2(directionalvector.y, directionalvector.x);
 
-				//saving just incase
-				m_ScriptData[id].NextPosition[1] = m_ScriptData[id].NextPosition[0];
+				//setting previous position as the current position of the next cat
+				vec2 savedLocation = m_ScriptData[id].NextPosition[0];
 
 				//setting current new position for the next object
 				m_ScriptData[id].NextPosition[0] = NewPosition + vec2(m_ScriptData[id].Distance * cosf(newRotation - M_PI), m_ScriptData[id].Distance * sinf(newRotation - M_PI));
 				EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).position = m_ScriptData[id].NextPosition[0];
+				
+
 
 				//checking rotation to set
 				float rotationOffset = newRotation - m_ScriptData[id].Rotation;
@@ -54,13 +56,15 @@ namespace PE
 					for (int index = 1; index < m_ScriptData[id].NumberOfFollower; ++index)
 					{
 						//to get rotation new position - current position which we set previously
-						vec2 NewPosition = m_ScriptData[id].NextPosition[index-1];
-						vec2 directionalvector = NewPosition - m_ScriptData[id].NextPosition[index];
+						vec2 NewPosition = savedLocation; //new position is the position of the previous mouse
+						//calculate new rotation since previous location
+						vec2 directionalvector = m_ScriptData[id].NextPosition[index-1] - m_ScriptData[id].NextPosition[index];
 						float newRotation = atan2(directionalvector.y, directionalvector.x);
 
-						//saving just incase
-						m_ScriptData[id].NextPosition[index+1] = m_ScriptData[id].NextPosition[index];
+						//saving current position as 
+						savedLocation = m_ScriptData[id].NextPosition[index];
 						m_ScriptData[id].NextPosition[index] = NewPosition + vec2(m_ScriptData[id].Distance * cosf(newRotation - M_PI), m_ScriptData[id].Distance * sinf(newRotation - M_PI));
+
 						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).position = m_ScriptData[id].NextPosition[index];
 						//checking rotation to set can ignore this for now lets get position to work
 						float rotationOffset = newRotation - m_ScriptData[id].Rotation;
@@ -92,8 +96,11 @@ namespace PE
 		m_ScriptData[id].FollowingObject.push_back(-1);
 	}
 
-	void FollowScript::OnDetach(EntityID)
+	void FollowScript::OnDetach(EntityID id)
 	{
+		auto it = m_ScriptData.find(id);
+		if (it != m_ScriptData.end())
+			m_ScriptData.erase(id);
 	}
 
 	std::map<EntityID, FollowScriptData>& FollowScript::GetScriptData()
@@ -105,9 +112,5 @@ namespace PE
 	{
 	}
 
-	void FollowScript::LookAt(EntityID id)
-	{
-
-	}
 
 }

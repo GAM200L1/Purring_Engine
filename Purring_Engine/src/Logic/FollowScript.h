@@ -28,8 +28,6 @@ namespace PE
 		std::map<EntityID, FollowScriptData>& GetScriptData();
 		virtual ~FollowScript();
 	private:
-		void LookAt(EntityID id);
-	private:
 		std::map<EntityID, FollowScriptData> m_ScriptData;
 	};
 }

@@ -36,7 +36,7 @@ namespace PE {
 		 \return    std::string The name of the system.
 		*************************************************************************************/
 		std::string GetName() override;
-
+	
 		/*!***********************************************************************************
 		 \brief						To be called when deleting an object to delete all related data
 		 \param [In] EntityID id	The ID to delete data from
