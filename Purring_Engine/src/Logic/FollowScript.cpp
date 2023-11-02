@@ -101,6 +101,7 @@ namespace PE
 		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
 		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
 		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
+		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
 	}
 
 	void FollowScript::OnDetach(EntityID id)
