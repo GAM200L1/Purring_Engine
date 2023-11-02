@@ -25,6 +25,13 @@
 #include "Math/MathCustom.h"
 #include <filesystem>
 #include "Graphics/CameraManager.h"
+#include "Logic/LogicSystem.h"
+#include "Logic/PlayerControllerScript.h"
+#include "Graphics/Text.h"
+
+// RTTR stuff
+#include <rttr/variant.h>
+#include <rttr/type.h>
 
 const std::wstring wjsonExt = L".json";
 
@@ -220,6 +227,9 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::GUI>(entityId, "GUI", j);
     SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); 
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
+    SerializeComponent<PE::ScriptComponent>(entityId, "ScriptComponent", j);
+    SerializeComponent<PE::AnimationComponent>(entityId, "AnimationComponent", j);
+    SerializeComponent<PE::TextComponent>(entityId, "TextComponent", j);
 
     return j; 
 }
@@ -320,7 +330,9 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("GUI", &SerializationManager::LoadGUI);
     m_initializeComponent.emplace("GUIRenderer", &SerializationManager::LoadGUIRenderer);
     m_initializeComponent.emplace("EntityDescriptor", &SerializationManager::LoadEntityDescriptor);
-
+    m_initializeComponent.emplace("ScriptComponent", &SerializationManager::LoadScriptComponent);
+    m_initializeComponent.emplace("AnimationComponent", &SerializationManager::LoadAnimationComponent);
+    m_initializeComponent.emplace("TextComponent", &SerializationManager::LoadTextComponent);
 }
 
 bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
@@ -330,6 +342,10 @@ bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::j
     trans.width = r_json["Entity"]["components"]["Transform"]["width"].get<float>();
     trans.orientation = r_json["Entity"]["components"]["Transform"]["orientation"].get<float>();
     trans.position = PE::vec2{ r_json["Entity"]["components"]["Transform"]["position"]["x"].get<float>(), r_json["Entity"]["components"]["Transform"]["position"]["y"].get<float>() };
+    if (r_json["Entity"]["components"]["Transform"].contains("relativeposition"))
+        trans.relPosition = PE::vec2{ r_json["Entity"]["components"]["Transform"]["relativeposition"]["x"].get<float>(), r_json["Entity"]["components"]["Transform"]["relativeposition"]["y"].get<float>() };
+    if (r_json["Entity"]["components"]["Transform"].contains("relorientation"))
+        trans.orientation = r_json["Entity"]["components"]["Transform"]["relorientation"].get<float>();
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Transform>(), static_cast<void*>(&trans));
     return true;
 }
@@ -364,6 +380,7 @@ bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::js
     {
         col.colliderVariant = PE::AABBCollider();
     }
+    col.isTrigger = r_json["Entity"]["components"]["Collider"]["isTrigger"].get<bool>();
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Collider>(), static_cast<void*>(&col));
     return true;
 }
@@ -377,6 +394,8 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
         r_json["Entity"]["components"]["Camera"]["viewportWidth"].get<float>(),
         r_json["Entity"]["components"]["Camera"]["viewportHeight"].get<float>()
     );
+    if (r_json["Entity"]["components"]["Camera"].contains("ismaincamera"))
+        cam.SetMainCamera(r_json["Entity"]["components"]["Camera"]["ismaincamera"].get<bool>());
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Camera>(), static_cast<void*>(&cam));
     return true;
 }
@@ -407,6 +426,95 @@ bool SerializationManager::LoadEntityDescriptor(const EntityID& r_id, const nloh
 
     // Pass the descriptor to the EntityFactory to create/update the EntityDescriptor component for the entity with id 'r_id'
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>(), static_cast<void*>(&descriptor));
+
+    return true;
+}
+
+bool SerializationManager::LoadAnimationComponent(const size_t& r_id, const nlohmann::json& r_json)
+{
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>(),
+        static_cast<void*>(&(PE::AnimationComponent().Deserialize(r_json["Entity"]["components"]["AnimationComponent"]))));
+    return true;
+}
+
+bool SerializationManager::LoadTextComponent(const size_t& r_id, const nlohmann::json& r_json)
+{
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>(),
+        static_cast<void*>(&(PE::TextComponent().Deserialize(r_json["Entity"]["components"]["TextComponent"]))));
+    return true;
+}
+
+bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohmann::json& r_json)
+{
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>(),
+        static_cast<void*>(&(PE::ScriptComponent().Deserialize(r_json["Entity"]["components"]["ScriptComponent"]))));
+    //auto& scriptsRef = PE::EntityManager::GetInstance().Get<PE::ScriptComponent>(r_id).m_scriptKeys;
+    for (const auto& k : r_json["Entity"]["components"]["ScriptComponent"].items())
+    {
+        auto str = k.key().c_str();
+        PE::LogicSystem::m_scriptContainer[str]->OnAttach(r_id);
+        if (PE::LogicSystem::m_scriptContainer.count(str))
+        {
+            rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(str)->GetScriptData(r_id);
+            if (k.value().contains("data"))
+            {
+                const auto& data = k.value()["data"];
+                if (inst.is_valid())
+                {
+                    for (auto& prop : rttr::type::get_by_name(str).get_properties())
+                    {
+                        if (prop.get_type().get_name() == "float")
+                        {
+                            float val = data[prop.get_name().to_string().c_str()].get<float>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "enumPE::PlayerState")
+                        {
+                            PE::PlayerState val = data[prop.get_name().to_string().c_str()].get<PE::PlayerState>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "int")
+                        {
+                            int val = data[prop.get_name().to_string().c_str()].get<int>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "unsigned__int64")
+                        {
+                            EntityID val = data[prop.get_name().to_string().c_str()].get<EntityID>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "bool")
+                        {
+                            bool val = data[prop.get_name().to_string().c_str()].get<bool>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
+                        {
+                            std::vector<EntityID> val = data[prop.get_name().to_string().c_str()].get<std::vector<EntityID>>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "structPE::vec2")
+                        {
+                            PE::vec2 val;
+
+
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+                        {
+                            std::vector<PE::vec2> val;
+
+                            for (size_t cnt{}; data[prop.get_name().to_string().c_str()].contains(std::to_string(cnt)); ++cnt)
+                            {
+                                val.emplace_back(PE::vec2{ data[prop.get_name().to_string().c_str()][std::to_string(cnt)]["x"].get<float>() , data[prop.get_name().to_string().c_str()][std::to_string(cnt)]["y"].get<float>() });
+                            }
+                            prop.set_value(inst, val);
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     return true;
 }

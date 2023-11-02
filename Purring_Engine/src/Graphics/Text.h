@@ -18,6 +18,10 @@
 #include "Graphics/Texture.h"
 #include "Graphics/ShaderProgram.h"
 #include "Graphics/EditorCamera.h"
+#include "Data/json.hpp"
+#include "rttr/registration.h"
+#include "ECS/Entity.h"
+#include <iostream>
 
 namespace PE
 {
@@ -80,6 +84,59 @@ namespace PE
 		void SetSize(float size);
 
 		void SetColor(glm::vec4 const& color);
+
+		nlohmann::json ToJson(EntityID id) const
+		{
+			nlohmann::json ret;
+
+			rttr::type type = rttr::type::get<TextComponent>();
+			rttr::instance inst(EntityManager::GetInstance().Get<TextComponent>(id));
+			for (auto& prop : type.get_properties())
+			{
+				rttr::variant var = prop.get_value(inst);
+				if (var.get_type().get_name() == "std::string")
+				{
+					ret[prop.get_name().to_string()] = var.get_value<std::string>();
+				}
+				else if (var.get_type().get_name() == "float")
+				{
+					ret[prop.get_name().to_string()] = var.get_value<float>();
+				}
+				else if (var.get_type().get_name() == "structglm::vec<4,float,0>")
+				{
+					ret[prop.get_name().to_string()]["x"] = var.get_value<glm::vec4>().x;
+					ret[prop.get_name().to_string()]["y"] = var.get_value<glm::vec4>().y;
+					ret[prop.get_name().to_string()]["z"] = var.get_value<glm::vec4>().z;
+					ret[prop.get_name().to_string()]["w"] = var.get_value<glm::vec4>().w;
+				}
+			}
+
+
+			return ret;
+		}
+
+		TextComponent& Deserialize(const nlohmann::json& j)
+		{
+			rttr::type type = rttr::type::get<TextComponent>();
+			rttr::instance inst(*this);
+			for (auto& meth : type.get_methods())
+			{
+				if (meth.get_name() == "Color")
+				{
+					meth.invoke(inst, glm::vec4{ j[meth.get_name().to_string()]["x"].get<float>(), j[meth.get_name().to_string()]["y"].get<float>(), j[meth.get_name().to_string()]["z"].get<float>(), j[meth.get_name().to_string()]["w"].get<float>() });
+				}
+				else if (meth.get_name() == "Text" || meth.get_name() == "Font")
+				{
+					meth.invoke(inst, j[meth.get_name().to_string()].get<std::string>());
+				}
+				else if (meth.get_name() == "Size")
+				{
+					meth.invoke(inst, j[meth.get_name().to_string()].get<float>());
+				}
+
+			}
+			return *this;
+		}
 
 	private:
 		std::string m_text;

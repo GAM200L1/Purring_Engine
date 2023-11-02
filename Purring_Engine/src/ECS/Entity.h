@@ -597,7 +597,7 @@ namespace PE
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
 		
 
-		nlohmann::json ToJson() const;
+		nlohmann::json ToJson(size_t id) const;
 		static EntityDescriptor Deserialize(const nlohmann::json& j);
 	};
 

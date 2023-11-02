@@ -1,4 +1,5 @@
 #pragma once
+#include <rttr/registration.h>
 typedef unsigned long long EntityID;
 
 namespace PE 
@@ -33,6 +34,9 @@ public:
 	 \param [In] EntityID	The ID of the object currently running the script
 	*************************************************************************************/
 	virtual void OnDetach(EntityID) = 0;
+
+
+	virtual rttr::instance GetScriptData(EntityID id) = 0;
 	/*!***********************************************************************************
 	 \brief					Destructor for Scripts
 	*************************************************************************************/

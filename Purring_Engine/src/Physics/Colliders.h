@@ -181,8 +181,10 @@ namespace PE
 
 			\return The JSON representation of the Collider object.
 			*************************************************************************************/
-			nlohmann::json ToJson() const
+			nlohmann::json ToJson(size_t id) const
 			{
+				id;
+
 				nlohmann::json j;
 				if (std::holds_alternative<AABBCollider>(colliderVariant))
 				{
