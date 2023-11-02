@@ -2452,8 +2452,15 @@ namespace PE {
 						screenPosition.x += m_sceneWindowOffsetX; // in viewport space + offset
 						screenPosition.y += m_sceneWindowOffsetY; // in viewport space + offset
 
-						std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << " y : " << m_sceneWindowOffsetY;
-						std::cout << ", offset clicked position: x: " << screenPosition.x << "y: " << screenPosition.y;
+						// Transform the position of the mouse cursor from screen space to model space
+						glm::vec4 worldSpacePosition{
+								Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
+								* glm::vec4{screenPosition.x, screenPosition.y, 0.f, 1.f} // screen position
+						};
+
+						std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << ", y : " << m_sceneWindowOffsetY;
+						std::cout << ", offset clicked position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
+						std::cout << "worldSpacePosition: x: " << worldSpacePosition.x << ", y: " << worldSpacePosition.y << "\n";
 
 						m_currentSelectedObject = -1;
 						// Loop through all objects
@@ -2463,17 +2470,27 @@ namespace PE {
 
 								// Get the transform component of the entity
 								Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
-
-								// Transform the position of the mouse cursor from screen space to model space
+										
 								glm::vec4 modelSpacePosition{
 										Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
-										* Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
-										* glm::vec4{screenPosition.x, screenPosition.y, 0.f, 1.f} // screen position
+										* worldSpacePosition
 								};
-									
+
+								std::cout << "modelSpacePosition: x: " << modelSpacePosition.x << ", y: " << modelSpacePosition.y << "\n";
+
+								glm::vec4 backToWorldSpacePosition{
+										Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+										* modelSpacePosition
+								};
+
+								Transform& r_transform2{ EntityManager::GetInstance().Get<Transform>(Graphics::CameraManager::testEntity) };
+								r_transform2.position.x = backToWorldSpacePosition.x, r_transform2.position.y = backToWorldSpacePosition.y;
+
+								std::cout << "backToWorldSpacePosition: x: " << backToWorldSpacePosition.x << ", y: " << backToWorldSpacePosition.y << "\n";
+
 								// Check if the cursor position is within the bounds of the object
-								if (!(screenPosition.x < -0.5f || screenPosition.x > 0.5f
-										|| screenPosition.y < -0.5f || screenPosition.y > 0.5f))
+								if (!(modelSpacePosition.x < -0.5f || modelSpacePosition.x > 0.5f
+										|| modelSpacePosition.y < -0.5f || modelSpacePosition.y > 0.5f))
 								{
 										// It is within the bounds, break out of the loop
 										m_currentSelectedObject = id;
