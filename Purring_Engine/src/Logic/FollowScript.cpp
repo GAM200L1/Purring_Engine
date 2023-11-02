@@ -68,12 +68,12 @@ namespace PE
 						savedLocation = m_ScriptData[id].NextPosition[index];
 						m_ScriptData[id].NextPosition[index] = NewPosition + vec2(m_ScriptData[id].Distance * cosf(newRotation - M_PI), m_ScriptData[id].Distance * sinf(newRotation - M_PI));
 
-						if(m_ScriptData[id].FollowingObject[index] >= 0)
+						if(m_ScriptData[id].FollowingObject[index] != -1)
 						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).position = m_ScriptData[id].NextPosition[index];
 						//checking rotation to set can ignore this for now lets get position to work
 						float rotationOffset = newRotation - m_ScriptData[id].Rotation;
 
-						if (m_ScriptData[id].FollowingObject[index] >= 0)
+						if (m_ScriptData[id].FollowingObject[index] != -1)
 						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
 					}
 
