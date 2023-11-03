@@ -151,12 +151,6 @@ namespace PE {
 		// -----Event Callbacks ----- // 
 	public:
 		/*!***********************************************************************************
-		\brief Callback function mouse events.
-		\param[in]  r_event Details about the mouse event called.
-		*************************************************************************************/
-		void OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event);
-
-		/*!***********************************************************************************
 		 \brief the callback function for an onkeyevent
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
