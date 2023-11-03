@@ -225,7 +225,7 @@ namespace PE
             *************************************************************************************/
             void UpdateCamera(Transform const& r_transform, bool const isMainCamera);
 
-            nlohmann::json ToJson() const;
+            nlohmann::json ToJson(size_t id) const;
             static Camera Deserialize(const nlohmann::json& j);
 
 

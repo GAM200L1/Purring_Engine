@@ -6,6 +6,9 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+
+#include <limits>
+
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -49,8 +52,18 @@ namespace PE
 	{
 		auto it = m_ScriptData.find(id);
 		if (it != m_ScriptData.end())
+		{
+			delete m_ScriptData.at(id).m_stateMachine;
 			m_ScriptData.erase(id);
+		}
 	}
+
+	rttr::instance testScript2::GetScriptData(EntityID id)
+	{
+		return rttr::instance();
+	}
+
+	
 
 	testScript2::~testScript2()
 	{

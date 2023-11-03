@@ -19,7 +19,7 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include <glm/glm.hpp>
 #include "System.h"
-
+#include "Data/json.hpp"
 
 namespace PE
 {
@@ -89,6 +89,7 @@ namespace PE
         \return glm::vec4 const& - RGBA values of the color of the object.
         *************************************************************************************/
         inline std::string GetAnimationID() const { return m_currentAnimationIndex; }
+		void SetAnimationID(const std::string& str) { m_currentAnimationIndex = str; }
 
 		inline bool HasAnimation() const { return !m_animationsID.empty(); }
 
@@ -108,7 +109,7 @@ namespace PE
         ///*!***********************************************************************************
         // \brief Serializes the data attached to this renderer.
         //*************************************************************************************/
-        //nlohmann::json ToJson() const;
+        nlohmann::json ToJson(size_t id) const;
 
         ///*!***********************************************************************************
         // \brief Deserializes data from a JSON file and loads it as values to set this
@@ -116,7 +117,7 @@ namespace PE
 
         // \param[in] j JSON object containing the values to load into the renderer component.
         //*************************************************************************************/
-        //static Renderer FromJson(const nlohmann::json& j);
+        AnimationComponent& Deserialize(const nlohmann::json& j);
 
     private:
 

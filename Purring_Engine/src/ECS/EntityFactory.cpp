@@ -153,6 +153,11 @@ namespace PE
 			ScriptComponent()
 			:
 			*reinterpret_cast<ScriptComponent*>(p_data);
+
+		for (auto [k, v] : EntityManager::GetInstance().Get<ScriptComponent>(r_id).m_scriptKeys)
+		{
+			PE::LogicSystem::m_scriptContainer[k]->OnAttach(r_id);
+		}
 		return true;
 	}
     

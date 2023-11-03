@@ -31,9 +31,9 @@ group "Library"
     project "GLFW"
         location "vendor/GLFW"
 
-        kind "StaticLib"        
+        kind "StaticLib"   
         
-
+        warnings "Off"
 
         language "C"
 
@@ -69,6 +69,8 @@ group "Library"
     project "ImGui"
         location "vendor/imgui"
         kind "StaticLib"
+
+        warnings "Off"
         
         language "C++"
         cppdialect "C++17"
@@ -274,8 +276,7 @@ project "Application"
     {
         ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
         ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
-        ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application"),
-        ("{COPYFILE} config.json ../bin/" .. outputdir .. "/Application")        
+        ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application")
     }
 
     filter "system:windows"

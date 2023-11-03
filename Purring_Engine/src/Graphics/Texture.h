@@ -76,9 +76,9 @@ namespace PE
 
 						// ----- Private variables ----- // 
 				private:
-						unsigned int m_textureID; // Handle of the texture object
-						unsigned int m_width; // Width of image pixels
-						unsigned int m_height; // Height of image pixels
+						unsigned int m_textureID{}; // Handle of the texture object
+						unsigned int m_width{}; // Width of image pixels
+						unsigned int m_height{}; // Height of image pixels
 				};
 		}
 }

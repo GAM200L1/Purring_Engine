@@ -12,6 +12,8 @@
 #include "FollowScript.h"
 #include "Editor/Editor.h"
 
+
+
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
 
 PE::LogicSystem::LogicSystem()

@@ -30,6 +30,7 @@
 #include "Graphics/GUIRenderer.h"
 #include "Data/JsonUtils.h"
 #include "GUISystem.h"
+#include <type_traits>
 
 struct StructPlayerStats
 {
@@ -161,6 +162,10 @@ private:
     bool LoadGUI(const size_t& r_id, const nlohmann::json& r_json);
     bool LoadGUIRenderer(const size_t& r_id, const nlohmann::json& r_json);
     bool LoadEntityDescriptor(const size_t& r_id, const nlohmann::json& r_json);
+    bool LoadAnimationComponent(const size_t& r_id, const nlohmann::json& r_json);
+    bool LoadTextComponent(const size_t& r_id, const nlohmann::json& r_json);
+
+    bool LoadScriptComponent(const size_t& r_id, const nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:
@@ -203,9 +208,7 @@ void SerializationManager::SerializeComponent(int entityId, const std::string& j
             );*/
         ComponentType& component = entityManager.Get<ComponentType>(entityId);
 
-
-            nlohmann::json jComponent = component.ToJson();
-            json["Entity"]["components"][jsonKey] = jComponent;
+        json["Entity"]["components"][jsonKey] = component.ToJson(static_cast<EntityID>(entityId));
         
     }
 }

@@ -25,6 +25,7 @@ namespace PE
 		void MovePlayer(EntityID id,float deltaTime);
 		void CheckState(EntityID id);
 		std::map<EntityID, PlayerControllerScriptData>& GetScriptData();
+		rttr::instance GetScriptData(EntityID id);
 		~PlayerControllerScript();
 	private:
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
