@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     TimeManager.h
- \date     18-09-2023
+ \date     28-10-2023
 
  \author               Brandon Ho Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
@@ -89,47 +89,77 @@ namespace PE
 		*************************************************************************************/
 		void EngineStart();
 
+		/*!***********************************************************************************
+		 \brief Start fixed time accumulator
+		*************************************************************************************/
 		void StartAccumulator();
 
+		/*!***********************************************************************************
+		 \brief Update fixed time accumulator
+		*************************************************************************************/
 		bool UpdateAccumulator();
 
+		/*!***********************************************************************************
+		 \brief End fixed time accumulator
+		*************************************************************************************/
 		void EndAccumulator();
 
+		/*!***********************************************************************************
+		 \brief Set accumulator limit
+
+		 \param[in] value Value to set accumulator limit
+		*************************************************************************************/
 		void SetAccumulatorLimit(float value);
 
+		/*!***********************************************************************************
+		 \brief Set fixed time step
+
+		 \param[in] value Value to set fixed time step
+		*************************************************************************************/
 		void SetFixedTimeStep(float value);
 
 		// ----- Public Getters ----- //
 	public:
 		/*!***********************************************************************************
 		 \brief Get the frame time for the last completed frame.
+
 		 \return The last frame time in seconds.
 		*************************************************************************************/
 		float GetFrameTime() const { return m_frameTime; }
 
 		/*!***********************************************************************************
 		 \brief Get the time passed since the last frame.
+
 		 \return The delta time in seconds.
 		*************************************************************************************/
 		float GetDeltaTime() const { return m_deltaTime; }
 
+		/*!***********************************************************************************
+		 \brief Get the fixed time step
+
+		 \return fixed time step
+		*************************************************************************************/
 		float GetFixedTimeStep() const { return m_fixedTimeStep; }
 
 		/*!***********************************************************************************
 		 \brief Get the total run time of the engine.
+
 		 \return The run time in seconds.
 		*************************************************************************************/
 		float GetRunTime() const { return m_engineRunTime; }
 
 		/*!***********************************************************************************
 		 \brief Get the starting time point of the frame.
+
 		 \return The high-resolution time point when the frame started.
 		*************************************************************************************/
 		std::chrono::high_resolution_clock::time_point const& GetStartTime() { return m_startFrame; }
 
 		/*!***********************************************************************************
 		 \brief Get the frame usage for a specific subsystem.
+
 		 \param[in] system The subsystem identifier.
+
 		 \return The frame usage for the specified subsystem in seconds.
 		*************************************************************************************/
 		float GetSystemFrameUsage(SystemID system) const { return m_systemFrameUsage[system]; }

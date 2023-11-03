@@ -83,8 +83,18 @@ namespace PE
             *************************************************************************************/
             inline std::string const& GetTextureKey() const { return m_textureKey; }
 
+            /*!***********************************************************************************
+             \brief Gets the minimum uv coordinates of the renderer component
+
+             \return glm::vec2 const& Min uv coordinates
+            *************************************************************************************/
             inline glm::vec2 const& GetUVCoordinatesMin() const { return m_minUV; }
 
+            /*!***********************************************************************************
+             \brief Gets the maximum uv coordinates of the renderer component
+
+             \return glm::vec2 const& Max uv coordinates
+            *************************************************************************************/
             inline glm::vec2 const& GetUVCoordinatesMax() const { return m_maxUV;  }
 
 
@@ -115,8 +125,18 @@ namespace PE
             *************************************************************************************/
             void Renderer::SetTextureKey(std::string const& r_newKey);
 
+            /*!***********************************************************************************
+             \brief Set Minimum UV coordinates of the renderer texture.
+
+             \param[in] maxUV Minimum UV coordinates to set m_minUV to
+            *************************************************************************************/
             void Renderer::SetUVCoordinatesMin(glm::vec2 const& minUV);
-            
+
+            /*!***********************************************************************************
+             \brief Set Maximum UV coordinates of the renderer texture.
+
+             \param[in] maxUV Maximum UV coordinates to set m_maxUV to
+            *************************************************************************************/
             void Renderer::SetUVCoordinatesMax(glm::vec2 const& maxUV);
 
             /*!***********************************************************************************

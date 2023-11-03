@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     Animation.h
- \date     25-09-2023
+ \date     01-11-2023
 
  \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
@@ -44,25 +44,31 @@ namespace PE
 	public:
 		/*!***********************************************************************************
 		 \brief Default constructor for Animation class.
+
 		*************************************************************************************/
 		//Animation();
 
 		/*!***********************************************************************************
 		 \brief Create an animation class with a spritesheet.
+
 		 \param[in] spriteSheetKey Identifier for spritesheet to be used for this animation
 		*************************************************************************************/
 		Animation(std::string spriteSheetKey);
 
 		/*!***********************************************************************************
 		 \brief Add a new frame to the animation sequence.
-		 \param[in] textureKey Identifier for the texture to display in this frame.
+
+		 \param[in] minUV minUV coords for the texture to display in this frame.
+		 \param[in] maxUV maxUV coords for the texture to display in this frame.
 		 \param[in] duration Duration this frame will be displayed in seconds.
 		*************************************************************************************/
 		void AddFrame(glm::vec2 const& minUV, glm::vec2 const& maxUV,  float duration);
 
 		/*!***********************************************************************************
 		 \brief Update the animation based on elapsed time.
+
 		 \param[in] deltaTime Time since last update.
+
 		 \return Current texture key for the frame to display.
 		*************************************************************************************/
 		AnimationFrame const& UpdateAnimation(float deltaTime);
@@ -84,17 +90,38 @@ namespace PE
         // ----- Public functions ----- //
     public:
         /*!***********************************************************************************
-        \brief Get the RGBA color values of the object as a glm::vec4 object.
+        \brief Get the current playing animation index for this component.
 
-        \return glm::vec4 const& - RGBA values of the color of the object.
+        \return Current animation index for this animation component.
         *************************************************************************************/
         inline std::string GetAnimationID() const { return m_currentAnimationIndex; }
+
+		/*!***********************************************************************************
+		 \brief Set current animation ID.
+
+		 \param[in] str Animation ID to set to.
+		*************************************************************************************/
 		void SetAnimationID(const std::string& str) { m_currentAnimationIndex = str; }
 
+		/*!***********************************************************************************
+		\brief Check if animationsID container is empty.
+
+		\return bool value if the animationID is empty.
+		*************************************************************************************/
 		inline bool HasAnimation() const { return !m_animationsID.empty(); }
 
+		/*!***********************************************************************************
+		\brief Add animation to a component.
+
+		\param[in] animationID id to add to component.
+		*************************************************************************************/
 		void AddAnimationToComponent(std::string animationID);
 
+		/*!***********************************************************************************
+		\brief Set current playing animation index of the component
+
+		\param[in] animationIndex index to set.
+		*************************************************************************************/
 		void SetCurrentAnimationIndex(std::string animationIndex);
 
         ///*!***********************************************************************************
@@ -158,12 +185,14 @@ namespace PE
 
 		/*!***********************************************************************************
 		 \brief Create a new Animation object and return its ID.
+
 		 \return Identifier for the newly created animation.
 		*************************************************************************************/
 		static std::string CreateAnimation(std::string animationID, std::string textureKey);
 
 		/*!***********************************************************************************
 		 \brief Add a frame to the specified animation.
+
 		 \param[in] animationID Identifier for the animation to modify.
 		 \param[in] textureKey Identifier for the texture to display in this frame.
 		 \param[in] duration Duration this frame will be displayed in seconds.
@@ -172,12 +201,21 @@ namespace PE
 
 		/*!***********************************************************************************
 		 \brief Update the specified animation based on elapsed time.
+
 		 \param[in] animationID Identifier for the animation to update.
 		 \param[in] deltaTime Time since last update.
+
 		 \return Current texture key for the frame to display.
 		*************************************************************************************/
 		AnimationFrame UpdateAnimation(std::string animationID, float deltaTime);
 
+		/*!***********************************************************************************
+		 \brief Get the spritesheet key of the current playing animation
+
+		 \param[in] animationID to get spritesheet key from
+
+		 \return Spritesheet key of current playing animation
+		*************************************************************************************/
 		std::string GetAnimationSpriteSheetKey(std::string animationID);
 
 		// ----- Private Variables ----- //
