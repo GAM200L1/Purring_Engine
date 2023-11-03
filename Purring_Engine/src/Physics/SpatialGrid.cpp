@@ -257,5 +257,5 @@ namespace PE
 	vec2 const& Grid::GetGridMin() const { return m_min; }
 	vec2 const& Grid::GetGridMax() const { return m_max; }
 	float Grid::GetCellWitdh() const { return m_cellWidth; }
-	vec2 Grid::GetColumnsRows() const { return { m_columns, m_rows }; }
+	vec2 Grid::GetColumnsRows() const { return vec2{ m_columns, m_rows }; }
 }
