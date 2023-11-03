@@ -97,6 +97,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::GUI);
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
+    REGISTERCOMPONENT(PE::TextComponent);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -189,7 +190,10 @@ PE::CoreApplication::CoreApplication()
 
     ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
 
-    
+    // Load Fonts
+    std::string fontHeader{ "../Assets/Fonts/Kalam/Kalam-Regular.ttf" }, fontBody{ "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf" };
+    ResourceManager::GetInstance().LoadFontFromFile(fontHeader, "../Assets/fonts/Kalam/Kalam-Regular.ttf");
+    ResourceManager::GetInstance().LoadFontFromFile(fontBody, "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf");    
 
     // Animation textures
     std::string catWalkSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png" };
@@ -357,21 +361,6 @@ void PE::CoreApplication::Run()
             }
         }
 
-
-        // Iterate over and update all systems
-        //for (unsigned int i{ 0 }; i < m_systemList.size(); ++i)
-        //{
-        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
-        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
-        //    {
-        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-        //        vec3 tmp { trans.relPosition, 1.f };
-        //        tmp = parent.GetTransformMatrix3x3() * tmp;
-        //        trans.position.x = tmp.x;
-        //        trans.position.y = tmp.y;
-        //        trans.orientation = parent.orientation + trans.relOrientation;
-        //    }
-        //}
 
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();

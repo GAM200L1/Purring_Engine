@@ -30,11 +30,13 @@
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
 #include "Logic/EnemyTestScript.h"
+#include "Logic/FollowScript.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
+#include "Graphics/Text.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 SerializationManager serializationManager;  // Create an instance
@@ -62,7 +64,7 @@ namespace PE {
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 		m_renderDebug = true; // whether to render debug lines
-		m_currentStyle = GuiStyle::BLUE;
+		m_currentStyle = GuiStyle::DARK;
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 		ADD_ALL_MOUSE_EVENT_LISTENER(Editor::OnMouseEvent, this)
@@ -160,8 +162,12 @@ namespace PE {
 		//delete all objects
 		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
 		{
-			if(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			{
+				LogicSystem::DeleteScriptData(n);
 				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+			}
+
 		}
 	}
 
@@ -495,7 +501,7 @@ namespace PE {
 					if (ImGui::IsItemClicked(1))
 					{
 						//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-						if (m_currentSelectedObject < 0)
+						if (hoveredObject)
 							m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 						ImGui::OpenPopup("popup");
 					}
@@ -527,7 +533,7 @@ namespace PE {
 							if (ImGui::IsItemClicked(1))
 							{
 								//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-								if (m_currentSelectedObject < 0)
+								if (hoveredObject)
 									m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 								ImGui::OpenPopup("popup");
 							}
@@ -592,6 +598,19 @@ namespace PE {
 }
 			if (ImGui::BeginPopup("popup"))
 			{
+				if (ImGui::Selectable("Save As Prefab"))
+				{
+					auto save = serializationManager.SerializeEntityPrefab(static_cast<int>(m_currentSelectedObject));
+					std::string filepath = "../Assets/Prefabs/";
+					filepath += EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).name; // can change to request name or smth
+					filepath += "_Prefab.json";
+					std::ofstream outFile(filepath);
+					if (outFile)
+					{
+						outFile << save.dump(4);
+						outFile.close();
+					}
+				}
 				if (ImGui::Selectable("Delete Object"))
 				{
 						AddInfoLog("Object Deleted");
@@ -602,7 +621,7 @@ namespace PE {
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
 						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-
+						LogicSystem::DeleteScriptData(m_currentSelectedObject);
 						//if not first index
 						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
@@ -887,20 +906,21 @@ namespace PE {
 			if (ImGui::Button("Draw 2500 objects"))
 			{
 				ClearObjectList();
+				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
 				for (size_t i{}; i < 2500; ++i)
 				{
-					//EntityFactory::GetInstance().Clone(EntityManager::GetInstance().GetEntitiesInPool(ALL)[id]);
-					EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-					EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+					
+					EntityID id2 = EntityFactory::GetInstance().Clone(id);
+					//EntityID id2 = EntityFactory::GetInstance().CreateEntity();
+					//EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor(1.f, 1.f, 1.f, 1.f);
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetTextureKey("cat");
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor();
 				}
-			}
+			} 
 			ImGui::SameLine();
 			if (ImGui::Button("Toggle Debug Lines"))
 			{
@@ -1116,12 +1136,28 @@ namespace PE {
 									if (prop.get_name() == "Orientation" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
 										prop.get_name() == "Relative Orientation" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
 										continue;
+
+									// hide properties if entity has a certain component
+									if (prop.get_name() == "Orientation")
+									{
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
+											continue;
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+											continue;
+									}
+
+									if (prop.get_name() == "Width" || prop.get_name() == "Height")
+									{
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
+											continue;
+									}
+
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
 									ImGui::Text(nm.c_str());
-									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
-									
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));									
+
 									// handle types
 									if (vp.get_type().get_name() == "structPE::vec2")
 									{
@@ -1546,8 +1582,7 @@ namespace PE {
 								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
 								if (ImGui::Button("Add Script"))
 								{
-									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex]);
-									LogicSystem::m_scriptContainer[key[scriptindex]]->OnAttach(entityID);
+									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex],m_currentSelectedObject);
 								}
 								ImGui::PopStyleColor(1);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1585,8 +1620,7 @@ namespace PE {
 								{
 									if (selectedScript >= 0)
 									{
-										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName);
-										LogicSystem::m_scriptContainer[selectedScriptName]->OnDetach(entityID);
+										EntityManager::GetInstance().Get<ScriptComponent>(entityID).removeScript(selectedScriptName, m_currentSelectedObject);
 										selectedScript = -1;
 									}
 								}
@@ -1697,11 +1731,12 @@ namespace PE {
 								ImGui::Checkbox("Is Main Camera: ", &isMainCamera); // bool to set this camera as the main cam
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Text("Viewport Dimensions: ");
-								ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
-								ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								// commented out for now
+								//ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//ImGui::Text("Viewport Dimensions: ");
+								//ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
+								//ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
+								//ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
 								float zoom{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetMagnification() };
 								ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
@@ -1732,8 +1767,8 @@ namespace PE {
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								//setting textures
+								ImGui::Dummy(ImVec2(0.0f, 5.0f)); //add space
+								// setting textures
 								std::vector<const char*> key;
 								key.push_back("");
 
@@ -1781,6 +1816,93 @@ namespace PE {
 								//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
+
+						// ---------- Text Component ---------- //
+
+						if (name == EntityManager::GetInstance().GetComponentID<TextComponent>())
+						{
+							if (ImGui::CollapsingHeader("Text", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									ImGui::EndPopup();
+								}
+
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								// Text Box
+								std::string stringBuffer{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetText() };
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Text("Text: ");
+								ImGui::InputTextMultiline("##Text", &stringBuffer, ImVec2(300.0f, 100.0f));
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetText(stringBuffer);
+
+								// Setting fonts
+								std::vector<const char*> key;
+								key.push_back("");
+
+								//to get all the keys
+								for (std::map<std::string, std::shared_ptr<Font>>::iterator it = ResourceManager::GetInstance().Fonts.begin(); it != ResourceManager::GetInstance().Fonts.end(); ++it)
+								{
+									key.push_back(it->first.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey())
+										break;
+									index++;
+								}
+
+								// create a combo box of texture ids
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("Font: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									// set selected texture id
+									if (ImGui::Combo("##Font", &index, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(key[index]);
+									}
+								}
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								ImGui::Separator();
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								float size{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetSize() };
+								ImGui::Text("Font Size: "); ImGui::SameLine(); ImGui::InputFloat("##FontSize", &size, 1.0f, 100.f, "%.3f");
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetSize(size);
+
+								// Color
+
+								// get and set color variable of the text component
+								ImVec4 color;
+								color.x = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().r;
+								color.y = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().g;
+								color.z = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().b;
+								color.w = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().a;
+
+								ImGui::Text("Change Color: "); ImGui::SameLine();
+								ImGui::ColorEdit4("##Change Color Text", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor({ color.x, color.y, color.z, color.w });
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
 							}
 						}
 					}
@@ -1831,6 +1953,40 @@ namespace PE {
 									}
 								}
 							}
+
+							if (key == "FollowScript")
+							{
+								FollowScript* p_Script = dynamic_cast<FollowScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int j = it->second.NumberOfFollower;
+										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
+										if (j <= 5 && j >= 0)
+										{
+											it->second.NumberOfFollower = j;
+										}
+										else
+										{
+											it->second.NumberOfFollower = 5;
+										}
+
+										for (int i = 0; i < it->second.NumberOfFollower; i++)
+										{
+											if (i != 0)
+											{
+												int id = static_cast<int> (it->second.FollowingObject[i]);
+												std::string test = std::string("##id") + std::to_string(i);
+												ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												if(id != m_currentSelectedObject)
+												it->second.FollowingObject[i] = id;
+											}
+										}
+									}
+								}
+							}
 						}
 					}
 
@@ -1853,48 +2009,63 @@ namespace PE {
 					//add different kind of components, however if it already has we cannot add
 					if (ImGui::BeginPopup("Components"))
 					{
-						if (ImGui::Selectable("Add Collision"))
+						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>())
+								&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
 						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
-							else
-								AddErrorLog("ALREADY HAS A COLLIDER");
+							if (ImGui::Selectable("Add Collision"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
+								else
+									AddErrorLog("ALREADY HAS A COLLIDER");
+							}
+							if (ImGui::Selectable("Add Transform"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
+								else
+									AddErrorLog("ALREADY HAS A TRANSFORM");
+							}
+							if (ImGui::Selectable("Add RigidBody"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
+								else
+									AddErrorLog("ALREADY HAS A TRANSFORM");
+							}
+							if (ImGui::Selectable("Add Renderer"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+								else
+									AddErrorLog("ALREADY HAS A RENDERER");
+							}
+							if (ImGui::Selectable("Add ScriptComponent"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
+								else
+									AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
+							}
+							if (ImGui::Selectable("Add Animation"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+								else
+									AddErrorLog("ALREADY HAS ANIMATION");
+							}
 						}
-						if (ImGui::Selectable("Add Transform"))
+						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 
 						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
-							else
-								AddErrorLog("ALREADY HAS A TRANSFORM");
+							if (ImGui::Selectable("Add Text"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
+								else
+									AddErrorLog("ALREADY HAS TEXT");
+							}
 						}
-						if (ImGui::Selectable("Add RigidBody"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
-							else
-								AddErrorLog("ALREADY HAS A TRANSFORM");
-						}
-						if (ImGui::Selectable("Add Renderer"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
-							else
-								AddErrorLog("ALREADY HAS A RENDERER");
-						}
-						if (ImGui::Selectable("Add ScriptComponent"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
-							else
-								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
-						}
-						if (ImGui::Selectable("Add Animation"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
-							else
-								AddErrorLog("ALREADY HAS ANIMATION");
-						}
+
 						ImGui::EndPopup();
 					}
 
@@ -2254,7 +2425,25 @@ namespace PE {
 						{
 							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 							// This will save all entities to a file
-							serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/Saved_All_Entities.json");
+							for (const auto& id : SceneView<EntityDescriptor>())
+							{
+								if (!id) // skip editor camera
+									continue;
+								EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+								for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+								{
+									if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+									{
+										desc.sceneID = i;
+										continue;
+									}
+								}
+								if (desc.parent)
+								{
+									EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
+								}
+							}
+							serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath());
 							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 						}
 						if (ImGui::MenuItem("Load"))
@@ -2389,8 +2578,8 @@ namespace PE {
 			int offsetY = static_cast<int>(mainViewport->Pos.y);
 
 
-			m_sceneWindowOffsetX = ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2) - glfwWindowX - glfwWindowSizeX / 2 + 5*offsetX;
-			m_sceneWindowOffsetY = ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2) - glfwWindowY - glfwWindowSizeY / 2 + offsetY;
+			m_sceneWindowOffsetX = ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2) - glfwWindowX - glfwWindowSizeX / 2;// +5 * offsetX;
+			m_sceneWindowOffsetY = ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2) - glfwWindowY - glfwWindowSizeY / 2;// +offsetY;
 
 			ImGuiStyle& style = ImGui::GetStyle();
 			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
@@ -2404,12 +2593,41 @@ namespace PE {
 			{
 				m_isRunTime = true;
 				m_showEditor = false;
+
+				engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+				// This will save all entities to a file
+				for (const auto& id : SceneView<EntityDescriptor>())
+				{
+					if (!id) // skip editor camera
+						continue;
+					EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+					for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+					{
+						if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+						{
+							desc.sceneID = i;
+							continue;
+						}
+					}
+					if (desc.parent)
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
+					}
+				}
+				serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+				engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 			}
 			ImGui::SameLine();
 			if (
 				ImGui::Button("Stop")
 				) {
 				m_isRunTime = false;
+				engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
+
+				// This will load all entities from the file
+				ClearObjectList();
+				serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
 				if (r_frameBuffer.GetTextureId())
@@ -2426,14 +2644,19 @@ namespace PE {
 				m_mouseInScene = ImGui::IsWindowHovered();
 			}
 			static ImVec2 clickedPosition;
+			static ImVec2 screenPosition; // coordinates from the top left corner
 			static ImVec2 currentPosition;
 			static vec2 startPosition;
 			if(ImGui::IsMouseClicked(0))
 			{
-				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // in screen space
-				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // in screen space
-				std::cout << "clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y << "\n";
+				std::cout << "-----mouse click-------------------------------------------------------------------------\n";
+				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
+				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // from bottom left corner
+				std::cout << "clicked position: x: " << clickedPosition.x << ", y: " << clickedPosition.y << "\n";
 
+				screenPosition.x = clickedPosition.x - m_renderWindowWidth * 0.5f; // in viewport space, origin in the center
+				screenPosition.y = clickedPosition.y - m_renderWindowHeight * 0.5f; // in viewport space, origin in the center
+				std::cout << "screen position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
 
 				// Check that position is within the viewport
 				if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
@@ -2441,55 +2664,103 @@ namespace PE {
 				{
 						std::cout << "is outside viewport";
 				}
+				else 
+				{
+						// subtract the offset of the scene window 
+						//screenPosition.x += m_sceneWindowOffsetX; // in viewport space + offset
+						//screenPosition.y += m_sceneWindowOffsetY; // in viewport space + offset
 
-				clickedPosition.x += m_sceneWindowOffsetX; // in screen space + offset
-				clickedPosition.y += m_sceneWindowOffsetY; // in screen space + offset
+						std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << ", y : " << m_sceneWindowOffsetY;
+						std::cout << ", offset clicked position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
 
-				std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << " y : " << m_sceneWindowOffsetY;
-				std::cout << ", offset clicked position: x: " << clickedPosition.x << "y: " << clickedPosition.y;
+						m_currentSelectedObject = -1;
+						// Loop through all objects
+						for (long i{ static_cast<long>(Graphics::RendererManager::renderedEntities.size() - 1) }; i >= 0; --i)
+						{	
+								EntityID id{ Graphics::RendererManager::renderedEntities[i] };
 
-				// get center position of the 
+								// Get the transform component of the entity
+								Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-				//else 
-				//{
-				//		long long selectedObjectRenderOrder{ -1 };
-				//		// Loop through all objects
-				//		for (const EntityID& id : SceneView<Transform>())
-				//		{
-				//			// subtract the offset of the scene window 
-				//					// transform the position of the mouse cursor from screen space to model space
-				//				// Check if the cursor position is within the bounds of the object
-				//				if () { continue; }
+								glm::vec4 transformedCursor{ screenPosition.x, screenPosition.y, 0.f, 1.f };
 
-				//				// It is within the bounds, so check if this was rendered later than the previous selected obj
-				//				long long thisObjectRenderOrder{ EntityManager::GetInstance().Get<EntityDescriptor>(id).renderOrder };
-				//				if (thisObjectRenderOrder > selectedObjectRenderOrder)
-				//				{
-				//						m_currentSelectedObject = id;
-				//						selectedObjectRenderOrder = thisObjectRenderOrder;
-				//				}
-				//		}
+								// Transform the position of the mouse cursor from screen space to model space
+								glm::vec4 worldSpacePosition{
+										Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
+										* transformedCursor // screen position
+								};
 
-				//		if (m_currentSelectedObject >= 0)
-				//		{
-				//				startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
-				//				std::cout << ", attempt to retrieve Entity ID: " << r_frameBuffer.ReadEntityId(clickedPosition.x, clickedPosition.y);
-				//		}
-				//}
+								std::cout << "worldSpacePosition: x: " << worldSpacePosition.x << ", y: " << worldSpacePosition.y << "\n";
+									
+								// If trying to pick text or UI, don't transform to world space
+								if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<TextComponent>())
+										&& !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+								{
+										transformedCursor = worldSpacePosition;
+								}
+								else 
+								{
+										transformedCursor /= Graphics::CameraManager::GetEditorCamera().GetMagnification();
+										std::cout << "checking text component\n";
+								}
+
+								transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+										* transformedCursor;
+
+								std::cout << "modelSpacePosition: x: " << transformedCursor.x << ", y: " << transformedCursor.y << "\n";
+
+								glm::vec4 backToWorldSpacePosition{
+										Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+										* transformedCursor
+								};
+
+								Transform& r_transform2{ EntityManager::GetInstance().Get<Transform>(Graphics::CameraManager::testEntity) };
+								r_transform2.position.x = backToWorldSpacePosition.x, r_transform2.position.y = backToWorldSpacePosition.y;
+
+								std::cout << "backToWorldSpacePosition: x: " << backToWorldSpacePosition.x << ", y: " << backToWorldSpacePosition.y << "\n";
+
+								// Check if the cursor position is within the bounds of the object
+								if (!(transformedCursor.x < -0.5f || transformedCursor.x > 0.5f
+										|| transformedCursor.y < -0.5f || transformedCursor.y > 0.5f))
+								{
+										// It is within the bounds, break out of the loop
+										m_currentSelectedObject = id;
+										break;
+								}
+						}
+
+						if (m_currentSelectedObject >= 0)
+						{
+								startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
+								std::cout << ", selected Entity ID: " << m_currentSelectedObject;
+						}
+				}
 				
 				std::cout << "\n";
 			}
-			if (ImGui::IsMouseDown(0))
+			if (ImGui::IsMouseDown(0) && (m_currentSelectedObject >= 0))
 			{
 				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-				ImVec2 offset;
-				offset.x = currentPosition.x - clickedPosition.x;
-				offset.y = currentPosition.y - clickedPosition.y;
-				float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
 
-				if (m_currentSelectedObject >= 0)
-				EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + (offset.x * magnification), startPosition.y + (offset.y * magnification));
+				// Check that position is within the viewport
+				if (!(clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
+						|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight))
+				{
+						ImVec2 offset;
+						offset.x = currentPosition.x - clickedPosition.x;
+						offset.y = currentPosition.y - clickedPosition.y;
+						float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
+
+						if (!EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<TextComponent>())
+								&& !EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+						{ 
+								offset.x *= magnification;
+								offset.y *= magnification;
+						}
+						
+						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+				}
 
 			}
 

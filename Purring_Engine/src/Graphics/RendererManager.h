@@ -43,6 +43,11 @@ namespace PE
         *************************************************************************************/
         class RendererManager : public System
         {            
+            // ----- Public Variables ----- //
+        public:
+            // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
+            static std::vector<EntityID> renderedEntities;
+
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
@@ -216,6 +221,58 @@ namespace PE
                 glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
                 glm::vec4 const& r_color = { 0.5f, 0.5f, 1.f, 1.f });
 
+
+            /*!***********************************************************************************
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
+
+            \param[in] width Width of the object.
+            \param[in] height Height of the object.
+            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
+            \param[in] positionX X position of the object (in world space).
+            \param[in] positionY Y position of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
+            *************************************************************************************/
+            static glm::mat4 GenerateTransformMatrix(float const width, float const height,
+                float const orientation, float const positionX, float const positionY);
+
+            /*!***********************************************************************************
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
+
+            \param[in] rightVector Right vector of the object.
+            \param[in] upVector Up vector of the object.
+            \param[in] centerPosition Position of the center of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
+            *************************************************************************************/
+            static glm::mat4 GenerateTransformMatrix(glm::vec2 const& rightVector,
+                glm::vec2 const& upVector, glm::vec2 const& centerPosition);
+
+            /*!***********************************************************************************
+            \brief  Computes the 4x4 matrix to transform coordinates in world space to model space.
+
+            \param[in] width Width of the object.
+            \param[in] height Height of the object.
+            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
+            \param[in] positionX X position of the object (in world space).
+            \param[in] positionY Y position of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in world space to model space.
+            *************************************************************************************/
+            static glm::mat4 GenerateInverseTransformMatrix(float const width, float const height,
+                float const orientation, float const positionX, float const positionY);
+            /*!***********************************************************************************
+             \brief Renders text from r_text parameter. Retrieves glyph information from map
+                   and renders a quad with the data.
+
+             \param[in] r_text String to render.
+             \param[in] position Position of text to render onto the screen.s
+             \param[in] scale Amount to scale text size.
+             \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
+             \param[in] r_color Color to render text as.
+            *************************************************************************************/
+            void RenderText(glm::mat4 const& r_worldToNdc);
+
             // ----- Private variables ----- //
         private:
             GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to
@@ -228,11 +285,11 @@ namespace PE
             // Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};
             std::string m_instancedShaderProgramKey{"Instanced"};
+            std::string m_textShaderProgramKey{ "Text" };
 
             // Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
 
-            Font m_font;
             //! Width and height of the ImGui window the last time the framebuffer was resized
             float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
                         
@@ -290,32 +347,6 @@ namespace PE
              \param[in,out] r_mesh Object containing the mesh data generated.
             *************************************************************************************/
             void InitializePointMesh(MeshData& r_mesh);
-
-            /*!***********************************************************************************
-            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
-
-            \param[in] width Width of the object.
-            \param[in] height Height of the object.
-            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
-            \param[in] positionX X position of the object (in world space).
-            \param[in] positionY Y position of the object (in world space).
-
-            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
-            *************************************************************************************/
-            glm::mat4 GenerateTransformMatrix(float const width, float const height, 
-                float const orientation, float const positionX, float const positionY);
-
-            /*!***********************************************************************************
-            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
-
-            \param[in] rightVector Right vector of the object.
-            \param[in] upVector Up vector of the object.
-            \param[in] centerPosition Position of the center of the object (in world space).
-
-            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
-            *************************************************************************************/
-            glm::mat4 GenerateTransformMatrix(glm::vec2 const& rightVector,
-                glm::vec2 const& upVector, glm::vec2 const& centerPosition);
 
             /*!***********************************************************************************
              \brief Prints the hardware specifications of the device related to graphics.

@@ -274,35 +274,46 @@ namespace PE
 
         void CameraManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
         {            
-            // Move a gameobject around to indicate the location of the mouse click
-            if (r_event.GetType() == MouseEvents::MouseButtonPressed)
-            {
-                MouseButtonPressedEvent event = dynamic_cast<const MouseButtonPressedEvent&>(r_event);
+            //// Move a gameobject around to indicate the location of the mouse click
+            //if (r_event.GetType() == MouseEvents::MouseButtonPressed)
+            //{
+            //    MouseButtonPressedEvent event = dynamic_cast<const MouseButtonPressedEvent&>(r_event);
 
-                if (event.button == 0) // If pressing the left mouse button
-                {
-                    float windowWidthOffset{ 0.f }, windowHeightOffset{ 0.f };
+            //    if (event.button == 0) // If pressing the left mouse button
+            //    {
+            //        std::cout << "------CameraManager::OnMouseEvent------------------------" << std::endl;
 
-                    if (Editor::GetInstance().IsEditorActive()) 
-                    {
-                        // Get the offset of the scene window from the window
-                        Editor::GetInstance().GetSceneWindowOffset(windowWidthOffset, windowHeightOffset);
-                    }
+            //        float windowWidthOffset{ 0.f }, windowHeightOffset{ 0.f };
 
-                    Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(testEntity) };
+            //        if (Editor::GetInstance().IsEditorActive()) 
+            //        {
+            //            // Get the offset of the scene window from the window
+            //            Editor::GetInstance().GetSceneWindowOffset(windowWidthOffset, windowHeightOffset);
+            //        }
 
-                    // Transform the coordinates of the mouse click from viewport space to view space to world space
-                    glm::vec4 newPos{
-                        GetViewToWorldMatrix(Editor::GetInstance().IsEditorActive()) * glm::vec4{
-                            static_cast<float>(event.x) - m_windowWidth * 0.5f + windowWidthOffset,
-                            m_windowHeight * 0.5f - static_cast<float>(event.y) + windowHeightOffset, 0.f, 1.f }
-                    };
+            //        Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(testEntity) };
 
-                    r_transform.position.x = newPos.x;
-                    r_transform.position.y = newPos.y;
-                }
+            //        // Transform the coordinates of the mouse click from viewport space to view space to world space
+            //        glm::mat4 ViewToWorlMtx{
+            //            GetViewToWorldMatrix(Editor::GetInstance().IsEditorActive())
+            //        };
 
-            }
+            //        glm::vec4 newPos{};
+
+            //        glm::vec4 vpPos{ // mouse is from top left corner
+            //                static_cast<float>(event.x) - m_windowWidth * 0.5f + windowWidthOffset, // viewport coords, origin is in the center
+            //                m_windowHeight * 0.5f - static_cast<float>(event.y) + windowHeightOffset, 0.f, 1.f };
+
+            //        newPos = ViewToWorlMtx * vpPos;
+
+            //        std::cout << "EVENT: " << event.x << ", Y: " << event.y << std::endl;
+            //        std::cout << "vpPos: " << vpPos.x << ", Y: " << vpPos.y << std::endl;
+            //        std::cout << "New: " << newPos.x << ", Y: " << newPos.y << std::endl;
+            //        r_transform.position.x = newPos.x;
+            //        r_transform.position.y = newPos.y;
+            //    }
+
+            //}
 
             // Zoom the editor camera in and out on mouse scroll
             if (Editor::GetInstance().IsMouseInScene() && r_event.GetType() == MouseEvents::MouseScrolled)

@@ -18,7 +18,6 @@
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
 #include "Colliders.h"
-
 namespace PE
 {
 	class CollisionManager : public System

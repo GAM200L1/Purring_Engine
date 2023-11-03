@@ -126,5 +126,6 @@ namespace PE
         static std::vector<MouseButtonHoldEvent> m_MouseDown; // vector holding current held down buttons
         static std::map<int, float> m_KeyTriggered;
         static float m_bufferTime; // has to be static to be used by the callbacks
+        GLFWwindow* p_window;
     };
 }
