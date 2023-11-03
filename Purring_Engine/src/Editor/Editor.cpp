@@ -2780,13 +2780,14 @@ namespace PE {
 								r_transform2.position.x = backToWorldSpacePosition.x, r_transform2.position.y = backToWorldSpacePosition.y;
 
 								std::cout << "backToWorldSpacePosition: x: " << backToWorldSpacePosition.x << ", y: " << backToWorldSpacePosition.y << "\n";
+								
 
 								// Check if the cursor position is within the bounds of the object
 								if (!(transformedCursor.x < -0.5f || transformedCursor.x > 0.5f
 										|| transformedCursor.y < -0.5f || transformedCursor.y > 0.5f))
 								{
 										// It is within the bounds, break out of the loop
-										m_currentSelectedObject = id;
+										m_currentSelectedObject = static_cast<int>(id);
 										break;
 								}
 						}

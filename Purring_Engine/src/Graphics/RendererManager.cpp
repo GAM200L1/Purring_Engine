@@ -787,18 +787,20 @@ namespace PE
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
 
+                // get width and height of text
+                glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
+                textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
+                textSize.y *= (textComponent.GetSize() * 2.f);
+
                 // Resize the transform if the entity does not have other renderer components
                 if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<GUIRenderer>())
                 && !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Renderer>()))
                 {
-                    // get width and height of text
-                    glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
-                    textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
-                    textSize.y *= textComponent.GetSize();
-
                     EntityManager::GetInstance().Get<Transform>(id).width = textSize.x;
                     EntityManager::GetInstance().Get<Transform>(id).height = textSize.y;
                 }
+
+                textSize.x *= 0.5f;
 
                 // activate corresponding render state	
                 p_textShader->Use();
@@ -814,7 +816,7 @@ namespace PE
                 {
                     Character ch = textComponent.GetFont()->Characters.at(*c);
 
-                    float xPosition = position.x + ch.Bearing.x * textComponent.GetSize();
+                    float xPosition = position.x + ch.Bearing.x * textComponent.GetSize() - textSize.x;
                     float yPosition = position.y - (ch.Size.y - ch.Bearing.y) * textComponent.GetSize();
 
                     float w = ch.Size.x * textComponent.GetSize();
