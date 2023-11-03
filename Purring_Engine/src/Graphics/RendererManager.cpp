@@ -175,7 +175,7 @@ namespace PE
             if (renderInEditor)
             {
                 // Bind the RBO for rendering to the ImGui window
-                m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f, 0);
+                m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
             }
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera

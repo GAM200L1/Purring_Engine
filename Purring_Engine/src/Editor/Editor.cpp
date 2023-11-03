@@ -157,13 +157,6 @@ namespace PE {
 		height = m_renderWindowHeight;
 	}
 	
-
-	void Editor::GetSceneWindowOffset(float& xOffset, float& yOffset)
-	{
-		xOffset = m_sceneWindowOffsetX;
-		yOffset = m_sceneWindowOffsetY;
-	}
-
 	bool Editor::IsEditorActive()
 	{
 		return m_showEditor;
@@ -2630,19 +2623,6 @@ namespace PE {
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
 
-			// Get the position of the cursor offset by the position of the scene window in the app window
-			int glfwWindowX, glfwWindowY;
-			glfwGetWindowPos(p_window, &glfwWindowX, &glfwWindowY);
-			int glfwWindowSizeX, glfwWindowSizeY;
-			glfwGetWindowSize(p_window, &glfwWindowSizeX, &glfwWindowSizeY);
-			const ImGuiViewport* mainViewport = ImGui::GetMainViewport();
-			int offsetX = static_cast<int>(mainViewport->Pos.x);
-			int offsetY = static_cast<int>(mainViewport->Pos.y);
-
-
-			m_sceneWindowOffsetX = ImGui::GetWindowPos().x + (ImGui::GetWindowSize().x / 2) - glfwWindowX - glfwWindowSizeX / 2;// +5 * offsetX;
-			m_sceneWindowOffsetY = ImGui::GetWindowPos().y + (ImGui::GetWindowSize().y / 2) - glfwWindowY - glfwWindowSizeY / 2;// +offsetY;
-
 			ImGuiStyle& style = ImGui::GetStyle();
 			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
 			float avail = ImGui::GetContentRegionAvail().x;
@@ -2728,13 +2708,6 @@ namespace PE {
 				}
 				else 
 				{
-						// subtract the offset of the scene window 
-						//screenPosition.x += m_sceneWindowOffsetX; // in viewport space + offset
-						//screenPosition.y += m_sceneWindowOffsetY; // in viewport space + offset
-
-						std::cout << "[Get Center Pos Offset] x : " << m_sceneWindowOffsetX << ", y : " << m_sceneWindowOffsetY;
-						std::cout << ", offset clicked position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
-
 						m_currentSelectedObject = -1;
 						// Loop through all objects
 						for (long i{ static_cast<long>(Graphics::RendererManager::renderedEntities.size() - 1) }; i >= 0; --i)

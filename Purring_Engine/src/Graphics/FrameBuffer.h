@@ -84,32 +84,14 @@ namespace PE
             void Resize(int const newWidth, int const newHeight);
 
             /*!***********************************************************************************
-             \brief Reads the ID of the entity being drawn at pixel at the specified coordinate.
-
-             \param[in] x x-coordinate of the pixel in the entity texture.
-             \param[in] y y-coordinate of the pixel in the entity texture.
-            *************************************************************************************/
-            int ReadEntityId(int x, int y);
-
-            /*!***********************************************************************************
-             \brief Sets the value of the pixel at the specified coordinate.
-
-             \param[in] x x-coordinate of the pixel in the entity texture.
-             \param[in] y y-coordinate of the pixel in the entity texture.
-             \param[in] pixelData Data to write to the pixel in the texture.
-            *************************************************************************************/
-            void WritePixel(int x, int y, void const* pixelData);
-
-            /*!***********************************************************************************
              \brief Sets the values of the buffers and attachments to their default values.
 
              \param[in] r Red value of the color to default the framebuffer to.
              \param[in] g Green value of the color to default the framebuffer to.
              \param[in] b Blue value of the color to default the framebuffer to.
              \param[in] a Alpha value of the color to default the framebuffer to.
-             \param[in] clearId Entity ID to default all the pixels to.
             *************************************************************************************/
-            void Clear(float const r, float const g, float const b, float const a, EntityID const clearId);
+            void Clear(float const r, float const g, float const b, float const a);
 
             /*!***********************************************************************************
              \brief Deletes the framebuffer and the textures attached to it.
