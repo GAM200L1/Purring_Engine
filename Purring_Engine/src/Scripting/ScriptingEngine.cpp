@@ -1,13 +1,31 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     ScriptingEngine.h
+ \date     10-09-2023
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+
+ \brief    This file contains the ScriptEngine class along with its support classes
+           ScriptClass and ScriptInstance. It manages the scripting lifecycle, allowing
+           for interaction with C# scripts using the Mono runtime. Functionality
+           includes class instantiation, method invocation, and handling script
+           assembly loading and unloading.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include "Scripting/ScriptingEngine.h"
 #include "Scripting/ScriptGlue.h"
-#include "glm/glm.hpp"
+#include "Scripting/Base.h"
 
 #include "mono/jit/jit.h"
 #include "mono/metadata/assembly.h"
 #include "mono/metadata/object.h"
+
 #include <stdio.h>
-#include "Scripting/Base.h"
+#include "glm/glm.hpp"
 #include <memory>
 #define FMT_HEADER_ONLY
 #include <fmt/format.h>
