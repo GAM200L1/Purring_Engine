@@ -751,61 +751,75 @@ namespace PE {
 		}
 		else
 		{
-			//audio
-			ImGui::SeparatorText("Audio Test");
-			if (ImGui::Button("Play SFX 1"))
 			{
-				AudioManager::GetInstance().PlaySound("audio_sound1");
+				//audio
+				ImGui::SeparatorText("Audio Test");
+				if (ImGui::Button("Play SFX 1"))
+				{
+					AudioManager::GetInstance().PlaySound("audio_sound1");
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Play SFX 2"))
+				{
+					AudioManager::GetInstance().PlaySound("audio_sound2");
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Play SFX 3"))
+				{
+					AudioManager::GetInstance().PlaySound("audio_sound3");
+				}
+				if (ImGui::Button("Play Background Music"))
+				{
+					AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Stop All Audio"))
+				{
+					AudioManager::GetInstance().StopAllSounds();
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
+				{
+					LoadSceneFromGivenPath("../Assets/RubricTestScenes/AudioButtonScene.json");
+				}
+				ImGui::Dummy(ImVec2(0.0f, 2.0f));
 			}
-			ImGui::SameLine();
-			if (ImGui::Button("Play SFX 2"))
-			{
-				AudioManager::GetInstance().PlaySound("audio_sound2");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Play SFX 3"))
-			{
-				AudioManager::GetInstance().PlaySound("audio_sound3");
-			}
-			if (ImGui::Button("Play Background Music"))
-			{
-				AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Stop All Audio"))
-			{
-				AudioManager::GetInstance().StopAllSounds();
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
-			{
-				//LoadSceneFromGivenPath("../Assets/Prefabs/SceneTest7.json");
-			}
-			ImGui::Dummy(ImVec2(0.0f, 2.0f));
 			ImGui::SeparatorText("Scenes To Test");
-			if (ImGui::Button("LoadScene1"))
+			if (ImGui::Button("Reset Default Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/Prefabs/SceneTest7.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
 			}
+			ImGui::SameLine();
+			if (ImGui::Button("Text Test Scene"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Text Test Scene"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Text Test Scene"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+			}
+			if (ImGui::Button("Text Test Scene"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+			}
+
 			ImGui::Separator();
-			ImGui::Text("Physics Test");
-			if (ImGui::Button("Open Physics Scene"))
-			{
-
-			}
-
 			ImGui::Dummy(ImVec2(0.0f, 2.0f));
 			ImGui::SeparatorText("Scenes To Test");
-			if (ImGui::Button("Draw 2500 objects"))
+			if (ImGui::Button("Draw 2500 objects Instancing Test"))
 			{
-				ClearObjectList();
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
 				for (size_t i{}; i < 2500; ++i)
 				{
 					
 					EntityID id2 = EntityFactory::GetInstance().Clone(id);
-					//EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-					//EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
@@ -2676,6 +2690,7 @@ namespace PE {
 								offset.y *= magnification;
 						}
 						
+						if(m_mouseInScene)
 						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
 				}
 

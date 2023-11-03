@@ -790,7 +790,7 @@ namespace PE
                 // get width and height of text
                 glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
                 textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
-                textSize.y *= (textComponent.GetSize() * 2.f);
+                textSize.y *= (textComponent.GetSize());
 
                 // Resize the transform if the entity does not have other renderer components
                 if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<GUIRenderer>())
@@ -801,6 +801,7 @@ namespace PE
                 }
 
                 textSize.x *= 0.5f;
+                textSize.y *= 0.5f;
 
                 // activate corresponding render state	
                 p_textShader->Use();
@@ -817,7 +818,7 @@ namespace PE
                     Character ch = textComponent.GetFont()->Characters.at(*c);
 
                     float xPosition = position.x + ch.Bearing.x * textComponent.GetSize() - textSize.x;
-                    float yPosition = position.y - (ch.Size.y - ch.Bearing.y) * textComponent.GetSize();
+                    float yPosition = position.y - (ch.Size.y - ch.Bearing.y) * textComponent.GetSize() - textSize.y;
 
                     float w = ch.Size.x * textComponent.GetSize();
                     float h = ch.Size.y * textComponent.GetSize();
