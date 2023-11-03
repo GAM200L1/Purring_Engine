@@ -64,7 +64,7 @@ namespace PE {
 		//show the entire gui 
 		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 		m_renderDebug = true; // whether to render debug lines
-		m_currentStyle = GuiStyle::BLUE;
+		m_currentStyle = GuiStyle::DARK;
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 		ADD_ALL_MOUSE_EVENT_LISTENER(Editor::OnMouseEvent, this)
