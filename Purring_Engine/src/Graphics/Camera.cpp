@@ -71,8 +71,8 @@ namespace PE
             glm::vec2 right{ up.y, -up.x };
 
             m_cachedViewToWorldMatrix = glm::mat4{
-                right.x, right.y, 0.f, 0.f,
-                up.x, up.y, 0.f, 0.f,
+                right.x * magnification, right.y * magnification, 0.f, 0.f,
+                up.x * magnification, up.y * magnification, 0.f, 0.f,
                 0.f, 0.f, 1.f, 0.f,
                 positionX, positionY, 0.f, 1.f
             };

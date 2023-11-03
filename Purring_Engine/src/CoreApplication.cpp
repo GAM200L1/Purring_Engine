@@ -297,7 +297,9 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
     //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
-
+    
+        // Create object to use for testing transformation matrices
+    Graphics::CameraManager::testEntity = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
 
     // Make a second runtime camera to test switching
    // cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
@@ -525,6 +527,8 @@ void PE::CoreApplication::InitializeSystems()
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
+
+    Graphics::CameraManager::m_window = m_window;
 
     AddSystem(p_inputSystem);
     AddSystem(p_guisystem);
