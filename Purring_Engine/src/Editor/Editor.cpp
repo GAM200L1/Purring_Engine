@@ -2513,10 +2513,10 @@ namespace PE {
 		else
 		{
 			ImGui::Text("Broad Phase Grid Size:");
-			int grid[2] = { CollisionManager::gridSize.x,CollisionManager::gridSize.y };
+			int grid[2] = { static_cast<int>(CollisionManager::gridSize.x),static_cast<int>(CollisionManager::gridSize.y) };
 			ImGui::InputInt2("##grid",grid);
-			CollisionManager::gridSize.x = abs( grid[0]);
-			CollisionManager::gridSize.y = abs(grid[1]);
+			CollisionManager::gridSize.x = static_cast<float>(abs( grid[0]));
+			CollisionManager::gridSize.y = static_cast<float>(abs(grid[1]));
 			ImGui::Dummy(ImVec2(0, 0.2f));
 
 			ImGui::Text("Grid Active: "); ImGui::SameLine(); ImGui::Checkbox("##Checkers", &CollisionManager::gridActive);
