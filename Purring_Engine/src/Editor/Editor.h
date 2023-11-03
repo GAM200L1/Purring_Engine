@@ -299,7 +299,7 @@ namespace PE {
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
-		int m_entityToModify;
+		std::pair<std::string, int> m_entityToModify;
 		static bool m_fileDragged;
 	};
 }

@@ -107,7 +107,7 @@ namespace PE {
 		// loading for assets window
 		GetFileNamesInParentPath(m_parentPath, m_files);
 		m_mouseInScene = false;
-		m_entityToModify = -1;
+		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
 		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
 		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
@@ -1445,7 +1445,7 @@ namespace PE {
 									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
 									if (ImGui::IsItemHovered())
 									{
-										m_entityToModify = static_cast<int>(entityID);
+										m_entityToModify = std::make_pair<std::string, int>("Renderer", static_cast<int>(entityID));
 									}
 
 									// Shows a drop down of selectable textures
@@ -1549,6 +1549,12 @@ namespace PE {
 										}
 									}
 									ImGui::EndChild();
+
+									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("GUIRenderer", static_cast<int>(entityID));
+									}
 
 									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
@@ -2280,15 +2286,24 @@ namespace PE {
 					// Check if the mouse button is released
 					if (ImGui::IsMouseReleased(0))
 					{
-						if (m_entityToModify != -1)
+						if (m_entityToModify.second != -1)
 						{
 							// alters the texture assigned to renderer component in entity
 							std::string const extension = m_files[draggedItemIndex].extension().string();
 							if (extension == ".png")
 							{
-								ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(m_files[draggedItemIndex].string());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
+								if (m_entityToModify.first == "Renderer")
+								{
+									ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify.second).SetTextureKey(m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
+								}
+								else if (m_entityToModify.first == "GUIRenderer")
+								{
+									ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetTextureKey(m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
+								}
 							}
 							// add remaining editable assets audio etc
 						}
@@ -2306,7 +2321,7 @@ namespace PE {
 						draggedItemIndex = -1;
 					}
 				}
-				m_entityToModify = -1;
+				m_entityToModify = std::make_pair<std::string>("", - 1);
 			}
 
 
