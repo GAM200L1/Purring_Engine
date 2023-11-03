@@ -33,17 +33,23 @@ namespace PE
             glGenFramebuffers(1, &m_frameBufferObjectIndex);
             glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObjectIndex);
 
-            // Attach a texture to the framebuffer
             glGenTextures(1, &m_textureIndex);
             glBindTexture(GL_TEXTURE_2D, m_textureIndex);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, bufferWidth, bufferHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, bufferWidth, bufferHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
+            
+
+            unsigned int attachments[1] = { GL_COLOR_ATTACHMENT0 };
+            glDrawBuffers(1, attachments);
+
+            m_bufferWidth = bufferWidth, m_bufferHeight = bufferHeight;
 
             // Check if the framebuffer was created successfully
             GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-            if (status != GL_FRAMEBUFFER_COMPLETE) {
+            if (status != GL_FRAMEBUFFER_COMPLETE) 
+            {
                 glDeleteTextures(1, &m_textureIndex);
 
                 switch (status) {
@@ -91,25 +97,43 @@ namespace PE
 
         void FrameBuffer::Unbind() const
         {
-            GLint currentFrameBuffer{};
-            glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
+           GLint currentFrameBuffer{};
+           glGetIntegerv(GL_FRAMEBUFFER_BINDING, &currentFrameBuffer);
 
             // Unbind the framebuffer object (if it is currently bound)
-            if (m_frameBufferObjectIndex == static_cast<GLuint>(currentFrameBuffer))
-            {
+           if (m_frameBufferObjectIndex == static_cast<GLuint>(currentFrameBuffer))
+           {
                 glBindFramebuffer(GL_FRAMEBUFFER, 0);
-            }
+           }
         }
 
         void FrameBuffer::Resize(int const newWidth, int const newHeight)
         {
-            // Resize the texture to be of the same width and height as that passed in
+            // Reset all the settings
             glBindTexture(GL_TEXTURE_2D, m_textureIndex);
-            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, newWidth, newHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, newWidth, newHeight, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
             glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, m_textureIndex, 0);
+
+
+            m_bufferWidth = newWidth, m_bufferHeight = newHeight;
+
+            unsigned int attachments[1] = { GL_COLOR_ATTACHMENT0 };
+            glDrawBuffers(1, attachments);
         }
+
+
+        void FrameBuffer::Clear(float const r, float const g, float const b, float const a) 
+        {
+            glDrawBuffer(GL_COLOR_ATTACHMENT0);
+            glClearColor(r, g, b, a);
+            glClear(GL_COLOR_BUFFER_BIT);
+        }
+
 
         void FrameBuffer::Cleanup()
         {

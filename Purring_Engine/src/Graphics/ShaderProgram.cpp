@@ -283,7 +283,7 @@ namespace PE
         }
 
 
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, GLuint const value) 
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, GLint const value) 
         {
 
             GLint uniformLocation = glGetUniformLocation(m_programId,
@@ -296,7 +296,7 @@ namespace PE
             {
 
                 // Pass the int value as a uniform variable
-                glUniform1ui(uniformLocation, value);
+                glUniform1i(uniformLocation, value);
             }
             else 
             {

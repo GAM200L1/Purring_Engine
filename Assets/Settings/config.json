@@ -1,0 +1,19 @@
+{
+    "Editor": {
+        "firstLaunch": false,
+        "renderDebug": true,
+        "showComponentWindow": true,
+        "showConsole": true,
+        "showEditor": true,
+        "showLogs": true,
+        "showObjectList": true,
+        "showPerformanceWindow": true,
+        "showResourceWindow": true,
+        "showSceneView": true,
+        "showTestWindows": false
+    },
+    "window": {
+        "height": 1080,
+        "width": 1920
+    }
+}
