@@ -170,12 +170,18 @@ namespace PE
 		std::pair<GridID, GridID> GetMinMaxIDs(AABBCollider const& r_collider);
 		std::pair<GridID, GridID> GetMinMaxIDs(CircleCollider const& r_collider);
 		GridID GetIndex(float posX, float posY);
+		vec2 const& GetGridSize() const;
+		vec2 const& GetGridMin() const;
+		vec2 const& GetGridMax() const;
+		float GetCellWitdh() const;
+		vec2 GetColumnsRows() const;
 
 	private:
 	// ----- Private Variables ----- //
 		int m_columns, m_rows; // contain the number of columns and rows the grid has
 		vec2 m_min;
 		vec2 m_max;
+		vec2 m_gridSize;
 		float m_cellWidth; // contain the half width of a cell, given a cell is a square
 		bool m_gridHasSetup;
 	};
