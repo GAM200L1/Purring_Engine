@@ -47,7 +47,8 @@ namespace PE
 
             std::streampos end = stream.tellg();
             stream.seekg(0, std::ios::beg);
-            uint32_t size = end - stream.tellg();
+            std::streamsize size = end - stream.tellg();
+
 
             if (size == 0)
             {
@@ -73,12 +74,14 @@ namespace PE
             MonoImageOpenStatus status;
             MonoImage* image = mono_image_open_from_data_full(fileData, fileSize, 1, &status, 0);
 
-            if (status != MONO_IMAGE_OK)
-            {
+            if (status != MONO_IMAGE_OK) {
                 const char* errorMessage = mono_image_strerror(status);
                 // Log some error message using the errorMessage data
+                std::cerr << "Error loading Mono image: " << errorMessage << std::endl;
                 return nullptr;
             }
+
+
 
             std::string pathString = assemblyPath.string();
             MonoAssembly* assembly = mono_assembly_load_from_full(image, pathString.c_str(), &status, 0);
