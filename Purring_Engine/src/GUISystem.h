@@ -1,3 +1,20 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     GUISystem.h
+ \date     02-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	Checks for events and updates the states and calls the functions of all 
+	GUI objects in the scene.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
+
 #pragma once
 
 #include "System.h"
@@ -48,17 +65,46 @@ namespace PE
 		*************************************************************************************/
 		virtual std::string GetName() override;
 
+		/*!***********************************************************************************
+		 \brief Checks if the mouse cursor is within the bounds of any GUI objects
+		 
+		 \param[in,out] r_ME mouse click event details
+		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
-		// assumes that all the coordinates are in view space
+		/*!***********************************************************************************
+		 \brief Checks if a point is within the square bounds of a transform
+		 
+		 \param[in,out] x - x coordinate in view space
+		 \param[in,out] y - y coordinate in view space
+		 \param[in,out] t - Transform to use as the bounds
+		 \return true - Within the bounds
+		 \return false - Not within the bounds
+		*************************************************************************************/
 		bool IsInBound(int x, int y, Transform t);
 
+		/*!***********************************************************************************
+		 \brief Checks if the  mouse is hovering over any buttons
+		 
+		 \param[in,out] r_ME mouse click event details
+		*************************************************************************************/
 		void OnMouseHover(const Event<MouseEvents>& r_ME);
 
+		/*!***********************************************************************************
+		 \brief Sample function to call from a button. Prints a message to the console.		 
+		*************************************************************************************/
 		void ButtonFunctionOne();
 
+		/*!***********************************************************************************
+		 \brief Sample function to call from a button. Prints a message to the console.		 
+		*************************************************************************************/
 		void ButtonFunctionTwo();
 
+		/*!***********************************************************************************
+		 \brief Adds a function to the UI element.
+		 
+		 \param[in,out] func - Function to add to the UI element
+		*************************************************************************************/
 		static void AddFunction(std::string_view, const std::function<void(void)>& func);
 
 	public:
@@ -68,17 +114,38 @@ namespace PE
 			GLFWwindow* p_window{};
 	};
 
+	//enum to tell type of UI to make
 	enum class UIType { Button = 0, TextBox };
 
 	struct GUI
-	{
-		//enum to tell type of UI to make
+	{		
+		/*!***********************************************************************************
+		 \brief Constructor. Does nothing 
+		*************************************************************************************/
 		GUI() {}
+		/*!***********************************************************************************
+		 \brief Initializes the UI element.		 
+		*************************************************************************************/
 		virtual void Init() {}
+		/*!***********************************************************************************
+		 \brief Update the UI element.		 
+		*************************************************************************************/
 		virtual void Update() {}
+		/*!***********************************************************************************
+		 \brief Destroy the UI element.		 
+		*************************************************************************************/
 		virtual void Destroy() {}
+		/*!***********************************************************************************
+		 \brief On hovering over the UI element	 
+		*************************************************************************************/
 		virtual void OnHover() {}
+		/*!***********************************************************************************
+		 \brief On clicking the UI element	 
+		*************************************************************************************/
 		virtual void OnClick() {}
+		/*!***********************************************************************************
+		 \brief Destructor	 
+		*************************************************************************************/
 		virtual ~GUI() {};
 
 		std::string m_onClicked{""};
@@ -87,27 +154,50 @@ namespace PE
 		UIType m_UIType{0};
 
 	public:
+		/*!***********************************************************************************
+		 \brief Serializes the UI element data	 
+		*************************************************************************************/
 		virtual nlohmann::json ToJson(size_t id) const;
+		/*!***********************************************************************************
+		 \brief Deserializes the UI element data	 
+		*************************************************************************************/
 		static GUI Deserialize(const nlohmann::json& j);
 	};
 
 
 	struct Button : public GUI
 	{
+		/*!***********************************************************************************
+		 \brief Serializes the UI element data	 
+		*************************************************************************************/
 		virtual void Init() override {}
+		/*!***********************************************************************************
+		 \brief Update the button		 
+		*************************************************************************************/
 		virtual void Update() override {}
+		/*!***********************************************************************************
+		 \brief Destory the button		 
+		*************************************************************************************/
 		virtual void Destroy() override {}
-		//use this for now idk how are we gonna bind functions later
+		/*!***********************************************************************************
+		 \brief Calls the onhover function 
+		*************************************************************************************/
 		inline virtual void OnHover() override 
 		{
 			if (m_onHovered != "")
 				GUISystem::m_uiFunc[m_onHovered]();
 		}
+		/*!***********************************************************************************
+		 \brief Calls the onClick function 
+		*************************************************************************************/
 		inline virtual void OnClick() override
 		{
 			if (m_onClicked != "")
 				GUISystem::m_uiFunc[m_onClicked]();
 		}
+		/*!***********************************************************************************
+		 \brief Does nothing
+		*************************************************************************************/
 		virtual ~Button() {};
 
 	};
