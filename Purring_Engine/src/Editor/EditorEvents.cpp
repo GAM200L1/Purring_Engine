@@ -44,11 +44,20 @@ namespace PE {
 				if (KTE.keycode == GLFW_KEY_F4)
 						m_showSceneView = !m_showSceneView;
 
+				if (KTE.keycode == GLFW_KEY_F5)
+					m_showResourceWindow = !m_showResourceWindow;
+
+				if (KTE.keycode == GLFW_KEY_F6)
+					m_showPerformanceWindow = !m_showPerformanceWindow;
+
 				if (KTE.keycode == GLFW_KEY_F7)
 						m_showComponentWindow = !m_showComponentWindow;
 
-				if (KTE.keycode == GLFW_KEY_F6)
-						m_showPerformanceWindow = !m_showPerformanceWindow;
+				if (KTE.keycode == GLFW_KEY_F8)
+					m_showPhysicsWindow = !m_showPhysicsWindow;
+
+				if (KTE.keycode == GLFW_KEY_F9)
+					m_showTestWindows = !m_showTestWindows;
 
 				if (KTE.keycode == GLFW_KEY_ESCAPE)
 				{
@@ -68,8 +77,7 @@ namespace PE {
 
 				}
 
-				if (KTE.keycode == GLFW_KEY_F5)
-						m_showResourceWindow = !m_showResourceWindow;
+
 
 				if (KTE.keycode == GLFW_KEY_F10)
 						ToggleDebugRender();

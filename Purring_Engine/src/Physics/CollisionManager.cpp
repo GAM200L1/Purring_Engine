@@ -114,6 +114,7 @@ namespace PE
 			m_grid.SetupGrid(gridSize.x, gridSize.y);
 		}
 
+		if(gridActive)
 		m_grid.UpdateGrid();
 		// Test for Collisions in the scene
 		TestColliders();

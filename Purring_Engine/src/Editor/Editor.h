@@ -194,9 +194,15 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief render the docking port window
 
-		 \param[in] bool* reference to the boolean that sets the window active (Ill add soon maybe)
+		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void SetDockingPort(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the physics window
+
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowPhysicsWindow(bool* Active);
 		/*!***********************************************************************************
 		 \brief render the sceneview window
 
@@ -227,7 +233,16 @@ namespace PE {
 		 \brief toggle rendering of debug lines
 		*************************************************************************************/
 		void ToggleDebugRender();
+		/*!***********************************************************************************
+		 \brief Set custom ImGUI style
+		*************************************************************************************/
+		void SetImGUIStyle();
+		/*!***********************************************************************************
+		 \brief					Load Scene based on given file path
 
+		 \param[in] string_view path name
+		*************************************************************************************/
+		void LoadSceneFromGivenPath(std::string_view path);
 		// ----- ImGui Command Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -284,6 +299,7 @@ namespace PE {
 		bool m_showComponentWindow;
 		bool m_showResourceWindow;
 		bool m_showPerformanceWindow;
+		bool m_showPhysicsWindow;
 		bool m_firstLaunch;
 
 		//boolean for rendering

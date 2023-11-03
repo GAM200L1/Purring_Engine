@@ -35,10 +35,6 @@ namespace PE
         *************************************************************************************/
         class CameraManager : public System
         {
-        public: // @TODO to remove
-            static EntityID testEntity; // ID of the entity to move on click (Temporary variable for testing purposes)
-            static GLFWwindow* m_window; // pointer to window also for testing purposes
-
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************

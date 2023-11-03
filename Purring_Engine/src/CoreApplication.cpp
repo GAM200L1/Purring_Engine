@@ -82,7 +82,7 @@
 #include "Logic/testScript.h"
 #include "Logic/testScript2.h"
 #include "Logic/FollowScript.h"
-
+#include "Logic/CameraManagerScript.h"
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -181,7 +181,7 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
-    rttr::registration::class_<PE::TestScriptData>("TestScript")
+    rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
@@ -197,6 +197,11 @@ RTTR_REGISTRATION
         .property("rotation", &PE::FollowScriptData::Rotation)
         .property("CurrentPosition", &PE::FollowScriptData::CurrentPosition)
         .property("NextPosition", &PE::FollowScriptData::NextPosition);
+
+    rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
+        .property("NumberOfCamera", &PE::CameraManagerScriptData::NumberOfCamera)
+        .property("CameraIDs", &PE::CameraManagerScriptData::CameraIDs);
+
 
     rttr::registration::class_<PE::TextComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>().to_string().c_str())
         .property_readonly("Font", &PE::TextComponent::GetFontKey)
@@ -297,9 +302,7 @@ PE::CoreApplication::CoreApplication()
     EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
     EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
     //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
-    
-        // Create object to use for testing transformation matrices
-    Graphics::CameraManager::testEntity = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
+
 
     // Make a second runtime camera to test switching
    // cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
@@ -527,8 +530,6 @@ void PE::CoreApplication::InitializeSystems()
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
-
-    Graphics::CameraManager::m_window = m_window;
 
     AddSystem(p_inputSystem);
     AddSystem(p_guisystem);
