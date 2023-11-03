@@ -6,9 +6,18 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
+ \par      code %:     95%
+ \par      changes:    Defined all the logic for rendering the editor UI through ImGUI.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    02-11-2023
+                       Added object picking logic.
 
  \brief
-	cpp file containing the definition of the editor class
+	cpp file containing the definition of the editor class, which contains 
+	logic for rendering the editor UI through ImGUI.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 

@@ -31,6 +31,10 @@ namespace PE
                      Empty by design; it has the same functionality as the Renderer, 
                      but has been separated so that the render passes of the UI and 
                      gameobjects can be separated. 
+
+                     Will be extended in the future to allow for different colors 
+                     and textures for different states (on button hover, on button 
+                     click etc.).
               */
         public:
               /*!***********************************************************************************
