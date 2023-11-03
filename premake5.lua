@@ -29,9 +29,9 @@ group "Library"
     project "GLFW"
         location "vendor/GLFW"
 
-        kind "StaticLib"        
+        kind "StaticLib"   
         
-
+        warnings "Off"
 
         language "C"
 
@@ -67,6 +67,8 @@ group "Library"
     project "ImGui"
         location "vendor/imgui"
         kind "StaticLib"
+
+        warnings "Off"
         
         language "C++"
         cppdialect "C++17"

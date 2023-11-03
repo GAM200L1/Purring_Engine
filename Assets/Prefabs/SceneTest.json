@@ -1,0 +1,306 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "Background",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/bg.png"
+                    },
+                    "Transform": {
+                        "height": 1000.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "width": 1000.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "magnification": 1.0,
+                        "viewportHeight": 0.0,
+                        "viewportWidth": 0.0
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "CameraObject",
+                        "parent": 4,
+                        "sceneID": 2
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.3294117748737335,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -263.0,
+                            "y": 90.0
+                        },
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "children": [
+                            2,
+                            9
+                        ],
+                        "name": "Player",
+                        "parent": null,
+                        "sceneID": 4
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "GUIButton",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "PlayAudio1",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 285.0,
+                            "y": 0.0
+                        },
+                        "width": 250.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "magnification": 1.0,
+                        "viewportHeight": 0.0,
+                        "viewportWidth": 0.0
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -156.0,
+                            "y": -130.0
+                        },
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [
+                            8
+                        ],
+                        "name": "AudioCat",
+                        "parent": null,
+                        "sceneID": 7
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 152.0,
+                            "y": -177.0
+                        },
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "AudioOnCat",
+                        "parent": 7,
+                        "sceneID": 8
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.364705890417099,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Icons/Audio_Icon.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 152.0,
+                            "y": -177.0
+                        },
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "LEMAO",
+                        "parent": 4,
+                        "sceneID": 9
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.46666666865348816,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Icons/Font_Icon.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}

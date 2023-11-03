@@ -28,6 +28,7 @@ namespace PE
         EntityID CameraManager::m_uiCameraId{};
         EditorCamera CameraManager::m_editorCamera{};
 
+
         CameraManager::CameraManager(float const windowWidth, float const windowHeight)
         {
             // Update the editor camera viewport size

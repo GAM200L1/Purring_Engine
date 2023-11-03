@@ -2,10 +2,9 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     RendererManager.cpp
- \date:       30-08-2023
+ \date:    30-08-2023
 
  \author:              Krystal YAMIN
-
  \par      email:      krystal.y@digipen.edu
 
  \brief    This file contains the RendererManager class, which manages 
@@ -48,6 +47,9 @@ namespace PE
 {
     namespace Graphics
     {
+        // Initialize static variables
+        std::vector<EntityID> RendererManager::renderedEntities{};
+
         RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
             : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
         {
@@ -60,9 +62,17 @@ namespace PE
                 throw;
             }
 
-            int width, height;
-            glfwGetWindowSize(p_glfwWindow, &width, &height);
-            m_imguiFrameBuffer.CreateFrameBuffer(width, height);
+            // Enable debug output
+            glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+            glDebugMessageCallback(glDebugOutput, nullptr);
+            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
+
+            // Enable alpha blending
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
 
             Editor::GetInstance().Init(p_window);
         }
@@ -92,12 +102,13 @@ namespace PE
             ResourceManager::GetInstance().LoadShadersFromFile(m_defaultShaderProgramKey, "../Shaders/Textured.vert", "../Shaders/Textured.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_instancedShaderProgramKey, "../Shaders/Instanced.vert", "../Shaders/Instanced.frag");
             ResourceManager::GetInstance().LoadShadersFromFile(m_textShaderProgramKey, "../Shaders/Text.vert", "../Shaders/Text.frag");
-
+            
             // Reserve memory for the vectors to build the buffer with
             m_isTextured.reserve(3000);
             m_modelToWorldMatrices.reserve(3000);
             m_colors.reserve(3000);
             m_UV.reserve(3000);
+            renderedEntities.reserve(3000);
 
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
@@ -119,6 +130,8 @@ namespace PE
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
 
+            // Reset the render order container
+            renderedEntities.clear();
 
             if (renderInEditor)
             {
@@ -132,38 +145,37 @@ namespace PE
                 windowHeight = static_cast<float>(height);
             }
 
+            // Set background color of the window
+            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
+            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+
+            if (renderInEditor)
+            {
+                // Bind the RBO for rendering to the ImGui window
+                m_imguiFrameBuffer.Bind();
+            }            
+
             // If the window size has changed
-            if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight) 
+            if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight)
             {
                 m_cachedWindowWidth = windowWidth, m_cachedWindowHeight = windowHeight;
 
                 // Update the frame buffer
                 GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
-                m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
+
+                m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
 
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
                 r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
-            } 
+            }
 
-            // Set background color of the window
-            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
-            glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
-
-            // Enable alpha blending
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-            
-            if(renderInEditor)
+            if (renderInEditor)
             {
                 // Bind the RBO for rendering to the ImGui window
-                m_imguiFrameBuffer.Bind();
-
-                // Set the background color of the ImGui window
-                glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
-                glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+                m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
             }
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera
@@ -180,7 +192,8 @@ namespace PE
             // Draw UI objects in the scene
             DrawQuadsInstanced(r_cameraManager.GetUiViewToNdcMatrix(), SceneView<GUIRenderer, Transform>());
 
-            // Render Text objects in the scene
+
+            // Render Text
             RenderText(r_cameraManager.GetUiViewToNdcMatrix());
 
             if (renderInEditor)
@@ -189,9 +202,7 @@ namespace PE
                 m_imguiFrameBuffer.Unbind();
             }
 
-            Editor::GetInstance().Render(m_imguiFrameBuffer.GetTextureId());
-            // Disable alpha blending
-            glDisable(GL_BLEND);
+            Editor::GetInstance().Render(m_imguiFrameBuffer);
 
             // Poll for and process events
             glfwPollEvents(); // should be called before glfwSwapbuffers
@@ -233,6 +244,9 @@ namespace PE
             {
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+
+                // Store the index of the rendered entity
+                renderedEntities.emplace_back(id);
 
                 glm::mat4 glmObjectTransform
                 {
@@ -291,6 +305,9 @@ namespace PE
                 
                 // Skip drawing this object is the renderer is not enabled
                 if (!renderer.GetEnabled()) { continue; }
+
+                // Store the index of the rendered entity
+                renderedEntities.emplace_back(id);
                 
                 const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
@@ -336,7 +353,7 @@ namespace PE
                         currentTexture = renderer.GetTextureKey();
 
                         // Bind the new texture
-                        unsigned int textureUnit{ 0 };
+                        GLint textureUnit{ 0 };
                         p_texture = textureIterator->second;
                         p_texture->Bind(textureUnit);
                         r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
@@ -536,7 +553,7 @@ namespace PE
                 else 
                 {
                     p_texture = textureIterator->second;
-                    unsigned int textureUnit{ 0 };
+                    GLint textureUnit{ 0 };
                     p_texture->Bind(textureUnit);
                     r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
                     r_shaderProgram.SetUniform("uIsTextured", true);
@@ -751,11 +768,10 @@ namespace PE
             DrawDebugLine(r_rightVector, r_position - r_rightVector * 0.5f, r_worldToNdc, r_shaderProgram, r_color);
         }
 
+        
         void RendererManager::RenderText(glm::mat4 const& r_worldToNdc)
         {
             std::shared_ptr<ShaderProgram> p_textShader{ ResourceManager::GetInstance().ShaderPrograms[m_textShaderProgramKey] };
-
-
 
             for (const EntityID& id : SceneView<TextComponent, Transform>())
             {
@@ -767,6 +783,24 @@ namespace PE
                 {
                     break;
                 }
+
+                // Store the index of the rendered entity
+                renderedEntities.emplace_back(id);
+
+                // get width and height of text
+                glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
+                textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
+                textSize.y *= (textComponent.GetSize() * 2.f);
+
+                // Resize the transform if the entity does not have other renderer components
+                if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<GUIRenderer>())
+                && !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Renderer>()))
+                {
+                    EntityManager::GetInstance().Get<Transform>(id).width = textSize.x;
+                    EntityManager::GetInstance().Get<Transform>(id).height = textSize.y;
+                }
+
+                textSize.x *= 0.5f;
 
                 // activate corresponding render state	
                 p_textShader->Use();
@@ -782,7 +816,7 @@ namespace PE
                 {
                     Character ch = textComponent.GetFont()->Characters.at(*c);
 
-                    float xPosition = position.x + ch.Bearing.x * textComponent.GetSize();
+                    float xPosition = position.x + ch.Bearing.x * textComponent.GetSize() - textSize.x;
                     float yPosition = position.y - (ch.Size.y - ch.Bearing.y) * textComponent.GetSize();
 
                     float w = ch.Size.x * textComponent.GetSize();
@@ -820,6 +854,7 @@ namespace PE
             }
 
         }
+
 
         void RendererManager::InitializeCircleMesh(std::size_t const segments, MeshData& r_mesh)
         { 
@@ -979,7 +1014,7 @@ namespace PE
         glm::mat4 RendererManager::GenerateTransformMatrix(float const width, float const height,
             float const orientation, float const positionX, float const positionY) 
         {
-            // Get rotation matrix
+            // Get rotation
             GLfloat sin_angle{ glm::sin(orientation) };
             GLfloat cos_angle{ glm::cos(orientation) };
 
@@ -1002,6 +1037,27 @@ namespace PE
                 centerPosition.x, centerPosition.y, 0.f, 1.f
             };
         }
+
+
+        glm::mat4 RendererManager::GenerateInverseTransformMatrix(float const width, float const height,
+            float const orientation, float const positionX, float const positionY)
+        {
+            glm::vec2 up{ -glm::sin(orientation), glm::cos(orientation) };
+            glm::vec2 right{ up.y, -up.x };
+            up *= 1.f / height, right *= 1.f / width;
+
+            float upDotPosition{ up.x * positionX + up.y * positionY };
+            float rightDotPosition{ right.x * positionX + right.y * positionY };
+
+            // Return the inverse transform matrix (world to model)
+            return glm::mat4{
+                right.x, up.x, 0.f, 0.f,
+                right.y, up.y, 0.f, 0.f,
+                0.f,    0.f,   1.f, 0.f,
+                -rightDotPosition, -upDotPosition, 0.f, 1.f
+            };
+        }
+
 
         void RendererManager::PrintSpecifications() const
         {
@@ -1030,6 +1086,53 @@ namespace PE
                 << "\nMaximum Indices Count: " << maxIndicesCount
                 << "\nGL Maximum texture size: " << maxTextureSize
                 << "\nMaximum Viewport Dimensions: " << maxViewportDims[0] << " x " << maxViewportDims[1] << "\n" << std::endl;
+        }
+
+
+        void APIENTRY glDebugOutput(GLenum source, GLenum type, unsigned int id,
+            GLenum severity, GLsizei length, const char* message, const void* userParam)
+        {
+            // ignore non-significant error/warning codes
+            if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+
+            std::cout << "---------------\n";
+            std::cout << "Debug message (" << id << "): " << message << "\n";
+
+            switch (source)
+            {
+            case GL_DEBUG_SOURCE_API:             std::cout << "Source: API"; break;
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Source: Window System"; break;
+            case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "Source: Shader Compiler"; break;
+            case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party"; break;
+            case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application"; break;
+            case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other"; break;
+            } 
+            
+            std::cout << "\n";
+
+            switch (type)
+            {
+            case GL_DEBUG_TYPE_ERROR:               std::cout << "Type: Error"; break;
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Type: Deprecated Behaviour"; break;
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Type: Undefined Behaviour"; break;
+            case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Type: Portability"; break;
+            case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Type: Performance"; break;
+            case GL_DEBUG_TYPE_MARKER:              std::cout << "Type: Marker"; break;
+            case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group"; break;
+            case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group"; break;
+            case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other"; break;
+            } 
+            
+            std::cout << "\n";
+
+            switch (severity)
+            {
+            case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Severity: high"; break;
+            case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: medium"; break;
+            case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
+            case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
+            } 
+            std::cout << "\n---------------\n" << std::endl;
         }
     } // End of Graphics namespace
 } // End of PE namespace
