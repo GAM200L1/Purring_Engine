@@ -94,7 +94,6 @@ namespace PE {
 					if (!inst.is_valid()) // if no data for this script type, just break out of this loop
 						break;
 					rttr::variant var = prop.get_value(inst);
-					std::cout << var.get_type().get_name().to_string() << std::endl;
 					if (var.get_type().get_name() == "float")
 					{
 						float val = var.get_value<float>();

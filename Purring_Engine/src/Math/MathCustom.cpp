@@ -106,6 +106,16 @@ namespace PE
 		return vec2{ -x, -y };
 	}
 
+	bool vec2::operator==(vec2 const& r_rhs) const
+	{
+		return (r_rhs.x == x && r_rhs.y == y);
+	}
+
+	bool vec2::operator!=(vec2 const& r_rhs) const
+	{
+		return !(*this == r_rhs);
+	}
+
 	// zero the vector
 	void vec2::Zero()
 	{
