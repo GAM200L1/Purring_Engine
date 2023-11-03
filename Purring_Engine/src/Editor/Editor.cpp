@@ -2711,6 +2711,8 @@ namespace PE {
 						{	
 								EntityID id{ Graphics::RendererManager::renderedEntities[i] };
 
+								if (id == Graphics::CameraManager::testEntity) { continue; }
+
 								// Get the transform component of the entity
 								Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
