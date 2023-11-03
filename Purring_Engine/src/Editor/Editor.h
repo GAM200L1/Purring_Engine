@@ -304,7 +304,7 @@ namespace PE {
 
 		//variable for assets browser
 		float m_time;
-		float m_renderWindowWidth, m_renderWindowHeight;
+		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
