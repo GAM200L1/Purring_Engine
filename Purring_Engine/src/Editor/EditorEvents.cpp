@@ -14,6 +14,12 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "Editor.h"
+#include "Data/json.hpp"
+#include "Data/SerializationManager.h"
+#include "Logging/Logger.h"
+
+extern SerializationManager serializationManager;  // Create an instance
+extern Logger engine_logger;
 
 namespace PE {
 		void Editor::OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_event)
@@ -48,8 +54,18 @@ namespace PE {
 				{
 						m_showEditor = true;
 
+						if (m_isRunTime)
+						{
+								ClearObjectList();
+								serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+								engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						}
+
 						if (m_showEditor)
 								m_isRunTime = false;
+
+						// This will load all entities from the file
+
 				}
 
 				if (KTE.keycode == GLFW_KEY_F5)

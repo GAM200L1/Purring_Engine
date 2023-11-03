@@ -1,6 +1,9 @@
 #pragma once
 #include "System.h"
 #include "Script.h"
+#include "Data/json.hpp"
+#include "PlayerControllerScript.h"
+#include "Math/MathCustom.h"
 
 #define REGISTER_SCRIPT(name) 	PE::LogicSystem::m_scriptContainer[#name] = new name()
 #define GETSCRIPTDATA(script,id) &reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData()[id]
@@ -70,6 +73,99 @@ namespace PE {
 			m_scriptKeys.erase(itr);
 			LogicSystem::m_scriptContainer[key]->OnDetach(id);
 		}
+
+		nlohmann::json ToJson(EntityID id) const
+		{
+			nlohmann::json ret;
+			/*rttr::type currType = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<ScriptComponent>().to_string());
+			for (auto& prop : currType.get_properties())
+			{
+				std::string nm(prop.get_name());	
+				rttr::variant vp = prop.get_value(m_scriptKeys);
+			}*/
+			for (auto [k, v] : m_scriptKeys)
+			{
+				ret[k.c_str()]["state"] = v;
+				//ret[k.c_str()]["data"] = 69;
+				rttr::type scriptDataType = rttr::type::get_by_name(k.c_str());
+				for (auto& prop : scriptDataType.get_properties())
+				{
+					rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(k.c_str())->GetScriptData(id);
+					if (!inst.is_valid()) // if no data for this script type, just break out of this loop
+						break;
+					rttr::variant var = prop.get_value(inst);
+					std::cout << var.get_type().get_name().to_string() << std::endl;
+					if (var.get_type().get_name() == "float")
+					{
+						float val = var.get_value<float>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "enumPE::PlayerState")
+					{
+						PlayerState val = var.get_value<PlayerState>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "int")
+					{
+						int val = var.get_value<int>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "unsigned__int64")
+					{
+						size_t val = var.get_value<size_t>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "bool")
+					{
+						bool val = var.get_value<bool>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
+					{
+						std::vector<EntityID> val = var.get_value<std::vector<EntityID>>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "structPE::vec2")
+					{
+						PE::vec2 val = var.get_value<PE::vec2>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
+					}
+					else if (var.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+					{
+						std::vector<PE::vec2> val = var.get_value<std::vector<PE::vec2>>();
+						size_t cnt{};
+						for (const auto& vec : val)
+						{
+							ret[k.c_str()]["data"][prop.get_name().to_string().c_str()][std::to_string(cnt)]["x"] = vec.x;
+							ret[k.c_str()]["data"][prop.get_name().to_string().c_str()][std::to_string(cnt)]["y"] = vec.y;
+							++cnt;
+						}
+					}
+					
+				}
+			}
+		
+			return ret;
+		}
+
+		ScriptComponent& Deserialize(const nlohmann::json& j)
+		{
+			for (const auto& k : j.items())
+			{
+				for (const auto& l : k.value().items())
+				{
+					if (l.key() == "state")
+					{
+						m_scriptKeys[k.key().c_str()] = l.value().get<ScriptState>();
+						break; // can leave once state set, values for data cant be set here~~
+					}
+					
+				}
+			}
+			return *this;
+		}
+
 		~ScriptComponent(){}
 	};
 

@@ -132,12 +132,15 @@ namespace PE
             SetMagnification(m_magnification + delta);
         }
 
-        nlohmann::json Camera::ToJson() const
+        nlohmann::json Camera::ToJson(size_t id) const
         {
+            UNREFERENCED_PARAMETER(id);
+
             nlohmann::json j;
             j["magnification"] = m_magnification;
             j["viewportWidth"] = m_viewportWidth;
             j["viewportHeight"] = m_viewportHeight;
+            j["ismaincamera"] = m_isMainCamera;
             return j;
         }
 
@@ -147,6 +150,8 @@ namespace PE
             cam.m_magnification = j["magnification"];
             cam.m_viewportWidth = j["viewportWidth"];
             cam.m_viewportHeight = j["viewportHeight"];
+            if (j.contains("ismaincamera"))
+                cam.m_isMainCamera = j["ismaincamera"];
             return cam;
         }
 

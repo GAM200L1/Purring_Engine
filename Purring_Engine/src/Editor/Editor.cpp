@@ -37,10 +37,11 @@
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
 #include "Graphics/Text.h"
+#include "Data/json.hpp"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
-SerializationManager serializationManager;  // Create an instance
 
+SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
 namespace PE {
@@ -49,25 +50,53 @@ namespace PE {
 	bool Editor::m_fileDragged{ false };
 
 	Editor::Editor() {
+		std::ifstream configFile("../Assets/Settings/config.json");
+		nlohmann::json configJson;
+		configFile >> configJson;
 		//initializing variables 
-		//m_firstLaunch needs to be serialized 
-		m_firstLaunch = true;
-		//serialize based on what was deserialized
-		m_showConsole = true;
-		m_showLogs = true;
-		m_showObjectList = true;
-		m_showSceneView = true;
-		m_showTestWindows = false;
-		m_showComponentWindow = true;
-		m_showResourceWindow = true;
-		m_showPerformanceWindow = false;
-		//show the entire gui 
-		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
-		m_renderDebug = true; // whether to render debug lines
+
+		if (configJson.contains("Editor"))
+		{
+			//m_firstLaunch needs to be serialized 
+			m_firstLaunch = configJson["Editor"]["firstLaunch"].get<bool>();
+			//serialize based on what was deserialized
+			m_showConsole = configJson["Editor"]["showConsole"].get<bool>();
+			m_showLogs = configJson["Editor"]["showLogs"].get<bool>();
+			m_showObjectList = configJson["Editor"]["showObjectList"].get<bool>();
+			m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
+			m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
+			m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
+			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
+			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
+			//show the entire gui 
+			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
+			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
+		}
+		else
+		{
+			//m_firstLaunch needs to be serialized 
+			m_firstLaunch = true;
+			//serialize based on what was deserialized
+			m_showConsole = true;
+			m_showLogs = true;
+			m_showObjectList = true;
+			m_showSceneView = true;
+			m_showTestWindows = false;
+			m_showComponentWindow = true;
+			m_showResourceWindow = true;
+			m_showPerformanceWindow = false;
+			//show the entire gui 
+			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
+			m_renderDebug = true; // whether to render debug lines
+		}
+
+		configFile.close();
+
+		// Set the default visual theme of the editor
 		m_currentStyle = GuiStyle::DARK;
+
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
-		ADD_ALL_MOUSE_EVENT_LISTENER(Editor::OnMouseEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedObject = 1;
@@ -86,6 +115,39 @@ namespace PE {
 
 	Editor::~Editor()
 	{
+		const char* filepath = "../Assets/Settings/config.json";
+		std::ifstream configFile(filepath);
+		nlohmann::json configJson;
+		configFile >> configJson;
+
+		// save the stuff
+		//m_firstLaunch needs to be serialized 
+		configJson["Editor"]["firstLaunch"] = m_firstLaunch;
+		//serialize based on what was deserialized
+		configJson["Editor"]["showConsole"] = m_showConsole;
+		configJson["Editor"]["showLogs"] = m_showLogs;
+		configJson["Editor"]["showObjectList"] = m_showObjectList;
+		configJson["Editor"]["showSceneView"] = m_showSceneView;
+		configJson["Editor"]["showTestWindows"] = m_showTestWindows;
+		configJson["Editor"]["showComponentWindow"] = m_showComponentWindow;
+		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
+		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
+		//show the entire gui 
+		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
+		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
+
+
+		std::ofstream outFile(filepath);
+		if (outFile)
+		{
+			outFile << configJson.dump(4);
+			outFile.close();
+		}
+		else
+		{
+			std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+		}
+
 		m_files.clear();
 	}
 
@@ -2797,7 +2859,7 @@ namespace PE {
 		ss += text;
 		AddLog(ss);
 	}
-
+	
 	void Editor::AddEventLog(std::string_view text)
 	{
 		std::string ss("[EVENT] ");
@@ -2841,7 +2903,6 @@ namespace PE {
 			if (!std::filesystem::equivalent(r_path.parent_path(), m_parentPath))
 				std::filesystem::copy(r_path, std::filesystem::path{ m_parentPath.string() + "/" + r_path.filename().string()}, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
 		}
-
 	}
 
 	void Editor::SetImGUIStyle_Dark()
@@ -3058,6 +3119,5 @@ namespace PE {
 		colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
 		colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
 		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
-
 	}
 }

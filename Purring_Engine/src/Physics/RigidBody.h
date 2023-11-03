@@ -149,8 +149,9 @@ namespace PE
 
 		\return The JSON representation of the RigidBody object.
 		*************************************************************************************/
-		nlohmann::json ToJson() const
+		nlohmann::json ToJson(size_t id) const
 		{
+			id;
 			nlohmann::json j;
 			j["type"] = static_cast<int>(GetType()); // right now its an enum
 			j["mass"] = m_mass;

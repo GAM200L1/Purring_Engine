@@ -37,7 +37,6 @@
 #include "Data/SerializationManager.h"
 #include "Data/json.hpp"
 
-
 namespace PE {
 
 	class Editor : public Singleton<Editor>

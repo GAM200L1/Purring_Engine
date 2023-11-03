@@ -116,6 +116,11 @@ namespace PE
 		return m_ScriptData;
 	}
 
+	rttr::instance FollowScript::GetScriptData(EntityID id)
+	{
+		return rttr::instance(m_ScriptData.at(id));
+	}
+
 	FollowScript::~FollowScript()
 	{
 	}
