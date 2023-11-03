@@ -254,5 +254,4 @@ namespace PE
 		return m_gridSize;
 	}
 
-	
 }
