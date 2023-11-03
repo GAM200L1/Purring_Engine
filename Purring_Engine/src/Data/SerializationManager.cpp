@@ -6,6 +6,14 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     70%
+ \par      changes:    Majority of code and structure
+
+ \co-author            FOONG Jun Wei
+ \par      email:      f.junwei\@digipen.edu
+ \par      code %:     30%
+ \par      changes:    LoadAnimationComponent(), LoadTextComponent(),
+                       LoadScriptComponent()
 
  \brief	   This file contains the implementation of the SerializationManager class.
            The SerializationManager is responsible for serializing and deserializing entities

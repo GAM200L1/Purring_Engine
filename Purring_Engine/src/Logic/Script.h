@@ -1,3 +1,26 @@
+/*!*********************************************************************************** 
+
+ \project  Purring Engine 
+ \module   CSD2401-A 
+ \file     Script.h 
+ \date     03-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan\@digipen.edu
+ \par      code %:     95% 
+ \par      changes:    Majority of the code 
+
+ \co-author            FOONG Jun Wei 
+ \par      email:      f.junwei\@digipen.edu 
+ \par      code %:     5% 
+ \par      changes:    rttr::instance GetScriptData() 
+
+
+ \brief  This file contains the base class declerations of Scripts class/type
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
+
+*************************************************************************************/
 #pragma once
 #include <rttr/registration.h>
 typedef unsigned long long EntityID;
@@ -35,7 +58,13 @@ public:
 	*************************************************************************************/
 	virtual void OnDetach(EntityID) = 0;
 
-
+	/*!***********************************************************************************
+	 \brief Get the Script Data returning an rttr::instance obj, to use for reflection of
+	 		Script data
+	 
+	 \param[in] id 
+	 \return rttr::instance 
+	*************************************************************************************/
 	virtual rttr::instance GetScriptData(EntityID id) = 0;
 	/*!***********************************************************************************
 	 \brief					Destructor for Scripts
