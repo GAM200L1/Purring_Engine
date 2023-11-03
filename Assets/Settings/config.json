@@ -8,7 +8,7 @@
         "showLogs": true,
         "showObjectList": true,
         "showPerformanceWindow": false,
-        "showResourceWindow": true,
+        "showResourceWindow": false,
         "showSceneView": true,
         "showTestWindows": false
     },

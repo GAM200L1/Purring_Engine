@@ -22,8 +22,8 @@ namespace PE
     int ScriptGlue::NativeSumIntArray(MonoArray* array)
     {
         long sum = 0;
-        int len = mono_array_length(array);
-        for (int i = 0; i < len; ++i) {
+        uintptr_t len = mono_array_length(array);
+        for (uintptr_t i = 0; i < len; ++i) {
             sum += mono_array_get(array, int, i);
         }
         return sum;
