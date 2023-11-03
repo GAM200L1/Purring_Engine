@@ -19,6 +19,7 @@
 #include "CollisionManager.h"
 #include "Logging/Logger.h"
 #include "Editor/Editor.h"
+#include "Data/json.hpp"
 extern Logger engine_logger;
 
 namespace PE
@@ -29,10 +30,44 @@ namespace PE
 	CollisionManager::CollisionManager() 
 	{
 		// empty by design
+		std::ifstream colliderCfg("../Assets/Settings/collidercfg.json");
+		if (colliderCfg.is_open())
+		{
+			nlohmann::json cfgJson;
+			colliderCfg >> cfgJson;
+			if (cfgJson.contains("Gridsize"))
+			{
+				gridSize.x = cfgJson["Gridsize"]["x"].get<float>();
+				gridSize.y = cfgJson["Gridsize"]["y"].get<float>();
+			}
+		}
+		
 	}
 
 	CollisionManager::~CollisionManager()
 	{
+		const char* filepath = "../Assets/Settings/collidercfg.json";
+		std::ifstream cfgFile(filepath);
+		nlohmann::json cfgjson;
+		if (cfgFile.is_open())
+		{
+			cfgFile >> cfgjson;
+			cfgFile.close();
+		}
+		cfgjson["Gridsize"]["x"] = gridSize.x;
+		cfgjson["Gridsize"]["y"] = gridSize.y;
+
+		std::ofstream outfile(filepath);
+		if (outfile.is_open())
+		{
+			outfile << cfgjson.dump(4);
+			outfile.close();
+		}
+		else
+		{
+			std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+		}
+
 		m_grid.ClearGrid();
 	}
 
