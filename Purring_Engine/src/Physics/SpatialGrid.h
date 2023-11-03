@@ -165,15 +165,84 @@ namespace PE
 		bool GridExists() const;
 
 		// ----- Public Methods ----- //
+		/*!***********************************************************************************
+		 \brief Checks if an AABB collider is in a grid area
+		 
+		 \param[in] r_collider const reference to an AABB collider
+		 \return true - Collider is in grid area
+		 \return false - Collider is not in grid area
+		*************************************************************************************/
 		bool CheckInGridArea(AABBCollider const& r_collider);
+		
+		/*!***********************************************************************************
+		 \brief Checks if a Circle collider is in a grid area
+		 
+		 \param[in] r_collider const referenceto a Circle collider
+		 \return true - Collider is in grid area
+		 \return false - Collider is not in grid area
+		*************************************************************************************/
 		bool CheckInGridArea(CircleCollider const& r_collider);
+
+		// ----- Public Methods ------ //
+		/*!***********************************************************************************
+		 \brief Get the GridID of the min and max bounds of an AABB collider
+
+		 \param[in] r_collider - AABB Collider
+		 \return std::pair<GridID, GridID> - GridID of the min and max bounds of the collider
+		*************************************************************************************/
 		std::pair<GridID, GridID> GetMinMaxIDs(AABBCollider const& r_collider);
+
+		/*!***********************************************************************************
+		 \brief Get the GridID of the min and max bounds of a Circle collider
+
+		 \param[in] r_collider - Circle Collider
+		 \return std::pair<GridID, GridID> - GridID of the min and max bounds of the collider
+		*************************************************************************************/
 		std::pair<GridID, GridID> GetMinMaxIDs(CircleCollider const& r_collider);
+
+		/*!***********************************************************************************
+		 \brief Get the GridID of a point
+		 
+		 \param[in] posX - x coordinate of the point
+		 \param[in] posY - y coordinate of the point
+		 \return GridID - ID of the grid the point is in
+		*************************************************************************************/
 		GridID GetIndex(float posX, float posY);
+		
+		// ----- Getters/Setters ----- //
+		/*!***********************************************************************************
+		 \brief Get the Grid Size object
+		 
+		 \return vec2 const& - m_gridSize, where x is width and y is height
+		*************************************************************************************/
 		vec2 const& GetGridSize() const;
+		
+		/*!***********************************************************************************
+		 \brief Get the Grid Min object which is the coordinate of the min bound of the grid
+		 
+		 \return vec2 const& - m_min
+		*************************************************************************************/
 		vec2 const& GetGridMin() const;
+
+		/*!***********************************************************************************
+		 \brief Get the Grid Max object which is the coordinate of the max bound of the grid
+		 
+		 \return vec2 const& - m_max
+		*************************************************************************************/
 		vec2 const& GetGridMax() const;
+
+		/*!***********************************************************************************
+		 \brief Get the individual cell width
+		 
+		 \return float - m_cellWidth
+		*************************************************************************************/
 		float GetCellWitdh() const;
+
+		/*!***********************************************************************************
+		 \brief Get a vec2 with the number of columns and rows the grid has
+		 
+		 \return vec2 - number of columns and rows
+		*************************************************************************************/
 		vec2 GetColumnsRows() const;
 
 	private:
