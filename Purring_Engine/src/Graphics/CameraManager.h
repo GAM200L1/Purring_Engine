@@ -200,7 +200,7 @@ namespace PE
             // ----- Public methods ----- //
         public:
             /*!***********************************************************************************
-             \brief Does nothing.
+             \brief Subscribe listeners to the mouse, key and window events.
             *************************************************************************************/
             void InitializeSystem();
 

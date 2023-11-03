@@ -78,8 +78,8 @@ namespace PE
             /*!***********************************************************************************
              \brief Resizes the texture object to match the size passed in.
 
-             \param[in] width Width the texture object should be set to.
-             \param[in] height Height the buffer should be set to.
+             \param[in] newWidth Width the texture object should be set to.
+             \param[in] newHeight Height the buffer should be set to.
             *************************************************************************************/
             void Resize(int const newWidth, int const newHeight);
 
@@ -102,7 +102,6 @@ namespace PE
         private:
             GLuint m_frameBufferObjectIndex{}; // Frame buffer object to draw to
             GLuint m_textureIndex{}; // ID of texture attachment that the scene window content is drawn to
-            GLuint m_entityTextureId{}; // ID of texture attachment that the entity IDs are written to (for screen picking)
 
             int m_bufferWidth{}, m_bufferHeight{}; // Width and height of the buffer object            
         };

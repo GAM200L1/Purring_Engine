@@ -79,6 +79,7 @@ namespace PE
 
         void EditorCamera::UpdateCamera()
         {
+            // Recompute matrices if its properties have changed
             if (GetHasChanged() || hasViewportChanged)
             {
                 ComputeViewMatrix(m_position.x, m_position.y, m_orientation, m_magnification);

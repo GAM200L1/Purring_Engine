@@ -26,6 +26,7 @@ namespace PE
 
 		// ----- Public Variable ----- //
 		static vec2 gridSize;
+		static bool gridActive;
 
 		// ----- Constructors/Destructors ----- //
 		/*!***********************************************************************************

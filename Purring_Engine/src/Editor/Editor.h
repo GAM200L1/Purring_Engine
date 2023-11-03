@@ -310,12 +310,12 @@ namespace PE {
 
 		//variable for assets browser
 		float m_time;
-		float m_renderWindowWidth, m_renderWindowHeight;
+		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
-		int m_entityToModify;
+		std::pair<std::string, int> m_entityToModify;
 		static bool m_fileDragged;
 	};
 }

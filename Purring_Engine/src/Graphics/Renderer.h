@@ -92,15 +92,6 @@ namespace PE
              \brief Sets the RGBA color of the object. If the object has a texture on it, 
                     this tints the color of the texture.
              
-             \param[in] newColor RGBA color to set the object to (the values should be on 
-                                    a range of [0, 1]).
-            *************************************************************************************/
-            //void Renderer::SetColor(glm::vec4 const& newColor);
-
-            /*!***********************************************************************************
-             \brief Sets the RGBA color of the object. If the object has a texture on it, 
-                    this tints the color of the texture.
-             
              \param[in] r Red component of the color to set the object to (from [0, 1]).
              \param[in] g Green component of the color to set the object to (from [0, 1]).
              \param[in] b Blue component of the color to set the object to (from [0, 1]).

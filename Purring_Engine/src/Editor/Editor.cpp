@@ -6,9 +6,18 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
+ \par      code %:     95%
+ \par      changes:    Defined all the logic for rendering the editor UI through ImGUI.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    02-11-2023
+                       Added object picking logic.
 
  \brief
-	cpp file containing the definition of the editor class
+	cpp file containing the definition of the editor class, which contains 
+	logic for rendering the editor UI through ImGUI.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -112,7 +121,7 @@ namespace PE {
 		// loading for assets window
 		GetFileNamesInParentPath(m_parentPath, m_files);
 		m_mouseInScene = false;
-		m_entityToModify = -1;
+		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
 		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
 		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
@@ -1263,7 +1272,7 @@ namespace PE {
 									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
 									if (ImGui::IsItemHovered())
 									{
-										m_entityToModify = static_cast<int>(entityID);
+										m_entityToModify = std::make_pair<std::string, int>("Renderer", static_cast<int>(entityID));
 									}
 
 									// Shows a drop down of selectable textures
@@ -1367,6 +1376,12 @@ namespace PE {
 										}
 									}
 									ImGui::EndChild();
+
+									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("GUIRenderer", static_cast<int>(entityID));
+									}
 
 									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
@@ -1721,33 +1736,49 @@ namespace PE {
 
 								EntityManager::GetInstance().Get<TextComponent>(entityID).SetText(stringBuffer);
 
-								// Setting fonts
-								std::vector<const char*> key;
-								key.push_back("");
-
-								//to get all the keys
-								for (std::map<std::string, std::shared_ptr<Font>>::iterator it = ResourceManager::GetInstance().Fonts.begin(); it != ResourceManager::GetInstance().Fonts.end(); ++it)
+								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's fonts
+								std::vector<std::filesystem::path> filepaths;
+								int i{ 0 };
+								int fontIndex{ 0 };
+								for (auto it = ResourceManager::GetInstance().Fonts.begin(); it != ResourceManager::GetInstance().Fonts.end(); ++it, ++i)
 								{
-									key.push_back(it->first.c_str());
-								}
-								int index{};
-								for (std::string str : key)
-								{
-									if (str == EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey())
-										break;
-									index++;
+									filepaths.emplace_back(it->first);
+									if (it->first == EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey())
+										fontIndex = i;
 								}
 
-								// create a combo box of texture ids
-								ImGui::SetNextItemWidth(200.0f);
-								if (!key.empty())
+								// Vector of the names of fonts that have already been loaded
+								std::vector<std::string> fontTextureKeys;
+
+								// get the keys of fonts already loaded by the resource manager
+								for (auto const& r_filepath : filepaths)
 								{
+									fontTextureKeys.emplace_back(r_filepath.stem().string());
+								}
+
+								//// Setting fonts
+								if (!fontTextureKeys.empty())
+								{
+									// create a combo box of Font ids
 									ImGui::Text("Font: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									// set selected texture id
-									if (ImGui::Combo("##Font", &index, key.data(), static_cast<int>(key.size())))
+									bool bl{};
+									if (EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey() != "")
 									{
-										EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(key[index]);
+										bl = ImGui::BeginCombo("##FontTextures", fontTextureKeys[fontIndex].c_str()); // The second parameter is the label previewed before opening the combo.
+									}
+									else
+									{
+										bl = ImGui::BeginCombo("##FontTextures", ""); // The second parameter is the label previewed before opening the combo.
+									}
+									if (bl)
+									{
+										for (int n{ 0 }; n < fontTextureKeys.size(); ++n)
+										{
+											if (ImGui::Selectable(fontTextureKeys[n].c_str()))
+												EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(filepaths[n].string());
+										}
+										ImGui::EndCombo();
 									}
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -2130,15 +2161,24 @@ namespace PE {
 					// Check if the mouse button is released
 					if (ImGui::IsMouseReleased(0))
 					{
-						if (m_entityToModify != -1)
+						if (m_entityToModify.second != -1)
 						{
 							// alters the texture assigned to renderer component in entity
 							std::string const extension = m_files[draggedItemIndex].extension().string();
 							if (extension == ".png")
 							{
-								ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(m_files[draggedItemIndex].string());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
+								if (m_entityToModify.first == "Renderer")
+								{
+									ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify.second).SetTextureKey(m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
+								}
+								else if (m_entityToModify.first == "GUIRenderer")
+								{
+									ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetTextureKey(m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
+								}
 							}
 							// add remaining editable assets audio etc
 						}
@@ -2156,7 +2196,7 @@ namespace PE {
 						draggedItemIndex = -1;
 					}
 				}
-				m_entityToModify = -1;
+				m_entityToModify = std::make_pair<std::string>("", - 1);
 			}
 
 
