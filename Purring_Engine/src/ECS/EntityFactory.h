@@ -190,16 +190,126 @@ namespace PE
 		 \return false 	 Failed to copy/initialize
 		*************************************************************************************/
 		bool InitializeED(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeRigidBody(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeCollider(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeTransform(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializePlayerStats(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeRenderer(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeScriptComponent(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeCamera(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeGUI(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeGUIRenderer(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeAnimationComponent(const EntityID& r_id, void* p_data);
+
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+		 
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+		 				 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeTextComponent(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
@@ -244,27 +354,6 @@ namespace PE
 		p_entityManager->UpdateVectors(ret);
 		return ret;
 	}
-
-
-
-	//template<typename T>
-	//void EntityFactory::Assign(EntityID id, const std::vector<T>& r_var)
-	//{
-	//	if (typeid(T) != typeid(ComponentID) && typeid(T) != typeid(const char*))
-	//	{
-	//		engine_logger.AddLog(true, "T was not a string!!", __FUNCTION__);
-	//		engine_logger.FlushLog();
-	//		throw;
-	//	}
-	//	for (const T& r_type : r_var)
-	//	{
-	//		if (m_componentMap.at(r_type) != m_componentMap.end())
-	//		{
-	//			p_entityManager->Assign(id, r_type);
-	//		}
-	//	}
-	//	p_entityManager->UpdateVectors(id);
-	//}
 
 
 	template<typename ... T>

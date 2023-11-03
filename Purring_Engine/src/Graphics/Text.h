@@ -7,6 +7,13 @@
 
  \author               Brandon Ho Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
+ \par      code %:     90% 
+ \par      changes:    Majority of the code 
+
+ \co-author            FOONG Jun Wei	 
+ \par      email:      f.junwei\@digipen.edu 
+ \par      code %:     10% 
+ \par      changes:    ToJson() & Deserialize() 
 
  \brief    This file contains the declarations of functions and classes required for
 		   rendering text.
@@ -67,24 +74,76 @@ namespace PE
 	{
 
 	public:
+		/*!***********************************************************************************
+		 \brief Get the Font 
+		 
+		 \return std::shared_ptr<const Font> 
+		*************************************************************************************/
 		inline std::shared_ptr<const Font> GetFont() const { return m_font; }
 
+		/*!***********************************************************************************
+		 \brief Get the Font Key 
+		 
+		 \return std::string const& 
+		*************************************************************************************/
 		inline std::string const& GetFontKey() const { return m_fontKey; }
 
+		/*!***********************************************************************************
+		 \brief Get the Text 
+		 
+		 \return std::string const& 
+		*************************************************************************************/
 		inline std::string const& GetText() const { return m_text; }
 
+		/*!***********************************************************************************
+		 \brief Get the Size 
+		 
+		 \return float 
+		*************************************************************************************/
 		inline float GetSize() const { return m_size; }
 
+		/*!***********************************************************************************
+		 \brief Get the Color
+		 
+		 \return glm::vec4 const& 
+		*************************************************************************************/
 		inline glm::vec4 const& GetColor() const { return m_color; }
 
+		/*!***********************************************************************************
+		 \brief Set the Font
+		 
+		 \param[in] fontKey 
+		*************************************************************************************/
 		void SetFont(std::string fontKey);
 
+		/*!***********************************************************************************
+		 \brief Set the Tex
+		 
+		 \param[in] text 
+		*************************************************************************************/
 		void SetText(std::string const& text);
 
+		/*!***********************************************************************************
+		 \brief Set the Size
+		 
+		 \param[in] size 
+		*************************************************************************************/
 		void SetSize(float size);
 
+		/*!***********************************************************************************
+		 \brief Set the Color
+		 
+		 \param[in] color 
+		*************************************************************************************/
 		void SetColor(glm::vec4 const& color);
 
+		/*!***********************************************************************************
+		 \brief Serializes the specified entity's TextComponent into a json file, returns a
+		 		copy
+		 
+		 \param[in] id 				The entity to serialize
+		 \return nlohmann::json 	The copy of the json generated
+		*************************************************************************************/
 		nlohmann::json ToJson(EntityID id) const
 		{
 			nlohmann::json ret;
@@ -115,6 +174,13 @@ namespace PE
 			return ret;
 		}
 
+		/*!***********************************************************************************
+		 \brief Deserializes from json file into this TextComponent and returns a reference
+		 		to this
+		 
+		 \param[in] j 				The json file to deserialize from
+		 \return TextComponent& 	The reference to this TextComponent Obj
+		*************************************************************************************/
 		TextComponent& Deserialize(const nlohmann::json& j)
 		{
 			rttr::type type = rttr::type::get<TextComponent>();

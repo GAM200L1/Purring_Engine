@@ -1,3 +1,25 @@
+/*!*********************************************************************************** 
+ \project  Purring Engine 
+ \module   CSD2401-A 
+ \file     LogicSystem.h 
+ \date     03-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan\@digipen.edu
+ \par      code %:     85% 
+ \par      changes:    Majority of the code 
+
+ \co-author            FOONG Jun Wei 
+ \par      email:      f.junwei\@digipen.edu 
+ \par      code %:     15% 
+ \par      changes:    Serialize and deserialize scriptcomponent & data
+
+
+ \brief  This file contains the base class declerations of Scripts class/type
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
+
+*************************************************************************************/
 #pragma once
 #include "System.h"
 #include "Script.h"
