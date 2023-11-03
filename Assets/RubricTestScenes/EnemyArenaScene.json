@@ -248,7 +248,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
-                        "name": "EmptyObject",
+                        "name": "Wall1",
                         "parent": null,
                         "sceneID": 5
                     },
@@ -311,7 +311,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
-                        "name": "EmptyObject",
+                        "name": "Wall2",
                         "parent": null,
                         "sceneID": 6
                     },
@@ -374,7 +374,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
-                        "name": "EmptyObject",
+                        "name": "Wall3",
                         "parent": null,
                         "sceneID": 7
                     },
@@ -437,7 +437,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
-                        "name": "EmptyObject",
+                        "name": "Wall4",
                         "parent": null,
                         "sceneID": 8
                     },

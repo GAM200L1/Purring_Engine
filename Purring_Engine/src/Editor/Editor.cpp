@@ -777,7 +777,6 @@ namespace PE {
 				{
 					AudioManager::GetInstance().StopAllSounds();
 				}
-				ImGui::SameLine();
 				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
 				{
 					LoadSceneFromGivenPath("../Assets/RubricTestScenes/AudioButtonScene.json");
@@ -795,30 +794,17 @@ namespace PE {
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Text Test Scene"))
+			if (ImGui::Button("Camera Test Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/CameraTestScene.json");
 			}
-			ImGui::SameLine();
-			if (ImGui::Button("Text Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
-			}
-			if (ImGui::Button("Text Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
-			}
-
-			ImGui::Separator();
-			ImGui::Dummy(ImVec2(0.0f, 2.0f));
-			ImGui::SeparatorText("Scenes To Test");
-			if (ImGui::Button("Draw 2500 objects Instancing Test"))
+			if (ImGui::Button("Draw 2500 objects Instancing Test Scene"))
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
 				for (size_t i{}; i < 2500; ++i)
 				{
-					
+
 					EntityID id2 = EntityFactory::GetInstance().Clone(id);
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
@@ -827,41 +813,26 @@ namespace PE {
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor();
 				}
-			} 
-			ImGui::SameLine();
-			if (ImGui::Button("Toggle Debug Lines"))
-			{
-				ToggleDebugRender();
 			}
-			ImGui::SameLine();
-			if (ImGui::Button("Clear Object List##2"))
-			{
-				ClearObjectList();
-			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::Dummy(ImVec2(0.0f, 2.0f));
-			ImGui::SeparatorText("Scenes To Test");
-			if (ImGui::Button("Crash Log"))
+			ImGui::SeparatorText("Logic Test");			
+			if (ImGui::Button("Logic Test Scene 1"))
 			{
-				try
-				{
-					std::vector testVector = { 1 };
-					testVector[0] = testVector.at(1); // force an out of range access exception
-				}
-				catch (const std::out_of_range& r_err)
-				{
-					engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
-					throw r_err; // pass the error along
-				}
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene1.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Add Debug Text"))
+			if (ImGui::Button("Logic Test Scene 2"))
 			{
-				AddErrorLog("Debug text");
-				AddInfoLog("Debug text");
-				AddWarningLog("Debug text");
-				AddEventLog("Debug text");
-				AddLog("Debug text");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene2.json");
+			}
+			if (ImGui::Button("Enemy AI Test Scene"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/EnemyArenaScene.json");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Advance AI Test Scene"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/AdvanceLogicScene.json");
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
@@ -1813,7 +1784,7 @@ namespace PE {
 					{
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
-							if (key == "test")
+							if (key == "testScript")
 							{
 								testScript* p_Script = dynamic_cast<testScript*>(val);
 								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
