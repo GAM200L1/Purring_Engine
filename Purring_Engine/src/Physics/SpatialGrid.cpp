@@ -7,7 +7,8 @@
  \author               Liew Yeni
  \par      email:      yeni.l/@digipen.edu.sg
 
- \brief 
+ \brief	   This file contains function definitions for classes Cell and Grid
+		   and defines the struct GridID.
 
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.

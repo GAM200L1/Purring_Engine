@@ -250,6 +250,16 @@ namespace PE {
 		*************************************************************************************/
 		void ClearObjectList();
 
+		/*!***********************************************************************************
+		 \brief Allows files to be dragged into the assets browser and copied from that its
+				original file directory to the project's asset folder.
+				Information on the number of files and their original filepaths is printed in
+				the engine log.
+
+		 \param[in] GLFWwindow* - pointer to the window the editor is in
+		 \param[in] int - number of files that has been dragged into the browser
+		 \param[in] const char** - filepaths of the files that have been dragged into the browser
+		*************************************************************************************/
 		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths);
 
 	private:
