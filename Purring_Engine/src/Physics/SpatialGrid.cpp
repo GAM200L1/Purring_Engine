@@ -219,7 +219,7 @@ namespace PE
 	{
 		vec2 colliderMax{ r_collider.center.x + r_collider.radius, r_collider.center.y + r_collider.radius };
 		vec2 colliderMin{ r_collider.center.x - r_collider.radius, r_collider.center.y - r_collider.radius };
-		std::cout << colliderMax.x << '\n';
+		//std::cout << colliderMax.x << '\n';
 		if (colliderMax.x >= m_max.x || colliderMin.x <= m_min.x) { return false; }
 		if (colliderMax.y >= m_max.y || colliderMin.y <= m_min.y) { return false; }
 		// else
