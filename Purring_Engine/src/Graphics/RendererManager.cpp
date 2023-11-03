@@ -1044,7 +1044,7 @@ namespace PE
         {
             glm::vec2 up{ -glm::sin(orientation), glm::cos(orientation) };
             glm::vec2 right{ up.y, -up.x };
-            up *= 1.f / width, right *= 1.f / height;
+            up *= 1.f / height, right *= 1.f / width;
 
             float upDotPosition{ up.x * positionX + up.y * positionY };
             float rightDotPosition{ right.x * positionX + right.y * positionY };
