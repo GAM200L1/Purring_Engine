@@ -1,3 +1,20 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     CameraManagerScript.cpp
+ \date     02-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	Script that switches the main camera between multiple cameras in the scene.
+	For M2 demo purposes.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
+
 #include "prpch.h"
 #include "CameraManagerScript.h"
 #include "Input/InputSystem.h"

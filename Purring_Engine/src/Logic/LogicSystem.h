@@ -79,6 +79,13 @@ namespace PE {
 		ScriptComponent() {}
 		//std::vector<std::string> m_scriptKeys;
 		std::map<std::string, ScriptState> m_scriptKeys;
+
+		/*!***********************************************************************************
+		 \brief Adds a script to the container and calls the attach function
+		 
+		 \param[in,out] key - Key of the script state
+		 \param[in,out] id - ID of the script
+		*************************************************************************************/
 		void addScript(std::string key, EntityID id)
 		{
 			auto itr = m_scriptKeys.find(key);
@@ -88,6 +95,13 @@ namespace PE {
 				LogicSystem::m_scriptContainer[key]->OnAttach(id);
 			}
 		}
+
+		/*!***********************************************************************************
+		 \brief Removes a script from the container 
+		 
+		 \param[in,out] key - Key of the script state
+		 \param[in,out] id - ID of the script
+		*************************************************************************************/
 		void removeScript(std::string key, EntityID id)
 		{
 			auto itr = m_scriptKeys.find(key);
@@ -96,15 +110,16 @@ namespace PE {
 			LogicSystem::m_scriptContainer[key]->OnDetach(id);
 		}
 
+		/*!***********************************************************************************
+		 \brief Serializes the data to a JSON file
+		 
+		 \param[in,out] id - ID of script to get the data of
+		 \return nlohmann::json - JSON object with data from script
+		*************************************************************************************/
 		nlohmann::json ToJson(EntityID id) const
 		{
 			nlohmann::json ret;
-			/*rttr::type currType = rttr::type::get_by_name(PE::EntityManager::GetInstance().GetComponentID<ScriptComponent>().to_string());
-			for (auto& prop : currType.get_properties())
-			{
-				std::string nm(prop.get_name());	
-				rttr::variant vp = prop.get_value(m_scriptKeys);
-			}*/
+			
 			for (auto [k, v] : m_scriptKeys)
 			{
 				ret[k.c_str()]["state"] = v;
@@ -170,6 +185,12 @@ namespace PE {
 			return ret;
 		}
 
+		/*!***********************************************************************************
+		 \brief Load the script data from a file
+		 
+		 \param[in,out] j - JSON object with data to laod into the script
+		 \return ScriptComponent& - Reference to updated script component
+		*************************************************************************************/
 		ScriptComponent& Deserialize(const nlohmann::json& j)
 		{
 			for (const auto& k : j.items())

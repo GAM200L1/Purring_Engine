@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     FollowScript.cpp
+ \date     02-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	Script that allows the cats to follow after a leader. For M2 demo purposes.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
+
 #include "prpch.h"
 #include "FollowScript.h"
 #include "ECS/EntityFactory.h"
