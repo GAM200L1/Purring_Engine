@@ -82,7 +82,7 @@
 #include "Logic/testScript.h"
 #include "Logic/testScript2.h"
 #include "Logic/FollowScript.h"
-
+#include "Logic/CameraManagerScript.h"
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -197,6 +197,11 @@ RTTR_REGISTRATION
         .property("rotation", &PE::FollowScriptData::Rotation)
         .property("CurrentPosition", &PE::FollowScriptData::CurrentPosition)
         .property("NextPosition", &PE::FollowScriptData::NextPosition);
+
+    rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
+        .property("NumberOfCamera", &PE::CameraManagerScriptData::NumberOfCamera)
+        .property("CameraIDs", &PE::CameraManagerScriptData::CameraIDs);
+
 
     rttr::registration::class_<PE::TextComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>().to_string().c_str())
         .property_readonly("Font", &PE::TextComponent::GetFontKey)

@@ -11,7 +11,7 @@
 #include "PlayerControllerScript.h"
 #include "FollowScript.h"
 #include "Editor/Editor.h"
-
+#include "CameraManagerScript.h"
 
 
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
@@ -31,6 +31,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(PlayerControllerScript);
 	REGISTER_SCRIPT(EnemyTestScript);
 	REGISTER_SCRIPT(FollowScript);
+	REGISTER_SCRIPT(CameraManagerScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

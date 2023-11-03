@@ -24,6 +24,7 @@
 #include <Commdlg.h>
 #include "Data/SerializationManager.h"
 #include "Physics/PhysicsManager.h"
+#include "Physics/CollisionManager.h"
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
 #include "Graphics/RendererManager.h"
@@ -31,6 +32,7 @@
 #include "Logic/PlayerControllerScript.h"
 #include "Logic/EnemyTestScript.h"
 #include "Logic/FollowScript.h"
+#include "Logic/CameraManagerScript.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
@@ -67,6 +69,7 @@ namespace PE {
 			m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
 			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
 			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
+			m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
@@ -84,6 +87,7 @@ namespace PE {
 			m_showComponentWindow = true;
 			m_showResourceWindow = true;
 			m_showPerformanceWindow = false;
+			m_showPhysicsWindow = false;
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = true; // whether to render debug lines
@@ -127,6 +131,7 @@ namespace PE {
 		configJson["Editor"]["showComponentWindow"] = m_showComponentWindow;
 		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
+		configJson["Editor"]["showPhysicsWindow"] = m_showPhysicsWindow;
 		//show the entire gui 
 		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
 		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
@@ -301,6 +306,7 @@ namespace PE {
 			//performance window showing time used per system
 			if (m_showPerformanceWindow) ShowPerformanceWindow(&m_showPerformanceWindow);
 
+			if (m_showPhysicsWindow) ShowPhysicsWindow(&m_showPhysicsWindow);
 
 			//imgui end frame render functions
 			ImGui::Render();
@@ -321,7 +327,7 @@ namespace PE {
 	{
 		//if active
 		if (IsEditorActive())
-		if (!ImGui::Begin("logwindow", Active))
+		if (!ImGui::Begin("Debug Log Window", Active))
 		{
 			ImGui::End();			//imgui syntax
 		}
@@ -361,6 +367,15 @@ namespace PE {
 			ImGui::InputText("Text Finder ", &m_findText); //inpux box
 			ImGui::SetItemTooltip("(Case Sensitive)");
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			if (ImGui::Button("Add Debug Text"))
+			{
+				AddErrorLog("Debug text");
+				AddInfoLog("Debug text");
+				AddWarningLog("Debug text");
+				AddEventLog("Debug text");
+				AddLog("Debug text");
+			}
 			ImGui::Separator(); // line
 
 
@@ -421,7 +436,7 @@ namespace PE {
 	void Editor::ShowConsoleWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("consolewindow", Active)) // start drawing
+		if (!ImGui::Begin("Console Window", Active)) // start drawing
 		{
 			ImGui::End(); //imgui syntax if inactive
 		}
@@ -483,7 +498,7 @@ namespace PE {
 	void Editor::ShowObjectWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Object List Window", Active)) // draw object list
+		if (!ImGui::Begin("Object Hierarchy Window", Active)) // draw object list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -708,66 +723,18 @@ namespace PE {
 		}
 	}
 
-
-	//temporary for milestone 1
+	//temporary hardcoded stuff for testing for milestone 2
 	void Editor::ShowDemoWindow(bool* Active)
 	{
-		//if (IsEditorActive())
-		if (!ImGui::Begin("debugTests", Active, ImGuiWindowFlags_AlwaysAutoResize))
+		if (IsEditorActive())
+		if (!ImGui::Begin("Rubric Test Window", Active, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
 		}
 		else
 		{
-			static int allocated = 1;
-			ImGui::Text("Memory Test");
-			ImGui::Spacing();
-			if (ImGui::Button("Allocating Memory"))
-			{
-				std::string ss("AllocationTest");
-				ss += std::to_string(allocated);
-				char* allocationtest = (char*)MemoryManager::GetInstance().AllocateMemory(ss, 30);
-				allocated++;
-				allocationtest;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Create Out of Index Object on Stack"))
-			{
-				char* outofmemorytest = (char*)MemoryManager::GetInstance().AllocateMemory("out of index test", 1000000);
-				outofmemorytest;
-			}
-			static bool buffertester = false;
-			ImGui::BeginDisabled(buffertester);
-			if (ImGui::Button("Written over Buffer Tests"))
-			{
-				buffertester = true;
-				char* buffertest = (char*)MemoryManager::GetInstance().AllocateMemory("buffertest", 7);
-				//writing 8 bytes into the 7 i allocated
-				strcpy_s(buffertest, 9, "testtest");
-				AddWarningLog("writing \"testtest\" 9 byte into buffertest of 7 byte + 4 buffer bytes");
-				AddConsole(buffertest);
-				allocated++;
-			}
-			ImGui::EndDisabled();
-			ImGui::SameLine();
-			ImGui::BeginDisabled(!(allocated > 1));
-			if (ImGui::Button("popback previous allocation"))
-			{
-				buffertester = false;
-				MemoryManager::GetInstance().Pop_BackMemory();
-				AddInfoLog("delete and popping back previously allocated object");
-				allocated--;
-			}
-			ImGui::EndDisabled();
-			if (ImGui::Button("Print Memory Data"))
-			{
-				MemoryManager::GetInstance().PrintData();
-			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
-
-			ImGui::Separator();
 			//audio
-			ImGui::Text("Audio Test");
+			ImGui::SeparatorText("Audio Test");
 			if (ImGui::Button("Play SFX 1"))
 			{
 				AudioManager::GetInstance().PlaySound("audio_sound1");
@@ -787,160 +754,30 @@ namespace PE {
 				AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
 			}
 			ImGui::SameLine();
-
 			if (ImGui::Button("Stop All Audio"))
 			{
 				AudioManager::GetInstance().StopAllSounds();
 			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // add space
-
+			ImGui::SameLine();
+			if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
+			{
+				//LoadSceneFromGivenPath("../Assets/Prefabs/SceneTest7.json");
+			}
+			ImGui::Dummy(ImVec2(0.0f, 2.0f));
+			ImGui::SeparatorText("Scenes To Test");
+			if (ImGui::Button("LoadScene1"))
+			{
+				LoadSceneFromGivenPath("../Assets/Prefabs/SceneTest7.json");
+			}
 			ImGui::Separator();
 			ImGui::Text("Physics Test");
-			if (ImGui::Button("Random Object Test"))
+			if (ImGui::Button("Open Physics Scene"))
 			{
-				ClearObjectList();
-				std::random_device rd;
-				std::mt19937 gen(rd());
-				for (size_t i{ 2 }; i < 20; ++i)
-				{
-					EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
 
-					std::uniform_int_distribution<>distr0(-550, 550);
-					EntityManager::GetInstance().Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
-					std::uniform_int_distribution<>distr1(-250, 250);
-					EntityManager::GetInstance().Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
-					std::uniform_int_distribution<>distr2(10, 200);
-					EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(distr2(gen));
-					EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(distr2(gen));
-					EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
-
-					if (i % 3)
-						EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-
-					if (i % 2)
-						EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
-					else
-						EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
-				}
 			}
-			ImGui::SameLine();
-			if (ImGui::Button("Clear Object List##1"))
-			{
-				ClearObjectList();
-			}
-			if (ImGui::Button("AABB AABB DYNAMIC STATIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
 
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("AABB AABB DYNAMIC DYNAMIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-			}
-			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC STATIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC DYNAMIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-			}
-			if (ImGui::Button("AABB CIRCLE DYNAMIC STATIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("AABB CIRCLE DYNAMIC DYNAMIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-			}
-			if (ImGui::Button("CIRCLE AABB DYNAMIC STATIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("CIRCLE AABB DYNAMIC DYNAMIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-			}
-			if (ImGui::Button("Toggle Step Physics"))
-			{
-				PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
-
-				if (PhysicsManager::GetStepPhysics())
-					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned On.\n");
-				else
-					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned Off.\n");
-			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
-
-			ImGui::Separator();
-			ImGui::Text("Object Test");
+			ImGui::Dummy(ImVec2(0.0f, 2.0f));
+			ImGui::SeparatorText("Scenes To Test");
 			if (ImGui::Button("Draw 2500 objects"))
 			{
 				ClearObjectList();
@@ -970,8 +807,8 @@ namespace PE {
 				ClearObjectList();
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
-			ImGui::Separator();
-			ImGui::Text("Other Test");
+			ImGui::Dummy(ImVec2(0.0f, 2.0f));
+			ImGui::SeparatorText("Scenes To Test");
 			if (ImGui::Button("Crash Log"))
 			{
 				try
@@ -984,11 +821,6 @@ namespace PE {
 					engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
 					throw r_err; // pass the error along
 				}
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Performance Viewer"))
-			{
-				m_showPerformanceWindow = !m_showPerformanceWindow;
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Add Debug Text"))
@@ -1007,7 +839,7 @@ namespace PE {
 	void Editor::ShowComponentWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("componentwindow", Active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
+		if (!ImGui::Begin("Property Editor Window", Active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
 		{
 			ImGui::End();
 		}
@@ -2008,6 +1840,38 @@ namespace PE {
 									}
 								}
 							}
+						
+							if (key == "CameraManagerScript")
+							{
+								CameraManagerScript* p_Script = dynamic_cast<CameraManagerScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int j = it->second.NumberOfCamera+1;
+										ImGui::Text("Number of Camera: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff", &j);
+										if (j <= 11 && j >= 1)
+										{
+											it->second.NumberOfCamera = j-1;
+										}
+										else
+										{
+											it->second.NumberOfCamera = 9;
+										}
+
+										for (int i = 0; i <= it->second.NumberOfCamera; i++)
+										{
+											int id = static_cast<int> (it->second.CameraIDs[i]);
+											std::string test = std::string("##ids") + std::to_string(i);
+											ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+											if (id != m_currentSelectedObject)
+												it->second.CameraIDs[i] = id;
+										}
+									}
+								}
+
+							}
 						}
 					}
 
@@ -2093,7 +1957,7 @@ namespace PE {
 	{
 		if (IsEditorActive())
 		//testing for drag and drop
-		if (!ImGui::Begin("resourcewindow", Active)) // draw resource list
+		if (!ImGui::Begin("Assets Browser", Active)) // draw resource list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -2277,7 +2141,7 @@ namespace PE {
 	void Editor::ShowPerformanceWindow(bool* Active)
 	{
 		//if (IsEditorActive())
-		if (!ImGui::Begin("performanceWindow", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		if (!ImGui::Begin("Performance Window", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -2395,7 +2259,7 @@ namespace PE {
 						ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
 						//Imgui docks right side by default
-						ImGui::DockBuilderDockWindow("sceneview", dockspace_id);
+						ImGui::DockBuilderDockWindow("Scene View", dockspace_id);
 
 						//set the other sides
 						ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.3f, nullptr, &dockspace_id);
@@ -2403,20 +2267,20 @@ namespace PE {
 						ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
 
 						//setting the other dock locations
-						ImGui::DockBuilderDockWindow("Object List Window", dock_id_right);
+						ImGui::DockBuilderDockWindow("Object Hierarchy Window", dock_id_right);
 
 						//set on the save location to dock ontop of eachother
-						ImGui::DockBuilderDockWindow("resourcewindow", dock_id_down);
-						ImGui::DockBuilderDockWindow("consolewindow", dock_id_down);
+						ImGui::DockBuilderDockWindow("Resource Window", dock_id_down);
+						ImGui::DockBuilderDockWindow("Console Window", dock_id_down);
 
 
 						//set on the save location to dock ontop of eachother
-						ImGui::DockBuilderDockWindow("componentwindow", dock_id_left);
+						ImGui::DockBuilderDockWindow("Property Editor Window", dock_id_left);
 
 						//split the bottom into 2
 						ImGuiID dock_id_down2 = ImGui::DockBuilderSplitNode(dock_id_down, ImGuiDir_Right, 0.5f, nullptr, &dock_id_down);
 
-						ImGui::DockBuilderDockWindow("logwindow", dock_id_down2);
+						ImGui::DockBuilderDockWindow("Debug Log Window", dock_id_down2);
 
 						//end dock
 						ImGui::DockBuilderFinish(dockspace_id);
@@ -2525,8 +2389,12 @@ namespace PE {
 						{
 							m_showPerformanceWindow = !m_showPerformanceWindow;
 						}
+						if (ImGui::MenuItem("PhysicsWindow", "", m_showPhysicsWindow, !m_showPhysicsWindow))
+						{
+							m_showPhysicsWindow = !m_showPhysicsWindow;
+						}
 						ImGui::Separator();
-						if (ImGui::MenuItem("Close Editor", "esc", m_showEditor, true))
+						if (ImGui::MenuItem("Close Editor (Game Wont Start Either)", "", m_showEditor, true))
 						{
 							m_showEditor = !m_showEditor;
 						}
@@ -2550,10 +2418,33 @@ namespace PE {
 		}
 	}
 
+	void Editor::ShowPhysicsWindow(bool* Active)
+	{
+		if (!ImGui::Begin("Physics Config Window", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		{
+			ImGui::End(); //imgui close
+		}
+		else
+		{
+			ImGui::Text("Broad Phase Grid Size:");
+			int grid[2] = { CollisionManager::gridSize.x,CollisionManager::gridSize.y };
+			ImGui::InputInt2("##grid",grid);
+			CollisionManager::gridSize.x = grid[0];
+			CollisionManager::gridSize.y = grid[1];
+			ImGui::Dummy(ImVec2(0, 0.2f));
+
+			if (ImGui::Button("Toggle Debug Lines"))
+			{
+				ToggleDebugRender();
+			}
+			ImGui::End(); //imgui close
+		}
+	}
+
 	void Editor::ShowSceneView(GLuint texture_id, bool* active)
 	{
 		if (IsEditorActive()) {
-			ImGui::Begin("sceneview", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+			ImGui::Begin("Scene View", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
 			//setting the current width and height of the window to be drawn on
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
@@ -2729,6 +2620,12 @@ namespace PE {
 		//		[ImGuiCol_TabSelected] = The color that is used when you are in one of the tabs.
 		//		[ImGuiCol_TabText] = Text color that only applies to tabs.
 		//		[ImGuiCol_TabTextActive] = Active text color for tabs.
+	}
+
+	void Editor::LoadSceneFromGivenPath(std::string_view path)
+	{
+		ClearObjectList();
+		serializationManager.LoadAllEntitiesFromFile(path);
 	}
 
 	void Editor::AddLog(std::string_view text)
