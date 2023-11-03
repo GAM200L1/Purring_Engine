@@ -82,10 +82,10 @@ namespace PE
 
 	// ----- Grid Class Member Function Declarations ----- //
 
-	Grid::Grid() : 
-		m_columns{ 0 }, m_rows{ 0 }, 
-		m_min{ 0.f,0.f }, m_max{ 0.f, 0.f }, 
-		m_cellWidth{ 0.f }, m_gridHasSetup{false} {}
+	Grid::Grid() :
+		m_columns{ 0 }, m_rows{ 0 },
+		m_min{ 0.f,0.f }, m_max{ 0.f, 0.f },
+		m_cellWidth{ 0.f }, m_gridSize{ 0.f, 0.f }, m_gridHasSetup{ false } {}
 
 	Grid::~Grid()
 	{
@@ -94,8 +94,8 @@ namespace PE
 
 	void Grid::SetupGrid(float gridWidth, float gridHeight)
 	{
-		m_gridHasSetup = true;
-
+		//m_gridHasSetup = true;
+		m_gridSize = vec2{ gridWidth, gridHeight };
 		auto checkForComponents = SceneView<Collider>();
 		if (checkForComponents.begin() != checkForComponents.end())
 		{
@@ -190,7 +190,7 @@ namespace PE
 
 	void Grid::ClearGrid()
 	{
-		m_gridHasSetup = false;
+		//m_gridHasSetup = false;
 		// clear each column of the row no. of cells it has
 		for (auto& r_column : m_cells)
 		{
@@ -247,4 +247,15 @@ namespace PE
 		vec2 lengths{ ((m_max - m_min) * 0.5f) };
 		return GridID{ static_cast<int>((lengths.x + posX)/m_cellWidth), static_cast<int>((lengths.y + posY)/m_cellWidth) };
 	}
+
+	vec2 const& Grid::GetGridSize() const
+	{
+		return m_gridSize;
+	}
+
+	vec2 const& Grid::GetGridSize() const { return m_gridSize; }
+	vec2 const& Grid::GetGridMin() const { return m_min; }
+	vec2 const& Grid::GetGridMax() const { return m_max; }
+	float Grid::GetCellWitdh() const { return m_cellWidth; }
+	vec2 Grid::GetColumnsRows() const { return { m_columns, m_rows }; }
 }
