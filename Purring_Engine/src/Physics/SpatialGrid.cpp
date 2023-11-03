@@ -7,7 +7,8 @@
  \author               Liew Yeni
  \par      email:      yeni.l/@digipen.edu.sg
 
- \brief 
+ \brief	   This file contains function definitions for classes Cell and Grid
+		   and defines the struct GridID.
 
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
@@ -248,9 +249,9 @@ namespace PE
 		return GridID{ static_cast<int>((lengths.x + posX)/m_cellWidth), static_cast<int>((lengths.y + posY)/m_cellWidth) };
 	}
 
-	vec2 const& Grid::GetGridSize() const { return m_gridSize; }
-	vec2 const& Grid::GetGridMin() const { return m_min; }
-	vec2 const& Grid::GetGridMax() const { return m_max; }
-	float Grid::GetCellWitdh() const { return m_cellWidth; }
-	vec2 Grid::GetColumnsRows() const { return vec2{ static_cast<float>(m_columns),  static_cast<float>(m_rows) }; }
+	vec2 const& Grid::GetGridSize() const
+	{
+		return m_gridSize;
+	}
+
 }
