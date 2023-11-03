@@ -802,10 +802,14 @@ namespace PE {
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
 			}
-			ImGui::SameLine();
 			if (ImGui::Button("Camera Test Scene"))
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/CameraTestScene.json");
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Physics Test Scene"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/PhysicsTestScene.json");
 			}
 			if (ImGui::Button("Draw 2500 objects Instancing Test Scene"))
 			{
@@ -2511,9 +2515,14 @@ namespace PE {
 			ImGui::Text("Broad Phase Grid Size:");
 			int grid[2] = { CollisionManager::gridSize.x,CollisionManager::gridSize.y };
 			ImGui::InputInt2("##grid",grid);
-			CollisionManager::gridSize.x = grid[0];
-			CollisionManager::gridSize.y = grid[1];
+			CollisionManager::gridSize.x = abs( grid[0]);
+			CollisionManager::gridSize.y = abs(grid[1]);
 			ImGui::Dummy(ImVec2(0, 0.2f));
+
+			ImGui::Text("Grid Active: "); ImGui::SameLine(); ImGui::Checkbox("##Checkers", &CollisionManager::gridActive);
+			ImGui::Dummy(ImVec2(0, 0.2f));
+			ImGui::Separator();
+
 
 			if (ImGui::Button("Toggle Debug Lines"))
 			{
