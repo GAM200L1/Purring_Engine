@@ -1,3 +1,26 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     PlayerControllerScript.cpp
+ \date     03-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan\@digipen.edu
+ \par      code %:     95%
+ \par      changes:    Majority of the code
+
+ \co-author            FOONG Jun Wei
+ \par      email:      f.junwei\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    rttr::instance GetScriptData()
+
+
+ \brief  This file contains the definitions of the player controller
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "PlayerControllerScript.h"
 #include "Input/InputSystem.h"
