@@ -30,6 +30,7 @@ Assets/*
 !Assets/RubricTestScenes
 
 Assets/Prefabs/savestate.json
+Assets/Settings/config.json
 
 *.sln
 
