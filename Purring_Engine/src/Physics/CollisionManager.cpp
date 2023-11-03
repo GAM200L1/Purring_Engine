@@ -213,7 +213,7 @@ namespace PE
 										else
 										{
 											// else send message to trigger event associated with this entity
-											Editor::GetInstance().AddEventLog("Collided with Trigger.\n");
+											engine_logger.AddLog(false, "Collided with Trigger!\n", "");
                                             //sending collision enter event
                                             OnTriggerEnterEvent OTEE;
 				                			OTEE.Entity1 = ColliderID_1;
