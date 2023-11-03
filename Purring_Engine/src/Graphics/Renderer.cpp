@@ -23,15 +23,6 @@ namespace PE
 {
     namespace Graphics
     {
-        //void Renderer::SetColor(glm::vec4 const& newColor)
-        //{
-        //    m_color.r = glm::clamp(newColor.r, 0.f, 1.f);
-        //    m_color.g = glm::clamp(newColor.g, 0.f, 1.f);
-        //    m_color.b = glm::clamp(newColor.b, 0.f, 1.f);
-        //    m_color.a = glm::clamp(newColor.a, 0.f, 1.f);
-        //}
-
-
         void Renderer::SetColor(float const r, float const g, float const b, float const a)
         {
             m_color.r = glm::clamp(r, 0.f, 1.f);
