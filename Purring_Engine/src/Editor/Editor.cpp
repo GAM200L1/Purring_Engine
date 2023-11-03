@@ -2009,55 +2009,63 @@ namespace PE {
 					//add different kind of components, however if it already has we cannot add
 					if (ImGui::BeginPopup("Components"))
 					{
-						if (ImGui::Selectable("Add Collision"))
+						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>())
+								&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
 						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
-							else
-								AddErrorLog("ALREADY HAS A COLLIDER");
+							if (ImGui::Selectable("Add Collision"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
+								else
+									AddErrorLog("ALREADY HAS A COLLIDER");
+							}
+							if (ImGui::Selectable("Add Transform"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
+								else
+									AddErrorLog("ALREADY HAS A TRANSFORM");
+							}
+							if (ImGui::Selectable("Add RigidBody"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
+								else
+									AddErrorLog("ALREADY HAS A TRANSFORM");
+							}
+							if (ImGui::Selectable("Add Renderer"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+								else
+									AddErrorLog("ALREADY HAS A RENDERER");
+							}
+							if (ImGui::Selectable("Add ScriptComponent"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
+								else
+									AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
+							}
+							if (ImGui::Selectable("Add Animation"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+								else
+									AddErrorLog("ALREADY HAS ANIMATION");
+							}
 						}
-						if (ImGui::Selectable("Add Transform"))
+						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 
 						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
-							else
-								AddErrorLog("ALREADY HAS A TRANSFORM");
+							if (ImGui::Selectable("Add Text"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
+								else
+									AddErrorLog("ALREADY HAS TEXT");
+							}
 						}
-						if (ImGui::Selectable("Add RigidBody"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
-							else
-								AddErrorLog("ALREADY HAS A TRANSFORM");
-						}
-						if (ImGui::Selectable("Add Renderer"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
-							else
-								AddErrorLog("ALREADY HAS A RENDERER");
-						}
-						if (ImGui::Selectable("Add ScriptComponent"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
-							else
-								AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
-						}
-						if (ImGui::Selectable("Add Animation"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
-							else
-								AddErrorLog("ALREADY HAS ANIMATION");
-						}
-						if (ImGui::Selectable("Add Text"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
-							else
-								AddErrorLog("ALREADY HAS TEXT");
-						}
+
 						ImGui::EndPopup();
 					}
 
