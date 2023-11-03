@@ -16,8 +16,21 @@ bin-int
 *.filters
 imgui.ini
 /vendor
-*/Assets
-/Assets
+
+# look inside Assets
+!Assets
+
+# ignore everything in Assets/
+Assets/* 
+
+# dont ignore these folders in Assets/
+!Assets/Prefabs
+!Assets/Settings
+!Assets/Scenes
+!Assets/RubricTestScenes
+
+Assets/Prefabs/savestate.json
+
 *.sln
 
 # User-specific files (MonoDevelop/Xamarin Studio)
@@ -406,10 +419,3 @@ FodyWeavers.xsd
 
 # JetBrains Rider
 *.sln.iml
-
-Application/Audio/
-
-Purring_Engine/Audio/
-
-Textures/
-*.json
