@@ -42,7 +42,19 @@ const auto ALL = std::move(std::bitset<MAX_COMPONENTS>{}.set());
 
 namespace PE
 {
+	/*!***********************************************************************************
+	 \brief Assits in using the bitset as a key when used as a map key
+	 
+	*************************************************************************************/
 	struct Comparer {
+		/*!***********************************************************************************
+		 \brief Compares the bitsets lhs < rhs value
+		 
+		 \param[in] b1 bitset lhs
+		 \param[in] b2 bitset rhs
+		 \return true 	lhs < rhs
+		 \return false  rhs > lhs
+		*************************************************************************************/
 		bool operator() (const std::bitset<MAX_COMPONENTS>& b1, const std::bitset<MAX_COMPONENTS>& b2) const {
 			return b1.to_ulong() < b2.to_ulong();
 		}
@@ -448,50 +460,11 @@ namespace PE
 		return p_component;
 	}
 
-
-	//template<typename T>
-	//T* EntityManager::Assign(EntityID id, T const& r_val)
-	//{
-	//	static ComponentID componentID = GetComponentID<T>();
-
-	//	// if component is not found
-	//	if (m_componentPools.find(componentID) == m_componentPools.end())
-	//	{
-	//		throw;
-	//	}
-	//	if (m_componentPools[componentID]->HasEntity(id))
-	//	{
-	//		return nullptr;
-	//	}
-	//	// add to component pool's map keeping track of index
-	//	m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
-
-	//	// initialize that region of memory
-	//	if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
-	//	{
-	//		m_componentPools[componentID]->Resize(m_componentPools[componentID]->capacity * 2);
-	//	}
-
-
-	//	// if you new at an existing region of allocated memory, and you specify where, like in this case
-	//	// it will call the constructor at this position instead of allocating more memory
-	//	m_componentPools[componentID]->Get(id) = T(r_val);
-	//	++(m_componentPools[componentID]->size);
-	//	return p_component;
-	//}
-
 	//-------------------- Templated function implementations --------------------//
 
 	template<typename T>
 	ComponentID EntityManager::GetComponentID() const
 	{
-		//auto tmp = typeid(T).name();
-		//size_t cPos = tmp.find_last_of(":");
-		//cPos = (cPos == std::string::npos) ? 0 : cPos + 1;
-		//tmp = tmp.substr(cPos);
-		//return (tmp[0] == 's') ? tmp.substr(7) :
-		//	   (tmp[0] == 'c') ? tmp.substr(6) : tmp;
-
 		static unsigned s_componentID = s_componentCounter++;
 		return ComponentID().set(s_componentID);
 	}
@@ -587,17 +560,38 @@ namespace PE
 		UpdateVectors(id, false);
 	}
 
+	/*!***********************************************************************************
+	 \brief Entity descriptor struct, used for idenifying/holding various useful data
 
+	*************************************************************************************/
 	struct EntityDescriptor
 	{
+		// name of the entity
 		std::string name{"GameObject"};
+
+		// the parent of the entity
 		std::optional<EntityID> parent;
+
+		// the children of this entity
 		std::set<EntityID> children;
 
+		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
 		
+		/*!***********************************************************************************
+		 \brief Serializes this struct into a json file
+		 
+		 \param[in] id 				Entity ID of who owns this descriptor struct
+		 \return nlohmann::json 	The generated json
+		*************************************************************************************/
+		nlohmann::json ToJson(size_t id) const;	
 
-		nlohmann::json ToJson() const;
+		/*!***********************************************************************************
+		 \brief Deserializes the input json file into a copy of the entity descriptor
+		 
+		 \param[in] j 				Json file to read from
+		 \return EntityDescriptor 	Copy of the resulting EntityDescriptor
+		*************************************************************************************/
 		static EntityDescriptor Deserialize(const nlohmann::json& j);
 	};
 

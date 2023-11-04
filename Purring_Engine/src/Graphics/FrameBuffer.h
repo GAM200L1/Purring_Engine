@@ -19,6 +19,7 @@
 #include "Graphics/GLHeaders.h"
 
 #include "VertexData.h"
+#include "ECS/Entity.h"
 
 namespace PE
 {
@@ -29,6 +30,10 @@ namespace PE
         *************************************************************************************/
         class FrameBuffer
         {
+            // ----- Public variables ----- // 
+        public:
+            static const unsigned int defaultId{ std::numeric_limits<GLuint>::max() }; // Default entity ID to clear the entity ID texture with
+
             // ----- Public getters ----- // 
         public:
             /*!***********************************************************************************
@@ -73,10 +78,20 @@ namespace PE
             /*!***********************************************************************************
              \brief Resizes the texture object to match the size passed in.
 
-             \param[in] width Width the texture object should be set to.
-             \param[in] height Height the buffer should be set to.
+             \param[in] newWidth Width the texture object should be set to.
+             \param[in] newHeight Height the buffer should be set to.
             *************************************************************************************/
             void Resize(int const newWidth, int const newHeight);
+
+            /*!***********************************************************************************
+             \brief Sets the values of the buffers and attachments to their default values.
+
+             \param[in] r Red value of the color to default the framebuffer to.
+             \param[in] g Green value of the color to default the framebuffer to.
+             \param[in] b Blue value of the color to default the framebuffer to.
+             \param[in] a Alpha value of the color to default the framebuffer to.
+            *************************************************************************************/
+            void Clear(float const r, float const g, float const b, float const a);
 
             /*!***********************************************************************************
              \brief Deletes the framebuffer and the textures attached to it.
@@ -86,7 +101,9 @@ namespace PE
             // ----- Private variables ----- // 
         private:
             GLuint m_frameBufferObjectIndex{}; // Frame buffer object to draw to
-            GLuint m_textureIndex{}; // Texture ID of the texture generated to attach to the framebuffer
+            GLuint m_textureIndex{}; // ID of texture attachment that the scene window content is drawn to
+
+            int m_bufferWidth{}, m_bufferHeight{}; // Width and height of the buffer object            
         };
     } // End of Graphics namespace
 } // End of PE namespace

@@ -6,9 +6,18 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
+ \par      code %:     95%
+ \par      changes:    Defined all the logic for rendering the editor UI through ImGUI.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    02-11-2023
+                       Added object picking logic.
 
  \brief
-	cpp file containing the definition of the editor class
+	cpp file containing the definition of the editor class, which contains 
+	logic for rendering the editor UI through ImGUI.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -24,6 +33,7 @@
 #include <Commdlg.h>
 #include "Data/SerializationManager.h"
 #include "Physics/PhysicsManager.h"
+#include "Physics/CollisionManager.h"
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
 #include "Graphics/RendererManager.h"
@@ -31,19 +41,19 @@
 #include "Logic/PlayerControllerScript.h"
 #include "Logic/EnemyTestScript.h"
 #include "Logic/FollowScript.h"
+#include "Logic/CameraManagerScript.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
-#include "Scripting/ScriptingEngine.h"
-#include "Scripting/CSharpScriptComponent.h"
-#include "Scripting/CSharpLogicSystem.h"
-
+#include "Graphics/Text.h"
+#include "Data/json.hpp"
+#include "Input/InputSystem.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
-SerializationManager serializationManager;  // Create an instance
 
+SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
 namespace PE {
@@ -52,26 +62,58 @@ namespace PE {
 	bool Editor::m_fileDragged{ false };
 
 	Editor::Editor() {
+		std::ifstream configFile("../Assets/Settings/config.json");
+		nlohmann::json configJson;
+		configFile >> configJson;
 		//initializing variables 
-		//m_firstLaunch needs to be serialized 
-		m_firstLaunch = true;
-		//serialize based on what was deserialized
-		m_showConsole = true;
-		m_showLogs = true;
-		m_showObjectList = true;
-		m_showSceneView = true;
-		m_showTestWindows = false;
-		m_showComponentWindow = true;
-		m_showResourceWindow = true;
-		m_showPerformanceWindow = false;
-		//show the entire gui 
-		m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
-		m_renderDebug = true; // whether to render debug lines
+
+		if (configJson.contains("Editor"))
+		{
+			//m_firstLaunch needs to be serialized 
+			m_firstLaunch = configJson["Editor"]["firstLaunch"].get<bool>();
+			//serialize based on what was deserialized
+			m_showConsole = configJson["Editor"]["showConsole"].get<bool>();
+			m_showLogs = configJson["Editor"]["showLogs"].get<bool>();
+			m_showObjectList = configJson["Editor"]["showObjectList"].get<bool>();
+			m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
+			m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
+			m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
+			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
+			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
+			m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
+			//show the entire gui 
+			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
+			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
+		}
+		else
+		{
+			//m_firstLaunch needs to be serialized 
+			m_firstLaunch = true;
+			//serialize based on what was deserialized
+			m_showConsole = true;
+			m_showLogs = true;
+			m_showObjectList = true;
+			m_showSceneView = true;
+			m_showTestWindows = false;
+			m_showComponentWindow = true;
+			m_showResourceWindow = true;
+			m_showPerformanceWindow = false;
+			m_showPhysicsWindow = false;
+			//show the entire gui 
+			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
+			m_renderDebug = true; // whether to render debug lines
+		}
+
+		configFile.close();
+
+		// Set the default visual theme of the editor
+		m_currentStyle = GuiStyle::DARK;
+
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
-		m_currentSelectedObject = 0;
+		m_currentSelectedObject = 1;
 		m_mouseInObjectWindow = false;
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
@@ -79,7 +121,7 @@ namespace PE {
 		// loading for assets window
 		GetFileNamesInParentPath(m_parentPath, m_files);
 		m_mouseInScene = false;
-		m_entityToModify = -1;
+		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
 		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
 		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
@@ -87,6 +129,40 @@ namespace PE {
 
 	Editor::~Editor()
 	{
+		const char* filepath = "../Assets/Settings/config.json";
+		std::ifstream configFile(filepath);
+		nlohmann::json configJson;
+		configFile >> configJson;
+
+		// save the stuff
+		//m_firstLaunch needs to be serialized 
+		configJson["Editor"]["firstLaunch"] = m_firstLaunch;
+		//serialize based on what was deserialized
+		configJson["Editor"]["showConsole"] = m_showConsole;
+		configJson["Editor"]["showLogs"] = m_showLogs;
+		configJson["Editor"]["showObjectList"] = m_showObjectList;
+		configJson["Editor"]["showSceneView"] = m_showSceneView;
+		configJson["Editor"]["showTestWindows"] = m_showTestWindows;
+		configJson["Editor"]["showComponentWindow"] = m_showComponentWindow;
+		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
+		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
+		configJson["Editor"]["showPhysicsWindow"] = m_showPhysicsWindow;
+		//show the entire gui 
+		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
+		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
+
+
+		std::ofstream outFile(filepath);
+		if (outFile)
+		{
+			outFile << configJson.dump(4);
+			outFile.close();
+		}
+		else
+		{
+			std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+		}
+
 		m_files.clear();
 	}
 
@@ -95,7 +171,7 @@ namespace PE {
 		width = m_renderWindowWidth;
 		height = m_renderWindowHeight;
 	}
-
+	
 	bool Editor::IsEditorActive()
 	{
 		return m_showEditor;
@@ -171,7 +247,19 @@ namespace PE {
 		IMGUI_CHECKVERSION();
 		//create imgui context 
 		ImGui::CreateContext();
-		SetImGUIStyle();
+		switch (m_currentStyle)
+		{
+		case GuiStyle::DARK:
+			SetImGUIStyle_Dark();
+			break;
+		case GuiStyle::PINK:
+			SetImGUIStyle_Pink();
+			break;
+		case GuiStyle::BLUE:
+			SetImGUIStyle_Blue();
+			break;
+		}
+
 
 		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
@@ -210,7 +298,7 @@ namespace PE {
 
 	}
 
-	void Editor::Render(GLuint texture_id)
+	void Editor::Render(Graphics::FrameBuffer& r_frameBuffer)
 	{
 		//hide the entire editor
 			//imgui start frame
@@ -234,7 +322,7 @@ namespace PE {
 			if (m_showConsole) ShowConsoleWindow(&m_showConsole);
 
 			//draw scene view
-			if (m_showSceneView) ShowSceneView(texture_id, &m_showSceneView);
+			if (m_showSceneView) ShowSceneView(r_frameBuffer, &m_showSceneView);
 
 			//draw the stuff for ellie to test
 			if (m_showTestWindows) ShowDemoWindow(&m_showTestWindows);
@@ -245,6 +333,7 @@ namespace PE {
 			//performance window showing time used per system
 			if (m_showPerformanceWindow) ShowPerformanceWindow(&m_showPerformanceWindow);
 
+			if (m_showPhysicsWindow) ShowPhysicsWindow(&m_showPhysicsWindow);
 
 			//imgui end frame render functions
 			ImGui::Render();
@@ -265,7 +354,7 @@ namespace PE {
 	{
 		//if active
 		if (IsEditorActive())
-		if (!ImGui::Begin("logwindow", Active))
+		if (!ImGui::Begin("Debug Log Window", Active))
 		{
 			ImGui::End();			//imgui syntax
 		}
@@ -305,6 +394,15 @@ namespace PE {
 			ImGui::InputText("Text Finder ", &m_findText); //inpux box
 			ImGui::SetItemTooltip("(Case Sensitive)");
 			ImGui::PopItemWidth();
+			ImGui::SameLine();
+			if (ImGui::Button("Add Debug Text"))
+			{
+				AddErrorLog("Debug text");
+				AddInfoLog("Debug text");
+				AddWarningLog("Debug text");
+				AddEventLog("Debug text");
+				AddLog("Debug text");
+			}
 			ImGui::Separator(); // line
 
 
@@ -365,7 +463,7 @@ namespace PE {
 	void Editor::ShowConsoleWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("consolewindow", Active)) // start drawing
+		if (!ImGui::Begin("Console Window", Active)) // start drawing
 		{
 			ImGui::End(); //imgui syntax if inactive
 		}
@@ -427,7 +525,7 @@ namespace PE {
 	void Editor::ShowObjectWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Object List Window", Active)) // draw object list
+		if (!ImGui::Begin("Object Hierarchy Window", Active)) // draw object list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -652,249 +750,75 @@ namespace PE {
 		}
 	}
 
-
-	//temporary for milestone 1
+	//temporary hardcoded stuff for testing for milestone 2
 	void Editor::ShowDemoWindow(bool* Active)
 	{
-		//if (IsEditorActive())
-		if (!ImGui::Begin("debugTests", Active, ImGuiWindowFlags_AlwaysAutoResize))
+		if (IsEditorActive())
+		if (!ImGui::Begin("Rubric Test Window", Active, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
 		}
 		else
 		{
-			static int allocated = 1;
-			ImGui::Text("Memory Test");
-			ImGui::Spacing();
-			if (ImGui::Button("Allocating Memory"))
 			{
-				std::string ss("AllocationTest");
-				ss += std::to_string(allocated);
-				char* allocationtest = (char*)MemoryManager::GetInstance().AllocateMemory(ss, 30);
-				allocated++;
-				allocationtest;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Create Out of Index Object on Stack"))
-			{
-				char* outofmemorytest = (char*)MemoryManager::GetInstance().AllocateMemory("out of index test", 1000000);
-				outofmemorytest;
-			}
-			static bool buffertester = false;
-			ImGui::BeginDisabled(buffertester);
-			if (ImGui::Button("Written over Buffer Tests"))
-			{
-				buffertester = true;
-				char* buffertest = (char*)MemoryManager::GetInstance().AllocateMemory("buffertest", 7);
-				//writing 8 bytes into the 7 i allocated
-				strcpy_s(buffertest, 9, "testtest");
-				AddWarningLog("writing \"testtest\" 9 byte into buffertest of 7 byte + 4 buffer bytes");
-				AddConsole(buffertest);
-				allocated++;
-			}
-			ImGui::EndDisabled();
-			ImGui::SameLine();
-			ImGui::BeginDisabled(!(allocated > 1));
-			if (ImGui::Button("popback previous allocation"))
-			{
-				buffertester = false;
-				MemoryManager::GetInstance().Pop_BackMemory();
-				AddInfoLog("delete and popping back previously allocated object");
-				allocated--;
-			}
-			ImGui::EndDisabled();
-			if (ImGui::Button("Print Memory Data"))
-			{
-				MemoryManager::GetInstance().PrintData();
-			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
-
-			ImGui::Separator();
-			//audio
-			ImGui::Text("Audio Test");
-			if (ImGui::Button("Play SFX 1"))
-			{
-				AudioManager::GetInstance().PlaySound("audio_sound1");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Play SFX 2"))
-			{
-				AudioManager::GetInstance().PlaySound("audio_sound2");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Play SFX 3"))
-			{
-				AudioManager::GetInstance().PlaySound("audio_sound3");
-			}
-			if (ImGui::Button("Play Background Music"))
-			{
-				AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
-			}
-			ImGui::SameLine();
-
-			if (ImGui::Button("Stop All Audio"))
-			{
-				AudioManager::GetInstance().StopAllSounds();
-			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // add space
-
-			ImGui::Separator();
-			ImGui::Text("Physics Test");
-			if (ImGui::Button("Random Object Test"))
-			{
-				ClearObjectList();
-				std::random_device rd;
-				std::mt19937 gen(rd());
-				for (size_t i{ 2 }; i < 20; ++i)
+				//audio
+				ImGui::SeparatorText("Audio Test");
+				if (ImGui::Button("Play SFX 1"))
 				{
-					EntityID id = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-
-					std::uniform_int_distribution<>distr0(-550, 550);
-					EntityManager::GetInstance().Get<Transform>(id).position.x = static_cast<float>(distr0(gen));
-					std::uniform_int_distribution<>distr1(-250, 250);
-					EntityManager::GetInstance().Get<Transform>(id).position.y = static_cast<float>(distr1(gen));
-					std::uniform_int_distribution<>distr2(10, 200);
-					EntityManager::GetInstance().Get<Transform>(id).width = static_cast<float>(distr2(gen));
-					EntityManager::GetInstance().Get<Transform>(id).height = static_cast<float>(distr2(gen));
-					EntityManager::GetInstance().Get<Transform>(id).orientation = 0.f;
-
-					if (i % 3)
-						EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-
-					if (i % 2)
-						EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider();
-					else
-						EntityManager::GetInstance().Get<Collider>(id).colliderVariant = AABBCollider();
+					AudioManager::GetInstance().PlaySound("audio_sound1");
 				}
+				ImGui::SameLine();
+				if (ImGui::Button("Play SFX 2"))
+				{
+					AudioManager::GetInstance().PlaySound("audio_sound2");
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Play SFX 3"))
+				{
+					AudioManager::GetInstance().PlaySound("audio_sound3");
+				}
+				if (ImGui::Button("Play Background Music"))
+				{
+					AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
+				}
+				ImGui::SameLine();
+				if (ImGui::Button("Stop All Audio"))
+				{
+					AudioManager::GetInstance().StopAllSounds();
+				}
+				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
+				{
+					LoadSceneFromGivenPath("../Assets/RubricTestScenes/AudioButtonScene.json");
+				}
+				ImGui::Dummy(ImVec2(0.0f, 2.0f));
+			}
+			ImGui::SeparatorText("Scenes To Test");
+			if (ImGui::Button("Reset Default Scene"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Clear Object List##1"))
+			if (ImGui::Button("Text Test Scene"))
 			{
-				ClearObjectList();
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
 			}
-			if (ImGui::Button("AABB AABB DYNAMIC STATIC"))
+			if (ImGui::Button("Camera Test Scene"))
 			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/CameraTestScene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("AABB AABB DYNAMIC DYNAMIC"))
+			if (ImGui::Button("Physics Test Scene"))
 			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/PhysicsTestScene.json");
 			}
-			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC STATIC"))
+			if (ImGui::Button("Draw 2500 objects Instancing Test Scene"))
 			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("CIRCLE CIRCLE DYNAMIC DYNAMIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-			}
-			if (ImGui::Button("AABB CIRCLE DYNAMIC STATIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("AABB CIRCLE DYNAMIC DYNAMIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = AABBCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/CircleCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-			}
-			if (ImGui::Button("CIRCLE AABB DYNAMIC STATIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::STATIC);
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("CIRCLE AABB DYNAMIC DYNAMIC"))
-			{
-				ClearObjectList();
-				EntityManager::GetInstance().Get<Transform>(1).position.x = 0;
-				EntityManager::GetInstance().Get<Transform>(1).position.y = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.x = 0;
-				EntityManager::GetInstance().Get<RigidBody>(1).velocity.y = 0;
-				EntityManager::GetInstance().Get<Collider>(1).colliderVariant = CircleCollider();
-
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/AABBCollider_Prefab.json");
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-			}
-			if (ImGui::Button("Toggle Step Physics"))
-			{
-				PhysicsManager::GetStepPhysics() = !PhysicsManager::GetStepPhysics();
-
-				if (PhysicsManager::GetStepPhysics())
-					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned On.\n");
-				else
-					Editor::GetInstance().AddEventLog("Step-by-Step Physics Turned Off.\n");
-			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
-
-			ImGui::Separator();
-			ImGui::Text("Object Test");
-			if (ImGui::Button("Draw 2500 objects"))
-			{
-				ClearObjectList();
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
 				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
 				for (size_t i{}; i < 2500; ++i)
 				{
-					
+
 					EntityID id2 = EntityFactory::GetInstance().Clone(id);
-					//EntityID id2 = EntityFactory::GetInstance().CreateEntity();
-					//EntityFactory::GetInstance().Assign(id2, { EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
 					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
 					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
@@ -902,46 +826,26 @@ namespace PE {
 					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor();
 				}
-			} 
-			ImGui::SameLine();
-			if (ImGui::Button("Toggle Debug Lines"))
+			}
+			ImGui::Dummy(ImVec2(0.0f, 2.0f));
+			ImGui::SeparatorText("Logic Test");			
+			if (ImGui::Button("Logic Test Scene 1"))
 			{
-				ToggleDebugRender();
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene1.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Clear Object List##2"))
+			if (ImGui::Button("Logic Test Scene 2"))
 			{
-				ClearObjectList();
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene2.json");
 			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
-			ImGui::Separator();
-			ImGui::Text("Other Test");
-			if (ImGui::Button("Crash Log"))
+			if (ImGui::Button("Enemy AI Test Scene"))
 			{
-				try
-				{
-					std::vector testVector = { 1 };
-					testVector[0] = testVector.at(1); // force an out of range access exception
-				}
-				catch (const std::out_of_range& r_err)
-				{
-					engine_logger.AddLog(true, r_err.what(), __FUNCTION__);
-					throw r_err; // pass the error along
-				}
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/EnemyArenaScene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Performance Viewer"))
+			if (ImGui::Button("Advance AI Test Scene"))
 			{
-				m_showPerformanceWindow = !m_showPerformanceWindow;
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Add Debug Text"))
-			{
-				AddErrorLog("Debug text");
-				AddInfoLog("Debug text");
-				AddWarningLog("Debug text");
-				AddEventLog("Debug text");
-				AddLog("Debug text");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/AdvanceLogicScene.json");
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
@@ -951,7 +855,7 @@ namespace PE {
 	void Editor::ShowComponentWindow(bool* Active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("componentwindow", Active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
+		if (!ImGui::Begin("Property Editor Window", Active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
 		{
 			ImGui::End();
 		}
@@ -1118,12 +1022,28 @@ namespace PE {
 									if (prop.get_name() == "Orientation" && EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent ||
 										prop.get_name() == "Relative Orientation" && !EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
 										continue;
+
+									// hide properties if entity has a certain component
+									if (prop.get_name() == "Orientation")
+									{
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
+											continue;
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+											continue;
+									}
+
+									if (prop.get_name() == "Width" || prop.get_name() == "Height")
+									{
+										if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
+											continue;
+									}
+
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									std::string nm(prop.get_name());
 									nm += ": ";
 									ImGui::Text(nm.c_str());
-									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));
-									
+									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));									
+
 									// handle types
 									if (vp.get_type().get_name() == "structPE::vec2")
 									{
@@ -1356,7 +1276,7 @@ namespace PE {
 									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
 									if (ImGui::IsItemHovered())
 									{
-										m_entityToModify = static_cast<int>(entityID);
+										m_entityToModify = std::make_pair<std::string, int>("Renderer", static_cast<int>(entityID));
 									}
 
 									// Shows a drop down of selectable textures
@@ -1461,6 +1381,12 @@ namespace PE {
 									}
 									ImGui::EndChild();
 
+									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("GUIRenderer", static_cast<int>(entityID));
+									}
+
 									// Shows a drop down of selectable textures
 									ImGui::Text("Textures: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
@@ -1506,80 +1432,62 @@ namespace PE {
 						}
 
 
-						// -------------------- C++ SCRIPT COMPONENT ---------------------- //
+						// ---------- SCRIPT COMPONENT ---------- //
+						
 
-
-						// This checks if the current component type (name) is the same as the ID of the ScriptComponent - Hans
 						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
 						{
 							hasScripts = true;
-
-							// This creates a Collapsible header Titled: ScriptComponent - Hans
-							if (ImGui::CollapsingHeader("C++ ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
-								// Aligns an "o" button next to the header for an additional option to "reset" variables to default settings (Hans requested but yet to implement logic) - Hans
+								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
 								std::string id = "options##", o = "o##";
 								id += std::to_string(componentCount);
 								o += std::to_string(componentCount);
-
-								// Popup menu for reset option (logic not yet implemented) - Hans
 								if (ImGui::BeginPopup(id.c_str()))
 								{
 									if (ImGui::Selectable("Reset")) {}
 									ImGui::EndPopup();
 								}
 
-								// Button to open the above popup - Hans
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
-
-								// This adds some vertical spacing - Hans
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));
-
-								//setting keys - Jarran
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//setting keys
 								std::vector<const char*> key;
-
-								// Iterates through all available scripts and stores their names in 'key' - Hans
+								//to get all the keys
 								for (std::map<std::string, Script*>::iterator it = LogicSystem::m_scriptContainer.begin(); it != LogicSystem::m_scriptContainer.end(); ++it)
 								{
 									key.push_back(it->first.c_str());
 								}
 								static int scriptindex{};
-								//std::cout << "Number of C# Scripts: " << key.size() << std::endl;
-
-								// Dropdown box for selecting a script to add - Hans
+								//create a combo box of scripts
 								ImGui::SetNextItemWidth(200.0f);
 								if (!key.empty())
 								{
 									ImGui::Text("Scripts: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
 									//set selected texture id
-									if (ImGui::Combo("##Scripts", &scriptindex, key.data(), static_cast<int>(key.size()))) {}			// This creates a combo box that lists all available scripts - Hans
+									if (ImGui::Combo("##Scripts", &scriptindex, key.data(), static_cast<int>(key.size()))) {}
 								}
-
-								// Button to add the selected script to the entity. When clicked, this button adds the selected script to the entity's ScriptComponent and calls the script's OnAttach method. - Hans
-								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.3f, 0.6f, 0.3f, 1.0f));
-								if (ImGui::Button("+ Add Script"))
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
+								if (ImGui::Button("Add Script"))
 								{
 									EntityManager::GetInstance().Get<ScriptComponent>(entityID).addScript(key[scriptindex],m_currentSelectedObject);
 								}
 								ImGui::PopStyleColor(1);
-
-								// Separator and spacing
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Separator();
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
 								static int selectedScript{ -1 };
 								static std::string selectedScriptName{};
 								ImGui::Text("Scripts List");
-
-								// Lists all the scripts currently added to the entity - Hans
-								if (ImGui::BeginChild("ScriptList", ImVec2(-1, 200), true, ImGuiWindowFlags_NoResize)) {
+								//loop to show all the items ins the vector
+								if (ImGui::BeginChild("ScriptList", ImVec2(-1, 200), true,  ImGuiWindowFlags_NoResize)) {
 									int n = 0;
-									/*				for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
-													{*/
+					/*				for (int n = 0; n < EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys.size(); n++)
+									{*/
 									for (auto& [str, state] : EntityManager::GetInstance().Get<ScriptComponent>(entityID).m_scriptKeys)
 									{
 										const bool is_selected = (selectedScript == n);
@@ -1599,9 +1507,8 @@ namespace PE {
 									//}
 								}
 								ImGui::EndChild();
-								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.3f, 0.3f, 1.0f));
-								// Button to remove the selected script from the entity. When clicked, this button removes the selected script from the entity's ScriptComponent and calls the script's OnDetach method - Hans
-								if (ImGui::Button("- Remove Script"))
+								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f));
+								if (ImGui::Button("Remove Script"))
 								{
 									if (selectedScript >= 0)
 									{
@@ -1613,78 +1520,9 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}
-
-						// -------------------- C# SCRIPT COMPONENT ---------------------- //
-
-
-						if (name == EntityManager::GetInstance().GetComponentID<CSharpScriptComponent>())
-						{
-							hasScripts = true;
-
-							// Similar logic as in C++ ScriptComponent
-							if (ImGui::CollapsingHeader("C# ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-							{
-								// Aligns an "o" button next to the header for an additional option to "reset" variables to default settings (Hans requested but yet to implement logic) - Hans
-								ImGui::SameLine();
-								std::string id = "options##", o = "o##";
-								id += std::to_string(componentCount);
-								o += std::to_string(componentCount);
-
-								// Popup menu for reset option (logic not yet implemented) - Hans
-								if (ImGui::BeginPopup(id.c_str()))
-								{
-									if (ImGui::Selectable("Reset")) {}
-									ImGui::EndPopup();
-								}
-
-								// Button to open the above popup - Hans
-								if (ImGui::Button(o.c_str()))
-									ImGui::OpenPopup(id.c_str());
-
-								// This adds some vertical spacing - Hans
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));
-
-								// -------------------- Issue ----------------------------
-								std::vector<const char*> cSharpKey;
-
-								//// TODO: Iterate through all available C# scripts
-								for (const auto& entry : PE::CSharpLogicSystem::m_cSharpScriptContainer) {
-									cSharpKey.push_back(entry.first.c_str());
-								}
-								static int scriptIndex2{};
-								std::cout << "Number of C# Scripts: " << cSharpKey.size() << std::endl;
-
-								// Dropdown box for selecting a C# script to add
-								ImGui::SetNextItemWidth(200.0f);
-								if (!cSharpKey.empty())
-								{
-									ImGui::Text("C# Scripts: "); ImGui::SameLine();
-									ImGui::SetNextItemWidth(200.0f);
-									if (ImGui::Combo("##C# Scripts", &scriptIndex2, cSharpKey.data(), static_cast<int>(cSharpKey.size()))) {}
-								}
-
-								// TODO: Button to add the selected C# script to the entity
-								ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f));
-								if (ImGui::Button("Add C# Script") && !cSharpKey.empty())
-								{
-									auto scriptKey = cSharpKey[scriptIndex2];
-									auto& cSharpScriptComponent = EntityManager::GetInstance().Get<PE::CSharpScriptComponent>(entityID);
-									cSharpScriptComponent.addCSharpScript(scriptKey);
-
-									MonoObject* scriptInstance = ScriptEngine::GetInstance().GetOrCreateMonoObject(entityID, scriptKey);
-									MonoMethod* onAttachMethod = ScriptEngine::GetMethodFromMonoObject(scriptInstance, "OnAttach", 0);
-									if (onAttachMethod != nullptr) {
-										ScriptClass::InvokeMethod(scriptInstance, onAttachMethod, nullptr);
-									}
-								}
-								ImGui::PopStyleColor(1);
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
-								// Additional UI and logic, similar to C++ ScriptComponent, but adapted for C#
-							}
-						}
-
-						// -------------------- GUI ---------------------- //
+                        
+						
+						// ---------- GUI ---------- //
 
 
 						if (name == EntityManager::GetInstance().GetComponentID<GUI>())
@@ -1770,7 +1608,8 @@ namespace PE {
                         
 
 						
-						// -------------------- CAMERA ---------------------- //
+						// ---------- CAMERA ---------- //
+
 
 						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
 							if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1784,11 +1623,12 @@ namespace PE {
 								ImGui::Checkbox("Is Main Camera: ", &isMainCamera); // bool to set this camera as the main cam
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Text("Viewport Dimensions: ");
-								ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
-								ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
-								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								// commented out for now
+								//ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								//ImGui::Text("Viewport Dimensions: ");
+								//ImGui::Text("Width: "); ImGui::SameLine(); ImGui::InputFloat("##View Width", &viewportWidth, 1.0f, 100.f, "%.3f");
+								//ImGui::Text("Height: "); ImGui::SameLine(); ImGui::InputFloat("##View Height", &viewportHeight, 1.0f, 100.f, "%.3f");
+								//ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
 								float zoom{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetMagnification() };
 								ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
@@ -1800,8 +1640,7 @@ namespace PE {
 							}
 						}
 
-						// -------------------- ANIMATION ---------------------- //
-
+						// Animation component
 						if (name == EntityManager::GetInstance().GetComponentID<AnimationComponent>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1901,33 +1740,49 @@ namespace PE {
 
 								EntityManager::GetInstance().Get<TextComponent>(entityID).SetText(stringBuffer);
 
-								// Setting fonts
-								std::vector<const char*> key;
-								key.push_back("");
-
-								//to get all the keys
-								for (std::map<std::string, std::shared_ptr<Font>>::iterator it = ResourceManager::GetInstance().Fonts.begin(); it != ResourceManager::GetInstance().Fonts.end(); ++it)
+								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's fonts
+								std::vector<std::filesystem::path> filepaths;
+								int i{ 0 };
+								int fontIndex{ 0 };
+								for (auto it = ResourceManager::GetInstance().Fonts.begin(); it != ResourceManager::GetInstance().Fonts.end(); ++it, ++i)
 								{
-									key.push_back(it->first.c_str());
-								}
-								int index{};
-								for (std::string str : key)
-								{
-									if (str == EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey())
-										break;
-									index++;
+									filepaths.emplace_back(it->first);
+									if (it->first == EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey())
+										fontIndex = i;
 								}
 
-								// create a combo box of texture ids
-								ImGui::SetNextItemWidth(200.0f);
-								if (!key.empty())
+								// Vector of the names of fonts that have already been loaded
+								std::vector<std::string> fontTextureKeys;
+
+								// get the keys of fonts already loaded by the resource manager
+								for (auto const& r_filepath : filepaths)
 								{
+									fontTextureKeys.emplace_back(r_filepath.stem().string());
+								}
+
+								//// Setting fonts
+								if (!fontTextureKeys.empty())
+								{
+									// create a combo box of Font ids
 									ImGui::Text("Font: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
-									// set selected texture id
-									if (ImGui::Combo("##Font", &index, key.data(), static_cast<int>(key.size())))
+									bool bl{};
+									if (EntityManager::GetInstance().Get<TextComponent>(entityID).GetFontKey() != "")
 									{
-										EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(key[index]);
+										bl = ImGui::BeginCombo("##FontTextures", fontTextureKeys[fontIndex].c_str()); // The second parameter is the label previewed before opening the combo.
+									}
+									else
+									{
+										bl = ImGui::BeginCombo("##FontTextures", ""); // The second parameter is the label previewed before opening the combo.
+									}
+									if (bl)
+									{
+										for (int n{ 0 }; n < fontTextureKeys.size(); ++n)
+										{
+											if (ImGui::Selectable(fontTextureKeys[n].c_str()))
+												EntityManager::GetInstance().Get<TextComponent>(entityID).SetFont(filepaths[n].string());
+										}
+										ImGui::EndCombo();
 									}
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -1950,7 +1805,7 @@ namespace PE {
 								color.w = EntityManager::GetInstance().Get<TextComponent>(entityID).GetColor().a;
 
 								ImGui::Text("Change Color: "); ImGui::SameLine();
-								ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+								ImGui::ColorEdit4("##Change Color Text", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
 
 								EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor({ color.x, color.y, color.z, color.w });
 
@@ -1960,22 +1815,17 @@ namespace PE {
 						}
 					}
 
-					// Check if the entity has any attached scripts. - Hans
 					if (hasScripts)
 					{
-						// Iterate through all the registered script types in LogicSystem's script container. - Hans
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
-							if (key == "test")
+							if (key == "testScript")
 							{
-								testScript* p_Script = dynamic_cast<testScript*>(val);							// Dynamic cast is used to safely cast the generic Script object to a specific 'testScript' object.
-								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);				// Search for this entity's specific data within the script.
-								
-								// If the data exists, render an ImGui interface for it.
+								testScript* p_Script = dynamic_cast<testScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
 								if (it != p_Script->GetScriptData().end())
 									if (ImGui::CollapsingHeader("testdata", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										// Render a UI for editing the 'rotationSpeed' property of the 'testScript'.
 										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
 									}
 							}
@@ -2045,21 +1895,53 @@ namespace PE {
 									}
 								}
 							}
+						
+							if (key == "CameraManagerScript")
+							{
+								CameraManagerScript* p_Script = dynamic_cast<CameraManagerScript*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int j = it->second.NumberOfCamera+1;
+										ImGui::Text("Number of Camera: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff", &j);
+										if (j <= 11 && j >= 1)
+										{
+											it->second.NumberOfCamera = j-1;
+										}
+										else
+										{
+											it->second.NumberOfCamera = 9;
+										}
+
+										for (int i = 0; i <= it->second.NumberOfCamera; i++)
+										{
+											int id = static_cast<int> (it->second.CameraIDs[i]);
+											std::string test = std::string("##ids") + std::to_string(i);
+											ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+											if (id != m_currentSelectedObject)
+												it->second.CameraIDs[i] = id;
+										}
+									}
+								}
+
+							}
 						}
 					}
+
+
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 					ImGui::Separator();
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
-
-					// -------------------- + Add Components Feature in Component Window ---------------------- //
 
 					// Set the cursor position to the center of the window
 					//the closest i can get to setting center the button x(
 					//shld look fine
 					ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 3.f, ImGui::GetCursorPosY()));
 
-						if (ImGui::Button("+ Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
+						if (ImGui::Button("Add Components", ImVec2(ImGui::GetContentRegionAvail().x / 2.f, 0)))
 						{
 							ImGui::OpenPopup("Components");
 						}
@@ -2067,74 +1949,63 @@ namespace PE {
 					//add different kind of components, however if it already has we cannot add
 					if (ImGui::BeginPopup("Components"))
 					{
-						if (ImGui::Selectable("+ Collider "))
+						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>())
+								&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
 						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
-							else
-								AddErrorLog("ALREADY HAS A COLLIDER");
+							if (ImGui::Selectable("Add Collision"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Collider>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Collider>() });
+								else
+									AddErrorLog("ALREADY HAS A COLLIDER");
+							}
+							if (ImGui::Selectable("Add Transform"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
+								else
+									AddErrorLog("ALREADY HAS A TRANSFORM");
+							}
+							if (ImGui::Selectable("Add RigidBody"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
+								else
+									AddErrorLog("ALREADY HAS A TRANSFORM");
+							}
+							if (ImGui::Selectable("Add Renderer"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
+								else
+									AddErrorLog("ALREADY HAS A RENDERER");
+							}
+							if (ImGui::Selectable("Add ScriptComponent"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
+								else
+									AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
+							}
+							if (ImGui::Selectable("Add Animation"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
+								else
+									AddErrorLog("ALREADY HAS ANIMATION");
+							}
 						}
-						if (ImGui::Selectable("+ Transform "))
+						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 
 						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Transform>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Transform>() });
-							else
-								AddErrorLog("ALREADY HAS A TRANSFORM");
+							if (ImGui::Selectable("Add Text"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
+								else
+									AddErrorLog("ALREADY HAS TEXT");
+							}
 						}
-						if (ImGui::Selectable("+ RigidBody "))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<RigidBody>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
-							else
-								AddErrorLog("ALREADY HAS A TRANSFORM");
-						}
-						if (ImGui::Selectable("+ Renderer "))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() });
-							else
-								AddErrorLog("ALREADY HAS A RENDERER");
-						}
-						if (ImGui::Selectable("+ C#  Script "))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<CSharpScriptComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<CSharpScriptComponent>() });
-							else
-								AddErrorLog("ALREADY HAS A C# SCRIPTCOMPONENT");
-						}
-						if (ImGui::Selectable("+ C++ Script "))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
-							else
-								AddErrorLog("ALREADY HAS A C++ SCRIPTCOMPONENT");
-						}
-						//std::vector<std::string> test {"test1", "test2", "test3"}; // replace this vector with your not hardcoded way of getting your scripts
-						//if (ImGui::BeginMenu("+ Scripts"))
-						//{
-						//	for (auto str : test) // change to whatever loop you want
-						//	{
-						//		if (ImGui::MenuItem(str.c_str())) 
-						//		{
-						//			//do whatever script specific stuff here
-						//		}
-						//	}
-						//	ImGui::EndMenu();
-						//}
-						if (ImGui::Selectable("+ Animation "))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
-							else
-								AddErrorLog("ALREADY HAS ANIMATION");
-						}
-						if (ImGui::Selectable("Add Text"))
-						{
-							if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-								EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
-							else
-								AddErrorLog("ALREADY HAS TEXT");
-						}
+
 						ImGui::EndPopup();
 					}
 
@@ -2149,7 +2020,7 @@ namespace PE {
 	{
 		if (IsEditorActive())
 		//testing for drag and drop
-		if (!ImGui::Begin("resourcewindow", Active)) // draw resource list
+		if (!ImGui::Begin("Assets Browser", Active)) // draw resource list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -2294,15 +2165,24 @@ namespace PE {
 					// Check if the mouse button is released
 					if (ImGui::IsMouseReleased(0))
 					{
-						if (m_entityToModify != -1)
+						if (m_entityToModify.second != -1)
 						{
 							// alters the texture assigned to renderer component in entity
 							std::string const extension = m_files[draggedItemIndex].extension().string();
 							if (extension == ".png")
 							{
-								ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetTextureKey(m_files[draggedItemIndex].string());
-								EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify).SetColor(1.f, 1.f, 1.f, 1.f);
+								if (m_entityToModify.first == "Renderer")
+								{
+									ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify.second).SetTextureKey(m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::Renderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
+								}
+								else if (m_entityToModify.first == "GUIRenderer")
+								{
+									ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetTextureKey(m_files[draggedItemIndex].string());
+									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
+								}
 							}
 							// add remaining editable assets audio etc
 						}
@@ -2320,10 +2200,7 @@ namespace PE {
 						draggedItemIndex = -1;
 					}
 				}
-			}
-			else
-			{
-				m_entityToModify = -1;
+				m_entityToModify = std::make_pair<std::string>("", - 1);
 			}
 
 
@@ -2336,7 +2213,7 @@ namespace PE {
 	void Editor::ShowPerformanceWindow(bool* Active)
 	{
 		//if (IsEditorActive())
-		if (!ImGui::Begin("performanceWindow", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		if (!ImGui::Begin("Performance Window", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -2454,7 +2331,7 @@ namespace PE {
 						ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
 
 						//Imgui docks right side by default
-						ImGui::DockBuilderDockWindow("sceneview", dockspace_id);
+						ImGui::DockBuilderDockWindow("Scene View", dockspace_id);
 
 						//set the other sides
 						ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.3f, nullptr, &dockspace_id);
@@ -2462,20 +2339,20 @@ namespace PE {
 						ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
 
 						//setting the other dock locations
-						ImGui::DockBuilderDockWindow("Object List Window", dock_id_right);
+						ImGui::DockBuilderDockWindow("Object Hierarchy Window", dock_id_right);
 
 						//set on the save location to dock ontop of eachother
-						ImGui::DockBuilderDockWindow("resourcewindow", dock_id_down);
-						ImGui::DockBuilderDockWindow("consolewindow", dock_id_down);
+						ImGui::DockBuilderDockWindow("Assets Browser", dock_id_down);
+						ImGui::DockBuilderDockWindow("Console Window", dock_id_down);
 
 
 						//set on the save location to dock ontop of eachother
-						ImGui::DockBuilderDockWindow("componentwindow", dock_id_left);
+						ImGui::DockBuilderDockWindow("Property Editor Window", dock_id_left);
 
 						//split the bottom into 2
 						ImGuiID dock_id_down2 = ImGui::DockBuilderSplitNode(dock_id_down, ImGuiDir_Right, 0.5f, nullptr, &dock_id_down);
 
-						ImGui::DockBuilderDockWindow("logwindow", dock_id_down2);
+						ImGui::DockBuilderDockWindow("Debug Log Window", dock_id_down2);
 
 						//end dock
 						ImGui::DockBuilderFinish(dockspace_id);
@@ -2535,11 +2412,6 @@ namespace PE {
 								engine_logger.AddLog(false, "File path is empty. Aborted loading entities.", __FUNCTION__);
 							}
 						}
-						ImGui::Separator();
-						//remove the false,false if using
-						if (ImGui::MenuItem("Scene 1", "", false, false)) {}
-						if (ImGui::MenuItem("Scene 2", "", false, false)) {}
-						if (ImGui::MenuItem("Scene 3", "", false, false)) {}
 						ImGui::EndMenu();
 					}
 					//does not work only for show
@@ -2584,8 +2456,12 @@ namespace PE {
 						{
 							m_showPerformanceWindow = !m_showPerformanceWindow;
 						}
+						if (ImGui::MenuItem("PhysicsWindow", "", m_showPhysicsWindow, !m_showPhysicsWindow))
+						{
+							m_showPhysicsWindow = !m_showPhysicsWindow;
+						}
 						ImGui::Separator();
-						if (ImGui::MenuItem("Close Editor", "esc", m_showEditor, true))
+						if (ImGui::MenuItem("Close Editor (Game Wont Start Either)", "", m_showEditor, true))
 						{
 							m_showEditor = !m_showEditor;
 						}
@@ -2602,6 +2478,25 @@ namespace PE {
 						}
 						ImGui::EndMenu();
 					}
+					if (ImGui::BeginMenu("Theme"))
+					{
+						if (ImGui::MenuItem("Kurumi", "")) 
+						{
+							m_currentStyle = GuiStyle::DARK; 
+							SetImGUIStyle_Dark();
+						}
+						if (ImGui::MenuItem("My Melody [WIP]", "")) 
+						{ 
+							m_currentStyle = GuiStyle::PINK; 
+							SetImGUIStyle_Pink();
+						}
+						if (ImGui::MenuItem("Cinnamoroll", "")) 
+						{
+							m_currentStyle = GuiStyle::BLUE;
+							SetImGUIStyle_Blue();
+						}
+						ImGui::EndMenu();
+					}
 				}
 				ImGui::EndMainMenuBar(); // closing of menu begin function
 				ImGui::End(); //finish drawing
@@ -2609,14 +2504,43 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowSceneView(GLuint texture_id, bool* active)
+	void Editor::ShowPhysicsWindow(bool* Active)
+	{
+		if (!ImGui::Begin("Physics Config Window", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		{
+			ImGui::End(); //imgui close
+		}
+		else
+		{
+			ImGui::Text("Broad Phase Grid Size:");
+			int grid[2] = { static_cast<int>(CollisionManager::gridSize.x),static_cast<int>(CollisionManager::gridSize.y) };
+			ImGui::InputInt2("##grid",grid);
+			CollisionManager::gridSize.x = static_cast<float>(abs( grid[0]));
+			CollisionManager::gridSize.y = static_cast<float>(abs(grid[1]));
+			ImGui::Dummy(ImVec2(0, 0.2f));
+
+			ImGui::Text("Grid Active: "); ImGui::SameLine(); ImGui::Checkbox("##Checkers", &CollisionManager::gridActive);
+			ImGui::Dummy(ImVec2(0, 0.2f));
+			ImGui::Separator();
+
+
+			if (ImGui::Button("Toggle Debug Lines"))
+			{
+				ToggleDebugRender();
+			}
+			ImGui::End(); //imgui close
+		}
+	}
+
+	void Editor::ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* active)
 	{
 		if (IsEditorActive()) {
-			ImGui::Begin("sceneview", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+			ImGui::Begin("Scene View", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
 			//setting the current width and height of the window to be drawn on
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
+
 			ImGuiStyle& style = ImGui::GetStyle();
 			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
 			float avail = ImGui::GetContentRegionAvail().x;
@@ -2666,219 +2590,139 @@ namespace PE {
 				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
-				//the graphics rendered onto an image on the imgui window
-				ImGui::Image(
-					reinterpret_cast<void*>(
-						static_cast<intptr_t>(texture_id)),
-					ImVec2(m_renderWindowWidth, m_renderWindowHeight),
-					ImVec2(0, 1),
-					ImVec2(1, 0)
-				);
+				if (r_frameBuffer.GetTextureId())
+				{
+					//the graphics rendered onto an image on the imgui window
+					ImGui::Image(
+						reinterpret_cast<void*>(
+							static_cast<intptr_t>(r_frameBuffer.GetTextureId())),
+						ImVec2(m_renderWindowWidth, m_renderWindowHeight),
+						ImVec2(0, 1),
+						ImVec2(1, 0)
+					);
+				}
 				m_mouseInScene = ImGui::IsWindowHovered();
 			}
+			static ImVec2 clickedPosition;
+			static ImVec2 screenPosition; // coordinates from the top left corner
+			static ImVec2 currentPosition;
+			static vec2 startPosition;
+			if(ImGui::IsMouseClicked(0))
+			{
+				std::cout << "-----mouse click-------------------------------------------------------------------------\n";
+				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
+				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // from bottom left corner
+				std::cout << "clicked position: x: " << clickedPosition.x << ", y: " << clickedPosition.y << "\n";
+
+				screenPosition.x = clickedPosition.x - m_renderWindowWidth * 0.5f; // in viewport space, origin in the center
+				screenPosition.y = clickedPosition.y - m_renderWindowHeight * 0.5f; // in viewport space, origin in the center
+				std::cout << "screen position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
+
+				// Check that position is within the viewport
+				if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
+						|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight)
+				{
+						std::cout << "is outside viewport";
+				}
+				else 
+				{
+						m_currentSelectedObject = -1;
+						// Loop through all objects
+						for (long i{ static_cast<long>(Graphics::RendererManager::renderedEntities.size() - 1) }; i >= 0; --i)
+						{	
+								EntityID id{ Graphics::RendererManager::renderedEntities[i] };
+
+								// Get the transform component of the entity
+								Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
+
+								glm::vec4 transformedCursor{ screenPosition.x, screenPosition.y, 0.f, 1.f };
+
+								// Transform the position of the mouse cursor from screen space to model space
+								glm::vec4 worldSpacePosition{
+										Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
+										* transformedCursor // screen position
+								};
+
+								std::cout << "worldSpacePosition: x: " << worldSpacePosition.x << ", y: " << worldSpacePosition.y << "\n";
+									
+								// If trying to pick text or UI, don't transform to world space
+								if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<TextComponent>())
+										&& !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+								{
+										transformedCursor = worldSpacePosition;
+								}
+								else 
+								{
+										transformedCursor /= Graphics::CameraManager::GetEditorCamera().GetMagnification();
+										std::cout << "checking text component\n";
+								}
+
+								transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+										* transformedCursor;
+
+								std::cout << "modelSpacePosition: x: " << transformedCursor.x << ", y: " << transformedCursor.y << "\n";
+
+								glm::vec4 backToWorldSpacePosition{
+										Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+										* transformedCursor
+								};
+
+								std::cout << "backToWorldSpacePosition: x: " << backToWorldSpacePosition.x << ", y: " << backToWorldSpacePosition.y << "\n";
+								
+
+								// Check if the cursor position is within the bounds of the object
+								if (!(transformedCursor.x < -0.5f || transformedCursor.x > 0.5f
+										|| transformedCursor.y < -0.5f || transformedCursor.y > 0.5f))
+								{
+										// It is within the bounds, break out of the loop
+										m_currentSelectedObject = static_cast<int>(id);
+										break;
+								}
+						}
+
+						if (m_currentSelectedObject >= 0)
+						{
+								startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
+								std::cout << ", selected Entity ID: " << m_currentSelectedObject;
+						}
+				}
+				
+				std::cout << "\n";
+			}
+			if (ImGui::IsMouseDown(0) && (m_currentSelectedObject >= 0))
+			{
+				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
+				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+
+				// Check that position is within the viewport
+				if (!(clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
+						|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight))
+				{
+						ImVec2 offset;
+						offset.x = currentPosition.x - clickedPosition.x;
+						offset.y = currentPosition.y - clickedPosition.y;
+						float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
+
+						if (!EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<TextComponent>())
+								&& !EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+						{ 
+								offset.x *= magnification;
+								offset.y *= magnification;
+						}
+						
+						if(m_mouseInScene)
+						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+				}
+
+			}
+
+
 			ImGui::EndChild();
 
 			//end the window
 			ImGui::End();
 		}
 	}
-
-	void Editor::SetImGUIStyle()
-	{
-		ImGuiStyle* style = &ImGui::GetStyle();
-		ImVec4* colors = style->Colors;
-
-		// Base Dark Color
-		ImVec4 darkColor = ImVec4(0.1216f, 0.1216f, 0.1216f, 1.0f);
-
-		// Darker Element
-		ImVec4 darkerElement = ImVec4(0.10f, 0.10f, 0.10f, 1.0f);
-
-		// Lighter Text
-		ImVec4 lighterText = ImVec4(0.8f, 0.8f, 0.8f, 1.0f);
-
-		// Highlight Color
-		ImVec4 highlightColor = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-
-		// Subtle Highlight
-		ImVec4 subtleHighlight = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-
-		// Subtle Hover
-		ImVec4 subtleHover = ImVec4(0.3f, 0.3f, 0.3f, 0.40f);
-
-		colors[ImGuiCol_Text] = lighterText;
-		colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-		colors[ImGuiCol_WindowBg] = darkColor;
-		colors[ImGuiCol_ChildBg] = darkColor;
-		colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
-		colors[ImGuiCol_Border] = darkerElement;
-		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_FrameBg] = darkerElement;
-		colors[ImGuiCol_FrameBgHovered] = subtleHover;
-		colors[ImGuiCol_FrameBgActive] = subtleHighlight;
-		colors[ImGuiCol_TitleBg] = darkerElement;
-		colors[ImGuiCol_TitleBgActive] = darkerElement;
-		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-		colors[ImGuiCol_MenuBarBg] = darkerElement;
-		colors[ImGuiCol_ScrollbarBg] = darkerElement;
-		colors[ImGuiCol_ScrollbarGrab] = subtleHighlight;
-		colors[ImGuiCol_ScrollbarGrabHovered] = subtleHover;
-		colors[ImGuiCol_ScrollbarGrabActive] = subtleHighlight;
-		colors[ImGuiCol_CheckMark] = highlightColor;
-		colors[ImGuiCol_SliderGrab] = subtleHighlight;
-		colors[ImGuiCol_SliderGrabActive] = highlightColor;
-		colors[ImGuiCol_Button] = subtleHighlight;
-		colors[ImGuiCol_ButtonHovered] = subtleHover;
-		colors[ImGuiCol_ButtonActive] = highlightColor;
-		colors[ImGuiCol_Header] = darkerElement;
-		colors[ImGuiCol_HeaderHovered] = subtleHover;
-		colors[ImGuiCol_HeaderActive] = subtleHighlight;
-		colors[ImGuiCol_Separator] = darkerElement;
-		colors[ImGuiCol_SeparatorHovered] = subtleHover;
-		colors[ImGuiCol_SeparatorActive] = subtleHighlight;
-		colors[ImGuiCol_ResizeGrip] = subtleHighlight;
-		colors[ImGuiCol_ResizeGripHovered] = subtleHover;
-		colors[ImGuiCol_ResizeGripActive] = highlightColor;
-		colors[ImGuiCol_Tab] = darkerElement;
-		colors[ImGuiCol_TabHovered] = subtleHover;
-		colors[ImGuiCol_TabActive] = subtleHighlight;
-		colors[ImGuiCol_TabUnfocused] = darkerElement;
-		colors[ImGuiCol_TabUnfocusedActive] = subtleHighlight;
-		colors[ImGuiCol_DockingEmptyBg] = darkColor;
-		colors[ImGuiCol_PlotLines] = lighterText;
-		colors[ImGuiCol_PlotLinesHovered] = highlightColor;
-		colors[ImGuiCol_PlotHistogram] = subtleHighlight;
-		colors[ImGuiCol_PlotHistogramHovered] = highlightColor;
-		colors[ImGuiCol_TableHeaderBg] = darkerElement;
-		colors[ImGuiCol_TableBorderStrong] = darkerElement;
-		colors[ImGuiCol_TableBorderLight] = darkerElement;
-		colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-		colors[ImGuiCol_TableRowBgAlt] = darkerElement;
-		colors[ImGuiCol_TextSelectedBg] = subtleHighlight;
-		colors[ImGuiCol_DragDropTarget] = highlightColor;
-		colors[ImGuiCol_NavHighlight] = highlightColor;
-		colors[ImGuiCol_NavWindowingHighlight] = highlightColor;
-		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
-		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
-
-		style->ChildRounding = 8.0f;
-		style->FrameBorderSize = 0.0f;
-		style->FrameRounding = 6.0f;
-		style->GrabMinSize = 10.0f;
-		style->PopupRounding = 6.0f;
-		style->ScrollbarRounding = 8.0f;
-		style->ScrollbarSize = 10.0f;
-		style->TabBorderSize = 0.0f;
-		style->TabRounding = 6.0f;
-	}
-
-
-	//void Editor::SetImGUIStyle()
-	//{
-	//	ImGuiStyle* style = &ImGui::GetStyle();
-	//	ImVec4* colors = style->Colors;
-
-	//	colors[ImGuiCol_Text] = ImVec4(HEX(200), HEX(200), HEX(200), 1.00f);
-	//	colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
-	//	colors[ImGuiCol_WindowBg] = ImVec4(.15f, .15f, .20f, 1.00f);
-	//	colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	//	colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
-	//	colors[ImGuiCol_Border] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-	//	colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	//	colors[ImGuiCol_FrameBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-	//	colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
-	//	colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-	//	colors[ImGuiCol_TitleBg] = ImVec4(.1f, .1f, .13f, 1.00f);;
-	//	colors[ImGuiCol_TitleBgActive] = ImVec4(.15f, .15f, .25f, 1.00f);
-	//	colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
-	//	colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-	//	colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-	//	colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
-	//	colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
-	//	colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
-	//	colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-	//	colors[ImGuiCol_SliderGrab] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
-	//	colors[ImGuiCol_SliderGrabActive] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
-	//	colors[ImGuiCol_Button] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
-	//	colors[ImGuiCol_ButtonHovered] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
-	//	colors[ImGuiCol_ButtonActive] = ImVec4(0.70f, 0.53f, 0.98f, 1.00f);
-	//	colors[ImGuiCol_Header] = ImVec4(0.3f, 0.3f, 0.3f, 0.31f);
-	//	colors[ImGuiCol_HeaderHovered] = ImVec4(0.70f, 0.59f, 0.98f, 0.4f);
-	//	colors[ImGuiCol_HeaderActive] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
-	//	colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
-	//	colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
-	//	colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
-	//	colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
-	//	colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
-	//	colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
-	//	colors[ImGuiCol_Tab] = ImLerp(colors[ImGuiCol_Header], colors[ImGuiCol_TitleBgActive], 0.80f);
-	//	colors[ImGuiCol_TabHovered] = colors[ImGuiCol_HeaderHovered];
-	//	colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
-	//	colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
-	//	colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
-	//	colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
-	//	colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
-	//	colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
-	//	colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
-	//	colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
-	//	colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
-	//	colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
-	//	colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
-	//	colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
-	//	colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
-	//	colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
-	//	colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
-	//	colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
-	//	colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
-	//	colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
-	//	colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
-
-	//	//[ImGuiCol_Text] = The color for the text that will be used for the whole menu.
-	//	//	[ImGuiCol_TextDisabled] = Color for "not active / disabled text".
-	//	//	[ImGuiCol_WindowBg] = Background color.
-	//	//	[ImGuiCol_PopupBg] = The color used for the background in ImGui::Combo and ImGui::MenuBar.
-	//	//	[ImGuiCol_Border] = The color that is used to outline your menu.
-	//	//	[ImGuiCol_BorderShadow] = Color for the stroke shadow.
-	//	//	[ImGuiCol_FrameBg] = Color for ImGui::InputText and for background ImGui::Checkbox
-	//	//	[ImGuiCol_FrameBgHovered] = The color that is used in almost the same way as the one above, except that it changes color when guiding it to ImGui::Checkbox.
-	//	//	[ImGuiCol_FrameBgActive] = Active color.
-	//	//	[ImGuiCol_TitleBg] = The color for changing the main place at the very top of the menu(where the name of your "top-of-the-table" is shown.
-	//	//		ImGuiCol_TitleBgCollapsed = ImguiCol_TitleBgActive
-	//	//		= The color of the active title window, ie if you have a menu with several windows, this color will be used for the window in which you will be at the moment.
-	//	//		[ImGuiCol_MenuBarBg] = The color for the bar menu. (Not all sawes saw this, but still)
-	//	//		[ImGuiCol_ScrollbarBg] = The color for the background of the "strip", through which you can "flip" functions in the software vertically.
-	//	//		[ImGuiCol_ScrollbarGrab] = Color for the scoll bar, ie for the "strip", which is used to move the menu vertically.
-	//	//		[ImGuiCol_ScrollbarGrabHovered] = Color for the "minimized / unused" scroll bar.
-	//	//		[ImGuiCol_ScrollbarGrabActive] = The color for the "active" activity in the window where the scroll bar is located.
-	//	//		[ImGuiCol_ComboBg] = Color for the background for ImGui::Combo.
-	//	//		[ImGuiCol_CheckMark] = Color for your ImGui::Checkbox.
-	//	//		[ImGuiCol_SliderGrab] = Color for the slider ImGui::SliderInt and ImGui::SliderFloat.
-	//	//		[ImGuiCol_SliderGrabActive] = Color of the slider,
-	//	//		[ImGuiCol_Button] = the color for the button.
-	//	//		[ImGuiCol_ButtonHovered] = Color when hovering over the button.
-	//	//		[ImGuiCol_ButtonActive] = Button color used.
-	//	//		[ImGuiCol_Header] = Color for ImGui::CollapsingHeader.
-	//	//		[ImGuiCol_HeaderHovered] = Color, when hovering over ImGui::CollapsingHeader.
-	//	//		[ImGuiCol_HeaderActive] = Used color ImGui::CollapsingHeader.
-	//	//		[ImGuiCol_Column] = Color for the "separation strip" ImGui::Column and ImGui::NextColumn.
-	//	//		[ImGuiCol_ColumnHovered] = Color, when hovering on the "strip strip" ImGui::Column and ImGui::NextColumn.
-	//	//		[ImGuiCol_ColumnActive] = The color used for the "separation strip" ImGui::Column and ImGui::NextColumn.
-	//	//		[ImGuiCol_ResizeGrip] = The color for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-	//	//		[ImGuiCol_ResizeGripHovered] = Color, when hovering to the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-	//	//		[ImGuiCol_ResizeGripActive] = The color used for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-	//	//		[ImGuiCol_CloseButton] = The color for the button - closing menu.
-	//	//		[ImGuiCol_CloseButtonHovered] = Color, when you hover over the button - close menu.
-	//	//		[ImGuiCol_CloseButtonActive] = The color used for the button - closing menu.
-	//	//		[ImGuiCol_TextSelectedBg] = The color of the selected text, in ImGui::MenuBar.
-	//	//		[ImGuiCol_ModalWindowDarkening] = The color of the "Blackout Window" of your menu.
-	//	//		I rarely see these designations, but still decided to put them here.
-	//	//		[ImGuiCol_Tab] = The color for tabs in the menu.
-	//	//		[ImGuiCol_TabActive] = The active color of tabs, ie when you click on the tab you will have this color.
-	//	//		[ImGuiCol_TabHovered] = The color that will be displayed when hovering on the table.
-	//	//		[ImGuiCol_TabSelected] = The color that is used when you are in one of the tabs.
-	//	//		[ImGuiCol_TabText] = Text color that only applies to tabs.
-	//	//		[ImGuiCol_TabTextActive] = Active text color for tabs.
-	//}
 
 	void Editor::AddLog(std::string_view text)
 	{
@@ -2905,7 +2749,7 @@ namespace PE {
 		ss += text;
 		AddLog(ss);
 	}
-
+	
 	void Editor::AddEventLog(std::string_view text)
 	{
 		std::string ss("[EVENT] ");
@@ -2931,54 +2775,6 @@ namespace PE {
 		m_consoleOutput.clear();
 	}
 
-	void Editor::OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_event)
-	{
-		PE::KeyTriggeredEvent KTE;
-
-		//dynamic cast
-		if (r_event.GetType() == PE::KeyEvents::KeyTriggered)
-		{
-			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
-		}
-
-		if (KTE.keycode == GLFW_KEY_F1)
-			m_showConsole = !m_showConsole;
-
-		if (KTE.keycode == GLFW_KEY_F2)
-			m_showObjectList = !m_showObjectList;
-
-		if (KTE.keycode == GLFW_KEY_F3)
-			m_showLogs = !m_showLogs;
-
-		if (KTE.keycode == GLFW_KEY_F4)
-			m_showSceneView = !m_showSceneView;
-
-		if (KTE.keycode == GLFW_KEY_F7)
-			m_showComponentWindow = !m_showComponentWindow;
-
-		if (KTE.keycode == GLFW_KEY_F6)
-			m_showPerformanceWindow = !m_showPerformanceWindow;
-
-		if (KTE.keycode == GLFW_KEY_ESCAPE)
-		{
-			m_showEditor = true;
-			
-			if (m_showEditor)
-				m_isRunTime = false;
-
-			// This will load all entities from the file
-			ClearObjectList();
-			serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-			engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-		}
-
-		if (KTE.keycode == GLFW_KEY_F5)
-			m_showResourceWindow = !m_showResourceWindow;
-
-		if (KTE.keycode == GLFW_KEY_F10)
-			ToggleDebugRender();
-	}
-
 	void Editor::HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths)
 	{
 		// prints the number of directories / files dragged over
@@ -2997,6 +2793,227 @@ namespace PE {
 			if (!std::filesystem::equivalent(r_path.parent_path(), m_parentPath))
 				std::filesystem::copy(r_path, std::filesystem::path{ m_parentPath.string() + "/" + r_path.filename().string()}, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
 		}
+	}
 
+	void Editor::SetImGUIStyle_Dark()
+	{
+		ImGuiStyle* style = &ImGui::GetStyle();
+		ImVec4* colors = style->Colors;
+
+		colors[ImGuiCol_Text] = ImVec4(HEX(200), HEX(200), HEX(200), 1.00f);
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+		colors[ImGuiCol_WindowBg] = ImVec4(.15f, .15f, .20f, 1.00f);;
+		colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
+		colors[ImGuiCol_Border] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_FrameBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+		colors[ImGuiCol_TitleBg] = ImVec4(.1f, .1f, .13f, 1.00f);;
+		colors[ImGuiCol_TitleBgActive] = ImVec4(.15f, .15f, .25f, 1.00f);
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_SliderGrab] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_Button] = ImVec4(0.70f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.70f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.70f, 0.53f, 0.98f, 1.00f);
+		colors[ImGuiCol_Header] = ImVec4(0.3f, 0.3f, 0.3f, 0.31f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.70f, 0.59f, 0.98f, 0.4f);
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
+		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
+		colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
+		colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
+		colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+		colors[ImGuiCol_Tab] = ImLerp(colors[ImGuiCol_Header], colors[ImGuiCol_TitleBgActive], 0.80f);
+		colors[ImGuiCol_TabHovered] = colors[ImGuiCol_HeaderHovered];
+		colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
+		colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
+		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
+		colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+		colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+		colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+		colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+		colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+		colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
+		colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
+		colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
+		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+		colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+		colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+
+		//[ImGuiCol_Text] = The color for the text that will be used for the whole menu.
+		//	[ImGuiCol_TextDisabled] = Color for "not active / disabled text".
+		//	[ImGuiCol_WindowBg] = Background color.
+		//	[ImGuiCol_PopupBg] = The color used for the background in ImGui::Combo and ImGui::MenuBar.
+		//	[ImGuiCol_Border] = The color that is used to outline your menu.
+		//	[ImGuiCol_BorderShadow] = Color for the stroke shadow.
+		//	[ImGuiCol_FrameBg] = Color for ImGui::InputText and for background ImGui::Checkbox
+		//	[ImGuiCol_FrameBgHovered] = The color that is used in almost the same way as the one above, except that it changes color when guiding it to ImGui::Checkbox.
+		//	[ImGuiCol_FrameBgActive] = Active color.
+		//	[ImGuiCol_TitleBg] = The color for changing the main place at the very top of the menu(where the name of your "top-of-the-table" is shown.
+		//		ImGuiCol_TitleBgCollapsed = ImguiCol_TitleBgActive
+		//		= The color of the active title window, ie if you have a menu with several windows, this color will be used for the window in which you will be at the moment.
+		//		[ImGuiCol_MenuBarBg] = The color for the bar menu. (Not all sawes saw this, but still)
+		//		[ImGuiCol_ScrollbarBg] = The color for the background of the "strip", through which you can "flip" functions in the software vertically.
+		//		[ImGuiCol_ScrollbarGrab] = Color for the scoll bar, ie for the "strip", which is used to move the menu vertically.
+		//		[ImGuiCol_ScrollbarGrabHovered] = Color for the "minimized / unused" scroll bar.
+		//		[ImGuiCol_ScrollbarGrabActive] = The color for the "active" activity in the window where the scroll bar is located.
+		//		[ImGuiCol_ComboBg] = Color for the background for ImGui::Combo.
+		//		[ImGuiCol_CheckMark] = Color for your ImGui::Checkbox.
+		//		[ImGuiCol_SliderGrab] = Color for the slider ImGui::SliderInt and ImGui::SliderFloat.
+		//		[ImGuiCol_SliderGrabActive] = Color of the slider,
+		//		[ImGuiCol_Button] = the color for the button.
+		//		[ImGuiCol_ButtonHovered] = Color when hovering over the button.
+		//		[ImGuiCol_ButtonActive] = Button color used.
+		//		[ImGuiCol_Header] = Color for ImGui::CollapsingHeader.
+		//		[ImGuiCol_HeaderHovered] = Color, when hovering over ImGui::CollapsingHeader.
+		//		[ImGuiCol_HeaderActive] = Used color ImGui::CollapsingHeader.
+		//		[ImGuiCol_Column] = Color for the "separation strip" ImGui::Column and ImGui::NextColumn.
+		//		[ImGuiCol_ColumnHovered] = Color, when hovering on the "strip strip" ImGui::Column and ImGui::NextColumn.
+		//		[ImGuiCol_ColumnActive] = The color used for the "separation strip" ImGui::Column and ImGui::NextColumn.
+		//		[ImGuiCol_ResizeGrip] = The color for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+		//		[ImGuiCol_ResizeGripHovered] = Color, when hovering to the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+		//		[ImGuiCol_ResizeGripActive] = The color used for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
+		//		[ImGuiCol_CloseButton] = The color for the button - closing menu.
+		//		[ImGuiCol_CloseButtonHovered] = Color, when you hover over the button - close menu.
+		//		[ImGuiCol_CloseButtonActive] = The color used for the button - closing menu.
+		//		[ImGuiCol_TextSelectedBg] = The color of the selected text, in ImGui::MenuBar.
+		//		[ImGuiCol_ModalWindowDarkening] = The color of the "Blackout Window" of your menu.
+		//		I rarely see these designations, but still decided to put them here.
+		//		[ImGuiCol_Tab] = The color for tabs in the menu.
+		//		[ImGuiCol_TabActive] = The active color of tabs, ie when you click on the tab you will have this color.
+		//		[ImGuiCol_TabHovered] = The color that will be displayed when hovering on the table.
+		//		[ImGuiCol_TabSelected] = The color that is used when you are in one of the tabs.
+		//		[ImGuiCol_TabText] = Text color that only applies to tabs.
+		//		[ImGuiCol_TabTextActive] = Active text color for tabs.
+	}
+
+	void Editor::LoadSceneFromGivenPath(std::string_view path)
+	{
+		ClearObjectList();
+		serializationManager.LoadAllEntitiesFromFile(path);
+	}
+
+	void Editor::SetImGUIStyle_Pink()
+	{
+		ImGuiStyle* style = &ImGui::GetStyle();
+		ImVec4* colors = style->Colors;
+
+		colors[ImGuiCol_Text] = ImVec4(HEX(255), HEX(255), HEX(255), 1.00f);
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+		colors[ImGuiCol_WindowBg] = ImVec4(.75f, .61f, .66f, 1.00f);
+		colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_PopupBg] = ImVec4(0.08f, 0.08f, 0.08f, 0.94f);
+		colors[ImGuiCol_Border] = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
+		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_FrameBg] = ImVec4(0.16f, 0.29f, 0.48f, 0.54f);
+		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+		colors[ImGuiCol_TitleBg] = ImVec4(1.00f, .75f, .85f, 1.00f);;
+		colors[ImGuiCol_TitleBgActive] = ImVec4(1.00f, .35f, .39f, 1.00f);;
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.02f, 0.02f, 0.02f, 0.53f);
+		colors[ImGuiCol_ScrollbarGrab] = ImVec4(0.31f, 0.31f, 0.31f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(0.41f, 0.41f, 0.41f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(0.51f, 0.51f, 0.51f, 1.00f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_SliderGrab] = ImVec4(0.24f, 0.52f, 0.88f, 1.00f);
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_Button] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
+		colors[ImGuiCol_Header] = ImVec4(0.26f, 0.61f, 0.78f, 0.31f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
+		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
+		colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
+		colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
+		colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+		colors[ImGuiCol_Tab] = ImLerp(colors[ImGuiCol_Header], colors[ImGuiCol_TitleBgActive], 0.80f);
+		colors[ImGuiCol_TabHovered] = colors[ImGuiCol_HeaderHovered];
+		colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
+		colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
+		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
+		colors[ImGuiCol_DockingEmptyBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		colors[ImGuiCol_PlotLines] = ImVec4(0.61f, 0.61f, 0.61f, 1.00f);
+		colors[ImGuiCol_PlotLinesHovered] = ImVec4(1.00f, 0.43f, 0.35f, 1.00f);
+		colors[ImGuiCol_PlotHistogram] = ImVec4(0.90f, 0.70f, 0.00f, 1.00f);
+		colors[ImGuiCol_PlotHistogramHovered] = ImVec4(1.00f, 0.60f, 0.00f, 1.00f);
+		colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+		colors[ImGuiCol_TableBorderStrong] = ImVec4(0.31f, 0.31f, 0.35f, 1.00f);   // Prefer using Alpha=1.0 here
+		colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);   // Prefer using Alpha=1.0 here
+		colors[ImGuiCol_TableRowBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_TableRowBgAlt] = ImVec4(1.00f, 1.00f, 1.00f, 0.06f);
+		colors[ImGuiCol_TextSelectedBg] = ImVec4(0.26f, 0.59f, 0.98f, 0.35f);
+		colors[ImGuiCol_DragDropTarget] = ImVec4(1.00f, 1.00f, 0.00f, 0.90f);
+		colors[ImGuiCol_NavHighlight] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
+		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+
+	}
+
+
+
+	void Editor::SetImGUIStyle_Blue()
+	{
+		ImGuiStyle* style = &ImGui::GetStyle();
+		ImVec4* colors = style->Colors;
+
+		colors[ImGuiCol_Text] = ImVec4(HEX(0), HEX(0), HEX(0), 1.00f);
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+		colors[ImGuiCol_WindowBg] = ImVec4(0.70f, 0.82f, .95f, 1.00f);
+		colors[ImGuiCol_ChildBg] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_PopupBg] = ImVec4(.95f, 0.95f, .95f, 0.94f);
+		colors[ImGuiCol_Border] = ImVec4(0.43f, 0.43f, 0.50f, 0.50f);
+		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+		colors[ImGuiCol_FrameBg] = ImVec4(0.32f, 0.58f, 0.99f, 0.54f);
+		colors[ImGuiCol_FrameBgHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.40f);
+		colors[ImGuiCol_FrameBgActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+		colors[ImGuiCol_TitleBg] = ImVec4(1.00f, 1, 1, 1.00f);;
+		colors[ImGuiCol_TitleBgActive] = ImVec4(.7f, .7f, .7f, 1.00f);;
+		colors[ImGuiCol_TitleBgCollapsed] = ImVec4(0.00f, 0.00f, 0.00f, 0.51f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(1.f, 1.f, 1.f, 1.00f);
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(.75f, 0.75f, 0.75f, 0.53f);
+		colors[ImGuiCol_ScrollbarGrab] = ImVec4(.95f, .95f, .95f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabHovered] = ImVec4(.85f, .85f, .85f, 1.00f);
+		colors[ImGuiCol_ScrollbarGrabActive] = ImVec4(.8f, .8f, .8f, 1.00f);
+		colors[ImGuiCol_CheckMark] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_SliderGrab] = ImVec4(.95f, 0.95f, 0.95f, 1.00f);
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.8f, 0.8f, 0.8f, 1.00f);
+		colors[ImGuiCol_Button] = ImVec4(1.f, 1.f, 1.f, 0.40f); // buttons
+		colors[ImGuiCol_ButtonHovered] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.06f, 0.53f, 0.98f, 1.00f);
+		colors[ImGuiCol_Header] = ImVec4(1.f, 1.f, 1.f, 0.31f);
+		colors[ImGuiCol_HeaderHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.80f);
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.26f, 0.59f, 0.98f, 1.00f);
+		colors[ImGuiCol_Separator] = colors[ImGuiCol_Border];
+		colors[ImGuiCol_SeparatorHovered] = ImVec4(0.10f, 0.40f, 0.75f, 0.78f);
+		colors[ImGuiCol_SeparatorActive] = ImVec4(0.10f, 0.40f, 0.75f, 1.00f);
+		colors[ImGuiCol_ResizeGrip] = ImVec4(0.26f, 0.59f, 0.98f, 0.20f);
+		colors[ImGuiCol_ResizeGripHovered] = ImVec4(0.26f, 0.59f, 0.98f, 0.67f);
+		colors[ImGuiCol_ResizeGripActive] = ImVec4(0.26f, 0.59f, 0.98f, 0.95f);
+		colors[ImGuiCol_Tab] = ImLerp(colors[ImGuiCol_Header], colors[ImGuiCol_TitleBgActive], 0.80f);
+		colors[ImGuiCol_TabHovered] = colors[ImGuiCol_HeaderHovered];
+		colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
+		colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
+		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
 	}
 }

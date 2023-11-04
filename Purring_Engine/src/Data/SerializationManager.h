@@ -6,6 +6,14 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     70%
+ \par      changes:    Majority of code and structure 
+
+ \co-author            FOONG Jun Wei 
+ \par      email:      f.junwei\@digipen.edu 
+ \par      code %:     30% 
+ \par      changes:    LoadAnimationComponent(), LoadTextComponent(), 
+                       LoadScriptComponent()
 
  \brief	   This file contains the implementation of the SerializationManager class.
            The SerializationManager is responsible for serializing and deserializing entities
@@ -30,6 +38,7 @@
 #include "Graphics/GUIRenderer.h"
 #include "Data/JsonUtils.h"
 #include "GUISystem.h"
+#include <type_traits>
 
 struct StructPlayerStats
 {
@@ -157,10 +166,40 @@ private:
     *************************************************************************************/
     bool LoadCollider(const size_t& r_id, const nlohmann::json& r_json);
 
+    /*!***********************************************************************************
+     \brief Load the camera component from JSON.
+    *************************************************************************************/
     bool LoadCamera(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the GUI component from JSON.
+    *************************************************************************************/
     bool LoadGUI(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Renderer component from JSON.
+    *************************************************************************************/
     bool LoadGUIRenderer(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the EntityDescriptor component from JSON.
+    *************************************************************************************/
     bool LoadEntityDescriptor(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Animation component from JSON.
+    *************************************************************************************/
+    bool LoadAnimationComponent(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Text component from JSON.
+    *************************************************************************************/
+    bool LoadTextComponent(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Load the Script component from JSON.
+    *************************************************************************************/
+    bool LoadScriptComponent(const size_t& r_id, const nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:
@@ -203,9 +242,7 @@ void SerializationManager::SerializeComponent(int entityId, const std::string& j
             );*/
         ComponentType& component = entityManager.Get<ComponentType>(entityId);
 
-
-            nlohmann::json jComponent = component.ToJson();
-            json["Entity"]["components"][jsonKey] = jComponent;
+        json["Entity"]["components"][jsonKey] = component.ToJson(static_cast<EntityID>(entityId));
         
     }
 }

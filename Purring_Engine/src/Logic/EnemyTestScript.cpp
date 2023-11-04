@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     EnemyTestScript.cpp
+ \date     02-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	Script that controls the enemy states. For M2 demo purposes.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
+
 #include "prpch.h"
 #include "EnemyTestScript.h"
 #include "ECS/EntityFactory.h"
@@ -6,6 +22,10 @@
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 #include "LogicSystem.h"
+
+#include <limits>
+
+
 # define M_PI   3.14159265358979323846 
 //#include "Input/InputSystem.h"
 
@@ -56,12 +76,20 @@ namespace PE {
 	{
 		auto it = m_ScriptData.find(id);
 		if (it != m_ScriptData.end())
+		{
+			delete m_ScriptData.at(id).m_stateManager;
 			m_ScriptData.erase(id);
+		}
 	}
 
 	std::map<EntityID, EnemyTestScriptData>& EnemyTestScript::GetScriptData()
 	{
 		return m_ScriptData;
+	}
+
+	rttr::instance EnemyTestScript::GetScriptData(EntityID id)
+	{
+		return rttr::instance(m_ScriptData.at(id));
 	}
 
 	EnemyTestScript::~EnemyTestScript()

@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     Animation.cpp
- \date     25-09-2023
+ \date     01-11-2023
 
  \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
@@ -69,6 +69,20 @@ namespace PE
 	void AnimationComponent::SetCurrentAnimationIndex(std::string animationIndex)
 	{
 		m_currentAnimationIndex = animationIndex;
+	}
+
+	nlohmann::json AnimationComponent::ToJson(size_t id) const
+	{
+		id;
+		nlohmann::json j;
+		j["CurrentAnimationIndex"] = m_currentAnimationIndex;
+		return j;
+	}
+
+	AnimationComponent& AnimationComponent::Deserialize(const nlohmann::json& j)
+	{
+		m_currentAnimationIndex = j["CurrentAnimationIndex"].get<std::string>();
+		return *this;
 	}
 
 	// AnimationManager

@@ -1,3 +1,20 @@
+/*!*********************************************************************************** 
+
+ \project  Purring Engine 
+ \module   CSD2401-A 
+ \file     StateManager.h 
+ \date     03-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan\@digipen.edu
+
+
+ \brief  This file contains the declearations for StateMachine & Manager
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
+
+*************************************************************************************/
+
 #pragma once
 typedef unsigned long long EntityID;
 

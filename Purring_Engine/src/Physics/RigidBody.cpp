@@ -15,7 +15,6 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "RigidBody.h"
-#include "Logging/Logger.h"
 #include "Physics/PhysicsManager.h"
 
 namespace PE

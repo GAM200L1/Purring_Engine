@@ -1,3 +1,25 @@
+/*!*********************************************************************************** 
+ \project  Purring Engine 
+ \module   CSD2401-A 
+ \file     LogicSystem.h 
+ \date     03-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan\@digipen.edu
+ \par      code %:     85% 
+ \par      changes:    Majority of the code 
+
+ \co-author            FOONG Jun Wei 
+ \par      email:      f.junwei\@digipen.edu 
+ \par      code %:     15% 
+ \par      changes:    Serialize and deserialize scriptcomponent & data
+
+
+ \brief  This file contains the base class declerations of Scripts class/type
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
+
+*************************************************************************************/
 #include "prpch.h"
 #include "LogicSystem.h"
 #include "ECS/EntityFactory.h"
@@ -11,6 +33,8 @@
 #include "PlayerControllerScript.h"
 #include "FollowScript.h"
 #include "Editor/Editor.h"
+#include "CameraManagerScript.h"
+
 
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
 
@@ -29,6 +53,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(PlayerControllerScript);
 	REGISTER_SCRIPT(EnemyTestScript);
 	REGISTER_SCRIPT(FollowScript);
+	REGISTER_SCRIPT(CameraManagerScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

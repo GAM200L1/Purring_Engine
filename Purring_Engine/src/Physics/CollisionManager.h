@@ -15,20 +15,31 @@
 *************************************************************************************/
 #pragma once
 #include "System.h"
-#include "ECS/Entity.h"
-#include "Math/MathCustom.h"
-#include "Colliders.h"
+#include "SpatialGrid.h"
+
 namespace PE
 {
+
 	class CollisionManager : public System
 	{
 	public:
-		// ----- Constructors ----- //
+
+		// ----- Public Variable ----- //
+		static vec2 gridSize;
+		static bool gridActive;
+
+		// ----- Constructors/Destructors ----- //
 		/*!***********************************************************************************
 		 \brief Construct a new Collision Manager object
 		 
 		*************************************************************************************/
 		CollisionManager();
+
+		/*!***********************************************************************************
+		 \brief Destroy a Collision Manager object
+
+		*************************************************************************************/
+		~CollisionManager();
 
 		// ----- Public Getters ----- //
 		/*!***********************************************************************************
@@ -89,6 +100,8 @@ namespace PE
 		void ResolveCollision();
 
 	private:
+
+		Grid m_grid;
 		std::vector<Manifold> m_manifolds;
 		std::string m_systemName{ "CollisionManager" };
 	};

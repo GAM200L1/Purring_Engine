@@ -1,3 +1,20 @@
+/*!*********************************************************************************** 
+
+ \project  Purring Engine 
+ \module   CSD2401-A 
+ \file     testScript.cpp 
+ \date     03-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan\@digipen.edu
+
+
+ \brief  This file contains the defenitions of testScript
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
+
+*************************************************************************************/
+
 #include "prpch.h"
 #include "testScript.h"
 #include "ECS/EntityFactory.h"
@@ -5,6 +22,10 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+
+#include <limits>
+
+
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -41,6 +62,11 @@ namespace PE
 	std::map<EntityID, TestScriptData>& testScript::GetScriptData()
 	{
 		return m_ScriptData;
+	}
+
+	rttr::instance testScript::GetScriptData(EntityID id)
+	{
+		return rttr::instance(m_ScriptData.at(id));
 	}
 
 }

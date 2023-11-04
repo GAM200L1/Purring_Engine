@@ -1,3 +1,20 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     GUISystem.cpp
+ \date     02-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	Checks for events and updates the states and calls the functions of all 
+	GUI objects in the scene.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
+
 #include "prpch.h"
 #include "GUISystem.h"
 #include "Events/EventHandler.h"
@@ -139,8 +156,10 @@ namespace PE
 
 
 	// Serialize GUI
-	nlohmann::json GUI::ToJson() const
+	nlohmann::json GUI::ToJson(size_t id) const
 	{
+		UNREFERENCED_PARAMETER(id);
+
 		nlohmann::json j;
 		// Serialize properties
 		j["m_onClicked"] = m_onClicked;

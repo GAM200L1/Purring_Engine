@@ -1,0 +1,113 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": true,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": -100.0,
+                            "y": -100.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "Text",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 1.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                        "Size": 1.0,
+                        "Text": "Hello DY :D"
+                    },
+                    "Transform": {
+                        "height": 22.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 155.0,
+                            "y": -160.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 209.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "Text",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
+                        "Size": 1.0,
+                        "Text": "Hello Elie :)"
+                    },
+                    "Transform": {
+                        "height": 18.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -143.0,
+                            "y": 173.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 260.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}

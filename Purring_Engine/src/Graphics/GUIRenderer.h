@@ -31,13 +31,19 @@ namespace PE
                      Empty by design; it has the same functionality as the Renderer, 
                      but has been separated so that the render passes of the UI and 
                      gameobjects can be separated. 
+
+                     Will be extended in the future to allow for different colors 
+                     and textures for different states (on button hover, on button 
+                     click etc.).
               */
         public:
               /*!***********************************************************************************
              \brief Serializes the data attached to this renderer.
             *************************************************************************************/
-            nlohmann::json ToJson() const
+            nlohmann::json ToJson(size_t id) const
             {
+                id;
+
                 nlohmann::json j;
                 j["TextureKey"] = GetTextureKey();
                 j["Color"]["r"] = GetColor().r;

@@ -16,17 +16,15 @@
 *************************************************************************************/
 #pragma once
 
-#include "Math/MathCustom.h"
-#include "Math/Transform.h"
-#include "RigidBody.h"
-#include "Data/json.hpp"
 #include <variant>
 #include <set>
+#include "Math/MathCustom.h"
+#include "Math/Transform.h"
+#include "ECS/Components.h"
+#include "RigidBody.h"
 
 namespace PE
 {
-	// may change this to box collider to combine obb and aabb in the future
-	
 	// ----- AABB Collider ----- //
 	
 	//! Struct containing AABBCollider parameters
@@ -181,8 +179,10 @@ namespace PE
 
 			\return The JSON representation of the Collider object.
 			*************************************************************************************/
-			nlohmann::json ToJson() const
+			nlohmann::json ToJson(size_t id) const
 			{
+				id;
+
 				nlohmann::json j;
 				if (std::holds_alternative<AABBCollider>(colliderVariant))
 				{

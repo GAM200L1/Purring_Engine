@@ -27,6 +27,7 @@
 #include "Singleton.h"
 
 #include "Graphics/GLHeaders.h"
+#include "Graphics/FrameBuffer.h"
 
 #include "ECS//EntityFactory.h"
 #include "ECS/Entity.h"
@@ -35,7 +36,6 @@
 #include "ECS/SceneView.h"
 #include "Data/SerializationManager.h"
 #include "Data/json.hpp"
-
 
 namespace PE {
 
@@ -66,9 +66,9 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Render all imgui windows
 
-		 \param[in] GLuint 	the id of the texture to be drawn on the scene view
+		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
 		*************************************************************************************/
-		void Render(GLuint texture_id);
+		void Render(Graphics::FrameBuffer& r_framebuffer);
 
 		// ----- Public Getters ----- // 
 	public:
@@ -194,19 +194,34 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief render the docking port window
 
-		 \param[in] bool* reference to the boolean that sets the window active (Ill add soon maybe)
+		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
 		void SetDockingPort(bool* Active);
 		/*!***********************************************************************************
-		 \brief render the sceneview window
+		 \brief render the physics window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowSceneView(GLuint texture_id, bool* active);
+		void ShowPhysicsWindow(bool* Active);
+		/*!***********************************************************************************
+		 \brief render the sceneview window
+
+		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* active);
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
-		void SetImGUIStyle();
+		void SetImGUIStyle_Dark();
+		/*!***********************************************************************************
+		 \brief Set custom ImGUI style
+		*************************************************************************************/
+		void SetImGUIStyle_Pink();
+		/*!***********************************************************************************
+		 \brief Set custom ImGUI style
+		*************************************************************************************/
+		void SetImGUIStyle_Blue();
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -224,7 +239,16 @@ namespace PE {
 		 \brief toggle rendering of debug lines
 		*************************************************************************************/
 		void ToggleDebugRender();
+		/*!***********************************************************************************
+		 \brief Set custom ImGUI style
+		*************************************************************************************/
+		void SetImGUIStyle();
+		/*!***********************************************************************************
+		 \brief	Load Scene based on given file path
 
+		 \param[in] string_view path name
+		*************************************************************************************/
+		void LoadSceneFromGivenPath(std::string_view path);
 		// ----- ImGui Command Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -236,8 +260,14 @@ namespace PE {
 		*************************************************************************************/
 		void test();
 
+		/*!***********************************************************************************
+		 \brief Plays a sound effect. Used by the buttons.		 
+		*************************************************************************************/
 		void PlayAudio1();
 
+		/*!***********************************************************************************
+		 \brief Plays a different sound effect. Used by the buttons.		 
+		*************************************************************************************/
 		void PlayAudio2();
 
 
@@ -247,7 +277,27 @@ namespace PE {
 		*************************************************************************************/
 		void ClearObjectList();
 
+		/*!***********************************************************************************
+		 \brief Allows files to be dragged into the assets browser and copied from that its
+				original file directory to the project's asset folder.
+				Information on the number of files and their original filepaths is printed in
+				the engine log.
+
+		 \param[in] GLFWwindow* - pointer to the window the editor is in
+		 \param[in] int - number of files that has been dragged into the browser
+		 \param[in] const char** - filepaths of the files that have been dragged into the browser
+		*************************************************************************************/
 		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths);
+
+	private:
+		enum class GuiStyle 
+		{
+			DARK,
+			PINK,
+			BLUE
+		};
+
+		GuiStyle m_currentStyle;
 
 		// ----- Private Variables ----- // 
 	private:
@@ -261,6 +311,7 @@ namespace PE {
 		bool m_showComponentWindow;
 		bool m_showResourceWindow;
 		bool m_showPerformanceWindow;
+		bool m_showPhysicsWindow;
 		bool m_firstLaunch;
 
 		//boolean for rendering
@@ -281,12 +332,12 @@ namespace PE {
 
 		//variable for assets browser
 		float m_time;
-		float m_renderWindowWidth, m_renderWindowHeight;
+		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
-		int m_entityToModify;
+		std::pair<std::string, int> m_entityToModify;
 		static bool m_fileDragged;
 	};
 }
