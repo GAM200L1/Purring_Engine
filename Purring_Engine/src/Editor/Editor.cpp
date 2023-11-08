@@ -618,10 +618,7 @@ namespace PE {
 						}
 
 						ImGui::Unindent();
-					}
-
-
-					
+					}					
 
 					
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
@@ -2555,14 +2552,11 @@ namespace PE {
 			static vec2 startPosition;
 			if(ImGui::IsMouseClicked(0))
 			{
-				std::cout << "-----mouse click-------------------------------------------------------------------------\n";
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
 				clickedPosition.y =  ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // from bottom left corner
-				std::cout << "clicked position: x: " << clickedPosition.x << ", y: " << clickedPosition.y << "\n";
 
 				screenPosition.x = clickedPosition.x - m_renderWindowWidth * 0.5f; // in viewport space, origin in the center
 				screenPosition.y = clickedPosition.y - m_renderWindowHeight * 0.5f; // in viewport space, origin in the center
-				std::cout << "screen position: x: " << screenPosition.x << ", y: " << screenPosition.y << "\n";
 
 				// Check that position is within the viewport
 				if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
@@ -2588,8 +2582,6 @@ namespace PE {
 										Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
 										* transformedCursor // screen position
 								};
-
-								std::cout << "worldSpacePosition: x: " << worldSpacePosition.x << ", y: " << worldSpacePosition.y << "\n";
 									
 								// If trying to pick text or UI, don't transform to world space
 								if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<TextComponent>())
@@ -2600,20 +2592,15 @@ namespace PE {
 								else 
 								{
 										transformedCursor /= Graphics::CameraManager::GetEditorCamera().GetMagnification();
-										std::cout << "checking text component\n";
 								}
 
 								transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
 										* transformedCursor;
 
-								std::cout << "modelSpacePosition: x: " << transformedCursor.x << ", y: " << transformedCursor.y << "\n";
-
 								glm::vec4 backToWorldSpacePosition{
 										Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
 										* transformedCursor
 								};
-
-								std::cout << "backToWorldSpacePosition: x: " << backToWorldSpacePosition.x << ", y: " << backToWorldSpacePosition.y << "\n";
 								
 
 								// Check if the cursor position is within the bounds of the object
@@ -2629,17 +2616,45 @@ namespace PE {
 						if (m_currentSelectedObject >= 0)
 						{
 								startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
-								std::cout << ", selected Entity ID: " << m_currentSelectedObject;
 						}
 				}
 				
 				std::cout << "\n";
 			}
-			if (ImGui::IsMouseDown(0) && (m_currentSelectedObject >= 0))
+			
+			static float rotation;
+			static bool rotating = false;
+			static bool scaling = false;
+			static float height;
+			static float width;
+			if (m_currentSelectedObject >= 0)
+			{
+				if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
+				{
+					rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation;
+					clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+					rotating = true;
+				}
+
+				if (InputSystem::IsKeyTriggered(GLFW_KEY_S) && scaling == false)
+				{
+					height = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height;
+					width = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width;
+
+					clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+					clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
+
+					scaling = true;
+
+				}
+			}
+			float currentRotation;
+			float currentHeight;
+			float currentWidth;
+			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0))
 			{
 				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-
 				// Check that position is within the viewport
 				if (!(clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
 						|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight))
@@ -2647,6 +2662,7 @@ namespace PE {
 						ImVec2 offset;
 						offset.x = currentPosition.x - clickedPosition.x;
 						offset.y = currentPosition.y - clickedPosition.y;
+
 						float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
 
 						if (!EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<TextComponent>())
@@ -2656,10 +2672,42 @@ namespace PE {
 								offset.y *= magnification;
 						}
 						
-						if(m_mouseInScene)
-						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+
+							if (InputSystem::IsKeyHeld(GLFW_KEY_R) && scaling == false)
+							{
+								currentRotation = rotation - offset.y;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation = currentRotation;
+								rotating = true;
+							}
+
+							if (InputSystem::IsKeyHeld(GLFW_KEY_S) && rotating == false)
+							{
+								currentHeight = height + offset.y;
+								currentWidth = width + offset.x;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+								scaling = true;
+
+								std::cout << "holding s" << std::endl;
+							}
+
+							if (m_mouseInScene)
+							if(rotating != true && scaling != true)
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+
 				}
 
+			}
+			else
+			{
+				clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
+			}
+			
+			if (!ImGui::IsMouseDown(0))
+			{
+				rotating = false;
+				scaling = false;
 			}
 			//end the window
 			ImGui::End();

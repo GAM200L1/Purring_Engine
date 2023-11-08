@@ -21,7 +21,7 @@
 #include "InputSystem.h"
 #include "Logging/Logger.h"
 #include "Events/EventHandler.h"
-
+#include "Time/TimeManager.h"
 namespace PE 
 {
     //static declarations
@@ -178,7 +178,7 @@ namespace PE
             PE::KeyTriggeredEvent kte;
             PE::KeyPressedEvent kpe;
             kte.keycode = kpe.keycode = key;
-            m_KeyTriggered[key] = .1f;
+            m_KeyTriggered[key] = TimeManager::GetInstance().GetFixedTimeStep() * 1.01;
             //setting a buffer before the keypressed becomes a repeat
             kpe.repeat = m_bufferTime;
             //saving the keypressed event
@@ -253,7 +253,7 @@ namespace PE
 
         for (auto& [key, val] : m_KeyTriggered)
         {
-            val = 0;
+            val -= TimeManager::GetInstance().GetFixedTimeStep();
         }
     }
 
