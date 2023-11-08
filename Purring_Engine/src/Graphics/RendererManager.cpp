@@ -127,7 +127,7 @@ namespace PE
             deltaTime; // Prevent warnings
 
             // Retrieve whether to render in the editor or the full window
-            bool renderInEditor{ Editor::GetInstance().IsEditorActive() };
+           // bool renderInEditor{ Editor::GetInstance().IsEditorActive() };
 
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
@@ -135,27 +135,27 @@ namespace PE
             // Reset the render order container
             renderedEntities.clear();
 
-            if (renderInEditor)
-            {
+            //if (renderInEditor)
+            //{
                 Editor::GetInstance().GetWindowSize(windowWidth, windowHeight);
-            }
-            else 
-            {
-                int width, height;
-                glfwGetWindowSize(p_glfwWindow, &width, &height);
-                windowWidth = static_cast<float>(width);
-                windowHeight = static_cast<float>(height);
-            }
+            //}
+            //else 
+            //{
+                //int width, height;
+                //glfwGetWindowSize(p_glfwWindow, &width, &height);
+                //windowWidth = static_cast<float>(width);
+                //windowHeight = static_cast<float>(height);
+           // }
 
             // Set background color of the window
             glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
-            if (renderInEditor)
-            {
+           //// if (renderInEditor)
+            //{
                 // Bind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Bind();
-            }            
+           // }            
 
             // If the window size has changed
             if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight)
@@ -174,14 +174,14 @@ namespace PE
                 r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
             }
 
-            if (renderInEditor)
-            {
+           // if (renderInEditor)
+           // {
                 // Bind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
-            }
+            //}
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera
-            glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(renderInEditor) };
+            glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(true) };
 
             // Draw objects in the scene
             DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 
@@ -198,11 +198,11 @@ namespace PE
             // Render Text
             RenderText(r_cameraManager.GetUiViewToNdcMatrix());
 
-            if (renderInEditor)
-            {
+            //if (renderInEditor)
+            //{
                 // Unbind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Unbind();
-            }
+           // }
 
             Editor::GetInstance().Render(m_imguiFrameBuffer);
 

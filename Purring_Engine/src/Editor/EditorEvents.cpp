@@ -74,13 +74,18 @@ namespace PE {
 						if (m_showEditor)
 								m_isRunTime = false;
 
+						m_showGameView = false;
 						// This will load all entities from the file
 
 				}
 
-				if (KTE.keycode == GLFW_KEY_F10)
+				if (KTE.keycode == GLFW_KEY_KP_SUBTRACT)
 						ToggleDebugRender();				
 				
+				if (KTE.keycode == GLFW_KEY_F10)
+					m_showGameView = !m_showGameView;
+
+
 				if (KTE.keycode == GLFW_KEY_DELETE)
 				{
 					for (const auto& id : SceneView())

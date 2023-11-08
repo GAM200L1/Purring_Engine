@@ -211,6 +211,14 @@ namespace PE {
 		*************************************************************************************/
 		void ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* active);
 		/*!***********************************************************************************
+		 \brief render the gameview window
+
+		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* active);
+
+		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Dark();
@@ -313,7 +321,7 @@ namespace PE {
 		bool m_showPerformanceWindow;
 		bool m_showPhysicsWindow;
 		bool m_firstLaunch;
-
+		bool m_showGameView;
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;
