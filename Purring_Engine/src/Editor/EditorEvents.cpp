@@ -79,11 +79,9 @@ namespace PE {
 
 				}
 
-				if (KTE.keycode == GLFW_KEY_KP_SUBTRACT)
+				if (KTE.keycode == GLFW_KEY_F10)
 						ToggleDebugRender();				
 				
-				if (KTE.keycode == GLFW_KEY_F10)
-					m_showGameView = !m_showGameView;
 
 
 				if (KTE.keycode == GLFW_KEY_DELETE)
