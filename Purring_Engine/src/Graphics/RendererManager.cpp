@@ -181,7 +181,7 @@ namespace PE
             //}
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera
-            glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(true) };
+                glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(Editor::GetInstance().IsEditorActive()) };
 
             // Draw objects in the scene
             DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 

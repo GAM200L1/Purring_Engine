@@ -178,7 +178,7 @@ namespace PE
             PE::KeyTriggeredEvent kte;
             PE::KeyPressedEvent kpe;
             kte.keycode = kpe.keycode = key;
-            m_KeyTriggered[key] = TimeManager::GetInstance().GetFixedTimeStep() * 1.01;
+            m_KeyTriggered[key] = static_cast<float>(TimeManager::GetInstance().GetFixedTimeStep() * 1.01);
             //setting a buffer before the keypressed becomes a repeat
             kpe.repeat = m_bufferTime;
             //saving the keypressed event
