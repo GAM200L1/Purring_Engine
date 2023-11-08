@@ -531,8 +531,6 @@ namespace PE {
 		}
 		else
 		{
-			//temporary here for counting created objects and add to name
-			static int count = 0;
 			//loop to show all the items ins the vector
 			bool isHoveringObject{ false };
 			static bool drag = false;
@@ -710,8 +708,6 @@ namespace PE {
 						//m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
 						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
-
-						count--;
 
 				}
 				if (ImGui::Selectable("Clone Object"))
@@ -2537,59 +2533,10 @@ namespace PE {
 		if (IsEditorActive()) {
 			ImGui::Begin("Scene View", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
-			//setting the current width and height of the window to be drawn on
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
 
-			ImGuiStyle& style = ImGui::GetStyle();
-			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
-			float avail = ImGui::GetContentRegionAvail().x;
-
-			float off = (float)((avail - size) * 0.5);
-			if (off > 0.0f)
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
-			if (ImGui::Button("Play"))
-			{
-				m_isRunTime = true;
-				m_showEditor = false;
-
-				engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-				// This will save all entities to a file
-				for (const auto& id : SceneView<EntityDescriptor>())
-				{
-					if (!id) // skip editor camera
-						continue;
-					EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-					for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
-					{
-						if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-						{
-							desc.sceneID = i;
-							continue;
-						}
-					}
-					if (desc.parent)
-					{
-						EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-					}
-				}
-				serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
-				engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
-			}
-			ImGui::SameLine();
-			if (
-				ImGui::Button("Stop")
-				) {
-				m_isRunTime = false;
-				engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
-
-				// This will load all entities from the file
-				ClearObjectList();
-				serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-			}
-			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
 				if (r_frameBuffer.GetTextureId())
 				{
 					//the graphics rendered onto an image on the imgui window
@@ -2602,7 +2549,6 @@ namespace PE {
 					);
 				}
 				m_mouseInScene = ImGui::IsWindowHovered();
-			}
 			static ImVec2 clickedPosition;
 			static ImVec2 screenPosition; // coordinates from the top left corner
 			static ImVec2 currentPosition;
@@ -2715,10 +2661,6 @@ namespace PE {
 				}
 
 			}
-
-
-			ImGui::EndChild();
-
 			//end the window
 			ImGui::End();
 		}
