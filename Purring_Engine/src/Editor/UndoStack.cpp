@@ -9,6 +9,7 @@ namespace PE
 	}
 	void UndoStack::AddChange(EditorChanges* ec)
 	{
+		std::cout << "Added to stack" << std::endl;
 		m_undoStack.push_front(ec);
 		++m_currentcount;
 		if (m_currentcount == 20)

@@ -1041,12 +1041,12 @@ namespace PE {
 									ImGui::Text(nm.c_str());
 									rttr::variant vp = prop.get_value(EntityManager::GetInstance().Get<Transform>(entityID));									
 
+									static float prevVal{};
 									// handle types
 									if (vp.get_type().get_name() == "structPE::vec2")
 									{
 										PE::vec2 tmp = vp.get_value<PE::vec2>();
 										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  
-										static float prevVal{};
 										ImGui::DragFloat(("##x" + prop.get_name().to_string()).c_str(), &tmp.x, 1.0f);
 										if (ImGui::IsItemActivated()) 
 										{
@@ -1058,15 +1058,44 @@ namespace PE {
 											std::cout << "Edited" << std::endl;
 											m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp.x, &EntityManager::GetInstance().Get<Transform>(entityID).position.x));
 										}
-										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
+										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  
+										ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
+										if (ImGui::IsItemActivated())
+										{
+											prevVal = vp.get_value<PE::vec2>().y;
+											std::cout << prevVal << std::endl;
+										}
+										if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp.y)
+										{
+											std::cout << "Edited" << std::endl;
+											m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp.y, &EntityManager::GetInstance().Get<Transform>(entityID).position.y));
+										}
 										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
 									else if (vp.get_type().get_name() == "float")
 									{
 										float tmp = vp.get_value<float>();
 										std::string str = "##" + prop.get_name().to_string();
-										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputFloat(str.c_str(), &tmp, 1.0f, 100.f, "%.3f");
+										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  
+										ImGui::DragFloat(str.c_str(), &tmp, 1.0f);
+										if (ImGui::IsItemActivated())
+										{
+											prevVal = vp.get_value<float>();
+											std::cout << prevVal << std::endl;
+										}
+										if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp)
+										{
+											std::cout << "Edited" << std::endl;
+											if (prop.get_name() == "Width")
+											m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).width));
+											if (prop.get_name() == "Height")
+												m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).height));
+											if (prop.get_name() == "Orientation")
+												m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).orientation));
+										}
 										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
+
+
 									}
 								}
 							}
@@ -2701,6 +2730,7 @@ namespace PE {
 			static float rotation;
 			static bool rotating = false;
 			static bool scaling = false;
+			static bool moved = false;
 			static float height;
 			static float width;
 			if (m_currentSelectedObject >= 0)
@@ -2783,6 +2813,7 @@ namespace PE {
 					if (m_mouseInScene)
 						if (rotating != true && scaling != true)
 						{ 
+							moved = true;
 							if (InputSystem::IsKeyHeld(GLFW_KEY_X))
 							{
 								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y);
@@ -2807,8 +2838,28 @@ namespace PE {
 
 			if (!ImGui::IsMouseDown(0))
 			{
+				if (moved && EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position != vec2(clickedPosition.x, clickedPosition.y))
+				{
+					m_undoStack.AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
+				}
+
+				if(rotating && rotation != EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation)
+					m_undoStack.AddChange(new ValueChange<float>(rotation, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation));
+
+				if (scaling)
+				{
+/*					if(width != EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width)
+						m_undoStack.AddChange(new ValueChange<float>(width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width));
+					if (height != EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height)
+						m_undoStack.AddChange(new ValueChange<float>(height, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height));
+				*/	
+					if (vec2(width, height) != vec2(EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height))
+						m_undoStack.AddChange(new ValueChange2<float>(height, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height
+						,width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width));
+				}
 				rotating = false;
 				scaling = false;
+				moved = false;
 			}
 			//end the window
 
