@@ -3,12 +3,17 @@
 
 namespace PE
 {
-	void UndoStack::AddChange(EditorChanges&& ec)
+	UndoStack::UndoStack()
+	{
+		m_currentcount = 0;
+	}
+	void UndoStack::AddChange(EditorChanges* ec)
 	{
 		m_undoStack.push_front(ec);
-		++currentcount;
-		if (currentcount == 20)
+		++m_currentcount;
+		if (m_currentcount == 20)
 		{
+			delete m_undoStack.back();
 			m_undoStack.pop_back();
 		}
 
@@ -17,9 +22,10 @@ namespace PE
 	{
 		if (!m_undoStack.empty())
 		{
-			m_undoStack.front().Undo();
+			m_undoStack.front()->Undo();
+			delete m_undoStack.front();
 			m_undoStack.pop_front();
-			--currentcount;
+			--m_currentcount;
 		}
 
 	}
@@ -27,18 +33,13 @@ namespace PE
 	{
 	}
 
-	template<typename T>
-	ValueChange<T>::ValueChange(value_type old_, value_type new_)
+	UndoStack::~UndoStack()
 	{
+		for (auto p : m_undoStack)
+		{
+			delete p;
+		}
 	}
-	template<typename T>
-	void ValueChange<T>::Undo()
-	{
-		p_value = m_oldVal;
-	}
-	template<typename T>
-	void ValueChange<T>::Redo()
-	{
-		p_value = m_newVal;
-	}
+
+
 }

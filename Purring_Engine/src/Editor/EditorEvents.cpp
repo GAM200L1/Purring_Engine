@@ -85,6 +85,7 @@ namespace PE {
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
 					m_undoStack.UndoChange();
+					std::cout << "working" << std::endl;
 				}
 
 				if (KTE.keycode == GLFW_KEY_DELETE)

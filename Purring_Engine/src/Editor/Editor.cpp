@@ -1045,7 +1045,19 @@ namespace PE {
 									if (vp.get_type().get_name() == "structPE::vec2")
 									{
 										PE::vec2 tmp = vp.get_value<PE::vec2>();
-										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##x" + prop.get_name().to_string()).c_str(), &tmp.x, 1.0f);
+										ImGui::Text("x: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  
+										static float prevVal{};
+										ImGui::DragFloat(("##x" + prop.get_name().to_string()).c_str(), &tmp.x, 1.0f);
+										if (ImGui::IsItemActivated()) 
+										{
+											prevVal = vp.get_value<PE::vec2>().x;
+											std::cout << prevVal << std::endl;
+										}
+										if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp.x)
+										{
+											std::cout << "Edited" << std::endl;
+											m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp.x, &EntityManager::GetInstance().Get<Transform>(entityID).position.x));
+										}
 										ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
 										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 									}
