@@ -2746,18 +2746,43 @@ namespace PE {
 
 					if (InputSystem::IsKeyHeld(GLFW_KEY_S) && rotating == false)
 					{
-						currentHeight = height + offset.y;
-						currentWidth = width + offset.x;
-						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
-						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+						if (InputSystem::IsKeyHeld(GLFW_KEY_X))
+						{
+							currentWidth = width + offset.x;
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = height;
+						}
+						else if (InputSystem::IsKeyHeld(GLFW_KEY_Y))
+						{
+							currentHeight = height + offset.y;
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = width;
+						}
+						else
+						{
+							currentHeight = height + offset.y;
+							currentWidth = width + offset.x;
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+						}
 						scaling = true;
-
-						std::cout << "holding s" << std::endl;
 					}
 
 					if (m_mouseInScene)
 						if (rotating != true && scaling != true)
+						{ 
+							if (InputSystem::IsKeyHeld(GLFW_KEY_X))
+							{
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y);
+							}
+							else if (InputSystem::IsKeyHeld(GLFW_KEY_Y))
+							{
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x , startPosition.y + offset.y);
+							}
+							else
 							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+						}
+
 
 				}
 
