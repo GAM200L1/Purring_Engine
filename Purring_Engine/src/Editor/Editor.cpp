@@ -354,11 +354,11 @@ namespace PE {
 			}
 	}
 
-	void Editor::ShowLogsWindow(bool* Active)
+	void Editor::ShowLogsWindow(bool* p_active)
 	{
 		//if active
 		if (IsEditorActive())
-		if (!ImGui::Begin("Debug Log Window", Active))
+		if (!ImGui::Begin("Debug Log Window", p_active))
 		{
 			ImGui::End();			//imgui syntax
 		}
@@ -464,10 +464,10 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowConsoleWindow(bool* Active)
+	void Editor::ShowConsoleWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Console Window", Active)) // start drawing
+		if (!ImGui::Begin("Console Window", p_active)) // start drawing
 		{
 			ImGui::End(); //imgui syntax if inactive
 		}
@@ -526,10 +526,10 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowObjectWindow(bool* Active)
+	void Editor::ShowObjectWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Object Hierarchy Window", Active)) // draw object list
+		if (!ImGui::Begin("Object Hierarchy Window", p_active)) // draw object list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -748,10 +748,10 @@ namespace PE {
 	}
 
 	//temporary hardcoded stuff for testing for milestone 2
-	void Editor::ShowDemoWindow(bool* Active)
+	void Editor::ShowDemoWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Rubric Test Window", Active, ImGuiWindowFlags_AlwaysAutoResize))
+		if (!ImGui::Begin("Rubric Test Window", p_active, ImGuiWindowFlags_AlwaysAutoResize))
 		{
 			ImGui::End();
 		}
@@ -849,10 +849,10 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowComponentWindow(bool* Active)
+	void Editor::ShowComponentWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Property Editor Window", Active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
+		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
 		{
 			ImGui::End();
 		}
@@ -2013,11 +2013,11 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowResourceWindow(bool* Active)
+	void Editor::ShowResourceWindow(bool* p_active)
 	{
 		if (IsEditorActive())
 		//testing for drag and drop
-		if (!ImGui::Begin("Assets Browser", Active)) // draw resource list
+		if (!ImGui::Begin("Assets Browser", p_active)) // draw resource list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -2207,10 +2207,10 @@ namespace PE {
 
 	}
 
-	void Editor::ShowPerformanceWindow(bool* Active)
+	void Editor::ShowPerformanceWindow(bool* p_active)
 	{
 		//if (IsEditorActive())
-		if (!ImGui::Begin("Performance Window", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		if (!ImGui::Begin("Performance Window", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -2271,7 +2271,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::SetDockingPort(bool* Active)
+	void Editor::SetDockingPort(bool* p_active)
 	{
 		if (IsEditorActive()) {
 			//initializing dockspace flags
@@ -2299,7 +2299,7 @@ namespace PE {
 			window_flags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
 			//begin of dockspace
-			if (!ImGui::Begin("DockSpace", Active, window_flags))
+			if (!ImGui::Begin("DockSpace", p_active, window_flags))
 			{
 				//if not active, just some weird imgui syntax
 				ImGui::End();
@@ -2504,9 +2504,9 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowPhysicsWindow(bool* Active)
+	void Editor::ShowPhysicsWindow(bool* p_active)
 	{
-		if (!ImGui::Begin("Physics Config Window", Active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		if (!ImGui::Begin("Physics Config Window", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close
 		}
@@ -2532,10 +2532,10 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* active)
+	void Editor::ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
 		if (IsEditorActive()) {
-			ImGui::Begin("Scene View", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
+			ImGui::Begin("Scene View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
 
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
@@ -2808,7 +2808,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* active)
+	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
 		if (IsRunTime() && !IsEditorActive())
 		{
@@ -2821,7 +2821,7 @@ namespace PE {
 			ImGui::SetNextWindowViewport(viewport->ID);
 		}
 
-		ImGui::Begin("Game View", active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoDecoration);
+		ImGui::Begin("Game View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoDecoration);
 
 
 		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
@@ -2946,7 +2946,7 @@ namespace PE {
 		m_consoleOutput.clear();
 	}
 
-	void Editor::HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths)
+	void Editor::HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** p_paths)
 	{
 		// prints the number of directories / files dragged over
 		m_fileDragged = true;
@@ -2957,7 +2957,7 @@ namespace PE {
 		std::vector<std::filesystem::path> consolidatedPaths;
 		for (int i{ 0 }; i < count; ++i)
 		{
-			consolidatedPaths.emplace_back(paths[i]);
+			consolidatedPaths.emplace_back(p_paths[i]);
 		}
 		for (std::filesystem::path const& r_path : consolidatedPaths)
 		{
