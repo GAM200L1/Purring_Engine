@@ -23,6 +23,7 @@ namespace PE
 {
 	class EditorChanges
 	{
+		// ----- Public Functions ----- //
 	public:
 		/*!***********************************************************************************
 		 \brief     Undo Changes to be overriden
@@ -56,7 +57,7 @@ namespace PE
 		 \brief			Adding New Change to the stack, clear Redo Stack
 		 \param [In]	pointer to the new change
 		*************************************************************************************/
-		void AddChange(EditorChanges* change);
+		void AddChange(EditorChanges* p_change);
 		/*!***********************************************************************************
 		 \brief			Undo the change and pop it out of stack then send it to the redo stack
 		*************************************************************************************/
