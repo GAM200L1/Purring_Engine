@@ -9,7 +9,7 @@
  \par      email:      jarranyanzhi.tan\@digipen.edu
 
 
- \brief  This file contains the declearations for StateMachine & Manager
+ \brief  This file contains the declaration for StateMachine & Manager
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
 

@@ -82,7 +82,10 @@ namespace PE {
 				if (KTE.keycode == GLFW_KEY_F10)
 						ToggleDebugRender();				
 				
-
+				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
+				{
+					m_undoStack.UndoChange();
+				}
 
 				if (KTE.keycode == GLFW_KEY_DELETE)
 				{
