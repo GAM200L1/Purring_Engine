@@ -1067,7 +1067,6 @@ namespace PE {
 										}
 										if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp.y)
 										{
-											std::cout << "Edited" << std::endl;
 											m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp.y, &EntityManager::GetInstance().Get<Transform>(entityID).position.y));
 										}
 										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
@@ -1085,7 +1084,6 @@ namespace PE {
 										}
 										if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp)
 										{
-											std::cout << "Edited" << std::endl;
 											if (prop.get_name() == "Width")
 											m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).width));
 											if (prop.get_name() == "Height")
