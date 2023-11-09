@@ -16,7 +16,7 @@
  \par      changes:    rttr::instance GetScriptData()
 
 
- \brief  This file contains the declerations of the player controller
+ \brief  This file contains the declaration of the player controller
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
 

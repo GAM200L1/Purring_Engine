@@ -16,7 +16,7 @@
  \par      changes:    rttr::instance GetScriptData() 
 
 
- \brief  This file contains the base class declerations of Scripts class/type
+ \brief  This file contains the base class declaration of Scripts class/type
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
 

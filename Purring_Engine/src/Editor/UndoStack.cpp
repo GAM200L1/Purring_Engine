@@ -1,3 +1,19 @@
+/*!***********************************************************************************
+
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     UndoStack.cpp
+ \date     09-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+
+ \brief  This file contains the definition of Undostack		
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "UndoStack.h"
 
@@ -7,10 +23,10 @@ namespace PE
 	{
 		m_currentcount = 0;
 	}
-	void UndoStack::AddChange(EditorChanges* ec)
+	void UndoStack::AddChange(EditorChanges* p_change)
 	{
 		std::cout << "Added to stack" << std::endl;
-		m_undoStack.push_front(ec);
+		m_undoStack.push_front(p_change);
 		++m_currentcount;
 		if (m_currentcount == 20)
 		{
