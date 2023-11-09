@@ -50,6 +50,7 @@
 #include "Graphics/Text.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 #define HEX(hexcode)    hexcode/255.f * 100.f // to convert colors
 
@@ -1744,6 +1745,89 @@ namespace PE {
 								//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+							}
+						}
+
+						// ---------- Audio Component ---------- //
+						if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen))
+						{
+							// Display a drop-down box of all sounds
+							static int selectedSoundIndex = -1;
+							static std::vector<std::string> soundKeys;
+							static std::string currentSoundID;
+
+							if (soundKeys.empty())
+							{
+
+								for (const auto& soundPair : ResourceManager::GetInstance().Sounds)
+								{
+									soundKeys.push_back(soundPair.first);
+								}
+							}
+
+							if (!soundKeys.empty())
+							{
+								// Convert vector to ImGui combo items
+								std::string comboPreviewValue = selectedSoundIndex >= 0 ? soundKeys[selectedSoundIndex] : "Select a sound...";
+
+								if (ImGui::BeginCombo("Sounds", comboPreviewValue.c_str()))
+								{
+									for (int i = 0; i < soundKeys.size(); ++i) {
+										bool isSelected = (selectedSoundIndex == i);
+										if (ImGui::Selectable(soundKeys[i].c_str(), isSelected))
+										{
+											selectedSoundIndex = i;
+											currentSoundID = soundKeys[i];
+										}
+
+										// Set the initial focus when opening the combo
+										if (isSelected)
+											ImGui::SetItemDefaultFocus();
+									}
+									ImGui::EndCombo();
+								}
+							}
+
+							// Play/Pause/Stop buttons
+							if (ImGui::Button("Play"))
+							{
+								if (!currentSoundID.empty())
+								{
+									AudioManager::GetInstance().PlaySound(currentSoundID);
+								}
+							}
+							ImGui::SameLine();
+							if (ImGui::Button("Pause"))
+							{
+								if (!currentSoundID.empty())
+								{
+									AudioManager::GetInstance().PauseSound(currentSoundID);
+								}
+							}
+							ImGui::SameLine();
+							if (ImGui::Button("Stop"))
+							{
+								if (!currentSoundID.empty())
+								{
+									AudioManager::GetInstance().StopSound(currentSoundID);
+								}
+							}
+
+							// Volume control for selected sound
+							static float volume = 1.0f;
+							if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
+							{
+								if (!currentSoundID.empty())
+								{
+									AudioManager::GetInstance().SetVolume(currentSoundID, volume);
+								}
+							}
+
+							// Global volume control (affecting all sounds)
+							static float globalVolume = 1.0f;
+							if (ImGui::SliderFloat("Global Volume", &globalVolume, 0.0f, 1.0f))
+							{
+								AudioManager::GetInstance().SetGlobalVolume(globalVolume);
 							}
 						}
 
