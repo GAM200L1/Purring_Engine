@@ -275,6 +275,7 @@ namespace PE
             {
                 MouseScrolledEvent event;
                 event = dynamic_cast<const MouseScrolledEvent&>(r_event);
+                if(Editor::GetInstance().IsEditorActive())
                 GetEditorCamera().AdjustMagnification(-event.yOffset * 0.5f);
 
             }

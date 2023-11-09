@@ -154,62 +154,70 @@ namespace PE {
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowLogsWindow(bool* Active);
+		void ShowLogsWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the console window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowConsoleWindow(bool* Active);
+		void ShowConsoleWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the object list window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowObjectWindow(bool* Active);
+		void ShowObjectWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the test windows (Temp for milestone 1 for elie to test)
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowDemoWindow(bool* Active);
+		void ShowDemoWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the object component window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowComponentWindow(bool* Active);
+		void ShowComponentWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the resource list window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowResourceWindow(bool* Active);
+		void ShowResourceWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the peformance profile window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowPerformanceWindow(bool* Active);
+		void ShowPerformanceWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the docking port window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void SetDockingPort(bool* Active);
+		void SetDockingPort(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the physics window
 
 		 \param[in] bool* reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowPhysicsWindow(bool* Active);
+		void ShowPhysicsWindow(bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the sceneview window
 
 		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
 		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* active);
+		void ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
+		/*!***********************************************************************************
+		 \brief render the gameview window
+
+		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
+
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
@@ -287,7 +295,7 @@ namespace PE {
 		 \param[in] int - number of files that has been dragged into the browser
 		 \param[in] const char** - filepaths of the files that have been dragged into the browser
 		*************************************************************************************/
-		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** paths);
+		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** p_paths);
 
 	private:
 		enum class GuiStyle 
@@ -313,7 +321,7 @@ namespace PE {
 		bool m_showPerformanceWindow;
 		bool m_showPhysicsWindow;
 		bool m_firstLaunch;
-
+		bool m_showGameView;
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;

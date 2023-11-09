@@ -17,6 +17,7 @@
 #include "Data/json.hpp"
 #include "Data/SerializationManager.h"
 #include "Logging/Logger.h"
+#include "Logic/LogicSystem.h"
 
 extern SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
@@ -73,13 +74,34 @@ namespace PE {
 						if (m_showEditor)
 								m_isRunTime = false;
 
+						m_showGameView = false;
 						// This will load all entities from the file
 
 				}
 
-
-
 				if (KTE.keycode == GLFW_KEY_F10)
-						ToggleDebugRender();
+						ToggleDebugRender();				
+				
+
+
+				if (KTE.keycode == GLFW_KEY_DELETE)
+				{
+					for (const auto& id : SceneView())
+					{
+						if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
+							EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
+					}
+					EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
+					LogicSystem::DeleteScriptData(m_currentSelectedObject);
+					//if not first index
+					//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
+					m_currentSelectedObject = -1; // just reset it
+					//if object selected
+					m_objectIsSelected = false;
+					//m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
+
+					if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
+				}
+
 		}
 }

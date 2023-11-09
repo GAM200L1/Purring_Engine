@@ -181,6 +181,7 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
+
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
 
