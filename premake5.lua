@@ -131,6 +131,11 @@ project "Purring_Engine"
     pchheader "prpch.h"
     pchsource "Purring_Engine/src/prpch/prpch.cpp"
 
+    flags
+    {
+        "MultiProcessorCompile"
+    }    
+
     files
     {
         "%{prj.name}/src/**.h",
