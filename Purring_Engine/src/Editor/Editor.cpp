@@ -2857,7 +2857,7 @@ namespace PE {
 			ImGui::Button("Stop")
 			) {
 			m_showEditor = true;
-			
+			toDisable = true;
 			if (m_isRunTime)
 			{
 				ClearObjectList();
