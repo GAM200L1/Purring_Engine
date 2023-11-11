@@ -1826,7 +1826,8 @@ namespace PE {
 											isSoundPaused = true;  // Update the flag when pausing
 										}
 									}
-								}								ImGui::SameLine();
+								}
+								ImGui::SameLine();
 								if (ImGui::Button("Stop"))
 								{
 									if (!currentSoundID.empty())

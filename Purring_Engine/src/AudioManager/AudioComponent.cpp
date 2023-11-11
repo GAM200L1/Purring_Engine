@@ -6,12 +6,12 @@ namespace PE
 {
     AudioComponent::AudioComponent()
     {
-        // Constructor implementation
+
     }
 
     AudioComponent::~AudioComponent()
     {
-        // Destructor implementation
+
     }
 
     void AudioComponent::PlayAudioSound(const std::string& id)
@@ -26,11 +26,11 @@ namespace PE
                 channel->isPlaying(&isPlaying);
                 if (isPlaying)
                 {
-                    return;  // Exit the function as sound is already playing
+                    return;
                 }
             }
 
-            FMOD::System* system = AudioManager::GetInstance().GetFMODSystem();  // Get the FMOD system from the AudioManager
+            FMOD::System* system = AudioManager::GetInstance().GetFMODSystem();
             FMOD_RESULT result = system->playSound(it->second->GetSound(), nullptr, false, &channel);
             if (result == FMOD_OK)
             {
