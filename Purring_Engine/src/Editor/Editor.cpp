@@ -26,6 +26,7 @@
 #include "Editor.h"
 #include "Memory/MemoryManager.h"
 #include "AudioManager/AudioManager.h"
+#include "AudioManager/AudioComponent.h"
 #include "Time/FrameRateTargetControl.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
@@ -126,8 +127,8 @@ namespace PE {
 		m_mouseInScene = false;
 		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
-		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
-		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
+		//REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
+		//REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
@@ -218,15 +219,15 @@ namespace PE {
 		m_showTestWindows = true;
 	}
 
-	void Editor::PlayAudio1()
-	{
-		AudioManager::GetInstance().PlaySound("audio_sound1");
-	}
+	//void Editor::PlayAudio1()
+	//{
+	//	//AudioManager::GetInstance().PlayAudioSound("audio_sound1");
+	//}
 
-	void Editor::PlayAudio2()
-	{
-		AudioManager::GetInstance().PlaySound("audio_sound2");
-	}
+	//void Editor::PlayAudio2()
+	//{
+	//	//AudioManager::GetInstance().PlayAudioSound("audio_sound2");
+	//}
 
 	void Editor::ClearObjectList()
 	{
@@ -763,26 +764,26 @@ namespace PE {
 				ImGui::SeparatorText("Audio Test");
 				if (ImGui::Button("Play SFX 1"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound1");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound1");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Play SFX 2"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound2");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound2");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Play SFX 3"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound3");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound3");
 				}
 				if (ImGui::Button("Play Background Music"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
+					//AudioManager::GetInstance().PlayAudioSound("audio_backgroundMusic");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Stop All Audio"))
 				{
-					AudioManager::GetInstance().StopAllSounds();
+					//AudioManager::GetInstance().StopAllSounds();
 				}
 				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
 				{
@@ -1748,87 +1749,110 @@ namespace PE {
 							}
 						}
 
-						// ---------- Audio Component ---------- //
-						if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen))
+						//// ---------- Audio Component ---------- //
+						if (name == EntityManager::GetInstance().GetComponentID<AudioComponent>())
 						{
-							// Display a drop-down box of all sounds
-							static int selectedSoundIndex = -1;
-							static std::vector<std::string> soundKeys;
-							static std::string currentSoundID;
-
-							if (soundKeys.empty())
+							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen))
 							{
+								// Display a drop-down box of all sounds
+								static int selectedSoundIndex = -1;
+								static std::vector<std::string> soundKeys;
+								static std::string currentSoundID;
 
-								for (const auto& soundPair : ResourceManager::GetInstance().Sounds)
+								if (soundKeys.empty())
 								{
-									soundKeys.push_back(soundPair.first);
-								}
-							}
 
-							if (!soundKeys.empty())
-							{
-								// Convert vector to ImGui combo items
-								std::string comboPreviewValue = selectedSoundIndex >= 0 ? soundKeys[selectedSoundIndex] : "Select a sound...";
-
-								if (ImGui::BeginCombo("Sounds", comboPreviewValue.c_str()))
-								{
-									for (int i = 0; i < soundKeys.size(); ++i) {
-										bool isSelected = (selectedSoundIndex == i);
-										if (ImGui::Selectable(soundKeys[i].c_str(), isSelected))
-										{
-											selectedSoundIndex = i;
-											currentSoundID = soundKeys[i];
-										}
-
-										// Set the initial focus when opening the combo
-										if (isSelected)
-											ImGui::SetItemDefaultFocus();
+									for (const auto& soundPair : ResourceManager::GetInstance().Sounds)
+									{
+										soundKeys.push_back(soundPair.first);
 									}
-									ImGui::EndCombo();
+								}
+
+								if (!soundKeys.empty())
+								{
+									// Convert vector to ImGui combo items
+									std::string comboPreviewValue = selectedSoundIndex >= 0 ? soundKeys[selectedSoundIndex] : "Select a sound...";
+
+									if (ImGui::BeginCombo("Sounds", comboPreviewValue.c_str()))
+									{
+										for (int i = 0; i < soundKeys.size(); ++i) {
+											bool isSelected = (selectedSoundIndex == i);
+											if (ImGui::Selectable(soundKeys[i].c_str(), isSelected))
+											{
+												selectedSoundIndex = i;
+												currentSoundID = soundKeys[i];
+											}
+
+											// Set the initial focus when opening the combo
+											if (isSelected)
+												ImGui::SetItemDefaultFocus();
+										}
+										ImGui::EndCombo();
+									}
+								}
+								AudioComponent audioComponent;
+								static bool isSoundPaused = false;
+
+								// Play/Pause/Stop buttons
+								if (ImGui::Button("Play"))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.PlayAudioSound(currentSoundID);
+										isSoundPaused = false;  // Reset the pause flag when playing
+									}
+								}
+
+								// Toggle between Pause and Resume based on isSoundPaused flag
+								ImGui::SameLine();
+								if (isSoundPaused)
+								{
+									if (ImGui::Button("Resume"))
+									{
+										if (!currentSoundID.empty())
+										{
+											audioComponent.ResumeSound(currentSoundID);
+											isSoundPaused = false;  // Update the flag when resuming
+										}
+									}
+								}
+								else
+								{
+									if (ImGui::Button("Pause"))
+									{
+										if (!currentSoundID.empty())
+										{
+											audioComponent.PauseSound(currentSoundID);
+											isSoundPaused = true;  // Update the flag when pausing
+										}
+									}
+								}								ImGui::SameLine();
+								if (ImGui::Button("Stop"))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.StopSound(currentSoundID);
+									}
+								}
+
+								// Volume control for selected sound
+								static float volume = 1.0f;
+								if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.SetVolume(currentSoundID, volume);
+									}
+								}
+
+								// Global volume control (affecting all sounds)
+								static float globalVolume = 1.0f;
+								if (ImGui::SliderFloat("Global Volume", &globalVolume, 0.0f, 1.0f))
+								{
+									AudioManager::GetInstance().SetGlobalVolume(globalVolume);
 								}
 							}
 
-							// Play/Pause/Stop buttons
-							if (ImGui::Button("Play"))
-							{
-								if (!currentSoundID.empty())
-								{
-									AudioManager::GetInstance().PlaySound(currentSoundID);
-								}
-							}
-							ImGui::SameLine();
-							if (ImGui::Button("Pause"))
-							{
-								if (!currentSoundID.empty())
-								{
-									AudioManager::GetInstance().PauseSound(currentSoundID);
-								}
-							}
-							ImGui::SameLine();
-							if (ImGui::Button("Stop"))
-							{
-								if (!currentSoundID.empty())
-								{
-									AudioManager::GetInstance().StopSound(currentSoundID);
-								}
-							}
-
-							// Volume control for selected sound
-							static float volume = 1.0f;
-							if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
-							{
-								if (!currentSoundID.empty())
-								{
-									AudioManager::GetInstance().SetVolume(currentSoundID, volume);
-								}
-							}
-
-							// Global volume control (affecting all sounds)
-							static float globalVolume = 1.0f;
-							if (ImGui::SliderFloat("Global Volume", &globalVolume, 0.0f, 1.0f))
-							{
-								AudioManager::GetInstance().SetGlobalVolume(globalVolume);
-							}
 						}
 
 						// ---------- Text Component ---------- //
@@ -2113,6 +2137,13 @@ namespace PE {
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
 								else
 									AddErrorLog("ALREADY HAS ANIMATION");
+							}
+							if (ImGui::Selectable("Add Audio"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AudioComponent>() });
+								else
+									AddErrorLog("ALREADY HAS AUDIO");
 							}
 						}
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 

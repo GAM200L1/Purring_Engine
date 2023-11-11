@@ -68,47 +68,6 @@ namespace PE
         return (result == FMOD_OK);
     }
 
-    void AudioManager::PlaySound(const std::string& id)
-    {
-        auto it = ResourceManager::GetInstance().Sounds.find(id);
-        if (it != ResourceManager::GetInstance().Sounds.end())
-        {
-            FMOD::Channel* channel = it->second->GetChannel();
-            if (channel)
-            {
-                bool isPlaying = false;
-                channel->isPlaying(&isPlaying);
-                if (isPlaying)
-                {
-                    return;  // Exit the function as sound is already playing
-                }
-            }
-
-            FMOD_RESULT result = m_system->playSound(it->second->GetSound(), nullptr, false, &channel);
-            if (result == FMOD_OK)
-            {
-                it->second->SetChannel(channel);
-            }
-            else
-            {
-                std::cout << "Failed to play sound: " << FMOD_ErrorString(result) << "\n";
-            }
-        }
-        else
-        {
-            std::cout << "Sound not found for id: " << id << "\n";
-        }
-    }
-
-    void AudioManager::SetVolume(const std::string& id, float volume)
-    {
-        auto it = ResourceManager::GetInstance().Sounds.find(id);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
-        {
-            it->second->GetChannel()->setVolume(volume);
-        }
-    }
-
     void AudioManager::SetGlobalVolume(float volume)
     {
         for (auto& pair : ResourceManager::GetInstance().Sounds)
@@ -118,33 +77,6 @@ namespace PE
             {
                 channel->setVolume(volume);
             }
-        }
-    }
-
-    void AudioManager::PauseSound(const std::string& id)
-    {
-        auto it = ResourceManager::GetInstance().Sounds.find(id);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
-        {
-            it->second->GetChannel()->setPaused(true);
-        }
-    }
-
-    void AudioManager::ResumeSound(const std::string& id)
-    {
-        auto it = ResourceManager::GetInstance().Sounds.find(id);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
-        {
-            it->second->GetChannel()->setPaused(false);
-        }
-    }
-
-    void AudioManager::StopSound(const std::string& id)
-    {
-        auto it = ResourceManager::GetInstance().Sounds.find(id);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
-        {
-            it->second->GetChannel()->stop();
         }
     }
 

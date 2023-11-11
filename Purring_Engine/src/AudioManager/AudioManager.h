@@ -20,17 +20,58 @@
 #include "fmod.hpp"
 #include "fmod_errors.h"
 #include "Singleton.h"
+#include "System.h"
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
 namespace PE
 {
+    //class AudioComponent
+    //{
+    //public:
+
+    //    /*!***********************************************************************************
+    //     \brief     Play a sound by its identifier.
+    //     \param     id The identifier for the sound to be played.
+    //    *************************************************************************************/
+    //    void PlayAudioSound(const std::string& id);
+
+    //    /*!***********************************************************************************
+    //     \brief     Set the volume for a specific sound.
+    //     \param     id The identifier for the sound.
+    //     \param     volume The new volume level (0.0 to 1.0).
+    //    *************************************************************************************/
+    //    void SetVolume(const std::string& id, float volume);
+
+    //    /*!***********************************************************************************
+    //     \brief     Pause a specific sound.
+    //     \param     id The identifier for the sound to be paused.
+    //    *************************************************************************************/
+    //    void PauseSound(const std::string& id);
+
+    //    /*!***********************************************************************************
+    //     \brief     Resume a paused sound.
+    //     \param     id The identifier for the sound to be resumed.
+    //    *************************************************************************************/
+    //    void ResumeSound(const std::string& id);
+
+    //    /*!***********************************************************************************
+    //     \brief     Stop a specific sound.
+    //     \param     id The identifier for the sound to be stopped.
+    //    *************************************************************************************/
+    //    void StopSound(const std::string& id);
+
+    //private:
+
+    //};
+
     /*!***********************************************************************************
      \brief     AudioManager class for handling FMOD audio system and events.
     *************************************************************************************/
     class AudioManager : public Singleton<AudioManager>
     {
     public:
+
         friend class Singleton<AudioManager>;
 
         /*!***********************************************************************************
@@ -82,41 +123,10 @@ namespace PE
         void Update();
 
         /*!***********************************************************************************
-         \brief     Play a sound by its identifier.
-         \param     id The identifier for the sound to be played.
-        *************************************************************************************/
-        void PlaySound(const std::string& id);
-
-        /*!***********************************************************************************
-         \brief     Set the volume for a specific sound.
-         \param     id The identifier for the sound.
-         \param     volume The new volume level (0.0 to 1.0).
-        *************************************************************************************/
-        void SetVolume(const std::string& id, float volume);
-
-        /*!***********************************************************************************
          \brief     Set the global volume for all sounds.
          \param     volume The new global volume level (0.0 to 1.0).
         *************************************************************************************/
         void SetGlobalVolume(float volume);
-
-        /*!***********************************************************************************
-         \brief     Pause a specific sound.
-         \param     id The identifier for the sound to be paused.
-        *************************************************************************************/
-        void PauseSound(const std::string& id);
-
-        /*!***********************************************************************************
-         \brief     Resume a paused sound.
-         \param     id The identifier for the sound to be resumed.
-        *************************************************************************************/
-        void ResumeSound(const std::string& id);
-
-        /*!***********************************************************************************
-         \brief     Stop a specific sound.
-         \param     id The identifier for the sound to be stopped.
-        *************************************************************************************/
-        void StopSound(const std::string& id);
 
         /*!***********************************************************************************
          \brief     Stop all currently playing sounds.
@@ -134,7 +144,6 @@ namespace PE
          \brief     Private constructor for Meyer's Singleton.
         *************************************************************************************/
         AudioManager();
-
         ~AudioManager();
 
         FMOD::System* m_system;

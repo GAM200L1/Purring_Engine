@@ -52,6 +52,7 @@
 
 // Audio
 #include "AudioManager/AudioManager.h"
+#include "AudioManager/AudioComponent.h"
 
 // Time Management
 #include "Time/TimeManager.h"
@@ -105,6 +106,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
     REGISTERCOMPONENT(PE::TextComponent);
+    REGISTERCOMPONENT(PE::AudioComponent);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
