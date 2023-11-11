@@ -87,7 +87,9 @@ namespace PE
 		if (r_event.GetType() == PE::KeyEvents::KeyTriggered)
 		{
 			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
+#ifndef GAMERELEASE
 			if(Editor::GetInstance().IsRunTime())
+#endif
 			if (KTE.keycode >= GLFW_KEY_0 && KTE.keycode <= GLFW_KEY_9)
 			{
 				m_keyPressed = true;

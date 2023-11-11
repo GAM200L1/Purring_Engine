@@ -26,12 +26,13 @@
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 
-
+#if 1
 // ImGui Headers
 #include "Editor/Editor.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#endif // GAMERELEASE
 
 // Graphics Headers
 #include "Graphics/GLHeaders.h"
@@ -443,9 +444,11 @@ void PE::CoreApplication::Run()
     }
 
     // Cleanup for ImGui
+#if 1
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+#endif
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();

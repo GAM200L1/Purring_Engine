@@ -18,8 +18,12 @@
 #include "ECS/SceneView.h"
 #include "CollisionManager.h"
 #include "Logging/Logger.h"
-#include "Editor/Editor.h"
 #include "Data/json.hpp"
+#include "Events/EventHandler.h"
+
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif
 extern Logger engine_logger;
 
 namespace PE
@@ -100,6 +104,7 @@ namespace PE
 		// Update the Collider's specs
 		UpdateColliders();
 
+#ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
 		{
 			// clears the grid if it exists when the editor is open
@@ -107,6 +112,7 @@ namespace PE
 				m_grid.ClearGrid();
 			return;
 		}
+#endif
 
 		if (m_grid.GetGridSize() != gridSize)
 		{

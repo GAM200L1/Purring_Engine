@@ -98,8 +98,10 @@ namespace PE
 	{
 		AnimationFrame p_currentFrame;
 
+#ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 		{
+#endif
 			for (EntityID const& id : SceneView<AnimationComponent>())
 			{
 				AnimationComponent const& animationComponent = EntityManager::GetInstance().Get<AnimationComponent>(id);
@@ -113,7 +115,9 @@ namespace PE
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
 					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
 			}
+#ifndef GAMERELEASE
 		}
+#endif
 	}
 
 	void AnimationManager::DestroySystem()

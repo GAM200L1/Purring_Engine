@@ -15,7 +15,10 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "MemoryManager.h"
+
+#ifndef GAMERELEASE
 #include "Editor/Editor.h"
+#endif
 
 namespace PE
 {
@@ -27,11 +30,13 @@ namespace PE
 	{
 		try
 		{
+#ifndef GAMERELEASE
 			//printing total allocated memory
 			std::string s("Currently allocated: ");
 			s += std::to_string(m_stackAllocator.GetStackTop());
 			Editor::GetInstance().AddInfoLog(s);
 			Editor::GetInstance().AddInfoLog("trying to allocate more memory now");
+#endif
 
 			//determine buffer size incase of writing over
 			int buffer = (size + 1) / 2;
@@ -42,17 +47,21 @@ namespace PE
 			m_memoryAllocationData.push_back(MemoryData(name, size, buffer));
 
 			//print to console how much was allocated
+#ifndef GAMERELEASE
 			std::stringstream ss;
 			ss << "memory allocated of size: " << size << " to: " << name << " along with buffer of: " << buffer;
 			Editor::GetInstance().AddInfoLog(ss.str());
+#endif
 
 			return p_newptr;
 		}
 		catch (int i) {
 			i; //stop unreference
+#ifndef GAMERELEASE
 			std::string ss("memory cannot be allocated to ");
 			ss += name;
 			Editor::GetInstance().AddErrorLog(ss);
+#endif
 			return nullptr;
 		}
 	}
@@ -78,6 +87,7 @@ namespace PE
 		//loop through all allocated objects
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) 
 		{
+#ifndef GAMERELEASE
 			//if written over buffer
 			if (*(m_stackAllocator.GetStack() + m_memoryAllocationData[i].size + totalMemory) != '\0')
 			{
@@ -85,6 +95,7 @@ namespace PE
 				s += " Writing into more than allocated spaces!";
 				Editor::GetInstance().AddErrorLog(s);
 			}
+#endif
 
 			//go to next object
 			totalMemory += m_memoryAllocationData[i].size + m_memoryAllocationData[i].bufferSize;
@@ -93,6 +104,7 @@ namespace PE
 
 	void MemoryManager::PrintData()
 	{
+#ifndef GAMERELEASE
 		//print total allocated memory
 		std::string s("Currently allocated: ");
 		s += std::to_string(m_stackAllocator.GetStackTop());
@@ -102,6 +114,7 @@ namespace PE
 		for (int i = 0; i < m_memoryAllocationData.size(); i++) {
 			Editor::GetInstance().AddInfoLog(m_memoryAllocationData[i].ToString());
 		}
+#endif
 	}
 
 
