@@ -258,12 +258,12 @@ namespace PE
                 m_windowWidth = static_cast<float>(event.width);
                 m_windowHeight = static_cast<float>(event.height);
 
-                // Update the size of the viewport of all the cameras
-                for (const EntityID& id : SceneView<Camera>())
-                {
-                    Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
-                    r_camera.SetViewDimensions(m_windowWidth, m_windowHeight);
-                }
+                //// Update the size of the viewport of all the cameras
+                //for (const EntityID& id : SceneView<Camera>())
+                //{
+                //    Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
+                //    r_camera.SetViewDimensions(m_windowWidth, m_windowHeight);
+                //}
             }
         }
 
