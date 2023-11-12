@@ -87,7 +87,7 @@ namespace PE
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
 				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
-				InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
+				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
 
 				std::cout << mouseX << " " << mouseY << std::endl;
 
@@ -126,7 +126,7 @@ namespace PE
 			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
 			double mouseX{ static_cast<double>(MME.x) }, mouseY{ static_cast<double>(MME.y) };
-			InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
+			InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
 
 			//check mouse coordinate against transform here
 			if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
