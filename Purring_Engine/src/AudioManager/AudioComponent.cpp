@@ -32,9 +32,20 @@ namespace PE
 
             FMOD::System* system = AudioManager::GetInstance().GetFMODSystem();
             FMOD_RESULT result = system->playSound(it->second->GetSound(), nullptr, false, &channel);
+
             if (result == FMOD_OK)
             {
                 it->second->SetChannel(channel);
+
+                // Set the loop mode based on the m_loop flag
+                FMOD_MODE loopMode = m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
+                channel->setMode(loopMode);
+
+                // If looping, set the loop count to -1 for infinite looping
+                if (m_loop)
+                {
+                    channel->setLoopCount(-1);
+                }
             }
             else
             {
@@ -81,6 +92,38 @@ namespace PE
         {
             it->second->GetChannel()->stop();
         }
+    }
+
+    std::string const& AudioComponent::GetAudioKey() const
+    {
+        return m_audioKey;
+    }
+
+    void AudioComponent::SetAudioKey(std::string const& newKey)
+    {
+        m_audioKey = newKey;
+    }
+
+    nlohmann::json AudioComponent::ToJson() const
+    {
+        nlohmann::json j;
+        j["audioKey"] = m_audioKey;
+        j["loop"] = m_loop;
+        return j;
+    }
+
+    AudioComponent AudioComponent::FromJson(const nlohmann::json& j)
+    {
+        AudioComponent audioComponent;
+        if (j.contains("audioKey"))
+        {
+            audioComponent.SetAudioKey(j["audioKey"].get<std::string>());
+        }
+        if (j.contains("loop"))
+        {
+            audioComponent.SetLoop(j["loop"].get<bool>());
+        }
+        return audioComponent;
     }
 
 }

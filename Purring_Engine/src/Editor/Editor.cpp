@@ -1752,7 +1752,7 @@ namespace PE {
 						//// ---------- Audio Component ---------- //
 						if (name == EntityManager::GetInstance().GetComponentID<AudioComponent>())
 						{
-							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen))
+							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								// Display a drop-down box of all sounds
 								static int selectedSoundIndex = -1;
@@ -1792,12 +1792,18 @@ namespace PE {
 								}
 								AudioComponent audioComponent;
 								static bool isSoundPaused = false;
+								static bool isLooping = false;
 
-								// Play/Pause/Stop buttons
+								if (ImGui::Checkbox("Loop", &isLooping))
+								{
+									audioComponent.SetLoop(isLooping);
+								}
+
 								if (ImGui::Button("Play"))
 								{
 									if (!currentSoundID.empty())
 									{
+										audioComponent.SetLoop(isLooping);  // Ensure loop setting is applied
 										audioComponent.PlayAudioSound(currentSoundID);
 										isSoundPaused = false;  // Reset the pause flag when playing
 									}
@@ -1826,8 +1832,7 @@ namespace PE {
 											isSoundPaused = true;  // Update the flag when pausing
 										}
 									}
-								}
-								ImGui::SameLine();
+								}								ImGui::SameLine();
 								if (ImGui::Button("Stop"))
 								{
 									if (!currentSoundID.empty())
@@ -1852,8 +1857,59 @@ namespace PE {
 								{
 									AudioManager::GetInstance().SetGlobalVolume(globalVolume);
 								}
-							}
 
+
+								// Vector of filepaths for audio files
+								std::vector<std::filesystem::path> audioFilePaths;
+								int index = 0;
+								int i = 0;
+
+								for (auto it = ResourceManager::GetInstance().Sounds.begin(); it != ResourceManager::GetInstance().Sounds.end(); ++it, ++i)
+								{
+									audioFilePaths.emplace_back(it->first);
+									// If current entity's audio component is using this audio file, remember its index
+									if (it->first == EntityManager::GetInstance().Get<AudioComponent>(entityID).GetAudioKey())
+										index = i;
+								}
+
+								// Vector of the names of audio files
+								std::vector<std::string> loadedAudioKeys;
+
+								// Get the keys of audio already loaded by the resource manager
+								for (auto const& r_filepath : audioFilePaths)
+								{
+									loadedAudioKeys.emplace_back(r_filepath.stem().string());
+								}
+
+								// Create a combo box of audio ids
+								if (!loadedAudioKeys.empty())
+								{
+									ImGui::Text("Audio: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									if (ImGui::BeginCombo("##Audio", loadedAudioKeys[index].c_str()))
+									{
+										for (int n = 0; n < loadedAudioKeys.size(); ++n)
+										{
+											if (ImGui::Selectable(loadedAudioKeys[n].c_str()))
+												EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(audioFilePaths[n].string());
+										}
+										ImGui::EndCombo();
+									}
+								}
+
+								// Drag and drop target
+								if (ImGui::BeginDragDropTarget())
+								{
+									if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("AUDIO_FILE"))
+									{
+										// Assuming payload is the path of the audio file
+										std::string droppedFilePath = (char*)payload->Data;
+										EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(droppedFilePath);
+									}
+									ImGui::EndDragDropTarget();
+								}
+
+							}
 						}
 
 						// ---------- Text Component ---------- //

@@ -1,0 +1,13 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "children": [],
+                "name": "GameObject",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}
