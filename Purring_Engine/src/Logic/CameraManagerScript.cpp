@@ -26,7 +26,10 @@
 #include "ECS/SceneView.h"
 #include "Graphics/Camera.h"
 #include "Graphics/CameraManager.h"
+
+#ifndef GAMERELEASE
 #include "Editor/Editor.h"
+#endif // !GAMERELEASE
 namespace PE
 {
 	void CameraManagerScript::Init(EntityID id)

@@ -20,8 +20,11 @@
 #include "Events/EventHandler.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
-#include "Editor/Editor.h"
 #include "Input/InputSystem.h"
+
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif // !GAMERELEASE
 
 #define UI_CAST(type, ui) reinterpret_cast<type&>(ui)
 

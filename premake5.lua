@@ -130,15 +130,9 @@ group "Library"
             runtime "Release"
             staticruntime "on"
             optimize "on"
-            
-        -- remove
-        filter "configurations:GameRelease"
-			runtime "Release"
-            staticruntime "on"
-			optimize "on"
 
-            targetdir ("bin/" .. gameoutputdir .. "/vendor/%{prj.name}")
-            objdir ("bin-int/" .. gameoutputdir .. "/vendor/%{prj.name}")
+        filter "configurations:GameRelease"
+            kind "None"
    
 group ""
 
@@ -205,7 +199,8 @@ project "Purring_Engine"
     {
         "GLFW",
         "glew32s",
-        "opengl32",  -- not sure if needed
+        "ImGui",
+        "opengl32",
         "fmod_vc",
         "libmono-static-sgen",
         "freetype"
@@ -226,11 +221,6 @@ project "Purring_Engine"
                 "vendor/mono/lib/Debug"
             }
 
-            links
-            {
-                "ImGui"
-            }
-
     filter "configurations:Release"
 			runtime "Release"
             staticruntime "on"
@@ -239,11 +229,6 @@ project "Purring_Engine"
             libdirs
             {
                 "vendor/mono/lib/Release"
-            }
-
-            links
-            {
-                "ImGui"
             }
     
     -- Game Release builds in release folder of editor, shares files with editor
@@ -266,14 +251,17 @@ project "Purring_Engine"
                 "vendor/mono/lib/Release"
             }
 
-            links
+            -- removes imgui link
+            removelinks
             {
                 "ImGui"
             }
 
+            -- removes editor files
             removefiles
             {
-
+                "%{prj.name}/src/Editor/*.h",
+                "%{prj.name}/src/Editor/*.cpp"
             }
 
 -- Application

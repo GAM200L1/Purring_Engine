@@ -24,7 +24,10 @@
 #include "ECS/Entity.h"
 #include "Graphics/Renderer.h"
 #include "ResourceManager/ResourceManager.h"
+
+#ifndef GAMERELEASE
 #include "Editor/Editor.h"
+#endif // !GAMERELEASE
 
 
 extern Logger engine_logger;
