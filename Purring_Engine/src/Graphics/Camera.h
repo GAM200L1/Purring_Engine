@@ -188,7 +188,7 @@ namespace PE
 
             \return vec2 - Converted position in world coordinates.
             *************************************************************************************/
-            vec2 GetViewportToWorldPosition(float const x, float const y);
+            vec2 GetViewportToWorldPosition(float const x, float const y) const;
 
 
             // ----- Public setters ----- // 

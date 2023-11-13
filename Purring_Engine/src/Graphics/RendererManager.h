@@ -48,6 +48,9 @@ namespace PE
             // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
             static std::vector<EntityID> renderedEntities;
 
+            // NDC to window conversion matrix
+            static glm::mat4 ndcToWindow;
+
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
@@ -83,6 +86,8 @@ namespace PE
              \brief Returns the name of the Graphics system.
             *************************************************************************************/
             inline std::string GetName() { return m_systemName; }
+
+            void DrawCameraQuad(glm::mat4 const& r_modelToNdc);
 
             /*!***********************************************************************************
              \brief Loops through all objects with a Renderer component (or a class that

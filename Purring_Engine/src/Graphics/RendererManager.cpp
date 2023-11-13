@@ -59,6 +59,8 @@ namespace PE
         // Initialize static variables
         std::vector<EntityID> RendererManager::renderedEntities{};
 
+        glm::mat4 RendererManager::ndcToWindow{};
+
         RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
             : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
         {
@@ -127,7 +129,7 @@ namespace PE
             deltaTime; // Prevent warnings
 
             // Retrieve whether to render in the editor or the full window
-           // bool renderInEditor{ Editor::GetInstance().IsEditorActive() };
+            bool renderInEditor{ Editor::GetInstance().IsEditorActive() };
 
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
@@ -135,20 +137,20 @@ namespace PE
             // Reset the render order container
             renderedEntities.clear();
 
-            //if (renderInEditor)
-            //{
+            if (renderInEditor)
+            {
                 Editor::GetInstance().GetWindowSize(windowWidth, windowHeight);
-            //}
-            //else 
-            //{
-                //int width, height;
-                //glfwGetWindowSize(p_glfwWindow, &width, &height);
-                //windowWidth = static_cast<float>(width);
-                //windowHeight = static_cast<float>(height);
-           // }
+            }
+            else 
+            {
+                int width, height;
+                glfwGetWindowSize(p_glfwWindow, &width, &height);
+                windowWidth = static_cast<float>(width);
+                windowHeight = static_cast<float>(height);
+            }
 
             // Set background color of the window
-            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
+            glClearColor(0.f, 0.f, 0.f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
            //// if (renderInEditor)
@@ -174,6 +176,24 @@ namespace PE
                 r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
             }
 
+            //if (renderInEditor)
+            //{
+            //    m_imguiFrameBuffer.Resize(m_cachedWindowWidth, m_cachedWindowHeight);
+            //}
+            //else
+            //{   // Get the main camera
+            //    std::optional<std::reference_wrapper<Camera>> mainCamera{ r_cameraManager.GetMainCamera() };
+            //    if (mainCamera.has_value())
+            //    {
+            //        m_imguiFrameBuffer.Resize(mainCamera.value().get().GetViewportWidth(),
+            //            mainCamera.value().get().GetViewportHeight());
+            //    }
+            //    else
+            //    {
+            //        m_imguiFrameBuffer.Resize(m_cachedWindowWidth, m_cachedWindowHeight);
+            //    }
+            //}
+
            // if (renderInEditor)
            // {
                 // Bind the RBO for rendering to the ImGui window
@@ -181,7 +201,7 @@ namespace PE
             //}
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera
-                glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(Editor::GetInstance().IsEditorActive()) };
+            glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(renderInEditor) };
 
             // Draw objects in the scene
             DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 
@@ -204,7 +224,71 @@ namespace PE
                 m_imguiFrameBuffer.Unbind();
            // }
 
-            Editor::GetInstance().Render(m_imguiFrameBuffer);
+            if (!renderInEditor) 
+            {
+                // Get the main camera
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ r_cameraManager.GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    // Create the model to world matrix
+                    glm::mat4 glmObjectTransform
+                    {
+                        GenerateTransformMatrix(
+                            //(m_cachedWindowWidth > mainCamera.value().get().GetViewportWidth() ? m_cachedWindowWidth : mainCamera.value().get().GetViewportWidth()),
+                            //(m_cachedWindowHeight > mainCamera.value().get().GetViewportHeight() ? m_cachedWindowHeight : mainCamera.value().get().GetViewportHeight()),
+                            //m_cachedWindowWidth, m_cachedWindowHeight,//1366.f, 768.f,
+                            mainCamera.value().get().GetViewportWidth(), // width
+                            mainCamera.value().get().GetViewportHeight(), // height
+                            0.f, 0.f, 0.f) // orientation, x, y position
+                    };
+
+                    float ratioedWidth{ 2.f }, ratioedHeight{ 2.f };
+                    //if (mainCamera.value().get().GetAspectRatio() > (m_cachedWindowWidth / m_cachedWindowHeight))
+                    //{//ar = w/h
+                    //    // Update the height
+                    //    //ratioedHeight *= m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth();
+                    //    //ratioedHeight *= ((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
+                    //    //    mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth : m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth());
+                    //    ratioedHeight *= ((m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight()) > 1.f ?
+                    //        mainCamera.value().get().GetViewportHeight() / m_cachedWindowHeight : m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight());
+                    //}
+                    //else 
+                    //{
+                    //    // Update the width
+                    //    //ratioedWidth *= m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight();
+                    //    //ratioedWidth *= ((m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight()) > 1.f ?
+                    //    //    mainCamera.value().get().GetViewportHeight() / m_cachedWindowHeight : m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight());
+                    //    ratioedWidth *= ((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
+                    //        mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth : m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()); 
+                    //}
+                    ////ratioedHeight *= ((m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight()) > 1.f ?
+                    ////    mainCamera.value().get().GetViewportHeight() / m_cachedWindowHeight : m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight());
+                    ////ratioedWidth *= ((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
+                    ////    mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth : m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth());
+
+                    ndcToWindow = glm::mat4{
+                        m_cachedWindowWidth * ratioedWidth, 0.f, 0.f, 0.f,
+                        0.f, m_cachedWindowHeight * ratioedHeight, 0.f, 0.f,
+                        0.f, 0.f, 20.f * -0.5f, 0.f,
+                        0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
+                    };
+
+                    glm::mat4 windowToNdc 
+                    {
+                        ratioedWidth / m_cachedWindowWidth, 0.f, 0.f, 0.f,
+                        0.f, ratioedHeight / m_cachedWindowHeight, 0.f, 0.f,
+                        0.f, 0.f, -2.f / 20.f, 0.f,
+                        0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
+                    };
+                    DrawCameraQuad(windowToNdc * glmObjectTransform);
+                }                    
+            }
+            else 
+            {
+
+                Editor::GetInstance().Render(m_imguiFrameBuffer);
+
+            }
 
             // Poll for and process events
             glfwPollEvents(); // should be called before glfwSwapbuffers
@@ -226,6 +310,47 @@ namespace PE
             m_imguiFrameBuffer.Cleanup();
         }
 
+        void RendererManager::DrawCameraQuad(glm::mat4 const& r_modelToNdc)
+        {
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
+
+            // Check if shader program is valid
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + m_defaultShaderProgramKey + " does not exist.", __FUNCTION__);
+                return;
+            }
+
+            // Bind the shader program
+            shaderProgramIterator->second->Use();
+
+            // Bind the mesh VBO
+            unsigned int meshIndex{ static_cast<unsigned int>(EnumMeshType::QUAD) };
+            m_meshes[meshIndex].Bind();
+
+            // Bind the framebuffer texture
+            GLint textureUnit{ 0 };
+            glActiveTexture(GL_TEXTURE0 + textureUnit);
+            glBindTexture(GL_TEXTURE_2D, m_imguiFrameBuffer.GetTextureId());
+            shaderProgramIterator->second->SetUniform("uTextureSampler2d", textureUnit);
+            shaderProgramIterator->second->SetUniform("uIsTextured", true);
+
+            // Pass the model to NDC transform matrix as a uniform variable
+            shaderProgramIterator->second->SetUniform("uModelToNdc", r_modelToNdc);
+
+            // Pass the color of the quad as a uniform variable
+            shaderProgramIterator->second->SetUniform("uColor", glm::vec4{1.f,0.9f,0.9f,1.f});
+
+            glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL);
+
+            // Unbind everything
+            m_meshes[static_cast<unsigned int>(EnumMeshType::QUAD)].Unbind();
+            shaderProgramIterator->second->UnUse();
+            glBindTexture(GL_TEXTURE_2D, 0);
+        }
 
         template<typename T>
         void RendererManager::DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)

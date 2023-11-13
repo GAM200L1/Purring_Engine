@@ -17,6 +17,7 @@
 #include "prpch.h"
 #include "Camera.h"
 #include "Input/InputSystem.h"
+#include "RendererManager.h"
 
 namespace PE 
 {
@@ -99,11 +100,11 @@ namespace PE
         }
 
 
-        vec2 Camera::GetViewportToWorldPosition(float const x, float const y)
+        vec2 Camera::GetViewportToWorldPosition(float const x, float const y) const
         {
             return vec2{
-                x * m_cachedViewToWorldMatrix[0][0] + m_cachedViewToWorldMatrix[3][0],
-                y * m_cachedViewToWorldMatrix[1][1] + m_cachedViewToWorldMatrix[3][1]
+                (x/* * Graphics::RendererManager::ndcToWindow[0][0]*/) * m_cachedViewToWorldMatrix[0][0] + m_cachedViewToWorldMatrix[3][0],
+                (y/* * Graphics::RendererManager::ndcToWindow[1][1]*/) * m_cachedViewToWorldMatrix[1][1] + m_cachedViewToWorldMatrix[3][1]
             };
         }
 
