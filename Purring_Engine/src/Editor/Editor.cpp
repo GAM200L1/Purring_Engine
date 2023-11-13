@@ -1761,7 +1761,6 @@ namespace PE {
 
 								if (soundKeys.empty())
 								{
-
 									for (const auto& soundPair : ResourceManager::GetInstance().Sounds)
 									{
 										soundKeys.push_back(soundPair.first);
@@ -1788,6 +1787,11 @@ namespace PE {
 												ImGui::SetItemDefaultFocus();
 										}
 										ImGui::EndCombo();
+									}
+									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("Audio", static_cast<int>(entityID));
 									}
 								}
 								AudioComponent audioComponent;
@@ -1897,17 +1901,17 @@ namespace PE {
 									}
 								}
 
-								// Drag and drop target
-								if (ImGui::BeginDragDropTarget())
-								{
-									if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("AUDIO_FILE"))
-									{
-										// Assuming payload is the path of the audio file
-										std::string droppedFilePath = (char*)payload->Data;
-										EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(droppedFilePath);
-									}
-									ImGui::EndDragDropTarget();
-								}
+								//// Drag and drop target
+								//if (ImGui::BeginDragDropTarget())
+								//{
+								//	if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("AUDIO_FILE"))
+								//	{
+								//		// Assuming payload is the path of the audio file
+								//		std::string droppedFilePath = (char*)payload->Data;
+								//		EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(droppedFilePath);
+								//	}
+								//	ImGui::EndDragDropTarget();
+								//}
 
 							}
 						}
@@ -2391,6 +2395,11 @@ namespace PE {
 									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetTextureKey(m_files[draggedItemIndex].string());
 									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
 								}
+							}
+							else if (extension == ".mp3")
+							{
+								ResourceManager::GetInstance().LoadAudioFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+								EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(m_files[draggedItemIndex].string());
 							}
 							// add remaining editable assets audio etc
 						}
