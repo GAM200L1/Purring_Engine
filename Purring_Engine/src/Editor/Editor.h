@@ -15,8 +15,7 @@
 *************************************************************************************/
 #pragma once
 
-#include "../Events/EventHandler.h"
-
+#include "Events/EventHandler.h"
 
 #include <imgui.h>
 #include <imgui_internal.h>
