@@ -273,6 +273,7 @@ namespace PE
 
         void CameraManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
         {
+            r_event; // remove if used
 #ifndef GAMERELEASE
             // Zoom the editor camera in and out on mouse scroll
             if (Editor::GetInstance().IsMouseInScene() && r_event.GetType() == MouseEvents::MouseScrolled)
@@ -281,7 +282,6 @@ namespace PE
                 event = dynamic_cast<const MouseScrolledEvent&>(r_event);
                 if(Editor::GetInstance().IsEditorActive())
                 GetEditorCamera().AdjustMagnification(-event.yOffset * 0.5f);
-
             }
 #endif // !GAMERELEASE
         }

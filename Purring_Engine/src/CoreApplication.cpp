@@ -226,7 +226,7 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-    float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
+    //float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
