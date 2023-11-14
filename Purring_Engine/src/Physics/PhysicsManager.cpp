@@ -19,7 +19,10 @@
 #include "Math/Transform.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
+
+#ifndef GAMERELEASE
 #include "Editor/Editor.h"
+#endif
 
 extern Logger engine_logger;
 
@@ -70,8 +73,11 @@ namespace PE
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
 		static bool sceneRunning{ false };
-		if (Editor::GetInstance().IsEditorActive())
+
+#ifndef GAMERELEASE
+		if (Editor::GetInstance().IsRunTime())
 		{
+#endif
 			if (sceneRunning)
 			{	
 				for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
@@ -84,7 +90,9 @@ namespace PE
 				sceneRunning = false;
 			}
 			return;
+#ifndef GAMERELEASE
 		}
+#endif
 
 		sceneRunning = true;
 		// In normal physics simulation mode

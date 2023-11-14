@@ -19,12 +19,15 @@
 #include "prpch.h"
 #include "WindowManager.h"
 #include "Logging/Logger.h"
-#include "Editor/Editor.h"
 #include "Input/InputSystem.h"
 #include "Math/Transform.h"
 #include "Physics/PhysicsManager.h"
 #include "Graphics/RendererManager.h"
 #include "GUISystem.h"
+
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
@@ -118,7 +121,9 @@ namespace PE
 	*************************************************************************************/
 	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event)
 	{
+#ifndef GAMERELEASE
 		Editor::GetInstance().AddEventLog(r_event.ToString());
+#endif
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -135,8 +140,9 @@ namespace PE
 	*************************************************************************************/
 	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
 	{
+#ifndef GAMERELEASE
 		Editor::GetInstance().AddEventLog(r_event.ToString());		
-
+#endif
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -153,7 +159,9 @@ namespace PE
 	*************************************************************************************/
 	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
 	{
+#ifndef GAMERELEASE
 		Editor::GetInstance().AddEventLog(r_event.ToString());
+#endif
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -169,7 +177,9 @@ namespace PE
 				if (ev.keycode == GLFW_KEY_N)
 				{
 					PhysicsManager::GetAdvanceStep() = true;
+#ifndef GAMERELEASE
 					Editor::GetInstance().AddEventLog("Advanced Step.\n");
+#endif
 				}
 			}
 

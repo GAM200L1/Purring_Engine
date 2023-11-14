@@ -20,8 +20,11 @@
 #include "Events/EventHandler.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
-#include "Editor/Editor.h"
 #include "Input/InputSystem.h"
+
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif // !GAMERELEASE
 
 #define UI_CAST(type, ui) reinterpret_cast<type&>(ui)
 
@@ -50,7 +53,9 @@ namespace PE
 	{
 		deltaTime; // Prevent warnings
 
+#ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
+#endif
 			for (EntityID objectID : SceneView<GUI>())
 			{
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
@@ -79,7 +84,9 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		//loop through all objects check for Button Component
+#ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
+#endif
 			for (EntityID objectID : SceneView<Transform, GUI>())
 			{
 				//get the components
@@ -118,7 +125,9 @@ namespace PE
 	void GUISystem::OnMouseHover(const Event<MouseEvents>& r_ME)
 	{
 		MouseMovedEvent MME = dynamic_cast<const MouseMovedEvent&>(r_ME);
+#ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
+#endif
 		for (EntityID objectID : SceneView<Transform, GUI>())
 		{
 			//get the components

@@ -26,12 +26,13 @@
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 
-
+#ifndef GAMERELEASE
 // ImGui Headers
 #include "Editor/Editor.h"
 #include "imgui.h"
 #include "backends/imgui_impl_glfw.h"
 #include "backends/imgui_impl_opengl3.h"
+#endif // !GAMERELEASE
 
 // Graphics Headers
 #include "Graphics/GLHeaders.h"
@@ -225,7 +226,7 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-    float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
+    //float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
@@ -275,7 +276,8 @@ PE::CoreApplication::CoreApplication()
     EntityID uiCameraId{ serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
-    EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
+
+    //EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
     
     // Creates an entity from file that is attached to the Character Controller
     //EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
@@ -296,12 +298,12 @@ PE::CoreApplication::CoreApplication()
     //}
 
     // Make a runtime camera that follows the player
-    EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
+    //EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
+    //EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
 
-    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
-    EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
-    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
+    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
+    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
+    //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
     //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
 
 
@@ -354,6 +356,7 @@ PE::CoreApplication::CoreApplication()
     AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
     AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
     AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
+
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -365,6 +368,11 @@ void PE::CoreApplication::Run()
 {
     // Start engine run time
     TimeManager::GetInstance().EngineStart();
+
+    SerializationManager serializationManager;
+
+    // Loads Default Scene
+    serializationManager.LoadAllEntitiesFromFile("../Assets/Scenes/DefaultScene.json");
 
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
@@ -443,9 +451,11 @@ void PE::CoreApplication::Run()
     }
 
     // Cleanup for ImGui
+#ifndef GAMERELEASE
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+#endif // !GAMERELEASE
 
     // Additional Cleanup (if required)
     m_windowManager.Cleanup();

@@ -17,7 +17,10 @@
 #include "prpch.h"
 #include "CameraManager.h"
 #include "ECS/SceneView.h"
+
+#ifndef GAMERELEASE
 #include "Editor/Editor.h"
+#endif // !GAMERELEASE
 
 namespace PE 
 {
@@ -207,9 +210,10 @@ namespace PE
         {
             deltaTime; // Prevent warnings
 
+#ifndef GAMERELEASE
             // Update the editor camera
             m_editorCamera.UpdateCamera();
-
+#endif // !GAMERELEASE
 
             // Check if the main camera ID stored is valid
             bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
@@ -267,9 +271,10 @@ namespace PE
             }
         }
 
-
         void CameraManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
         {
+            r_event; // remove if used
+#ifndef GAMERELEASE
             // Zoom the editor camera in and out on mouse scroll
             if (Editor::GetInstance().IsMouseInScene() && r_event.GetType() == MouseEvents::MouseScrolled)
             {
@@ -277,9 +282,10 @@ namespace PE
                 event = dynamic_cast<const MouseScrolledEvent&>(r_event);
                 if(Editor::GetInstance().IsEditorActive())
                 GetEditorCamera().AdjustMagnification(-event.yOffset * 0.5f);
-
             }
+#endif // !GAMERELEASE
         }
+
 
 
         void CameraManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
@@ -289,6 +295,7 @@ namespace PE
                 KeyPressedEvent event;
                 event = dynamic_cast<const KeyPressedEvent&>(r_event);
 
+#ifndef GAMERELEASE
                 // Move the editor camera
                 if (event.keycode == GLFW_KEY_UP)
                 {
@@ -316,6 +323,7 @@ namespace PE
                 {
                     GetEditorCamera().AdjustRotationRadians(-0.1f);
                 }
+#endif // !GAMERELEASE
 
                 // Zoom the main runtime camera in and out
                 if (event.keycode == GLFW_KEY_C)

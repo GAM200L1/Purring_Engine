@@ -14,7 +14,11 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "Logger.h"
+
+#ifndef GAMERELEASE
 #include "Editor/Editor.h"
+#endif // !GAMERELEASE
+
 #pragma warning(disable : 4996)
 
 // static variables decleration

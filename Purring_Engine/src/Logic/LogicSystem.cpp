@@ -32,9 +32,11 @@
 #include "EnemyTestScript.h"
 #include "PlayerControllerScript.h"
 #include "FollowScript.h"
-#include "Editor/Editor.h"
 #include "CameraManagerScript.h"
 
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif
 
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
 
@@ -60,7 +62,10 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 {
 	//loop all objects in scene view
 	//get only "script" objects
+
+#ifndef GAMERELEASE
 	if(Editor::GetInstance().IsRunTime())
+#endif
 	for (EntityID objectID : SceneView<ScriptComponent>())
 	{
 		ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
@@ -104,7 +109,9 @@ void PE::LogicSystem::DeleteScriptData(EntityID id)
 {
 	for (auto& [key, val] : m_scriptContainer)
 	{
+#ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
+#endif
 		m_scriptContainer.find(key)->second->Destroy(id);
 
 		val->OnDetach(id);
