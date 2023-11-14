@@ -103,6 +103,7 @@ namespace PE
 
 		Grid m_grid;
 		std::vector<Manifold> m_manifolds;
+		std::set <std::pair<size_t, size_t>> m_collisionPairs;
 		std::string m_systemName{ "CollisionManager" };
 	};
 
