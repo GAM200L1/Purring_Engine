@@ -73,9 +73,9 @@ namespace PE
                 throw;
             }
 
-            // Enable alpha blending
-            glEnable(GL_BLEND);
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            //// Enable alpha blending
+            //glEnable(GL_BLEND);
+            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 
             Editor::GetInstance().Init(p_window);
@@ -194,11 +194,17 @@ namespace PE
             //    }
             //}
 
-           // if (renderInEditor)
-           // {
+            if (renderInEditor)
+            {
                 // Bind the RBO for rendering to the ImGui window
                 m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
-            //}
+            }
+            else
+            {
+                // Set background color of the window
+                glClearColor(0.f, 0.f, 0.f, 1.f);
+                glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
+            }
 
             // Get the world to NDC matrix of the editor cam or the main runtime camera
             glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(renderInEditor) };
@@ -236,13 +242,13 @@ namespace PE
                         GenerateTransformMatrix(
                             //(m_cachedWindowWidth > mainCamera.value().get().GetViewportWidth() ? m_cachedWindowWidth : mainCamera.value().get().GetViewportWidth()),
                             //(m_cachedWindowHeight > mainCamera.value().get().GetViewportHeight() ? m_cachedWindowHeight : mainCamera.value().get().GetViewportHeight()),
-                            //m_cachedWindowWidth, m_cachedWindowHeight,//1366.f, 768.f,
-                            mainCamera.value().get().GetViewportWidth(), // width
-                            mainCamera.value().get().GetViewportHeight(), // height
+                            m_cachedWindowWidth, m_cachedWindowHeight,//1366.f, 768.f,
+                            //mainCamera.value().get().GetViewportWidth(), // width
+                            //mainCamera.value().get().GetViewportHeight(), // height
                             0.f, 0.f, 0.f) // orientation, x, y position
                     };
 
-                    float ratioedWidth{ 2.f }, ratioedHeight{ 2.f };
+                    float ratioedWidth{ 1.f }, ratioedHeight{ 1.f };
                     //if (mainCamera.value().get().GetAspectRatio() > (m_cachedWindowWidth / m_cachedWindowHeight))
                     //{//ar = w/h
                     //    // Update the height
@@ -261,22 +267,22 @@ namespace PE
                     //    ratioedWidth *= ((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
                     //        mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth : m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()); 
                     //}
-                    ////ratioedHeight *= ((m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight()) > 1.f ?
-                    ////    mainCamera.value().get().GetViewportHeight() / m_cachedWindowHeight : m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight());
-                    ////ratioedWidth *= ((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
-                    ////    mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth : m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth());
+                    ratioedHeight *= //((m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight()) > 1.f ?
+                        mainCamera.value().get().GetViewportHeight() / m_cachedWindowHeight; //: m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight());
+                    ratioedWidth *= //((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
+                        mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth; //: m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth());
 
                     ndcToWindow = glm::mat4{
-                        m_cachedWindowWidth * ratioedWidth, 0.f, 0.f, 0.f,
-                        0.f, m_cachedWindowHeight * ratioedHeight, 0.f, 0.f,
+                        ratioedWidth, 0.f, 0.f, 0.f,
+                        0.f, ratioedHeight, 0.f, 0.f,
                         0.f, 0.f, 20.f * -0.5f, 0.f,
                         0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
                     };
 
                     glm::mat4 windowToNdc 
                     {
-                        ratioedWidth / m_cachedWindowWidth, 0.f, 0.f, 0.f,
-                        0.f, ratioedHeight / m_cachedWindowHeight, 0.f, 0.f,
+                        2.f / m_cachedWindowWidth, 0.f, 0.f, 0.f,
+                        0.f, 2.f / m_cachedWindowHeight, 0.f, 0.f,
                         0.f, 0.f, -2.f / 20.f, 0.f,
                         0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
                     };
@@ -341,7 +347,7 @@ namespace PE
             shaderProgramIterator->second->SetUniform("uModelToNdc", r_modelToNdc);
 
             // Pass the color of the quad as a uniform variable
-            shaderProgramIterator->second->SetUniform("uColor", glm::vec4{1.f,0.9f,0.9f,1.f});
+            shaderProgramIterator->second->SetUniform("uColor", glm::vec4{1.f,1.f,1.f,1.f});
 
             glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
                 GL_UNSIGNED_SHORT, NULL);

@@ -275,7 +275,12 @@ PE::CoreApplication::CoreApplication()
     EntityID uiCameraId{ serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
-    EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
+
+    EntityID bgId{ serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json") };
+    //1920.f, 1080.f
+    EntityManager::GetInstance().Get<EntityDescriptor>(bgId).name = "Background";
+    EntityManager::GetInstance().Get<Transform>(bgId).width = 1920.f;
+    EntityManager::GetInstance().Get<Transform>(bgId).height = 1080.f;
     
     
 
