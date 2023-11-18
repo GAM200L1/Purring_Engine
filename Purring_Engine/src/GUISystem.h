@@ -157,13 +157,13 @@ namespace PE
 		UIType m_UIType{0};
 
 		vec4 m_defaultColor{ HEX(255),HEX(255) ,HEX(255),HEX(255) };
-		std::string m_defaultTexture{};
+		std::string m_defaultTexture{"../Assets/Textures/Button_White_128px.png"};
 		vec4 m_hoveredColor{HEX(220.f),HEX(220.f) ,HEX(220.f),HEX(255) };
-		std::string m_hoveredTexture{};
+		std::string m_hoveredTexture{ m_defaultTexture };
 		vec4 m_pressedColor{ HEX(200),HEX(200) ,HEX(200),HEX(255) };
-		std::string m_pressedTexture{};
+		std::string m_pressedTexture{ m_defaultTexture };
 		vec4 m_disabledColor{ HEX(100),HEX(100) ,HEX(100),HEX(255) };
-		std::string m_disabledTexture{};
+		std::string m_disabledTexture{ m_defaultTexture };
 	public:
 		/*!***********************************************************************************
 		 \brief Serializes the UI element data	 
