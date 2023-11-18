@@ -23,78 +23,30 @@
 
 namespace PE
 {
-	/*!***********************************************************************************
-	 \brief A structure representing a single frame in an animation.
-	*************************************************************************************/
-	struct AnimationFrame
+	class AnimationComponent
 	{
-		// un-comment if not using spritesheet
-		//std::string textureKey;
-		glm::vec2 m_minUV;
-		glm::vec2 m_maxUV;
-		float m_duration;
-	};
-
-	/*!***********************************************************************************
-	 \brief A class handling individual animations, made up of multiple frames.
-	*************************************************************************************/
-	class Animation
-	{
-		// ----- Public Methods ----- //
+		// ----- Public functions ----- //
 	public:
 		/*!***********************************************************************************
-		 \brief Default constructor for Animation class.
+		\brief Get the current playing animation index for this component.
 
+		\return Current animation index for this animation component.
 		*************************************************************************************/
-		//Animation();
+		inline std::string GetAnimationID() const { return m_currentAnimationIndex; }
 
 		/*!***********************************************************************************
-		 \brief Create an animation class with a spritesheet.
+		\brief Get the current frame time of the animation.
 
-		 \param[in] spriteSheetKey Identifier for spritesheet to be used for this animation
+		\return Current frame time of the animation.
 		*************************************************************************************/
-		Animation(std::string spriteSheetKey);
+		inline float GetCurrentFrameTime() const { return m_currentTime; }
 
 		/*!***********************************************************************************
-		 \brief Add a new frame to the animation sequence.
+		\brief Get the current frame index of the animation.
 
-		 \param[in] minUV minUV coords for the texture to display in this frame.
-		 \param[in] maxUV maxUV coords for the texture to display in this frame.
-		 \param[in] duration Duration this frame will be displayed in seconds.
-		*************************************************************************************/
-		void AddFrame(glm::vec2 const& minUV, glm::vec2 const& maxUV,  float duration);
-
-		/*!***********************************************************************************
-		 \brief Update the animation based on elapsed time.
-
-		 \param[in] deltaTime Time since last update.
-
-		 \return Current texture key for the frame to display.
-		*************************************************************************************/
-		AnimationFrame const& UpdateAnimation(float deltaTime);
-
-		void ResetAnimation();
-
-		inline std::string GetSpriteSheetKey() { return m_textureKey; }
-
-		// ----- Private Variables ----- //
-	private:
-		std::vector<AnimationFrame> m_animationFrames;
-		std::string m_textureKey;
-		unsigned m_currentFrameIndex;
-		float m_elapsedTime;
-	};
-
-	class AnimationComponent
-    {
-        // ----- Public functions ----- //
-    public:
-        /*!***********************************************************************************
-        \brief Get the current playing animation index for this component.
-
-        \return Current animation index for this animation component.
-        *************************************************************************************/
-        inline std::string GetAnimationID() const { return m_currentAnimationIndex; }
+		\return Current frame index of the animation.
+		**************************************************************************************/
+		inline unsigned GetCurrentFrameIndex() const { return m_currentFrameIndex; }
 
 		/*!***********************************************************************************
 		 \brief Set current animation ID.
@@ -102,6 +54,20 @@ namespace PE
 		 \param[in] str Animation ID to set to.
 		*************************************************************************************/
 		void SetAnimationID(const std::string& str) { m_currentAnimationIndex = str; }
+
+		/*!***********************************************************************************
+		\brief Set current frame time of the animation.
+
+		\param[in] time Time to set to.
+		*************************************************************************************/
+		void SetCurrentFrameTime(float time) { m_currentTime = time; }
+
+		/*!***********************************************************************************
+		\brief Set current frame index of the animation.
+
+		\param[in] index Index to set to.
+		*************************************************************************************/
+		void SetCurrentFrameIndex(unsigned index) { m_currentFrameIndex = index; }
 
 		/*!***********************************************************************************
 		\brief Check if animationsID container is empty.
@@ -124,34 +90,97 @@ namespace PE
 		*************************************************************************************/
 		void SetCurrentAnimationIndex(std::string animationIndex);
 
-        ///*!***********************************************************************************
-        // \brief Sets the RGBA color of the object. If the object has a texture on it,
-        //        this tints the color of the texture.
+		///*!***********************************************************************************
+		// \brief Sets the RGBA color of the object. If the object has a texture on it,
+		//        this tints the color of the texture.
 
-        // \param[in] newColor RGBA color to set the object to (the values should be on
-        //                        a range of [0, 1]).
-        //*************************************************************************************/
-        //void Renderer::SetColor(glm::vec4 const& newColor);
+		// \param[in] newColor RGBA color to set the object to (the values should be on
+		//                        a range of [0, 1]).
+		//*************************************************************************************/
+		//void Renderer::SetColor(glm::vec4 const& newColor);
 
-        ///*!***********************************************************************************
-        // \brief Serializes the data attached to this renderer.
-        //*************************************************************************************/
-        nlohmann::json ToJson(size_t id) const;
+		///*!***********************************************************************************
+		// \brief Serializes the data attached to this renderer.
+		//*************************************************************************************/
+		nlohmann::json ToJson(size_t id) const;
 
-        ///*!***********************************************************************************
-        // \brief Deserializes data from a JSON file and loads it as values to set this
-        //        component to.
+		///*!***********************************************************************************
+		// \brief Deserializes data from a JSON file and loads it as values to set this
+		//        component to.
 
-        // \param[in] j JSON object containing the values to load into the renderer component.
-        //*************************************************************************************/
-        AnimationComponent& Deserialize(const nlohmann::json& j);
+		// \param[in] j JSON object containing the values to load into the renderer component.
+		//*************************************************************************************/
+		AnimationComponent& Deserialize(const nlohmann::json& j);
 
-    private:
+	private:
 
 		std::vector<std::string> m_animationsID; // Stores all animations for the component // not in use now
 		std::string m_currentAnimationIndex{}; // current playing animation
-		std::string m_startingAnimationIndex{}; // starting playing animation
-    };
+		std::string m_startingAnimationIndex{}; // starting playing animation // not sure if needed
+		float m_currentTime{}; // current frame time of the animation
+		unsigned m_currentFrameIndex{}; // current frame index of the animation
+	};
+
+	/*!***********************************************************************************
+	 \brief A structure representing a single frame in an animation.
+	*************************************************************************************/
+	struct AnimationFrame
+	{
+		// un-comment if not using spritesheet
+		//std::string textureKey;
+		vec2 m_minUV;
+		vec2 m_maxUV;
+		float m_duration;
+	};
+
+	/*!***********************************************************************************
+	 \brief A class handling individual animations, made up of multiple frames.
+	*************************************************************************************/
+	class Animation
+	{
+		// ----- Public Methods ----- //
+	public:
+		/*!***********************************************************************************
+		 \brief Default constructor for Animation class.
+		*************************************************************************************/
+		Animation();
+
+		/*!***********************************************************************************
+		 \brief Create an animation class with a spritesheet.
+
+		 \param[in] spriteSheetKey Identifier for spritesheet to be used for this animation
+		*************************************************************************************/
+		Animation(std::string spriteSheetKey);
+
+		/*!***********************************************************************************
+		 \brief Add a new frame to the animation sequence.
+
+		 \param[in] minUV minUV coords for the texture to display in this frame.
+		 \param[in] maxUV maxUV coords for the texture to display in this frame.
+		 \param[in] duration Duration this frame will be displayed in seconds.
+		*************************************************************************************/
+		void AddFrame(vec2 const& minUV, vec2 const& maxUV,  float duration);
+
+		/*!***********************************************************************************
+		 \brief Update the animation based on elapsed time.
+
+		 \param[in] deltaTime Time since last update.
+
+		 \return Current texture key for the frame to display.
+		*************************************************************************************/
+		AnimationFrame const& UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent);
+
+		void ResetAnimation();
+
+		inline std::string GetSpriteSheetKey() { return m_textureKey; }
+
+		// ----- Private Variables ----- //
+	private:
+		std::vector<AnimationFrame> m_animationFrames;
+		std::string m_textureKey; // remove this, should be using texxture key from renderer component
+		unsigned m_currentFrameIndex;
+		float m_currentFrameTime;
+	};
 
 	/*!***********************************************************************************
 	 \brief Manages multiple animations.
@@ -188,7 +217,7 @@ namespace PE
 
 		 \return Identifier for the newly created animation.
 		*************************************************************************************/
-		static std::string CreateAnimation(std::string animationID, std::string textureKey);
+		static std::string CreateAnimation(std::string animationID);
 
 		/*!***********************************************************************************
 		 \brief Add a frame to the specified animation.
@@ -197,7 +226,7 @@ namespace PE
 		 \param[in] textureKey Identifier for the texture to display in this frame.
 		 \param[in] duration Duration this frame will be displayed in seconds.
 		*************************************************************************************/
-		static void AddFrameToAnimation(std::string animationID, glm::vec2 const& minUV, glm::vec2 const& maxUV, float duration);
+		static void AddFrameToAnimation(std::string animationID, vec2 const& minUV, vec2 const& maxUV, float duration);
 
 		/*!***********************************************************************************
 		 \brief Update the specified animation based on elapsed time.
@@ -207,7 +236,7 @@ namespace PE
 
 		 \return Current texture key for the frame to display.
 		*************************************************************************************/
-		AnimationFrame UpdateAnimation(std::string animationID, float deltaTime);
+		AnimationFrame UpdateAnimation(EntityID id, float deltaTime);
 
 		/*!***********************************************************************************
 		 \brief Get the spritesheet key of the current playing animation

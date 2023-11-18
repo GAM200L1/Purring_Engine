@@ -80,6 +80,7 @@ namespace PE {
 			m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
 			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
 			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
+			m_showAnimationWindow = configJson["Editor"]["showAnimationWindow"].get<bool>();
 			m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
@@ -98,6 +99,7 @@ namespace PE {
 			m_showComponentWindow = true;
 			m_showResourceWindow = true;
 			m_showPerformanceWindow = false;
+			m_showAnimationWindow = false;
 			m_showPhysicsWindow = false;
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
@@ -148,6 +150,7 @@ namespace PE {
 		configJson["Editor"]["showComponentWindow"] = m_showComponentWindow;
 		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
+		configJson["Editor"]["showAnimationWindow"] = m_showAnimationWindow;
 		configJson["Editor"]["showPhysicsWindow"] = m_showPhysicsWindow;
 		//show the entire gui 
 		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
@@ -334,6 +337,8 @@ namespace PE {
 
 			//performance window showing time used per system
 			if (m_showPerformanceWindow) ShowPerformanceWindow(&m_showPerformanceWindow);
+
+			if (m_showAnimationWindow) ShowAnimationWindow(&m_showAnimationWindow);
 
 			if (m_showPhysicsWindow) ShowPhysicsWindow(&m_showPhysicsWindow);
 
@@ -1843,7 +1848,7 @@ namespace PE {
 								ImGui::Text("Change Color: "); ImGui::SameLine();
 								ImGui::ColorEdit4("##Change Color Text", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
 
-								EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor({ color.x, color.y, color.z, color.w });
+								EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor(color.x, color.y, color.z, color.w);
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
@@ -2310,6 +2315,25 @@ namespace PE {
 		}
 	}
 
+	void Editor::ShowAnimationWindow(bool* p_active)
+	{
+		if (IsEditorActive())
+		if (!ImGui::Begin("Animation Editor", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		{
+			ImGui::End(); //imgui close
+		}
+		else
+		{
+			ImGui::SeparatorText("Rendering settings");
+
+			ImGui::SeparatorText("");
+
+			ImGui::SeparatorText("Animation Properties");
+			
+			ImGui::End(); //imgui close
+		}
+	}
+
 	void Editor::SetDockingPort(bool* p_active)
 	{
 		if (IsEditorActive()) {
@@ -2494,6 +2518,10 @@ namespace PE {
 							{
 								m_showPerformanceWindow = !m_showPerformanceWindow;
 							}
+							if (ImGui::MenuItem("AnimationEditor", "", m_showAnimationWindow, !m_showAnimationWindow))
+							{
+								m_showAnimationWindow = !m_showAnimationWindow;
+							}
 							if (ImGui::MenuItem("PhysicsWindow", "", m_showPhysicsWindow, !m_showPhysicsWindow))
 							{
 								m_showPhysicsWindow = !m_showPhysicsWindow;
@@ -2513,6 +2541,7 @@ namespace PE {
 								m_firstLaunch = true;
 								m_showResourceWindow = false;
 								m_showPerformanceWindow = false;
+								m_showAnimationWindow = false;
 							}
 							ImGui::EndMenu();
 						}
