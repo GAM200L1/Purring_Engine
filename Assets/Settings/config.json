@@ -2,7 +2,7 @@
     "Editor": {
         "firstLaunch": false,
         "renderDebug": true,
-        "showAnimationWindow": true,
+        "showAnimationWindow": false,
         "showComponentWindow": true,
         "showConsole": true,
         "showEditor": true,

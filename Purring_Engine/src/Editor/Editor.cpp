@@ -2331,14 +2331,17 @@ namespace PE {
 			static int index1{};
 			static int index2{};
 			static int index3{};
+			ImGui::SetNextItemWidth(300);
 			if (ImGui::Combo("Script", &index1, Script.data(), static_cast<int>(Script.size())))
 			{
 				//change something
 			}
+			ImGui::SetNextItemWidth(300);
 			if (ImGui::Combo("Entity", &index2, Entity.data(), static_cast<int>(Entity.size())))
 			{
 				//change something
 			}
+			ImGui::SetNextItemWidth(300);
 			if (ImGui::Combo("Animation", &index3, Animation.data(), static_cast<int>(Animation.size())))
 			{
 				//change something
@@ -2357,9 +2360,9 @@ namespace PE {
 			}
 			ImGui::SameLine();
 			static int frame{};
-			//name, reference, drag speed, min, max
-			ImGui::SetNextItemWidth(400);
-			ImGui::DragInt("Frame",&frame,1.0f,0.f,60.f);
+			ImGui::SetNextItemWidth(300);
+			//name, reference, min, max
+			ImGui::SliderInt("Frame",&frame,0,60);
 			if (ImGui::Button("Add Animation"))
 			{
 
