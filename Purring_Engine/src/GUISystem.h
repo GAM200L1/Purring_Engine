@@ -23,9 +23,11 @@
 #include "Math/Transform.h"
 #include "WindowManager.h"
 
-#define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this))
+#define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this, std::placeholders::_1))
+typedef unsigned long long EntityID;
 namespace PE 
 {
+
 	class GUISystem : public System
 	{
 	public:
@@ -93,22 +95,22 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Sample function to call from a button. Prints a message to the console.		 
 		*************************************************************************************/
-		void ButtonFunctionOne();
+		void ButtonFunctionOne(::EntityID);
 
 		/*!***********************************************************************************
 		 \brief Sample function to call from a button. Prints a message to the console.		 
 		*************************************************************************************/
-		void ButtonFunctionTwo();
+		void ButtonFunctionTwo(::EntityID);
 
 		/*!***********************************************************************************
 		 \brief Adds a function to the UI element.
 		 
 		 \param[in,out] func - Function to add to the UI element
 		*************************************************************************************/
-		static void AddFunction(std::string_view, const std::function<void(void)>& func);
+		static void AddFunction(std::string_view, const std::function<void(EntityID)>& func);
 
 	public:
-			static std::map<std::string_view, std::function<void(void)>> m_uiFunc;
+			static std::map<std::string_view, std::function<void(EntityID)>> m_uiFunc;
 
 	private:
 			GLFWwindow* p_window{};
@@ -138,11 +140,11 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief On hovering over the UI element	 
 		*************************************************************************************/
-		virtual void OnHover() {}
+		virtual void OnHover(EntityID) {}
 		/*!***********************************************************************************
 		 \brief On clicking the UI element	 
 		*************************************************************************************/
-		virtual void OnClick() {}
+		virtual void OnClick(EntityID) {}
 		/*!***********************************************************************************
 		 \brief Destructor	 
 		*************************************************************************************/
@@ -182,18 +184,18 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Calls the onhover function 
 		*************************************************************************************/
-		inline virtual void OnHover() override 
+		inline virtual void OnHover(EntityID id) override
 		{
 			if (m_onHovered != "")
-				GUISystem::m_uiFunc[m_onHovered]();
+				GUISystem::m_uiFunc[m_onHovered](id);
 		}
 		/*!***********************************************************************************
 		 \brief Calls the onClick function 
 		*************************************************************************************/
-		inline virtual void OnClick() override
+		inline virtual void OnClick(EntityID id) override
 		{
 			if (m_onClicked != "")
-				GUISystem::m_uiFunc[m_onClicked]();
+				GUISystem::m_uiFunc[m_onClicked](id);
 		}
 		/*!***********************************************************************************
 		 \brief Does nothing

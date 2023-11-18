@@ -28,7 +28,7 @@
 
 #define UI_CAST(type, ui) reinterpret_cast<type&>(ui)
 
-std::map<std::string_view, std::function<void(void)>> PE::GUISystem::m_uiFunc;
+std::map<std::string_view, std::function<void(::EntityID)>> PE::GUISystem::m_uiFunc;
 
 
 
@@ -45,8 +45,8 @@ namespace PE
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GUISystem::OnMouseClick, this)
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseMoved, GUISystem::OnMouseHover, this)
 
-		REGISTER_UI_FUNCTION(ButtonFunctionOne, GUISystem);
-		REGISTER_UI_FUNCTION(ButtonFunctionTwo, GUISystem);
+		REGISTER_UI_FUNCTION(ButtonFunctionOne, PE::GUISystem);
+		REGISTER_UI_FUNCTION(ButtonFunctionTwo, PE::GUISystem);
 	}
 
 	void GUISystem::UpdateSystem(float deltaTime)
@@ -66,7 +66,7 @@ namespace PE
 				{
 					Button btn = UI_CAST(Button, gui);
 					if (btn.m_Hovered)
-					btn.OnHover();
+					btn.OnHover(objectID);
 				}
 			}
 	}
@@ -104,7 +104,7 @@ namespace PE
 				if (gui.m_UIType == UIType::Button)
 				{
 					Button btn = UI_CAST(Button, gui);
-					btn.OnClick();
+					btn.OnClick(objectID);
 				}
 			}
 	}
@@ -149,16 +149,16 @@ namespace PE
 		}
 	}
 
-	void GUISystem::ButtonFunctionOne()
+	void GUISystem::ButtonFunctionOne(EntityID)
 	{
 		std::cout << "function 1" << std::endl;
 	}
 
-	void GUISystem::ButtonFunctionTwo()
+	void GUISystem::ButtonFunctionTwo(EntityID)
 	{
 		std::cout << "hi im function 2" << std::endl;
 	}
-	void GUISystem::AddFunction(std::string_view str, const std::function<void(void)>& func)
+	void GUISystem::AddFunction(std::string_view str, const std::function<void(EntityID)>& func)
 	{
 		m_uiFunc[str] = func;
 	}

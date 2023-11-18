@@ -260,7 +260,7 @@ namespace PE
 		}
 	}
 
-	void WindowManager::TestFunction()
+	void WindowManager::TestFunction(EntityID)
 	{
 		std::cout << "hi im a test function" << std::endl;
 	}

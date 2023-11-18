@@ -272,12 +272,12 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Plays a sound effect. Used by the buttons.		 
 		*************************************************************************************/
-		void PlayAudio1();
+		void PlayAudio1(EntityID);
 
 		/*!***********************************************************************************
 		 \brief Plays a different sound effect. Used by the buttons.		 
 		*************************************************************************************/
-		void PlayAudio2();
+		void PlayAudio2(EntityID);
 
 
 		// ----- Private Functions ----- // 

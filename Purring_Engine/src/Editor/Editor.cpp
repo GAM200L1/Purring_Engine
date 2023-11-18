@@ -217,12 +217,16 @@ namespace PE {
 		m_showTestWindows = true;
 	}
 
-	void Editor::PlayAudio1()
+	void Editor::PlayAudio1(EntityID id)
 	{
+		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+		{
+			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetColor(255,0,0,255);
+		}
 		AudioManager::GetInstance().PlaySound("audio_sound1");
 	}
 
-	void Editor::PlayAudio2()
+	void Editor::PlayAudio2(EntityID)
 	{
 		AudioManager::GetInstance().PlaySound("audio_sound2");
 	}
