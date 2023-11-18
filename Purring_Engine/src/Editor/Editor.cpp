@@ -2325,11 +2325,87 @@ namespace PE {
 		else
 		{
 			ImGui::SeparatorText("Rendering settings");
+			std::vector<const char*> Script{"S1","S2","S3"};
+			std::vector<const char*> Entity{"E1","E2","E3"};
+			std::vector<const char*> Animation{"T1","T2","T3"};
+			static int index1{};
+			static int index2{};
+			static int index3{};
+			if (ImGui::Combo("Script", &index1, Script.data(), static_cast<int>(Script.size())))
+			{
+				//change something
+			}
+			if (ImGui::Combo("Entity", &index2, Entity.data(), static_cast<int>(Entity.size())))
+			{
+				//change something
+			}
+			if (ImGui::Combo("Animation", &index3, Animation.data(), static_cast<int>(Animation.size())))
+			{
+				//change something
+			}
 
-			ImGui::SeparatorText("");
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::SeparatorText("Sprite Sheet");
+			if (ImGui::Button("Play"))
+			{
 
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Stop"))
+			{
+
+			}
+			ImGui::SameLine();
+			static int frame{};
+			//name, reference, drag speed, min, max
+			ImGui::SetNextItemWidth(400);
+			ImGui::DragInt("Frame",&frame,1.0f,0.f,60.f);
+			if (ImGui::Button("Add Animation"))
+			{
+
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Remove Animation"))
+			{
+
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Save"))
+			{
+
+			}
+			ImGui::Dummy(ImVec2(0, 5));
 			ImGui::SeparatorText("Animation Properties");
-			
+			ImGui::Columns(2, "TwoSections", true);
+			ImGui::Text("Name");
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::Text("looped");
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::Text("FrameCount");
+			if (ImGui::TreeNode("FrameRects")) {
+
+				ImGui::TreePop();
+			}
+			ImGui::Text("frameTime");
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::Text("offsets");
+			if (ImGui::TreeNode("sounds")) {
+
+				ImGui::TreePop();
+			}
+			ImGui::NextColumn();
+			static std::string text{};
+			ImGui::InputText("##name",&text);
+			static bool looped{};
+			ImGui::Checkbox("##looped", &looped);
+			static int fc{};
+			ImGui::InputInt("##framecount", &fc);
+			ImGui::Text("{ unordered_map, size = 1}");
+			static int ft{};
+			ImGui::InputInt("##frametime", &ft);
+			ImGui::Text("{ unordered_map, size = 0}");
+			ImGui::Text("{ vector, size = 1}");
+			ImGui::Columns(1);
 			ImGui::End(); //imgui close
 		}
 	}
