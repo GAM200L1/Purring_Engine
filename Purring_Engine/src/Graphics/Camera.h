@@ -179,7 +179,9 @@ namespace PE
 
             /*!***********************************************************************************
             \brief  Returns a vec2 object with a position in viewport coordinates (with the origin  
-                at the center of the window) converted to world coordinates.
+                at the center of the window) converted to world coordinates. 
+
+                NOTE: Does not take the relationship between the viewport and the window into account.
                             
             \param[in] x x-coordinate of the position in viewport coordinates (with the origin  
                 at the center of the window) to convert to world coordinates.                            

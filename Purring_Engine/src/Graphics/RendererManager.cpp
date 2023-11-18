@@ -59,8 +59,6 @@ namespace PE
         // Initialize static variables
         std::vector<EntityID> RendererManager::renderedEntities{};
 
-        glm::mat4 RendererManager::ndcToWindow{};
-
         RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
             : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
         {
@@ -232,62 +230,20 @@ namespace PE
 
             if (!renderInEditor) 
             {
-                // Get the main camera
-                std::optional<std::reference_wrapper<Camera>> mainCamera{ r_cameraManager.GetMainCamera() };
-                if (mainCamera.has_value())
+                // Create the model to world matrix
+                glm::mat4 glmObjectTransform
                 {
-                    // Create the model to world matrix
-                    glm::mat4 glmObjectTransform
-                    {
-                        GenerateTransformMatrix(
-                            //(m_cachedWindowWidth > mainCamera.value().get().GetViewportWidth() ? m_cachedWindowWidth : mainCamera.value().get().GetViewportWidth()),
-                            //(m_cachedWindowHeight > mainCamera.value().get().GetViewportHeight() ? m_cachedWindowHeight : mainCamera.value().get().GetViewportHeight()),
-                            m_cachedWindowWidth, m_cachedWindowHeight,//1366.f, 768.f,
-                            //mainCamera.value().get().GetViewportWidth(), // width
-                            //mainCamera.value().get().GetViewportHeight(), // height
-                            0.f, 0.f, 0.f) // orientation, x, y position
-                    };
+                    GenerateTransformMatrix( m_cachedWindowWidth, m_cachedWindowHeight, 0.f, 0.f, 0.f)
+                };
 
-                    float ratioedWidth{ 1.f }, ratioedHeight{ 1.f };
-                    //if (mainCamera.value().get().GetAspectRatio() > (m_cachedWindowWidth / m_cachedWindowHeight))
-                    //{//ar = w/h
-                    //    // Update the height
-                    //    //ratioedHeight *= m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth();
-                    //    //ratioedHeight *= ((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
-                    //    //    mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth : m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth());
-                    //    ratioedHeight *= ((m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight()) > 1.f ?
-                    //        mainCamera.value().get().GetViewportHeight() / m_cachedWindowHeight : m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight());
-                    //}
-                    //else 
-                    //{
-                    //    // Update the width
-                    //    //ratioedWidth *= m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight();
-                    //    //ratioedWidth *= ((m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight()) > 1.f ?
-                    //    //    mainCamera.value().get().GetViewportHeight() / m_cachedWindowHeight : m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight());
-                    //    ratioedWidth *= ((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
-                    //        mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth : m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()); 
-                    //}
-                    ratioedHeight *= //((m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight()) > 1.f ?
-                        mainCamera.value().get().GetViewportHeight() / m_cachedWindowHeight; //: m_cachedWindowHeight / mainCamera.value().get().GetViewportHeight());
-                    ratioedWidth *= //((m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth()) > 1.f ?
-                        mainCamera.value().get().GetViewportWidth() / m_cachedWindowWidth; //: m_cachedWindowWidth / mainCamera.value().get().GetViewportWidth());
-
-                    ndcToWindow = glm::mat4{
-                        ratioedWidth, 0.f, 0.f, 0.f,
-                        0.f, ratioedHeight, 0.f, 0.f,
-                        0.f, 0.f, 20.f * -0.5f, 0.f,
-                        0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
-                    };
-
-                    glm::mat4 windowToNdc 
-                    {
-                        2.f / m_cachedWindowWidth, 0.f, 0.f, 0.f,
-                        0.f, 2.f / m_cachedWindowHeight, 0.f, 0.f,
-                        0.f, 0.f, -2.f / 20.f, 0.f,
-                        0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
-                    };
-                    DrawCameraQuad(windowToNdc * glmObjectTransform);
-                }                    
+                glm::mat4 windowToNdc
+                {
+                    2.f / m_cachedWindowWidth, 0.f, 0.f, 0.f,
+                    0.f, 2.f / m_cachedWindowHeight, 0.f, 0.f,
+                    0.f, 0.f, -2.f / 20.f, 0.f,
+                    0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
+                };
+                DrawCameraQuad(windowToNdc * glmObjectTransform);
             }
             else 
             {

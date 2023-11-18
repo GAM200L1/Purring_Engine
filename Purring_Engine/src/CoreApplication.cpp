@@ -225,7 +225,7 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-    float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
+
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
@@ -412,7 +412,7 @@ void PE::CoreApplication::Run()
         Transform& playerTransform = EntityManager::GetInstance().Get<Transform>(playerId);
         double x{ playerTransform.position.x }, y{ playerTransform.position.y };
         InputSystem::GetCursorViewportPosition(m_window, x, y);
-        playerTransform.position = m_cameraManager->GetMainCamera().value().get().GetViewportToWorldPosition(static_cast<float>(x), static_cast<float>(y));
+        playerTransform.position = m_cameraManager->GetWindowToWorldPosition(static_cast<float>(x), static_cast<float>(y));
 
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();

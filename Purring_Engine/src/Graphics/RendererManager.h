@@ -48,9 +48,6 @@ namespace PE
             // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
             static std::vector<EntityID> renderedEntities;
 
-            // NDC to window conversion matrix
-            static glm::mat4 ndcToWindow;
-
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
