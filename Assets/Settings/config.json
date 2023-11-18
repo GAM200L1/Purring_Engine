@@ -2,14 +2,15 @@
     "Editor": {
         "firstLaunch": false,
         "renderDebug": true,
+        "showAnimationWindow": true,
         "showComponentWindow": true,
         "showConsole": true,
         "showEditor": true,
         "showLogs": true,
         "showObjectList": true,
-        "showPerformanceWindow": false,
+        "showPerformanceWindow": true,
         "showPhysicsWindow": false,
-        "showResourceWindow": false,
+        "showResourceWindow": true,
         "showSceneView": true,
         "showTestWindows": false
     },
