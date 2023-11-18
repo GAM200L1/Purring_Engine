@@ -319,18 +319,18 @@ namespace PE
 	//}
 	//
 	//// access operator
-	//float vec4::operator[](unsigned int index) const
-	//{
-	//	// if (index > 3)
-	//		// return error
-	//	return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
-	//}
+	float vec4::operator[](unsigned int index) const
+	{
+		// if (index > 3)
+			// return error
+		return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
+	}
 	//
 	//// allows modification
-	//float& vec4::operator[](unsigned int index)
-	//{
-	//	return (*this)[index];
-	//}
+	float& vec4::operator[](unsigned int index)
+	{
+		return (*this)[index];
+	}
 	//
 	//// addition
 	//vec4 vec4::operator+(vec4 const& r_rhs)

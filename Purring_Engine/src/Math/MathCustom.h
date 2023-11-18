@@ -486,48 +486,48 @@ namespace PE
 		
 	};
 
-	//struct vec4
-	//{
-	//	float x, y, z, w;
-	//
-	//	// default constructor
-	//	vec4() : x{ 0.f }, y{ 0.f }, z{ 0.f }, w{ 0.f } {}
-	//	// 3 floats constructor
-	//	vec4(float ux, float uy, float uz, float uw) : x{ ux }, y{ uy }, z{ uz }, w{ uw } {}
-	//	// vec3 + float constructor
-	//	vec4(vec3 const& r_v, float uw) : x{ r_v.x }, y{ r_v.y }, z{ r_v.z }, w{ uw } {}
-	//	// copy constructor
-	//	vec4(vec4 const& r_cpy) : x{ r_cpy.x }, y{ r_cpy.y }, z{ r_cpy.z }, w{ r_cpy.w } {}
-	//	// copy assignment
-	//	vec4& operator=(vec4 const& r_cpy);
-	//
-	//	// access operator
-	//	float operator[](unsigned int index) const;
-	//
-	//	// allows modification
-	//	float& operator[](unsigned int index);
-	//
-	//	// addition
-	//	vec4 operator+(vec4 const& r_rhs);
-	//	vec4& operator+=(vec4 const& r_rhs);
-	//
-	//	// subtraction
-	//	vec4 operator-(vec4 const& r_rhs);
-	//	vec4& operator-=(vec4 const& r_rhs);
-	//
-	//	// scale
-	//	vec4 operator*(float scale);
-	//	vec4 operator/(float scale);
-	//	vec4& operator*=(float scale);
-	//	vec4& operator/=(float scale);
-	//
-	//	// zero the vector
-	//	void Zero();
-	//	// cross product
-	//	vec4 Cross(vec4 const& r_rhs);
-	//	// dot product
-	//	float Dot(vec4 const& r_rhs);
-	//};
+	struct vec4
+	{
+		float x, y, z, w;
+	
+		// default constructor
+		vec4() : x{ 0.f }, y{ 0.f }, z{ 0.f }, w{ 0.f } {}
+		// 3 floats constructor
+		vec4(float ux, float uy, float uz, float uw) : x{ ux }, y{ uy }, z{ uz }, w{ uw } {}
+		// vec3 + float constructor
+		vec4(vec3 const& r_v, float uw) : x{ r_v.x }, y{ r_v.y }, z{ r_v.z }, w{ uw } {}
+		// copy constructor
+		vec4(vec4 const& r_cpy) : x{ r_cpy.x }, y{ r_cpy.y }, z{ r_cpy.z }, w{ r_cpy.w } {}
+		// copy assignment
+		//vec4& operator=(vec4 const& r_cpy);
+	
+		// access operator
+		float operator[](unsigned int index) const;
+	
+		// allows modification
+		float& operator[](unsigned int index);
+	
+		//// addition
+		//vec4 operator+(vec4 const& r_rhs);
+		//vec4& operator+=(vec4 const& r_rhs);
+	
+		//// subtraction
+		//vec4 operator-(vec4 const& r_rhs);
+		//vec4& operator-=(vec4 const& r_rhs);
+	
+		//// scale
+		//vec4 operator*(float scale);
+		//vec4 operator/(float scale);
+		//vec4& operator*=(float scale);
+		//vec4& operator/=(float scale);
+	
+		//// zero the vector
+		//void Zero();
+		//// cross product
+		//vec4 Cross(vec4 const& r_rhs);
+		//// dot product
+		//float Dot(vec4 const& r_rhs);
+	};
 
 	//! Matrix 3 column 3 row struct
 	struct mat3x3

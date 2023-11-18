@@ -66,7 +66,18 @@ namespace PE
 				{
 					Button btn = UI_CAST(Button, gui);
 					if (btn.m_Hovered)
-					btn.OnHover(objectID);
+					{
+						btn.OnHover(objectID);
+						if (EntityManager::GetInstance().Has(objectID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+						{
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_hoveredColor.x, gui.m_hoveredColor.y, gui.m_hoveredColor.z, gui.m_hoveredColor.w);
+						}
+					}
+					else
+					{
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
+					}
+
 				}
 			}
 	}
@@ -105,6 +116,7 @@ namespace PE
 				{
 					Button btn = UI_CAST(Button, gui);
 					btn.OnClick(objectID);
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
 				}
 			}
 	}

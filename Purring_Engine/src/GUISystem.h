@@ -22,7 +22,7 @@
 #include "Events/Event.h"
 #include "Math/Transform.h"
 #include "WindowManager.h"
-
+#define HEX(hexcode)    hexcode/255.f // to convert colors
 #define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this, std::placeholders::_1))
 typedef unsigned long long EntityID;
 namespace PE 
@@ -124,7 +124,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Constructor. Does nothing 
 		*************************************************************************************/
-		GUI() {}
+		GUI(){}
 		/*!***********************************************************************************
 		 \brief Initializes the UI element.		 
 		*************************************************************************************/
@@ -153,8 +153,17 @@ namespace PE
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
 		bool m_Hovered{};
+		bool disabled;
 		UIType m_UIType{0};
 
+		vec4 m_defaultColor{ HEX(255),HEX(255) ,HEX(255),HEX(255) };
+		std::string m_defaultTexture{};
+		vec4 m_hoveredColor{HEX(220.f),HEX(220.f) ,HEX(220.f),HEX(255) };
+		std::string m_hoveredTexture{};
+		vec4 m_pressedColor{ HEX(200),HEX(200) ,HEX(200),HEX(255) };
+		std::string m_pressedTexture{};
+		vec4 m_disabledColor{ HEX(100),HEX(100) ,HEX(100),HEX(255) };
+		std::string m_disabledTexture{};
 	public:
 		/*!***********************************************************************************
 		 \brief Serializes the UI element data	 
