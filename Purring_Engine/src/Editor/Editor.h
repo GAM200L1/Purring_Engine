@@ -326,6 +326,7 @@ namespace PE {
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;
+		bool m_isPrefabMode;
 
 		//variables for logging
 		std::vector<std::string> m_logOutput;

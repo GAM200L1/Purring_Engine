@@ -84,6 +84,9 @@ namespace PE {
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
+
+			// also an e.g of how to make it safe
+			m_isPrefabMode = (configJson["Editor"].contains("isPrefabMode")) ? configJson["Editor"]["isPrefabMode"].get<bool>() : false;
 		}
 		else
 		{
@@ -102,6 +105,7 @@ namespace PE {
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = true; // whether to render debug lines
+			m_isPrefabMode = false;
 		}
 
 		configFile.close();
@@ -152,6 +156,7 @@ namespace PE {
 		//show the entire gui 
 		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
 		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
+		configJson["Editor"]["isPrefabMode"] = m_isPrefabMode;
 
 
 		std::ofstream outFile(filepath);
