@@ -2093,6 +2093,14 @@ namespace PE {
 						break;
 					}
 				}
+				// refresh button here!!
+				//ImGui::SameLine();
+				if (ImGui::Button("Refresh"))
+				{
+					GetFileNamesInParentPath(m_parentPath, m_files);
+				}
+				
+
 				ImGui::Separator();
 				
 
