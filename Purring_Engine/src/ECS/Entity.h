@@ -577,6 +577,8 @@ namespace PE
 
 		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
+
+		bool isActive{true}; // defaults to true
 		
 		/*!***********************************************************************************
 		 \brief Serializes this struct into a json file

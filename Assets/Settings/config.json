@@ -9,7 +9,7 @@
         "showObjectList": true,
         "showPerformanceWindow": false,
         "showPhysicsWindow": false,
-        "showResourceWindow": false,
+        "showResourceWindow": true,
         "showSceneView": true,
         "showTestWindows": false
     },
