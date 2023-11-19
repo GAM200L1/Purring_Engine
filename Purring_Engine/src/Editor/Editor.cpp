@@ -173,6 +173,11 @@ namespace PE {
 		width = m_renderWindowWidth;
 		height = m_renderWindowHeight;
 	}
+
+	float Editor::GetPlayWindowOffset()
+	{
+		return m_playWindowOffset;
+	}
 	
 	bool Editor::IsEditorActive()
 	{

@@ -188,8 +188,20 @@ namespace PE
             if (ref_mainCamera.has_value())
             {
                 Camera& r_mainCamera = ref_mainCamera.value().get();
-                vec2 ret{ x * m_widthRatio, y * m_heightRatio };
-                return r_mainCamera.GetViewportToWorldPosition(ret.x, ret.y);
+
+#ifndef GAMERELEASE
+                // Get the size of the render window
+                float editorWindowSizeX{}, editorWindowSizeY{};
+                Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+
+                // Adjust scale of the position
+                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * m_viewportWidth / editorWindowSizeX, y * m_viewportHeight / editorWindowSizeY) };
+                ret.y += Editor::GetInstance().GetPlayWindowOffset();
+#else
+                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * m_widthRatio, y * m_heightRatio) };
+#endif // !GAMERELEASE
+
+                return ret;
             }
             else 
             {
