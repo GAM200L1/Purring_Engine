@@ -373,19 +373,6 @@ void PE::CoreApplication::Run()
     // Loads Default Scene
     serializationManager.LoadAllEntitiesFromFile("../Assets/Scenes/DefaultScene.json");
 
-    // Creates an entity from file that is attached to the Character Controller
-    // Make a runtime camera
-    EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-    //int windowWidth, windowHeight;
-    //glfwGetWindowSize(m_window, &windowWidth, &windowHeight);
-    EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(1920.f, 1080.f);//(float)windowWidth, (float)windowHeight);
-    EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
-    m_cameraManager->SetMainCamera(cameraId);
-
-    // Create an entity that follows the player's mouse
-    EntityID playerId = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
-    EntityManager::GetInstance().Get<EntityDescriptor>(playerId).name = "Player";
-
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
     while (!glfwWindowShouldClose(m_window))
@@ -435,10 +422,6 @@ void PE::CoreApplication::Run()
             }
         }
 
-        Transform& playerTransform = EntityManager::GetInstance().Get<Transform>(playerId);
-        double x{ playerTransform.position.x }, y{ playerTransform.position.y };
-        InputSystem::GetCursorViewportPosition(m_window, x, y);
-        playerTransform.position = m_cameraManager->GetWindowToWorldPosition(static_cast<float>(x), static_cast<float>(y));
 
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();
@@ -550,8 +533,8 @@ void PE::CoreApplication::InitializeSystems()
     // Add system to list & assigning memory to them
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
-    /*Graphics::CameraManager* p_cameraManager*/ m_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *m_cameraManager };//p_cameraManager };
+    Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
@@ -564,6 +547,6 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_physicsManager);
     AddSystem(p_collisionManager);
     AddSystem(p_animationManager);
-    AddSystem(m_cameraManager);//p_cameraManager);
+    AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
 }

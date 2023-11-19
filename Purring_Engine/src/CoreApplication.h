@@ -107,8 +107,6 @@ namespace PE
 		GLFWwindow* m_window;								// Pointer to the GLFW window object
 		float m_time;										// Placeholder for time value
 
-		Graphics::CameraManager* m_cameraManager;
-
 	private:
 
 	public:
