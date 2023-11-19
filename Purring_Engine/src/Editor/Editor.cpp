@@ -1618,7 +1618,6 @@ namespace PE {
 								{
 									loadedTextureKeys.emplace_back(r_filepath.stem().string());
 								}
-								bool bl{};
 								if (!loadedTextureKeys.empty())
 								{
 									ImGui::Text("Default Texture:");

@@ -66,7 +66,6 @@ namespace PE
 				{
 					Button btn = UI_CAST(Button, gui);
 					gui.m_clickedTimer -= deltaTime;
-					std::cout<< gui.m_clickedTimer << std::endl;
 					if (btn.m_Hovered)
 					{
 						btn.OnHover(objectID);
@@ -110,8 +109,6 @@ namespace PE
 
 				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
 				InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
-
-				std::cout << mouseX << " " << mouseY << std::endl;
 
 				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 					continue;
