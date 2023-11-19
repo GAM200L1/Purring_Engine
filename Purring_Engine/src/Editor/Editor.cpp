@@ -980,6 +980,13 @@ namespace PE {
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
 										}
 									}
+									else if (vp.get_type().get_name() == "bool")
+									{
+										bool tmp = vp.get_value<bool>();
+										std::string str = "##" + prop.get_name().to_string();
+										ImGui::SameLine(); ImGui::Checkbox(str.c_str(), &tmp);
+										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+									}
 								}
 							}
 						}
