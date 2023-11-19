@@ -164,6 +164,7 @@ namespace PE
 		std::string m_pressedTexture{ m_defaultTexture };
 		vec4 m_disabledColor{ HEX(100),HEX(100) ,HEX(100),HEX(255) };
 		std::string m_disabledTexture{ m_defaultTexture };
+		float m_clickedTimer{};
 	public:
 		/*!***********************************************************************************
 		 \brief Serializes the UI element data	 

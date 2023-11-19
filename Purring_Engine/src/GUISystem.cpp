@@ -65,16 +65,18 @@ namespace PE
 				if (gui.m_UIType == UIType::Button)
 				{
 					Button btn = UI_CAST(Button, gui);
+					gui.m_clickedTimer -= deltaTime;
+					std::cout<< gui.m_clickedTimer << std::endl;
 					if (btn.m_Hovered)
 					{
 						btn.OnHover(objectID);
-						if (EntityManager::GetInstance().Has(objectID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+						if (EntityManager::GetInstance().Has(objectID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) && gui.m_clickedTimer <= 0)
 						{
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_hoveredColor.x, gui.m_hoveredColor.y, gui.m_hoveredColor.z, gui.m_hoveredColor.w);
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_hoveredTexture);
 						}
-					}
-					else
+					}					
+					else if(gui.m_clickedTimer <= 0)
 					{
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
@@ -118,6 +120,7 @@ namespace PE
 				{
 					Button btn = UI_CAST(Button, gui);
 					btn.OnClick(objectID);
+					gui.m_clickedTimer = .3f;
 					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
 					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
 				}
