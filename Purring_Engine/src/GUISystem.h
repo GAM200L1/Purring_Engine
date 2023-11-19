@@ -149,7 +149,7 @@ namespace PE
 		 \brief Destructor	 
 		*************************************************************************************/
 		virtual ~GUI() {};
-
+	public:
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
 		bool m_Hovered{};

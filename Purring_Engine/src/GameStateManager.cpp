@@ -1,3 +1,18 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     GameStateManager.h
+ \date     19-11-2023
+
+ \author               Jarran Tan Yan Zhi
+ \par      email:      jarranyanzhi.tan@digipen.edu
+
+ \brief
+	Declaration for the class GameStateManager that Handle the Gamestate of the game
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "GameStateManager.h"
 
