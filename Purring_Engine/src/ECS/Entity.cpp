@@ -214,6 +214,7 @@ namespace PE
 		j["children"] = children;
 
 		j["sceneID"] = sceneID;
+		j["isActive"] = isActive;
 
 		return j;
 	}
@@ -235,6 +236,11 @@ namespace PE
 		desc.children = j["children"].get<std::set<EntityID>>();
 
 		desc.sceneID = j["sceneID"].get<EntityID>();
+
+		if (j.contains("isActive"))
+		{
+			desc.isActive = j["isActive"];
+		}
 
 		return desc;
 	}

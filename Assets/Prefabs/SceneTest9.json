@@ -5,6 +5,7 @@
                 "components": {
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": false,
                         "name": "Background",
                         "parent": null,
                         "sceneID": 1
@@ -47,6 +48,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "CameraObject",
                         "parent": null,
                         "sceneID": 2
@@ -74,6 +76,7 @@
                 "components": {
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "EmptyObject",
                         "parent": null,
                         "sceneID": 3
@@ -133,6 +136,7 @@
                             8,
                             9
                         ],
+                        "isActive": true,
                         "name": "Player",
                         "parent": null,
                         "sceneID": 4
@@ -227,6 +231,7 @@
                 "components": {
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "GUIButton",
                         "parent": null,
                         "sceneID": 5
@@ -270,6 +275,7 @@
                         "children": [
                             8
                         ],
+                        "isActive": true,
                         "name": "Hi yeni",
                         "parent": null,
                         "sceneID": 6
@@ -312,6 +318,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "CameraObject",
                         "parent": null,
                         "sceneID": 7
@@ -342,6 +349,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "Follow1",
                         "parent": null,
                         "sceneID": 8
@@ -426,6 +434,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "Follow3",
                         "parent": null,
                         "sceneID": 9
@@ -511,6 +520,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "Follow4",
                         "parent": null,
                         "sceneID": 10
@@ -596,6 +606,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "Follow5",
                         "parent": null,
                         "sceneID": 11
@@ -681,6 +692,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "Follow6",
                         "parent": null,
                         "sceneID": 12
@@ -766,6 +778,7 @@
                     },
                     "EntityDescriptor": {
                         "children": [],
+                        "isActive": true,
                         "name": "Follow7",
                         "parent": null,
                         "sceneID": 13
