@@ -108,7 +108,7 @@ namespace PE
 		EntityManager::GetInstance().Get<Collider>(boxID).colliderVariant = AABBCollider();
 
 		EntityManager::GetInstance().Get<Graphics::Renderer>(boxID).SetColor(0.f, 1.f, 0.f, 1.f); // sets the color of the box to be green
-		// set to inactive
+		EntityManager::GetInstance().Get<EntityDescriptor>(boxID).parent = id;
 
 		vec2 boxPositionOffset{ 0.f,0.f };
 		vec2 boxScaleOffset{ 1.f,1.f };
@@ -161,8 +161,9 @@ namespace PE
 					{
 						p_data->attackDirection = selectBox.first;
 						m_mouseClick = false;
-						p_data->m_stateManager->ChangeState(new GreyCatAttackEXECUTE{}, id);
-						return;
+						std::cout << "yippee\n";
+						/*p_data->m_stateManager->ChangeState(new GreyCatAttackEXECUTE{}, id);
+						return;*/
 					}
 				}
 				else
