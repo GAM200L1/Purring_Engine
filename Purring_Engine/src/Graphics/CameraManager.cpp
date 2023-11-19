@@ -33,6 +33,8 @@ namespace PE
 
 
         CameraManager::CameraManager(float const windowWidth, float const windowHeight)
+            : m_viewportWidth{ windowWidth }, m_viewportHeight{ windowHeight },
+            m_widthRatio{ 1.f }, m_heightRatio{ 1.f }
         {
             // Update the editor camera viewport size
             m_editorCamera.SetViewDimensions(windowWidth, windowHeight);
@@ -160,7 +162,7 @@ namespace PE
         }
 
 
-        std::optional<std::reference_wrapper<Camera>> CameraManager::GetMainCamera()
+        std::optional<std::reference_wrapper<Camera>> CameraManager::GetMainCamera() const
         {
             // Check if the main camera ID stored is valid
             if (EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
@@ -178,6 +180,25 @@ namespace PE
         }
 
 
+        vec2 CameraManager::GetWindowToWorldPosition(float const x, float const y) const
+        {
+            // Get the main camera
+            std::optional<std::reference_wrapper<Camera>> ref_mainCamera{ GetMainCamera() };
+
+            if (ref_mainCamera.has_value())
+            {
+                Camera& r_mainCamera = ref_mainCamera.value().get();
+                vec2 ret{ x * m_widthRatio, y * m_heightRatio };
+                return r_mainCamera.GetViewportToWorldPosition(ret.x, ret.y);
+            }
+            else 
+            {
+                return vec2{x, y};
+            }
+        }
+
+
+
         bool CameraManager::SetMainCamera(EntityID const cameraEntityId)            
         {
             // Don't set it if it's the UI camera, or if it doesn't have a camera component on it
@@ -187,6 +208,13 @@ namespace PE
             }
 
             m_mainCameraId = cameraEntityId;
+
+            Camera const& r_mainCamera{ EntityManager::GetInstance().Get<Camera>(m_mainCameraId) };
+            m_viewportWidth = r_mainCamera.GetViewportWidth();
+            m_viewportHeight = r_mainCamera.GetViewportHeight();
+            m_widthRatio = m_viewportWidth / m_windowWidth,
+                m_heightRatio = m_viewportHeight / m_windowHeight;
+
             return true;
         }
 
@@ -235,6 +263,21 @@ namespace PE
                 }
 
                 r_camera.UpdateCamera(r_transform, m_mainCameraId == id);
+
+                // Update the cached viewport dimensions
+                if(m_mainCameraId == id) { 
+                    if (m_viewportWidth != r_camera.GetViewportWidth()) 
+                    {
+                        m_viewportWidth = r_camera.GetViewportWidth();
+                        m_widthRatio = m_viewportWidth / m_windowWidth;
+                    }
+
+                    if(m_viewportHeight != r_camera.GetViewportHeight()) 
+                    {
+                        m_viewportHeight = r_camera.GetViewportHeight();
+                        m_heightRatio = m_viewportHeight / m_windowHeight;
+                    }
+                }
             }
 
             // No runtime cameras exist so just set the id to the default ID
@@ -262,11 +305,17 @@ namespace PE
                 m_windowWidth = static_cast<float>(event.width);
                 m_windowHeight = static_cast<float>(event.height);
 
-                // Update the size of the viewport of all the cameras
-                for (const EntityID& id : SceneView<Camera>())
+                // Store the ratio of the main camera's viewport to the avtual window size
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera) {
+                    m_viewportWidth = mainCamera.value().get().GetViewportWidth();
+                    m_viewportHeight = mainCamera.value().get().GetViewportHeight();
+                    m_widthRatio = m_viewportWidth / m_windowWidth,
+                        m_heightRatio = m_viewportHeight / m_windowHeight;
+                } 
+                else
                 {
-                    Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
-                    r_camera.SetViewDimensions(m_windowWidth, m_windowHeight);
+                    m_widthRatio = 1.f, m_heightRatio = 1.f;
                 }
             }
         }

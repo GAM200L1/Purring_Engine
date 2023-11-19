@@ -85,6 +85,12 @@ namespace PE
             inline std::string GetName() { return m_systemName; }
 
             /*!***********************************************************************************
+             \brief Draws the texture attached to the render frame buffer to a quad stretched 
+                    to the size of the window.
+            *************************************************************************************/
+            void DrawCameraQuad();
+
+            /*!***********************************************************************************
              \brief Loops through all objects with a Renderer component (or a class that
                     derives from it) and draws it. Makes a draw call for each object.
 
@@ -143,6 +149,21 @@ namespace PE
              \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
             *************************************************************************************/
             void Draw(EnumMeshType const meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
+                GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
+
+            /*!***********************************************************************************
+             \brief Binds the shader program, vertex array object and texture and makes a
+                    draw call for the object passed in.
+
+             \param[in] meshType Type of mesh to draw with.
+             \param[in] r_color Color to draw the mesh.
+             \param[in] textureId Id of the texture to draw the mesh with.
+             \param[in] r_shaderProgram Shader program to use.
+             \param[in] primitiveType GL Primitive type to make the draw call with.
+             \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
+            *************************************************************************************/
+            void Draw(EnumMeshType const meshType, glm::vec4 const& r_color, 
+                GLuint textureId, ShaderProgram& r_shaderProgram,
                 GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
 
             /*!***********************************************************************************
@@ -278,7 +299,8 @@ namespace PE
             GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to
             CameraManager& r_cameraManager; // Reference to the camera manager
 
-            Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
+            // Framebuffer object for rendering game scene rendered through the editor or in-game runtime camera
+            Graphics::FrameBuffer m_renderFrameBuffer{}; 
 
             std::string m_systemName{ "RendererManager" }; // Name of system
 
