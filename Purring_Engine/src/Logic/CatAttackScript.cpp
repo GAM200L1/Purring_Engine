@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     GreyCatAttackScript.cpp
+ \file     CatAttackScript.cpp
  \date     15-11-2023
 
  \author               Liew Yeni
@@ -15,7 +15,7 @@
 *************************************************************************************/
 
 #include "prpch.h"
-#include "GreyCatAttackScript.h"
+#include "CatScript.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
 #include "ECS/Components.h"
@@ -25,87 +25,8 @@
 
 namespace PE
 {
-	// ----- GREY CAT ATTACK SCRIPT ----- //
-	void GreyCatAttackScript::Init(EntityID id)
-	{
-		m_scriptData[id].m_stateManager = new StateMachine{};
-		m_scriptData[id].m_stateManager->ChangeState(new GreyCatAttackPLAN{}, id);
-	}
-	
-	void GreyCatAttackScript::Update(EntityID id, float deltaTime)
-	{
-		m_scriptData[id].m_stateManager->Update(id, deltaTime);
-	}
-	
-	void GreyCatAttackScript::Destroy(EntityID id)
-	{}
-	
-	void GreyCatAttackScript::OnAttach(EntityID id)
-	{
-		// check if the given entity has transform, rigidbody, and collider. if it does not, assign it one
-		if (!EntityManager::GetInstance().Has<Transform>(id))
-		{
-			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Transform>() });
-		}
-		if (!EntityManager::GetInstance().Has<RigidBody>(id))
-		{
-			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
-			EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
-		}
-		if (!EntityManager::GetInstance().Has<Collider>(id))
-		{
-			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Collider>() });
-			EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider(); // cat default colliders is circle
-		}
-		
-		if (m_scriptData.find(id) == m_scriptData.end())
-		{
-			m_scriptData[id] = GreyCatAttackScriptData{};
-		}
-		else
-		{
-			delete m_scriptData[id].m_stateManager;
-			m_scriptData[id] = GreyCatAttackScriptData{};
-		}
-
-		CreateAttackSelectBoxes(id, true, false); // east box
-		CreateAttackSelectBoxes(id, true, true); // west box
-		CreateAttackSelectBoxes(id, false, false); // north box
-		CreateAttackSelectBoxes(id, false, true); // south box
-	}
-	
-	void GreyCatAttackScript::OnDetach(EntityID id)
-	{
-		if (m_scriptData.find(id) != m_scriptData.end())
-		{
-			delete m_scriptData[id].m_stateManager;
-			m_scriptData.erase(id);
-		}
-		for (auto const& boxID : m_scriptData[id].selectBoxIDs)
-		{
-			EntityManager::GetInstance().RemoveEntity(boxID.second);
-		}
-	}
-
-	std::map<EntityID, GreyCatAttackScriptData>& GreyCatAttackScript::GetScriptData()
-	{
-		return m_scriptData;
-	}
-
-	rttr::instance GreyCatAttackScript::GetScriptData(EntityID id)
-	{
-		return rttr::instance(m_scriptData.at(id));
-	}
-
-	GreyCatAttackScript::~GreyCatAttackScript()
-	{
-		for (auto& [key, value] : m_scriptData)
-		{
-			delete value.m_stateManager;
-		}
-	}
-
-	void GreyCatAttackScript::CreateAttackSelectBoxes(EntityID id, bool isXAxis, bool isNegative)
+	// ----- Helper function for creating entities which are selectable boxes for the cat attacks ----- //
+	void CatScript::CreateAttackSelectBoxes(EntityID id, bool isXAxis, bool isNegative)
 	{
 		// create the east direction entity
 		EntityID boxID = EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>();
@@ -118,21 +39,21 @@ namespace PE
 
 		vec2 boxPositionOffset{ 0.f,0.f };
 		vec2 boxScaleOffset{ 1.f,1.f };
-		EnumGreyCatAttackDirection dir;
+		EnumCatAttackDirection dir;
 		
 		if (isXAxis)
 		{
 			boxScaleOffset.x = m_scriptData[id].bulletRange;
 			boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(boxID).width);
 			boxPositionOffset.x *= (isNegative) ? -1 : 1;
-			dir = (isNegative) ? EnumGreyCatAttackDirection::WEST : EnumGreyCatAttackDirection::EAST;
+			dir = (isNegative) ? EnumCatAttackDirection::WEST : EnumCatAttackDirection::EAST;
 		}
 		else
 		{
 			boxScaleOffset.y = m_scriptData[id].bulletRange;
 			boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).height * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(boxID).height);
 			boxPositionOffset.y *= (isNegative) ? -1 : 1;
-			dir = (isNegative) ? EnumGreyCatAttackDirection::SOUTH : EnumGreyCatAttackDirection::NORTH;
+			dir = (isNegative) ? EnumCatAttackDirection::SOUTH : EnumCatAttackDirection::NORTH;
 		}
 
 		// set the position of the selection box to be half the range away from the center of the cat
@@ -147,20 +68,23 @@ namespace PE
 	}
 
 
-	// ----- GREY CAT ATTACK PLAN STATE MANAGER ----- //
-	void GreyCatAttackPLAN::StateEnter(EntityID id)
+	// ----- CAT ATTACK PLAN STATE ----- //
+	void CatAttackPLAN::StateEnter(EntityID id)
 	{
-		p_data = GETSCRIPTDATA(GreyCatAttackScript, id);
-		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GreyCatAttackPLAN::OnMouseClick, this);
+		p_data = GETSCRIPTDATA(CatScript, id);
+		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatAttackPLAN::OnMouseClick, this);
 	}
-	void GreyCatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
+	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
 	{
+		//double mouseX{}, mouseY{};
+		//InputSystem::GetCursorViewportPosition(m_window, mouseX, mouseY); // I'll change this to take floats in next time...
+		//vec2 cursorPosition{ m_cameraManager->GetWindowToWorldPosition(static_cast<float>(mouseX), static_cast<float>(mouseY)) };
 		if (m_showBoxes)
 		{
 			for (auto const& selectBox : p_data->selectBoxIDs)
 			{
 				AABBCollider const& selectBoxCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(selectBox.second).colliderVariant);
-				if (PointCollision(selectBoxCollider, vec2{ 0.f, 0.f }))
+				if (PointCollision(selectBoxCollider, vec2{0.f, 0.f}))
 				{
 					EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f); // sets the color of the box to be red if hovered
 					if (m_mouseClick)
@@ -168,7 +92,7 @@ namespace PE
 						p_data->attackDirection = selectBox.first;
 						m_mouseClick = false;
 						std::cout << "yippee\n";
-						/*p_data->m_stateManager->ChangeState(new GreyCatAttackEXECUTE{}, id);
+						/*p_data->m_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
 						return;*/
 					}
 				}
@@ -180,15 +104,15 @@ namespace PE
 		}
 	}
 	
-	void GreyCatAttackPLAN::StateExit(EntityID id)
+	void CatAttackPLAN::StateExit(EntityID id)
 	{}
 
-	std::string_view GreyCatAttackPLAN::GetName()
+	std::string_view CatAttackPLAN::GetName()
 	{
 		return "AttackPLAN";
 	}
 
-	void GreyCatAttackPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
+	void CatAttackPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		m_mouseClick = true;
