@@ -227,7 +227,7 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-    //float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
+    
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
@@ -278,12 +278,11 @@ PE::CoreApplication::CoreApplication()
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
 
-    //EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
+    // EntityID bgId{ serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json") };
+    // EntityManager::GetInstance().Get<EntityDescriptor>(bgId).name = "Background";
+    // EntityManager::GetInstance().Get<Transform>(bgId).width = 1920.f;
+    // EntityManager::GetInstance().Get<Transform>(bgId).height = 1080.f;
     
-    // Creates an entity from file that is attached to the Character Controller
-    //EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
-    //EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
-
     
 
     // Create button objects
