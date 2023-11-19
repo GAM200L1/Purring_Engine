@@ -433,31 +433,33 @@ namespace PE
 	template<typename T>
 	T* EntityManager::Assign(EntityID id)
 	{
-		static ComponentID componentID = GetComponentID<T>();
-
+		ComponentID componentID = GetComponentID<T>();
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
+			//engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
+			//engine_logger.FlushLog();
 			throw;
 		}
+
 		if (m_componentPools[componentID]->HasEntity(id))
 		{
-			return;
+			return reinterpret_cast<T*>(m_componentPools[componentID]->Get(id));
 		}
-
 		// add to component pool's map keeping track of index
 		m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
-		
+
 		// initialize that region of memory
 		if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
 		{
-			m_componentPools[componentID]->Resize(m_componentPools[componentID]->m_capacity * 2);
+			m_componentPools[componentID]->Resize(m_componentPools[componentID]->capacity * 2);
 		}
+
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
-		// it will call the constructor at this position instead of allocating more memory
-		m_componentPools[componentID]->Get(id) =  T();
+		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[componentID]->size);
-		return p_component;
+
+		return reinterpret_cast<T*>(m_componentPools[componentID]->Get(id));
 	}
 
 	//-------------------- Templated function implementations --------------------//
