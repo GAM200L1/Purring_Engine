@@ -1085,15 +1085,13 @@ namespace PE {
 										if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp)
 										{
 											if (prop.get_name() == "Width")
-											m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).width));
+												m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).width));
 											if (prop.get_name() == "Height")
 												m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).height));
 											if (prop.get_name() == "Orientation")
 												m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).orientation));
 										}
 										prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-
-
 									}
 								}
 							}

@@ -592,5 +592,16 @@ namespace PE
 		return 0;
 	}
 
+	// ----- Point in Collider Helper Functions ----- //
+	bool PointCollision(CircleCollider const& r_circle, vec2 const& r_point)
+	{
+		return ((r_circle.center - r_point).LengthSquared() < r_circle.radius * r_circle.radius) ? true : false;
+	}
 
+	bool PointCollision(AABBCollider const& r_AABB, vec2 const& r_point)
+	{
+		if (r_point.x < r_AABB.min.x && r_point.x > r_AABB.max.x) { return false; }
+		if (r_point.y < r_AABB.min.y && r_point.y > r_AABB.max.y) { return false; }
+		return true;
+	}
 }
