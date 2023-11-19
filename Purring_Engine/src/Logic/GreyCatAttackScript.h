@@ -46,7 +46,7 @@ namespace PE
 		unsigned attackDirection{ 0 };
 		
 		// bullet variables
-		float bulletRange{ 0.f };
+		float bulletRange{ 3.f };
 		float bulletLifeTime{ 0.f };
 		float bulletForce{ 0.f };
 
@@ -95,7 +95,7 @@ namespace PE
 
 	private:
 		GreyCatAttackScriptData* p_data;
-		bool m_showBoxes{ false };
+		bool m_showBoxes{ true };
 		bool m_mouseClick{ false };
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);

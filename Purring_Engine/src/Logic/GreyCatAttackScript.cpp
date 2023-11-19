@@ -81,6 +81,10 @@ namespace PE
 			delete m_scriptData[id].m_stateManager;
 			m_scriptData.erase(id);
 		}
+		for (auto const& boxID : m_scriptData[id].selectBoxIDs)
+		{
+			EntityManager::GetInstance().RemoveEntity(boxID.second);
+		}
 	}
 
 	std::map<EntityID, GreyCatAttackScriptData>& GreyCatAttackScript::GetScriptData()
@@ -106,9 +110,11 @@ namespace PE
 		// create the east direction entity
 		EntityID boxID = EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>();
 		EntityManager::GetInstance().Get<Collider>(boxID).colliderVariant = AABBCollider();
+		EntityManager::GetInstance().Get<Collider>(boxID).isTrigger = true;
 
 		EntityManager::GetInstance().Get<Graphics::Renderer>(boxID).SetColor(0.f, 1.f, 0.f, 1.f); // sets the color of the box to be green
 		EntityManager::GetInstance().Get<EntityDescriptor>(boxID).parent = id;
+		EntityManager::GetInstance().Get<EntityDescriptor>(boxID).isActive = false;
 
 		vec2 boxPositionOffset{ 0.f,0.f };
 		vec2 boxScaleOffset{ 1.f,1.f };
@@ -116,22 +122,22 @@ namespace PE
 		
 		if (isXAxis)
 		{
-			boxScaleOffset.x = m_scriptData[id].bulletRange * EntityManager::GetInstance().Get<Transform>(id).width;
-			boxPositionOffset.x = (m_scriptData[id].bulletRange * 0.5f);
+			boxScaleOffset.x = m_scriptData[id].bulletRange;
+			boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(boxID).width);
 			boxPositionOffset.x *= (isNegative) ? -1 : 1;
 			dir = (isNegative) ? EnumGreyCatAttackDirection::WEST : EnumGreyCatAttackDirection::EAST;
 		}
 		else
 		{
-			boxScaleOffset.y = m_scriptData[id].bulletRange * EntityManager::GetInstance().Get<Transform>(id).height;
-			boxPositionOffset.y = (m_scriptData[id].bulletRange * 0.5f);
+			boxScaleOffset.y = m_scriptData[id].bulletRange;
+			boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).height * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(boxID).height);
 			boxPositionOffset.y *= (isNegative) ? -1 : 1;
 			dir = (isNegative) ? EnumGreyCatAttackDirection::SOUTH : EnumGreyCatAttackDirection::NORTH;
 		}
 
 		// set the position of the selection box to be half the range away from the center of the cat
-		EntityManager::GetInstance().Get<Transform>(boxID).position.x = EntityManager::GetInstance().Get<Transform>(id).position.x + boxPositionOffset.x;
-		EntityManager::GetInstance().Get<Transform>(boxID).position.y = EntityManager::GetInstance().Get<Transform>(id).position.y + boxPositionOffset.y;
+		EntityManager::GetInstance().Get<Transform>(boxID).relPosition.x = EntityManager::GetInstance().Get<Transform>(id).position.x + boxPositionOffset.x;
+		EntityManager::GetInstance().Get<Transform>(boxID).relPosition.y = EntityManager::GetInstance().Get<Transform>(id).position.y + boxPositionOffset.y;
 
 		// set the scale of the selection box
 		EntityManager::GetInstance().Get<Transform>(boxID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
@@ -153,7 +159,7 @@ namespace PE
 		{
 			for (auto const& selectBox : p_data->selectBoxIDs)
 			{
-				AABBCollider& selectBoxCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(selectBox.second).colliderVariant);
+				AABBCollider const& selectBoxCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(selectBox.second).colliderVariant);
 				if (PointCollision(selectBoxCollider, vec2{ 0.f, 0.f }))
 				{
 					EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f); // sets the color of the box to be red if hovered
