@@ -88,7 +88,7 @@ namespace PE
             glfwGetCursorPos(window, &x, &y);
             mbpe.x = static_cast<int>(x);
             mbpe.y = static_cast<int>(y);
-            ConvertGLFWToTransform(window,&x,&y);
+            ConvertGLFWToTransform(window,x,y);
             mbpe.transX = static_cast<int>(x);
             mbpe.transY = static_cast<int>(y);
             PE::MouseButtonHoldEvent mbhe;
@@ -311,14 +311,19 @@ namespace PE
         return false;
     }
 
-    void InputSystem::ConvertGLFWToTransform(GLFWwindow* window, double* x, double* y)
+    void InputSystem::ConvertGLFWToTransform(GLFWwindow* window, double& x, double& y)
     {
         int windowWidth, windowHeight;
         glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
-        *x = *x - static_cast<double>(windowWidth) * 0.5;
-        *y = static_cast<double>(windowHeight) * 0.5 - *y;
-
+        x = x - static_cast<double>(windowWidth) * 0.5;
+        y = static_cast<double>(windowHeight) * 0.5 - y;
     }
+        
 
+    void InputSystem::GetCursorViewportPosition(GLFWwindow* window, double& x, double& y)
+    {
+        glfwGetCursorPos(window, &x, &y);
+        ConvertGLFWToTransform(window, x, y);
+    }
 
 }
