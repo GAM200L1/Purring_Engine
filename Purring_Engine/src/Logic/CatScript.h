@@ -179,12 +179,6 @@ namespace PE
 		void CreateAttackSelectBoxes(EntityID id, bool isSide, bool isNegative);
 	};
 
-	
-
-	
-
-
-
 	// ----- CAT ATTACK EXECUTE STATE ----- //
 	class CatAttackEXECUTE : public State
 	{
@@ -193,14 +187,14 @@ namespace PE
 		virtual ~CatAttackEXECUTE() { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
-		virtual void StateEnter(EntityID id) override;
+		virtual void StateEnter(EntityID id) { id; }
 
-		virtual void StateUpdate(EntityID id, float deltaTime) override;
+		virtual void StateUpdate(EntityID id, float deltaTime) { id; deltaTime; }
 
-		virtual void StateExit(EntityID id) override;
+		virtual void StateExit(EntityID id) { id; }
 
 		// ----- Getter ----- //
-		virtual std::string_view GetName() override;
+		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
 		// ----- Private Variables ----- //

@@ -149,7 +149,7 @@ namespace PE
 		for (auto const& selection : p_data->selectBoxIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
-			EntityManager::GetInstance().Get<Graphics::Renderer>(selection.second).SetColor(1.f, 0.f, 0.f, 1.f);
+			EntityManager::GetInstance().Get<Graphics::Renderer>(selection.second).SetColor(0.f, 0.f, 0.f, 0.f);
 		}
 	}
 
