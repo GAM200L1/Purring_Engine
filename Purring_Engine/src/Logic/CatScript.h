@@ -48,7 +48,7 @@ namespace PE
 		int attackDamage{ 0 };
 		int requiredAttackPoints{ 0 };
 		int attackDirection{ 0 };
-		std::set<std::pair<EnumCatAttackDirection, EntityID>> selectBoxIDs;
+		std::map<EnumCatAttackDirection, EntityID> selectBoxIDs;
 		
 		// bullet variables
 		float bulletRange{ 3.f };
@@ -81,7 +81,7 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		CatScriptData* p_data;
-		bool m_showBoxes{ true };
+		bool m_showBoxes{ false };
 		bool m_mouseClick{ false };
 
 		// ----- Private Functions ----- //
@@ -186,24 +186,24 @@ namespace PE
 
 
 	// ----- CAT ATTACK EXECUTE STATE ----- //
-	//class CatAttackEXECUTE : public State
-	//{
-	//public:
-	//	// ----- Destructor ----- //
-	//	virtual ~CatAttackEXECUTE() { p_data = nullptr; }
+	class CatAttackEXECUTE : public State
+	{
+	public:
+		// ----- Destructor ----- //
+		virtual ~CatAttackEXECUTE() { p_data = nullptr; }
 
-	//	// ----- Public Functions ----- //
-	//	virtual void StateEnter(EntityID id) override;
+		// ----- Public Functions ----- //
+		virtual void StateEnter(EntityID id) override;
 
-	//	virtual void StateUpdate(EntityID id, float deltaTime) override;
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
 
-	//	virtual void StateExit(EntityID id) override;
+		virtual void StateExit(EntityID id) override;
 
-	//	// ----- Getter ----- //
-	//	virtual std::string_view GetName() override;
+		// ----- Getter ----- //
+		virtual std::string_view GetName() override;
 
-	//private:
-	//	// ----- Private Variables ----- //
-	//	CatScriptData* p_data;
-	//};
+	private:
+		// ----- Private Variables ----- //
+		CatScriptData* p_data;
+	};
 }

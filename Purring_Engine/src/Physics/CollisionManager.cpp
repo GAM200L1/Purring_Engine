@@ -121,7 +121,7 @@ namespace PE
 		}
 
 		if(gridActive)
-		m_grid.UpdateGrid();
+			m_grid.UpdateGrid();
 		// Test for Collisions in the scene
 		TestColliders();
 		// Resolve the positions and velocities of the entities
@@ -600,8 +600,8 @@ namespace PE
 
 	bool PointCollision(AABBCollider const& r_AABB, vec2 const& r_point)
 	{
-		if (r_point.x < r_AABB.min.x && r_point.x > r_AABB.max.x) { return false; }
-		if (r_point.y < r_AABB.min.y && r_point.y > r_AABB.max.y) { return false; }
+		if (r_point.x < r_AABB.min.x || r_point.x > r_AABB.max.x) { return false; }
+		if (r_point.y < r_AABB.min.y || r_point.y > r_AABB.max.y) { return false; }
 		return true;
 	}
 }

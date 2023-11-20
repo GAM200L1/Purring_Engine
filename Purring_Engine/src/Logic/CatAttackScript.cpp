@@ -39,6 +39,7 @@ namespace PE
 		
 		if (isXAxis)
 		{
+			boxScaleOffset.y = 0.75f;
 			boxScaleOffset.x = m_scriptData[id].bulletRange;
 			boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(boxID).width);
 			boxPositionOffset.x *= (isNegative) ? -1 : 1;
@@ -46,6 +47,7 @@ namespace PE
 		}
 		else
 		{
+			boxScaleOffset.x = 0.75f;
 			boxScaleOffset.y = m_scriptData[id].bulletRange;
 			boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).height * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(boxID).height);
 			boxPositionOffset.y *= (isNegative) ? -1 : 1;
@@ -77,18 +79,16 @@ namespace PE
 		InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY); // I'll change this to take floats in next time...
 		vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(static_cast<float>(mouseX), static_cast<float>(mouseY)) };
 		
-		// for checking if the game state is correct
-		//std::cout << static_cast<int>(GameStateManager::GetInstance().GetGameState()) << ' ' << static_cast<int>(GameStates::ATTACK) << '\n';
-		
 		// if in attack planning phase, allow player to select a cat and plan that cats attacks
-		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
-		{*/
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
+		{
 
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 			if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
 			{
 				// if player selects cat with EntityID 'id', the cat will show its selectable attack boxes and become active
 				m_showBoxes = true;
+				p_data->attackDirection = 0;
 				for (auto const& boxID : p_data->selectBoxIDs)
 				{
 					EntityManager::GetInstance().Get<EntityDescriptor>(boxID.second).isActive = true;
@@ -103,13 +103,11 @@ namespace PE
 					// checks if the mouse hovers over any of the select boxes. if it does, the boxes should become red
 					if (PointCollision(selectBoxCollider, cursorPosition))
 					{
-						std::cout << "inbox\n";
 						EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f); // sets the color of the box to be red if hovered
 						if (m_mouseClick)
 						{
 							// if player selects either of the boxes, the attack direction is determined
 							p_data->attackDirection = selectBox.first;
-							m_mouseClick = false;
 							// the other boxes should not show
 							m_showBoxes = false;
 							for (auto const& selection : p_data->selectBoxIDs)
@@ -124,8 +122,6 @@ namespace PE
 									EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f);
 								}
 							}
-
-							std::cout << "yippee\n";
 						}
 					}
 					else
@@ -135,15 +131,27 @@ namespace PE
 					}
 				}
 			}
-		//}
-		//else
-		//{
-		//	// set the entity with p_attack direction to not active, the green box should disappear
-		//}
+			else
+			{
+				if (p_data->attackDirection != 0)
+					EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->selectBoxIDs[static_cast<EnumCatAttackDirection>(p_data->attackDirection)]).SetColor(1.f, 0.f, 0.f, 1.f);
+			}
+			m_mouseClick = false;
+		}
+		else
+		{
+			p_data->m_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
+		}
 	}
 	
 	void CatAttackPLAN::StateExit(EntityID id)
-	{}
+	{
+		for (auto const& selection : p_data->selectBoxIDs)
+		{
+			// set the entity with p_attack direction to not active, the green box should disappear
+			EntityManager::GetInstance().Get<Graphics::Renderer>(selection.second).SetColor(1.f, 0.f, 0.f, 1.f);
+		}
+	}
 
 	std::string_view CatAttackPLAN::GetName()
 	{
