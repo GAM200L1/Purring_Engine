@@ -125,6 +125,15 @@ namespace PE
             \return Texture object in map.
         *************************************************************************************/
         std::shared_ptr<Graphics::Texture> GetTexture(std::string const& r_name);
+
+        /*!***********************************************************************************
+            \brief Gets the animation stored in the resource manager.
+            
+            \param[in] r_name Name of animation
+                                
+            \return Animation in map.
+        *************************************************************************************/
+        std::shared_ptr<Animation> GetAnimation(std::string const& r_name);
     private:
         // constructor
         ResourceManager()

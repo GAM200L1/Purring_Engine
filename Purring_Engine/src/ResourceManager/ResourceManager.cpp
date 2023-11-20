@@ -111,8 +111,31 @@ namespace PE
 
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
     {
-        return Textures[r_name];
+        if (Textures.find(r_name) != Textures.end())
+        {
+            return Textures[r_name];
+        }
+        else
+        {
+            // return default texture
+			std::cout << "Texture " << r_name << " not found" << std::endl;
+			return nullptr;
+		}
     }
+
+    std::shared_ptr<Animation> ResourceManager::GetAnimation(std::string const& r_name)
+    {
+        if (Animations.find(r_name) != Animations.end())
+        {
+			return Animations[r_name];
+		}
+        else
+        {
+			// return default animation
+			std::cout << "Animation " << r_name << " not found" << std::endl;
+			return nullptr;
+		}
+	}
 
     void ResourceManager::UnloadResources()
     {

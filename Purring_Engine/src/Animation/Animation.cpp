@@ -41,9 +41,14 @@ namespace PE
 
 	}
 
-	Animation::Animation(std::string spriteSheetKey) : m_textureKey{ spriteSheetKey }, m_currentFrameIndex { 0 }, m_currentFrameTime{ 0.0f }
+	Animation::Animation(std::string spriteSheetKey) : m_spriteSheetKey{ spriteSheetKey }, m_currentFrameIndex { 0 }, m_currentFrameTime{ 0.0f }
 	{
 	
+	}
+
+	void Animation::SetSpriteSheetKey(std::string spriteSheetKey)
+	{
+		m_spriteSheetKey = spriteSheetKey;
 	}
 
 	void Animation::AddFrame(vec2 const& minUV, vec2 const& maxUV, float duration)
@@ -51,17 +56,42 @@ namespace PE
 		m_animationFrames.emplace_back(AnimationFrame{ minUV, maxUV, duration });
 	}
 
-	AnimationFrame const& Animation::UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent)
+	void Animation::UpdateAnimationFrame(float deltaTime, float& currentFrameTime, unsigned& currentFrameIndex)
 	{
-		r_animationComponent.SetCurrentFrameTime(r_animationComponent.GetCurrentFrameTime() + deltaTime);
-		if (r_animationComponent.GetCurrentFrameTime() >= m_animationFrames[r_animationComponent.GetCurrentFrameIndex()].m_duration)
+		currentFrameTime += deltaTime;
+		if (currentFrameTime >= m_animationFrames[currentFrameIndex].m_duration)
 		{
 			// move on the the next frame when current frame duration is reached
-			r_animationComponent.SetCurrentFrameIndex((r_animationComponent.GetCurrentFrameIndex() + 1) % m_animationFrames.size());
-			r_animationComponent.SetCurrentFrameTime(0.0f);
+			currentFrameIndex = (currentFrameIndex + 1) % m_animationFrames.size();
+			currentFrameTime = 0.f;
 		}
+	}
 
-		return m_animationFrames[r_animationComponent.GetCurrentFrameIndex()];
+	AnimationFrame const& Animation::GetCurrentAnimationFrame(unsigned currentFrameIndex)
+	{
+		return m_animationFrames[currentFrameIndex];
+	}
+
+	void Animation::CreateAnimationFrames(float totalSprites, float frameRate)
+	{
+		m_animationFrames.clear();
+
+		float framesPerSprite = totalSprites / frameRate;
+		for (unsigned i = 0; i < totalSprites; ++i)
+		{
+			AddFrame(vec2{ static_cast<float>(i), totalSprites }, vec2{ static_cast<float>(i + 1), totalSprites }, framesPerSprite);
+		}
+	}
+
+	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, float duration)
+	{
+		m_animationFrames[currentFrameIndex].m_duration = duration;
+	}
+
+	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& minUV, vec2 const& maxUV)
+	{
+		m_animationFrames[currentFrameIndex].m_minUV = minUV;
+		m_animationFrames[currentFrameIndex].m_maxUV = maxUV;
 	}
 
 	void Animation::ResetAnimation()
@@ -72,26 +102,31 @@ namespace PE
 	// AnimationComponent
 	void AnimationComponent::AddAnimationToComponent(std::string animationID)
 	{
-		m_animationsID.emplace_back(animationID);
-		m_currentAnimationIndex = animationID;
+		m_animationsID.insert(animationID);
+		//m_currentAnimationID = animationID;
 	}
 
-	void AnimationComponent::SetCurrentAnimationIndex(std::string animationIndex)
+	void AnimationComponent::RemoveAnimationFromComponent(std::string animationID)
 	{
-		m_currentAnimationIndex = animationIndex;
+		m_animationsID.erase(animationID);
+	}
+
+	void AnimationComponent::SetCurrentAnimationID(std::string animationIndex)
+	{
+		m_currentAnimationID = animationIndex;
 	}
 
 	nlohmann::json AnimationComponent::ToJson(size_t id) const
 	{
 		id;
 		nlohmann::json j;
-		j["CurrentAnimationIndex"] = m_currentAnimationIndex;
+		j["CurrentAnimationID"] = m_currentAnimationID;
 		return j;
 	}
 
 	AnimationComponent& AnimationComponent::Deserialize(const nlohmann::json& j)
 	{
-		m_currentAnimationIndex = j["CurrentAnimationIndex"].get<std::string>();
+		m_currentAnimationID = j["CurrentAnimationID"].get<std::string>();
 		return *this;
 	}
 
@@ -109,6 +144,11 @@ namespace PE
 		playerAttackAnimation = CreateAnimation("playerAttack");
 		ratAttackAnimation	  = CreateAnimation("ratAttack");
 		ratDeathAnimation	  = CreateAnimation("ratDeath");
+
+		SetAnimationSpriteSheetKey(playerWalkAnimation, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png");
+		SetAnimationSpriteSheetKey(playerAttackAnimation, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png");
+		SetAnimationSpriteSheetKey(ratDeathAnimation, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Attack.png");
+		SetAnimationSpriteSheetKey(ratDeathAnimation, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png");
 
 		// animation 1
 		AddFrameToAnimation(playerWalkAnimation, vec2{ 0.f, 0.f }, vec2{ 1.f / 6.f, 1.f }, 1.f / 6.f);
@@ -161,7 +201,7 @@ namespace PE
 
 					if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
 					{
-						//EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(animationComponent.GetAnimationID()));
+						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()));
 						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
 						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
 					}
@@ -197,18 +237,19 @@ namespace PE
 		// store animations in resource manager instead
 		if (ResourceManager::GetInstance().Animations.find(animationComponent.GetAnimationID()) != ResourceManager::GetInstance().Animations.end())
 		{
-			return ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent);
+			ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->UpdateAnimationFrame(deltaTime, animationComponent.m_currentFrameTime, animationComponent.m_currentFrameIndex);
+			return ResourceManager::GetInstance().Animations[animationComponent.GetAnimationID()]->GetCurrentAnimationFrame(animationComponent.m_currentFrameIndex);
 		}
 		return AnimationFrame{};
 	}
 
 	std::string AnimationManager::GetAnimationSpriteSheetKey(std::string animationID)
 	{
-		// store animations in resource manager instead
-		if (ResourceManager::GetInstance().Animations.find(animationID) != ResourceManager::GetInstance().Animations.end())
-		{
-			return ResourceManager::GetInstance().Animations[animationID]->GetSpriteSheetKey();
-		}
-		return "";
+		return ResourceManager::GetInstance().GetAnimation(animationID)->GetSpriteSheetKey();
+	}
+
+	void AnimationManager::SetAnimationSpriteSheetKey(std::string animationID, std::string spriteSheetKey)
+	{
+		ResourceManager::GetInstance().GetAnimation(animationID)->SetSpriteSheetKey(spriteSheetKey);
 	}
 }

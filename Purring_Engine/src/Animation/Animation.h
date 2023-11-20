@@ -32,14 +32,14 @@ namespace PE
 
 		\return Current animation index for this animation component.
 		*************************************************************************************/
-		inline std::string GetAnimationID() const { return m_currentAnimationIndex; }
+		inline std::string GetAnimationID() const { return m_currentAnimationID; }
 
 		/*!***********************************************************************************
 		\brief Get the current frame time of the animation.
 
 		\return Current frame time of the animation.
 		*************************************************************************************/
-		inline float GetCurrentFrameTime() const { return m_currentTime; }
+		inline float GetCurrentFrameTime() const { return m_currentFrameTime; }
 
 		/*!***********************************************************************************
 		\brief Get the current frame index of the animation.
@@ -49,18 +49,18 @@ namespace PE
 		inline unsigned GetCurrentFrameIndex() const { return m_currentFrameIndex; }
 
 		/*!***********************************************************************************
-		 \brief Set current animation ID.
+		\brief Get the list of animations for the component.
 
-		 \param[in] str Animation ID to set to.
+		\return List of animations for the component.
 		*************************************************************************************/
-		void SetAnimationID(const std::string& str) { m_currentAnimationIndex = str; }
-
+		inline std::set<std::string> const& GetAnimationList() const { return m_animationsID; }
+		
 		/*!***********************************************************************************
 		\brief Set current frame time of the animation.
 
 		\param[in] time Time to set to.
 		*************************************************************************************/
-		void SetCurrentFrameTime(float time) { m_currentTime = time; }
+		void SetCurrentFrameTime(float time) { m_currentFrameTime = time; }
 
 		/*!***********************************************************************************
 		\brief Set current frame index of the animation.
@@ -84,11 +84,18 @@ namespace PE
 		void AddAnimationToComponent(std::string animationID);
 
 		/*!***********************************************************************************
+		\brief Remove animation from a component.
+
+		\param[in] animationID id to remove from component.
+		*************************************************************************************/
+		void RemoveAnimationFromComponent(std::string animationID);
+
+		/*!***********************************************************************************
 		\brief Set current playing animation index of the component
 
 		\param[in] animationIndex index to set.
 		*************************************************************************************/
-		void SetCurrentAnimationIndex(std::string animationIndex);
+		void SetCurrentAnimationID(std::string animationID);
 
 		///*!***********************************************************************************
 		// \brief Sets the RGBA color of the object. If the object has a texture on it,
@@ -112,12 +119,10 @@ namespace PE
 		//*************************************************************************************/
 		AnimationComponent& Deserialize(const nlohmann::json& j);
 
-	private:
-
-		std::vector<std::string> m_animationsID; // Stores all animations for the component // not in use now
-		std::string m_currentAnimationIndex{}; // current playing animation
-		std::string m_startingAnimationIndex{}; // starting playing animation // not sure if needed
-		float m_currentTime{}; // current frame time of the animation
+		std::set<std::string> m_animationsID; // Stores all animations for the component // not in use now
+		std::string m_currentAnimationID{}; // current playing animation
+		std::string m_startingAnimationID{}; // starting playing animation // not sure if needed
+		float m_currentFrameTime{}; // current frame time of the animation
 		unsigned m_currentFrameIndex{}; // current frame index of the animation
 	};
 
@@ -152,6 +157,8 @@ namespace PE
 		*************************************************************************************/
 		Animation(std::string spriteSheetKey);
 
+		void SetSpriteSheetKey(std::string spriteSheetKey);
+
 		/*!***********************************************************************************
 		 \brief Add a new frame to the animation sequence.
 
@@ -165,19 +172,32 @@ namespace PE
 		 \brief Update the animation based on elapsed time.
 
 		 \param[in] deltaTime Time since last update.
-
-		 \return Current texture key for the frame to display.
 		*************************************************************************************/
-		AnimationFrame const& UpdateAnimationFrame(float deltaTime, AnimationComponent& r_animationComponent);
+		void UpdateAnimationFrame(float deltaTime, float& currentFrameTime, unsigned& currentFrameIndex);
+
+		/*!***********************************************************************************
+			\brief Get the current frame of the animation.
+				 
+			\return Current frame of the animation.
+		*************************************************************************************/
+		AnimationFrame const& GetCurrentAnimationFrame(unsigned currentFrameIndex);
+
+		void CreateAnimationFrames(float totalSprites, float frameRate);
+
+		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, float duration);
+
+		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& minUV, vec2 const& maxUV);
 
 		void ResetAnimation();
 
-		inline std::string GetSpriteSheetKey() { return m_textureKey; }
+		inline std::string GetSpriteSheetKey() const { return m_spriteSheetKey; }
+
+		inline unsigned GetFrameCount() { return static_cast<unsigned>(m_animationFrames.size()); }
 
 		// ----- Private Variables ----- //
 	private:
 		std::vector<AnimationFrame> m_animationFrames;
-		std::string m_textureKey; // remove this, should be using texxture key from renderer component
+		std::string m_spriteSheetKey; // remove this, should be using texxture key from renderer component
 		unsigned m_currentFrameIndex;
 		float m_currentFrameTime;
 	};
@@ -246,6 +266,14 @@ namespace PE
 		 \return Spritesheet key of current playing animation
 		*************************************************************************************/
 		std::string GetAnimationSpriteSheetKey(std::string animationID);
+
+		/*!***********************************************************************************
+		\brief Set the spritesheet key of the current playing animation
+				 
+		\param[in] animationID to set spritesheet key to
+		\param[in] spriteSheetKey to set to
+		*************************************************************************************/
+		void SetAnimationSpriteSheetKey(std::string animationID, std::string spriteSheetKey);
 
 		// ----- Private Variables ----- //
 	private:

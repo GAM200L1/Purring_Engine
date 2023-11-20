@@ -1681,7 +1681,8 @@ namespace PE {
 							}
 						}
 
-						// Animation component
+						// ---------- ANIMATION COMPONENT ---------- //
+
 						if (name == EntityManager::GetInstance().GetComponentID<AnimationComponent>())
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1701,14 +1702,15 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f)); //add space
-								// setting textures
+
+								// setting animations
 								std::vector<const char*> key;
 								key.push_back("");
 
-								//to get all the keys
-								for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
+								//to get all the animation keys for the entity
+								for (auto const& tmp : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
 								{
-									key.push_back(it->first.c_str());
+									key.push_back(tmp.c_str());
 								}
 								int index{};
 								for (std::string str : key)
@@ -1727,7 +1729,7 @@ namespace PE {
 									//set selected texture id
 									if (ImGui::Combo("##Animation", &index, key.data(), static_cast<int>(key.size())))
 									{
-										EntityManager::GetInstance().Get<AnimationComponent>(entityID).SetCurrentAnimationIndex(key[index]);
+										EntityManager::GetInstance().Get<AnimationComponent>(entityID).SetCurrentAnimationID(key[index]);
 									}
 								}
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -2325,58 +2327,219 @@ namespace PE {
 		else
 		{
 			ImGui::SeparatorText("Rendering settings");
-			std::vector<const char*> Script{"S1","S2","S3"};
-			std::vector<const char*> Entity{"E1","E2","E3"};
-			std::vector<const char*> Animation{"T1","T2","T3"};
-			static int index1{};
-			static int index2{};
-			static int index3{};
-			ImGui::SetNextItemWidth(300);
-			if (ImGui::Combo("Script", &index1, Script.data(), static_cast<int>(Script.size())))
+			std::map<const char*, EntityID> entities;
+			std::vector<const char*> entityList;
+			std::vector<const char*> animationList;
+
+			static std::optional<EntityID> currentEntityID;
+			static std::string currentAnimationID;
+
+			int entityIndex{};
+			int animationIndex{};
+
+
+			// get all the entities with animation component
+			for (EntityID id : SceneView<AnimationComponent>())
 			{
-				//change something
+				entities[EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str()] = id;
+				entityList.push_back(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str());
 			}
-			ImGui::SetNextItemWidth(300);
-			if (ImGui::Combo("Entity", &index2, Entity.data(), static_cast<int>(Entity.size())))
+
+			// get all animations from resource manager
+			for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
 			{
-				//change something
+				animationList.push_back(it->first.c_str());
 			}
-			ImGui::SetNextItemWidth(300);
-			if (ImGui::Combo("Animation", &index3, Animation.data(), static_cast<int>(Animation.size())))
+
+			// get index of current animation for combo box
+			for (std::string str : animationList)
 			{
-				//change something
+				if (str == currentAnimationID)
+					break;
+				++animationIndex;
+			}
+
+			// get index of current entity for combo box
+			for (std::string str : entityList)
+			{
+				if (currentEntityID.has_value())
+				{
+					if (str == EntityManager::GetInstance().Get<EntityDescriptor>(currentEntityID.value()).name)
+					break;
+				}
+				++entityIndex;
+			}
+
+			ImGui::SetNextItemWidth(300.f);
+			if (ImGui::Combo("Entity", &entityIndex, entityList.data(), static_cast<int>(entityList.size())))
+			{
+				currentEntityID = entities[entityList[entityIndex]];
+			}
+
+			ImGui::SetNextItemWidth(300.f);
+			if (ImGui::Combo("Animation", &animationIndex, animationList.data(), static_cast<int>(animationList.size())))
+			{
+				currentAnimationID = animationList[animationIndex];
+			}
+
+			if (ImGui::Button("Create Animation"))
+			{
+				if (currentEntityID.has_value())
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(currentEntityID.value()).AddAnimationToComponent(currentAnimationID);
+				}
 			}
 
 			ImGui::Dummy(ImVec2(0, 5));
 			ImGui::SeparatorText("Sprite Sheet");
+
+			// animation data
+			static float previewCurrentFrameTime;
+			static unsigned previewCurrentFrameIndex;
+			std::shared_ptr<Graphics::Texture> texture;
+			std::shared_ptr<Animation> currentAnimation;
+			int frameCount{};
+
+			// frame data
+			float frameTime{};
+			ImVec2 minUV;
+			ImVec2 maxUV;
+
+			static bool playAnimation{ false };
+
+			// if there's animation to preview
+			if (currentAnimationID != "")
+			{
+				currentAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID);
+
+				// get max frames
+				frameCount = currentAnimation->GetFrameCount() - 1;
+				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+
+				// if animation has spritesheet, get the texture
+				if (currentAnimation->GetSpriteSheetKey() != "")
+				{
+					texture = ResourceManager::GetInstance().GetTexture(currentAnimation->GetSpriteSheetKey());
+
+					minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+							  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+					maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+							  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
+				}
+			}
+			else
+			{
+				// reset preview animation
+				previewCurrentFrameTime = 0.f;
+				previewCurrentFrameIndex = 0;
+			}
+
+			// spritesheet selection for animation
+			// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
+			std::vector<std::filesystem::path> filepaths;
+			int textureIndex{ 0 };
+			for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+			{
+				filepaths.emplace_back(it->first);
+			}
+
+			// Vector of the names of textures that have already been loaded
+			std::vector<std::string> loadedTextureKeys;
+			std::vector<const char*> textureList;
+
+			// get the keys of textures already loaded by the resource manager
+			for (auto const& r_filepath : filepaths)
+			{
+				loadedTextureKeys.push_back(r_filepath.stem().string());
+			}
+
+			for (auto const& r_filepath : filepaths)
+			{
+				if (currentAnimation)
+					if (r_filepath.string() == currentAnimation->GetSpriteSheetKey())
+						break;
+				++textureIndex;
+			}
+
+			for (auto const& r_str : loadedTextureKeys)
+			{
+				textureList.push_back(r_str.c_str());
+			}
+
+			// Displays the current spritesheet set on the animation
+			if (ImGui::BeginChild("currentTexture", ImVec2{ 116,116 }, true))
+			{
+				// if theres a spritesheet texture
+				if (texture)
+					ImGui::Image((void*)(intptr_t)texture->GetTextureID(), ImVec2{ 100,100 }, minUV, maxUV);
+				ImGui::EndChild();
+			}
+
+			ImGui::SetNextItemWidth(300.f);
+			if (ImGui::Combo("Spritesheet", &textureIndex, textureList.data(), static_cast<int>(textureList.size())))
+			{
+				if(currentAnimation)
+					currentAnimation->SetSpriteSheetKey(filepaths[textureIndex].string());
+			}
+
 			if (ImGui::Button("Play"))
 			{
-
+				playAnimation = true;
 			}
+
 			ImGui::SameLine();
 			if (ImGui::Button("Stop"))
 			{
-
+				playAnimation = false;
 			}
+
+			// slider
 			ImGui::SameLine();
-			static int frame{};
+			int frame{ static_cast<int>(previewCurrentFrameIndex)};
 			ImGui::SetNextItemWidth(300);
-			//name, reference, min, max
-			ImGui::SliderInt("Frame",&frame,0,60);
+
+			if (ImGui::SliderInt("Frame", &frame, 0, frameCount))
+			{
+				previewCurrentFrameIndex = static_cast<unsigned>(frame);
+			}
+
+			// update preview animation
+			if(playAnimation)
+			currentAnimation->UpdateAnimationFrame(TimeManager::GetInstance().GetDeltaTime(), previewCurrentFrameTime, previewCurrentFrameIndex);
+
+			if (currentAnimation)
+			{
+				// update frame display parameters
+				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+				minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+						  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+				maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+						  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
+			}
+
 			if (ImGui::Button("Add Animation"))
 			{
-
+				if (currentEntityID.has_value())
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(currentEntityID.value()).AddAnimationToComponent(currentAnimationID);
+				}
 			}
+
 			ImGui::SameLine();
 			if (ImGui::Button("Remove Animation"))
 			{
-
+				if (currentEntityID.has_value())
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(currentEntityID.value()).RemoveAnimationFromComponent(currentAnimationID);
+				}
 			}
+
 			ImGui::SameLine();
 			if (ImGui::Button("Save"))
 			{
 
 			}
+
 			ImGui::Dummy(ImVec2(0, 5));
 			ImGui::SeparatorText("Animation Properties");
 			ImGui::Columns(2, "TwoSections", true);
@@ -2396,19 +2559,27 @@ namespace PE {
 
 				ImGui::TreePop();
 			}
+
 			ImGui::NextColumn();
 			static std::string text{};
-			ImGui::InputText("##name",&text);
+			ImGui::InputText("##name", &text);
 			static bool looped{};
 			ImGui::Checkbox("##looped", &looped);
 			static int fc{};
 			ImGui::InputInt("##framecount", &fc);
 			ImGui::Text("{ unordered_map, size = 1}");
-			static int ft{};
-			ImGui::InputInt("##frametime", &ft);
+
+			ImGui::InputFloat("##frameTime", &frameTime);
 			ImGui::Text("{ unordered_map, size = 0}");
 			ImGui::Text("{ vector, size = 1}");
 			ImGui::Columns(1);
+
+			// update animation frame data
+			if (currentAnimation)
+			{
+				currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, frameTime);
+			}
+
 			ImGui::End(); //imgui close
 		}
 	}

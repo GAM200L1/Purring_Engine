@@ -187,8 +187,8 @@ RTTR_REGISTRATION
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
-        .method("GetCurrentAnimation", &PE::AnimationComponent::GetAnimationID)
-        .method("SetCurrentAntimation", &PE::AnimationComponent::SetAnimationID);
+        .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
+        .method("SetCurrentAnimationID", &PE::AnimationComponent::SetCurrentAnimationID);
 
     rttr::registration::class_<PE::FollowScriptData>("FollowScript")
         .property("Size", &PE::FollowScriptData::Size)
