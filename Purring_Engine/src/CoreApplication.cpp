@@ -84,6 +84,7 @@
 #include "Logic/testScript2.h"
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
+#include "GameStateManager.h"
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -550,4 +551,7 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
+
+    GameStateManager::GetInstance().p_cameraManager = p_cameraManager;
+    GameStateManager::GetInstance().RegisterButtonFunctions();
 }

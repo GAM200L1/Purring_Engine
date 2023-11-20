@@ -24,7 +24,7 @@
 #include "Events/WindowEvent.h"
 #include "Events/KeyEvent.h"
 #include "System.h"
-
+typedef unsigned long long EntityID;
 namespace PE
 {
     /*!***********************************************************************************
@@ -122,6 +122,6 @@ namespace PE
         *************************************************************************************/
         void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
-        void TestFunction();
+        void TestFunction(EntityID);
     };
 }
