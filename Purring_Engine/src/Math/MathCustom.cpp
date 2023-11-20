@@ -307,7 +307,7 @@ namespace PE
 		*this /= this->Length();
 	}
 
-	///*potentially dont need																				   vec4 struct member implementations
+	///*																			   vec4 struct member implementations
 	//--------------------------------------------------------------------------------------------------------------------- */
 	//// copy assignment
 	//vec4& vec4::operator=(vec4 const& r_cpy)
@@ -329,7 +329,7 @@ namespace PE
 	//// allows modification
 	float& vec4::operator[](unsigned int index)
 	{
-		return (*this)[index];
+		return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
 	}
 	//
 	//// addition

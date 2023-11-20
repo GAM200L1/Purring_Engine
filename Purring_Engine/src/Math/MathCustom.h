@@ -486,25 +486,58 @@ namespace PE
 		
 	};
 
+	//! vec4 struct, contains x, y, z, w values
 	struct vec4
 	{
+		// ----- Public Variables ----- //
 		float x, y, z, w;
 	
-		// default constructor
+		// ----- Public Functions ----- //
+		/*!***********************************************************************************
+		 \brief Constructs a vec4 object. Initializes all values to 0.
+		*************************************************************************************/
 		vec4() : x{ 0.f }, y{ 0.f }, z{ 0.f }, w{ 0.f } {}
-		// 3 floats constructor
+		
+		/*!***********************************************************************************
+		 \brief Constructs a vec4 object with 4 floats.
+
+		 \param[in] ux 	x variable of vec4
+		 \param[in] uy	y variable of vec4
+		 \param[in] uz 	z variable of vec4
+		 \param[in] uw 	w variable of vec4
+		*************************************************************************************/
 		vec4(float ux, float uy, float uz, float uw) : x{ ux }, y{ uy }, z{ uz }, w{ uw } {}
-		// vec3 + float constructor
+		
+		/*!***********************************************************************************
+		 \brief Constructs a vec4 object with a vec3 and a float.
+
+		 \param[in] r_v		x, y, z variables of vec4
+		 \param[in] uw		w variable of the vec4
+		*************************************************************************************/
 		vec4(vec3 const& r_v, float uw) : x{ r_v.x }, y{ r_v.y }, z{ r_v.z }, w{ uw } {}
-		// copy constructor
+		
+		/*!***********************************************************************************
+		 \brief Copy constructor for vec4 object
+
+		 \param[in] r_cpy vec4 to copy into new vec4
+		*************************************************************************************/
 		vec4(vec4 const& r_cpy) : x{ r_cpy.x }, y{ r_cpy.y }, z{ r_cpy.z }, w{ r_cpy.w } {}
+		
 		// copy assignment
 		//vec4& operator=(vec4 const& r_cpy);
 	
-		// access operator
+		/*!***********************************************************************************
+		 \brief Read-only access operator
+
+		 \param[in] index	number 0-3, indicated variables x,y,z,w
+		*************************************************************************************/
 		float operator[](unsigned int index) const;
-	
-		// allows modification
+		
+		/*!***********************************************************************************
+		 \brief Modifiable mutator operator
+
+		 \param[in] index	number 0-3, indicated variables x,y,z,w
+		*************************************************************************************/
 		float& operator[](unsigned int index);
 	
 		//// addition
