@@ -24,7 +24,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Graphics/RendererManager.h"
 #include "GUISystem.h"
-
+#include "GameStateManager.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif
@@ -78,7 +78,7 @@ namespace PE
 	GLFWwindow* WindowManager::InitWindow(int width, int height, const char* p_title)
 	{
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
-
+		GameStateManager::GetInstance().p_window = window;
 		if (!window)
 		{
 			std::cerr << "Failed to create GLFW window." << std::endl;
@@ -260,7 +260,7 @@ namespace PE
 		}
 	}
 
-	void WindowManager::TestFunction()
+	void WindowManager::TestFunction(EntityID)
 	{
 		std::cout << "hi im a test function" << std::endl;
 	}
