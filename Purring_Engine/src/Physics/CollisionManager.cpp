@@ -240,7 +240,7 @@ namespace PE
 												else // trigger collision
 												{
 													// else send message to trigger event associated with this entity
-													engine_logger.AddLog(false, "Collided with Trigger!\n", "");
+													//engine_logger.AddLog(false, "Collided with Trigger!\n", "");
 													
 													//sending trigger enter event
 													if (m_collisionPairs.count(std::pair{ ColliderID_1, ColliderID_2 }) || m_collisionPairs.count(std::pair{ ColliderID_2, ColliderID_1 }))

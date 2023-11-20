@@ -16,12 +16,8 @@
 
 #include "prpch.h"
 #include "CatScript.h"
-#include "ECS/EntityFactory.h"
-#include "ECS/Entity.h"
-#include "ECS/Components.h"
-#include "ECS/SceneView.h"
-#include "Logic/LogicSystem.h"
 #include "Physics/CollisionManager.h"
+#include "GameStateManager.h"
 
 namespace PE
 {
@@ -33,7 +29,7 @@ namespace PE
 		EntityManager::GetInstance().Get<Collider>(boxID).colliderVariant = AABBCollider();
 		EntityManager::GetInstance().Get<Collider>(boxID).isTrigger = true;
 
-		EntityManager::GetInstance().Get<Graphics::Renderer>(boxID).SetColor(0.f, 1.f, 0.f, 1.f); // sets the color of the box to be green
+		EntityManager::GetInstance().Get<Graphics::Renderer>(boxID).SetColor(0.f, 1.f, 0.f, 0.f); // sets the color of the box to be green
 		EntityManager::GetInstance().Get<EntityDescriptor>(boxID).parent = id;
 		EntityManager::GetInstance().Get<EntityDescriptor>(boxID).isActive = false;
 
@@ -57,8 +53,8 @@ namespace PE
 		}
 
 		// set the position of the selection box to be half the range away from the center of the cat
-		EntityManager::GetInstance().Get<Transform>(boxID).relPosition.x = EntityManager::GetInstance().Get<Transform>(id).position.x + boxPositionOffset.x;
-		EntityManager::GetInstance().Get<Transform>(boxID).relPosition.y = EntityManager::GetInstance().Get<Transform>(id).position.y + boxPositionOffset.y;
+		EntityManager::GetInstance().Get<Transform>(boxID).relPosition.x = boxPositionOffset.x;
+		EntityManager::GetInstance().Get<Transform>(boxID).relPosition.y = boxPositionOffset.y;
 
 		// set the scale of the selection box
 		EntityManager::GetInstance().Get<Transform>(boxID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
@@ -76,32 +72,74 @@ namespace PE
 	}
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
 	{
-		//double mouseX{}, mouseY{};
-		//InputSystem::GetCursorViewportPosition(m_window, mouseX, mouseY); // I'll change this to take floats in next time...
-		//vec2 cursorPosition{ m_cameraManager->GetWindowToWorldPosition(static_cast<float>(mouseX), static_cast<float>(mouseY)) };
-		if (m_showBoxes)
-		{
-			for (auto const& selectBox : p_data->selectBoxIDs)
+		// get the mouse cursor position
+		double mouseX{}, mouseY{};
+		InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY); // I'll change this to take floats in next time...
+		vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(static_cast<float>(mouseX), static_cast<float>(mouseY)) };
+		
+		// for checking if the game state is correct
+		//std::cout << static_cast<int>(GameStateManager::GetInstance().GetGameState()) << ' ' << static_cast<int>(GameStates::ATTACK) << '\n';
+		
+		// if in attack planning phase, allow player to select a cat and plan that cats attacks
+		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
+		{*/
+
+			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+			if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
 			{
-				AABBCollider const& selectBoxCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(selectBox.second).colliderVariant);
-				if (PointCollision(selectBoxCollider, vec2{0.f, 0.f}))
+				// if player selects cat with EntityID 'id', the cat will show its selectable attack boxes and become active
+				m_showBoxes = true;
+				for (auto const& boxID : p_data->selectBoxIDs)
 				{
-					EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f); // sets the color of the box to be red if hovered
-					if (m_mouseClick)
-					{
-						p_data->attackDirection = selectBox.first;
-						m_mouseClick = false;
-						std::cout << "yippee\n";
-						/*p_data->m_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
-						return;*/
-					}
-				}
-				else
-				{
-					EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(0.f, 1.f, 0.f, 1.f); // sets the color of the box to be green if not hovering
+					EntityManager::GetInstance().Get<EntityDescriptor>(boxID.second).isActive = true;
 				}
 			}
-		}
+
+			if (m_showBoxes)
+			{
+				for (auto const& selectBox : p_data->selectBoxIDs)
+				{
+					AABBCollider const& selectBoxCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(selectBox.second).colliderVariant);
+					// checks if the mouse hovers over any of the select boxes. if it does, the boxes should become red
+					if (PointCollision(selectBoxCollider, cursorPosition))
+					{
+						std::cout << "inbox\n";
+						EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f); // sets the color of the box to be red if hovered
+						if (m_mouseClick)
+						{
+							// if player selects either of the boxes, the attack direction is determined
+							p_data->attackDirection = selectBox.first;
+							m_mouseClick = false;
+							// the other boxes should not show
+							m_showBoxes = false;
+							for (auto const& selection : p_data->selectBoxIDs)
+							{
+								if (selection.first != p_data->attackDirection)
+								{
+									EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(0.f, 1.f, 0.f, 0.f); // makes the other boxes transparent (temp, should use active)
+									// set is not active
+								}
+								else
+								{
+									EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f);
+								}
+							}
+
+							std::cout << "yippee\n";
+						}
+					}
+					else
+					{
+						// if the mouse is not over any of the boxes, it should be green
+						EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(0.f, 1.f, 0.f, 1.f); // sets the color of the box to be green if not hovering
+					}
+				}
+			}
+		//}
+		//else
+		//{
+		//	// set the entity with p_attack direction to not active, the green box should disappear
+		//}
 	}
 	
 	void CatAttackPLAN::StateExit(EntityID id)

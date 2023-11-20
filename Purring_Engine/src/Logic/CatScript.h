@@ -17,6 +17,11 @@
 #include "Script.h"
 #include "StateManager.h"
 #include "Events/EventHandler.h"
+#include "ECS/EntityFactory.h"
+#include "ECS/Entity.h"
+#include "ECS/Components.h"
+#include "ECS/SceneView.h"
+#include "Logic/LogicSystem.h"
 
 namespace PE
 {
@@ -42,7 +47,7 @@ namespace PE
 		// attack variables
 		int attackDamage{ 0 };
 		int requiredAttackPoints{ 0 };
-		unsigned attackDirection{ 0 };
+		int attackDirection{ 0 };
 		std::set<std::pair<EnumCatAttackDirection, EntityID>> selectBoxIDs;
 		
 		// bullet variables
@@ -54,6 +59,34 @@ namespace PE
 		StateMachine* m_stateManager;
 	};
 
+	// ========== CAT ATTACKS ========== //
+
+	// ----- CAT ATTACK PLANNING STATE ----- //
+	class CatAttackPLAN : public State
+	{
+	public:
+		// ----- Destructor ----- //
+		virtual ~CatAttackPLAN() { p_data = nullptr; }
+
+		// ----- Public Functions ----- //
+		virtual void StateEnter(EntityID id) override;
+
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+
+		virtual void StateExit(EntityID id) override;
+
+		// ----- Getter ----- //
+		virtual std::string_view GetName() override;
+
+	private:
+		// ----- Private Variables ----- //
+		CatScriptData* p_data;
+		bool m_showBoxes{ true };
+		bool m_mouseClick{ false };
+
+		// ----- Private Functions ----- //
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+	};
 
 	// ----- CAT SCRIPT ----- //
 	class CatScript : public Script
@@ -146,58 +179,31 @@ namespace PE
 		void CreateAttackSelectBoxes(EntityID id, bool isSide, bool isNegative);
 	};
 
+	
 
-
-	// ========== CAT ATTACKS ========== //
-
-	// ----- CAT ATTACK PLANNING STATE ----- //
-	class CatAttackPLAN : public State
-	{
-	public:
-		// ----- Destructor ----- //
-		virtual ~CatAttackPLAN() { p_data = nullptr; }
-
-		// ----- Public Functions ----- //
-		virtual void StateEnter(EntityID id) override;
-
-		virtual void StateUpdate(EntityID id, float deltaTime) override;
-
-		virtual void StateExit(EntityID id) override;
-
-		// ----- Getter ----- //
-		virtual std::string_view GetName() override;
-
-	private:
-		// ----- Private Variables ----- //
-		CatScriptData* p_data;
-		bool m_showBoxes{ true };
-		bool m_mouseClick{ false };
-
-		// ----- Private Functions ----- //
-		void OnMouseClick(const Event<MouseEvents>& r_ME);
-	};
+	
 
 
 
 	// ----- CAT ATTACK EXECUTE STATE ----- //
-	class CatAttackEXECUTE : public State
-	{
-	public:
-		// ----- Destructor ----- //
-		virtual ~CatAttackEXECUTE() { p_data = nullptr; }
+	//class CatAttackEXECUTE : public State
+	//{
+	//public:
+	//	// ----- Destructor ----- //
+	//	virtual ~CatAttackEXECUTE() { p_data = nullptr; }
 
-		// ----- Public Functions ----- //
-		virtual void StateEnter(EntityID id) override;
+	//	// ----- Public Functions ----- //
+	//	virtual void StateEnter(EntityID id) override;
 
-		virtual void StateUpdate(EntityID id, float deltaTime) override;
+	//	virtual void StateUpdate(EntityID id, float deltaTime) override;
 
-		virtual void StateExit(EntityID id) override;
+	//	virtual void StateExit(EntityID id) override;
 
-		// ----- Getter ----- //
-		virtual std::string_view GetName() override;
+	//	// ----- Getter ----- //
+	//	virtual std::string_view GetName() override;
 
-	private:
-		// ----- Private Variables ----- //
-		CatScriptData* p_data;
-	};
+	//private:
+	//	// ----- Private Variables ----- //
+	//	CatScriptData* p_data;
+	//};
 }

@@ -33,7 +33,7 @@
 #include "PlayerControllerScript.h"
 #include "FollowScript.h"
 #include "CameraManagerScript.h"
-#include "GreyCatAttackScript.h"
+#include "CatScript.h"
 
 
 #ifndef GAMERELEASE
@@ -58,7 +58,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(EnemyTestScript);
 	REGISTER_SCRIPT(FollowScript);
 	REGISTER_SCRIPT(CameraManagerScript);
-	REGISTER_SCRIPT(GreyCatAttackScript);
+	REGISTER_SCRIPT(CatScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
