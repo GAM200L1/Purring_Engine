@@ -112,8 +112,13 @@ namespace PE
 			*************************************************************************************/
 			Iterator& operator++()
 			{
-				if (poolIdx != endIdx)
+				do 
+				{
 					++poolIdx;
+					if (poolIdx != endIdx && p_entityManager->Get<EntityDescriptor>(*poolIdx).isAlive)
+						break;
+				} while (poolIdx != endIdx);
+					
 				return *this;
 			}
 
