@@ -32,8 +32,9 @@ namespace PE
 		std::vector<vec2> NextPosition;
 
 		//for attaching through code
-		bool isAttaching{ false };
-		EntityID toAttach{};
+		bool IsAttaching{ false };
+		int NumberOfAttachers{ 1 };
+		std::vector<EntityID> toAttach{};
 	};
 
 

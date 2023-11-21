@@ -32,17 +32,26 @@ namespace PE
 
 	void FollowScript::Update(EntityID id, float)
 	{
-		if (m_ScriptData[id].isAttaching)
+		if (m_ScriptData[id].IsAttaching)
 		{
-			Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-			Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].toAttach);
-			if ((curT.position.x <= toCheck.position.x + toCheck.width/2 && curT.position.x >= toCheck.position.x - toCheck.width / 2) && (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
+			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
-				//PE::EntityManager::GetInstance().Get <EntityDescriptor>(m_ScriptData[id].toAttach).isActive = false;
-				//PE::EntityManager::GetInstance().Get <EntityDescriptor>(m_ScriptData[id].FollowingObject[1]).isActive = true;
-				m_ScriptData[id].NumberOfFollower++;
-				m_ScriptData[id].FollowingObject.push_back(m_ScriptData[id].toAttach);
-				m_ScriptData[id].isAttaching = false;
+				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+				Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].toAttach[index]);
+				if ((curT.position.x <= toCheck.position.x + toCheck.width/2 && curT.position.x >= toCheck.position.x - toCheck.width / 2) 
+					&& (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
+				{
+					//can make into a loop to attach more objects
+					m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = m_ScriptData[id].toAttach[index];
+					m_ScriptData[id].toAttach.erase(m_ScriptData[id].toAttach.begin() + index);
+					++m_ScriptData[id].NumberOfFollower;
+					--m_ScriptData[id].NumberOfAttachers;
+				}
+			}
+			if (m_ScriptData[id].NumberOfAttachers == 1)
+			{
+				m_ScriptData[id].IsAttaching = false;
+
 			}
 		}
 
@@ -97,14 +106,17 @@ namespace PE
 						savedLocation = m_ScriptData[id].NextPosition[index];
 						m_ScriptData[id].NextPosition[index] = NewPosition2 + vec2(m_ScriptData[id].Distance * cosf(newRotation2 - static_cast<float>(M_PI)), m_ScriptData[id].Distance * sinf(newRotation2 - static_cast<float>(M_PI)));
 
-						if(m_ScriptData[id].FollowingObject[index] != -1)
-						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).position = m_ScriptData[id].NextPosition[index];
-						//checking rotation to set can ignore this for now lets get position to work
-						if (m_ScriptData[id].FollowingObject[index] != -1) 
+						if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].FollowingObject[index]))
 						{
-							vec2 directionalvector3 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
-							float newRot = atan2(directionalvector3.y, directionalvector3.x);
-							EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = newRot;
+							if (m_ScriptData[id].FollowingObject[index] != -1)
+								EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).position = m_ScriptData[id].NextPosition[index];
+							//checking rotation to set can ignore this for now lets get position to work
+							if (m_ScriptData[id].FollowingObject[index] != -1)
+							{
+								vec2 directionalvector3 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
+								float newRot = atan2(directionalvector3.y, directionalvector3.x);
+								EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = newRot;
+							}
 						}
 					}
 
@@ -125,12 +137,10 @@ namespace PE
 		m_ScriptData[id] = FollowScriptData();
 		//hardcoded based on unity demo
 		m_ScriptData[id].NextPosition.resize(5);
-		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
-		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
-		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
-		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
-		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
-		m_ScriptData[id].FollowingObject.push_back(static_cast<EntityID>(-1));
+		m_ScriptData[id].FollowingObject.resize(6);
+		std::fill(m_ScriptData[id].FollowingObject.begin(), m_ScriptData[id].FollowingObject.end(), static_cast<EntityID>(-1));
+		m_ScriptData[id].toAttach.resize(6);
+		std::fill(m_ScriptData[id].toAttach.begin(), m_ScriptData[id].toAttach.end(), static_cast<EntityID>(-1));
 	}
 
 	void FollowScript::OnDetach(EntityID id)
