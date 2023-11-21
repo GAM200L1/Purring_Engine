@@ -591,9 +591,17 @@ namespace PE
 		*************************************************************************************/
 		nlohmann::json ToJson(size_t id) const;
 
-
+		/*!***********************************************************************************
+		 \brief Mark an entity to be disabled completely, and will be guaranteed to not
+		 		be saved.
+		 
+		*************************************************************************************/
 		void HandicapEntity() { isAlive = toSave = false; }
-
+		
+		/*!***********************************************************************************
+		 \brief Reset an entity back to a state of existence
+		 
+		*************************************************************************************/
 		void UnHandicapEntity() { isAlive = toSave = true; }
 		
 
