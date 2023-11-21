@@ -139,6 +139,9 @@ namespace PE
 	{
 		for (EntityID ColliderID : SceneView<Collider, Transform>())
 		{
+			// if the entity is not active, do not update collision
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID).isActive) { continue; }
+			std::cout << ColliderID << " is updating collision\n";
 			Transform const& transform = EntityManager::GetInstance().Get<Transform>(ColliderID);
 			Collider& collider = EntityManager::GetInstance().Get<Collider>(ColliderID);
 			
@@ -166,10 +169,17 @@ namespace PE
 
 					for (EntityID ColliderID_1 : IDs)
 					{
-						Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
+						// if the entity is not active, do not check for collision
+						if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_1).isActive) { continue; }
+						std::cout << ColliderID_1 << " is testing collision\n";
 
+						Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
 						for (EntityID ColliderID_2 : IDs)
 						{
+							// if the entity is not active, do not check for collision
+							if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_2).isActive) { continue; }
+							std::cout << ColliderID_2 << " is testing collision\n";
+
 							Collider& collider2 = EntityManager::GetInstance().Get<Collider>(ColliderID_2);
 
 							// if its the same don't check
@@ -246,10 +256,16 @@ namespace PE
 		{
 			for (EntityID ColliderID_1 : SceneView<Collider,Transform>())
 			{
+				// if the entity is not active, do not check for collision
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_1).isActive) { continue; }
+
 				Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
 
 				for (EntityID ColliderID_2 : SceneView<Collider, Transform>())
 				{
+					// if the entity is not active, do not check for collision
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_2).isActive) { continue; }
+
 					Collider& collider2 = EntityManager::GetInstance().Get<Collider>(ColliderID_2);
 
 					// if its the same don't check
