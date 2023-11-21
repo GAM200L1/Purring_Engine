@@ -153,7 +153,7 @@ namespace PE
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
 		bool m_Hovered{};
-		bool disabled;
+		bool disabled{false};
 		UIType m_UIType{0};
 
 		vec4 m_defaultColor{ HEX(255),HEX(255) ,HEX(255),HEX(255) };

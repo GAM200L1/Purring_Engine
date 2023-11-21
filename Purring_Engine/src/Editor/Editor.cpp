@@ -746,11 +746,31 @@ namespace PE {
 					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
-				if (ImGui::Selectable("Create UI Object"))
-				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
-					m_undoStack.AddChange(new CreateObjectUndo(s_id));
-				}
+				//if (ImGui::Selectable("Create UI Object"))
+				//{
+					if (ImGui::BeginMenu("Create UI Object"))
+					{
+						if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
+						{
+							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
+							m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						}
+						if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
+						{
+							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+							m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						}
+						if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
+						{
+							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
+							m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						}
+						ImGui::EndMenu();
+					}
+
+					//EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+					//m_undoStack.AddChange(new CreateObjectUndo(s_id));
+				//}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
 					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
@@ -1004,14 +1024,6 @@ namespace PE {
 										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
 									}
 								}
-
-								//---------- Test Code HERE ----------//
-								ImGui::Text("Alive");
-								ImGui::SameLine(); ImGui::Checkbox("##Alive", &EntityManager::GetInstance().Get<EntityDescriptor>(entityID).isAlive);
-
-								ImGui::Text("Save Entity");
-								ImGui::SameLine(); ImGui::Checkbox("##Save", &EntityManager::GetInstance().Get<EntityDescriptor>(entityID).toSave);
-								//--------- pls remove this ----------//
 							}
 						}
 
@@ -1610,7 +1622,7 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
+								ImGui::Checkbox("Disabled", &EntityManager::GetInstance().Get<GUI>(entityID).disabled);
 								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
 								std::vector<std::filesystem::path> filepaths;
 								int i{ 0 };
