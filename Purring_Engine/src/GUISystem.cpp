@@ -28,7 +28,7 @@
 
 #define UI_CAST(type, ui) reinterpret_cast<type&>(ui)
 
-std::map<std::string_view, std::function<void(void)>> PE::GUISystem::m_uiFunc;
+std::map<std::string_view, std::function<void(::EntityID)>> PE::GUISystem::m_uiFunc;
 
 
 
@@ -45,8 +45,8 @@ namespace PE
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GUISystem::OnMouseClick, this)
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseMoved, GUISystem::OnMouseHover, this)
 
-		REGISTER_UI_FUNCTION(ButtonFunctionOne, GUISystem);
-		REGISTER_UI_FUNCTION(ButtonFunctionTwo, GUISystem);
+		REGISTER_UI_FUNCTION(ButtonFunctionOne, PE::GUISystem);
+		REGISTER_UI_FUNCTION(ButtonFunctionTwo, PE::GUISystem);
 	}
 
 	void GUISystem::UpdateSystem(float deltaTime)
@@ -65,8 +65,22 @@ namespace PE
 				if (gui.m_UIType == UIType::Button)
 				{
 					Button btn = UI_CAST(Button, gui);
+					gui.m_clickedTimer -= deltaTime;
 					if (btn.m_Hovered)
-					btn.OnHover();
+					{
+						btn.OnHover(objectID);
+						if (EntityManager::GetInstance().Has(objectID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) && gui.m_clickedTimer <= 0)
+						{
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_hoveredColor.x, gui.m_hoveredColor.y, gui.m_hoveredColor.z, gui.m_hoveredColor.w);
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_hoveredTexture);
+						}
+					}					
+					else if(gui.m_clickedTimer <= 0)
+					{
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
+					}
+
 				}
 			}
 	}
@@ -94,9 +108,7 @@ namespace PE
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
 				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
-				InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
-
-				std::cout << mouseX << " " << mouseY << std::endl;
+				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
 
 				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 					continue;
@@ -104,7 +116,10 @@ namespace PE
 				if (gui.m_UIType == UIType::Button)
 				{
 					Button btn = UI_CAST(Button, gui);
-					btn.OnClick();
+					btn.OnClick(objectID);
+					gui.m_clickedTimer = .3f;
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
 				}
 			}
 	}
@@ -135,7 +150,7 @@ namespace PE
 			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
 			double mouseX{ static_cast<double>(MME.x) }, mouseY{ static_cast<double>(MME.y) };
-			InputSystem::ConvertGLFWToTransform(p_window, &mouseX, &mouseY);
+			InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
 
 			//check mouse coordinate against transform here
 			if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
@@ -149,16 +164,16 @@ namespace PE
 		}
 	}
 
-	void GUISystem::ButtonFunctionOne()
+	void GUISystem::ButtonFunctionOne(EntityID)
 	{
 		std::cout << "function 1" << std::endl;
 	}
 
-	void GUISystem::ButtonFunctionTwo()
+	void GUISystem::ButtonFunctionTwo(EntityID)
 	{
 		std::cout << "hi im function 2" << std::endl;
 	}
-	void GUISystem::AddFunction(std::string_view str, const std::function<void(void)>& func)
+	void GUISystem::AddFunction(std::string_view str, const std::function<void(EntityID)>& func)
 	{
 		m_uiFunc[str] = func;
 	}
