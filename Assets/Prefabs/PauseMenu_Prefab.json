@@ -1,0 +1,306 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "PauseMenuBackground",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/PauseMenuBackground.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "PausePanel",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.9137254953384399,
+                            "y": 0.8901960849761963,
+                            "z": 0.8274509906768799
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
+                        "Size": 2.0,
+                        "Text": "Game Pawsed!"
+                    },
+                    "Transform": {
+                        "height": 0.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 400.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 0.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "Resume Button",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "ResumeState",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
+                        "Size": 1.0,
+                        "Text": "Resume"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 200.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 300.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "Options Button",
+                        "parent": null,
+                        "sceneID": 4
+                    },
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
+                        "Size": 1.0,
+                        "Text": "Options"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 50.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 300.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "Back to Menu Button",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
+                        "Size": 1.0,
+                        "Text": "Back to Menu"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": -100.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 300.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "Exit Game Button",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.29019609093666077,
+                            "y": 0.25882354378700256,
+                            "z": 0.22745098173618317
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
+                        "Size": 1.0,
+                        "Text": "Exit Game"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": -250.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 300.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}

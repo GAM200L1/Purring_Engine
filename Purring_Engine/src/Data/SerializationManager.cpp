@@ -251,13 +251,9 @@ nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
     return ret;
 }
 
-
-
-
 size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
 {
     StructEntity entity;
-
 
     if (m_initializeComponent.empty())
         LoadLoaders();
