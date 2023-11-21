@@ -2100,7 +2100,7 @@ namespace PE {
 										ImGui::Checkbox("isAttaching", & it->second.IsAttaching);
 										if (it->second.IsAttaching)
 										{
-											int j = it->second.NumberOfAttachers;
+											j = it->second.NumberOfAttachers;
 											ImGui::Text("Number of Attacher + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##aa", &j);
 											if (j <= 5 && j >= 0)
 											{
@@ -2116,16 +2116,12 @@ namespace PE {
 												if (i != 0)
 												{
 													int id = static_cast<int> (it->second.toAttach[i]);
-													std::string test = std::string("##id") + std::to_string(i);
+													std::string test = std::string("##id2") + std::to_string(i);
 													ImGui::Text("Attacher ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
 													if (id != m_currentSelectedObject)
 														it->second.toAttach[i] = id;
 												}
 											}
-
-											//int id = static_cast<int>(it->second.toAttach);
-											//ImGui::Text("entity"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("to attach", &id);
-											//it->second.toAttach = id;
 										}
 									}
 								}

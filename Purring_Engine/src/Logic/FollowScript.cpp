@@ -37,15 +37,18 @@ namespace PE
 			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-				Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].toAttach[index]);
-				if ((curT.position.x <= toCheck.position.x + toCheck.width/2 && curT.position.x >= toCheck.position.x - toCheck.width / 2) 
-					&& (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
+				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].toAttach[index])) 
 				{
-					//can make into a loop to attach more objects
-					m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = m_ScriptData[id].toAttach[index];
-					m_ScriptData[id].toAttach.erase(m_ScriptData[id].toAttach.begin() + index);
-					++m_ScriptData[id].NumberOfFollower;
-					--m_ScriptData[id].NumberOfAttachers;
+					Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].toAttach[index]);
+					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)
+						&& (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
+					{
+						//can make into a loop to attach more objects
+						m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = m_ScriptData[id].toAttach[index];
+						m_ScriptData[id].toAttach.erase(m_ScriptData[id].toAttach.begin() + index);
+						++m_ScriptData[id].NumberOfFollower;
+						--m_ScriptData[id].NumberOfAttachers;
+					}
 				}
 			}
 			if (m_ScriptData[id].NumberOfAttachers == 1)
