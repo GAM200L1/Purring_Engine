@@ -103,6 +103,8 @@ namespace PE
 #endif
 			for (EntityID objectID : SceneView<Transform, GUI>())
 			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+					continue;
 				//get the components
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
@@ -145,6 +147,8 @@ namespace PE
 #endif
 		for (EntityID objectID : SceneView<Transform, GUI>())
 		{
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+				continue;
 			//get the components
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
