@@ -67,6 +67,7 @@ namespace PE
 					poolIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL).end() : p_entityManager->GetEntitiesInPool(r_components).end();
 					endIdx = (all) ? p_entityManager->GetEntitiesInPool(ALL).end() : p_entityManager->GetEntitiesInPool(r_components).end();
 				}
+				while (poolIdx != endIdx && !p_entityManager->Get<EntityDescriptor>(*poolIdx).isAlive) ++poolIdx;
 			}
 
 			/*!***********************************************************************************
