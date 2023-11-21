@@ -357,36 +357,37 @@ namespace PE {
 				ImGui::OpenPopup("Confirm Exit");
 			}
 
-			if (ImGui::BeginPopupModal("Confirm Exit"))
+			if (ImGui::BeginPopup("Confirm Exit"))
 			{
 				ImGui::Text("Are you sure you want to exit Prefab Editor mode?");
 				ImGui::Separator();
 				if (ImGui::Button("Yes"))
+					ImGui::OpenPopup("Save prefab");					
+				if (ImGui::BeginPopup/*Modal*/("Save prefab"))
 				{
-					ImGui::OpenPopup("Save prefab");
-					if (ImGui::BeginPopupModal("Save prefab"))
+					ImGui::Text("Do you want to save your changes?");
+					ImGui::Separator();
+					if (ImGui::Selectable("Yes"))
 					{
-						ImGui::Text("Do you want to save your changes?");
-						ImGui::Separator();
-						if (ImGui::Button("Yes"))
-						{
-							serializationManager.SerializeEntityPrefab(1);
+						serializationManager.SerializeEntityPrefab(1);
 
-							m_isPrefabMode = false;
-							ClearObjectList();
-							serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-						}
-						ImGui::SameLine();
-						//ImGui::Separator();
-						if (ImGui::Selectable("No"))
-						{
-							m_isPrefabMode = false;
-							ClearObjectList();
-							serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-						}
+						m_isPrefabMode = false;
+						ClearObjectList();
+						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						ImGui::CloseCurrentPopup();
 					}
+					//ImGui::SameLine();
+					ImGui::Separator();
+					if (ImGui::Selectable("No"))
+					{
+						m_isPrefabMode = false;
+						ClearObjectList();
+						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						ImGui::CloseCurrentPopup();
+					}
+					ImGui::EndPopup();
 				}
 				ImGui::SameLine();
 				//ImGui::Separator();
@@ -396,11 +397,12 @@ namespace PE {
 					ClearObjectList();
 					serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
 					engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+					ImGui::CloseCurrentPopup();
 				}
+
 				ImGui::EndPopup();
 			}
 
-			
 			//imgui end frame render functions
 			ImGui::Render();
 
