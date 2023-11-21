@@ -2647,6 +2647,7 @@ namespace PE {
 									engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
 
 									// This will load all entities from the file
+									m_undoStack.ClearStack();
 									ClearObjectList();
 									serializationManager.LoadAllEntitiesFromFile(filePath);
 									engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
@@ -3343,6 +3344,7 @@ namespace PE {
 
 	void Editor::LoadSceneFromGivenPath(std::string_view path)
 	{
+		m_undoStack.ClearStack();
 		ClearObjectList();
 		serializationManager.LoadAllEntitiesFromFile(path);
 	}
