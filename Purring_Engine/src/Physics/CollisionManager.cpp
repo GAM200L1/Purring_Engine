@@ -121,11 +121,15 @@ namespace PE
 		}
 
 		if(gridActive)
-		m_grid.UpdateGrid();
-		// Test for Collisions in the scene
-		TestColliders();
-		// Resolve the positions and velocities of the entities
-		ResolveCollision();
+			m_grid.UpdateGrid();
+
+		if (!Editor::GetInstance().IsEditorActive())
+		{
+			// Test for Collisions in the scene
+			TestColliders();
+			// Resolve the positions and velocities of the entities
+			ResolveCollision();
+		}
 	}
 
 	void CollisionManager::DestroySystem()
@@ -171,14 +175,12 @@ namespace PE
 					{
 						// if the entity is not active, do not check for collision
 						if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_1).isActive) { continue; }
-						std::cout << ColliderID_1 << " is testing collision\n";
 
 						Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
 						for (EntityID ColliderID_2 : IDs)
 						{
 							// if the entity is not active, do not check for collision
 							if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_2).isActive) { continue; }
-							std::cout << ColliderID_2 << " is testing collision\n";
 
 							Collider& collider2 = EntityManager::GetInstance().Get<Collider>(ColliderID_2);
 
