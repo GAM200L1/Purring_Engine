@@ -37,15 +37,15 @@ namespace PE
 			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].toAttach[index])) 
+				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index])) 
 				{
-					Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].toAttach[index]);
+					Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].ToAttach[index]);
 					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)
 						&& (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
 					{
 						//can make into a loop to attach more objects
-						m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = m_ScriptData[id].toAttach[index];
-						m_ScriptData[id].toAttach.erase(m_ScriptData[id].toAttach.begin() + index);
+						m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = m_ScriptData[id].ToAttach[index];
+						m_ScriptData[id].ToAttach.erase(m_ScriptData[id].ToAttach.begin() + index);
 						++m_ScriptData[id].NumberOfFollower;
 						--m_ScriptData[id].NumberOfAttachers;
 					}
@@ -142,8 +142,8 @@ namespace PE
 		m_ScriptData[id].NextPosition.resize(5);
 		m_ScriptData[id].FollowingObject.resize(6);
 		std::fill(m_ScriptData[id].FollowingObject.begin(), m_ScriptData[id].FollowingObject.end(), static_cast<EntityID>(-1));
-		m_ScriptData[id].toAttach.resize(6);
-		std::fill(m_ScriptData[id].toAttach.begin(), m_ScriptData[id].toAttach.end(), static_cast<EntityID>(-1));
+		m_ScriptData[id].ToAttach.resize(6);
+		std::fill(m_ScriptData[id].ToAttach.begin(), m_ScriptData[id].ToAttach.end(), static_cast<EntityID>(-1));
 	}
 
 	void FollowScript::OnDetach(EntityID id)

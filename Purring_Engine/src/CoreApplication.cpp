@@ -201,7 +201,7 @@ RTTR_REGISTRATION
         .property("rotation", &PE::FollowScriptData::Rotation)
         .property("CurrentPosition", &PE::FollowScriptData::CurrentPosition)
         .property("NextPosition", &PE::FollowScriptData::NextPosition)
-        .property("toAttach", &PE::FollowScriptData::toAttach)
+        .property("ToAttach", &PE::FollowScriptData::ToAttach)
         .property("NumberOfAttacher", &PE::FollowScriptData::NumberOfAttachers)
         .property("IsAttaching", &PE::FollowScriptData::IsAttaching);
 

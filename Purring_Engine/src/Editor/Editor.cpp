@@ -1623,6 +1623,7 @@ namespace PE {
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Checkbox("Disabled", &EntityManager::GetInstance().Get<GUI>(entityID).disabled);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
 								std::vector<std::filesystem::path> filepaths;
 								int i{ 0 };
@@ -2115,11 +2116,11 @@ namespace PE {
 											{
 												if (i != 0)
 												{
-													int id = static_cast<int> (it->second.toAttach[i]);
+													int id = static_cast<int> (it->second.ToAttach[i]);
 													std::string test = std::string("##id2") + std::to_string(i);
 													ImGui::Text("Attacher ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
 													if (id != m_currentSelectedObject)
-														it->second.toAttach[i] = id;
+														it->second.ToAttach[i] = id;
 												}
 											}
 										}

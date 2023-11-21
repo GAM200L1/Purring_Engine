@@ -34,7 +34,7 @@ namespace PE
 		//for attaching through code
 		bool IsAttaching{ false };
 		int NumberOfAttachers{ 1 };
-		std::vector<EntityID> toAttach{};
+		std::vector<EntityID> ToAttach{};
 	};
 
 
