@@ -30,7 +30,10 @@ namespace PE
 		float Rotation;
 		vec2 CurrentPosition;
 		std::vector<vec2> NextPosition;
-		EntityID test{};
+
+		//for attaching through code
+		bool isAttaching{ false };
+		EntityID toAttach{};
 	};
 
 

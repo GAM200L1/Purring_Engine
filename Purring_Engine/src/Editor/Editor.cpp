@@ -2084,9 +2084,14 @@ namespace PE {
 												it->second.FollowingObject[i] = id;
 											}
 										}
-										int id = static_cast<int>(it->second.test);
-										ImGui::Text("entity"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("toadd", &id);
-										it->second.test = id;
+
+										ImGui::Checkbox("isAttaching", & it->second.isAttaching);
+										if (it->second.isAttaching)
+										{
+											int id = static_cast<int>(it->second.toAttach);
+											ImGui::Text("entity"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("to attach", &id);
+											it->second.toAttach = id;
+										}
 									}
 								}
 							}
@@ -2781,6 +2786,7 @@ namespace PE {
 					}
 				}
 				serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+				m_undoStack.ClearStack();
 				engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 			}
 			ImGui::SameLine();

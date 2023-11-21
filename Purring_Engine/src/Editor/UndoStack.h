@@ -70,6 +70,10 @@ namespace PE
 		 \brief			Redo the change, pop it out of the stack send it back into undo stack
 		*************************************************************************************/
 		void RedoChange();
+		/*!***********************************************************************************
+		 \brief			Redo the change, pop it out of the stack send it back into undo stack
+		*************************************************************************************/
+		void ClearStack();
 		// ----- Private Variables ----- // 
 	private:
 		std::deque<EditorChanges*> m_undoStack;

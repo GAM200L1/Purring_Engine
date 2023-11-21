@@ -50,6 +50,16 @@ namespace PE
 	{
 	}
 
+	void UndoStack::ClearStack()
+	{
+		for(auto& a:m_undoStack)
+		{
+			a->OnStackLeave();
+			delete a;			
+		}
+		m_undoStack.clear();
+	}
+
 	UndoStack::~UndoStack()
 	{
 		for (auto p : m_undoStack)

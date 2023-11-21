@@ -32,6 +32,19 @@ namespace PE
 
 	void FollowScript::Update(EntityID id, float)
 	{
+		if (m_ScriptData[id].isAttaching)
+		{
+			Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+			Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].toAttach);
+			if ((curT.position.x <= toCheck.position.x + toCheck.width/2 && curT.position.x >= toCheck.position.x - toCheck.width / 2) && (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
+			{
+				//PE::EntityManager::GetInstance().Get <EntityDescriptor>(m_ScriptData[id].toAttach).isActive = false;
+				//PE::EntityManager::GetInstance().Get <EntityDescriptor>(m_ScriptData[id].FollowingObject[1]).isActive = true;
+				m_ScriptData[id].NumberOfFollower++;
+				m_ScriptData[id].FollowingObject.push_back(m_ScriptData[id].toAttach);
+				m_ScriptData[id].isAttaching = false;
+			}
+		}
 
 		for (int i = m_ScriptData[id].NumberOfFollower; i < 5; ++i)
 		{
