@@ -17,8 +17,8 @@
 *************************************************************************************/
 #pragma once
 #include <deque>
-
-
+#include "ECS/EntityFactory.h"
+typedef unsigned long long EntityID;
 namespace PE
 {
 	class EditorChanges
@@ -33,6 +33,10 @@ namespace PE
 		 \brief     Redo Changes to be overriden
 		*************************************************************************************/
 		virtual void Redo() = 0;
+		/*!***********************************************************************************
+		 \brief     When a change leaves the stack
+		*************************************************************************************/
+		virtual void OnStackLeave() {}
 		/*!***********************************************************************************
 		 \brief     virtual destructor to ensure proper destruction of derived classes
 		*************************************************************************************/
@@ -175,5 +179,82 @@ namespace PE
 		value_type* p_value2;
 		value_type m_newVal2;
 		value_type m_oldVal2;
+	};
+
+
+	class DeleteObjectUndo : public EditorChanges
+	{
+		// ----- Constructors ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief			deleted default constructor
+		*************************************************************************************/
+		DeleteObjectUndo() = delete;
+		/*!***********************************************************************************
+		 \brief										constructor taking in values
+		 \param [In]	EntityID id					id that is edited
+		*************************************************************************************/
+		DeleteObjectUndo(EntityID id) : ObjectDeleted(id) {}
+	public:
+		// ----- Public Functions ----- // 
+		/*!***********************************************************************************
+		 \brief			overriden Undo Function
+		*************************************************************************************/
+		virtual void Undo() override
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).UnHandicapEntity();
+		}
+		/*!***********************************************************************************
+		 \brief			overriden Redo Function
+		*************************************************************************************/
+		virtual void Redo() override
+		{
+			//TBD
+		}
+		/*!***********************************************************************************
+		 \brief     When a change leaves the stack
+		*************************************************************************************/
+		virtual void OnStackLeave() override 
+		{
+			EntityManager::GetInstance().RemoveEntity(ObjectDeleted);
+		}
+
+		// ----- Private Variables ----- // 
+	private:
+		EntityID ObjectDeleted;
+	};
+
+	class CreateObjectUndo : public EditorChanges
+	{
+		// ----- Constructors ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief			deleted default constructor
+		*************************************************************************************/
+		CreateObjectUndo() = delete;
+		/*!***********************************************************************************
+		 \brief										constructor taking in values
+		 \param [In]	EntityID id					id that is edited
+		*************************************************************************************/
+		CreateObjectUndo(EntityID id): ObjectCreated(id) {}
+	public:
+		// ----- Public Functions ----- // 
+		/*!***********************************************************************************
+		 \brief			overriden Undo Function
+		*************************************************************************************/
+		virtual void Undo() override
+		{
+			EntityManager::GetInstance().RemoveEntity(ObjectCreated);
+		}
+		/*!***********************************************************************************
+		 \brief			overriden Redo Function
+		*************************************************************************************/
+		virtual void Redo() override
+		{
+			//TBD
+		}
+		// ----- Private Variables ----- // 
+	private:
+		EntityID ObjectCreated;
 	};
 }

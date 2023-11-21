@@ -27,8 +27,9 @@ namespace PE
 	{
 		m_undoStack.push_front(p_change);
 		++m_currentcount;
-		if (m_currentcount == 21)
+		if (m_currentcount >= 21)
 		{
+			m_undoStack.back()->OnStackLeave();
 			delete m_undoStack.back();
 			m_undoStack.pop_back();
 		}

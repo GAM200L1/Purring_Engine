@@ -707,8 +707,13 @@ namespace PE {
 							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
-						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-						LogicSystem::DeleteScriptData(m_currentSelectedObject);
+						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+
+						//create undo here
+						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+
+						//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
+						//LogicSystem::DeleteScriptData(m_currentSelectedObject);
 						//if not first index
 						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
@@ -738,15 +743,18 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::Selectable("Create UI Object"))
 				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
+					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				ImGui::EndPopup();
 			}
@@ -2076,6 +2084,9 @@ namespace PE {
 												it->second.FollowingObject[i] = id;
 											}
 										}
+										int id = static_cast<int>(it->second.test);
+										ImGui::Text("entity"); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("toadd", &id);
+										it->second.test = id;
 									}
 								}
 							}
@@ -2382,7 +2393,8 @@ namespace PE {
 						{
 							if (m_files[draggedItemIndex].extension() == ".json")
 							{
-								serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+								EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+								m_undoStack.AddChange(new CreateObjectUndo(s_id));
 								// change position of loaded prefab based on mouse cursor here
 							}
 						}

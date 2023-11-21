@@ -124,9 +124,10 @@ namespace PE
 #ifndef GAMERELEASE
 		Editor::GetInstance().AddEventLog(r_event.ToString());
 #endif
-		//commented so it stops flooding the console
-		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
-		//event_logger.FlushLog();
+		if (r_event.GetType() == WindowEvents::WindowLostFocus)
+		{
+			GameStateManager::GetInstance().SetPauseState();
+		}
 	}
 
 

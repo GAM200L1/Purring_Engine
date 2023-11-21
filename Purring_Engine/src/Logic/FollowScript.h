@@ -30,6 +30,7 @@ namespace PE
 		float Rotation;
 		vec2 CurrentPosition;
 		std::vector<vec2> NextPosition;
+		EntityID test{};
 	};
 
 
