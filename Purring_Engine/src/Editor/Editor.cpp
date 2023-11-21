@@ -2250,6 +2250,9 @@ namespace PE {
 						break;
 					}
 				}
+				ImGuiStyle& style = ImGui::GetStyle();
+				float pos = ImGui::CalcTextSize("Refresh").x + style.FramePadding.x * 2.0f;
+				ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - pos);
 				// Refresh button
 				if (ImGui::Button("Refresh"))
 				{
