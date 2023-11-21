@@ -338,6 +338,7 @@ namespace PE {
 		std::string m_input;
 		std::string m_findText;
 		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
+		
 
 		//variable for objects
 		bool m_mouseInObjectWindow;
@@ -356,6 +357,9 @@ namespace PE {
 		std::vector<std::filesystem::path> m_files;
 		std::pair<std::string, int> m_entityToModify;
 		static bool m_fileDragged;
+
+		// variable for prefab editor
+		std::string prefabFP;
 	};
 }
 

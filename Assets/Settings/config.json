@@ -1,6 +1,7 @@
 {
     "Editor": {
         "firstLaunch": false,
+        "isPrefabMode": true,
         "renderDebug": true,
         "showComponentWindow": true,
         "showConsole": true,

@@ -352,6 +352,55 @@ namespace PE {
 
 			if (m_showGameView) ShowGameView(r_frameBuffer , &m_showGameView);
 
+			if (m_isPrefabMode && ImGui::IsKeyPressed(ImGuiKey_Escape))
+			{
+				ImGui::OpenPopup("Confirm Exit");
+			}
+
+			if (ImGui::BeginPopupModal("Confirm Exit"))
+			{
+				ImGui::Text("Are you sure you want to exit Prefab Editor mode?");
+				ImGui::Separator();
+				if (ImGui::Button("Yes"))
+				{
+					ImGui::OpenPopup("Save prefab");
+					if (ImGui::BeginPopupModal("Save prefab"))
+					{
+						ImGui::Text("Do you want to save your changes?");
+						ImGui::Separator();
+						if (ImGui::Button("Yes"))
+						{
+							serializationManager.SerializeEntityPrefab(1);
+
+							m_isPrefabMode = false;
+							ClearObjectList();
+							serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						}
+						ImGui::SameLine();
+						//ImGui::Separator();
+						if (ImGui::Selectable("No"))
+						{
+							m_isPrefabMode = false;
+							ClearObjectList();
+							serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						}
+					}
+				}
+				ImGui::SameLine();
+				//ImGui::Separator();
+				if (ImGui::Button("No"))
+				{
+					m_isPrefabMode = false;
+					ClearObjectList();
+					serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+					engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+				}
+				ImGui::EndPopup();
+			}
+
+			
 			//imgui end frame render functions
 			ImGui::Render();
 
@@ -2210,6 +2259,7 @@ namespace PE {
 			static int draggedItemIndex = -1;
 			static bool isDragging = false;
 			static std::string iconDragged{};
+			static int rmbIndex = -1;
 			//ImGuiStyle& style = ImGui::GetStyle();
 			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
 				
@@ -2332,11 +2382,60 @@ namespace PE {
 						}
 
 					}
+
+					if (ImGui::IsItemClicked(1))
+					{
+						rmbIndex = n;
+
+						if (m_files[n].extension().string() == ".json")
+						{
+							ImGui::OpenPopup("EditPrefab");
+						}
+					}
+					if (n == rmbIndex && ImGui::BeginPopup("EditPrefab"))
+					{
+						if (ImGui::Selectable("Modify Prefab"))
+						{
+							engine_logger.AddLog(false, "Enterting PreFabEditorMode...", __FUNCTION__);
+							prefabFP = m_files[n].string();
+							m_isPrefabMode = true;
+							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+							// This will save all entities to a file
+							for (const auto& id : SceneView<EntityDescriptor>())
+							{
+								if (!id) // skip editor camera
+									continue;
+								EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+								for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+								{
+									if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+									{
+										desc.sceneID = i;
+										continue;
+									}
+								}
+								if (desc.parent)
+								{
+									EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
+								}
+							}
+							serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+							ClearObjectList();
+							engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
+							serializationManager.LoadFromFile(prefabFP);
+							
+						}
+						ImGui::EndPopup();
+					}
+					
 				}
 				ImGui::EndChild();
+				
 			}
 			ImGui::EndChild();
 
+			
 			//if player is still holding the mouse down
 			if (isDragging)
 			{
@@ -2390,7 +2489,7 @@ namespace PE {
 				}
 				m_entityToModify = std::make_pair<std::string>("", - 1);
 			}
-
+			
 
 			ImGui::End(); //imgui close
 		}
