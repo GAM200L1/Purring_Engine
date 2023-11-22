@@ -304,11 +304,11 @@ namespace PE
 	 \param[in] fps     Current frames per second to be displayed in the window title.
 	 \return void       Does not return a value.
 	*************************************************************************************/
-	void WindowManager::UpdateTitle(GLFWwindow* p_window, double fps)
+	void WindowManager::UpdateTitle(GLFWwindow* window, double fps)
 	{
 		std::ostringstream titleStream;
 		titleStream << "Purring Engine | FPS: " << static_cast<int>(fps);
-		glfwSetWindowTitle(p_window, titleStream.str().c_str());
+		glfwSetWindowTitle(window, titleStream.str().c_str());
 	}
 
 
