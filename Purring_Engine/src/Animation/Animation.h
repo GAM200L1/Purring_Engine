@@ -131,6 +131,7 @@ namespace PE
 	*************************************************************************************/
 	struct AnimationFrame
 	{
+		// SERIALIZE THIS
 		// un-comment if not using spritesheet
 		//std::string textureKey;
 		vec2 m_minUV{ 0, 0 };
@@ -190,6 +191,10 @@ namespace PE
 
 		void SetAnimationDuration(float animationDuration);
 
+		void SetAnimationID(std::string animationID);
+
+		inline std::string GetAnimationID() const { return m_animationID; }
+
 		inline std::string GetSpriteSheetKey() const { return m_spriteSheetKey; }
 
 		inline unsigned GetFrameCount() { return static_cast<unsigned>(m_animationFrames.size()); }
@@ -198,6 +203,9 @@ namespace PE
 
 		// ----- Private Variables ----- //
 	private:
+
+		// SERIALIZE THESE
+		std::string m_animationID;
 		std::vector<AnimationFrame> m_animationFrames;
 		std::string m_spriteSheetKey; // remove this, should be using texxture key from renderer component
 		unsigned m_totalSprites;

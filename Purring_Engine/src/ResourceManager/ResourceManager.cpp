@@ -109,6 +109,17 @@ namespace PE
         }
     }
 
+    void ResourceManager::LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath)
+    {
+        std::string animationID = AnimationManager::CreateAnimation(r_key);
+        //if (add your deserialize function here, set all the values of the animation with "animationID")
+        {
+            // fail to create animation, delete key
+            std::cout << "Couldn't create animation " << r_filePath << std::endl;
+            Animations.erase(r_key);
+        }
+    }
+
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
     {
         if (Textures.find(r_name) != Textures.end())

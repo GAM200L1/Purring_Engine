@@ -110,12 +110,20 @@ namespace PE
         void LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
-            \brief Loads font from file and inserts into Sounds map container.
+            \brief Loads font from file and inserts into Fonts map container.
 
             \param[in] r_key Name of font file.
             \param[in] r_filePath File path of font.
         *************************************************************************************/
         void LoadFontFromFile(std::string const& r_key, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Loads animation from file and inserts into Animations map container.
+
+            \param[in] r_key Name of animation file.
+            \param[in] r_filePath File path of animation.
+        *************************************************************************************/
+        void LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.

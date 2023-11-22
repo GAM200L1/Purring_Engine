@@ -144,6 +144,11 @@ namespace PE
 		}
 	}
 
+	void Animation::SetAnimationID(std::string animationID)
+	{
+		m_animationID = animationID;
+	}
+
 	// AnimationComponent
 	void AnimationComponent::AddAnimationToComponent(std::string animationID)
 	{
@@ -264,6 +269,7 @@ namespace PE
 	std::string AnimationManager::CreateAnimation(std::string animationID)
 	{
 		ResourceManager::GetInstance().Animations[animationID] = std::make_shared<Animation>();
+		ResourceManager::GetInstance().Animations[animationID]->SetAnimationID(animationID);
 		return animationID;
 	}
 
