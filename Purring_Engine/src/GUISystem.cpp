@@ -189,6 +189,19 @@ namespace PE
 		j["m_onClicked"] = m_onClicked;
 		j["m_onHovered"] = m_onHovered;
 		j["m_UIType"] = static_cast<int>(m_UIType);
+
+		// Serialize textures and colors
+		j["m_defaultTexture"] = m_defaultTexture;
+		j["m_hoveredTexture"] = m_hoveredTexture;
+		j["m_pressedTexture"] = m_pressedTexture;
+		j["m_disabledTexture"] = m_disabledTexture;
+
+		// Serialize color vectors as arrays
+		j["m_defaultColor"] = { m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, m_defaultColor.w };
+		j["m_hoveredColor"] = { m_hoveredColor.x, m_hoveredColor.y, m_hoveredColor.z, m_hoveredColor.w };
+		j["m_pressedColor"] = { m_pressedColor.x, m_pressedColor.y, m_pressedColor.z, m_pressedColor.w };
+		j["m_disabledColor"] = { m_disabledColor.x, m_disabledColor.y, m_disabledColor.z, m_disabledColor.w };
+
 		return j;
 	}
 
@@ -199,6 +212,19 @@ namespace PE
 		gui.m_onClicked = j["m_onClicked"];
 		gui.m_onHovered = j["m_onHovered"];
 		gui.m_UIType = static_cast<UIType>(j["m_UIType"].get<int>());
+
+		// Deserialize textures
+		gui.m_defaultTexture = j["m_defaultTexture"];
+		gui.m_hoveredTexture = j["m_hoveredTexture"];
+		gui.m_pressedTexture = j["m_pressedTexture"];
+		gui.m_disabledTexture = j["m_disabledTexture"];
+
+		// Deserialize colors
+		gui.m_defaultColor = vec4(j["m_defaultColor"][0], j["m_defaultColor"][1], j["m_defaultColor"][2], j["m_defaultColor"][3]);
+		gui.m_hoveredColor = vec4(j["m_hoveredColor"][0], j["m_hoveredColor"][1], j["m_hoveredColor"][2], j["m_hoveredColor"][3]);
+		gui.m_pressedColor = vec4(j["m_pressedColor"][0], j["m_pressedColor"][1], j["m_pressedColor"][2], j["m_pressedColor"][3]);
+		gui.m_disabledColor = vec4(j["m_disabledColor"][0], j["m_disabledColor"][1], j["m_disabledColor"][2], j["m_disabledColor"][3]);
+
 		return gui;
 	}
 }

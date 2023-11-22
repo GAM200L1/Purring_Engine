@@ -12,12 +12,12 @@
                     },
                     "GUIRenderer": {
                         "Color": {
-                            "a": 1.0,
+                            "a": 0.47058823704719543,
                             "b": 1.0,
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/PauseMenuBackground.png"
+                        "TextureKey": "../Assets/Textures/UI/PauseBackground_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -50,13 +50,21 @@
                     "GUI": {
                         "m_UIType": 0,
                         "m_onClicked": "",
-                        "m_onHovered": ""
+                        "m_onHovered": "",
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_defaultColor": [1.0, 1.0, 1.0, 1.0],
+                        "m_hoveredColor": [0.8, 0.8, 0.8, 1.0],
+                        "m_pressedColor": [0.6, 0.6, 0.6, 1.0],
+                        "m_disabledColor": [0.5, 0.5, 0.5, 1.0]
                     },
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
-                            "g": 1.0,
+                            "g": 0.0,
                             "r": 1.0
                         },
                         "TextureKey": "../Assets/Textures/Button_White_128px.png"
@@ -103,7 +111,15 @@
                     "GUI": {
                         "m_UIType": 0,
                         "m_onClicked": "ResumeState",
-                        "m_onHovered": ""
+                        "m_onHovered": "",
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_defaultColor": [1.0, 1.0, 1.0, 1.0],
+                        "m_hoveredColor": [0.8, 0.8, 0.8, 1.0],
+                        "m_pressedColor": [0.6, 0.6, 0.6, 1.0],
+                        "m_disabledColor": [0.5, 0.5, 0.5, 1.0]
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -112,7 +128,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                        "TextureKey": "../Assets/Textures/UI/Button_512x128.png"
                     },
                     "TextComponent": {
                         "Color": {
@@ -123,7 +139,7 @@
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
                         "Size": 1.0,
-                        "Text": "Resume"
+                        "Text": "Resume Game"
                     },
                     "Transform": {
                         "height": 100.0,
@@ -137,7 +153,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 300.0
+                        "width": 400.0
                     }
                 },
                 "name": ""
@@ -149,14 +165,22 @@
                     "EntityDescriptor": {
                         "children": [],
                         "isActive": true,
-                        "name": "Options Button",
+                        "name": "How To Play Button",
                         "parent": null,
                         "sceneID": 4
                     },
                     "GUI": {
                         "m_UIType": 0,
                         "m_onClicked": "",
-                        "m_onHovered": ""
+                        "m_onHovered": "",
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_defaultColor": [1.0, 1.0, 1.0, 1.0],
+                        "m_hoveredColor": [0.8, 0.8, 0.8, 1.0],
+                        "m_pressedColor": [0.6, 0.6, 0.6, 1.0],
+                        "m_disabledColor": [0.5, 0.5, 0.5, 1.0]
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -165,7 +189,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                        "TextureKey": "../Assets/Textures/UI/Button_512x128.png"
                     },
                     "TextComponent": {
                         "Color": {
@@ -176,7 +200,7 @@
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
                         "Size": 1.0,
-                        "Text": "Options"
+                        "Text": "How To Play"
                     },
                     "Transform": {
                         "height": 100.0,
@@ -190,7 +214,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 300.0
+                        "width": 400.0
                     }
                 },
                 "name": ""
@@ -209,7 +233,15 @@
                     "GUI": {
                         "m_UIType": 0,
                         "m_onClicked": "",
-                        "m_onHovered": ""
+                        "m_onHovered": "",
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_defaultColor": [1.0, 1.0, 1.0, 1.0],
+                        "m_hoveredColor": [0.8, 0.8, 0.8, 1.0],
+                        "m_pressedColor": [0.6, 0.6, 0.6, 1.0],
+                        "m_disabledColor": [0.5, 0.5, 0.5, 1.0]
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -218,7 +250,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                        "TextureKey": "../Assets/Textures/UI/Button_512x128.png"
                     },
                     "TextComponent": {
                         "Color": {
@@ -243,7 +275,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 300.0
+                        "width": 400.0
                     }
                 },
                 "name": ""
@@ -262,7 +294,15 @@
                     "GUI": {
                         "m_UIType": 0,
                         "m_onClicked": "",
-                        "m_onHovered": ""
+                        "m_onHovered": "",
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_defaultColor": [1.0, 1.0, 1.0, 1.0],
+                        "m_hoveredColor": [0.8, 0.8, 0.8, 1.0],
+                        "m_pressedColor": [0.6, 0.6, 0.6, 1.0],
+                        "m_disabledColor": [0.5, 0.5, 0.5, 1.0]
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -271,7 +311,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                        "TextureKey": "../Assets/Textures/UI/Button_512x128.png"
                     },
                     "TextComponent": {
                         "Color": {
@@ -296,7 +336,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 300.0
+                        "width": 400.0
                     }
                 },
                 "name": ""
