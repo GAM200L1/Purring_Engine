@@ -7,11 +7,11 @@
         "showEditor": true,
         "showLogs": true,
         "showObjectList": true,
-        "showPerformanceWindow": true,
+        "showPerformanceWindow": false,
         "showPhysicsWindow": false,
         "showResourceWindow": true,
         "showSceneView": true,
-        "showTestWindows": true
+        "showTestWindows": false
     },
     "window": {
         "height": 1080,

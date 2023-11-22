@@ -142,6 +142,7 @@ namespace PE
 
 				EntityManager::GetInstance().Get<EntityDescriptor>(boxID).parent = id;
 				EntityManager::GetInstance().Get<EntityDescriptor>(boxID).isActive = false;
+				EntityManager::GetInstance().Get<EntityDescriptor>(boxID).toSave = false;
 
 				vec2 boxPositionOffset{ 0.f,0.f };
 				vec2 boxScaleOffset{ 1.f,1.f };
