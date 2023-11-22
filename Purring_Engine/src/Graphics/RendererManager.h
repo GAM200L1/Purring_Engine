@@ -56,8 +56,11 @@ namespace PE
 
              \param[in,out] p_window Pointer to the GLFWwindow to render to.
              \param[in,out] r_cameraManagerArg Reference to the camera manager.
+             \param[in] windowWidth Width of the window.
+             \param[in] windowHeight Height of the window.
             *************************************************************************************/
-            RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg);
+            RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, 
+                int const windowWidth, int const windowHeight);
 
             // ----- Public methods ----- //
         public:
@@ -314,6 +317,7 @@ namespace PE
 
             //! Width and height of the ImGui window the last time the framebuffer was resized
             float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
+            const int m_windowStartWidth, m_windowStartHeight;
                         
             std::vector<float> m_isTextured{}; // Container that stores whether the quad is textured
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad

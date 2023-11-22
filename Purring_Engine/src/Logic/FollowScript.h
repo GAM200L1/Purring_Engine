@@ -22,14 +22,18 @@ namespace PE
 {
 	struct FollowScriptData
 	{
-		float Size{ 100 }; // fixed size of each object
-		float Distance{ Size };	//distance between each object
+		int Size{ 100 }; // fixed size of each object
 		float Speed{ 100 };
 		int NumberOfFollower{1};
 		std::vector<EntityID> FollowingObject;
 		float Rotation;
 		vec2 CurrentPosition;
 		std::vector<vec2> NextPosition;
+
+		//for attaching through code
+		bool IsAttaching{ false };
+		int NumberOfAttachers{ 1 };
+		std::vector<EntityID> ToAttach{};
 	};
 
 
