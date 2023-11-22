@@ -272,7 +272,6 @@ namespace PE
 
             static float m_windowWidth, m_windowHeight; // Dimensions of the window being rendered to by the main camera or editor
             float m_viewportWidth, m_viewportHeight; // Dimensions of the viewport of the main camera
-            float m_widthRatio, m_heightRatio; // Ratio of the camera viewport dimensions to that of the window
 
             std::string m_systemName{ "CameraManager" }; // Name of system
 
