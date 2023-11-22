@@ -16,7 +16,6 @@
 
 #include "Graphics/GLHeaders.h"
 #include <glm/glm.hpp>
-#include <string>
 
 namespace PE
 {
@@ -90,9 +89,17 @@ namespace PE
              \brief Set the Uniform object with the name [r_uniformName] using [r_vector4].
 
              \param[in,out] r_uniformName Name of the uniform.
-             \param[in,out] r_vector4 Reference to the vector 4 object variable to.
+             \param[in,out] r_vector4 Reference to the vector 4 object to set the uniform variable to.
             *************************************************************************************/
             void SetUniform(std::string const& r_uniformName, glm::vec4 const& r_vector4);
+
+            /*!***********************************************************************************
+             \brief Set the Uniform object with the name [r_uniformName] using [r_vector3].
+
+             \param[in,out] r_uniformName Name of the uniform.
+             \param[in,out] r_vector3 Reference to the vector 3 to set the uniform variable to.
+            *************************************************************************************/
+            void SetUniform(std::string const& r_uniformName, glm::vec3 const& r_vector3);
             
             /*!***********************************************************************************
              \brief Set the Uniform object with the name [r_uniformName] using [value].
@@ -106,12 +113,9 @@ namespace PE
              \brief Set the Uniform object with the name [r_uniformName] using [value].
 
              \param[in,out] r_uniformName Name of the uniform.
-             \param[in,out] value Unsigned int value to set the uniform variable to.
+             \param[in,out] value Int value to set the uniform variable to.
             *************************************************************************************/
-            void SetUniform(std::string const& r_uniformName, GLuint const value);
-
-            // text
-            void SetUniform(const std::string& name, const glm::vec3& value);
+            void SetUniform(std::string const& r_uniformName, GLint const value);
 
             // ----- Private variables ----- //
         private:

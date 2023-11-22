@@ -106,6 +106,16 @@ namespace PE
 		return vec2{ -x, -y };
 	}
 
+	bool vec2::operator==(vec2 const& r_rhs) const
+	{
+		return (r_rhs.x == x && r_rhs.y == y);
+	}
+
+	bool vec2::operator!=(vec2 const& r_rhs) const
+	{
+		return !(*this == r_rhs);
+	}
+
 	// zero the vector
 	void vec2::Zero()
 	{
@@ -297,7 +307,7 @@ namespace PE
 		*this /= this->Length();
 	}
 
-	///*potentially dont need																				   vec4 struct member implementations
+	///*																			   vec4 struct member implementations
 	//--------------------------------------------------------------------------------------------------------------------- */
 	//// copy assignment
 	//vec4& vec4::operator=(vec4 const& r_cpy)
@@ -309,18 +319,18 @@ namespace PE
 	//}
 	//
 	//// access operator
-	//float vec4::operator[](unsigned int index) const
-	//{
-	//	// if (index > 3)
-	//		// return error
-	//	return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
-	//}
+	float vec4::operator[](unsigned int index) const
+	{
+		// if (index > 3)
+			// return error
+		return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
+	}
 	//
 	//// allows modification
-	//float& vec4::operator[](unsigned int index)
-	//{
-	//	return (*this)[index];
-	//}
+	float& vec4::operator[](unsigned int index)
+	{
+		return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
+	}
 	//
 	//// addition
 	//vec4 vec4::operator+(vec4 const& r_rhs)
@@ -525,23 +535,23 @@ namespace PE
 		vec3 ret{};
 		for (int i = 0; i < 3; ++i)
 		{
-			int matIndex = i * 3;
+			int matIndex = i;
 			ret[i] = (r_rhs[0] * m[matIndex]) +
-				(r_rhs[1] * m[matIndex + 1]) +
-				(r_rhs[1] * m[matIndex + 2]);
+					 (r_rhs[1] * m[matIndex + 3]) +
+					 (r_rhs[2] * m[matIndex + 6]);
 		}
 		return ret;
 	}
 	mat3x3 mat3x3::operator*(mat3x3 const& r_rhs) const
 	{
 		mat3x3 ret{};
-		for (unsigned int i{ 0 }; i < 3;)
+		for (unsigned int j{ 0 }; j < 3; ++j)
 		{
-			for (unsigned int j{ 0 }, k{ i }; j < 3; ++i, ++j)
+			for (unsigned int i{ 0 }; i < 9; i += 3)
 			{
-				ret[i] = m[j] * r_rhs[k]
-					+ m[j + 3] * r_rhs[k + 1]
-					+ m[j + 6] * r_rhs[k + 2];
+				ret[i + j] = m[j] * r_rhs[i]
+							+ m[j + 3] * r_rhs[i + 1]
+							+ m[j + 6] * r_rhs[i + 2];
 			}
 		}
 		return ret;
@@ -573,8 +583,8 @@ namespace PE
 	void mat3x3::Translate(float t_x, float t_y)
 	{
 		this->Identity();
-		_m02 = t_x;
-		_m12 = t_y;
+		_m20 = t_x;
+		_m21 = t_y;
 	}
 	// create scale matrix
 	void mat3x3::Scale(float s_x, float s_y)
@@ -588,8 +598,8 @@ namespace PE
 	{
 		this->Identity();
 		_m00 = cosf(angle);
-		_m01 = -sinf(angle);
-		_m10 = sinf(angle);
+		_m01 = sinf(angle);
+		_m10 = -sinf(angle);
 		_m11 = cosf(angle);
 	}
 	// create rotation matrix from angle which is in degrees

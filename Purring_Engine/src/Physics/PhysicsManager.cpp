@@ -20,6 +20,10 @@
 #include "RigidBody.h"
 #include "Logging/Logger.h"
 
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif
+
 extern Logger engine_logger;
 
 namespace PE
@@ -32,19 +36,9 @@ namespace PE
 	// ----- Constructor ----- //
 
 	PhysicsManager::PhysicsManager() :
-		m_linearDragCoefficient{ -2.f }, m_velocityNegligence{ 2.f } {} 
+		m_velocityNegligence{ 2.f } {} 
 	
 	// ----- Public Getters ----- //
-
-	float PhysicsManager::GetLinearDragCoefficient()
-	{
-		return m_linearDragCoefficient;
-	}
-
-	void PhysicsManager::SetLinearDragCoefficient(float newCoefficient)
-	{
-		m_linearDragCoefficient = (newCoefficient < 0.f) ? newCoefficient : -newCoefficient;
-	}
 
 	float PhysicsManager::GetVelocityNegligence()
 	{
@@ -78,18 +72,47 @@ namespace PE
 
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
-		// In normal physics simulation mode
-		if (!m_applyStepPhysics)
+		static bool sceneRunning{ false };
+
+#ifndef GAMERELEASE
+		if (Editor::GetInstance().IsRunTime())
 		{
-				UpdateDynamics(deltaTime);
+#endif
+			if (sceneRunning)
+			{	
+				for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
+				{
+					// if the entity is not active, do not update physics
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
+
+					RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
+					rb.ZeroForce();
+					rb.velocity.Zero();
+					rb.rotationVelocity = 0.f;
+				}
+				sceneRunning = false;
+			}
+			return;
+#ifndef GAMERELEASE
 		}
-		else
+#endif
+
+		sceneRunning = true;
+		if (!Editor::GetInstance().IsEditorActive())
 		{
-			// Applies Step Physics
-			if (m_advanceStep)
+			// In normal physics simulation mode
+			if (!m_applyStepPhysics)
 			{
 				UpdateDynamics(deltaTime);
-				m_advanceStep = false;
+			}
+			else
+			{
+				// Applies Step Physics
+				if (m_advanceStep)
+				{
+					UpdateDynamics(deltaTime);
+					m_advanceStep = false;
+				}
 			}
 		}
 	}
@@ -106,24 +129,26 @@ namespace PE
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
+			// if the entity is not active, do not check for collision
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
+			
 			RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(RigidBodyID);
 
 			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
 			{
 				// Applies drag force
-				rb.ApplyForce(rb.velocity * rb.GetMass() * m_linearDragCoefficient);
+				rb.ApplyForce(rb.velocity * rb.GetMass() * rb.GetLinearDrag() * -1.f);
 				
 				// Update Speed based on total forces
 				rb.velocity += rb.force * rb.GetInverseMass() * deltaTime;
-
-				// at negligible velocity, velocity will set to 0.f
-				rb.velocity.x = (rb.velocity.x < m_velocityNegligence && rb.velocity.x > -m_velocityNegligence) ? 0.f : rb.velocity.x;
-				rb.velocity.y = (rb.velocity.y < m_velocityNegligence && rb.velocity.y > -m_velocityNegligence) ? 0.f : rb.velocity.y;
 			}
 
 			if (rb.GetType() != EnumRigidBodyType::STATIC)
 			{
+				// at negligible velocity, velocity will set to 0.f
+				rb.velocity.x = (rb.velocity.x < m_velocityNegligence && rb.velocity.x > -m_velocityNegligence) ? 0.f : rb.velocity.x;
+				rb.velocity.y = (rb.velocity.y < m_velocityNegligence && rb.velocity.y > -m_velocityNegligence) ? 0.f : rb.velocity.y;
 				rb.prevPosition = transform.position;
 				transform.position += rb.velocity * deltaTime;
 				transform.orientation += rb.rotationVelocity * deltaTime;

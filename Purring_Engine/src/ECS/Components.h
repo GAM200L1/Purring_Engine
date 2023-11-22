@@ -15,9 +15,7 @@
 #pragma once
 
 // INCLUDES
-#include <set>
-#include <queue>
-#include "Math/MathCustom.h"
+
 // CONSTANT VARIABLES
 constexpr size_t DEFAULT_ENTITY_CNT = 3000;		// default bytes allocated to components pool
 
@@ -44,7 +42,7 @@ namespace PE
         ComponentPool(size_t elementsize, size_t entcnt = DEFAULT_ENTITY_CNT)
         {
             elementSize = elementsize;
-            capacity = entcnt;            
+            capacity = entcnt;
         }
 
         /*!***********************************************************************************
@@ -136,7 +134,15 @@ namespace PE
         *************************************************************************************/
         void* Get(size_t index)
         {
-            return reinterpret_cast<void*>(&(p_data[idxMap[index]]));
+            try
+            {
+                return reinterpret_cast<void*>(&(p_data[idxMap.at(index)]));
+            }
+            catch (const std::out_of_range& err)
+            {
+                engine_logger.AddLog(false, err.what(), __FUNCTION__);
+                return nullptr;
+            }
         }
         
     // ----- Public methods ----- // 
@@ -208,4 +214,4 @@ namespace PE
  \brief Registers a component to the component pools
  
 *************************************************************************************/
-#define REGISTERCOMPONENT(type) EntityFactory::GetInstance().AddComponentCreator<type>( #type, sizeof(type)  );
+#define REGISTERCOMPONENT(type) PE::EntityFactory::GetInstance().AddComponentCreator<type>( PE::EntityManager::GetInstance().GetComponentID<type>(), sizeof(type)  );

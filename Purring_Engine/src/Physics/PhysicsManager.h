@@ -13,7 +13,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
-#include "prpch.h"
 #include "System.h"
 namespace PE
 {
@@ -28,20 +27,6 @@ namespace PE
 		PhysicsManager();
 		
 		// ----- Public Getters and Setters ----- //
-		/*!***********************************************************************************
-		 \brief Get the Linear Drag Coefficient object
-		 
-		 \return float - m_linearDragCoefficient variable
-		*************************************************************************************/
-		float GetLinearDragCoefficient();
-
-		/*!***********************************************************************************
-		 \brief Set the Linear Drag Coefficient object
-		 
-		 \param[in] newCoefficient - new m_linearDragCoefficient value
-		*************************************************************************************/
-		void SetLinearDragCoefficient(float newCoefficient);
-
 		/*!***********************************************************************************
 		 \brief Get the Velocity Negligence object
 		 
@@ -110,10 +95,9 @@ namespace PE
 
 	private:
 		// ----- Private Variables ----- //
-		float m_linearDragCoefficient{};
 		float m_velocityNegligence{};
 		static bool m_applyStepPhysics;
 		static bool m_advanceStep;
-		std::string m_systemName{ "Physics" };
+		std::string m_systemName{ "PhysicsManager" };
 	};
 }

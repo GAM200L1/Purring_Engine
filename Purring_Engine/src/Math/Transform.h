@@ -14,7 +14,6 @@
 *************************************************************************************/
 #pragma once
 #include "Math/MathCustom.h"
-#include "ECS/Components.h"
 #include "Data/json.hpp"
 
 namespace PE
@@ -25,6 +24,9 @@ namespace PE
         float width{100}, height{100};
         float orientation{}; // in radians
         vec2 position{};
+
+        float relOrientation{};
+        vec2 relPosition{};
         
         // ----- Getter ----- //
         /*!***********************************************************************************
@@ -34,14 +36,14 @@ namespace PE
         *************************************************************************************/
         mat3x3 GetTransformMatrix3x3() const
         {
-            mat3x3 scaleMat;
-            scaleMat.Scale(width, height);
+            //mat3x3 scaleMat;
+            //scaleMat.Scale(width, height);
             mat3x3 rotMat;
             rotMat.RotateRad(orientation);
             mat3x3 transMat;
             transMat.Translate(position.x, position.y);
 
-            return transMat * rotMat * scaleMat;
+            return transMat * rotMat;//* scaleMat;
         }
 
         // ----- Serialization ------ //
@@ -52,14 +54,20 @@ namespace PE
                 easy storage and transmission.
 
         \return The JSON representation of the Transform object.
-        *************************************************************************************/        nlohmann::json ToJson() const
+        *************************************************************************************/        
+        nlohmann::json ToJson(size_t id) const
         {
+            id;
             nlohmann::json j;
             j["width"] = width;
             j["height"] = height;
             j["orientation"] = orientation;
             j["position"]["x"] = position.x;
             j["position"]["y"] = position.y;
+            
+            j["relativeposition"]["x"] = relPosition.x;
+            j["relativeposition"]["y"] = relPosition.y;
+            j["relorientation"] = relOrientation;
             return j;
         }
 
@@ -78,6 +86,13 @@ namespace PE
             t.orientation = r_j["orientation"];
             t.position.x = r_j["position"]["x"];
             t.position.y = r_j["position"]["y"];
+            if (r_j.contains("relativeposition"))
+            {
+                t.relPosition.x = r_j["relativeposition"]["x"];
+                t.relPosition.y = r_j["relativeposition"]["y"];
+            }
+            if (r_j.contains("relorientation"))
+                t.relOrientation = r_j["relorientation"];
             return t;
         }
     };

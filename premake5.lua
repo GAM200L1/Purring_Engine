@@ -6,10 +6,12 @@ workspace "Purring_Engine"
     configurations
     {
         "Debug",
-        "Release"
+        "Release",
+        "GameRelease"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+gameoutputdir = "Release-%{cfg.system}-%{cfg.architecture}"
 
 
 -- Include directories 
@@ -20,6 +22,8 @@ IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
 IncludeDir["FMOD"]          = "vendor/FMOD/core/inc" -- CORE
+IncludeDir["RTTR"]          = "vendor/RTTR/include"
+IncludeDir["mono"]          = "vendor/mono/include"
 
 -- external libraries
 group "Library"
@@ -27,13 +31,19 @@ group "Library"
     project "GLFW"
         location "vendor/GLFW"
 
-        kind "StaticLib"        
-        staticruntime "on"
+        kind "StaticLib"   
+        
+        warnings "Off"
 
         language "C"
 
         targetdir ("bin/" .. outputdir .. "/vendor/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/vendor/%{prj.name}")
+
+        flags
+        {
+            "MultiProcessorCompile"
+        } 
 
         files
         {
@@ -51,23 +61,40 @@ group "Library"
             systemversion "latest"
 
         filter "configurations:Debug"
+            staticruntime "off"
             runtime "Debug"
             symbols "on"
 
         filter "configurations:Release"
+            staticruntime "on"
             runtime "Release"
             optimize "on"
+
+        filter "configurations:GameRelease"
+			runtime "Release"
+            staticruntime "on"
+			optimize "on"
+
+            targetdir ("bin/" .. gameoutputdir .. "/vendor/%{prj.name}")
+            objdir ("bin-int/" .. gameoutputdir .. "/vendor/%{prj.name}")
+
     -- imgui
     project "ImGui"
         location "vendor/imgui"
         kind "StaticLib"
-        staticruntime "on"
+
+        warnings "Off"
         
         language "C++"
         cppdialect "C++17"
 
         targetdir ("bin/" .. outputdir .. "/vendor/%{prj.name}")
         objdir ("bin-int/" .. outputdir .. "/vendor/%{prj.name}")
+
+        flags
+        {
+            "MultiProcessorCompile"
+        } 
 
         files
         {
@@ -80,7 +107,7 @@ group "Library"
         }
 
         removefiles
-        { 
+        {
             "vendor/imgui/misc/freetype/*.*"
         }
 
@@ -96,11 +123,16 @@ group "Library"
 
         filter "configurations:Debug"
             runtime "Debug"
+            staticruntime "off"
             symbols "on"
 
         filter "configurations:Release"
             runtime "Release"
+            staticruntime "on"
             optimize "on"
+
+        filter "configurations:GameRelease"
+            kind "None"
    
 group ""
 
@@ -116,11 +148,18 @@ project "Purring_Engine"
     
     warnings "Extra"
 
+    -- editor builds in debug and release
+    targetname "Purring_Engine_Editor"
     targetdir("bin/" .. outputdir .. "/%{prj.name}")
     objdir("bin-int/" .. outputdir .. "/%{prj.name}")
 
     pchheader "prpch.h"
     pchsource "Purring_Engine/src/prpch/prpch.cpp"
+
+    flags
+    {
+        "MultiProcessorCompile"
+    }    
 
     files
     {
@@ -142,14 +181,18 @@ project "Purring_Engine"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.GLEW}",
         "%{IncludeDir.FMOD}",
-        "vendor/freetype/include"
+        "vendor/freetype/include",
+        "%{IncludeDir.RTTR}",
+        "%{IncludeDir.mono}"
     }
 
     libdirs
     {
+        "vendor/",
         "vendor/GLEW/lib/Release/x64",
         "vendor/FMOD/core/lib/x64",
-        "vendor/freetype/libs"
+        "vendor/freetype/libs",
+        "vendor/RTTR/lib"
     }
 
     links
@@ -157,8 +200,10 @@ project "Purring_Engine"
         "GLFW",
         "glew32s",
         "ImGui",
-        "opengl32",  -- not sure if needed
-        "fmod_vc"
+        "opengl32",
+        "fmod_vc",
+        "libmono-static-sgen",
+        "freetype"
     }
 
     linkoptions { "/ignore:4006" }
@@ -168,26 +213,76 @@ project "Purring_Engine"
 
     filter "configurations:Debug"
 			runtime "Debug"
+            staticruntime "off"
 			symbols "on"
+
+            libdirs
+            {
+                "vendor/mono/lib/Debug"
+            }
 
     filter "configurations:Release"
 			runtime "Release"
+            staticruntime "on"
 			optimize "on"
+            
+            libdirs
+            {
+                "vendor/mono/lib/Release"
+            }
+    
+    -- Game Release builds in release folder of editor, shares files with editor
+    filter "configurations:GameRelease"
+			runtime "Release"
+            staticruntime "on"
+			optimize "on"
+            
+            targetname "Purring_Engine"
+            targetdir("bin/" .. gameoutputdir .. "/%{prj.name}")
+            objdir("bin-int/" .. gameoutputdir .. "/%{prj.name}")
+
+            defines 
+            { 
+                "GAMERELEASE"
+            }
+
+            libdirs
+            {
+                "vendor/mono/lib/Release"
+            }
+
+            -- removes imgui link
+            removelinks
+            {
+                "ImGui"
+            }
+
+            -- removes editor files
+            removefiles
+            {
+                "%{prj.name}/src/Editor/*.h",
+                "%{prj.name}/src/Editor/*.cpp"
+            }
 
 -- Application
 project "Application"
     location "Application"
 
     kind "ConsoleApp"
-    staticruntime "on"
 
     language "C++"
     cppdialect "C++17"
 
     warnings "Extra"
 
-    targetdir("bin/" .. outputdir .. "/%{prj.name}")
-    objdir("bin-int/" .. outputdir .. "/%{prj.name}")
+    targetname "Editor"
+    targetdir("bin/" .. outputdir .. "/Editor")
+    objdir("bin-int/" .. outputdir .. "/Editor")
+
+    flags
+    {
+        "MultiProcessorCompile"
+    } 
 
 	files
 	{
@@ -204,28 +299,26 @@ project "Application"
         "%{IncludeDir.glm}",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLEW}",
-        "%{IncludeDir.FMOD}"
+        "%{IncludeDir.FMOD}",
+        "%{IncludeDir.RTTR}"
     }
 
     libdirs
     {
-        "vendor/freetype/libs"
-    }
-
-    links
-    {
-        "Purring_Engine",
-        "freetype"
+        "vendor/freetype/libs",
+        "vendor/RTTR/lib"
     }
     
+    links
+    {
+        "Purring_Engine"
+    }
+
     linkoptions { "/ignore:4006", "/ignore:4098", "/ignore:4099"}
 
     postbuildcommands
     {
-        ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
-        ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
-        ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Application")
-        
+
     }
 
     filter "system:windows"
@@ -233,8 +326,64 @@ project "Application"
 
     filter "configurations:Debug"
 			runtime "Debug"
+            staticruntime "off"
 			symbols "on"
+
+            postbuildcommands
+            {
+                ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
+                ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
+                ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Editor"),
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core_d.dll ../bin/" .. outputdir .. "/Editor"),
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core_d.pdb ../bin/" .. outputdir .. "/Editor")
+            }
+
+            libdirs
+            {
+                "Purring_Engine/"
+            }
+
+            links
+            {
+                "rttr_core_d"
+            }
 
     filter "configurations:Release"
 			runtime "Release"
+            staticruntime "on"
 			optimize "on"
+
+            postbuildcommands
+            {
+                ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
+                ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
+                ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Editor"),
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. outputdir .. "/Editor"),
+            }
+            
+            links
+            {
+                "rttr_core"
+            }
+
+    filter "configurations:GameRelease"
+			runtime "Release"
+            staticruntime "on"
+			optimize "on"
+            
+            targetname "MarchOfTheMeows"
+            targetdir("bin/" .. gameoutputdir .. "/MarchOfTheMeows")
+            objdir("bin-int/" .. gameoutputdir .. "/MarchOfTheMeows")
+
+            postbuildcommands
+            {
+                ("{COPYDIR} ../Assets ../bin/" .. gameoutputdir .. "/Assets"),
+                ("{COPYDIR} ../Shaders ../bin/" .. gameoutputdir .. "/Shaders"),
+                ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. gameoutputdir .. "/MarchOfTheMeows"),
+                ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. gameoutputdir .. "/MarchOfTheMeows"),
+            }
+
+            links
+            {
+                "rttr_core"
+            }

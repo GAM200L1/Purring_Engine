@@ -22,7 +22,6 @@
 *************************************************************************************/
 
 #include "prpch.h"
-#include <iostream>
 #include "ShaderProgram.h" 
 #include "Logging/Logger.h" 
 
@@ -49,6 +48,7 @@ namespace PE
 
         bool ShaderProgram::LoadAndCompileShadersFromFile(std::string const& vertexFile, std::string const& fragmentFile)
         {
+            // Open the shader files
             std::ifstream vertexFileStream(vertexFile);
             std::ifstream fragmentFileStream(fragmentFile);
 
@@ -67,6 +67,7 @@ namespace PE
                 return false;
             }
 
+            // Store the file contents in a string and compile the strings
             std::stringstream vertexStream;
             std::stringstream fragmentStream;
 
@@ -284,7 +285,7 @@ namespace PE
         }
 
 
-        void ShaderProgram::SetUniform(std::string const& r_uniformName, GLuint const value) 
+        void ShaderProgram::SetUniform(std::string const& r_uniformName, GLint const value) 
         {
 
             GLint uniformLocation = glGetUniformLocation(m_programId,
@@ -297,7 +298,7 @@ namespace PE
             {
 
                 // Pass the int value as a uniform variable
-                glUniform1ui(uniformLocation, value);
+                glUniform1i(uniformLocation, value);
             }
             else 
             {

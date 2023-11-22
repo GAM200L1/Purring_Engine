@@ -1,0 +1,572 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "Background",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/bg.png"
+                    },
+                    "Transform": {
+                        "height": 1000.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1000.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": true,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": ""
+                    },
+                    "EntityDescriptor": {
+                        "children": [
+                            2
+                        ],
+                        "name": "Leader",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "FollowScript": {
+                            "data": {
+                                "CurrentPosition": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "Distance": 100.0,
+                                "FollowingObject": [
+                                    18446744073709551615,
+                                    4,
+                                    5,
+                                    6,
+                                    7,
+                                    18446744073709551615
+                                ],
+                                "NextPosition": {
+                                    "0": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "1": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "2": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "3": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "4": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    }
+                                },
+                                "NumberOfFollower": 5,
+                                "Size": 100.0,
+                                "Speed": 100.0,
+                                "rotation": 0.0
+                            },
+                            "state": 0
+                        },
+                        "PlayerControllerScript": {
+                            "data": {
+                                "HP": 100,
+                                "PlayerState": 0,
+                                "speed": 500.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 417.0,
+                            "y": 2.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": "playerWalk"
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 4
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 136.0,
+                            "y": 207.5
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": "playerWalk"
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 70.0,
+                            "y": -242.5
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": "playerWalk"
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -83.0,
+                            "y": 252.5
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": "playerWalk"
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "SubLeader",
+                        "parent": null,
+                        "sceneID": 7
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "FollowScript": {
+                            "data": {
+                                "CurrentPosition": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "Distance": 100.0,
+                                "FollowingObject": [
+                                    18446744073709551615,
+                                    8,
+                                    9,
+                                    10,
+                                    11,
+                                    18446744073709551615
+                                ],
+                                "NextPosition": {
+                                    "0": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "1": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "2": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "3": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "4": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    }
+                                },
+                                "NumberOfFollower": 5,
+                                "Size": 100.0,
+                                "Speed": 100.0,
+                                "rotation": 0.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -198.0,
+                            "y": -240.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": "playerWalk"
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 8
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -283.0,
+                            "y": 252.5
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": "playerWalk"
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 9
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -442.0,
+                            "y": -160.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": "playerWalk"
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 10
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -446.5,
+                            "y": 332.5
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "CurrentAnimationIndex": "playerWalk"
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 11
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -482.5,
+                            "y": 50.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}

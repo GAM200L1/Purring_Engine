@@ -91,12 +91,16 @@ namespace PE
 		*************************************************************************************/
 		float GetInverseMass() const;
 
+		float GetLinearDrag() const;
+
 		/*!***********************************************************************************
 		 \brief Set the Mass and Inverse Mass of object
 		 
 		 \param[in,out] mass - new mass of the object
 		*************************************************************************************/
 		void SetMass(float mass);
+
+		void SetLinearDrag(float drag);
 
 		/*!***********************************************************************************
 		 \brief Set 'force' of RigidBody to zero vec2
@@ -145,11 +149,13 @@ namespace PE
 
 		\return The JSON representation of the RigidBody object.
 		*************************************************************************************/
-		nlohmann::json ToJson() const
+		nlohmann::json ToJson(size_t id) const
 		{
+			id;
 			nlohmann::json j;
 			j["type"] = static_cast<int>(GetType()); // right now its an enum
 			j["mass"] = m_mass;
+			j["linearDrag"] = m_linearDrag;
 
 			return j;
 		}
@@ -165,6 +171,8 @@ namespace PE
 			RigidBody rb;
 			rb.SetType(static_cast<EnumRigidBodyType>(j["type"].get<int>())); // right now its an enum
 			rb.m_mass = j["mass"];
+			rb.m_linearDrag = j["linearDrag"];
+
 
 			return rb;
 		}
@@ -175,6 +183,7 @@ namespace PE
 
 		float m_mass{10.f};
 		float m_inverseMass{1.f/10.f};
+		float m_linearDrag{};
 	};
 
 }

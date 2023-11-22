@@ -6,18 +6,12 @@
 
  \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
 
  \co-author            Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
 
  \co-author            Jarran TAN Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
 
  \brief    This file contains the CoreApplication class, which serves as the entry point for
 		   the engine. It handles the main application loop, initializes and updates all registered
@@ -32,7 +26,6 @@
 #pragma once
 
 #include "System.h"
-#include <vector>
 
 #include "LayerStack.h"
 
@@ -90,7 +83,6 @@ namespace PE
 	private:
 
 		void InitializeVariables();
-		void RegisterComponents();
 		void InitializeLogger();
 		void InitializeAudio();
 		void InitializeMemoryManager();
@@ -113,7 +105,6 @@ namespace PE
 		// Temporary (or additional) components
 		WindowManager m_windowManager;						// Manages the application window
 		GLFWwindow* m_window;								// Pointer to the GLFW window object
-		FrameRateTargetControl m_fpsController;				// Controls the frame rate target
 		float m_time;										// Placeholder for time value
 
 	private:

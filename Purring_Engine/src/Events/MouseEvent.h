@@ -19,8 +19,7 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Event.h"
-#include <sstream>
-#include <utility>
+
 
 namespace PE
 {
@@ -28,6 +27,7 @@ namespace PE
 	{
 		MouseMoved,
 		MouseButtonPressed,
+		MouseButtonHold,
 		MouseButtonReleased,
 		MouseScrolled
 	};
@@ -82,6 +82,38 @@ namespace PE
 
 		int button = -1; //lmb 1, mmb 2, rmb 3
 		float repeat = 0;
+		int x = -1, y = -1;
+		int transX = -1, transY = -1;
+	};
+
+	class MouseButtonHoldEvent : public Event<MouseEvents>
+	{
+	public:
+		/*!***********************************************************************************
+		\brief			Constructor of event
+		*************************************************************************************/
+		MouseButtonHoldEvent() : Event<MouseEvents>(MouseEvents::MouseButtonHold, "MouseButtonPressed") {}
+		/*!***********************************************************************************
+		\brief			Destructor of event
+		*************************************************************************************/
+		virtual ~MouseButtonHoldEvent() {}
+		/*!***********************************************************************************
+		 \brief     Prints out data from the event
+		 \return    std::string - Returns the data of the event as a string
+		*************************************************************************************/
+		inline std::string ToString() const override
+		{
+			std::stringstream ss;
+			ss << "Button Held: " << button;
+			return ss.str();
+			//if (repeat < 0)
+			//	ss << " (Button Being Held)";
+
+		}
+
+		int button = -1; //lmb 1, mmb 2, rmb 3
+		int x = -1, y = -1;
+		float repeat = 0;
 	};
 
 	class MouseButtonReleaseEvent : public Event<MouseEvents>
@@ -102,11 +134,12 @@ namespace PE
 		inline std::string ToString() const override
 		{
 			std::stringstream ss;
-			ss << "Button Released: " << button;
+			ss << "Button: " << button << " Released: "  << "At(" << x << ", "<< y << ")";
 			return ss.str();
 		}
 
 		int button = -1; //lmb 1, mmb 2, rmb 3
+		int x = -1, y = -1;
 	};
 
 	class MouseScrolledEvent : public Event<MouseEvents>

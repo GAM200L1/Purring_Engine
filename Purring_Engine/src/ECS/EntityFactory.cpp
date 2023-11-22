@@ -15,6 +15,10 @@
 #include "prpch.h"
 #include "EntityFactory.h"
 #include "Logging/Logger.h"
+#include "Logic/LogicSystem.h"
+#include "GUISystem.h"
+#include "Graphics/GUIRenderer.h"
+#include "Graphics/Text.h"
 extern Logger engine_logger;
 
 
@@ -41,7 +45,7 @@ namespace PE
 			EntityID clone = CreateEntity();
 			for (const ComponentID& r_componentCreator : p_entityManager->GetComponentIDs(id))
 			{
-				LoadComponent(clone, r_componentCreator.c_str(),
+				LoadComponent(clone, r_componentCreator,
 					p_entityManager->GetComponentPoolPointer(r_componentCreator)->Get(id));
 			}
 			return clone;
@@ -66,11 +70,30 @@ namespace PE
 	
 	void EntityFactory::LoadComponents()
 	{
-		m_initializeComponent.emplace("RigidBody", &EntityFactory::InitializeRigidBody);
-		m_initializeComponent.emplace("Collider", &EntityFactory::InitializeCollider);
-		m_initializeComponent.emplace("Transform", &EntityFactory::InitializeTransform);
-		m_initializeComponent.emplace("PlayerStats", &EntityFactory::InitializePlayerStats);
-		m_initializeComponent.emplace("Renderer", &EntityFactory::InitializeRenderer);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<EntityDescriptor>(), &EntityFactory::InitializeED);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<RigidBody>(), &EntityFactory::InitializeRigidBody);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Collider>(), &EntityFactory::InitializeCollider);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Transform>(), &EntityFactory::InitializeTransform);
+		//m_initializeComponent.emplace(p_entityManager->GetComponentID<PlayerStats>(), &EntityFactory::InitializePlayerStats);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(), &EntityFactory::InitializeRenderer);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(), &EntityFactory::InitializeCamera);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(), &EntityFactory::InitializeGUI);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(), &EntityFactory::InitializeAnimationComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(), &EntityFactory::InitializeTextComponent);
+	}
+
+
+	bool EntityFactory::InitializeED(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<EntityDescriptor>(r_id) =
+			(p_data == nullptr) ?
+			EntityDescriptor()
+			:
+			*reinterpret_cast<EntityDescriptor*>(p_data);
+		//EntityManager::GetInstance().Get<EntityDescriptor>(r_id).name += "-Copy-" + std::to_string(r_id);
+		return true;
 	}
 
 	bool EntityFactory::InitializeRigidBody(const EntityID& r_id, void* p_data)
@@ -123,6 +146,71 @@ namespace PE
 		return true;
 	}
 
+	bool EntityFactory::InitializeScriptComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<ScriptComponent>(r_id) =
+			(p_data == nullptr) ?
+			ScriptComponent()
+			:
+			*reinterpret_cast<ScriptComponent*>(p_data);
+
+		for (auto [k, v] : EntityManager::GetInstance().Get<ScriptComponent>(r_id).m_scriptKeys)
+		{
+			PE::LogicSystem::m_scriptContainer[k]->OnAttach(r_id);
+		}
+		return true;
+	}
+    
+	bool EntityFactory::InitializeCamera(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<Graphics::Camera>(r_id) =
+			(p_data == nullptr) ?
+			Graphics::Camera()
+			:
+			*reinterpret_cast<Graphics::Camera*>(p_data);
+		return true;
+	}
+    
+	bool EntityFactory::InitializeGUIRenderer(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<Graphics::GUIRenderer>(r_id) =
+			(p_data == nullptr) ?
+			Graphics::GUIRenderer()
+			:
+			*reinterpret_cast<Graphics::GUIRenderer*>(p_data);
+		return true;
+	}
+
+	bool EntityFactory::InitializeGUI(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<GUI>(r_id) =
+			(p_data == nullptr) ?
+			GUI()
+			:
+			*reinterpret_cast<GUI*>(p_data);
+		return true;
+	}
+
+
+	bool EntityFactory::InitializeAnimationComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<AnimationComponent>(r_id) =
+			(p_data == nullptr) ?
+			AnimationComponent()
+			:
+			*reinterpret_cast<AnimationComponent*>(p_data);
+		return true;
+	}
+
+	bool EntityFactory::InitializeTextComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<TextComponent>(r_id) =
+			(p_data == nullptr) ?
+			TextComponent()
+			:
+			*reinterpret_cast<TextComponent*>(p_data);
+		return true;
+	}
 
 	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)
 	{
@@ -131,10 +219,10 @@ namespace PE
 		// if the prefab exists in the current list
 		if (m_prefabs.prefabs.count(p_prefab))
 		{
-			Assign(id, m_prefabs.prefabs.at(p_prefab));
+			//Assign(id, m_prefabs.prefabs.at(p_prefab));
 			for (const ComponentID& componentID : m_prefabs.prefabs[p_prefab])
 			{
-				LoadComponent(id, componentID.c_str(), nullptr);
+				LoadComponent(id, componentID, nullptr);
 			}
 		}
 		std::string str = "Created Entity-";
@@ -143,12 +231,24 @@ namespace PE
 		return id;
 	}
 
-	bool EntityFactory::LoadComponent(EntityID id, const char* p_component, void* p_data)
+	bool EntityFactory::LoadComponent(EntityID id, const ComponentID& r_component, void* p_data)
 	{
 		if (!EntityManager::GetInstance().IsEntityValid(id))
 			return false;
 		// if the prefab exists in the current list
-		Assign(id, { p_component });
-		return std::invoke(m_initializeComponent[p_component], this, id, p_data);
+		Assign(id, { r_component });
+		return std::invoke(m_initializeComponent[r_component], this, id, p_data);
+	}
+
+	void EntityFactory::Assign(EntityID id, const std::initializer_list<ComponentID>& var)
+	{
+		for (const ComponentID& r_type : var)
+		{
+			if (m_componentMap.find(r_type) != m_componentMap.end())
+			{
+				p_entityManager->Assign(id, r_type);
+			}
+		}
+		p_entityManager->UpdateVectors(id);
 	}
 }

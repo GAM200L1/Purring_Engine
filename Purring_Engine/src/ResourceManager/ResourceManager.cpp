@@ -113,8 +113,9 @@ namespace PE
     {
         Fonts[r_key] = std::make_shared<Font>();
 
-        if (!Fonts[r_key]->Load(r_filePath))
+        if (!Fonts[r_key]->Initialize(r_filePath))
         {
+            std::cout << "Fail to load font" << r_filePath << std::endl;
             Fonts.erase(r_key);
         }
     }

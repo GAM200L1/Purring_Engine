@@ -19,17 +19,21 @@
 #include "prpch.h"
 #include "WindowManager.h"
 #include "Logging/Logger.h"
-#include "Editor/Editor.h"
 #include "Input/InputSystem.h"
 #include "Math/Transform.h"
 #include "Physics/PhysicsManager.h"
 #include "Graphics/RendererManager.h"
-
+#include "GUISystem.h"
+#include "GameStateManager.h"
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif
 //logger instantiation
 Logger event_logger = Logger("EVENT");
 
 namespace PE
 {
+
 	/*!***********************************************************************************
 	 \brief     Default constructor for WindowManager. Initializes GLFW for window creation.
 
@@ -74,7 +78,7 @@ namespace PE
 	GLFWwindow* WindowManager::InitWindow(int width, int height, const char* p_title)
 	{
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
-
+		GameStateManager::GetInstance().p_window = window;
 		if (!window)
 		{
 			std::cerr << "Failed to create GLFW window." << std::endl;
@@ -101,6 +105,8 @@ namespace PE
 		ADD_ALL_MOUSE_EVENT_LISTENER(WindowManager::OnMouseEvent, this)
 		ADD_ALL_KEY_EVENT_LISTENER(WindowManager::OnKeyEvent, this)
 
+		REGISTER_UI_FUNCTION(TestFunction, WindowManager);
+
 		return window;
 	}
 
@@ -115,7 +121,9 @@ namespace PE
 	*************************************************************************************/
 	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event)
 	{
+#ifndef GAMERELEASE
 		Editor::GetInstance().AddEventLog(r_event.ToString());
+#endif
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -132,15 +140,9 @@ namespace PE
 	*************************************************************************************/
 	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
 	{
-		Editor::GetInstance().AddEventLog(r_event.ToString());
-		if (r_event.GetType() == MouseEvents::MouseScrolled)
-		{
-			MouseScrolledEvent mse;
-			mse = dynamic_cast<const MouseScrolledEvent&>(r_event);
-			Graphics::RendererManager::m_mainCamera.AdjustMagnification(-mse.yOffset);
-
-		}
-
+#ifndef GAMERELEASE
+		Editor::GetInstance().AddEventLog(r_event.ToString());		
+#endif
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -157,7 +159,9 @@ namespace PE
 	*************************************************************************************/
 	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
 	{
+#ifndef GAMERELEASE
 		Editor::GetInstance().AddEventLog(r_event.ToString());
+#endif
 		//commented so it stops flooding the console
 		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
 		//event_logger.FlushLog();
@@ -173,27 +177,29 @@ namespace PE
 				if (ev.keycode == GLFW_KEY_N)
 				{
 					PhysicsManager::GetAdvanceStep() = true;
+#ifndef GAMERELEASE
 					Editor::GetInstance().AddEventLog("Advanced Step.\n");
+#endif
 				}
 			}
 
-			// Movement
-			if (ev.keycode == GLFW_KEY_W)
-			{
-				EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_A)
-			{
-				EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_S)
-			{
-				EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-			}
-			if (ev.keycode == GLFW_KEY_D)
-			{
-				EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-			}
+			//// Movement
+			//if (ev.keycode == GLFW_KEY_W)
+			//{
+			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
+			//}
+			//if (ev.keycode == GLFW_KEY_A)
+			//{
+			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+			//}
+			//if (ev.keycode == GLFW_KEY_S)
+			//{
+			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+			//}
+			//if (ev.keycode == GLFW_KEY_D)
+			//{
+			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+			//}
 			// dash
 			if (EntityManager::GetInstance().GetComponentPool<RigidBody>().HasEntity(1))
 			{
@@ -212,29 +218,29 @@ namespace PE
 			// ----- M1 Movement ----- //
 			if (EntityManager::GetInstance().GetComponentPool<RigidBody>().HasEntity(1))
 			{
-				if (ev.keycode == GLFW_KEY_W)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
-				}
-				if (ev.keycode == GLFW_KEY_A)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-				}
-				if (ev.keycode == GLFW_KEY_S)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-				}
-				if (ev.keycode == GLFW_KEY_D)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-				}
+				//if (ev.keycode == GLFW_KEY_W)
+				//{
+				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
+				//}
+				//if (ev.keycode == GLFW_KEY_A)
+				//{
+				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
+				//}
+				//if (ev.keycode == GLFW_KEY_S)
+				//{
+				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
+				//}
+				//if (ev.keycode == GLFW_KEY_D)
+				//{
+				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
+				//}
 
 				// rotation
-				if (ev.keycode == GLFW_KEY_RIGHT)
+				if (ev.keycode == GLFW_KEY_X)
 				{
 					EntityManager::GetInstance().Get<RigidBody>(1).rotationVelocity = -PE_PI;
 				}
-				if (ev.keycode == GLFW_KEY_LEFT)
+				if (ev.keycode == GLFW_KEY_Z)
 				{
 					EntityManager::GetInstance().Get<RigidBody>(1).rotationVelocity = PE_PI;
 				}
@@ -252,6 +258,11 @@ namespace PE
 				}
 			}
 		}
+	}
+
+	void WindowManager::TestFunction(EntityID)
+	{
+		std::cout << "hi im a test function" << std::endl;
 	}
 
 

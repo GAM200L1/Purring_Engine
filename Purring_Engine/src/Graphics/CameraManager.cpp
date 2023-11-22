@@ -1,0 +1,408 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     CameraManager.cpp
+ \date     12-10-2023
+ 
+ \author               Krystal YAMIN
+ \par      email:      krystal.y@digipen.edu
+ 
+ \brief    This file contains the definition of the member functions of the class
+           that manages the editor and runtime cameras.
+ 
+ 
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
+
+#include "prpch.h"
+#include "CameraManager.h"
+#include "ECS/SceneView.h"
+
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif // !GAMERELEASE
+
+namespace PE 
+{
+    namespace Graphics
+    {
+        // Initialize static variables
+        float CameraManager::m_windowWidth{}, CameraManager::m_windowHeight{};
+        EntityID CameraManager::m_uiCameraId{};
+        EditorCamera CameraManager::m_editorCamera{};
+
+
+        CameraManager::CameraManager(float const windowWidth, float const windowHeight)
+            : m_viewportWidth{ windowWidth }, m_viewportHeight{ windowHeight },
+            m_widthRatio{ 1.f }, m_heightRatio{ 1.f }
+        {
+            // Update the editor camera viewport size
+            m_editorCamera.SetViewDimensions(windowWidth, windowHeight);
+
+            // Store the window size
+            m_windowWidth = windowWidth, m_windowHeight = windowHeight;
+        }
+
+
+        glm::mat4 CameraManager::GetWorldToNdcMatrix(bool const editorMode)
+        {
+            if (editorMode) 
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetWorldToNdcMatrix();
+            }
+            else 
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera()};
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetWorldToNdcMatrix();
+                }
+
+                return glm::mat4{ 0 };
+            }
+        }
+
+
+        glm::mat4 CameraManager::GetViewToNdcMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetViewToNdcMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetViewToNdcMatrix();
+                }
+
+                return glm::mat4{ 0 };
+            }
+        }
+
+
+        glm::mat4 CameraManager::GetUiViewToNdcMatrix()
+        {
+            return GetUiCamera().GetViewToNdcMatrix();
+        }
+        
+
+
+        glm::mat4 CameraManager::GetUiNdcToViewMatrix()
+        {
+            return GetUiCamera().GetNdcToViewMatrix();
+        }
+
+
+        glm::mat4 CameraManager::GetNdcToWorldMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetNdcToWorldMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetNdcToWorldMatrix();
+                }
+
+                return glm::mat4{ 0 };
+            }
+        }
+
+
+        glm::mat4 CameraManager::GetNdcToViewMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetNdcToViewMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetNdcToViewMatrix();
+                }
+
+                return glm::mat4{ 0 };
+            }
+        }
+
+
+        glm::mat4 CameraManager::GetViewToWorldMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetViewToWorldMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetViewToWorldMatrix();
+                }
+
+                return glm::mat4{ 0 };
+            }
+        }
+
+
+        std::optional<std::reference_wrapper<Camera>> CameraManager::GetMainCamera() const
+        {
+            // Check if the main camera ID stored is valid
+            if (EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
+            {
+                return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
+            }
+
+            return std::nullopt;
+        }
+
+
+        Camera& CameraManager::GetUiCamera()
+        {
+            return EntityManager::GetInstance().Get<Camera>(m_uiCameraId);
+        }
+
+
+        vec2 CameraManager::GetWindowToWorldPosition(float const x, float const y) const
+        {
+            // Get the main camera
+            std::optional<std::reference_wrapper<Camera>> ref_mainCamera{ GetMainCamera() };
+
+            if (ref_mainCamera.has_value())
+            {
+                Camera& r_mainCamera = ref_mainCamera.value().get();
+
+#ifndef GAMERELEASE
+                // Get the size of the render window
+                float editorWindowSizeX{}, editorWindowSizeY{};
+                Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+
+                // Adjust scale of the position
+                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * m_viewportWidth / editorWindowSizeX, y * m_viewportHeight / editorWindowSizeY) };
+                ret.y += Editor::GetInstance().GetPlayWindowOffset();
+#else
+                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * m_widthRatio, y * m_heightRatio) };
+#endif // !GAMERELEASE
+
+                return ret;
+            }
+            else 
+            {
+                return vec2{x, y};
+            }
+        }
+
+
+
+        bool CameraManager::SetMainCamera(EntityID const cameraEntityId)            
+        {
+            // Don't set it if it's the UI camera, or if it doesn't have a camera component on it
+            if (cameraEntityId == m_uiCameraId || !EntityManager::GetInstance().Has(cameraEntityId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
+            {
+                return false;
+            }
+
+            m_mainCameraId = cameraEntityId;
+
+            Camera const& r_mainCamera{ EntityManager::GetInstance().Get<Camera>(m_mainCameraId) };
+            m_viewportWidth = r_mainCamera.GetViewportWidth();
+            m_viewportHeight = r_mainCamera.GetViewportHeight();
+            m_widthRatio = m_viewportWidth / m_windowWidth,
+                m_heightRatio = m_viewportHeight / m_windowHeight;
+
+            return true;
+        }
+
+
+        void CameraManager::SetUiCamera(EntityID const cameraEntityId)
+        {
+            m_uiCameraId = cameraEntityId;
+        }
+
+
+        void CameraManager::InitializeSystem()
+        {
+            // Subscribe listeners to the events
+            ADD_ALL_WINDOW_EVENT_LISTENER(CameraManager::OnWindowEvent, this)
+            ADD_ALL_MOUSE_EVENT_LISTENER(CameraManager::OnMouseEvent, this)
+            ADD_ALL_KEY_EVENT_LISTENER(CameraManager::OnKeyEvent, this)
+        }
+
+
+        void CameraManager::UpdateSystem(float deltaTime)
+        {
+            deltaTime; // Prevent warnings
+
+#ifndef GAMERELEASE
+            // Update the editor camera
+            m_editorCamera.UpdateCamera();
+#endif // !GAMERELEASE
+
+            // Check if the main camera ID stored is valid
+            bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
+
+            // Loop through all runtime cameras
+            for (const EntityID& id : SceneView<Camera, Transform>())
+            {
+                // Recompute the matrices of all the cameras
+                Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
+                Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
+
+                // If this camera has been set as the main camera in the last frame
+                // or this camera is the first valid runtime camera available 
+                if ((r_camera.GetMainCameraStatusChanged() && r_camera.GetIsMainCamera()) 
+                    || (setNewMainCamera && (id != m_uiCameraId)))
+                {
+                    SetMainCamera(id);
+                    setNewMainCamera = false;
+                }
+
+                r_camera.UpdateCamera(r_transform, m_mainCameraId == id);
+
+                // Update the cached viewport dimensions
+                if(m_mainCameraId == id) { 
+                    if (m_viewportWidth != r_camera.GetViewportWidth()) 
+                    {
+                        m_viewportWidth = r_camera.GetViewportWidth();
+                        m_widthRatio = m_viewportWidth / m_windowWidth;
+                    }
+
+                    if(m_viewportHeight != r_camera.GetViewportHeight()) 
+                    {
+                        m_viewportHeight = r_camera.GetViewportHeight();
+                        m_heightRatio = m_viewportHeight / m_windowHeight;
+                    }
+                }
+            }
+
+            // No runtime cameras exist so just set the id to the default ID
+            if (setNewMainCamera)
+            {
+                SetMainCamera(defaultId);
+            }
+        }
+
+
+        void CameraManager::DestroySystem()
+        {
+            /* Empty by design */
+        }
+
+
+        void CameraManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event)
+        {
+            if (r_event.GetType() == WindowEvents::WindowResize)
+            {
+                WindowResizeEvent event;
+                event = dynamic_cast<const WindowResizeEvent&>(r_event);
+
+                // Store the window size
+                m_windowWidth = static_cast<float>(event.width);
+                m_windowHeight = static_cast<float>(event.height);
+
+                // Store the ratio of the main camera's viewport to the avtual window size
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera) {
+                    m_viewportWidth = mainCamera.value().get().GetViewportWidth();
+                    m_viewportHeight = mainCamera.value().get().GetViewportHeight();
+                    m_widthRatio = m_viewportWidth / m_windowWidth,
+                        m_heightRatio = m_viewportHeight / m_windowHeight;
+                } 
+                else
+                {
+                    m_widthRatio = 1.f, m_heightRatio = 1.f;
+                }
+            }
+        }
+
+        void CameraManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
+        {
+            r_event; // remove if used
+#ifndef GAMERELEASE
+            // Zoom the editor camera in and out on mouse scroll
+            if (Editor::GetInstance().IsMouseInScene() && r_event.GetType() == MouseEvents::MouseScrolled)
+            {
+                MouseScrolledEvent event;
+                event = dynamic_cast<const MouseScrolledEvent&>(r_event);
+                if(Editor::GetInstance().IsEditorActive())
+                GetEditorCamera().AdjustMagnification(-event.yOffset * 0.5f);
+            }
+#endif // !GAMERELEASE
+        }
+
+
+
+        void CameraManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
+        {
+            if (r_event.GetType() == KeyEvents::KeyPressed)
+            {
+                KeyPressedEvent event;
+                event = dynamic_cast<const KeyPressedEvent&>(r_event);
+
+#ifndef GAMERELEASE
+                // Move the editor camera
+                if (event.keycode == GLFW_KEY_UP)
+                {
+                    GetEditorCamera().AdjustPosition(0.f, 10.f);
+                }
+                if (event.keycode == GLFW_KEY_DOWN)
+                {
+                    GetEditorCamera().AdjustPosition(0.f, -10.f);
+                }
+                if (event.keycode == GLFW_KEY_LEFT)
+                {
+                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
+                }
+                if (event.keycode == GLFW_KEY_RIGHT)
+                {
+                    GetEditorCamera().AdjustPosition(10.f, 0.f);
+                }
+
+                // Rotate the editor camera
+                if (event.keycode == GLFW_KEY_COMMA)
+                {
+                    GetEditorCamera().AdjustRotationRadians(0.1f);
+                }
+                if (event.keycode == GLFW_KEY_PERIOD)
+                {
+                    GetEditorCamera().AdjustRotationRadians(-0.1f);
+                }
+#endif // !GAMERELEASE
+
+                // Zoom the main runtime camera in and out
+                if (event.keycode == GLFW_KEY_C)
+                {
+                    std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                    if (mainCamera) {
+                        mainCamera.value().get().AdjustMagnification(0.5f);
+                    }
+                }
+                if (event.keycode == GLFW_KEY_V)
+                {
+                    std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                    if (mainCamera) {
+                        mainCamera.value().get().AdjustMagnification(-0.5f);
+                    }
+                }
+            }            
+        }
+
+    } // End of Graphics namespace
+} // End of PE namspace

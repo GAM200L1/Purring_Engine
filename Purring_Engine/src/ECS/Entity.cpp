@@ -19,9 +19,9 @@
 #include "SceneView.h"
 #include "Physics/Colliders.h"
 #include "Logging/Logger.h"
+#include "EntityFactory.h"
 
 extern Logger engine_logger;
-
 
 namespace PE
 {
@@ -29,7 +29,7 @@ namespace PE
 
 	EntityManager::EntityManager()
 	{
-		m_poolsEntity["All"];
+		m_poolsEntity[ALL];
 	}
 
 	EntityManager::~EntityManager()
@@ -44,40 +44,68 @@ namespace PE
 
 	EntityID EntityManager::NewEntity()
 	{
-		size_t id = (m_removed.empty()) ? m_entities.size() : (m_removed.front());
+		size_t id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin());
 		if (!m_removed.empty())
-			m_removed.pop();
+			m_removed.erase(id);
 		m_entities.emplace(id);
 		++m_entityCounter;
+		// Assign Descriptor component
+		Assign(id, GetComponentID<EntityDescriptor>());
+		Get<EntityDescriptor>(id).name = "GameObject";
+		Get<EntityDescriptor>(id).name += std::to_string(id);
+		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
 		return id;
 	}
 
-
-	void EntityManager::Assign(const EntityID& r_id, const char* p_componentID)
+	EntityID EntityManager::NewEntity(EntityID id)
 	{
-		// if component is not found
-		if (m_componentPools.find(p_componentID) == m_componentPools.end())
+		if (m_removed.count(id))
+			m_removed.erase(id);
+		else if (id == ULLONG_MAX || m_entities.count(id)) // if a prefab or the id alread is used
 		{
-			engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
-			engine_logger.FlushLog();
-			throw;
-		}
-		if (m_componentPools[p_componentID]->HasEntity(r_id))
-		{
-			return;
-		}
-		// add to component pool's map keeping track of index
-		m_componentPools[p_componentID]->idxMap.emplace(r_id, m_componentPools[p_componentID]->idxMap.size());
-		// initialize that region of memory
-		if (m_componentPools[p_componentID]->size >= m_componentPools[p_componentID]->capacity - 1)
-		{
-			m_componentPools[p_componentID]->Resize(m_componentPools[p_componentID]->capacity * 2);
-		}
+			engine_logger.AddLog(false, "Allocating new ID for New Entity!", __FUNCTION__);
+			id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin()); // re-assgin the id
 
-		// if you new at an existing region of allocated memory, and you specify where, like in this case
-		// it will call the constructor at this position instead  of allocating more memory
-		++(m_componentPools[p_componentID]->size);
+			// if the removed set was not empty, that means an id was used, remove it.
+			if (!m_removed.empty())
+				m_removed.erase(id);
+		}
+		
+		m_entities.emplace(id);
+		++m_entityCounter;
+		// Assign Descriptor component
+		Assign(id, GetComponentID<EntityDescriptor>());
+		Get<EntityDescriptor>(id).name = "GameObject";
+		Get<EntityDescriptor>(id).name += std::to_string(id);
+		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
+		return id;
 	}
+
+	//void EntityManager::Assign(const EntityID& r_id, const char* p_componentID)
+	//{
+	//	// if component is not found
+	//	if (m_componentPools.find(p_componentID) == m_componentPools.end())
+	//	{
+	//		engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
+	//		engine_logger.FlushLog();
+	//		throw;
+	//	}
+	//	if (m_componentPools[p_componentID]->HasEntity(r_id))
+	//	{
+	//		return;
+	//	}
+	//	// add to component pool's map keeping track of index
+	//	m_componentPools[p_componentID]->idxMap.emplace(r_id, m_componentPools[p_componentID]->idxMap.size());
+	//	// initialize that region of memory
+	//	if (m_componentPools[p_componentID]->size >= m_componentPools[p_componentID]->capacity - 1)
+	//	{
+	//		m_componentPools[p_componentID]->Resize(m_componentPools[p_componentID]->capacity * 2);
+	//	}
+
+	//	// if you new at an existing region of allocated memory, and you specify where, like in this case
+	//	// it will call the constructor at this position instead  of allocating more memory
+	//	++(m_componentPools[p_componentID]->size);
+	//}
 
 	void EntityManager::Assign(const EntityID& r_id, const ComponentID& r_componentID)
 	{
@@ -124,7 +152,8 @@ namespace PE
 		if (!Has(dest, r_component))
 			Assign(dest, r_component);
 
-		memcpy_s(m_componentPools[r_component]->Get(dest), m_componentPools[r_component]->elementSize, m_componentPools[r_component]->Get(src), m_componentPools[r_component]->elementSize);
+		//memcpy_s(m_componentPools[r_component]->Get(dest), m_componentPools[r_component]->elementSize, m_componentPools[r_component]->Get(src), m_componentPools[r_component]->elementSize);
+		EntityFactory::GetInstance().LoadComponent(dest, r_component, m_componentPools[r_component]->Get(src));
 	}	
 
 	bool EntityManager::Has(EntityID id, const ComponentID& r_component) const
@@ -144,5 +173,75 @@ namespace PE
 			m_removed.emplace(id);
 			UpdateVectors(id, false);
 		}
+	}
+
+	std::vector<EntityID>& EntityManager::GetEntitiesInPool(const ComponentID& r_pool)
+	{
+		try
+		{
+			return m_poolsEntity.at(r_pool);
+		}
+		catch (const std::out_of_range& c_error)
+		{
+			engine_logger.AddLog(false, c_error.what(), __FUNCTION__);
+			
+			// make the pool?
+			m_poolsEntity[r_pool];
+			for (const auto& id : m_entities)
+			{
+				UpdateVectors(id);
+			}
+			return m_poolsEntity.at(r_pool);
+		}
+	}
+
+	nlohmann::json EntityDescriptor::ToJson(size_t id) const
+	{
+		UNREFERENCED_PARAMETER(id);
+
+		nlohmann::json j;
+		j["name"] = name;
+
+		if (parent.has_value())
+		{
+			j["parent"] = parent.value();
+		}
+		else
+		{
+			j["parent"] = nullptr;
+		}
+
+		j["children"] = children;
+
+		j["sceneID"] = sceneID;
+		j["isActive"] = isActive;
+
+		return j;
+	}
+
+	EntityDescriptor EntityDescriptor::Deserialize(const nlohmann::json& j)
+	{
+		EntityDescriptor desc;
+		desc.name = j["name"];
+
+		if (j["parent"] != nullptr)
+		{
+			desc.parent = j["parent"].get<EntityID>();
+		}
+		else
+		{
+			desc.parent = std::nullopt;
+		}
+
+		desc.children = j["children"].get<std::set<EntityID>>();
+
+		desc.sceneID = j["sceneID"].get<EntityID>();
+
+		if (j.contains("isActive"))
+		{
+			desc.isActive = j["isActive"];
+		}
+
+		return desc;
 	}
 }

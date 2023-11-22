@@ -19,19 +19,48 @@
 #pragma once
 
 // INCLUDES
-#include "prpch.h"
 #include "Components.h"
+#include "Data/json.hpp"
 #include "Data/SerializationManager.h"
 #include "Singleton.h"
+#include <bitset>
+#include <set>
+#include <queue>
+#include <optional>
+#include <climits>
 
-
+// Const expressions
+constexpr unsigned MAX_COMPONENTS = 32;
+static unsigned s_componentCounter{};
 
 // Typedefs
-typedef unsigned long long EntityID;				// typedef for storing the unique ID of the entity, same as size_t
-typedef std::string ComponentID;					// ComponentID type, internally it is a std::string
+typedef unsigned long long EntityID;								// typedef for storing the unique ID of the entity, same as size_t
+typedef std::bitset<MAX_COMPONENTS> ComponentID;					// ComponentID type, internally it is a bitset
+
+
+const auto ALL = std::move(std::bitset<MAX_COMPONENTS>{}.set());
 
 namespace PE
 {
+	/*!***********************************************************************************
+	 \brief Assits in using the bitset as a key when used as a map key
+	 
+	*************************************************************************************/
+	struct Comparer {
+		/*!***********************************************************************************
+		 \brief Compares the bitsets lhs < rhs value
+		 
+		 \param[in] b1 bitset lhs
+		 \param[in] b2 bitset rhs
+		 \return true 	lhs < rhs
+		 \return false  rhs > lhs
+		*************************************************************************************/
+		bool operator() (const std::bitset<MAX_COMPONENTS>& b1, const std::bitset<MAX_COMPONENTS>& b2) const {
+			return b1.to_ulong() < b2.to_ulong();
+		}
+	};
+
+
 	/*!***********************************************************************************
 	 \brief Entity manager struct
 	 
@@ -161,6 +190,13 @@ namespace PE
 		 \return EntityID ID of the generated entity
 		*************************************************************************************/
 		EntityID NewEntity();
+
+		/*!***********************************************************************************
+		 \brief Creates a new with request for specific ID entity and returns its' ID
+
+		 \return EntityID ID of the generated entity
+		*************************************************************************************/
+		EntityID NewEntity(EntityID id);
 		
 		/*!************************************************************************
 		 \brief 	Assigns components to an entity
@@ -288,7 +324,7 @@ namespace PE
 		*************************************************************************************/
 		inline size_t OnePast() const
 		{
-			return m_entityCounter;
+			return m_entityCounter + 1;
 		}
 		
 
@@ -329,10 +365,7 @@ namespace PE
 		 \param[in] r_pool 						The pool to get the eneity vector from
 		 \return const std::vector<EntityID>& 	Gets the pool's vector of entities
 		*************************************************************************************/
-		const std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool)
-		{
-			return m_poolsEntity[r_pool];
-		}
+		std::vector<EntityID>& GetEntitiesInPool(const ComponentID& r_pool);
 
 		/*!***********************************************************************************
 		 \brief Updates the entity vectors, helps keeps track of which entity can be found in
@@ -343,32 +376,38 @@ namespace PE
 		*************************************************************************************/
 		void UpdateVectors(EntityID id, bool add = true)
 		{
-			if (add) 
-			{			
-				if (std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) == m_poolsEntity["All"].end())
+			if (add)
+			{
+				if (std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) == m_poolsEntity[ALL].end())
 				{
-					m_poolsEntity["All"].emplace_back(id);
+					m_poolsEntity[ALL].emplace_back(id);
 				}
-				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				for (const auto& vec : m_poolsEntity)
 				{
-					if (pool.second->HasEntity(id) && 
-					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) == m_poolsEntity[pool.first].end()))
+					const size_t cnt = vec.first.count();
+					size_t cnt2{};
+					for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
 					{
-						m_poolsEntity[pool.first].emplace_back(id);
+						if ((vec.first & pool.first).any() && pool.second->HasEntity(id)) 
+						if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
+						{
+							++cnt2;
+						}
 					}
+					if (cnt2 == cnt)
+						m_poolsEntity[vec.first].emplace_back(id);
 				}
 			}
 			else
 			{
 				if (!m_entities.count(id) &&
-					(std::find(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id) != m_poolsEntity["All"].end()))
+					(std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) != m_poolsEntity[ALL].end()))
 				{
-					m_poolsEntity["All"].erase(std::remove(m_poolsEntity["All"].begin(), m_poolsEntity["All"].end(), id), m_poolsEntity["All"].end());
+					m_poolsEntity[ALL].erase(std::remove(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id), m_poolsEntity[ALL].end());
 				}
-				for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
+				for (const auto& pool : m_poolsEntity)
 				{
-					if (!pool.second->HasEntity(id) &&
-					   (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					if ((std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
 					{
 						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
 					}
@@ -380,13 +419,13 @@ namespace PE
 		// set of entities picked over vector to increase the speed of searches for specific entites
 		std::set<EntityID> m_entities;
 		// map of to store pointers to individual componnet pools
-		std::map<ComponentID, ComponentPool*> m_componentPools;
+		std::map<ComponentID, ComponentPool*, Comparer> m_componentPools;
 		// a queue of entity IDs to handle removed entities
-		std::queue<EntityID> m_removed;
+		std::set<EntityID> m_removed;
 		// a map to a vector of entity IDs used to keep track of entity components (used to iterate in SceneView)
-		std::map<ComponentID, std::vector<EntityID>> m_poolsEntity;
+		std::map<ComponentID, std::vector<EntityID>, Comparer> m_poolsEntity;
 		// a counter to help keep track of the entities "absolute" count
-		size_t m_entityCounter{1};
+		size_t m_entityCounter{0};
 	};
 
 	//-------------------- Templated function implementations --------------------//
@@ -421,49 +460,13 @@ namespace PE
 		return p_component;
 	}
 
-
-	template<typename T>
-	T* EntityManager::Assign(EntityID id, T const& r_val)
-	{
-		static ComponentID componentID = GetComponentID<T>();
-
-		// if component is not found
-		if (m_componentPools.find(componentID) == m_componentPools.end())
-		{
-			throw;
-		}
-		if (m_componentPools[componentID]->HasEntity(id))
-		{
-			return;
-		}
-		// add to component pool's map keeping track of index
-		m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
-
-		// initialize that region of memory
-		if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
-		{
-			m_componentPools[componentID]->Resize(m_componentPools[componentID]->capacity * 2);
-		}
-
-
-		// if you new at an existing region of allocated memory, and you specify where, like in this case
-		// it will call the constructor at this position instead of allocating more memory
-		m_componentPools[componentID]->Get(id) = T(r_val);
-		++(m_componentPools[componentID]->size);
-		return p_component;
-	}
-
 	//-------------------- Templated function implementations --------------------//
 
 	template<typename T>
 	ComponentID EntityManager::GetComponentID() const
 	{
-		ComponentID tmp = typeid(T).name();
-		size_t cPos = tmp.find_last_of(":");
-		cPos = (cPos == std::string::npos) ? 0 : cPos + 1;
-		tmp = tmp.substr(cPos);
-		return (tmp[0] == 's') ? tmp.substr(7) :
-			   (tmp[0] == 'c') ? tmp.substr(6) : tmp;
+		static unsigned s_componentID = s_componentCounter++;
+		return ComponentID().set(s_componentID);
 	}
 
 
@@ -533,8 +536,7 @@ namespace PE
 	template<typename T>
 	bool EntityManager::Has(EntityID id) const
 	{
-		// if the return is not a nullptr, it has the component
-		return (GetPointer<T>(id) != nullptr);
+		return m_componentPools.at(GetComponentID<T>())->HasEntity(id);
 	}
 
 	template<typename T>
@@ -557,4 +559,58 @@ namespace PE
 		--(m_componentPools[componentID]->m_size);
 		UpdateVectors(id, false);
 	}
+
+	/*!***********************************************************************************
+	 \brief Entity descriptor struct, used for idenifying/holding various useful data
+
+	*************************************************************************************/
+	struct EntityDescriptor
+	{
+		// name of the entity
+		std::string name{"GameObject"};
+
+		// the parent of the entity
+		std::optional<EntityID> parent;
+
+		// the children of this entity
+		std::set<EntityID> children;
+
+		// the SceneID (mainly used to request the ID when loading scene files)
+		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
+
+		bool isActive{ true };  // defaults to true
+		bool isAlive{ true };   // defaults to true, mainly used in undo/redo for editor functionality
+		bool toSave{ true };    // used for whether the entity should be saved or not
+
+		inline bool SaveEntity() { return toSave && isAlive; }
+		/*!***********************************************************************************
+		 \brief Serializes this struct into a json file
+		 
+		 \param[in] id 				Entity ID of who owns this descriptor struct
+		 \return nlohmann::json 	The generated json
+		*************************************************************************************/
+		nlohmann::json ToJson(size_t id) const;
+
+		/*!***********************************************************************************
+		 \brief Mark an entity to be disabled completely, and will be guaranteed to not
+		 		be saved.
+		 
+		*************************************************************************************/
+		void HandicapEntity() { isAlive = toSave = false; }
+		
+		/*!***********************************************************************************
+		 \brief Reset an entity back to a state of existence
+		 
+		*************************************************************************************/
+		void UnHandicapEntity() { isAlive = toSave = true; }
+		
+
+		/*!***********************************************************************************
+		 \brief Deserializes the input json file into a copy of the entity descriptor
+		 
+		 \param[in] j 				Json file to read from
+		 \return EntityDescriptor 	Copy of the resulting EntityDescriptor
+		*************************************************************************************/
+		static EntityDescriptor Deserialize(const nlohmann::json& j);
+	};
 }

@@ -16,20 +16,22 @@
 
 #include "GLHeaders.h"
 
-#include <cstddef>
 #include <glm/glm.hpp>
 #include <glm/gtx/compatibility.hpp> // atan2()
-#include <map>
-#include <vector>
 
-#include "Camera.h"
-#include "MeshData.h"
+
 #include "Renderer.h"
+
+#include "GUIRenderer.h"
+
+#include "CameraManager.h"
+#include "MeshData.h"
 #include "FrameBuffer.h"
 #include "ShaderProgram.h"
 #include "System.h"
 #include "Physics/Colliders.h"
 
+#include "ECS/SceneView.h"
 #include "Text.h"
 
 namespace PE
@@ -40,11 +42,12 @@ namespace PE
          \brief System In charge of calling the draw functions in all the renderer components.
         *************************************************************************************/
         class RendererManager : public System
-        {
+        {            
             // ----- Public Variables ----- //
         public:
-            static Graphics::Camera m_mainCamera; // Camera object. Made static for ease of access, pending camera system.
-            
+            // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
+            static std::vector<EntityID> renderedEntities;
+
             // ----- Constructors ----- //
         public:
             /*!***********************************************************************************
@@ -52,8 +55,9 @@ namespace PE
                     draw to. 
 
              \param[in,out] p_window Pointer to the GLFWwindow to render to.
+             \param[in,out] r_cameraManagerArg Reference to the camera manager.
             *************************************************************************************/
-            RendererManager(GLFWwindow* p_window);
+            RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg);
 
             // ----- Public methods ----- //
         public:
@@ -81,27 +85,43 @@ namespace PE
             inline std::string GetName() { return m_systemName; }
 
             /*!***********************************************************************************
-             \brief Loops through all objects with a Renderer component and draws it. Makes a
-                    draw call for each object.
-
-             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \brief Draws the texture attached to the render frame buffer to a quad stretched 
+                    to the size of the window.
             *************************************************************************************/
-            void DrawScene(glm::mat4 const& r_worldToNdc);
+            void DrawCameraQuad();
 
             /*!***********************************************************************************
-             \brief Loops through all objects with a Renderer component and draws it. Batches 
-             the colors, transformation matrices and textured status together into a vertex buffer 
-             object and makes an instanced drawcall. The instanced batch is broken when a new 
-             texture is encountered.
+             \brief Loops through all objects with a Renderer component (or a class that
+                    derives from it) and draws it. Makes a draw call for each object.
 
-             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \tparam T - A component type derived from the Renderer.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
+                                NDC space.
+             \param[in] r_sceneView Only works with SceneView objects that are scoped to
+                                a component derived from the Renderer.
             *************************************************************************************/
-            void DrawSceneInstanced(glm::mat4 const& r_worldToNdc);
+            template<typename T>
+            void DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
+
+            /*!***********************************************************************************
+             \brief Loops through all objects with a Renderer component (or a class that
+                    derives from it) and draws it. Batches the colors, transformation matrices 
+                    and textured status together into a vertex buffer object and makes an 
+                    instanced drawcall. The instanced batch is broken when a new texture is encountered.
+
+             \tparam T - A component type derived from the Renderer.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
+                                NDC space.
+             \param[in] r_sceneView Only works with SceneView objects that are scoped to
+                                a component derived from the Renderer.
+            *************************************************************************************/
+            template<typename T>
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
 
             /*!***********************************************************************************
              \brief Loops through all objects with colliders and rigidbody components and draws 
                     shapes to visualise their bounds, direction and magnitude for debug purposes. 
-                    
+
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
             *************************************************************************************/
             void DrawDebug(glm::mat4 const& r_worldToNdc);
@@ -129,6 +149,21 @@ namespace PE
              \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
             *************************************************************************************/
             void Draw(EnumMeshType const meshType, glm::vec4 const& r_color, ShaderProgram& r_shaderProgram,
+                GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
+
+            /*!***********************************************************************************
+             \brief Binds the shader program, vertex array object and texture and makes a
+                    draw call for the object passed in.
+
+             \param[in] meshType Type of mesh to draw with.
+             \param[in] r_color Color to draw the mesh.
+             \param[in] textureId Id of the texture to draw the mesh with.
+             \param[in] r_shaderProgram Shader program to use.
+             \param[in] primitiveType GL Primitive type to make the draw call with.
+             \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
+            *************************************************************************************/
+            void Draw(EnumMeshType const meshType, glm::vec4 const& r_color, 
+                GLuint textureId, ShaderProgram& r_shaderProgram,
                 GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
 
             /*!***********************************************************************************
@@ -191,32 +226,99 @@ namespace PE
                 glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
                 glm::vec4 const& r_color = { 0.f, 0.f, 1.f, 1.f });
 
+            /*!***********************************************************************************
+             \brief Makes a draw call for a "+" to represent the position, up and right vectors 
+                    passed in.
+
+             \param[in] r_position Position to draw the point at.
+             \param[in] r_upVector Direction and magnitude of the vertical line to draw.
+             \param[in] r_rightVector Direction and magnitude of the horizontal line to draw.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugCross(glm::vec2 const& r_position,
+                glm::vec2 const& r_upVector, glm::vec2 const& r_rightVector,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color = { 0.5f, 0.5f, 1.f, 1.f });
+
+
+            /*!***********************************************************************************
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
+
+            \param[in] width Width of the object.
+            \param[in] height Height of the object.
+            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
+            \param[in] positionX X position of the object (in world space).
+            \param[in] positionY Y position of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
+            *************************************************************************************/
+            static glm::mat4 GenerateTransformMatrix(float const width, float const height,
+                float const orientation, float const positionX, float const positionY);
+
+            /*!***********************************************************************************
+            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
+
+            \param[in] rightVector Right vector of the object.
+            \param[in] upVector Up vector of the object.
+            \param[in] centerPosition Position of the center of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
+            *************************************************************************************/
+            static glm::mat4 GenerateTransformMatrix(glm::vec2 const& rightVector,
+                glm::vec2 const& upVector, glm::vec2 const& centerPosition);
+
+            /*!***********************************************************************************
+            \brief  Computes the 4x4 matrix to transform coordinates in world space to model space.
+
+            \param[in] width Width of the object.
+            \param[in] height Height of the object.
+            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
+            \param[in] positionX X position of the object (in world space).
+            \param[in] positionY Y position of the object (in world space).
+
+            \return glm::mat4 - 4x4 matrix to transform coordinates in world space to model space.
+            *************************************************************************************/
+            static glm::mat4 GenerateInverseTransformMatrix(float const width, float const height,
+                float const orientation, float const positionX, float const positionY);
+            /*!***********************************************************************************
+             \brief Renders text from r_text parameter. Retrieves glyph information from map
+                   and renders a quad with the data.
+
+             \param[in] r_text String to render.
+             \param[in] position Position of text to render onto the screen.s
+             \param[in] scale Amount to scale text size.
+             \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
+             \param[in] r_color Color to render text as.
+            *************************************************************************************/
+            void RenderText(glm::mat4 const& r_worldToNdc);
+
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_glfwWindow{}; // Pointer to the GLFW window to render to
+            GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to
+            CameraManager& r_cameraManager; // Reference to the camera manager
 
-            Graphics::FrameBuffer m_imguiFrameBuffer{}; // Framebuffer object for rendering to ImGui window
+            // Framebuffer object for rendering game scene rendered through the editor or in-game runtime camera
+            Graphics::FrameBuffer m_renderFrameBuffer{}; 
 
-            std::string m_systemName{ "Graphics" }; // Name of system
+            std::string m_systemName{ "RendererManager" }; // Name of system
 
             // Default shader program to use
             std::string m_defaultShaderProgramKey{"Textured"};
             std::string m_instancedShaderProgramKey{"Instanced"};
+            std::string m_textShaderProgramKey{ "Text" };
 
             // Container of meshes
             std::vector<Graphics::MeshData> m_meshes{};
 
-            Font m_font;
             //! Width and height of the ImGui window the last time the framebuffer was resized
-            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f }; 
-
-            // 4x4 world to NDC matrix. Updated when window is resized or camera has been repositioned
-            glm::mat4 m_cachedWorldToNdcMatrix{}; 
+            float m_cachedWindowWidth{ -1.f }, m_cachedWindowHeight{ -1.f };
                         
             std::vector<float> m_isTextured{}; // Container that stores whether the quad is textured
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
             std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
-
+            std::vector<glm::vec2> m_UV{};
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************
@@ -269,37 +371,10 @@ namespace PE
             void InitializePointMesh(MeshData& r_mesh);
 
             /*!***********************************************************************************
-            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
-
-            \param[in] width Width of the object.
-            \param[in] height Height of the object.
-            \param[in] orientation Counterclockwise angle (in radians) about the z-axis from the x-axis.
-            \param[in] positionX X position of the object (in world space).
-            \param[in] positionY Y position of the object (in world space).
-
-            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
-            *************************************************************************************/
-            glm::mat4 GenerateTransformMatrix(float const width, float const height, 
-                float const orientation, float const positionX, float const positionY);
-
-            /*!***********************************************************************************
-            \brief  Computes the 4x4 matrix to transform coordinates in model space to world space.
-
-            \param[in] rightVector Right vector of the object.
-            \param[in] upVector Up vector of the object.
-            \param[in] centerPosition Position of the center of the object (in world space).
-
-            \return glm::mat4 - 4x4 matrix to transform coordinates in model space to world space.
-            *************************************************************************************/
-            glm::mat4 GenerateTransformMatrix(glm::vec2 const& rightVector,
-                glm::vec2 const& upVector, glm::vec2 const& centerPosition);
-
-            /*!***********************************************************************************
              \brief Prints the hardware specifications of the device related to graphics.
             *************************************************************************************/
             void PrintSpecifications() const;
         };
-
 
     } // End of Graphics namespace
 } // End of PE namespace

@@ -27,9 +27,10 @@
 
 #include "System.h"
 #include "Events/KeyEvent.h"
-
+#include "Events/MouseEvent.h"
 namespace PE 
 {
+
     class InputSystem : public System
     {
         // ----- Constructors ----- // 
@@ -102,14 +103,45 @@ namespace PE
         *************************************************************************************/
         std::string GetName();
         /*!***********************************************************************************
+         \brief Returns the cursor position in viewport coordinates (with the origin at the
+                center of the window) through the arguments.
+         \param [In] window Pointer to the GLFW window
+         \param [In,out] x x-coordinate in window coordinates
+         \param [In,out] y y-coordinate in window coordinates
+        *************************************************************************************/
+        void static GetCursorViewportPosition(GLFWwindow* window, double& x, double& y);
+        /*!***********************************************************************************
          \brief To set the buffer time before counting a key press as hold
          \param [In] float buffer time
         *************************************************************************************/
         void SetHoldBufferTime(float s);
+        /*!***********************************************************************************
+         \brief Check if a Certain Key was Triggerd
+         \param [In] int keycode to check
+        *************************************************************************************/
+        bool static IsKeyTriggered(int keycode);
+        /*!***********************************************************************************
+         \brief Check if a Certain Key was Held
+         \param [In] int keycode to check
+        *************************************************************************************/
+        bool static IsKeyHeld(int keycode);
+        /*!***********************************************************************************
+         \brief Convert the x and y coordinates passed in from window coordinates (with the
+                origin in the top-left corner) to viewport coordinates (with the origin at 
+                the center of the window).
+         \param [In] window Pointer to the GLFW window
+         \param [In] x x-coordinate in window coordinates
+         \param [In] y y-coordinate in window coordinates
+        *************************************************************************************/
+        void static ConvertGLFWToTransform(GLFWwindow* window, double& x, double& y);
+
 
         // ----- Private Variables ----- // 
     private:
         static std::vector<KeyPressedEvent> m_KeyDown; // vector holding current held down buttons
+        static std::vector<MouseButtonHoldEvent> m_MouseDown; // vector holding current held down buttons
+        static std::map<int, float> m_KeyTriggered;
         static float m_bufferTime; // has to be static to be used by the callbacks
+        GLFWwindow* p_window;
     };
 }
