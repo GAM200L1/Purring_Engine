@@ -189,11 +189,11 @@ namespace PE
 		virtual ~CatAttackEXECUTE() { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
-		virtual void StateEnter(EntityID id) { id; }
+		virtual void StateEnter(EntityID id);
 
-		virtual void StateUpdate(EntityID id, float deltaTime) { id; deltaTime; }
+		virtual void StateUpdate(EntityID id, float deltaTime);
 
-		virtual void StateExit(EntityID id) { id; }
+		virtual void StateExit(EntityID id);
 
 		// ----- Getter ----- //
 		virtual std::string_view GetName() { return "AttackEXECUTE"; }

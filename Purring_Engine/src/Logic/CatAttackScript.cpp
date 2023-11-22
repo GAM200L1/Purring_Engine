@@ -69,7 +69,9 @@ namespace PE
 	}
 
 
+
 	// ----- CAT ATTACK PLAN STATE ----- //
+
 	void CatAttackPLAN::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(CatScript, id);
@@ -122,11 +124,6 @@ namespace PE
 					}
 				}
 			}
-			else
-			{
-				//if (p_data->attackDirection != 0)
-					//EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->selectBoxIDs[static_cast<EnumCatAttackDirection>(p_data->attackDirection)]).SetColor(1.f, 0.f, 0.f, 1.f);
-			}
 			m_mouseClick = false;
 		}
 		else if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
@@ -169,4 +166,10 @@ namespace PE
 			}
 		}
 	}
+
+
+
+	// ----- CAT ATTACK EXECUTION ----- //
+
+
 }
