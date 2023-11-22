@@ -34,6 +34,8 @@ namespace PE
 
 		virtual void StateExit(EntityID id) override;
 
+		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);
+
 		// ----- Getter ----- //
 		virtual std::string_view GetName() override;
 

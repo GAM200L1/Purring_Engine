@@ -140,7 +140,6 @@ namespace PE
 				EntityManager::GetInstance().Get<Collider>(boxID).colliderVariant = AABBCollider();
 				EntityManager::GetInstance().Get<Collider>(boxID).isTrigger = true;
 
-				EntityManager::GetInstance().Get<Graphics::Renderer>(boxID).SetColor(0.f, 1.f, 0.f, 0.f); // sets the color of the box to be green
 				EntityManager::GetInstance().Get<EntityDescriptor>(boxID).parent = id;
 				EntityManager::GetInstance().Get<EntityDescriptor>(boxID).isActive = false;
 

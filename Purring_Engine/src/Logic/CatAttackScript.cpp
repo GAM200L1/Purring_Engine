@@ -60,7 +60,6 @@ namespace PE
 							{
 								if (p_data->attackDirection != k)
 								{
-									EntityManager::GetInstance().Get<Graphics::Renderer>(v).SetColor(0.f, 1.f, 0.f, 0.f);
 									EntityManager::GetInstance().Get<EntityDescriptor>(v).isActive = false;
 								}
 							}
@@ -87,7 +86,7 @@ namespace PE
 		for (auto const& selection : p_data->selectBoxIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
-			EntityManager::GetInstance().Get<Graphics::Renderer>(selection.second).SetColor(0.f, 0.f, 0.f, 0.f);
+			EntityManager::GetInstance().Get<EntityDescriptor>(selection.second).isActive = false;
 		}
 	}
 
