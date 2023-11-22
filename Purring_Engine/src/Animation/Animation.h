@@ -137,6 +137,9 @@ namespace PE
 		vec2 m_minUV{ 0, 0 };
 		vec2 m_maxUV{ 1, 1 };
 		float m_duration{ 0.f };
+
+		nlohmann::json AnimationFrame::ToJson() const;
+
 	};
 
 	/*!***********************************************************************************
@@ -200,6 +203,10 @@ namespace PE
 		inline unsigned GetFrameCount() { return static_cast<unsigned>(m_animationFrames.size()); }
 
 		inline float GetAnimationDuration() { return m_animationDuration; }
+
+		nlohmann::json Animation::ToJson() const;
+		static Animation Deserialize(const nlohmann::json& j);
+
 
 		// ----- Private Variables ----- //
 	private:

@@ -39,7 +39,7 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "ResourceManager.h"
-
+#include "Data/SerializationManager.h"
 namespace PE
 {
     void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderPath,
@@ -112,10 +112,31 @@ namespace PE
     void ResourceManager::LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath)
     {
         std::string animationID = AnimationManager::CreateAnimation(r_key);
-        //if (add your deserialize function here, set all the values of the animation with "animationID")
+        nlohmann::json animationJson;
+
+        // Read the JSON file
+        std::ifstream i(r_filePath);
+        if (i.is_open() && nlohmann::json::accept(i))
         {
-            // fail to create animation, delete key
-            std::cout << "Couldn't create animation " << r_filePath << std::endl;
+            i >> animationJson;
+            i.close();
+
+            try
+            {
+                auto animation = std::make_shared<Animation>(Animation::Deserialize(animationJson));
+
+                // If deserialization successful, add it to the Animations map
+                Animations[r_key] = animation;
+            }
+            catch (const std::exception& e)
+            {
+                std::cout << "Couldn't create animation " << r_filePath << ". Error: " << e.what() << std::endl;
+                Animations.erase(r_key);
+            }
+        }
+        else
+        {
+            std::cout << "Couldn't open animation file " << r_filePath << std::endl;                // Handle file not opening correctly
             Animations.erase(r_key);
         }
     }

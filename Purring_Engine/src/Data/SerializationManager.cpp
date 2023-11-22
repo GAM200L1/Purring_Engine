@@ -305,6 +305,20 @@ void SerializationManager::SaveToFile(const std::filesystem::path& filepath, int
     }
 }
 
+void SerializationManager::SaveAnimationToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData)
+{
+    std::ofstream outFile(filepath);
+    if (outFile)
+    {
+        outFile << serializedData.dump(4);
+        outFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
+
 size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
 {
     if (!std::filesystem::exists(filepath))

@@ -2537,7 +2537,25 @@ namespace PE {
 			ImGui::SameLine();
 			if (ImGui::Button("Save"))
 			{
+				if (currentAnimation)
+				{
+					// Serialize the current animation data to JSON
+					nlohmann::json serializedAnimation = currentAnimation->ToJson();
 
+					// Get the file path using the file explorer
+					std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+					// Check if filePath is not empty
+					if (!filePath.empty())
+					{
+						serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
+						std::cout << "Animation saved successfully to " << filePath << std::endl;
+					}
+					else
+					{
+						std::cerr << "No file path was selected for saving." << std::endl;
+					}
+				}
 			}
 
 			ImGui::Dummy(ImVec2(0, 5));

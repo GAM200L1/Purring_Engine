@@ -180,6 +180,59 @@ namespace PE
 		return *this;
 	}
 
+	// Animation Frame
+	nlohmann::json AnimationFrame::ToJson() const
+	{
+		nlohmann::json j;
+		// j["textureKey"] = textureKey; @Brandon do I need this?
+		j["minUV"] = { m_minUV.x, m_minUV.y };
+		j["maxUV"] = { m_maxUV.x, m_maxUV.y };
+		j["duration"] = m_duration;
+		return j;
+	}
+
+	// Animiation Properties
+	nlohmann::json Animation::ToJson() const
+	{
+		nlohmann::json j;
+		j["animationID"] = m_animationID;
+		j["spriteSheetKey"] = m_spriteSheetKey;
+		j["totalSprites"] = m_totalSprites;
+		j["animationDuration"] = m_animationDuration;
+
+		// Serialize the animation frames
+		for (const auto& frame : m_animationFrames)
+		{
+			j["animationFrames"].push_back(frame.ToJson());
+		}
+		// Serialize the empty frame @Brandon if need to, just uncomment it - Hans
+		// j["emptyFrame"] = m_emptyFrame.ToJson();
+
+		return j;
+	}
+
+	Animation Animation::Deserialize(const nlohmann::json& j)
+	{
+		Animation anim;
+		anim.m_animationID = j["animationID"].get<std::string>();
+		anim.m_spriteSheetKey = j["spriteSheetKey"].get<std::string>();
+		anim.m_totalSprites = j["totalSprites"].get<unsigned>();
+		anim.m_animationDuration = j["animationDuration"].get<float>();
+
+		for (const auto& frameJson : j["animationFrames"])
+		{
+			AnimationFrame frame;
+			frame.m_minUV.x = frameJson["minUV"][0].get<float>(); // Assign x
+			frame.m_minUV.y = frameJson["minUV"][1].get<float>(); // Assign y
+			frame.m_maxUV.x = frameJson["maxUV"][0].get<float>(); // Assign x
+			frame.m_maxUV.y = frameJson["maxUV"][1].get<float>(); // Assign y
+			frame.m_duration = frameJson["duration"].get<float>();
+			anim.m_animationFrames.push_back(frame);
+		}
+
+		return anim;
+	}
+
 	// AnimationManager
 	void AnimationManager::InitializeSystem()
 	{
