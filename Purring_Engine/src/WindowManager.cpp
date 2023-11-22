@@ -136,7 +136,7 @@ namespace PE
 	{
 #ifndef GAMERELEASE
 		Editor::GetInstance().AddEventLog(r_event.ToString());
-#endif
+#else
 		if (r_event.GetType() == WindowEvents::WindowLostFocus)
 		{
 			GameStateManager::GetInstance().SetPauseState();	
@@ -145,6 +145,7 @@ namespace PE
 
 			msepress = true;
 		}
+#endif
 	}
 
 
@@ -228,17 +229,8 @@ namespace PE
 				}
 			}
 #endif
-
-			if (EntityManager::GetInstance().GetComponentPool<RigidBody>().HasEntity(1))
-			{
-				if (ev.keycode == GLFW_KEY_E)
-				{
-					if (EntityManager::GetInstance().Get<RigidBody>(1).velocity.Dot(EntityManager::GetInstance().Get<RigidBody>(1).velocity) == 0.f)
-						EntityManager::GetInstance().Get<RigidBody>(1).velocity = vec2{ 1.f, 0.f };
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(1).velocity.GetNormalized() * 5000.f);
-				}
-			}
 		}
+#ifdef GAMERELEASE
 		else if (r_event.GetType() == KeyEvents::KeyRelease)
 		{
 			KeyReleaseEvent ev;
@@ -250,6 +242,7 @@ namespace PE
 		}
 		if (InputSystem::IsKeyTriggered(GLFW_KEY_LEFT_ALT))
 			msepress = true;
+#endif
 	}
 
 	void WindowManager::TestFunction(EntityID)
@@ -379,11 +372,12 @@ namespace PE
 		else {
 			// The window is being restored
 			// You can perform any actions you want when the window is restored here
-
+#ifdef GAMERELEASE
 			if(!msepress)
 			glfwIconifyWindow(window);
 
 			msepress = false;
+#endif
 		}
 	}
 }
