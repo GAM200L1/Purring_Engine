@@ -28,10 +28,10 @@ namespace PE
 	//! Enum denoting cardinal directions for attack
 	enum EnumCatAttackDirection
 	{
-		EAST = 0b0001,
-		NORTH = 0b0010,
-		WEST = 0b0100,
-		SOUTH = 0b1000
+		EAST = 1,
+		NORTH = 2,
+		WEST = 3,
+		SOUTH = 4
 	};
 
 	//! struct with variables needed by cat scripts
@@ -86,6 +86,8 @@ namespace PE
 
 		// ----- Private Functions ----- //
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
+		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);
 	};
 
 	// ----- CAT SCRIPT ----- //

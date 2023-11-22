@@ -29,9 +29,12 @@ namespace PE
 		EntityManager::GetInstance().Get<Collider>(boxID).colliderVariant = AABBCollider();
 		EntityManager::GetInstance().Get<Collider>(boxID).isTrigger = true;
 
+		// CHANGE HERE: can set alpha to 1.f
 		EntityManager::GetInstance().Get<Graphics::Renderer>(boxID).SetColor(0.f, 1.f, 0.f, 0.f); // sets the color of the box to be green
+		
 		EntityManager::GetInstance().Get<EntityDescriptor>(boxID).parent = id;
 		EntityManager::GetInstance().Get<EntityDescriptor>(boxID).isActive = false;
+		// set tosave to false
 
 		vec2 boxPositionOffset{ 0.f,0.f };
 		vec2 boxScaleOffset{ 1.f,1.f };
@@ -72,28 +75,19 @@ namespace PE
 		p_data = GETSCRIPTDATA(CatScript, id);
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatAttackPLAN::OnMouseClick, this);
 	}
+	
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
 	{
 		// get the mouse cursor position
 		double mouseX{}, mouseY{};
 		InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY); // I'll change this to take floats in next time...
 		vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(static_cast<float>(mouseX), static_cast<float>(mouseY)) };
-		
+
 		// if in attack planning phase, allow player to select a cat and plan that cats attacks
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
 		{
-
-			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
-			if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
-			{
-				// if player selects cat with EntityID 'id', the cat will show its selectable attack boxes and become active
-				m_showBoxes = true;
-				p_data->attackDirection = 0;
-				for (auto const& boxID : p_data->selectBoxIDs)
-				{
-					EntityManager::GetInstance().Get<EntityDescriptor>(boxID.second).isActive = true;
-				}
-			}
+			// resets selected attack and shows the boxes as green
+			ShowAttackSelection(id, cursorPosition);
 
 			if (m_showBoxes)
 			{
@@ -110,18 +104,15 @@ namespace PE
 							p_data->attackDirection = selectBox.first;
 							// the other boxes should not show
 							m_showBoxes = false;
-							for (auto const& selection : p_data->selectBoxIDs)
+							for (auto const& [k,v] : p_data->selectBoxIDs)
 							{
-								if (selection.first != p_data->attackDirection)
+								if (p_data->attackDirection != k)
 								{
-									EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(0.f, 1.f, 0.f, 0.f); // makes the other boxes transparent (temp, should use active)
-									// set is not active
-								}
-								else
-								{
-									EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f);
+									EntityManager::GetInstance().Get<Graphics::Renderer>(v).SetColor(0.f, 1.f, 0.f, 0.f);
+									EntityManager::GetInstance().Get<EntityDescriptor>(v).isActive = false;
 								}
 							}
+							break;
 						}
 					}
 					else
@@ -133,12 +124,12 @@ namespace PE
 			}
 			else
 			{
-				if (p_data->attackDirection != 0)
-					EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->selectBoxIDs[static_cast<EnumCatAttackDirection>(p_data->attackDirection)]).SetColor(1.f, 0.f, 0.f, 1.f);
+				//if (p_data->attackDirection != 0)
+					//EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->selectBoxIDs[static_cast<EnumCatAttackDirection>(p_data->attackDirection)]).SetColor(1.f, 0.f, 0.f, 1.f);
 			}
 			m_mouseClick = false;
 		}
-		else
+		else if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 		{
 			p_data->m_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
 		}
@@ -162,5 +153,20 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		m_mouseClick = true;
+	}
+
+	void CatAttackPLAN::ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition)
+	{
+		CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+		if (PointCollision(catCollider, r_cursorPosition) && m_mouseClick)
+		{
+			// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
+			m_showBoxes = true;
+			p_data->attackDirection = 0;
+			for (auto const& boxID : p_data->selectBoxIDs)
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(boxID.second).isActive = true;
+			}
+		}
 	}
 }
