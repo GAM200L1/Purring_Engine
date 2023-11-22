@@ -145,7 +145,6 @@ namespace PE
 		{
 			// if the entity is not active, do not update collision
 			if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID).isActive) { continue; }
-			std::cout << ColliderID << " is updating collision\n";
 			Transform const& transform = EntityManager::GetInstance().Get<Transform>(ColliderID);
 			Collider& collider = EntityManager::GetInstance().Get<Collider>(ColliderID);
 			
