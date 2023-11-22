@@ -43,24 +43,29 @@ namespace PE
 
 			if (m_showBoxes)
 			{
-				for (auto const& selectBox : p_data->selectBoxIDs)
+				for (auto const& telegraph : p_data->telegraphIDs)
 				{
-					AABBCollider const& selectBoxCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(selectBox.second).colliderVariant);
+					AABBCollider const& telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(telegraph.second).colliderVariant);
 					// checks if the mouse hovers over any of the select boxes. if it does, the boxes should become red
-					if (PointCollision(selectBoxCollider, cursorPosition))
+					if (PointCollision(telegraphCollider, cursorPosition))
 					{
-						EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(1.f, 0.f, 0.f, 1.f); // sets the color of the box to be red if hovered
+						// sets hover color if telegraph is color
+						EntityManager::GetInstance().Get<Graphics::Renderer>(telegraph.second).SetColor(m_hoverColor.x, m_hoverColor.y, m_hoverColor.z, 1.f);
 						if (m_mouseClick)
 						{
 							// if player selects either of the boxes, the attack direction is determined
-							p_data->attackDirection = selectBox.first;
+							p_data->attackDirection = telegraph.first;
 							// the other boxes should not show
 							m_showBoxes = false;
-							for (auto const& [k,v] : p_data->selectBoxIDs)
+							for (auto const& [direction, telegraphID] : p_data->telegraphIDs)
 							{
-								if (p_data->attackDirection != k)
+								if (p_data->attackDirection == direction)
 								{
-									EntityManager::GetInstance().Get<EntityDescriptor>(v).isActive = false;
+									EntityManager::GetInstance().Get<Graphics::Renderer>(telegraph.second).SetColor(m_selectColor.x, m_selectColor.y, m_selectColor.z, 1.f);
+								}
+								else
+								{
+									EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false;
 								}
 							}
 							break;
@@ -69,7 +74,7 @@ namespace PE
 					else
 					{
 						// if the mouse is not over any of the boxes, it should be green
-						EntityManager::GetInstance().Get<Graphics::Renderer>(selectBox.second).SetColor(0.f, 1.f, 0.f, 1.f); // sets the color of the box to be green if not hovering
+						EntityManager::GetInstance().Get<Graphics::Renderer>(telegraph.second).SetColor(m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, 1.f); // sets the color of the box to be green if not hovering
 					}
 				}
 			}
@@ -83,10 +88,10 @@ namespace PE
 	
 	void CatAttackPLAN::StateExit(EntityID id)
 	{
-		for (auto const& selection : p_data->selectBoxIDs)
+		for (auto const& telegraph : p_data->telegraphIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
-			EntityManager::GetInstance().Get<EntityDescriptor>(selection.second).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(telegraph.second).isActive = false;
 		}
 	}
 
@@ -109,7 +114,7 @@ namespace PE
 			// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
 			m_showBoxes = true;
 			p_data->attackDirection = 0;
-			for (auto const& boxID : p_data->selectBoxIDs)
+			for (auto const& boxID : p_data->telegraphIDs)
 			{
 				EntityManager::GetInstance().Get<EntityDescriptor>(boxID.second).isActive = true;
 			}

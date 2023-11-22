@@ -27,6 +27,7 @@
 #include "prpch.h"
 #include "CatScript.h"
 #include "CatAttackScript.h"
+#include "ResourceManager/ResourceManager.h"
 
 namespace PE
 {
@@ -47,6 +48,12 @@ namespace PE
 				m_scriptData[id].m_stateManager->ChangeState(new CatAttackPLAN{}, id);
 
 				ResetValues(id);
+
+				//! Creates entities for the telegraph boxes
+				CreateAttackTelegraphs(id, true, false); // east box
+				CreateAttackTelegraphs(id, true, true); // west box
+				CreateAttackTelegraphs(id, false, false); // north box
+				CreateAttackTelegraphs(id, false, true); // south box
 		}
 
 		void CatScript::Update(EntityID id, float deltaTime)
@@ -82,11 +89,6 @@ namespace PE
 						m_scriptData[id] = CatScriptData{};
 				}
 
-				CreateAttackSelectBoxes(id, true, false); // east box
-				CreateAttackSelectBoxes(id, true, true); // west box
-				CreateAttackSelectBoxes(id, false, false); // north box
-				CreateAttackSelectBoxes(id, false, true); // south box
-
 				// Create as many entities to visualise the player path nodes  
 				// such that there is one node per energy level
 				for (std::size_t i{}; i < m_scriptData[id].catMaxEnergy; ++i)
@@ -99,9 +101,9 @@ namespace PE
 		{
 
 				// Delete the boxes created for attack selection
-				for (auto const& boxID : m_scriptData[id].selectBoxIDs)
+				for (auto const& telegraphID : m_scriptData[id].telegraphIDs)
 				{
-						EntityManager::GetInstance().RemoveEntity(boxID.second);
+						EntityManager::GetInstance().RemoveEntity(telegraphID.second);
 				}
 
 				// Delete the entities created to visualise the path nodes
@@ -132,17 +134,25 @@ namespace PE
 				EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
 		}
 
-		// ----- Helper function for creating entities which are selectable boxes for the cat attacks ----- //
-		void CatScript::CreateAttackSelectBoxes(EntityID id, bool isXAxis, bool isNegative)
+		
+		/*!***********************************************************************************
+		 \brief Helper function for creating entities which are for the cat's attack telegraphs
+
+		 \param[in] id			EntityID of the cat which the telegraphs are for
+		 \param[in] isXAxis		bool to check if the box is elongated by its x Axis
+		 \param[in] isNegative	bool to check if the box is positioned on the west or south of the cat 
+								if it is lengthen by its width or height respectively
+		*************************************************************************************/
+		void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 		{
 				// create the east direction entity
-				EntityID boxID = EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>();
-				EntityManager::GetInstance().Get<Collider>(boxID).colliderVariant = AABBCollider();
-				EntityManager::GetInstance().Get<Collider>(boxID).isTrigger = true;
+				EntityID telegraphID = EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>();
+				EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = AABBCollider();
+				EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
 
-				EntityManager::GetInstance().Get<EntityDescriptor>(boxID).parent = id;
-				EntityManager::GetInstance().Get<EntityDescriptor>(boxID).isActive = false;
-				EntityManager::GetInstance().Get<EntityDescriptor>(boxID).toSave = false;
+				EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id;
+				EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false;
+				//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false;
 
 				vec2 boxPositionOffset{ 0.f,0.f };
 				vec2 boxScaleOffset{ 1.f,1.f };
@@ -152,7 +162,7 @@ namespace PE
 				{
 						boxScaleOffset.y = 0.75f;
 						boxScaleOffset.x = m_scriptData[id].bulletRange;
-						boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(boxID).width);
+						boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(telegraphID).width);
 						boxPositionOffset.x *= (isNegative) ? -1 : 1;
 						dir = (isNegative) ? EnumCatAttackDirection::WEST : EnumCatAttackDirection::EAST;
 				}
@@ -160,20 +170,26 @@ namespace PE
 				{
 						boxScaleOffset.x = 0.75f;
 						boxScaleOffset.y = m_scriptData[id].bulletRange;
-						boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).height * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(boxID).height);
+						boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).height * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(telegraphID).height);
 						boxPositionOffset.y *= (isNegative) ? -1 : 1;
 						dir = (isNegative) ? EnumCatAttackDirection::SOUTH : EnumCatAttackDirection::NORTH;
 				}
 
 				// set the position of the selection box to be half the range away from the center of the cat
-				EntityManager::GetInstance().Get<Transform>(boxID).relPosition.x = boxPositionOffset.x;
-				EntityManager::GetInstance().Get<Transform>(boxID).relPosition.y = boxPositionOffset.y;
+				EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.x = boxPositionOffset.x;
+				EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.y = boxPositionOffset.y;
 
 				// set the scale of the selection box
-				EntityManager::GetInstance().Get<Transform>(boxID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
-				EntityManager::GetInstance().Get<Transform>(boxID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
+				EntityManager::GetInstance().Get<Transform>(telegraphID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
+				EntityManager::GetInstance().Get<Transform>(telegraphID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
 
-				m_scriptData[id].selectBoxIDs.emplace(dir, boxID);
+				// Load and Set the texture for the telegraphs
+				std::string telegraphTextureName = "../Assets/Textures/Telegraphs/Telegraph_Long_512x128.png";
+				ResourceManager::GetInstance().LoadTextureFromFile(telegraphTextureName, telegraphTextureName);
+				EntityManager::GetInstance().Get<Graphics::Renderer>(telegraphID).SetTextureKey(telegraphTextureName);
+
+
+				m_scriptData[id].telegraphIDs.emplace(dir, telegraphID);
 		}
 
 

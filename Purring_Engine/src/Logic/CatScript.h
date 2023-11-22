@@ -60,7 +60,7 @@ namespace PE
 		int attackDamage{ 0 };
 		int requiredAttackPoints{ 0 };
 		int attackDirection{ 0 };
-		std::map<EnumCatAttackDirection, EntityID> selectBoxIDs;
+		std::map<EnumCatAttackDirection, EntityID> telegraphIDs;
 		
 		// bullet variables
 		float bulletRange{ 3.f };
@@ -116,7 +116,7 @@ namespace PE
 	private:
 
 		// ----- Private Functions ----- //
-		void CreateAttackSelectBoxes(EntityID id, bool isSide, bool isNegative);
+		void CreateAttackTelegraphs(EntityID id, bool isSide, bool isNegative);
 
 		/*!***********************************************************************************
 		 \brief Creates a path node to visualise the path drawn by the player. 

@@ -44,6 +44,9 @@ namespace PE
 		CatScriptData* p_data;
 		bool m_showBoxes{ false };
 		bool m_mouseClick{ false };
+		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
+		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
+		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
 
 		// ----- Private Functions ----- //
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
@@ -69,5 +72,6 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		CatScriptData* p_data;
+		
 	};
 }
