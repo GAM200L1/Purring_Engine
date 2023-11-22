@@ -567,7 +567,7 @@ namespace PE
 	struct EntityDescriptor
 	{
 		// name of the entity
-		std::string name{"GameObject"};
+		std::string name{ "GameObject" };
 
 		// the parent of the entity
 		std::optional<EntityID> parent;
@@ -578,23 +578,24 @@ namespace PE
 		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
 
-		bool isActive{true}; // defaults to true
-		
+		bool isActive{ true }; // defaults to true
+
+		std::string prefabName{ "" };
+
 		/*!***********************************************************************************
 		 \brief Serializes this struct into a json file
-		 
+
 		 \param[in] id 				Entity ID of who owns this descriptor struct
 		 \return nlohmann::json 	The generated json
 		*************************************************************************************/
-		nlohmann::json ToJson(size_t id) const;	
+		nlohmann::json ToJson(size_t id) const;
 
 		/*!***********************************************************************************
 		 \brief Deserializes the input json file into a copy of the entity descriptor
-		 
+
 		 \param[in] j 				Json file to read from
 		 \return EntityDescriptor 	Copy of the resulting EntityDescriptor
 		*************************************************************************************/
 		static EntityDescriptor Deserialize(const nlohmann::json& j);
 	};
-
 }

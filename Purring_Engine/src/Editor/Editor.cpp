@@ -85,7 +85,7 @@ namespace PE {
 			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
 
 			// also an e.g of how to make it safe
-			m_isPrefabMode = (configJson["Editor"].contains("isPrefabMode")) ? configJson["Editor"]["isPrefabMode"].get<bool>() : false;
+			m_isPrefabMode = false;
 		}
 		else
 		{
@@ -369,8 +369,14 @@ namespace PE {
 					ImGui::Separator();
 					if (ImGui::Selectable("Yes"))
 					{
-						serializationManager.SerializeEntityPrefab(1);
+						auto save = serializationManager.SerializeEntityPrefab(1);
 
+						std::ofstream outFile(prefabFP);
+						if (outFile)
+						{
+							outFile << save.dump(4);
+							outFile.close();
+						}
 						m_isPrefabMode = false;
 						ClearObjectList();
 						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
@@ -390,7 +396,6 @@ namespace PE {
 					ImGui::EndPopup();
 				}
 				ImGui::SameLine();
-				//ImGui::Separator();
 				if (ImGui::Button("No"))
 				{
 					m_isPrefabMode = false;
@@ -2834,59 +2839,99 @@ namespace PE {
 			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
 
 			ImGuiStyle& style = ImGui::GetStyle();
-			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
-			float avail = ImGui::GetContentRegionAvail().x;
-
-			float off = (float)((avail - size) * 0.5);
-			if (off > 0.0f)
-				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
-
-			if (ImGui::Button("Play"))
+			if (!m_isPrefabMode)
 			{
-				m_isRunTime = true;
-				m_showEditor = false;
-				m_showGameView = true;
-				engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-				// This will save all entities to a file
-				for (const auto& id : SceneView<EntityDescriptor>())
+				float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
+				float avail = ImGui::GetContentRegionAvail().x;
+
+				float off = (float)((avail - size) * 0.5);
+				if (off > 0.0f)
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
+
+				if (ImGui::Button("Play"))
 				{
-					if (!id) // skip editor camera
-						continue;
-					EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-					for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+					m_isRunTime = true;
+					m_showEditor = false;
+					m_showGameView = true;
+					engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+					// This will save all entities to a file
+					for (const auto& id : SceneView<EntityDescriptor>())
 					{
-						if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-						{
-							desc.sceneID = i;
+						if (!id) // skip editor camera
 							continue;
+						EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+						for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+						{
+							if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+							{
+								desc.sceneID = i;
+								continue;
+							}
+						}
+						if (desc.parent)
+						{
+							EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
 						}
 					}
-					if (desc.parent)
-					{
-						EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-					}
+					serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+					engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 				}
-				serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
-				engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
-			}
-			ImGui::SameLine();
-			ImGui::BeginDisabled();
-			if (ImGui::Button("Stop")) {
-				m_showEditor = true;
+				ImGui::SameLine();
+				ImGui::BeginDisabled();
+				if (ImGui::Button("Stop")) {
+					m_showEditor = true;
 
-				if (m_isRunTime)
+					if (m_isRunTime)
+					{
+						ClearObjectList();
+						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+					}
+
+					if (m_showEditor)
+						m_isRunTime = false;
+
+					m_showGameView = false;
+				}
+				ImGui::EndDisabled();
+			}
+			else // is prefab mode
+			{
+				float size = ImGui::CalcTextSize("Return").x + style.FramePadding.x * 2.0f;
+				float avail = ImGui::GetContentRegionAvail().x;
+
+				float off = (float)((avail - size) * 0.5);
+				if (off > 0.0f)
+					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Return").x + style.FramePadding.x) / 2);
+
+				if (ImGui::Button("Return"))
 				{
+					auto save = serializationManager.SerializeEntityPrefab(1);
+
+					std::ofstream outFile(prefabFP);
+					if (outFile)
+					{
+						outFile << save.dump(4);
+						outFile.close();
+					}
+					m_isPrefabMode = false;
 					ClearObjectList();
 					serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
 					engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 				}
+				ImGui::SameLine();
+				if (ImGui::Button(" Save "))
+				{
+					auto save = serializationManager.SerializeEntityPrefab(1);
 
-				if (m_showEditor)
-					m_isRunTime = false;
-
-				m_showGameView = false;
+					std::ofstream outFile(prefabFP);
+					if (outFile)
+					{
+						outFile << save.dump(4);
+						outFile.close();
+					}
+				}
 			}
-			ImGui::EndDisabled();
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
 				if (r_frameBuffer.GetTextureId())

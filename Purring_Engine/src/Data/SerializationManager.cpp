@@ -245,6 +245,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
 nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
 {
     PE::EntityDescriptor tmp;
+    tmp.name = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).name;
     std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
     nlohmann::json ret = SerializeEntity(entityId);
     std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
