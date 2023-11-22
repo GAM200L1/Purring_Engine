@@ -194,7 +194,6 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::FollowScriptData>("FollowScript")
         .property("Size", &PE::FollowScriptData::Size)
-        .property("Distance", &PE::FollowScriptData::Distance)
         .property("Speed", &PE::FollowScriptData::Speed)
         .property("NumberOfFollower", &PE::FollowScriptData::NumberOfFollower)
         .property("FollowingObject", &PE::FollowScriptData::FollowingObject)

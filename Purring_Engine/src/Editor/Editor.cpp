@@ -2075,6 +2075,9 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+										ImGui::SetNextItemWidth(100.0f);
+										ImGui::InputInt("Distance Offset", &it->second.Size,0,0);
+
 										int j = it->second.NumberOfFollower;
 										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
 										if (j <= 5 && j >= 0)
@@ -2083,7 +2086,7 @@ namespace PE {
 										}
 										else
 										{
-											it->second.NumberOfFollower = 6;
+											it->second.NumberOfFollower = 5;
 										}
 
 										for (int i = 0; i < it->second.NumberOfFollower; i++)
@@ -2109,7 +2112,7 @@ namespace PE {
 											}
 											else
 											{
-												it->second.NumberOfAttachers = 6;
+												it->second.NumberOfAttachers = 5;
 											}
 
 											for (int i = 0; i < it->second.NumberOfAttachers; i++)

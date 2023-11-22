@@ -22,8 +22,7 @@ namespace PE
 {
 	struct FollowScriptData
 	{
-		float Size{ 100 }; // fixed size of each object
-		float Distance{ Size };	//distance between each object
+		int Size{ 100 }; // fixed size of each object
 		float Speed{ 100 };
 		int NumberOfFollower{1};
 		std::vector<EntityID> FollowingObject;
