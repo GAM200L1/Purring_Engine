@@ -21,7 +21,6 @@
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
 #include "Input/InputSystem.h"
-#include "Graphics/CameraManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -63,6 +62,15 @@ namespace PE
 				//gui.m_onClicked = "TestFunction";
 				gui.Update();
 				//gui.m_onClicked = m_uiFunc.at("ButtonFunctionOne").target<void()>();
+
+				if (gui.disabled)
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
+					continue;
+				}
+
+
 				if (gui.m_UIType == UIType::Button)
 				{
 					Button btn = UI_CAST(Button, gui);
@@ -110,10 +118,10 @@ namespace PE
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
-				float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
+				if (gui.disabled)
+					continue;
+				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
 				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
-				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
-				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
 				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 					continue;
@@ -155,11 +163,10 @@ namespace PE
 			//get the components
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
-
-			float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
+			if (gui.disabled)
+				continue;
+			double mouseX{ static_cast<double>(MME.x) }, mouseY{ static_cast<double>(MME.y) };
 			InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
-			mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
-			mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
 			//check mouse coordinate against transform here
 			if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))

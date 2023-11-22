@@ -97,12 +97,8 @@ namespace PE
 		engine_logger.AddLog(false, "CollisionManager initialized!", __FUNCTION__);
 	}
 
-	void CollisionManager::UpdateSystem(float deltaTime)
+	void CollisionManager::UpdateSystem(float)
 	{
-		// prevent warnings
-		deltaTime;
-		// Update the Collider's specs
-		UpdateColliders();
 
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
@@ -112,16 +108,19 @@ namespace PE
 				m_grid.ClearGrid();
 			return;
 		}
-#endif
+
 
 		if (m_grid.GetGridSize() != gridSize)
 		{
 			// sets up the grid if it did not exist during runtime
 			m_grid.SetupGrid(gridSize.x, gridSize.y);
 		}
-
+#endif
 		if(gridActive)
 			m_grid.UpdateGrid();
+
+		// Update the Collider's specs
+		UpdateColliders();
 
 #ifndef GAMERELEASE
 		if (!Editor::GetInstance().IsEditorActive())

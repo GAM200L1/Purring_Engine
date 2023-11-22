@@ -107,6 +107,7 @@ namespace PE
 			{
 				UpdateDynamics(deltaTime);
 			}
+#ifndef GAMERELEASE
 			else
 			{
 				// Applies Step Physics
@@ -117,7 +118,6 @@ namespace PE
 				}
 			}
 
-#ifndef GAMERELEASE
 		}
 #endif
 	}
