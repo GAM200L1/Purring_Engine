@@ -580,15 +580,32 @@ namespace PE
 		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
 
-		bool isActive{true}; // defaults to true
-		
+		bool isActive{ true };  // defaults to true
+		bool isAlive{ true };   // defaults to true, mainly used in undo/redo for editor functionality
+		bool toSave{ true };    // used for whether the entity should be saved or not
+
+		inline bool SaveEntity() { return toSave && isAlive; }
 		/*!***********************************************************************************
 		 \brief Serializes this struct into a json file
 		 
 		 \param[in] id 				Entity ID of who owns this descriptor struct
 		 \return nlohmann::json 	The generated json
 		*************************************************************************************/
-		nlohmann::json ToJson(size_t id) const;	
+		nlohmann::json ToJson(size_t id) const;
+
+		/*!***********************************************************************************
+		 \brief Mark an entity to be disabled completely, and will be guaranteed to not
+		 		be saved.
+		 
+		*************************************************************************************/
+		void HandicapEntity() { isAlive = toSave = false; }
+		
+		/*!***********************************************************************************
+		 \brief Reset an entity back to a state of existence
+		 
+		*************************************************************************************/
+		void UnHandicapEntity() { isAlive = toSave = true; }
+		
 
 		/*!***********************************************************************************
 		 \brief Deserializes the input json file into a copy of the entity descriptor
@@ -598,5 +615,4 @@ namespace PE
 		*************************************************************************************/
 		static EntityDescriptor Deserialize(const nlohmann::json& j);
 	};
-
 }

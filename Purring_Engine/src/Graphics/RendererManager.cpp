@@ -322,6 +322,11 @@ namespace PE
             for (const EntityID& id : r_sceneView)
             {
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+
+                // Skip drawing this object is the entity or renderer is not enabled
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
+                    || !renderer.GetEnabled()) { continue; }
+
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 // Store the index of the rendered entity
@@ -382,8 +387,9 @@ namespace PE
             {
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 
-                // Skip drawing this object is the renderer is not enabled
-                if (!renderer.GetEnabled()) { continue; }
+                // Skip drawing this object is the entity or renderer is not enabled
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
+                    || !renderer.GetEnabled()) { continue; }
 
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
@@ -494,6 +500,9 @@ namespace PE
             // Draw each of the colliders
             for (const EntityID& id : SceneView<Collider>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
                 std::visit([&](auto& col)
@@ -506,6 +515,9 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
@@ -522,6 +534,9 @@ namespace PE
             // Draw a "+" for every camera component
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 // Don't draw a cross for the UI camera
                 if (id == r_cameraManager.GetUiCameraId()) { continue; }
 
