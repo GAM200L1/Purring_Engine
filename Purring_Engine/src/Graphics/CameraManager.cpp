@@ -33,8 +33,7 @@ namespace PE
 
 
         CameraManager::CameraManager(float const windowWidth, float const windowHeight)
-            : m_viewportWidth{ windowWidth }, m_viewportHeight{ windowHeight },
-            m_widthRatio{ 1.f }, m_heightRatio{ 1.f }
+            : m_viewportWidth{ windowWidth }, m_viewportHeight{ windowHeight }
         {
             // Update the editor camera viewport size
             m_editorCamera.SetViewDimensions(windowWidth, windowHeight);
@@ -188,17 +187,21 @@ namespace PE
             if (ref_mainCamera.has_value())
             {
                 Camera& r_mainCamera = ref_mainCamera.value().get();
-
+                
 #ifndef GAMERELEASE
                 // Get the size of the render window
                 float editorWindowSizeX{}, editorWindowSizeY{};
                 Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+                float widthRatio{ (editorWindowSizeX < std::numeric_limits<float>::epsilon()) ? m_viewportWidth / editorWindowSizeX : 1.f };
+                float heightRatio{ (editorWindowSizeY < std::numeric_limits<float>::epsilon()) ? m_viewportHeight / editorWindowSizeY : 1.f };
 
                 // Adjust scale of the position
-                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * m_viewportWidth / editorWindowSizeX, y * m_viewportHeight / editorWindowSizeY) };
+                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * widthRatio, y * heightRatio) };
                 ret.y += Editor::GetInstance().GetPlayWindowOffset();
 #else
-                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * m_widthRatio, y * m_heightRatio) };
+                float widthRatio{ (m_windowWidth < std::numeric_limits<float>::epsilon()) ? m_viewportWidth / m_windowWidth : 1.f };
+                float heightRatio{ (m_windowHeight < std::numeric_limits<float>::epsilon()) ? m_viewportHeight / m_windowHeight : 1.f };
+                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * widthRatio, y * heightRatio) };
 #endif // !GAMERELEASE
 
                 return ret;
@@ -207,6 +210,25 @@ namespace PE
             {
                 return vec2{x, y};
             }
+        }
+
+
+        vec2 CameraManager::GetUiWindowToScreenPosition(float const x, float const y)
+        {
+            // Get the UI camera
+#ifndef GAMERELEASE
+                // Get the size of the render window
+            float editorWindowSizeX{}, editorWindowSizeY{};
+            Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+
+            // Adjust scale of the position
+            vec2 ret{ x * GetUiCamera().GetViewportWidth() / editorWindowSizeX, y * GetUiCamera().GetViewportHeight() / editorWindowSizeY };
+            ret.y += Editor::GetInstance().GetPlayWindowOffset();
+#else
+            vec2 ret{ x * GetUiCamera().GetViewportWidth() / m_windowWidth, y * GetUiCamera().GetViewportHeight() / m_windowHeight};
+#endif // !GAMERELEASE
+
+            return ret;
         }
 
 
@@ -224,8 +246,6 @@ namespace PE
             Camera const& r_mainCamera{ EntityManager::GetInstance().Get<Camera>(m_mainCameraId) };
             m_viewportWidth = r_mainCamera.GetViewportWidth();
             m_viewportHeight = r_mainCamera.GetViewportHeight();
-            m_widthRatio = m_viewportWidth / m_windowWidth,
-                m_heightRatio = m_viewportHeight / m_windowHeight;
 
             return true;
         }
@@ -281,13 +301,11 @@ namespace PE
                     if (m_viewportWidth != r_camera.GetViewportWidth()) 
                     {
                         m_viewportWidth = r_camera.GetViewportWidth();
-                        m_widthRatio = m_viewportWidth / m_windowWidth;
                     }
 
                     if(m_viewportHeight != r_camera.GetViewportHeight()) 
                     {
                         m_viewportHeight = r_camera.GetViewportHeight();
-                        m_heightRatio = m_viewportHeight / m_windowHeight;
                     }
                 }
             }
@@ -322,13 +340,7 @@ namespace PE
                 if (mainCamera) {
                     m_viewportWidth = mainCamera.value().get().GetViewportWidth();
                     m_viewportHeight = mainCamera.value().get().GetViewportHeight();
-                    m_widthRatio = m_viewportWidth / m_windowWidth,
-                        m_heightRatio = m_viewportHeight / m_windowHeight;
                 } 
-                else
-                {
-                    m_widthRatio = 1.f, m_heightRatio = 1.f;
-                }
             }
         }
 
