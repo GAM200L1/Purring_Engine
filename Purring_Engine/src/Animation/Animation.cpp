@@ -36,12 +36,12 @@ extern Logger engine_logger;
 
 namespace PE
 {
-	Animation::Animation() : m_currentFrameIndex{ 0 }, m_currentFrameTime{ 0.0f }
+	Animation::Animation() : m_totalSprites{ 6 }, m_animationDuration{ 1.f }
 	{
 
 	}
 
-	Animation::Animation(std::string spriteSheetKey) : m_spriteSheetKey{ spriteSheetKey }, m_currentFrameIndex { 0 }, m_currentFrameTime{ 0.0f }
+	Animation::Animation(std::string spriteSheetKey) : m_spriteSheetKey{ spriteSheetKey }, m_totalSprites{ 6 }, m_animationDuration { 1.f }
 	{
 	
 	}
@@ -59,44 +59,89 @@ namespace PE
 	void Animation::UpdateAnimationFrame(float deltaTime, float& currentFrameTime, unsigned& currentFrameIndex)
 	{
 		currentFrameTime += deltaTime;
-		if (currentFrameTime >= m_animationFrames[currentFrameIndex].m_duration)
+
+		try
 		{
-			// move on the the next frame when current frame duration is reached
-			currentFrameIndex = (currentFrameIndex + 1) % m_animationFrames.size();
-			currentFrameTime = 0.f;
+			if (currentFrameTime >= m_animationFrames.at(currentFrameIndex).m_duration)
+			{
+				// move on the the next frame when current frame duration is reached
+				currentFrameIndex = (currentFrameIndex + 1) % m_animationFrames.size();
+				currentFrameTime = 0.f;
+			}
+		}
+		catch (const std::out_of_range&)
+		{
+			return;
 		}
 	}
 
 	AnimationFrame const& Animation::GetCurrentAnimationFrame(unsigned currentFrameIndex)
 	{
-		return m_animationFrames[currentFrameIndex];
+		try
+		{
+			return m_animationFrames.at(currentFrameIndex);
+		}
+		catch (std::out_of_range const&)
+		{
+			return m_emptyFrame;
+		}
 	}
 
-	void Animation::CreateAnimationFrames(float totalSprites, float frameRate)
+	void Animation::CreateAnimationFrames(unsigned totalSprites, float animationDuration)
 	{
 		m_animationFrames.clear();
 
-		float framesPerSprite = totalSprites / frameRate;
+		if (!totalSprites)
+		{
+			return;
+		}
+
+		m_totalSprites = totalSprites;
+		m_animationDuration = animationDuration;
+
+		float duration = animationDuration / static_cast<float>(totalSprites);
+
 		for (unsigned i = 0; i < totalSprites; ++i)
 		{
-			AddFrame(vec2{ static_cast<float>(i), totalSprites }, vec2{ static_cast<float>(i + 1), totalSprites }, framesPerSprite);
+			AddFrame(vec2{ static_cast<float>(i) / static_cast<float>(totalSprites), 0.f },
+					 vec2{ static_cast<float>(i + 1) / static_cast<float>(totalSprites), 1.f },
+					 duration);
 		}
 	}
 
 	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, float duration)
 	{
-		m_animationFrames[currentFrameIndex].m_duration = duration;
+		try
+		{
+			m_animationFrames.at(currentFrameIndex).m_duration = duration;
+		}
+		catch (std::out_of_range const&)
+		{
+			return;
+		}
 	}
 
 	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& minUV, vec2 const& maxUV)
 	{
-		m_animationFrames[currentFrameIndex].m_minUV = minUV;
-		m_animationFrames[currentFrameIndex].m_maxUV = maxUV;
+		try
+		{
+			m_animationFrames.at(currentFrameIndex).m_minUV = minUV;
+			m_animationFrames.at(currentFrameIndex).m_maxUV = maxUV;
+		}
+		catch (std::out_of_range const&)
+		{
+			return;
+		}
 	}
 
-	void Animation::ResetAnimation()
+	void Animation::SetAnimationDuration(float animationDuration)
 	{
-		m_currentFrameIndex = 0;
+		m_animationDuration = animationDuration;
+
+		for (auto& frame : m_animationFrames)
+		{
+			frame.m_duration = m_animationDuration / static_cast<float>(m_totalSprites);
+		}
 	}
 
 	// AnimationComponent

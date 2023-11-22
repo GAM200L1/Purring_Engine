@@ -133,9 +133,9 @@ namespace PE
 	{
 		// un-comment if not using spritesheet
 		//std::string textureKey;
-		vec2 m_minUV;
-		vec2 m_maxUV;
-		float m_duration;
+		vec2 m_minUV{ 0, 0 };
+		vec2 m_maxUV{ 1, 1 };
+		float m_duration{ 0.f };
 	};
 
 	/*!***********************************************************************************
@@ -182,24 +182,28 @@ namespace PE
 		*************************************************************************************/
 		AnimationFrame const& GetCurrentAnimationFrame(unsigned currentFrameIndex);
 
-		void CreateAnimationFrames(float totalSprites, float frameRate);
+		void CreateAnimationFrames(unsigned totalSprites, float animationDuration);
 
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, float duration);
 
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& minUV, vec2 const& maxUV);
 
-		void ResetAnimation();
+		void SetAnimationDuration(float animationDuration);
 
 		inline std::string GetSpriteSheetKey() const { return m_spriteSheetKey; }
 
 		inline unsigned GetFrameCount() { return static_cast<unsigned>(m_animationFrames.size()); }
 
+		inline float GetAnimationDuration() { return m_animationDuration; }
+
 		// ----- Private Variables ----- //
 	private:
 		std::vector<AnimationFrame> m_animationFrames;
 		std::string m_spriteSheetKey; // remove this, should be using texxture key from renderer component
-		unsigned m_currentFrameIndex;
-		float m_currentFrameTime;
+		unsigned m_totalSprites;
+		float m_animationDuration;
+
+		AnimationFrame m_emptyFrame{};
 	};
 
 	/*!***********************************************************************************

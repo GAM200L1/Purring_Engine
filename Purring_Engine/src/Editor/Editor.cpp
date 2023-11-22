@@ -2413,7 +2413,7 @@ namespace PE {
 				currentAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID);
 
 				// get max frames
-				frameCount = currentAnimation->GetFrameCount() - 1;
+				frameCount = currentAnimation->GetFrameCount() ? currentAnimation->GetFrameCount() - 1 : 0;
 				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
 
 				// if animation has spritesheet, get the texture
@@ -2503,12 +2503,12 @@ namespace PE {
 				previewCurrentFrameIndex = static_cast<unsigned>(frame);
 			}
 
-			// update preview animation
-			if(playAnimation)
-			currentAnimation->UpdateAnimationFrame(TimeManager::GetInstance().GetDeltaTime(), previewCurrentFrameTime, previewCurrentFrameIndex);
-
 			if (currentAnimation)
 			{
+				// update preview animation
+				if (playAnimation)
+					currentAnimation->UpdateAnimationFrame(TimeManager::GetInstance().GetDeltaTime(), previewCurrentFrameTime, previewCurrentFrameIndex);
+
 				// update frame display parameters
 				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
 				minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
@@ -2547,7 +2547,9 @@ namespace PE {
 			ImGui::Dummy(ImVec2(0, 5));
 			ImGui::Text("looped");
 			ImGui::Dummy(ImVec2(0, 5));
-			ImGui::Text("FrameCount");
+			ImGui::Text("Total Sprites");
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::Text("Animation Duration");
 			if (ImGui::TreeNode("FrameRects")) {
 
 				ImGui::TreePop();
@@ -2565,8 +2567,41 @@ namespace PE {
 			ImGui::InputText("##name", &text);
 			static bool looped{};
 			ImGui::Checkbox("##looped", &looped);
-			static int fc{};
-			ImGui::InputInt("##framecount", &fc);
+
+			int totalSprites{};
+			float animationDuration{};
+
+			if (currentAnimation)
+			{
+				totalSprites = currentAnimation->GetFrameCount();
+				animationDuration = currentAnimation->GetAnimationDuration();
+			}
+
+			// edit total frames in an animation
+			if (ImGui::InputInt("##totalFrames", &totalSprites))
+			{
+				totalSprites = totalSprites < 0 ? 0 : totalSprites;
+
+				playAnimation = false;
+				if(currentAnimation)
+					currentAnimation->CreateAnimationFrames(totalSprites, animationDuration);
+
+				// update frame duration
+				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+
+				// check if index is same size as total sprites
+				if (previewCurrentFrameIndex == static_cast<unsigned>(totalSprites))
+				{
+					// set index to last sprite if not zero
+					previewCurrentFrameIndex = totalSprites ? totalSprites - 1 : 0;
+				}
+			}
+
+			if (ImGui::InputFloat("##animationDuration", &animationDuration))
+			{
+				currentAnimation->SetAnimationDuration(animationDuration);
+			}
+
 			ImGui::Text("{ unordered_map, size = 1}");
 
 			ImGui::InputFloat("##frameTime", &frameTime);
@@ -2579,6 +2614,8 @@ namespace PE {
 			{
 				currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, frameTime);
 			}
+
+			// save animation here
 
 			ImGui::End(); //imgui close
 		}
