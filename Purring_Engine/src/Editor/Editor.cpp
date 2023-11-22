@@ -996,6 +996,14 @@ namespace PE {
 										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
 									}
 								}
+
+								//---------- Test Code HERE ----------//
+								ImGui::Text("Alive");
+								ImGui::SameLine(); ImGui::Checkbox("##Alive", &EntityManager::GetInstance().Get<EntityDescriptor>(entityID).isAlive);
+
+								ImGui::Text("Save Entity");
+								ImGui::SameLine(); ImGui::Checkbox("##Save", &EntityManager::GetInstance().Get<EntityDescriptor>(entityID).toSave);
+								//--------- pls remove this ----------//
 							}
 						}
 

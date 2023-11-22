@@ -5,7 +5,7 @@
                 "components": {
                     "EntityDescriptor": {
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Background",
                         "parent": null,
                         "sceneID": 1
