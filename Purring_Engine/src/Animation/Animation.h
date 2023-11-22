@@ -205,7 +205,7 @@ namespace PE
 		inline float GetAnimationDuration() { return m_animationDuration; }
 
 		nlohmann::json Animation::ToJson() const;
-		static Animation Deserialize(const nlohmann::json& j);
+		Animation& Deserialize(const nlohmann::json& j);
 
 
 		// ----- Private Variables ----- //

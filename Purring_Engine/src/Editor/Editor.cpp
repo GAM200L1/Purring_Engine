@@ -2401,29 +2401,22 @@ namespace PE {
 
 			if (ImGui::Button("Create Animation"))
 			{
-				// this works
-				std::string path = "1po/whatever/Purring_Engine/Assets/Animations/name.json";
-
-				path = ".." + path.substr(path.find("/Assets/"), path.find(".") - path.find("/Assets/")) + "_Anim.json";
-				std::cout << path;
-
-
 				// Get the file path using the file explorer
 				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
-
-				// this doesnt
-				//filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + "_Anim.json";
-
-				std::cout << filePath << std::endl;
-				// Create a new animation
-				currentAnimationID =  AnimationManager::CreateAnimation(filePath);
-
-				// Serialize the current animation data to JSON
-				nlohmann::json serializedAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID)->ToJson();
 
 				// Check if filePath is not empty
 				if (!filePath.empty())
 				{
+					// format filepath to be relative to the Assets folder
+					std::replace(filePath.begin(), filePath.end(), '\\', '/');
+					filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + "_Anim.json";
+
+					// Create a new animation
+					currentAnimationID = AnimationManager::CreateAnimation(filePath);
+
+					// Serialize the current animation data to JSON
+					nlohmann::json serializedAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID)->ToJson();
+
 					serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
 					std::cout << "Animation created successfully at " << filePath << std::endl;
 				}
@@ -2568,9 +2561,7 @@ namespace PE {
 			{
 				if (currentAnimation)
 				{
-					std::string filePath = "../Assets/Animations/";
-					filePath += currentAnimation->GetAnimationID();
-					filePath += "_Anim.json";
+					std::string filePath = currentAnimation->GetAnimationID();
 
 					// Serialize the current animation data to JSON
 					nlohmann::json serializedAnimation = currentAnimation->ToJson();
@@ -2592,14 +2583,19 @@ namespace PE {
 			if (ImGui::Button("Load"))
 			{
 				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+				// Check if filePath is not empty
 				if (!filePath.empty())
 				{
 					nlohmann::json loadedAnimationData = serializationManager.LoadAnimationFromFile(filePath);
 
 					if (!loadedAnimationData.is_null())
 					{
-						currentAnimation = std::make_shared<Animation>(Animation::Deserialize(loadedAnimationData));
-						currentAnimationID = currentAnimation->GetAnimationID();
+						// create animation to load into
+						currentAnimationID = AnimationManager::CreateAnimation(loadedAnimationData["animationID"].get<std::string>());
+
+						currentAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID);
+						currentAnimation->Deserialize(loadedAnimationData);
 
 						// Update texture for preview
 						if (currentAnimation->GetSpriteSheetKey() != "")

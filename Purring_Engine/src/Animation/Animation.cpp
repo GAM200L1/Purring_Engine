@@ -211,13 +211,12 @@ namespace PE
 		return j;
 	}
 
-	Animation Animation::Deserialize(const nlohmann::json& j)
+	Animation& Animation::Deserialize(const nlohmann::json& j)
 	{
-		Animation anim;
-		anim.m_animationID = j["animationID"].get<std::string>();
-		anim.m_spriteSheetKey = j["spriteSheetKey"].get<std::string>();
-		anim.m_totalSprites = j["totalSprites"].get<unsigned>();
-		anim.m_animationDuration = j["animationDuration"].get<float>();
+		m_animationID = j["animationID"].get<std::string>();
+		m_spriteSheetKey = j["spriteSheetKey"].get<std::string>();
+		m_totalSprites = j["totalSprites"].get<unsigned>();
+		m_animationDuration = j["animationDuration"].get<float>();
 
 		for (const auto& frameJson : j["animationFrames"])
 		{
@@ -227,10 +226,10 @@ namespace PE
 			frame.m_maxUV.x = frameJson["maxUV"][0].get<float>(); // Assign x
 			frame.m_maxUV.y = frameJson["maxUV"][1].get<float>(); // Assign y
 			frame.m_duration = frameJson["duration"].get<float>();
-			anim.m_animationFrames.push_back(frame);
+			m_animationFrames.push_back(frame);
 		}
 
-		return anim;
+		return *this;
 	}
 
 	// AnimationManager
