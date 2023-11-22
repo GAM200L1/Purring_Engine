@@ -27,7 +27,10 @@
 #include "prpch.h"
 #include "CatScript.h"
 #include "CatAttackScript.h"
+#include "Data/SerializationManager.h"
 #include "ResourceManager/ResourceManager.h"
+
+extern SerializationManager serializationManager;
 
 namespace PE
 {
@@ -37,15 +40,15 @@ namespace PE
 		{
 				for (auto& [key, value] : m_scriptData)
 				{
-						delete value.m_stateManager;
+						delete value.p_stateManager;
 				}
 		}
 
 		// ----- Public Functions ----- //
 		void CatScript::Init(EntityID id)
 		{
-				m_scriptData[id].m_stateManager = new StateMachine{};
-				m_scriptData[id].m_stateManager->ChangeState(new CatAttackPLAN{}, id);
+				m_scriptData[id].p_stateManager = new StateMachine{};
+				m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
 
 				ResetValues(id);
 
@@ -54,11 +57,29 @@ namespace PE
 				CreateAttackTelegraphs(id, true, true); // west box
 				CreateAttackTelegraphs(id, false, false); // north box
 				CreateAttackTelegraphs(id, false, true); // south box
+
+				//! Creates an entity for the projectile
+				ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/Cat_Hairball_512px.png", "../Assets/Textures/Cat_Hairball_512px.png");
+				m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
 		}
 
 		void CatScript::Update(EntityID id, float deltaTime)
 		{
-				m_scriptData[id].m_stateManager->Update(id, deltaTime);
+				m_scriptData[id].p_stateManager->Update(id, deltaTime);
+
+				if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
+				{
+					if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
+					}
+				}
+				else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
+				{
+
+				}
 		}
 
 		void CatScript::OnAttach(EntityID id)
@@ -85,7 +106,7 @@ namespace PE
 				}
 				else
 				{
-						delete m_scriptData[id].m_stateManager;
+						delete m_scriptData[id].p_stateManager;
 						m_scriptData[id] = CatScriptData{};
 				}
 
@@ -114,7 +135,7 @@ namespace PE
 
 				if (m_scriptData.find(id) != m_scriptData.end())
 				{
-						delete m_scriptData[id].m_stateManager;
+						delete m_scriptData[id].p_stateManager;
 						m_scriptData.erase(id);
 				}
 		}
@@ -135,14 +156,6 @@ namespace PE
 		}
 
 		
-		/*!***********************************************************************************
-		 \brief Helper function for creating entities which are for the cat's attack telegraphs
-
-		 \param[in] id			EntityID of the cat which the telegraphs are for
-		 \param[in] isXAxis		bool to check if the box is elongated by its x Axis
-		 \param[in] isNegative	bool to check if the box is positioned on the west or south of the cat 
-								if it is lengthen by its width or height respectively
-		*************************************************************************************/
 		void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 		{
 				// create the east direction entity
@@ -152,7 +165,6 @@ namespace PE
 
 				EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id;
 				EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false;
-				//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false;
 
 				vec2 boxPositionOffset{ 0.f,0.f };
 				vec2 boxScaleOffset{ 1.f,1.f };
@@ -192,6 +204,34 @@ namespace PE
 				m_scriptData[id].telegraphIDs.emplace(dir, telegraphID);
 		}
 
+		void CatScript::CreateProjectile(EntityID id)
+		{
+			// create the east direction entity
+			EntityID projectileID = EntityFactory::GetInstance().CreateEntity<Transform, RigidBody, Collider, Graphics::Renderer, AnimationComponent>();
+
+			// bullet uses circle collider
+			EntityManager::GetInstance().Get<Collider>(projectileID).colliderVariant = CircleCollider();
+
+			// bullet will come from the cat entity
+			EntityManager::GetInstance().Get<EntityDescriptor>(projectileID).parent = id;
+
+			// not active until it is shot
+			EntityManager::GetInstance().Get<EntityDescriptor>(projectileID).isActive = false;
+
+			// load and set the texture of the bullet
+			std::string projectileTextureName = "../Assets/Textures/Cat_Hairball_512px.png";
+			ResourceManager::GetInstance().LoadTextureFromFile(projectileTextureName, projectileTextureName);
+			EntityManager::GetInstance().Get<Graphics::Renderer>(projectileID).SetTextureKey(projectileTextureName);
+
+			// makes the projectile half the size of the cat
+			EntityManager::GetInstance().Get<Transform>(projectileID).width = 0.5f * EntityManager::GetInstance().Get<Transform>(id).width;
+			EntityManager::GetInstance().Get<Transform>(projectileID).height = 0.5f * EntityManager::GetInstance().Get<Transform>(id).height;
+
+			// set rigidbody to dynamic
+			EntityManager::GetInstance().Get<RigidBody>(projectileID).SetType(EnumRigidBodyType::DYNAMIC);
+			EntityManager::GetInstance().Get<RigidBody>(projectileID).SetMass(m_scriptData[id].bulletForce);
+
+		}
 
 		/*!***********************************************************************************
 		 \brief Creates a path node to visualise the path drawn by the player.
@@ -211,11 +251,11 @@ namespace PE
 		*************************************************************************************/
 		void CatScript::ResetValues(EntityID id)
 		{
-				if (m_scriptData[id].m_stateManager->GetStateName() == "MovementPLAN")
+				if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
 				{
 
 				}
-				else if (m_scriptData[id].m_stateManager->GetStateName() == "AttackPLAN") 
+				else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN") 
 				{
 
 				}

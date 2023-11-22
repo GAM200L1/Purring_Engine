@@ -64,15 +64,15 @@ namespace PE
 		
 		// bullet variables
 		float bulletRange{ 3.f };
-		float bulletLifeTime{ 0.f };
-		float bulletForce{ 0.f };
+		float bulletLifeTime{ 1.f };
+		float bulletForce{ 6.f };
 
 		// movement variables
 		std::vector<vec2> pathPositions{};
 		std::vector<EntityID> pathQuads{};
 
 		// state manager
-		StateMachine* m_stateManager;
+		StateMachine* p_stateManager;
 	};
 
 
@@ -116,7 +116,20 @@ namespace PE
 	private:
 
 		// ----- Private Functions ----- //
+		
+		/*!***********************************************************************************
+		 \brief Helper function for creating entities which are for the cat's attack telegraphs
+
+		 \param[in] id			EntityID of the cat which the telegraphs are for
+		 \param[in] isXAxis		bool to check if the box is elongated by its x Axis
+		 \param[in] isNegative	bool to check if the box is positioned on the west or south of the cat
+								if it is lengthen by its width or height respectively
+		*************************************************************************************/
 		void CreateAttackTelegraphs(EntityID id, bool isSide, bool isNegative);
+
+
+		void CreateProjectile(EntityID id);
+
 
 		/*!***********************************************************************************
 		 \brief Creates a path node to visualise the path drawn by the player. 

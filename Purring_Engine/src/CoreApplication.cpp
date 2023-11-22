@@ -387,7 +387,7 @@ void PE::CoreApplication::Run()
         MemoryManager::GetInstance().CheckMemoryOver();
         
         // ----- UPDATE ----- //
-        
+
         // List of keys to check for FPS adjustment
         const int keys[] = { GLFW_KEY_1, GLFW_KEY_2, GLFW_KEY_3, GLFW_KEY_4, GLFW_KEY_5, GLFW_KEY_6, GLFW_KEY_7, GLFW_KEY_8 };
 
