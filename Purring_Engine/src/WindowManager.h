@@ -125,6 +125,7 @@ namespace PE
         void TestFunction(EntityID);
 
     private:
+        GLFWwindow* p_window;
         GLFWmonitor* p_monitor;
     };
 }
