@@ -352,6 +352,8 @@ namespace PE {
 
 			if (m_showGameView) ShowGameView(r_frameBuffer , &m_showGameView);
 
+			if (m_applyPrefab) ShowApplyWindow(&m_applyPrefab);
+
 			if (m_isPrefabMode && ImGui::IsKeyPressed(ImGuiKey_Escape))
 			{
 				ImGui::OpenPopup("Confirm Exit");
@@ -3018,6 +3020,7 @@ namespace PE {
 					//serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
 					//engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					ImGui::OpenPopup("ReqSave?");
+					m_applyPrefab = false;
 				}
 
 				ImGui::SameLine();
@@ -3036,9 +3039,13 @@ namespace PE {
 				{
 					ImGui::Text("Do you want to save your changes?");
 					ImGui::Separator();
+
+					ImGui::Separator();
+
 					if (ImGui::Selectable("Yes"))
 					{
 						auto save = serializationManager.SerializeEntityPrefab(1);
+						prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
 
 						std::ofstream outFile(prefabFP);
 						if (outFile)
@@ -3050,6 +3057,7 @@ namespace PE {
 						ClearObjectList();
 						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						m_applyPrefab = true;
 					}
 					//ImGui::SameLine();
 					ImGui::Separator();
@@ -3383,6 +3391,51 @@ namespace PE {
 
 		ImGui::End();
 
+	}
+
+	void Editor::ShowApplyWindow(bool* p_active)
+	{
+		if (prefabTP == "")
+		{
+			*p_active = false;
+		}
+		if (!ImGui::Begin("Modify Entities", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		{
+			*p_active = false;
+			ImGui::End(); //imgui close
+		}
+		else
+		{
+			ImGui::Text("Select what entities to apply the prefab to:");
+			ImGui::Separator();
+			static std::set<EntityID> modify;
+			for (const auto& id : SceneView())
+			{
+				if (prefabTP != "" && prefabTP == EntityManager::GetInstance().Get<EntityDescriptor>(id).prefabType)
+				{
+					bool tmp{ static_cast<bool>(modify.count(id)) };
+					ImGui::Checkbox((std::to_string(id) + ". " + EntityManager::GetInstance().Get<EntityDescriptor>(id).name).c_str(), &tmp);
+					if (tmp && !modify.count(id))
+						modify.emplace(id);
+					else if (!tmp && modify.count(id))
+						modify.erase(id);
+				}
+			}
+			ImGui::Separator();
+
+			if (ImGui::Button("Apply"))
+			{
+				// exectue the changes!!
+			}
+			ImGui::SameLine();
+			if (ImGui::Button("Cancel"))
+			{
+				*p_active = false;
+			}
+			// do some apply, set boolean to false
+
+			ImGui::End();
+		}
 	}
 
 	void Editor::AddLog(std::string_view text)

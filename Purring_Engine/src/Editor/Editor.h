@@ -223,6 +223,8 @@ namespace PE {
 		*************************************************************************************/
 		void ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
 
+		void ShowApplyWindow(bool*p_active);
+
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
@@ -330,7 +332,10 @@ namespace PE {
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;
+
 		bool m_isPrefabMode;
+		bool m_applyPrefab;
+
 
 		//variables for logging
 		std::vector<std::string> m_logOutput;
@@ -360,6 +365,7 @@ namespace PE {
 
 		// variable for prefab editor
 		std::string prefabFP;
+		std::string prefabTP;
 	};
 }
 
