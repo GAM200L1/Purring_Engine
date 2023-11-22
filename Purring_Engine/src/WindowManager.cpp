@@ -77,8 +77,17 @@ namespace PE
 	*************************************************************************************/
 	GLFWwindow* WindowManager::InitWindow(int width, int height, const char* p_title)
 	{
+#ifndef GAMERELEASE
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
+#else
+		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, p_title, glfwGetPrimaryMonitor(), nullptr);
+
+		p_monitor = glfwGetWindowMonitor(window);
+		p_window = window;
+#endif
 		GameStateManager::GetInstance().p_window = window;
+
 		if (!window)
 		{
 			std::cerr << "Failed to create GLFW window." << std::endl;
@@ -183,7 +192,26 @@ namespace PE
 #endif
 				}
 			}
+#ifdef GAMERELEASE
+			static bool fs{};
+			//only on game release be able to change fullscreen
+			if (ev.keycode == GLFW_KEY_F11)
+			{
+				const GLFWvidmode* mode = glfwGetVideoMode(p_monitor);
 
+				if (!fs) 
+				{
+					glfwSetWindowMonitor(p_window, NULL, 30, 30, 1920, 1080, 0);
+					fs = !fs;
+				}
+				else
+				{
+
+					glfwSetWindowMonitor(p_window, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+					fs = !fs;
+				}
+			}
+#endif
 			//// Movement
 			//if (ev.keycode == GLFW_KEY_W)
 			//{
@@ -276,11 +304,11 @@ namespace PE
 	 \param[in] fps     Current frames per second to be displayed in the window title.
 	 \return void       Does not return a value.
 	*************************************************************************************/
-	void WindowManager::UpdateTitle(GLFWwindow* p_window, double fps)
+	void WindowManager::UpdateTitle(GLFWwindow* window, double fps)
 	{
 		std::ostringstream titleStream;
 		titleStream << "Purring Engine | FPS: " << static_cast<int>(fps);
-		glfwSetWindowTitle(p_window, titleStream.str().c_str());
+		glfwSetWindowTitle(window, titleStream.str().c_str());
 	}
 
 

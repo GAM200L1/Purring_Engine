@@ -98,13 +98,16 @@ namespace PE
 #endif
 
 		sceneRunning = true;
+#ifndef GAMERELEASE
 		if (!Editor::GetInstance().IsEditorActive())
 		{
+#endif
 			// In normal physics simulation mode
 			if (!m_applyStepPhysics)
 			{
 				UpdateDynamics(deltaTime);
 			}
+#ifndef GAMERELEASE
 			else
 			{
 				// Applies Step Physics
@@ -114,7 +117,9 @@ namespace PE
 					m_advanceStep = false;
 				}
 			}
+
 		}
+#endif
 	}
 
 	void PhysicsManager::DestroySystem()
