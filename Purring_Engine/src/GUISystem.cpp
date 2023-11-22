@@ -62,6 +62,15 @@ namespace PE
 				//gui.m_onClicked = "TestFunction";
 				gui.Update();
 				//gui.m_onClicked = m_uiFunc.at("ButtonFunctionOne").target<void()>();
+
+				if (gui.disabled)
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
+					continue;
+				}
+
+
 				if (gui.m_UIType == UIType::Button)
 				{
 					Button btn = UI_CAST(Button, gui);
@@ -109,6 +118,8 @@ namespace PE
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
+				if (gui.disabled)
+					continue;
 				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
 				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
 
@@ -152,7 +163,8 @@ namespace PE
 			//get the components
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
-
+			if (gui.disabled)
+				continue;
 			double mouseX{ static_cast<double>(MME.x) }, mouseY{ static_cast<double>(MME.y) };
 			InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
 
