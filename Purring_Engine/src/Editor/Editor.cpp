@@ -2340,6 +2340,20 @@ namespace PE {
 			int entityIndex{};
 			int animationIndex{};
 
+			// animation data
+			static float previewCurrentFrameTime;
+			static unsigned previewCurrentFrameIndex;
+			std::shared_ptr<Graphics::Texture> texture;
+			std::shared_ptr<Animation> currentAnimation;
+			int frameCount{};
+
+			// frame data
+			float frameTime{};
+			ImVec2 minUV;
+			ImVec2 maxUV;
+
+			static bool playAnimation{ false };
+
 
 			// get all the entities with animation component
 			for (EntityID id : SceneView<AnimationComponent>())
@@ -2387,28 +2401,40 @@ namespace PE {
 
 			if (ImGui::Button("Create Animation"))
 			{
-				if (currentEntityID.has_value())
+				// this works
+				std::string path = "1po/whatever/Purring_Engine/Assets/Animations/name.json";
+
+				path = ".." + path.substr(path.find("/Assets/"), path.find(".") - path.find("/Assets/")) + "_Anim.json";
+				std::cout << path;
+
+
+				// Get the file path using the file explorer
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+				// this doesnt
+				//filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + "_Anim.json";
+
+				std::cout << filePath << std::endl;
+				// Create a new animation
+				currentAnimationID =  AnimationManager::CreateAnimation(filePath);
+
+				// Serialize the current animation data to JSON
+				nlohmann::json serializedAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID)->ToJson();
+
+				// Check if filePath is not empty
+				if (!filePath.empty())
 				{
-					EntityManager::GetInstance().Get<AnimationComponent>(currentEntityID.value()).AddAnimationToComponent(currentAnimationID);
+					serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
+					std::cout << "Animation created successfully at " << filePath << std::endl;
+				}
+				else
+				{
+					std::cerr << "No file path was selected for saving." << std::endl;
 				}
 			}
 
 			ImGui::Dummy(ImVec2(0, 5));
 			ImGui::SeparatorText("Sprite Sheet");
-
-			// animation data
-			static float previewCurrentFrameTime;
-			static unsigned previewCurrentFrameIndex;
-			std::shared_ptr<Graphics::Texture> texture;
-			std::shared_ptr<Animation> currentAnimation;
-			int frameCount{};
-
-			// frame data
-			float frameTime{};
-			ImVec2 minUV;
-			ImVec2 maxUV;
-
-			static bool playAnimation{ false };
 
 			// if there's animation to preview
 			if (currentAnimationID != "")
@@ -2542,11 +2568,12 @@ namespace PE {
 			{
 				if (currentAnimation)
 				{
+					std::string filePath = "../Assets/Animations/";
+					filePath += currentAnimation->GetAnimationID();
+					filePath += "_Anim.json";
+
 					// Serialize the current animation data to JSON
 					nlohmann::json serializedAnimation = currentAnimation->ToJson();
-
-					// Get the file path using the file explorer
-					std::string filePath = serializationManager.OpenFileExplorerRequestPath();
 
 					// Check if filePath is not empty
 					if (!filePath.empty())
