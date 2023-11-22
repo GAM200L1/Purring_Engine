@@ -289,6 +289,14 @@ namespace PE
 		void Remove(EntityID id);
 
 		/*!***********************************************************************************
+		 \brief Removes a component from an entity
+
+		 \param[in] r_cID 		Component to remove
+		 \param[in] id 			Entity to remove
+		*************************************************************************************/
+		void Remove(EntityID id, const ComponentID& r_cID);
+
+		/*!***********************************************************************************
 		 \brief Removes an entity
 		 
 		 \param[in] id Entity to remove
@@ -407,7 +415,7 @@ namespace PE
 				}
 				for (const auto& pool : m_poolsEntity)
 				{
-					if ((std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					if (pool.first != ALL && (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
 					{
 						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
 					}
@@ -545,21 +553,42 @@ namespace PE
 		if (!Has<T>(id))
 			return; // log in the future
 		const ComponentID componentID = GetComponentID<T>();
-		size_t lastEntID = (*std::prev(m_componentPools[componentID]->m_idxMap.end())).first;
-		size_t poolID = m_componentPools[componentID]->m_idxMap[id];
-		if (m_componentPools[componentID]->m_idxMap.size() > 1)
+		size_t lastEntID = (*std::prev(m_componentPools[componentID]->idxMap.end())).first;
+		size_t poolID = m_componentPools[componentID]->idxMap[id];
+		if (lastEntID != id && m_componentPools[componentID]->idxMap.size() > 1)
 		{
 			std::swap(Get<T>(id), Get<T>(lastEntID));
 		}
 		// remove the current component, and the last component from the map
-		m_componentPools[componentID]->remove(id);
-		m_componentPools[componentID]->remove(lastEntID);
-		// re-empalce the "last" entity inplace to the existing id's position
-		m_componentPools[componentID]->m_idxMap.emplace(lastEntID, poolID);
-		--(m_componentPools[componentID]->m_size);
+		m_componentPools[componentID]->Remove(id);
+		if (lastEntID != id)
+		{
+			m_componentPools[componentID]->Remove(lastEntID);
+			// re-empalce the "last" entity inplace to the existing id's position
+			m_componentPools[componentID]->idxMap.emplace(lastEntID, poolID);
+		}
+		--(m_componentPools[componentID]->size);
 		UpdateVectors(id, false);
 	}
 
+	//void EntityManager::Remove(EntityID id, const ComponentID& r_cID)
+	//{
+	//	if (!Has(id, r_cID))
+	//		return; // log in the future
+	//	size_t lastEntID = (*std::prev(m_componentPools[r_cID]->idxMap.end())).first;
+	//	size_t poolID = m_componentPools[r_cID]->idxMap[id];
+	//	if (m_componentPools[r_cID]->idxMap.size() > 1)
+	//	{
+	//		std::swap(Get(id), Get<T>(lastEntID));
+	//	}
+	//	// remove the current component, and the last component from the map
+	//	m_componentPools[r_cID]->Remove(id);
+	//	m_componentPools[r_cID]->Remove(lastEntID);
+	//	// re-empalce the "last" entity inplace to the existing id's position
+	//	m_componentPools[r_cID]->idxMap.emplace(lastEntID, poolID);
+	//	--(m_componentPools[r_cID]->size);
+	//	UpdateVectors(id, false);
+	//}
 	/*!***********************************************************************************
 	 \brief Entity descriptor struct, used for idenifying/holding various useful data
 
