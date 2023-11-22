@@ -98,8 +98,10 @@ namespace PE
 #endif
 
 		sceneRunning = true;
+#ifndef GAMERELEASE
 		if (!Editor::GetInstance().IsEditorActive())
 		{
+#endif
 			// In normal physics simulation mode
 			if (!m_applyStepPhysics)
 			{
@@ -114,7 +116,10 @@ namespace PE
 					m_advanceStep = false;
 				}
 			}
+
+#ifndef GAMERELEASE
 		}
+#endif
 	}
 
 	void PhysicsManager::DestroySystem()

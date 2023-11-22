@@ -109,7 +109,7 @@ namespace PE
          \param [In,out] x x-coordinate in window coordinates
          \param [In,out] y y-coordinate in window coordinates
         *************************************************************************************/
-        void static GetCursorViewportPosition(GLFWwindow* window, double& x, double& y);
+        void static GetCursorViewportPosition(GLFWwindow* window, float& x, float& y);
         /*!***********************************************************************************
          \brief To set the buffer time before counting a key press as hold
          \param [In] float buffer time
@@ -133,7 +133,7 @@ namespace PE
          \param [In] x x-coordinate in window coordinates
          \param [In] y y-coordinate in window coordinates
         *************************************************************************************/
-        void static ConvertGLFWToTransform(GLFWwindow* window, double& x, double& y);
+        void static ConvertGLFWToTransform(GLFWwindow* window, float& x, float& y);
 
 
         // ----- Private Variables ----- // 

@@ -123,13 +123,17 @@ namespace PE
 		if(gridActive)
 			m_grid.UpdateGrid();
 
+#ifndef GAMERELEASE
 		if (!Editor::GetInstance().IsEditorActive())
 		{
+#endif
 			// Test for Collisions in the scene
 			TestColliders();
 			// Resolve the positions and velocities of the entities
 			ResolveCollision();
+#ifndef GAMERELEASE
 		}
+#endif
 	}
 
 	void CollisionManager::DestroySystem()

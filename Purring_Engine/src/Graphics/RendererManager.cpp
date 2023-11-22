@@ -61,8 +61,8 @@ namespace PE
         // Initialize static variables
         std::vector<EntityID> RendererManager::renderedEntities{};
 
-        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
-            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
+        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, int const windowWidth, int const windowHeight)
+            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
         {
             // Initialize GLEW
             if (glewInit() != GLEW_OK)
@@ -175,11 +175,22 @@ namespace PE
 #ifndef GAMERELEASE
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
-#endif // !GAMERELEASE
 
-                // Update the ui camera viewport size
-                r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+                if (Editor::GetInstance().IsEditorActive())
+                {
+                    // Update the ui camera viewport size
+                    r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+                }
+#endif // !GAMERELEASE
             }
+
+#ifndef GAMERELEASE
+            if (!Editor::GetInstance().IsEditorActive())
+            {
+                // Update the ui camera viewport size
+                r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
+            }
+#endif // !GAMERELEASE
 
             // Clear the texture object
             m_renderFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);

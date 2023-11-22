@@ -210,6 +210,25 @@ namespace PE
         }
 
 
+        vec2 CameraManager::GetUiWindowToScreenPosition(float const x, float const y)
+        {
+            // Get the UI camera
+#ifndef GAMERELEASE
+                // Get the size of the render window
+            float editorWindowSizeX{}, editorWindowSizeY{};
+            Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+
+            // Adjust scale of the position
+            vec2 ret{ x * GetUiCamera().GetViewportWidth() / editorWindowSizeX, y * GetUiCamera().GetViewportHeight() / editorWindowSizeY };
+            ret.y += Editor::GetInstance().GetPlayWindowOffset();
+#else
+            vec2 ret{ x * GetUiCamera().GetViewportWidth() / m_windowWidth, y * GetUiCamera().GetViewportHeight() / m_windowHeight};
+#endif // !GAMERELEASE
+
+            return ret;
+        }
+
+
 
         bool CameraManager::SetMainCamera(EntityID const cameraEntityId)            
         {

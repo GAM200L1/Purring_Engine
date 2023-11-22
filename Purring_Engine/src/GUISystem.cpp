@@ -21,6 +21,7 @@
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
 #include "Input/InputSystem.h"
+#include "Graphics/CameraManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -109,8 +110,10 @@ namespace PE
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
-				double mouseX{ static_cast<double>(MBPE.x) }, mouseY{ static_cast<double>(MBPE.y) };
+				float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
 				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
+				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
+				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
 				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 					continue;
@@ -153,8 +156,10 @@ namespace PE
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 
-			double mouseX{ static_cast<double>(MME.x) }, mouseY{ static_cast<double>(MME.y) };
+			float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
 			InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
+			mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
+			mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
 			//check mouse coordinate against transform here
 			if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
