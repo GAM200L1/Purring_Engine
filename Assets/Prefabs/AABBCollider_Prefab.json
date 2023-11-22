@@ -24,6 +24,7 @@
                 "type": "AABBCollider"
             },
             "EntityDescriptor": {
+                "Prefab Type": "a",
                 "children": [],
                 "isActive": true,
                 "name": "AABB_tst2345",

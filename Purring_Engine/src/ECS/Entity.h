@@ -612,7 +612,7 @@ namespace PE
 
 		bool isActive{ true }; // defaults to true
 
-		std::string prefabName{ "" };
+		std::string prefabType{ "" };
 
 		/*!***********************************************************************************
 		 \brief Serializes this struct into a json file

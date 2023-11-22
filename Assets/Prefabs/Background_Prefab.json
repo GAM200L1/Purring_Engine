@@ -2,6 +2,7 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
+                "Prefab Type": "Background",
                 "children": [],
                 "isActive": true,
                 "name": "Background",
