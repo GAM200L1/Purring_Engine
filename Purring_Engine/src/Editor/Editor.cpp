@@ -929,9 +929,9 @@ namespace PE {
 		{
 			if (ImGui::BeginChild("GameComponentList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar | (IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs)))
 			{
-				if (m_objectIsSelected)
+				if (m_objectIsSelected || m_isPrefabMode)
 				{
-					EntityID entityID = m_currentSelectedObject;
+					EntityID entityID = (m_isPrefabMode)? 1 : m_currentSelectedObject;
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
 					bool hasScripts = false;
@@ -1066,7 +1066,7 @@ namespace PE {
 						// ---------- TRANSFORM ---------- //
 
 
-						if (name == EntityManager::GetInstance().GetComponentID<Transform>())
+						if (name == EntityManager::GetInstance().GetComponentID<Transform>() && EntityManager::GetInstance().Has<Transform>(entityID))
 						{
 							ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
 
@@ -1189,7 +1189,7 @@ namespace PE {
 						// ---------- RIGID BODY ---------- //
 
 
-						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>())
+						if (name == EntityManager::GetInstance().GetComponentID<RigidBody>() && EntityManager::GetInstance().Has<RigidBody>(entityID))
 						{
 							if (ImGui::CollapsingHeader("RigidBody", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
@@ -1254,7 +1254,7 @@ namespace PE {
 						// ---------- COLLIDER ---------- //
 						
 
-						if (name == EntityManager::GetInstance().GetComponentID<Collider>())
+						if (name == EntityManager::GetInstance().GetComponentID<Collider>() && EntityManager::GetInstance().Has<Collider>(entityID))
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							if (ImGui::CollapsingHeader("Collider", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1344,7 +1344,7 @@ namespace PE {
 										EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.y = std::abs(offset2.y);
 										EntityManager::GetInstance().Get<Collider>(entityID).colliderVariant._Storage()._Get().scaleOffset.x = std::abs(offset2.x);
 									}
-									ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(m_currentSelectedObject).isTrigger);
+									ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(entityID).isTrigger);
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								}
 							}
@@ -1353,7 +1353,7 @@ namespace PE {
 						// ---------- RENDERER ---------- //
 
 
-						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
+						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() && EntityManager::GetInstance().Has<Graphics::Renderer>(entityID))
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							if (ImGui::CollapsingHeader("Renderer", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1466,7 +1466,7 @@ namespace PE {
 						// ---------- GUI RENDERER ---------- //
 
 
-						if (name == EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>())
+						if (name == EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>() && EntityManager::GetInstance().Has<Graphics::GUIRenderer>(entityID))
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							if (ImGui::CollapsingHeader("GUIRenderer", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1582,7 +1582,7 @@ namespace PE {
 						// ---------- SCRIPT COMPONENT ---------- //
 						
 
-						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>())
+						if (name == EntityManager::GetInstance().GetComponentID<ScriptComponent>() && EntityManager::GetInstance().Has<ScriptComponent>(entityID))
 						{
 							hasScripts = true;
 							if (ImGui::CollapsingHeader("ScriptComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1681,7 +1681,7 @@ namespace PE {
 						// ---------- GUI ---------- //
 
 
-						if (name == EntityManager::GetInstance().GetComponentID<GUI>())
+						if (name == EntityManager::GetInstance().GetComponentID<GUI>() && EntityManager::GetInstance().Has<GUI>(entityID))
 						{
 							if (ImGui::CollapsingHeader("GUIComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
@@ -1896,7 +1896,7 @@ namespace PE {
 						// ---------- CAMERA ---------- //
 
 
-						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) {
+						if (name == EntityManager::GetInstance().GetComponentID<Graphics::Camera>() && EntityManager::GetInstance().Has<Graphics::Camera>(entityID)) {
 							if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								Graphics::Camera& cameraComponent{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID) };
@@ -1926,7 +1926,7 @@ namespace PE {
 						}
 
 						// Animation component
-						if (name == EntityManager::GetInstance().GetComponentID<AnimationComponent>())
+						if (name == EntityManager::GetInstance().GetComponentID<AnimationComponent>() && EntityManager::GetInstance().Has<AnimationComponent>(entityID))
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							if (ImGui::CollapsingHeader("Animation", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -2005,7 +2005,7 @@ namespace PE {
 
 						// ---------- Text Component ---------- //
 
-						if (name == EntityManager::GetInstance().GetComponentID<TextComponent>())
+						if (name == EntityManager::GetInstance().GetComponentID<TextComponent>() && EntityManager::GetInstance().Has<TextComponent>(entityID))
 						{
 							if (ImGui::CollapsingHeader("Text", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
@@ -2464,35 +2464,51 @@ namespace PE {
 					{
 						if (ImGui::Selectable("Modify Prefab"))
 						{
+							
 							engine_logger.AddLog(false, "Enterting PreFabEditorMode...", __FUNCTION__);
-							prefabFP = m_files[n].string();
-							m_isPrefabMode = true;
-							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-							// This will save all entities to a file
-							for (const auto& id : SceneView<EntityDescriptor>())
+							prefabFP = (m_isPrefabMode)? prefabFP : m_files[n].string();
+
+							if (!m_isPrefabMode)
 							{
-								if (!id) // skip editor camera
-									continue;
-								EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-								for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+								m_isPrefabMode = true;
+								engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+								// This will save all entities to a file
+								for (const auto& id : SceneView<EntityDescriptor>())
 								{
-									if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-									{
-										desc.sceneID = i;
+									if (!id) // skip editor camera
 										continue;
+									EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+									for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+									{
+										if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+										{
+											desc.sceneID = i;
+											continue;
+										}
+									}
+									if (desc.parent)
+									{
+										EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
 									}
 								}
-								if (desc.parent)
-								{
-									EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-								}
+								serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+								
 							}
-							serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
-							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+							else
+							{
+								auto save = serializationManager.SerializeEntityPrefab(1);
+								std::ofstream outFile(prefabFP);
+								if (outFile)
+								{
+									outFile << save.dump(4);
+									outFile.close();
+								}
+								prefabFP = m_files[n].string();
+							}
 							ClearObjectList();
 							engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
 							serializationManager.LoadFromFile(prefabFP);
-							
 						}
 						ImGui::EndPopup();
 					}
@@ -2722,51 +2738,72 @@ namespace PE {
 					if (ImGui::BeginMainMenuBar())
 					{
 						//menu 1
-						if (ImGui::BeginMenu("Scenes"))
+						if (ImGui::BeginMenu("File"))
 						{
-							if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
+							if (m_isPrefabMode)
 							{
-								engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-								// This will save all entities to a file
-								for (const auto& id : SceneView<EntityDescriptor>())
+								if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 								{
-									if (!id) // skip editor camera
-										continue;
-									EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-									for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+									engine_logger.AddLog(false, "Attempting to save prefab entities to file...", __FUNCTION__);
+									
+									auto save = serializationManager.SerializeEntityPrefab(1);
+
+									std::ofstream outFile(prefabFP);
+									if (outFile)
 									{
-										if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-										{
-											desc.sceneID = i;
+										outFile << save.dump(4);
+										outFile.close();
+									}
+
+									engine_logger.AddLog(false, "Prefab saved successfully to file.", __FUNCTION__);
+								}
+							}
+							else
+							{
+								if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
+								{
+									engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+									// This will save all entities to a file
+									for (const auto& id : SceneView<EntityDescriptor>())
+									{
+										if (!id) // skip editor camera
 											continue;
+										EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+										for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
+										{
+											if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
+											{
+												desc.sceneID = i;
+												continue;
+											}
+										}
+										if (desc.parent)
+										{
+											EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
 										}
 									}
-									if (desc.parent)
+									serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath());
+									engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+								}
+								if (ImGui::MenuItem("Load"))
+								{
+									engine_logger.AddLog(false, "Opening file explorer to load entities...", __FUNCTION__);
+
+									// Invoke the file explorer and allow user to choose a JSON file for loading entities.
+									std::string filePath = serializationManager.OpenFileExplorer();
+									if (!filePath.empty())
 									{
-										EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
+										engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
+
+										// This will load all entities from the file
+										ClearObjectList();
+										serializationManager.LoadAllEntitiesFromFile(filePath);
+										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 									}
-								}
-								serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath());
-								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
-							}
-							if (ImGui::MenuItem("Load"))
-							{
-								engine_logger.AddLog(false, "Opening file explorer to load entities...", __FUNCTION__);
-
-								// Invoke the file explorer and allow user to choose a JSON file for loading entities.
-								std::string filePath = serializationManager.OpenFileExplorer();
-								if (!filePath.empty())
-								{
-									engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
-
-									// This will load all entities from the file
-									ClearObjectList();
-									serializationManager.LoadAllEntitiesFromFile(filePath);
-									engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-								}
-								else
-								{
-									engine_logger.AddLog(false, "File path is empty. Aborted loading entities.", __FUNCTION__);
+									else
+									{
+										engine_logger.AddLog(false, "File path is empty. Aborted loading entities.", __FUNCTION__);
+									}
 								}
 							}
 							ImGui::EndMenu();
@@ -2967,19 +3004,22 @@ namespace PE {
 
 				if (ImGui::Button("Return"))
 				{
-					auto save = serializationManager.SerializeEntityPrefab(1);
 
-					std::ofstream outFile(prefabFP);
-					if (outFile)
-					{
-						outFile << save.dump(4);
-						outFile.close();
-					}
-					m_isPrefabMode = false;
-					ClearObjectList();
-					serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-					engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+					//auto save = serializationManager.SerializeEntityPrefab(1);
+
+					//std::ofstream outFile(prefabFP);
+					//if (outFile)
+					//{
+					//	outFile << save.dump(4);
+					//	outFile.close();
+					//}
+					//m_isPrefabMode = false;
+					//ClearObjectList();
+					//serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+					//engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+					ImGui::OpenPopup("ReqSave?");
 				}
+
 				ImGui::SameLine();
 				if (ImGui::Button(" Save "))
 				{
@@ -2991,6 +3031,36 @@ namespace PE {
 						outFile << save.dump(4);
 						outFile.close();
 					}
+				}
+				if (ImGui::BeginPopup/*Modal*/("ReqSave?"))
+				{
+					ImGui::Text("Do you want to save your changes?");
+					ImGui::Separator();
+					if (ImGui::Selectable("Yes"))
+					{
+						auto save = serializationManager.SerializeEntityPrefab(1);
+
+						std::ofstream outFile(prefabFP);
+						if (outFile)
+						{
+							outFile << save.dump(4);
+							outFile.close();
+						}
+						m_isPrefabMode = false;
+						ClearObjectList();
+						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+					}
+					//ImGui::SameLine();
+					ImGui::Separator();
+					if (ImGui::Selectable("No"))
+					{
+						m_isPrefabMode = false;
+						ClearObjectList();
+						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+					}
+					ImGui::EndPopup();
 				}
 			}
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));

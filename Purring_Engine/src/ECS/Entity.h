@@ -382,7 +382,7 @@ namespace PE
 		 \param[in] id 	ID of the entity to handle
 		 \param[in] add Add or remove flag, true = add, false = remove from pool
 		*************************************************************************************/
-		void UpdateVectors(EntityID id, bool add = true)
+		void UpdateVectors(EntityID id, bool add = true, ComponentID comp = ALL)
 		{
 			if (add)
 			{
@@ -413,11 +413,14 @@ namespace PE
 				{
 					m_poolsEntity[ALL].erase(std::remove(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id), m_poolsEntity[ALL].end());
 				}
-				for (const auto& pool : m_poolsEntity)
+				for (auto& pool : m_poolsEntity)
 				{
-					if (pool.first != ALL && (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					if (comp == ALL || (pool.first & comp).any())
 					{
-						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
+						if (pool.first != ALL && (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+						{
+							m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
+						}
 					}
 				}
 			}
@@ -568,7 +571,7 @@ namespace PE
 			m_componentPools[componentID]->idxMap.emplace(lastEntID, poolID);
 		}
 		--(m_componentPools[componentID]->size);
-		UpdateVectors(id, false);
+		UpdateVectors(id, false, componentID);
 	}
 
 	//void EntityManager::Remove(EntityID id, const ComponentID& r_cID)
