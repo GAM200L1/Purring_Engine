@@ -251,9 +251,6 @@ nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
     return ret;
 }
 
-
-
-
 size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
 {
     StructEntity entity;
@@ -341,6 +338,23 @@ size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
         return MAXSIZE_T;
     }
 }
+
+nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem::path& filepath)
+{
+    nlohmann::json loadedData;
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        inFile >> loadedData;
+        inFile.close();
+    }
+    else {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+    }
+    return loadedData;
+}
+
+
 
 void SerializationManager::LoadLoaders()
 {

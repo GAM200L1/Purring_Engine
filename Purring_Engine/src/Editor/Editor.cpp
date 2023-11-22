@@ -2319,6 +2319,9 @@ namespace PE {
 
 	void Editor::ShowAnimationWindow(bool* p_active)
 	{
+		int totalSprites{};
+		float animationDuration{};
+
 		if (IsEditorActive())
 		if (!ImGui::Begin("Animation Editor", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
@@ -2471,7 +2474,7 @@ namespace PE {
 			{
 				// if theres a spritesheet texture
 				if (texture)
-					ImGui::Image((void*)(intptr_t)texture->GetTextureID(), ImVec2{ 100,100 }, minUV, maxUV);
+					ImGui::Image((void*)(intptr_t)texture->GetTextureID(), ImVec2{ 100, 100 }, minUV, maxUV);
 				ImGui::EndChild();
 			}
 
@@ -2558,6 +2561,52 @@ namespace PE {
 				}
 			}
 
+			ImGui::SameLine();
+			if (ImGui::Button("Load"))
+			{
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+				if (!filePath.empty())
+				{
+					nlohmann::json loadedAnimationData = serializationManager.LoadAnimationFromFile(filePath);
+
+					if (!loadedAnimationData.is_null())
+					{
+						currentAnimation = std::make_shared<Animation>(Animation::Deserialize(loadedAnimationData));
+						currentAnimationID = currentAnimation->GetAnimationID();
+
+						// Update texture for preview
+						if (currentAnimation->GetSpriteSheetKey() != "")
+						{
+							texture = ResourceManager::GetInstance().GetTexture(currentAnimation->GetSpriteSheetKey());
+						}
+
+						// Set preview frame data to first frame of the loaded animation
+						previewCurrentFrameIndex = 0; // Reset to first frame
+						frameCount = currentAnimation->GetFrameCount();
+						animationDuration = currentAnimation->GetAnimationDuration();
+						frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+						minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
+						maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+
+						//// debugging code- hans
+						//std::cout << "Loaded Animation Data:\n" << loadedAnimationData.dump(4) << std::endl;
+					}
+					else
+					{
+						std::cerr << "Failed to load animation data from file." << std::endl;
+					}
+				}
+				else
+				{
+					std::cerr << "No file path was selected for loading." << std::endl;
+				}
+			}
+
+
+
+
 			ImGui::Dummy(ImVec2(0, 5));
 			ImGui::SeparatorText("Animation Properties");
 			ImGui::Columns(2, "TwoSections", true);
@@ -2586,8 +2635,7 @@ namespace PE {
 			static bool looped{};
 			ImGui::Checkbox("##looped", &looped);
 
-			int totalSprites{};
-			float animationDuration{};
+
 
 			if (currentAnimation)
 			{
@@ -3581,5 +3629,11 @@ namespace PE {
 		colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
 		colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
 		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
+	}
+
+	std::string GenerateTimestampID() {
+		auto now = std::chrono::system_clock::now();
+		auto now_c = std::chrono::system_clock::to_time_t(now);
+		return std::to_string(now_c);
 	}
 }

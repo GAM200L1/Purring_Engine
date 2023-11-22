@@ -129,6 +129,9 @@ public:
     *************************************************************************************/
     size_t LoadFromFile(const std::filesystem::path& filepath);
 
+    nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
+
+
     /*!************************************************************************
      \brief Serializes an entity's component to JSON.
 
