@@ -82,6 +82,9 @@ namespace PE
 			{	
 				for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 				{
+					// if the entity is not active, do not update physics
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
+
 					RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
 					rb.ZeroForce();
 					rb.velocity.Zero();
@@ -95,18 +98,21 @@ namespace PE
 #endif
 
 		sceneRunning = true;
-		// In normal physics simulation mode
-		if (!m_applyStepPhysics)
+		if (!Editor::GetInstance().IsEditorActive())
 		{
-			UpdateDynamics(deltaTime);
-		}
-		else
-		{
-			// Applies Step Physics
-			if (m_advanceStep)
+			// In normal physics simulation mode
+			if (!m_applyStepPhysics)
 			{
 				UpdateDynamics(deltaTime);
-				m_advanceStep = false;
+			}
+			else
+			{
+				// Applies Step Physics
+				if (m_advanceStep)
+				{
+					UpdateDynamics(deltaTime);
+					m_advanceStep = false;
+				}
 			}
 		}
 	}
@@ -123,6 +129,9 @@ namespace PE
 	{
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
+			// if the entity is not active, do not check for collision
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
+			
 			RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(RigidBodyID);
 
