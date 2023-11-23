@@ -58,6 +58,7 @@ namespace PE
 			delete a;			
 		}
 		m_undoStack.clear();
+		m_currentcount=0;
 	}
 
 	UndoStack::~UndoStack()
