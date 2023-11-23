@@ -114,7 +114,7 @@ namespace PE
 					CatScript::ToggleEntity(boxID, false);
 			}
 		}
-		else if (m_mouseClick && !m_showBoxes && p_data->attackDirection == 0)
+		else if (m_mouseClick && m_showBoxes && p_data->attackDirection == 0)
 		{
 			m_showBoxes = false;
 		}
