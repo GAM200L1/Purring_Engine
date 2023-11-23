@@ -142,7 +142,7 @@ namespace PE
 
 				// Get the distance of the proposed position from the last node in the path
 				float distanceOfPosition{ p_data->pathPositions.back().Distance(r_position) };
-				if (distanceOfPosition < p_data->maxDistance)
+				if (distanceOfPosition > p_data->maxDistance)
 				{
 						// Compute the direction of the proposed position from the last node in the path
 						vec2 directionOfProposed{ (r_position - p_data->pathPositions.back()).GetNormalized() };
