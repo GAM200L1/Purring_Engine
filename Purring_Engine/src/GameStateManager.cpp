@@ -46,12 +46,49 @@ namespace PE
 				DeleteMenu();
 			}
 
+
+			//pause menu
+
 			pauseBGID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/pausebg_Prefab.json");
 			resumeButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/resumegamebutton_Prefab.json");
 			howToPlayButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/howtoplaybutton_Prefab.json");
 			quitButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/quitgamebutton_Prefab.json");
 			pawsedID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/pawsed_Prefab.json");
 
+			EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).toSave = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(pauseBGID).toSave = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).toSave = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).toSave = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).toSave = false;
+
+
+
+			//how to play//
+
+			howToPlayID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/howtoplayobj_Prefab.json");
+			returnButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/returnbutton_Prefab.json");
+
+
+			EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = false;
+
+			EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).toSave = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).toSave = false;
+
+			//are you sure
+
+			areYouSureID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/areyousure_Prefab.json");
+			yesButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/Yes_Prefab.json");
+			noButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/No_Prefab.json");
+
+
+			EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = false;
+
+			EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).toSave = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).toSave = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).toSave = false;
 		}
 		//SerializationManager serializationManager;
 		//serializationManager.LoadAllEntitiesFromFile("..Assets/Prefabs/PauseMenu_Prefab.json");
@@ -136,13 +173,10 @@ namespace PE
 	void GameStateManager::InactiveMenuButtons()
 	{
 		EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).isActive = false;
-		EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).toSave = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).isActive = false;
-		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).toSave = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = false;
-		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).toSave = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = false;
-		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).toSave = false;
+
 	}
 
 	void GameStateManager::InactiveMenu()
@@ -158,58 +192,68 @@ namespace PE
 	{
 
 		EntityManager::GetInstance().RemoveEntity(pauseBGID);
-
-
 		EntityManager::GetInstance().RemoveEntity(howToPlayButtonID);
-
-
 		EntityManager::GetInstance().RemoveEntity(quitButtonID);
-
-
 		EntityManager::GetInstance().RemoveEntity(resumeButtonID);
-
-
 		EntityManager::GetInstance().RemoveEntity(pawsedID);
+
+		if (htp)
+		{
+			EntityManager::GetInstance().RemoveEntity(howToPlayID);
+			EntityManager::GetInstance().RemoveEntity(returnButtonID);
+
+			htp = false;
+		}
 	}
 
-	void GameStateManager::ActiveMenu()
+	void GameStateManager::ActiveMenuButtons()
 	{
-		EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).isActive = false;
-		EntityManager::GetInstance().Get<EntityDescriptor>(pauseBGID).isActive = false;
-		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).isActive = false;
-		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = false;
-		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).isActive = true;
+		EntityManager::GetInstance().Get<EntityDescriptor>(pauseBGID).isActive = true;
+		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).isActive = true;
+		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = true;
+		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = true;
 	}
 
 	void GameStateManager::HowToPlay(EntityID)
 	{
 		//set all the 4 buttons inactive
-		
+		InactiveMenuButtons();
 		//create howtoplay menu here
+		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = true;
+		EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = true;
 
+		htp = true;
 	}
 
 	void GameStateManager::ReturnToPauseMenuFromHowToPlay(EntityID)
 	{
 		//set all the 4 buttons active
-
-		//delete how to play menu here
+		ActiveMenuButtons();
+		//set inactive how to play menu here
+		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = false;
 	}
 
 	void GameStateManager::ReturnToPauseMenuFromExit(EntityID)
 	{
 		//set all 4 button active and pawsed
-
+		ActiveMenuButtons();
 		//delete yes no and are you sure object
+		EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = false;
 	}
 
 	void GameStateManager::AreYouSureExit(EntityID)
 	{
 		//set pawsed and 4 buttons inactive
-
+		InactiveMenuButtons();
 		//create yes no button
 		//create are you sure object
-
+		EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = true;
+		EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = true;
+		EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = true;
 	}
 
 

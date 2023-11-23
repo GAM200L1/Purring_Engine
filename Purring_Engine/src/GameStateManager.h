@@ -103,7 +103,7 @@ namespace PE {
 		//for use when calling the other functions
 		void InactiveMenuButtons();
 		void DeleteMenu();
-		void ActiveMenu();
+		void ActiveMenuButtons();
 
 		// ----- Public Variables ----- // 
 	public:
@@ -125,7 +125,7 @@ namespace PE {
 
 		EntityID areYouSureID, yesButtonID, noButtonID;
 
-		bool pausedOnce{false};
+		bool htp{ false }, pausedOnce{ false };
 	};
 
 }

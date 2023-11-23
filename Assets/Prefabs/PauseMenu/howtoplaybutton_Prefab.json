@@ -32,7 +32,7 @@
                     1.0
                 ],
                 "m_hoveredTexture": "../Assets/Textures/Button_HowToPlay_Highlighted_512x128.png",
-                "m_onClicked": "ResumeState",
+                "m_onClicked": "HowToPlay",
                 "m_onHovered": "",
                 "m_pressedColor": [
                     1.0,
