@@ -100,6 +100,8 @@ namespace PE
         *************************************************************************************/
         void static window_focus_callback(GLFWwindow* p_window, int focus);
 
+
+
         void static window_iconify_callback(GLFWwindow* window, int iconified);
 
 /*                                                                                          Event Handling Functions
@@ -125,7 +127,7 @@ namespace PE
         void TestFunction(EntityID);
 
     private:
-        GLFWwindow* p_window;
+        GLFWwindow* p_currWindow;
         GLFWmonitor* p_monitor;
         static bool msepress;
     };

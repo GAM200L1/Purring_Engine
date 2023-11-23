@@ -81,13 +81,13 @@ namespace PE
 #ifndef GAMERELEASE
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
 		p_monitor = glfwGetWindowMonitor(window);
-		p_window = window;
+		p_currWindow = window;
 #else
 		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, p_title, glfwGetPrimaryMonitor(), nullptr);
 
 		p_monitor = glfwGetWindowMonitor(window);
-		p_window = window;
+		p_currWindow = window;
 #endif
 		GameStateManager::GetInstance().p_window = window;
 
@@ -141,7 +141,7 @@ namespace PE
 		{
 			GameStateManager::GetInstance().SetPauseState();	
 			if(msepress)
-				glfwIconifyWindow(p_window);
+				glfwIconifyWindow(p_currWindow);
 
 			msepress = true;
 		}
@@ -213,18 +213,18 @@ namespace PE
 
 				if (!fs) 
 				{
-					glfwSetWindowMonitor(p_window, NULL, 30, 30, 1920, 1080, 0);
+					glfwSetWindowMonitor(p_currWindow, NULL, 30, 30, 1920, 1080, 0);
 					HWND windowHandle = GetActiveWindow();
 					long Style = GetWindowLong(windowHandle, GWL_STYLE);
 					Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
 					SetWindowLong(windowHandle, GWL_STYLE, Style);
-					glfwSetWindowAttrib(p_window, GLFW_RESIZABLE, false);
+					glfwSetWindowAttrib(p_currWindow, GLFW_RESIZABLE, false);
 					fs = !fs;
 				}
 				else
 				{
 
-					glfwSetWindowMonitor(p_window, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+					glfwSetWindowMonitor(p_currWindow, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 					fs = !fs;
 				}
 			}
@@ -363,7 +363,7 @@ namespace PE
 		PE::SEND_WINDOW_EVENT(WME)
 	}
 
-	void WindowManager::window_iconify_callback(GLFWwindow* window, int iconified) {
+	void WindowManager::window_iconify_callback(GLFWwindow* p_window, int iconified) {
 		if (iconified == GLFW_TRUE) {
 			// The window is being minimized
 			// You can perform any actions you want when the window is minimized here
@@ -374,7 +374,7 @@ namespace PE
 			// You can perform any actions you want when the window is restored here
 #ifdef GAMERELEASE
 			if(!msepress)
-			glfwIconifyWindow(window);
+			glfwIconifyWindow(p_window);
 
 			msepress = false;
 #endif
