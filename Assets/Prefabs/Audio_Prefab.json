@@ -8,9 +8,9 @@
                     "EntityDescriptor": {
                         "children": [],
                         "isActive": true,
-                        "name": "Audio Prefab",
+                        "name": "Audio Object",
                         "parent": null,
-                        "sceneID": 18446744072709551615
+                        "sceneID": 1000
                     }
                 },
                 "name": ""
