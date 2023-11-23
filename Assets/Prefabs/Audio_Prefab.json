@@ -1,0 +1,18 @@
+        {
+            "Entity": {
+                "components": {
+                    "AudioComponent": {
+                        "audioKey": "",
+                        "loop": false
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "Audio Prefab",
+                        "parent": null,
+                        "sceneID": 18446744072709551615
+                    }
+                },
+                "name": ""
+            }
+        }

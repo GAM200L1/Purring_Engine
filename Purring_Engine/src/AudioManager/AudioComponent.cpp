@@ -1,6 +1,7 @@
 #include "prpch.h"
 #include "AudioComponent.h"
 #include "ResourceManager/ResourceManager.h"
+#include <Windows.h>
 
 namespace PE
 {
@@ -14,8 +15,23 @@ namespace PE
 
     }
 
+    void AudioComponent::ShowErrorMessage(const std::string& message, const std::string& title)
+    {
+        MessageBoxA(NULL, message.c_str(), title.c_str(), MB_ICONERROR | MB_OK);
+    }
+
     void AudioComponent::PlayAudioSound(const std::string& id)
     {
+        std::cout << "[PlayAudioSound] Attempting to play sound with id: " << id << std::endl;
+
+        // Check the file extension
+        std::string fileExtension = id.substr(id.find_last_of('.') + 1);
+        if (fileExtension != "mp3")
+        {
+            AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '." + fileExtension + "' for id: " + id, "File Type Error");
+            return;
+        }
+
         auto it = ResourceManager::GetInstance().Sounds.find(id);
         if (it != ResourceManager::GetInstance().Sounds.end())
         {
@@ -26,6 +42,7 @@ namespace PE
                 channel->isPlaying(&isPlaying);
                 if (isPlaying)
                 {
+                    std::cout << "Sound with id: " << id << " is already playing." << std::endl;
                     return;
                 }
             }
@@ -36,6 +53,7 @@ namespace PE
             if (result == FMOD_OK)
             {
                 it->second->SetChannel(channel);
+                std::cout << "Sound played successfully with id: " << id << std::endl;
 
                 // Set the loop mode based on the m_loop flag
                 FMOD_MODE loopMode = m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
@@ -45,25 +63,34 @@ namespace PE
                 if (m_loop)
                 {
                     channel->setLoopCount(-1);
+                    std::cout << "Looping enabled for sound with id: " << id << std::endl;
                 }
             }
             else
             {
-                std::cout << "Failed to play sound: " << FMOD_ErrorString(result) << "\n";
+                std::string errorStr = FMOD_ErrorString(result);
+                ShowErrorMessage("Failed to play sound with id: " + id + ". Error: " + errorStr, "Playback Error");
             }
         }
         else
         {
-            std::cout << "Sound not found for id: " << id << "\n";
+            ShowErrorMessage("Sound not found in ResourceManager for id: " + id, "Resource Error");
         }
     }
 
     void AudioComponent::SetVolume(const std::string& id, float volume)
     {
+        std::cout << "Setting volume for sound with id: " << id << " to " << volume << std::endl;
+
         auto it = ResourceManager::GetInstance().Sounds.find(id);
         if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
         {
             it->second->GetChannel()->setVolume(volume);
+            std::cout << "Volume set successfully for sound with id: " << id << std::endl;
+        }
+        else
+        {
+            std::cout << "Failed to set volume for sound with id: " << id << " (sound or channel not found)" << std::endl;
         }
     }
 

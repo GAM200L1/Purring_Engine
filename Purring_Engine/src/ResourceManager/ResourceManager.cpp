@@ -98,6 +98,34 @@ namespace PE
         }
     }
 
+    std::string ResourceManager::LoadDraggedAudio(std::string const& r_filePath)
+    {
+        // Extract the file name with the extension
+        std::filesystem::path filePath(r_filePath);
+        std::cout << "[LoadDraggedAudio] Loading audio from path: " << r_filePath << std::endl;
+
+        std::string key = filePath.filename().string(); // Key generation with file extension
+        std::cout << "[LoadDraggedAudio] Generated key: " << key << std::endl;
+
+        // Load the audio file
+        Sounds[key] = std::make_shared<AudioManager::Audio>();
+
+        if (AudioManager::GetInstance().GetFMODSystem() == nullptr)
+        {
+            std::cout << "NO SYSTEM";
+        }
+
+        if (!Sounds[key]->LoadSound(r_filePath, AudioManager::GetInstance().GetFMODSystem()))
+        {
+            std::cout << "Failed to load sound from path: " << r_filePath << std::endl;
+            Sounds.erase(key);
+            return "";
+        }
+
+        std::cout << "Loaded sound: " << key << " from path: " << r_filePath << std::endl;
+        return key;
+    }
+
     void ResourceManager::LoadFontFromFile(std::string const& r_key, std::string const& r_filePath)
     {
         Fonts[r_key] = std::make_shared<Font>();

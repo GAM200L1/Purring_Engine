@@ -11,6 +11,8 @@ namespace PE
         AudioComponent();
         ~AudioComponent();
 
+        static void ShowErrorMessage(const std::string& message, const std::string& title = "Error");
+
         void PlayAudioSound(const std::string& id);
         void SetVolume(const std::string& id, float volume);
         void PauseSound(const std::string& id);
