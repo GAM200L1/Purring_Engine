@@ -39,18 +39,18 @@
                 "type": 1
             },
             "Transform": {
-                "height": 100.0,
+                "height": 50.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0
+                    "x": -259.0,
+                    "y": 102.0
                 },
                 "relativeposition": {
                     "x": 0.0,
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 100.0
+                "width": 50.0
             }
         },
         "name": ""

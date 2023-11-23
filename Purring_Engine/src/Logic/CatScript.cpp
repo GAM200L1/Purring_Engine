@@ -61,7 +61,7 @@ namespace PE
 				//! Creates an entity for the projectile
 				ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/Cat_Hairball_512px.png", "../Assets/Textures/Cat_Hairball_512px.png");
 				m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
-				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;
+				/*EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;*/
 				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
 		}
 
@@ -71,7 +71,7 @@ namespace PE
 
 				if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 				{
-					if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+					if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
 					{
 						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
 					}

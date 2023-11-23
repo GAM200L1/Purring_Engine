@@ -2436,6 +2436,7 @@ namespace PE {
 							{
 								EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
 								m_undoStack.AddChange(new CreateObjectUndo(s_id));
+								// change position of loaded prefab based on mouse cursor here
 							}
 						}
 
