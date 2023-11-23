@@ -227,25 +227,25 @@ namespace PE
 	}
 
 	// Deserialize GUI
-	GUI GUI::Deserialize(const nlohmann::json& j)
+	GUI GUI::Deserialize(const nlohmann::json& r_j)
 	{
 		GUI gui;
-		gui.m_onClicked = j["m_onClicked"];
-		gui.m_onHovered = j["m_onHovered"];
-		gui.m_UIType = static_cast<UIType>(j["m_UIType"].get<int>());
-		gui.disabled = j["disabled"].get<bool>();			// @Jarran when you add, uncomment this
+		gui.m_onClicked = r_j["m_onClicked"];
+		gui.m_onHovered = r_j["m_onHovered"];
+		gui.m_UIType = static_cast<UIType>(r_j["m_UIType"].get<int>());
+		gui.disabled = r_j["disabled"].get<bool>();			// @Jarran when you add, uncomment this
 
 		// Deserialize textures
-		gui.m_defaultTexture = j["m_defaultTexture"];
-		gui.m_hoveredTexture = j["m_hoveredTexture"];
-		gui.m_pressedTexture = j["m_pressedTexture"];
-		gui.m_disabledTexture = j["m_disabledTexture"];
+		gui.m_defaultTexture = r_j["m_defaultTexture"];
+		gui.m_hoveredTexture = r_j["m_hoveredTexture"];
+		gui.m_pressedTexture = r_j["m_pressedTexture"];
+		gui.m_disabledTexture = r_j["m_disabledTexture"];
 
 		// Deserialize colors
-		gui.m_defaultColor = vec4(j["m_defaultColor"][0], j["m_defaultColor"][1], j["m_defaultColor"][2], j["m_defaultColor"][3]);
-		gui.m_hoveredColor = vec4(j["m_hoveredColor"][0], j["m_hoveredColor"][1], j["m_hoveredColor"][2], j["m_hoveredColor"][3]);
-		gui.m_pressedColor = vec4(j["m_pressedColor"][0], j["m_pressedColor"][1], j["m_pressedColor"][2], j["m_pressedColor"][3]);
-		gui.m_disabledColor = vec4(j["m_disabledColor"][0], j["m_disabledColor"][1], j["m_disabledColor"][2], j["m_disabledColor"][3]);
+		gui.m_defaultColor = vec4(r_j["m_defaultColor"][0], r_j["m_defaultColor"][1], r_j["m_defaultColor"][2], r_j["m_defaultColor"][3]);
+		gui.m_hoveredColor = vec4(r_j["m_hoveredColor"][0], r_j["m_hoveredColor"][1], r_j["m_hoveredColor"][2], r_j["m_hoveredColor"][3]);
+		gui.m_pressedColor = vec4(r_j["m_pressedColor"][0], r_j["m_pressedColor"][1], r_j["m_pressedColor"][2], r_j["m_pressedColor"][3]);
+		gui.m_disabledColor = vec4(r_j["m_disabledColor"][0], r_j["m_disabledColor"][1], r_j["m_disabledColor"][2], r_j["m_disabledColor"][3]);
 
 		return gui;
 	}
