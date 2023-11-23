@@ -100,8 +100,11 @@ namespace PE
         *************************************************************************************/
         void static window_focus_callback(GLFWwindow* p_window, int focus);
 
-
-
+        /*!***********************************************************************************
+         \brief     Callback for window iconify events.
+         \param     window Pointer to the window receiving or losing focus.
+         \param     iconify, 1 for when going to be iconified, 0 for when returning from being iconified
+        *************************************************************************************/
         void static window_iconify_callback(GLFWwindow* window, int iconified);
 
 /*                                                                                          Event Handling Functions
