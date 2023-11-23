@@ -30,8 +30,6 @@
 #include "Data/SerializationManager.h"
 #include "ResourceManager/ResourceManager.h"
 
-extern SerializationManager serializationManager;
-
 namespace PE
 {
 
@@ -57,6 +55,7 @@ namespace PE
 				CreateAttackTelegraphs(id, false, true); // south box
 
 				//! Creates an entity for the projectile
+				SerializationManager serializationManager;
 				ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/Cat_Hairball_512px.png", "../Assets/Textures/Cat_Hairball_512px.png");
 				m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
 				/*EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;*/
