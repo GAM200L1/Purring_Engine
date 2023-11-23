@@ -62,9 +62,9 @@ namespace PE
 
 /*                                                                                                    Audio Controls
 --------------------------------------------------------------------------------------------------------------------- */
-    bool AudioManager::Audio::LoadSound(const std::string& path, FMOD::System* system)
+    bool AudioManager::Audio::LoadSound(const std::string& r_path, FMOD::System* p_system)
     {
-        FMOD_RESULT result = system->createSound(path.c_str(), FMOD_DEFAULT, nullptr, &m_sound);
+        FMOD_RESULT result = p_system->createSound(r_path.c_str(), FMOD_DEFAULT, nullptr, &m_sound);
         return (result == FMOD_OK);
     }
 
@@ -72,10 +72,10 @@ namespace PE
     {
         for (auto& pair : ResourceManager::GetInstance().Sounds)
         {
-            FMOD::Channel* channel = pair.second->GetChannel();
-            if (channel)
+            FMOD::Channel* p_channel = pair.second->GetChannel();
+            if (p_channel)
             {
-                channel->setVolume(volume);
+                p_channel->setVolume(volume);
             }
         }
     }
@@ -84,10 +84,10 @@ namespace PE
     {
         for (auto& pair : ResourceManager::GetInstance().Sounds)
         {
-            FMOD::Channel* channel = pair.second->GetChannel();
-            if (channel)
+            FMOD::Channel* p_channel = pair.second->GetChannel();
+            if (p_channel)
             {
-                channel->stop();
+                p_channel->stop();
             }
         }
     }
