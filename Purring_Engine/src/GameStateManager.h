@@ -18,6 +18,8 @@
 #include "Graphics/CameraManager.h"
 #include "Graphics/GLHeaders.h"
 #include "GUISystem.h"
+#include "Data/SerializationManager.h"
+
 namespace PE {
 	enum class GameStates {MOVEMENT, ATTACK, EXECUTE, PAUSE, WIN, LOSE };
 
