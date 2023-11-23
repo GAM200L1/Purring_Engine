@@ -61,8 +61,6 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).toSave = false;
 			EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).toSave = false;
 
-
-
 			//how to play//
 
 			howToPlayID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/howtoplayobj_Prefab.json");
@@ -90,9 +88,6 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).toSave = false;
 			EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).toSave = false;
 		}
-		//SerializationManager serializationManager;
-		//serializationManager.LoadAllEntitiesFromFile("..Assets/Prefabs/PauseMenu_Prefab.json");
-		// store the entityIDs of the created pause menu entities to be remove in resumestate
 	}
 
 	void GameStateManager::SetWinState()
@@ -204,6 +199,15 @@ namespace PE
 
 			htp = false;
 		}
+
+		if (ays)
+		{
+			EntityManager::GetInstance().RemoveEntity(areYouSureID);
+			EntityManager::GetInstance().RemoveEntity(yesButtonID);
+			EntityManager::GetInstance().RemoveEntity(noButtonID);
+
+			ays = false;
+		}
 	}
 
 	void GameStateManager::ActiveMenuButtons()
@@ -254,6 +258,8 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = true;
 		EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = true;
 		EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = true;
+
+		ays = true;
 	}
 
 

@@ -87,22 +87,54 @@ namespace PE {
 		*************************************************************************************/
 		void RegisterButtonFunctions();
 
+		/*!***********************************************************************************
+		 \brief			open how to play window
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void HowToPlay(EntityID = -1);
 
+		/*!***********************************************************************************
+		 \brief			return to pause menu from hwo to play 
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void ReturnToPauseMenuFromHowToPlay(EntityID = -1);
 
+		/*!***********************************************************************************
+		 \brief			return to pause menu from are you sure
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void ReturnToPauseMenuFromExit(EntityID = -1);
 
+		/*!***********************************************************************************
+		 \brief			enter confirmation prompt to exit
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void AreYouSureExit(EntityID = -1);
 
+		/*!***********************************************************************************
+		 \brief			exit the game
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void ExitGame(EntityID = -1);
 
-		//for use when resuming
+		/*!***********************************************************************************
+		 \brief			Set the entire pause menu to inactive
+		*************************************************************************************/
 		void InactiveMenu();
 
-		//for use when calling the other functions
+		/*!***********************************************************************************
+		 \brief			Set the entire pause menu except for the black background to inactive
+		*************************************************************************************/
 		void InactiveMenuButtons();
+
+		/*!***********************************************************************************
+		 \brief			Delete the entire pause menu UI
+		*************************************************************************************/
 		void DeleteMenu();
+
+		/*!***********************************************************************************
+		 \brief			Set the entire pause menu except for the black background to active
+		*************************************************************************************/
 		void ActiveMenuButtons();
 
 		// ----- Public Variables ----- // 
@@ -125,7 +157,7 @@ namespace PE {
 
 		EntityID areYouSureID, yesButtonID, noButtonID;
 
-		bool htp{ false }, pausedOnce{ false };
+		bool htp{ false }, pausedOnce{ false }, ays{ false };
 	};
 
 }
