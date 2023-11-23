@@ -8,10 +8,10 @@
         "showLogs": true,
         "showObjectList": true,
         "showPerformanceWindow": false,
-        "showPhysicsWindow": false,
+        "showPhysicsWindow": true,
         "showResourceWindow": true,
         "showSceneView": true,
-        "showTestWindows": true
+        "showTestWindows": false
     },
     "window": {
         "height": 1080,
