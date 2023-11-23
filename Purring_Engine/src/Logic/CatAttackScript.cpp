@@ -17,6 +17,7 @@
 #include "prpch.h"
 #include "Physics/CollisionManager.h"
 #include "CatAttackScript.h"
+#include "CatMovementScript.h"
 
 namespace PE
 {
@@ -34,7 +35,7 @@ namespace PE
 	{
 		// get the mouse cursor position
 		float mouseX{}, mouseY{};
-		InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY); // I'll change this to take floats in next time...
+		InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY); 
 		vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
 
 		// if in attack planning phase, allow player to select a cat and plan that cats attacks
@@ -90,6 +91,8 @@ namespace PE
 	
 	void CatAttackPLAN::StateExit(EntityID id)
 	{
+		REMOVE_MOUSE_EVENT_LISTENER(m_eventListener);
+
 		for (auto const& telegraph : p_data->telegraphIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear

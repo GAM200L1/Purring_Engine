@@ -47,6 +47,10 @@ namespace PE
 		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
 		std::set<EntityID> ignoresTelegraphs;
 
+		bool m_mouseClicked{ false }; // Set to true when the mouse is pressed, false otherwise
+		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
+		int m_eventListener; // Stores the handler for the mouse click event
+
 		// ----- Private Functions ----- //
 		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
