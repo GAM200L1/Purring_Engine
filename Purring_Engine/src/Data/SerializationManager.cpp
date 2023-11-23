@@ -411,7 +411,7 @@ bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r
     gui.m_onClicked = r_json["Entity"]["components"]["GUI"]["m_onClicked"].get<std::string>();
     gui.m_onHovered = r_json["Entity"]["components"]["GUI"]["m_onHovered"].get<std::string>();
     gui.m_UIType = static_cast<PE::UIType>(r_json["Entity"]["components"]["GUI"]["m_UIType"].get<int>());
-    //gui.disabled = r_json["Entity"]["components"]["GUI"]["disabled"].get<bool>();      // @Jarran when you add, uncomment this
+    gui.disabled = r_json["Entity"]["components"]["GUI"]["disabled"].get<bool>();      // @Jarran when you add, uncomment this
 
     gui.m_defaultTexture = r_json["Entity"]["components"]["GUI"]["m_defaultTexture"].get<std::string>();
     gui.m_hoveredTexture = r_json["Entity"]["components"]["GUI"]["m_hoveredTexture"].get<std::string>();

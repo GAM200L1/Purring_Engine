@@ -11,6 +11,7 @@
                 "m_UIType": 0,
                 "m_onClicked": "",
                 "m_onHovered": "",
+		"disabled": false,
                 "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
                 "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
                 "m_pressedTexture": "../Assets/Textures/Button_White_128px.png",
