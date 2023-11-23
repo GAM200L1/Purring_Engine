@@ -195,13 +195,15 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::FollowScriptData>("FollowScript")
         .property("Size", &PE::FollowScriptData::Size)
-        .property("Distance", &PE::FollowScriptData::Distance)
         .property("Speed", &PE::FollowScriptData::Speed)
         .property("NumberOfFollower", &PE::FollowScriptData::NumberOfFollower)
         .property("FollowingObject", &PE::FollowScriptData::FollowingObject)
         .property("rotation", &PE::FollowScriptData::Rotation)
         .property("CurrentPosition", &PE::FollowScriptData::CurrentPosition)
-        .property("NextPosition", &PE::FollowScriptData::NextPosition);
+        .property("NextPosition", &PE::FollowScriptData::NextPosition)
+        .property("ToAttach", &PE::FollowScriptData::ToAttach)
+        .property("NumberOfAttacher", &PE::FollowScriptData::NumberOfAttachers)
+        .property("IsAttaching", &PE::FollowScriptData::IsAttaching);
 
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
         .property("NumberOfCamera", &PE::CameraManagerScriptData::NumberOfCamera)
@@ -537,7 +539,7 @@ void PE::CoreApplication::InitializeSystems()
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager, width, height };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};

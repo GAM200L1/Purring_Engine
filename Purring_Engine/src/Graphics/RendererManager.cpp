@@ -61,8 +61,8 @@ namespace PE
         // Initialize static variables
         std::vector<EntityID> RendererManager::renderedEntities{};
 
-        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
-            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
+        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, int const windowWidth, int const windowHeight)
+            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
         {
             // Initialize GLEW
             if (glewInit() != GLEW_OK)
@@ -162,7 +162,8 @@ namespace PE
             m_renderFrameBuffer.Bind();
 
             // If the window size has changed
-            if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight)
+            if ((windowWidth > std::numeric_limits<float>::epsilon() && windowHeight > std::numeric_limits<float>::epsilon()) &&
+                (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight))
             {
                 m_cachedWindowWidth = windowWidth, m_cachedWindowHeight = windowHeight;
 
@@ -175,11 +176,22 @@ namespace PE
 #ifndef GAMERELEASE
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
-#endif // !GAMERELEASE
 
-                // Update the ui camera viewport size
-                r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+                if (Editor::GetInstance().IsEditorActive())
+                {
+                    // Update the ui camera viewport size
+                    r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+                }
+#endif // !GAMERELEASE
             }
+
+#ifndef GAMERELEASE
+            if (!Editor::GetInstance().IsEditorActive())
+            {
+                // Update the ui camera viewport size
+                r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
+            }
+#endif // !GAMERELEASE
 
             // Clear the texture object
             m_renderFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
@@ -322,6 +334,11 @@ namespace PE
             for (const EntityID& id : r_sceneView)
             {
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+
+                // Skip drawing this object is the entity or renderer is not enabled
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
+                    || !renderer.GetEnabled()) { continue; }
+
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 // Store the index of the rendered entity
@@ -382,8 +399,9 @@ namespace PE
             {
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 
-                // Skip drawing this object is the renderer is not enabled
-                if (!renderer.GetEnabled()) { continue; }
+                // Skip drawing this object is the entity or renderer is not enabled
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
+                    || !renderer.GetEnabled()) { continue; }
 
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
@@ -494,6 +512,9 @@ namespace PE
             // Draw each of the colliders
             for (const EntityID& id : SceneView<Collider>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
                 std::visit([&](auto& col)
@@ -506,6 +527,9 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
@@ -522,6 +546,9 @@ namespace PE
             // Draw a "+" for every camera component
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 // Don't draw a cross for the UI camera
                 if (id == r_cameraManager.GetUiCameraId()) { continue; }
 

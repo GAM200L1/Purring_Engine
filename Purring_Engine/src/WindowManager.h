@@ -123,5 +123,9 @@ namespace PE
         void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
         void TestFunction(EntityID);
+
+    private:
+        GLFWwindow* p_window;
+        GLFWmonitor* p_monitor;
     };
 }

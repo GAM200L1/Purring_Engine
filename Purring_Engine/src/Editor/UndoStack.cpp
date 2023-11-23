@@ -27,8 +27,9 @@ namespace PE
 	{
 		m_undoStack.push_front(p_change);
 		++m_currentcount;
-		if (m_currentcount == 21)
+		if (m_currentcount >= 21)
 		{
+			m_undoStack.back()->OnStackLeave();
 			delete m_undoStack.back();
 			m_undoStack.pop_back();
 		}
@@ -47,6 +48,16 @@ namespace PE
 	}
 	void UndoStack::RedoChange()
 	{
+	}
+
+	void UndoStack::ClearStack()
+	{
+		for(auto& a:m_undoStack)
+		{
+			a->OnStackLeave();
+			delete a;			
+		}
+		m_undoStack.clear();
 	}
 
 	UndoStack::~UndoStack()

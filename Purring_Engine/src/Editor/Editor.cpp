@@ -770,8 +770,13 @@ namespace PE {
 							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
-						EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-						LogicSystem::DeleteScriptData(m_currentSelectedObject);
+						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+
+						//create undo here
+						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+
+						//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
+						//LogicSystem::DeleteScriptData(m_currentSelectedObject);
 						//if not first index
 						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
@@ -801,15 +806,38 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
-				if (ImGui::Selectable("Create UI Object"))
-				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
-				}
+				//if (ImGui::Selectable("Create UI Object"))
+				//{
+					if (ImGui::BeginMenu("Create UI Object"))
+					{
+						if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
+						{
+							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
+							m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						}
+						if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
+						{
+							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+							m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						}
+						if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
+						{
+							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
+							m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						}
+						ImGui::EndMenu();
+					}
+
+					//EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+					//m_undoStack.AddChange(new CreateObjectUndo(s_id));
+				//}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
+					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				ImGui::EndPopup();
 			}
@@ -1705,7 +1733,8 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
+								ImGui::Checkbox("Disabled", &EntityManager::GetInstance().Get<GUI>(entityID).disabled);
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
 								std::vector<std::filesystem::path> filepaths;
 								int i{ 0 };
@@ -2170,6 +2199,9 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+										ImGui::SetNextItemWidth(100.0f);
+										ImGui::InputInt("Distance Offset", &it->second.Size,0,0);
+
 										int j = it->second.NumberOfFollower;
 										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
 										if (j <= 5 && j >= 0)
@@ -2190,6 +2222,33 @@ namespace PE {
 												ImGui::Text("Follower ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
 												if(id != m_currentSelectedObject)
 												it->second.FollowingObject[i] = id;
+											}
+										}
+
+										ImGui::Checkbox("isAttaching", & it->second.IsAttaching);
+										if (it->second.IsAttaching)
+										{
+											j = it->second.NumberOfAttachers;
+											ImGui::Text("Number of Attacher + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##aa", &j);
+											if (j <= 5 && j >= 0)
+											{
+												it->second.NumberOfAttachers = j;
+											}
+											else
+											{
+												it->second.NumberOfAttachers = 5;
+											}
+
+											for (int i = 0; i < it->second.NumberOfAttachers; i++)
+											{
+												if (i != 0)
+												{
+													int id = static_cast<int> (it->second.ToAttach[i]);
+													std::string test = std::string("##id2") + std::to_string(i);
+													ImGui::Text("Attacher ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+													if (id != m_currentSelectedObject)
+														it->second.ToAttach[i] = id;
+												}
 											}
 										}
 									}
@@ -2351,6 +2410,9 @@ namespace PE {
 						break;
 					}
 				}
+				ImGuiStyle& style = ImGui::GetStyle();
+				float pos = ImGui::CalcTextSize("Refresh").x + style.FramePadding.x * 2.0f;
+				ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - pos);
 				// Refresh button
 				if (ImGui::Button("Refresh"))
 				{
@@ -2564,7 +2626,8 @@ namespace PE {
 						{
 							if (m_files[draggedItemIndex].extension() == ".json")
 							{
-								serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+								EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+								m_undoStack.AddChange(new CreateObjectUndo(s_id));
 								// change position of loaded prefab based on mouse cursor here
 							}
 						}
@@ -2798,6 +2861,7 @@ namespace PE {
 										engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
 
 										// This will load all entities from the file
+                                        m_undoStack.ClearStack();
 										ClearObjectList();
 										serializationManager.LoadAllEntitiesFromFile(filePath);
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
@@ -2974,6 +3038,7 @@ namespace PE {
 						}
 					}
 					serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+                    m_undoStack.ClearStack();
 					engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 				}
 				ImGui::SameLine();
@@ -3681,6 +3746,7 @@ namespace PE {
 
 	void Editor::LoadSceneFromGivenPath(std::string_view path)
 	{
+		m_undoStack.ClearStack();
 		ClearObjectList();
 		serializationManager.LoadAllEntitiesFromFile(path);
 	}
