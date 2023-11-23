@@ -82,10 +82,11 @@ namespace PE
         {
         case GLFW_PRESS:
         {
-            double x, y;
+            double x_d, y_d;
             //creation of event and sending
             PE::MouseButtonPressedEvent mbpe;
-            glfwGetCursorPos(window, &x, &y);
+            glfwGetCursorPos(window, &x_d, &y_d);
+            float x{static_cast<float>(x_d)}, y{static_cast<float>(y_d)};
             mbpe.x = static_cast<int>(x);
             mbpe.y = static_cast<int>(y);
             ConvertGLFWToTransform(window,x,y);
@@ -311,18 +312,20 @@ namespace PE
         return false;
     }
 
-    void InputSystem::ConvertGLFWToTransform(GLFWwindow* window, double& x, double& y)
+    void InputSystem::ConvertGLFWToTransform(GLFWwindow* window, float& x, float& y)
     {
         int windowWidth, windowHeight;
         glfwGetFramebufferSize(window, &windowWidth, &windowHeight);
-        x = x - static_cast<double>(windowWidth) * 0.5;
-        y = static_cast<double>(windowHeight) * 0.5 - y;
+        x = x - static_cast<float>(windowWidth) * 0.5f;
+        y = static_cast<float>(windowHeight) * 0.5f - y;
     }
         
 
-    void InputSystem::GetCursorViewportPosition(GLFWwindow* window, double& x, double& y)
+    void InputSystem::GetCursorViewportPosition(GLFWwindow* window, float& x, float& y)
     {
-        glfwGetCursorPos(window, &x, &y);
+        double x_d{}, y_d{};
+        glfwGetCursorPos(window, &x_d, &y_d);
+        x = static_cast<float>(x_d), y = static_cast<float>(y_d);
         ConvertGLFWToTransform(window, x, y);
     }
 

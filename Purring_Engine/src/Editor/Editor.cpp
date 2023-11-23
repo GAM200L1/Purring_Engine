@@ -6,7 +6,7 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
- \par      code %:     95%
+ \par      code %:     90%
  \par      changes:    Defined all the logic for rendering the editor UI through ImGUI.
 
  \co-author            Krystal Yamin
@@ -14,6 +14,12 @@
  \par      code %:     5%
  \par      changes:    02-11-2023
                        Added object picking logic.
+
+ \co-author            Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    02-11-2023
+					   Added animation editor, collision layer matrix.
 
  \brief
 	cpp file containing the definition of the editor class, which contains 
@@ -708,9 +714,11 @@ namespace PE {
 							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
+						if (m_currentSelectedObject != -1)
 						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 
 						//create undo here
+						if (m_currentSelectedObject != -1)
 						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 						//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
@@ -1307,7 +1315,7 @@ namespace PE {
 								ImGui::Text("Collision Layer: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
 								//set combo box for the different collider types
-								if (ImGui::Combo("##Collision Layers", &currentLayerIndex, layerNames.data(), layerNames.size()))
+								if (ImGui::Combo("##Collision Layers", &currentLayerIndex, layerNames.data(), static_cast<unsigned>(layerNames.size())))
 								{
 									EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex = currentLayerIndex;
 								}
@@ -2094,6 +2102,9 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("FollowScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+										ImGui::SetNextItemWidth(100.0f);
+										ImGui::InputInt("Distance Offset", &it->second.Size,0,0);
+
 										int j = it->second.NumberOfFollower;
 										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
 										if (j <= 5 && j >= 0)
@@ -2128,7 +2139,7 @@ namespace PE {
 											}
 											else
 											{
-												it->second.NumberOfAttachers = 6;
+												it->second.NumberOfAttachers = 5;
 											}
 
 											for (int i = 0; i < it->second.NumberOfAttachers; i++)
@@ -2797,9 +2808,6 @@ namespace PE {
 
 			ImGui::SeparatorText("Collision Layer Matrix");
 
-			int counter{};
-			//your column first value needs to be the name of the table
-
 			auto& collisionLayers { CollisionLayerManager::GetInstance().GetCollisionLayers() };
 			
 			std::vector<const char*> column_names{ "" };
@@ -2811,8 +2819,8 @@ namespace PE {
 				row_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
 			}
 		
+			unsigned counter{};
 			const int columns_count = static_cast<int>(column_names.size());
-			int rows_count = static_cast<int>(row_names.size());
 			static ImGuiTableFlags table_flags = ImGuiTableFlags_SizingFixedFit| ImGuiTableFlags_Hideable;
 
 				if (ImGui::BeginTable("collisionlayer", columns_count, table_flags))
@@ -2829,12 +2837,12 @@ namespace PE {
 						ImGui::TableSetColumnIndex(0);
 						ImGui::AlignTextToFramePadding();
 						ImGui::Text(row_names[p_collisionLayer->GetCollisionLayerIndex()], p_collisionLayer->GetCollisionLayerIndex());
-						for (std::size_t i{ p_collisionLayer->GetCollisionLayerSignature().size() }, column{ 1 }; i != 0; ++column)
+						for (unsigned i{ static_cast<unsigned>(p_collisionLayer->GetCollisionLayerSignature().size()) }, column{ 1 }; i != 0; ++column)
 							if (ImGui::TableSetColumnIndex(column))
 							{
 								bool bit = p_collisionLayer->IsCollidingWith(--i);
 								ImGui::PushID(column);
-								if(column < columns_count - counter)
+								if(column < static_cast<unsigned>(columns_count) - counter)
 									if (ImGui::Checkbox("", &bit))
 									{
 										// flip the bit
@@ -2850,7 +2858,7 @@ namespace PE {
 								ImGui::PopID();
 							}
 						ImGui::PopID();
-						counter++;
+						++counter;
 					}
 					ImGui::EndTable();
 				}
@@ -3016,7 +3024,7 @@ namespace PE {
 						}
 					}
 
-					if (m_currentSelectedObject >= 0)
+					if (m_currentSelectedObject != -1)
 					{
 						startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
 					}
@@ -3031,7 +3039,7 @@ namespace PE {
 			static bool moved = false;
 			static float height;
 			static float width;
-			if (m_currentSelectedObject >= 0)
+			if (m_currentSelectedObject != -1)
 			{
 				if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
 				{
@@ -3055,7 +3063,7 @@ namespace PE {
 			float currentRotation;
 			float currentHeight;
 			float currentWidth;
-			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0))
+			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0) && m_currentSelectedObject != -1)
 			{
 				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
@@ -3134,8 +3142,9 @@ namespace PE {
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 			}
 
-			if (!ImGui::IsMouseDown(0))
+			if (!ImGui::IsMouseDown(0) && m_currentSelectedObject != -1)
 			{
+
 				if (moved && EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position != vec2(clickedPosition.x, clickedPosition.y))
 				{
 					m_undoStack.AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
@@ -3171,7 +3180,7 @@ namespace PE {
 
 	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
-		if (IsRunTime() && !IsEditorActive())
+		if (!IsEditorActive())
 		{
 			//get the current viewport so that i can get the full size of the window
 			ImGuiViewport* viewport = ImGui::GetMainViewport();

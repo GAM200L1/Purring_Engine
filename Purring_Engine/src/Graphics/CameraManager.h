@@ -181,6 +181,20 @@ namespace PE
             vec2 GetWindowToWorldPosition(float const x, float const y) const;
 
             /*!***********************************************************************************
+             \brief  Returns a vec2 object with a position in window coordinates (with the origin
+                at the center of the window) converted to screen coordinates for the UI. This 
+                function takes the ratio of the viewport to the window's dimensions into account.
+
+             \param[in] x x-coordinate of the position in viewport coordinates (with the origin
+                at the center of the window) to convert to world coordinates.
+             \param[in] y y-coordinate of the position in viewport coordinates (with the origin
+                at the center of the window) to convert to world coordinates.
+
+             \return vec2 - Converted position in world coordinates.
+            *************************************************************************************/
+            static vec2 GetUiWindowToScreenPosition(float const x, float const y);
+
+            /*!***********************************************************************************
              \brief Get the system's name, useful for debugging and identification.
              \return std::string The name of the system.
             *************************************************************************************/
@@ -258,7 +272,6 @@ namespace PE
 
             static float m_windowWidth, m_windowHeight; // Dimensions of the window being rendered to by the main camera or editor
             float m_viewportWidth, m_viewportHeight; // Dimensions of the viewport of the main camera
-            float m_widthRatio, m_heightRatio; // Ratio of the camera viewport dimensions to that of the window
 
             std::string m_systemName{ "CameraManager" }; // Name of system
 
