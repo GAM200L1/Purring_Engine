@@ -36,12 +36,12 @@ extern Logger engine_logger;
 
 namespace PE
 {
-	Animation::Animation() : m_totalSprites{ 6 }, m_animationDuration{ 1.f }
+	Animation::Animation() : m_totalSprites{ 6 }, m_frameRate{ 30 }
 	{
 
 	}
 
-	Animation::Animation(std::string spriteSheetKey) : m_spriteSheetKey{ spriteSheetKey }, m_totalSprites{ 6 }, m_animationDuration { 1.f }
+	Animation::Animation(std::string spriteSheetKey) : m_spriteSheetKey{ spriteSheetKey }, m_totalSprites{ 6 }, m_frameRate{ 30 }
 	{
 	
 	}
@@ -87,7 +87,7 @@ namespace PE
 		}
 	}
 
-	void Animation::CreateAnimationFrames(unsigned totalSprites, float animationDuration)
+	void Animation::CreateAnimationFrames(unsigned totalSprites)
 	{
 		m_animationFrames.clear();
 
@@ -97,9 +97,7 @@ namespace PE
 		}
 
 		m_totalSprites = totalSprites;
-		m_animationDuration = animationDuration;
-
-		float duration = animationDuration / static_cast<float>(totalSprites);
+		float duration = 1.f / static_cast<float>(totalSprites);
 
 		for (unsigned i = 0; i < totalSprites; ++i)
 		{
@@ -121,6 +119,18 @@ namespace PE
 		}
 	}
 
+	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, unsigned framesToHold)
+	{
+		try
+		{
+			m_animationFrames.at(currentFrameIndex).m_duration = static_cast<float>(framesToHold) / static_cast<float>(m_frameRate);
+		}
+		catch (std::out_of_range const&)
+		{
+			return;
+		}
+	}
+
 	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& minUV, vec2 const& maxUV)
 	{
 		try
@@ -134,19 +144,25 @@ namespace PE
 		}
 	}
 
-	void Animation::SetAnimationDuration(float animationDuration)
+	void Animation::SetCurrentAnimationFrameRate(unsigned frameRate)
 	{
-		m_animationDuration = animationDuration;
-
-		for (auto& frame : m_animationFrames)
-		{
-			frame.m_duration = m_animationDuration / static_cast<float>(m_totalSprites);
-		}
+		m_frameRate = frameRate;
 	}
 
 	void Animation::SetAnimationID(std::string animationID)
 	{
 		m_animationID = animationID;
+	}
+
+	float Animation::GetAnimationDuration()
+	{
+		float duration{ 0.f };
+		for (auto const& frame : m_animationFrames)
+		{
+			duration += frame.m_duration;
+		}
+
+		return duration;
 	}
 
 	// AnimationComponent
@@ -191,14 +207,14 @@ namespace PE
 		return j;
 	}
 
-	// Animiation Properties
+	// Animation Properties
 	nlohmann::json Animation::ToJson() const
 	{
 		nlohmann::json j;
 		j["animationID"] = m_animationID;
 		j["spriteSheetKey"] = m_spriteSheetKey;
 		j["totalSprites"] = m_totalSprites;
-		j["animationDuration"] = m_animationDuration;
+		j["frameRate"] = m_frameRate;
 
 		// Serialize the animation frames
 		for (const auto& frame : m_animationFrames)
@@ -216,8 +232,9 @@ namespace PE
 		m_animationID = j["animationID"].get<std::string>();
 		m_spriteSheetKey = j["spriteSheetKey"].get<std::string>();
 		m_totalSprites = j["totalSprites"].get<unsigned>();
-		m_animationDuration = j["animationDuration"].get<float>();
+		m_frameRate = j["frameRate"].get<unsigned>();
 
+		if(j.contains("animationFrames"))
 		for (const auto& frameJson : j["animationFrames"])
 		{
 			AnimationFrame frame;

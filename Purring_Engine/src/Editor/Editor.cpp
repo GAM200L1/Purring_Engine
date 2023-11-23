@@ -2319,9 +2319,6 @@ namespace PE {
 
 	void Editor::ShowAnimationWindow(bool* p_active)
 	{
-		int totalSprites{};
-		float animationDuration{};
-
 		if (IsEditorActive())
 		if (!ImGui::Begin("Animation Editor", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
@@ -2346,11 +2343,15 @@ namespace PE {
 			std::shared_ptr<Graphics::Texture> texture;
 			std::shared_ptr<Animation> currentAnimation;
 			int frameCount{};
+			int totalSprites{};
+			int frameRate{};
+			float animationDuration{};
 
 			// frame data
 			float frameTime{};
 			ImVec2 minUV;
 			ImVec2 maxUV;
+			int framesHeld{};
 
 			static bool playAnimation{ false };
 
@@ -2362,16 +2363,28 @@ namespace PE {
 				entityList.push_back(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str());
 			}
 
+			std::vector<std::filesystem::path> animationFilePaths;
+			std::vector<std::string> loadedAnimationKeys;
 			// get all animations from resource manager
 			for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
 			{
-				animationList.push_back(it->first.c_str());
+				animationFilePaths.emplace_back(it->first);
+			}
+
+			for(auto const& r_path : animationFilePaths)
+			{
+				loadedAnimationKeys.push_back(r_path.stem().string());
+			}
+
+			for (auto const& r_str : loadedAnimationKeys)
+			{
+				animationList.push_back(r_str.c_str());
 			}
 
 			// get index of current animation for combo box
-			for (std::string str : animationList)
+			for (auto const& r_path : animationFilePaths)
 			{
-				if (str == currentAnimationID)
+				if (r_path.string() == currentAnimationID)
 					break;
 				++animationIndex;
 			}
@@ -2396,7 +2409,7 @@ namespace PE {
 			ImGui::SetNextItemWidth(300.f);
 			if (ImGui::Combo("Animation", &animationIndex, animationList.data(), static_cast<int>(animationList.size())))
 			{
-				currentAnimationID = animationList[animationIndex];
+				currentAnimationID = animationFilePaths[animationIndex].string();
 			}
 
 			if (ImGui::Button("Create Animation"))
@@ -2437,6 +2450,8 @@ namespace PE {
 				// get max frames
 				frameCount = currentAnimation->GetFrameCount() ? currentAnimation->GetFrameCount() - 1 : 0;
 				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+				frameRate = currentAnimation->GetFrameRate();
+				animationDuration = currentAnimation->GetAnimationDuration();
 
 				// if animation has spritesheet, get the texture
 				if (currentAnimation->GetSpriteSheetKey() != "")
@@ -2520,10 +2535,13 @@ namespace PE {
 			int frame{ static_cast<int>(previewCurrentFrameIndex)};
 			ImGui::SetNextItemWidth(300);
 
-			if (ImGui::SliderInt("Frame", &frame, 0, frameCount))
+			if (ImGui::SliderInt("##FrameSlider", &frame, 0, frameCount))
 			{
 				previewCurrentFrameIndex = static_cast<unsigned>(frame);
 			}
+
+			ImGui::SameLine();
+			ImGui::Text("%d:%.f", static_cast<int>(animationDuration), (animationDuration - static_cast<int>(animationDuration)) * 100.f);
 
 			if (currentAnimation)
 			{
@@ -2606,6 +2624,7 @@ namespace PE {
 						// Set preview frame data to first frame of the loaded animation
 						previewCurrentFrameIndex = 0; // Reset to first frame
 						frameCount = currentAnimation->GetFrameCount();
+						frameRate = currentAnimation->GetFrameRate();
 						animationDuration = currentAnimation->GetAnimationDuration();
 						frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
 						minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
@@ -2627,36 +2646,25 @@ namespace PE {
 				}
 			}
 
-
-
-
 			ImGui::Dummy(ImVec2(0, 5));
 			ImGui::SeparatorText("Animation Properties");
 			ImGui::Columns(2, "TwoSections", true);
-			ImGui::Text("Name");
-			ImGui::Dummy(ImVec2(0, 5));
-			ImGui::Text("looped");
-			ImGui::Dummy(ImVec2(0, 5));
+			//ImGui::Text("Name");
+			//ImGui::Dummy(ImVec2(0, 5));
+			//ImGui::Text("looped");
+			//ImGui::Dummy(ImVec2(0, 5));
 			ImGui::Text("Total Sprites");
 			ImGui::Dummy(ImVec2(0, 5));
-			ImGui::Text("Animation Duration");
-			if (ImGui::TreeNode("FrameRects")) {
-
-				ImGui::TreePop();
-			}
-			ImGui::Text("frameTime");
+			ImGui::Text("Frame Rate");
 			ImGui::Dummy(ImVec2(0, 5));
-			ImGui::Text("offsets");
-			if (ImGui::TreeNode("sounds")) {
+			ImGui::Text("Frames Held");
+			ImGui::Dummy(ImVec2(0, 5));
 
-				ImGui::TreePop();
-			}
-
-			ImGui::NextColumn();
+			ImGui::NextColumn();/*
 			static std::string text{};
 			ImGui::InputText("##name", &text);
 			static bool looped{};
-			ImGui::Checkbox("##looped", &looped);
+			ImGui::Checkbox("##looped", &looped);*/
 
 
 
@@ -2664,16 +2672,17 @@ namespace PE {
 			{
 				totalSprites = currentAnimation->GetFrameCount();
 				animationDuration = currentAnimation->GetAnimationDuration();
+				frameRate = currentAnimation->GetFrameRate();
 			}
 
-			// edit total frames in an animation
-			if (ImGui::InputInt("##totalFrames", &totalSprites))
+			// edit total sprites in an animation
+			if (ImGui::InputInt("##totalSprites", &totalSprites))
 			{
 				totalSprites = totalSprites < 0 ? 0 : totalSprites;
 
 				playAnimation = false;
 				if(currentAnimation)
-					currentAnimation->CreateAnimationFrames(totalSprites, animationDuration);
+					currentAnimation->CreateAnimationFrames(totalSprites);
 
 				// update frame duration
 				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
@@ -2686,22 +2695,20 @@ namespace PE {
 				}
 			}
 
-			if (ImGui::InputFloat("##animationDuration", &animationDuration))
+			if (ImGui::InputInt("##frameRate", &frameRate))
 			{
-				currentAnimation->SetAnimationDuration(animationDuration);
+				currentAnimation->SetCurrentAnimationFrameRate(frameRate);
 			}
 
-			ImGui::Text("{ unordered_map, size = 1}");
+			// get frames held
+			framesHeld = static_cast<int>(static_cast<float>(frameRate) * frameTime);
 
-			ImGui::InputFloat("##frameTime", &frameTime);
-			ImGui::Text("{ unordered_map, size = 0}");
-			ImGui::Text("{ vector, size = 1}");
-			ImGui::Columns(1);
+			ImGui::InputInt("##framesHeld", &framesHeld);
 
 			// update animation frame data
 			if (currentAnimation)
 			{
-				currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, frameTime);
+				currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, static_cast<unsigned>(framesHeld));
 			}
 
 			// save animation here

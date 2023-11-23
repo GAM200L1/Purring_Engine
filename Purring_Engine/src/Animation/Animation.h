@@ -186,13 +186,15 @@ namespace PE
 		*************************************************************************************/
 		AnimationFrame const& GetCurrentAnimationFrame(unsigned currentFrameIndex);
 
-		void CreateAnimationFrames(unsigned totalSprites, float animationDuration);
+		void CreateAnimationFrames(unsigned totalSprites);
 
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, float duration);
 
+		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, unsigned framesToHold);
+
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& minUV, vec2 const& maxUV);
 
-		void SetAnimationDuration(float animationDuration);
+		void SetCurrentAnimationFrameRate(unsigned frameRate);
 
 		void SetAnimationID(std::string animationID);
 
@@ -201,8 +203,10 @@ namespace PE
 		inline std::string GetSpriteSheetKey() const { return m_spriteSheetKey; }
 
 		inline unsigned GetFrameCount() { return static_cast<unsigned>(m_animationFrames.size()); }
+		
+		inline unsigned GetFrameRate() { return m_frameRate; }
 
-		inline float GetAnimationDuration() { return m_animationDuration; }
+		float GetAnimationDuration();
 
 		nlohmann::json Animation::ToJson() const;
 		Animation& Deserialize(const nlohmann::json& j);
@@ -214,9 +218,9 @@ namespace PE
 		// SERIALIZE THESE
 		std::string m_animationID;
 		std::vector<AnimationFrame> m_animationFrames;
-		std::string m_spriteSheetKey; // remove this, should be using texxture key from renderer component
+		std::string m_spriteSheetKey;
 		unsigned m_totalSprites;
-		float m_animationDuration;
+		unsigned m_frameRate;
 
 		AnimationFrame m_emptyFrame{};
 	};
