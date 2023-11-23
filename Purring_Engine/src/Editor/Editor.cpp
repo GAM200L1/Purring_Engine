@@ -6,7 +6,7 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
- \par      code %:     95%
+ \par      code %:     90%
  \par      changes:    Defined all the logic for rendering the editor UI through ImGUI.
 
  \co-author            Krystal Yamin
@@ -14,6 +14,12 @@
  \par      code %:     5%
  \par      changes:    02-11-2023
                        Added object picking logic.
+
+ \co-author            Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    02-11-2023
+					   Added animation editor, collision layer matrix.
 
  \brief
 	cpp file containing the definition of the editor class, which contains 
@@ -50,6 +56,7 @@
 #include "Graphics/Text.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
+#include "Layers/CollisionLayer.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -1294,6 +1301,24 @@ namespace PE {
 								}
 								ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(m_currentSelectedObject).isTrigger);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								auto& collisionLayers{ CollisionLayerManager::GetInstance().GetCollisionLayers() };
+
+								std::vector<const char*> layerNames;
+
+								for (auto& collisionLayer : collisionLayers)
+								{
+									layerNames.push_back(collisionLayer->GetCollisionLayerName().c_str());
+								}
+
+								int currentLayerIndex = static_cast<int>(EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex);
+								ImGui::Text("Collision Layer: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+								//set combo box for the different collider types
+								if (ImGui::Combo("##Collision Layers", &currentLayerIndex, layerNames.data(), static_cast<unsigned>(layerNames.size())))
+								{
+									EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex = currentLayerIndex;
+								}
 							}
 						}
 
@@ -2780,6 +2805,75 @@ namespace PE {
 			{
 				ToggleDebugRender();
 			}
+
+			ImGui::SeparatorText("Collision Layer Matrix");
+
+			auto& collisionLayers { CollisionLayerManager::GetInstance().GetCollisionLayers() };
+			
+			std::vector<const char*> column_names{ "" };
+			std::vector<const char*> row_names;
+
+			for(auto& collisionLayer : collisionLayers)
+			{
+				column_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
+				row_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
+			}
+		
+			unsigned counter{};
+			const int columns_count = static_cast<int>(column_names.size());
+			static ImGuiTableFlags table_flags = ImGuiTableFlags_SizingFixedFit| ImGuiTableFlags_Hideable;
+
+				if (ImGui::BeginTable("collisionlayer", columns_count, table_flags))
+				{
+					ImGui::TableSetupColumn(column_names[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder);
+					for (int n = columns_count - 1; n > 0 ; --n)
+						ImGui::TableSetupColumn(column_names[n], ImGuiTableColumnFlags_WidthFixed);
+
+					ImGui::TableHeadersRow();       // Draw remaining headers and allow access to context-menu and other functions.
+					for (auto const& p_collisionLayer : collisionLayers)
+					{
+						ImGui::PushID(p_collisionLayer->GetCollisionLayerIndex());
+						ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
+						ImGui::AlignTextToFramePadding();
+						ImGui::Text(row_names[p_collisionLayer->GetCollisionLayerIndex()], p_collisionLayer->GetCollisionLayerIndex());
+						for (unsigned i{ static_cast<unsigned>(p_collisionLayer->GetCollisionLayerSignature().size()) }, column{ 1 }; i != 0; ++column)
+							if (ImGui::TableSetColumnIndex(column))
+							{
+								bool bit = p_collisionLayer->IsCollidingWith(--i);
+								ImGui::PushID(column);
+								if(column < static_cast<unsigned>(columns_count) - counter)
+									if (ImGui::Checkbox("", &bit))
+									{
+										// flip the bit
+										p_collisionLayer->FlipCollisionLayerBit(i);
+
+										// check if its not flipping its own bit
+										if (p_collisionLayer->GetCollisionLayerIndex() != i)
+										{
+											// flip the bit of the other collision layer
+											collisionLayers[i]->FlipCollisionLayerBit(p_collisionLayer->GetCollisionLayerIndex());
+										}
+									}
+								ImGui::PopID();
+							}
+						ImGui::PopID();
+						++counter;
+					}
+					ImGui::EndTable();
+				}
+
+				// print debug layer signature
+				//for (auto const& p_collisionLayer : collisionLayers)
+				//{
+				//	ImGui::Text((p_collisionLayer->GetCollisionLayerName() + ": ").c_str());
+				//	for (std::size_t i{ p_collisionLayer->GetCollisionLayerSignature().size()}; i != 0 ;)
+				//	{
+				//		ImGui::SameLine();
+				//		ImGui::Text(" %d ", p_collisionLayer->IsCollidingWith(--i));
+				//	}
+				//}
+
 			ImGui::End(); //imgui close
 		}
 	}
