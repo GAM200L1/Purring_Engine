@@ -26,7 +26,7 @@ namespace PE
     public:
         CollisionLayer(unsigned collisionLayerIndex);
 
-        inline std::bitset<TOTAL_COLLISION_LAYERS> GetCollisionLayerSignature() { return m_collisionLayerIndex; }
+        inline std::bitset<TOTAL_COLLISION_LAYERS>& GetCollisionLayerSignature() { return m_collisionLayerSignature; }
 
         inline bool IsCollidingWith(unsigned collisionLayerIndex) { return m_collisionLayerSignature[collisionLayerIndex]; }
 
@@ -34,7 +34,7 @@ namespace PE
 
         inline unsigned GetCollisionLayerIndex() { return m_collisionLayerIndex; }
 
-        inline std::string GetCollisionLayerName() { return m_collisionLayerName; }
+        inline std::string const& GetCollisionLayerName() { return m_collisionLayerName; }
 
         void SetCollisionLayerName(std::string collisionLayerName);
 
@@ -54,6 +54,8 @@ namespace PE
 
         inline std::shared_ptr<CollisionLayer> GetCollisionLayer(unsigned collisionLayerIndex) { return m_collisionLayers[collisionLayerIndex]; }
 
+        std::vector<std::shared_ptr<CollisionLayer>>& GetCollisionLayers() { return m_collisionLayers; }
+
         // serialize for each scene
 
         // deserialize for each scene
@@ -62,6 +64,6 @@ namespace PE
         // private constructor for singleton
         CollisionLayerManager();
 
-        std::map<unsigned, std::shared_ptr<CollisionLayer>> m_collisionLayers;
+        std::vector<std::shared_ptr<CollisionLayer>> m_collisionLayers;
     };
 }

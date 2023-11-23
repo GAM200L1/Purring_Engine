@@ -50,6 +50,7 @@
 #include "Graphics/Text.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
+#include "Layers/CollisionLayer.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -2776,38 +2777,59 @@ namespace PE {
 				ToggleDebugRender();
 			}
 
-			ImGui::SeparatorText("Physics Layer");
+			ImGui::SeparatorText("Collision Layer Matrix");
 			int counter{};
 			//your column first value needs to be the name of the table
-			const char* column_names[] = { "", "Layer1", "Layer2", "Layer3", "Layer4", "Layer5", "Layer6", "Layer7", "Layer8", "Layer9","Layer10"};
-			const char* row_names[] = { "Layer1", "Layer2", "Layer3", "Layer4", "Layer5", "Layer6", "Layer7", "Layer8", "Layer9","Layer10"};
+
+			auto& collisionLayers { CollisionLayerManager::GetInstance().GetCollisionLayers() };
+			
+			std::vector<const char*> column_names{ "" };
+			std::vector<const char*> row_names;
+
+			for(auto& collisionLayer : collisionLayers)
+			{
+				column_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
+				row_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
+			}
+
+
 		
-			const int columns_count = IM_ARRAYSIZE(column_names);
-			int rows_count = sizeof(row_names) / sizeof(char*);
-			static std::vector<int> bools;
-			bools.resize(10 * 11);// Dummy storage selection storage
-			static ImGuiTableFlags table_flags = ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_Hideable;
+			const int columns_count = static_cast<int>(column_names.size());
+			int rows_count = static_cast<int>(row_names.size());
+			static ImGuiTableFlags table_flags = ImGuiTableFlags_SizingFixedFit| ImGuiTableFlags_Hideable;
 
 				if (ImGui::BeginTable("collisionlayer", columns_count, table_flags))
 				{
 					ImGui::TableSetupColumn(column_names[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder);
-					for (int n = 1; n < columns_count; n++)
+					for (int n = columns_count - 1; n > 0 ; --n)
 						ImGui::TableSetupColumn(column_names[n], ImGuiTableColumnFlags_WidthFixed);
 
 					ImGui::TableHeadersRow();       // Draw remaining headers and allow access to context-menu and other functions.
-					for (int row = 0; row < rows_count; row++)
+					for (auto const& p_collisionLayer : collisionLayers)
 					{
-						ImGui::PushID(row);
+						ImGui::PushID(p_collisionLayer->GetCollisionLayerIndex());
 						ImGui::TableNextRow();
 						ImGui::TableSetColumnIndex(0);
 						ImGui::AlignTextToFramePadding();
-						ImGui::Text(row_names[row], row);
-						for (int column = 1; column < columns_count; column++)
+						ImGui::Text(row_names[p_collisionLayer->GetCollisionLayerIndex()], p_collisionLayer->GetCollisionLayerIndex());
+						for (std::size_t i{ p_collisionLayer->GetCollisionLayerSignature().size() }, column{ 1 }; i != 0; ++column)
 							if (ImGui::TableSetColumnIndex(column))
 							{
+								bool bit = p_collisionLayer->IsCollidingWith(--i);
 								ImGui::PushID(column);
 								if(column < columns_count - counter)
-								ImGui::Checkbox("",(bool*)&bools[row * columns_count + column]); // weird ass syntax cuz vector of bools is not an array of boolsl
+									if (ImGui::Checkbox("", &bit))
+									{
+										// flip the bit
+										p_collisionLayer->FlipCollisionLayerBit(i);
+
+										// check if its not flipping its own bit
+										if (p_collisionLayer->GetCollisionLayerIndex() != i)
+										{
+											// flip the bit of the other collision layer
+											collisionLayers[i]->FlipCollisionLayerBit(p_collisionLayer->GetCollisionLayerIndex());
+										}
+									}
 								ImGui::PopID();
 							}
 						ImGui::PopID();
@@ -2816,11 +2838,18 @@ namespace PE {
 					ImGui::EndTable();
 				}
 
-
+				// print debug layer signature
+				//for (auto const& p_collisionLayer : collisionLayers)
+				//{
+				//	ImGui::Text((p_collisionLayer->GetCollisionLayerName() + ": ").c_str());
+				//	for (std::size_t i{ p_collisionLayer->GetCollisionLayerSignature().size()}; i != 0 ;)
+				//	{
+				//		ImGui::SameLine();
+				//		ImGui::Text(" %d ", p_collisionLayer->IsCollidingWith(--i));
+				//	}
+				//}
 
 			ImGui::End(); //imgui close
-
-
 		}
 	}
 

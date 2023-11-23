@@ -39,7 +39,7 @@ namespace PE
 	{
         for (unsigned i{}; i < TOTAL_COLLISION_LAYERS; ++i)
         {
-            m_collisionLayers[i] = std::make_shared<CollisionLayer>(i);
+            m_collisionLayers.emplace_back(std::make_shared<CollisionLayer>(i));
         }
 	}
 

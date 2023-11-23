@@ -20,6 +20,7 @@
 #include "Logging/Logger.h"
 #include "Data/json.hpp"
 #include "Events/EventHandler.h"
+#include "Layers/CollisionLayer.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -47,6 +48,9 @@ namespace PE
 				gridSize.y = cfgJson["Gridsize"]["y"].get<float>();
 			}
 		}
+
+		// initilize collision layer manager
+		CollisionLayerManager::GetInstance();
 		
 	}
 
