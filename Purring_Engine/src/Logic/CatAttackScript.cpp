@@ -68,7 +68,7 @@ namespace PE
 								}
 								else
 								{
-									CatScript::ToggleEntity(telegraphID, false);
+									EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false;
 								}
 							}
 							break;
@@ -104,7 +104,7 @@ namespace PE
 	void CatAttackPLAN::ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition)
 	{
 		CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
-		if (PointCollision(catCollider, r_cursorPosition) && m_mouseClick)
+		if (PointCollision(catCollider, r_cursorPosition) && m_mouseClick && !m_showBoxes)
 		{
 			// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
 			m_showBoxes = true;
