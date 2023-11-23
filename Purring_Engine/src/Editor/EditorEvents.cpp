@@ -94,9 +94,11 @@ namespace PE {
 						if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
 							EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 					}
+					if (m_currentSelectedObject != -1)
 					EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 
 					//create undo here
+					if(m_currentSelectedObject != -1)
 					m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 					//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
