@@ -132,9 +132,6 @@ namespace PE
 			// if the entity is not active, do not check for collision
 			if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
 			
-			// ----- please remove this ----- //
-			std::cout << RigidBodyID << " is updating physics\n";
-			
 			RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(RigidBodyID);
 

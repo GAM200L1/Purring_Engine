@@ -2775,7 +2775,52 @@ namespace PE {
 			{
 				ToggleDebugRender();
 			}
+
+			ImGui::SeparatorText("Physics Layer");
+			int counter{};
+			//your column first value needs to be the name of the table
+			const char* column_names[] = { "", "Layer1", "Layer2", "Layer3", "Layer4", "Layer5", "Layer6", "Layer7", "Layer8", "Layer9","Layer10"};
+			const char* row_names[] = { "Layer1", "Layer2", "Layer3", "Layer4", "Layer5", "Layer6", "Layer7", "Layer8", "Layer9","Layer10"};
+		
+			const int columns_count = IM_ARRAYSIZE(column_names);
+			int rows_count = sizeof(row_names) / sizeof(char*);
+			static std::vector<int> bools;
+			bools.resize(10 * 11);// Dummy storage selection storage
+			static ImGuiTableFlags table_flags = ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_ScrollX | ImGuiTableFlags_ScrollY | ImGuiTableFlags_Hideable;
+
+				if (ImGui::BeginTable("collisionlayer", columns_count, table_flags))
+				{
+					ImGui::TableSetupColumn(column_names[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder);
+					for (int n = 1; n < columns_count; n++)
+						ImGui::TableSetupColumn(column_names[n], ImGuiTableColumnFlags_WidthFixed);
+
+					ImGui::TableHeadersRow();       // Draw remaining headers and allow access to context-menu and other functions.
+					for (int row = 0; row < rows_count; row++)
+					{
+						ImGui::PushID(row);
+						ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
+						ImGui::AlignTextToFramePadding();
+						ImGui::Text(row_names[row], row);
+						for (int column = 1; column < columns_count; column++)
+							if (ImGui::TableSetColumnIndex(column))
+							{
+								ImGui::PushID(column);
+								if(column < columns_count - counter)
+								ImGui::Checkbox("",(bool*)&bools[row * columns_count + column]); // weird ass syntax cuz vector of bools is not an array of boolsl
+								ImGui::PopID();
+							}
+						ImGui::PopID();
+						counter++;
+					}
+					ImGui::EndTable();
+				}
+
+
+
 			ImGui::End(); //imgui close
+
+
 		}
 	}
 
