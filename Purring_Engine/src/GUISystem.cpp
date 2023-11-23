@@ -189,6 +189,7 @@ namespace PE
 		j["m_onClicked"] = m_onClicked;
 		j["m_onHovered"] = m_onHovered;
 		j["m_UIType"] = static_cast<int>(m_UIType);
+		//j["disabled"] = disabled;							// @Jarran when you add, uncomment this
 
 		// Serialize textures and colors
 		j["m_defaultTexture"] = m_defaultTexture;
@@ -212,6 +213,7 @@ namespace PE
 		gui.m_onClicked = j["m_onClicked"];
 		gui.m_onHovered = j["m_onHovered"];
 		gui.m_UIType = static_cast<UIType>(j["m_UIType"].get<int>());
+		//gui.disabled = j["disabled"].get<bool>();			// @Jarran when you add, uncomment this
 
 		// Deserialize textures
 		gui.m_defaultTexture = j["m_defaultTexture"];
