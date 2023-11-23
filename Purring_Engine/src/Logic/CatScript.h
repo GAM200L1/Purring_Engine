@@ -49,7 +49,7 @@ namespace PE
 	struct CatScriptData
 	{
 		// reference entities
-		EntityID catID{ 1 };
+		EntityID catID{ 0 };
 		EntityID projectileID{ 0 };
 
 		// cat stats
