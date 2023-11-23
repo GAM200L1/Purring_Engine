@@ -91,7 +91,7 @@ namespace PE
 	
 	void CatAttackPLAN::StateExit(EntityID id)
 	{
-		REMOVE_MOUSE_EVENT_LISTENER(m_eventListener);
+		//REMOVE_MOUSE_EVENT_LISTENER(m_eventListener);
 
 		for (auto const& telegraph : p_data->telegraphIDs)
 		{
