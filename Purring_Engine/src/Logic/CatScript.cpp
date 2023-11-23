@@ -90,18 +90,15 @@ namespace PE
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 		{
 			// if player is planning attack, set animation to idle
-			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
-			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
-			}
-			else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
-			{
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+		}
+		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
+		{
 
-			}
-			else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
-			{
+		}
+		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
+		{
 
-			}
 		}
 	}
 
@@ -167,8 +164,8 @@ namespace PE
 	{
 			try
 			{
-					Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
-					r_transform.position = r_position;
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.position = r_position;
 			}
 			catch (...) { return; }
 	}

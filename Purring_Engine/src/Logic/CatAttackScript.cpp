@@ -85,6 +85,7 @@ namespace PE
 		}
 		else if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 		{
+			std::cout << "here\n";
 			p_data->p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
 		}
 	}
@@ -117,10 +118,6 @@ namespace PE
 				else
 					CatScript::ToggleEntity(boxID, false);
 			}
-		}
-		else if (m_mouseClick && m_showBoxes && p_data->attackDirection == 0)
-		{
-			m_showBoxes = false;
 		}
 	}
 
