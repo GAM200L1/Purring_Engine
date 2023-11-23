@@ -1,0 +1,37 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "children": [],
+                "isActive": true,
+                "name": "TurnCounter",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "GUIRenderer": {
+                "Color": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "TextureKey": "../Assets/Textures/LongNote_512x128.png"
+            },
+            "Transform": {
+                "height": 181.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 695.0,
+                    "y": 461.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 708.0
+            }
+        },
+        "name": ""
+    }
+}
