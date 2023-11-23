@@ -30,6 +30,7 @@ namespace PE
 		if (m_currentcount >= 21)
 		{
 			m_undoStack.back()->OnStackLeave();
+			--m_currentcount;
 			delete m_undoStack.back();
 			m_undoStack.pop_back();
 		}
@@ -58,6 +59,7 @@ namespace PE
 			delete a;			
 		}
 		m_undoStack.clear();
+		m_currentcount=0;
 	}
 
 	UndoStack::~UndoStack()
