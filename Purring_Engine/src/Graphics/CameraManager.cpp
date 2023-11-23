@@ -33,6 +33,7 @@ namespace PE
 
 
         CameraManager::CameraManager(float const windowWidth, float const windowHeight)
+            : m_viewportWidth{ windowWidth }, m_viewportHeight{ windowHeight }
         {
             // Update the editor camera viewport size
             m_editorCamera.SetViewDimensions(windowWidth, windowHeight);
@@ -160,7 +161,7 @@ namespace PE
         }
 
 
-        std::optional<std::reference_wrapper<Camera>> CameraManager::GetMainCamera()
+        std::optional<std::reference_wrapper<Camera>> CameraManager::GetMainCamera() const
         {
             // Check if the main camera ID stored is valid
             if (EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
@@ -178,6 +179,60 @@ namespace PE
         }
 
 
+        vec2 CameraManager::GetWindowToWorldPosition(float const x, float const y) const
+        {
+            // Get the main camera
+            std::optional<std::reference_wrapper<Camera>> ref_mainCamera{ GetMainCamera() };
+
+            if (ref_mainCamera.has_value())
+            {
+                Camera& r_mainCamera = ref_mainCamera.value().get();
+                
+#ifndef GAMERELEASE
+                // Get the size of the render window
+                float editorWindowSizeX{}, editorWindowSizeY{};
+                Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+                float widthRatio{ (editorWindowSizeX < std::numeric_limits<float>::epsilon()) ? m_viewportWidth / editorWindowSizeX : 1.f };
+                float heightRatio{ (editorWindowSizeY < std::numeric_limits<float>::epsilon()) ? m_viewportHeight / editorWindowSizeY : 1.f };
+
+                // Adjust scale of the position
+                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * widthRatio, y * heightRatio) };
+                ret.y += Editor::GetInstance().GetPlayWindowOffset();
+#else
+                float widthRatio{ (m_windowWidth < std::numeric_limits<float>::epsilon()) ? m_viewportWidth / m_windowWidth : 1.f };
+                float heightRatio{ (m_windowHeight < std::numeric_limits<float>::epsilon()) ? m_viewportHeight / m_windowHeight : 1.f };
+                vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * widthRatio, y * heightRatio) };
+#endif // !GAMERELEASE
+
+                return ret;
+            }
+            else 
+            {
+                return vec2{x, y};
+            }
+        }
+
+
+        vec2 CameraManager::GetUiWindowToScreenPosition(float const x, float const y)
+        {
+            // Get the UI camera
+#ifndef GAMERELEASE
+                // Get the size of the render window
+            float editorWindowSizeX{}, editorWindowSizeY{};
+            Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+
+            // Adjust scale of the position
+            vec2 ret{ x * GetUiCamera().GetViewportWidth() / editorWindowSizeX, y * GetUiCamera().GetViewportHeight() / editorWindowSizeY };
+            ret.y += Editor::GetInstance().GetPlayWindowOffset();
+#else
+            vec2 ret{ x * GetUiCamera().GetViewportWidth() / m_windowWidth, y * GetUiCamera().GetViewportHeight() / m_windowHeight};
+#endif // !GAMERELEASE
+
+            return ret;
+        }
+
+
+
         bool CameraManager::SetMainCamera(EntityID const cameraEntityId)            
         {
             // Don't set it if it's the UI camera, or if it doesn't have a camera component on it
@@ -187,6 +242,11 @@ namespace PE
             }
 
             m_mainCameraId = cameraEntityId;
+
+            Camera const& r_mainCamera{ EntityManager::GetInstance().Get<Camera>(m_mainCameraId) };
+            m_viewportWidth = r_mainCamera.GetViewportWidth();
+            m_viewportHeight = r_mainCamera.GetViewportHeight();
+
             return true;
         }
 
@@ -235,6 +295,19 @@ namespace PE
                 }
 
                 r_camera.UpdateCamera(r_transform, m_mainCameraId == id);
+
+                // Update the cached viewport dimensions
+                if(m_mainCameraId == id) { 
+                    if (m_viewportWidth != r_camera.GetViewportWidth()) 
+                    {
+                        m_viewportWidth = r_camera.GetViewportWidth();
+                    }
+
+                    if(m_viewportHeight != r_camera.GetViewportHeight()) 
+                    {
+                        m_viewportHeight = r_camera.GetViewportHeight();
+                    }
+                }
             }
 
             // No runtime cameras exist so just set the id to the default ID
@@ -262,12 +335,12 @@ namespace PE
                 m_windowWidth = static_cast<float>(event.width);
                 m_windowHeight = static_cast<float>(event.height);
 
-                // Update the size of the viewport of all the cameras
-                for (const EntityID& id : SceneView<Camera>())
-                {
-                    Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
-                    r_camera.SetViewDimensions(m_windowWidth, m_windowHeight);
-                }
+                // Store the ratio of the main camera's viewport to the avtual window size
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera) {
+                    m_viewportWidth = mainCamera.value().get().GetViewportWidth();
+                    m_viewportHeight = mainCamera.value().get().GetViewportHeight();
+                } 
             }
         }
 

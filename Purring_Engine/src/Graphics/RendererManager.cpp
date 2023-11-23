@@ -61,8 +61,8 @@ namespace PE
         // Initialize static variables
         std::vector<EntityID> RendererManager::renderedEntities{};
 
-        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg)
-            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }
+        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, int const windowWidth, int const windowHeight)
+            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
         {
             // Initialize GLEW
             if (glewInit() != GLEW_OK)
@@ -87,10 +87,10 @@ namespace PE
             // Print the specs
             PrintSpecifications();
 
-            // Create the framebuffer to render to ImGui window
+            // Create the framebuffer to render to a texture object
             int width, height;
             glfwGetWindowSize(p_glfwWindow, &width, &height);
-            m_imguiFrameBuffer.CreateFrameBuffer(width, height);
+            m_renderFrameBuffer.CreateFrameBuffer(width, height);
             m_cachedWindowWidth = static_cast<float>(width), 
                 m_cachedWindowHeight = static_cast<float>(height);
 
@@ -129,9 +129,6 @@ namespace PE
             }
             deltaTime; // Prevent warnings
 
-            // Retrieve whether to render in the editor or the full window
-           // bool renderInEditor{ Editor::GetInstance().IsEditorActive() };
-
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
 
@@ -140,25 +137,33 @@ namespace PE
 
             // resizing window
 #ifndef GAMERELEASE
-            Editor::GetInstance().GetWindowSize(windowWidth, windowHeight);
+            if (Editor::GetInstance().IsEditorActive())
+            {
+                Editor::GetInstance().GetWindowSize(windowWidth, windowHeight);
+            }
+            else 
+            {
+                int width, height;
+                glfwGetWindowSize(p_glfwWindow, &width, &height);
+                windowWidth = static_cast<float>(width);
+                windowHeight = static_cast<float>(height);
+            }
 #else
             int width, height;
             glfwGetWindowSize(p_glfwWindow, &width, &height);
             windowWidth = static_cast<float>(width);
             windowHeight = static_cast<float>(height);
 #endif
-
             // Set background color of the window
-            glClearColor(0.796f, 0.6157f, 0.4588f, 1.f);
+            glClearColor(0.f, 0.f, 0.f, 1.f);
             glClear(GL_COLOR_BUFFER_BIT); // Clear the color buffer
 
-#ifndef GAMERELEASE
-            // Bind the RBO for rendering to the ImGui window
-            m_imguiFrameBuffer.Bind();
-#endif // !GAMERELEASE
+            // Bind the RBO for rendering to a texture object
+            m_renderFrameBuffer.Bind();
 
             // If the window size has changed
-            if (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight)
+            if ((windowWidth > std::numeric_limits<float>::epsilon() && windowHeight > std::numeric_limits<float>::epsilon()) &&
+                (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight))
             {
                 m_cachedWindowWidth = windowWidth, m_cachedWindowHeight = windowHeight;
 
@@ -166,22 +171,32 @@ namespace PE
                 GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
+                m_renderFrameBuffer.Resize(windowWidthInt, windowHeightInt);
 
 #ifndef GAMERELEASE
-                m_imguiFrameBuffer.Resize(windowWidthInt, windowHeightInt);
-
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
-#endif // !GAMERELEASE
 
-                // Update the ui camera viewport size
-                r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+                if (Editor::GetInstance().IsEditorActive())
+                {
+                    // Update the ui camera viewport size
+                    r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+                }
+#endif // !GAMERELEASE
             }
 
 #ifndef GAMERELEASE
-            // Bind the RBO for rendering to the ImGui window
-            m_imguiFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
+            if (!Editor::GetInstance().IsEditorActive())
+            {
+                // Update the ui camera viewport size
+                r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
+            }
+#endif // !GAMERELEASE
 
+            // Clear the texture object
+            m_renderFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
+
+#ifndef GAMERELEASE            
             // Get the world to NDC matrix of the editor cam or the main runtime camera
             glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(Editor::GetInstance().IsEditorActive()) };
 #else
@@ -205,12 +220,21 @@ namespace PE
             // Render Text
             RenderText(r_cameraManager.GetUiViewToNdcMatrix());
 
-#ifndef GAMERELEASE
-            // Unbind the RBO for rendering to the ImGui window
-            m_imguiFrameBuffer.Unbind();
+            // Unbind the RBO for rendering the game scene to
+            m_renderFrameBuffer.Unbind();
 
-            Editor::GetInstance().Render(m_imguiFrameBuffer);
+#ifndef GAMERELEASE
+            // Check if the Imgui editor windows are active
+            if (!Editor::GetInstance().IsEditorActive())
+            {
+                DrawCameraQuad();
+            }
+
+            Editor::GetInstance().Render(m_renderFrameBuffer);
+#else
+            DrawCameraQuad();
 #endif // !GAMERELEASE
+
 
             // Poll for and process events
             glfwPollEvents(); // should be called before glfwSwapbuffers
@@ -229,9 +253,68 @@ namespace PE
             m_meshes.clear();
 
             // Delete the framebuffer object
-            m_imguiFrameBuffer.Cleanup();
+            m_renderFrameBuffer.Cleanup();
         }
 
+        void RendererManager::DrawCameraQuad()
+        {
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
+
+            // Check if shader program is valid
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + m_defaultShaderProgramKey + " does not exist.", __FUNCTION__);
+                return;
+            }
+
+            // Create the model to world matrix
+            glm::mat4 glmObjectTransform
+            {
+                GenerateTransformMatrix(m_cachedWindowWidth, m_cachedWindowHeight, 0.f, 0.f, 0.f)
+            };
+
+            glm::mat4 windowToNdc
+            {
+                2.f / m_cachedWindowWidth, 0.f, 0.f, 0.f,
+                0.f, 2.f / m_cachedWindowHeight, 0.f, 0.f,
+                0.f, 0.f, -2.f / 20.f, 0.f,
+                0.f, 0.f, 0.f, 1.f // assumption: view frustrum is centered
+            };
+
+            Draw(EnumMeshType::QUAD, glm::vec4{ 1.f, 1.f, 1.f, 1.f }, 
+                m_renderFrameBuffer.GetTextureId(), *(shaderProgramIterator->second),
+                GL_TRIANGLES, windowToNdc* glmObjectTransform);
+
+            //// Bind the shader program
+            //shaderProgramIterator->second->Use();
+
+            //// Bind the mesh VBO
+            //unsigned int meshIndex{ static_cast<unsigned int>(EnumMeshType::QUAD) };
+            //m_meshes[meshIndex].Bind();
+
+            //// Bind the framebuffer texture
+            //GLint textureUnit{ 0 };
+            //glActiveTexture(GL_TEXTURE0 + textureUnit);
+            //glBindTexture(GL_TEXTURE_2D, m_renderFrameBuffer.GetTextureId());
+            //shaderProgramIterator->second->SetUniform("uTextureSampler2d", textureUnit);
+            //shaderProgramIterator->second->SetUniform("uIsTextured", true);
+
+            //// Pass the model to NDC transform matrix as a uniform variable
+            //shaderProgramIterator->second->SetUniform("uModelToNdc", r_modelToNdc);
+
+            //// Pass the color of the quad as a uniform variable
+            //shaderProgramIterator->second->SetUniform("uColor", glm::vec4{1.f,1.f,1.f,1.f});
+
+            //glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+            //    GL_UNSIGNED_SHORT, NULL);
+
+            //// Unbind everything
+            //m_meshes[static_cast<unsigned int>(EnumMeshType::QUAD)].Unbind();
+            //shaderProgramIterator->second->UnUse();
+            //glBindTexture(GL_TEXTURE_2D, 0);
+        }
 
         template<typename T>
         void RendererManager::DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
@@ -251,6 +334,11 @@ namespace PE
             for (const EntityID& id : r_sceneView)
             {
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+
+                // Skip drawing this object is the entity or renderer is not enabled
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
+                    || !renderer.GetEnabled()) { continue; }
+
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 // Store the index of the rendered entity
@@ -311,8 +399,9 @@ namespace PE
             {
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
                 
-                // Skip drawing this object is the renderer is not enabled
-                if (!renderer.GetEnabled()) { continue; }
+                // Skip drawing this object is the entity or renderer is not enabled
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
+                    || !renderer.GetEnabled()) { continue; }
 
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
@@ -423,6 +512,9 @@ namespace PE
             // Draw each of the colliders
             for (const EntityID& id : SceneView<Collider>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
                 std::visit([&](auto& col)
@@ -435,6 +527,9 @@ namespace PE
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
@@ -451,6 +546,9 @@ namespace PE
             // Draw a "+" for every camera component
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 // Don't draw a cross for the UI camera
                 if (id == r_cameraManager.GetUiCameraId()) { continue; }
 
@@ -501,6 +599,48 @@ namespace PE
             // Unbind everything
             m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
+        }
+
+
+        void RendererManager::Draw(EnumMeshType meshType, glm::vec4 const& r_color,
+            GLuint textureId, ShaderProgram& r_shaderProgram, 
+            GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
+        {
+            r_shaderProgram.Use();
+
+            // Check if mesh index is valid
+            unsigned char meshIndex{ static_cast<unsigned char>(meshType) };
+            if (meshIndex >= m_meshes.size())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+                return;
+            }
+
+            m_meshes[meshIndex].Bind();
+
+            // Pass the model to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
+
+            // Pass the color of the quad as a uniform variable
+            r_shaderProgram.SetUniform("uColor", r_color);
+
+            // Bind the texture
+            GLint textureUnit{ 0 };
+            glActiveTexture(GL_TEXTURE0 + textureUnit);
+            glBindTexture(GL_TEXTURE_2D, textureId);
+            r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+            r_shaderProgram.SetUniform("uIsTextured", true);
+
+
+            glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+                GL_UNSIGNED_SHORT, NULL);
+
+            // Unbind everything
+            m_meshes[meshIndex].Unbind();
+            r_shaderProgram.UnUse();
+            glBindTexture(GL_TEXTURE_2D, 0);
         }
 
 
