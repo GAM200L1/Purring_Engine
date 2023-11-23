@@ -28,7 +28,7 @@ namespace PE
         std::string fileExtension = id.substr(id.find_last_of('.') + 1);
         if (fileExtension != "mp3")
         {
-            AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '." + fileExtension + "' for id: " + id, "File Type Error");
+            AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.mp3', but got '." + fileExtension + "' for id: " + id, "File Type Error");
             return;
         }
 
