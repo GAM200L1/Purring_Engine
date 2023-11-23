@@ -1,0 +1,39 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "children": [],
+                "isActive": true,
+                "name": "EndMovementText",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "TextComponent": {
+                "Color": {
+                    "w": 1.0,
+                    "x": 0.29019609093666077,
+                    "y": 0.25882354378700256,
+                    "z": 0.22745098173618317
+                },
+                "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                "Size": 1.0,
+                "Text": "End Movement"
+            },
+            "Transform": {
+                "height": 19.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 455.0,
+                    "y": -415.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 252.0
+            }
+        },
+        "name": ""
+    }
+}

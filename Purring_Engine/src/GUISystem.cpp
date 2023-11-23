@@ -132,10 +132,13 @@ namespace PE
 				if (gui.m_UIType == UIType::Button)
 				{
 					Button btn = UI_CAST(Button, gui);
-					btn.OnClick(objectID);
-					gui.m_clickedTimer = .3f;
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
+					if (gui.m_clickedTimer <= 0)
+					{
+						btn.OnClick(objectID);
+						gui.m_clickedTimer = .3f;
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
+					}
 				}
 			}
 	}

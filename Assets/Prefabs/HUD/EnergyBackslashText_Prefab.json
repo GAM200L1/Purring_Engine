@@ -1,0 +1,39 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "children": [],
+                "isActive": true,
+                "name": "EnergyBackslashText",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "TextComponent": {
+                "Color": {
+                    "w": 1.0,
+                    "x": 0.29019609093666077,
+                    "y": 0.25882354378700256,
+                    "z": 0.22745098173618317
+                },
+                "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                "Size": 1.0,
+                "Text": "/"
+            },
+            "Transform": {
+                "height": 23.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": -307.0,
+                    "y": -408.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 22.0
+            }
+        },
+        "name": ""
+    }
+}
