@@ -201,7 +201,7 @@ namespace PE
 							// if its the same don't check
 							if (ColliderID_1 == ColliderID_2) { continue; }
 							// if they have been checked before don't check again
-							if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
+							if (collider1.collisionChecked.count(ColliderID_2)) { continue; }
 							// if the layers are not colliding, don't check
 							if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
 
@@ -341,7 +341,7 @@ namespace PE
 					// if its the same don't check
 					if (ColliderID_1 == ColliderID_2) { continue; }
 					// if they have been checked before don't check again
-					if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
+					if (collider1.collisionChecked.count(ColliderID_2)) { continue; }
 					// if the layers are not colliding, don't check
 					if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
 
