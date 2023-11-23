@@ -1293,6 +1293,24 @@ namespace PE {
 								}
 								ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(m_currentSelectedObject).isTrigger);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								auto& collisionLayers{ CollisionLayerManager::GetInstance().GetCollisionLayers() };
+
+								std::vector<const char*> layerNames;
+
+								for (auto& collisionLayer : collisionLayers)
+								{
+									layerNames.push_back(collisionLayer->GetCollisionLayerName().c_str());
+								}
+
+								int currentLayerIndex = static_cast<int>(EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex);
+								ImGui::Text("Collision Layer: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+								//set combo box for the different collider types
+								if (ImGui::Combo("##Collision Layers", &currentLayerIndex, layerNames.data(), layerNames.size()))
+								{
+									EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex = currentLayerIndex;
+								}
 							}
 						}
 
@@ -2778,6 +2796,7 @@ namespace PE {
 			}
 
 			ImGui::SeparatorText("Collision Layer Matrix");
+
 			int counter{};
 			//your column first value needs to be the name of the table
 
@@ -2791,8 +2810,6 @@ namespace PE {
 				column_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
 				row_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
 			}
-
-
 		
 			const int columns_count = static_cast<int>(column_names.size());
 			int rows_count = static_cast<int>(row_names.size());

@@ -191,6 +191,8 @@ namespace PE
 							if (ColliderID_1 == ColliderID_2) { continue; }
 							// if they have been checked before don't check again
 							if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
+							// if the layers are not colliding, don't check
+							if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
 
 							std::visit([&](auto& col1)
 								{
@@ -277,6 +279,8 @@ namespace PE
 					if (ColliderID_1 == ColliderID_2) { continue; }
 					// if they have been checked before don't check again
 					if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
+					// if the layers are not colliding, don't check
+					if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
 
 					std::visit([&](auto& col1)
 						{
