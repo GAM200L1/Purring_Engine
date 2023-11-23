@@ -3,7 +3,11 @@
         "components": {
             "Collider": {
                 "data": {
-                    "center": {
+                    "max": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "min": {
                         "x": 0.0,
                         "y": 0.0
                     },
@@ -11,11 +15,13 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "radius": 0.0,
-                    "scaleOffset": 1.0
+                    "scaleOffset": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
                 },
                 "isTrigger": false,
-                "type": "CircleCollider"
+                "type": "AABBCollider"
             },
             "EntityDescriptor": {
                 "Prefab Type": "a",
@@ -40,8 +46,8 @@
                 "type": 1
             },
             "Transform": {
-                "height": 239.0,
-                "orientation": 0.5,
+                "height": 50.0,
+                "orientation": 0.0,
                 "position": {
                     "x": 0.0,
                     "y": 0.0
@@ -51,7 +57,7 @@
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 136.0
+                "width": 50.0
             }
         },
         "name": ""

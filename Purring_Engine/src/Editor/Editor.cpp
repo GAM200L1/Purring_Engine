@@ -372,6 +372,9 @@ namespace PE {
 					if (ImGui::Selectable("Yes"))
 					{
 						auto save = serializationManager.SerializeEntityPrefab(1);
+						prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
+						prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
+						m_applyPrefab = true;
 
 						std::ofstream outFile(prefabFP);
 						if (outFile)
@@ -396,6 +399,7 @@ namespace PE {
 						ImGui::ClosePopupToLevel(0, true);
 					}
 					ImGui::EndPopup();
+					m_undoStack.ClearStack();
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("No"))
@@ -3134,6 +3138,7 @@ namespace PE {
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					}
 					ImGui::EndPopup();
+					m_undoStack.ClearStack();
 				}
 			}
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
@@ -3524,6 +3529,11 @@ namespace PE {
 						ImGui::Separator();
 					}
 				}
+			}
+			// if there is no entities to modify, set to inactive
+			if (modify.empty())
+			{
+				*p_active = false;
 			}
 			ImGui::Separator();
 
