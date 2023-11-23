@@ -69,7 +69,8 @@ namespace PE
 		{
 				m_scriptData[id].p_stateManager->Update(id, deltaTime);
 
-				if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
+				// if the player selected an attack direction for this cat play attack animation
+				if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE" && m_scriptData[id].attackDirection != EnumCatAttackDirection::NONE)
 				{
 					if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
 					{
@@ -78,6 +79,7 @@ namespace PE
 				}
 				else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 				{
+					// if player is planning attack, set animation to idle
 					if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
 					{
 						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");

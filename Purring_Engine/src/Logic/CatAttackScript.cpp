@@ -128,44 +128,56 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(CatScript, id);
 		ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackEXECUTE::ProjectileHitRat, this);
-		
-		EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = true;
-		m_attackDuration = p_data->bulletLifeTime;
-		
-		vec2 direction{ 0.f, 0.f };
-		switch (p_data->attackDirection)
+		m_bulletImpulse = vec2{ 0.f, 0.f };
+		if (p_data->attackDirection != EnumCatAttackDirection::NONE)
 		{
-		case EnumCatAttackDirection::EAST:
-		{
-			direction.x = 1.f;
-			break;
+			m_attackDuration = p_data->bulletLifeTime;
+			vec2 direction{ 0.f, 0.f };
+			switch (p_data->attackDirection)
+			{
+			case EnumCatAttackDirection::EAST:
+			{
+				direction.x = 1.f;
+				break;
+			}
+			case EnumCatAttackDirection::NORTH:
+			{
+				direction.y = 1.f;
+				break;
+			}
+			case EnumCatAttackDirection::SOUTH:
+			{
+				direction.y = -1.f;
+				break;
+			}
+			case EnumCatAttackDirection::WEST:
+			{
+				direction.x = -1.f;
+				break;
+			}
+			}
+			EntityManager::GetInstance().Get<Transform>(p_data->projectileID).position = EntityManager::GetInstance().Get<Transform>(id).position + (direction * ((0.5f * EntityManager::GetInstance().Get<Transform>(id).width) + 0.5f * EntityManager::GetInstance().Get<Transform>(p_data->projectileID).width));
+			EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).velocity.Zero();
+			m_bulletImpulse = direction * p_data->bulletForce;
+			m_bulletDelay = p_data->bulletDelay;
 		}
-		case EnumCatAttackDirection::NORTH:
-		{
-			direction.y = 1.f;
-			break;
-		}
-		case EnumCatAttackDirection::SOUTH:
-		{
-			direction.y = -1.f;
-			break;
-		}
-		case EnumCatAttackDirection::WEST:
-		{
-			direction.x = -1.f;
-			break;
-		}
-		}
-
-		EntityManager::GetInstance().Get<Transform>(p_data->projectileID).position = EntityManager::GetInstance().Get<Transform>(id).position + (direction * ((0.5f * EntityManager::GetInstance().Get<Transform>(id).width) + 0.5f * EntityManager::GetInstance().Get<Transform>(p_data->projectileID).width));
-		EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).velocity.Zero();
-		EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(direction * p_data->bulletForce);
 	}
 
 	void CatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+		static bool projectileFired{ false };
+		if (m_bulletDelay > 0.f)
 		{
+			m_bulletDelay -= deltaTime;
+		}
+		else
+		{
+			if (p_data->attackDirection != EnumCatAttackDirection::NONE && !projectileFired)
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = true;
+				EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
+				projectileFired = true;
+			}
 			if (m_attackDuration > 0.f && !m_bulletCollided)
 			{
 				m_attackDuration -= deltaTime;
@@ -175,6 +187,7 @@ namespace PE
 				p_data->p_stateManager->ChangeState(new CatAttackPLAN{}, id);
 				GameStateManager::GetInstance().SetPauseState();
 				m_bulletCollided = false;
+				projectileFired = false;
 			}
 		}
 	}
