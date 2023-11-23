@@ -99,6 +99,8 @@ namespace PE
 
 	void CollisionManager::UpdateSystem(float)
 	{
+		// Update the Collider's specs
+		UpdateColliders();
 
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
@@ -106,9 +108,7 @@ namespace PE
 			// clears the grid if it exists when the editor is open
 			if (m_grid.GridExists())
 				m_grid.ClearGrid();
-			return;
 		}
-
 
 		if (m_grid.GetGridSize() != gridSize)
 		{
@@ -116,14 +116,20 @@ namespace PE
 			m_grid.SetupGrid(gridSize.x, gridSize.y);
 		}
 #endif
-		if(gridActive)
-			m_grid.UpdateGrid();
-
-		// Update the Collider's specs
-		UpdateColliders();
+		
+		// updates the grid during runtime
+#ifndef GAMERELEASE
+		if (Editor::GetInstance().IsRunTime())
+		{
+#endif
+			if (gridActive)
+				m_grid.UpdateGrid();
+#ifndef GAMERELEASE
+		}
+#endif
 
 #ifndef GAMERELEASE
-		if (!Editor::GetInstance().IsEditorActive())
+		if (Editor::GetInstance().IsRunTime())
 		{
 #endif
 			// Test for Collisions in the scene
