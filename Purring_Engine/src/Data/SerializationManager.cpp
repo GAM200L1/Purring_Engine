@@ -390,6 +390,8 @@ bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::js
     }
     if (r_json["Entity"]["components"]["Collider"].contains("isTrigger"))
         col.isTrigger = r_json["Entity"]["components"]["Collider"]["isTrigger"].get<bool>();
+    if (r_json["Entity"]["components"]["Collider"].contains("isTrigger"))
+        col.collisionLayerIndex = r_json["Entity"]["components"]["Collider"]["collisionLayerIndex"].get<unsigned>();
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Collider>(), static_cast<void*>(&col));
     return true;
 }
