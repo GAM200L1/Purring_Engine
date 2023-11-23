@@ -33,6 +33,7 @@
 #include "PlayerControllerScript.h"
 #include "FollowScript.h"
 #include "CameraManagerScript.h"
+#include "GameStateController.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -56,6 +57,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(EnemyTestScript);
 	REGISTER_SCRIPT(FollowScript);
 	REGISTER_SCRIPT(CameraManagerScript);
+	REGISTER_SCRIPT(GameStateController);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

@@ -34,9 +34,17 @@ namespace PE
 
 	void GameStateManager::SetPauseState(EntityID)
 	{
-		m_prevGameState = m_currentGameState;
-		m_currentGameState = GameStates::PAUSE;
+		if (m_currentGameState != GameStates::INACTIVE)
+		{
+			if (m_currentGameState != GameStates::PAUSE)
+				m_prevGameState = m_currentGameState;
+			m_currentGameState = GameStates::PAUSE;
 
+			//create pause menuy here
+
+
+
+		}
 		//SerializationManager serializationManager;
 		//serializationManager.LoadAllEntitiesFromFile("..Assets/Prefabs/PauseMenu_Prefab.json");
 		// store the entityIDs of the created pause menu entities to be remove in resumestate
@@ -44,12 +52,14 @@ namespace PE
 
 	void GameStateManager::SetWinState()
 	{
+		if (m_currentGameState != GameStates::WIN)
 		m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::WIN;
 	}
 
 	void GameStateManager::SetLoseState()
 	{
+		if (m_currentGameState != GameStates::LOSE)
 		m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::LOSE;
 	}
@@ -103,15 +113,48 @@ namespace PE
 		{
 			m_currentGameState = m_prevGameState;
 			m_prevGameState = GameStates::PAUSE;
+			
+			//delete pause menu here
 
-			//// Iterate over the pause menu entities and remove or deactivate them
-			//for (auto& entityId : pauseMenuEntityIds)
-			//{
-			//	// Assuming you have a function to remove or deactivate entities
-			//	RemoveOrDeactivateEntity(entityId);
-			//}
 		}
 	}
+
+	void GameStateManager::ExitGame(EntityID)
+	{
+		glfwSetWindowShouldClose(p_window, GL_TRUE);
+	}
+
+	void GameStateManager::HowToPlay(EntityID)
+	{
+		//set all the 4 buttons inactive
+		
+		//create howtoplay menu here
+
+	}
+
+	void GameStateManager::ReturnToPauseMenuFromHowToPlay(EntityID)
+	{
+		//set all the 4 buttons active
+
+		//delete how to play menu here
+	}
+
+	void GameStateManager::ReturnToPauseMenuFromExit(EntityID)
+	{
+		//set all 4 button active and pawsed
+
+		//delete yes no and are you sure object
+	}
+
+	void GameStateManager::AreYouSureExit(EntityID)
+	{
+		//set pawsed and 4 buttons inactive
+
+		//create yes no button
+		//create are you sure object
+
+	}
+
 
 	void GameStateManager::RegisterButtonFunctions()
 	{
@@ -119,7 +162,12 @@ namespace PE
 		REGISTER_UI_FUNCTION(ResumeState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(IncrementGameState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(DecrementGameState, PE::GameStateManager);
+		REGISTER_UI_FUNCTION(ExitGame, PE::GameStateManager);
 	}
+
+
+
+
 
 
 }

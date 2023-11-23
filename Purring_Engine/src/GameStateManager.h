@@ -21,7 +21,7 @@
 #include "Data/SerializationManager.h"
 
 namespace PE {
-	enum class GameStates {MOVEMENT, ATTACK, EXECUTE, PAUSE, WIN, LOSE };
+	enum class GameStates {MOVEMENT, ATTACK, EXECUTE, PAUSE, WIN, LOSE, SPLASHSCREEN, INACTIVE };
 
 	class GameStateManager : public Singleton<GameStateManager>
 	{
@@ -87,6 +87,16 @@ namespace PE {
 		*************************************************************************************/
 		void RegisterButtonFunctions();
 
+		void HowToPlay(EntityID = -1);
+
+		void ReturnToPauseMenuFromHowToPlay(EntityID = -1);
+
+		void ReturnToPauseMenuFromExit(EntityID = -1);
+
+		void AreYouSureExit(EntityID = -1);
+
+		void ExitGame(EntityID = -1);
+
 		// ----- Public Variables ----- // 
 	public:
 		Graphics::CameraManager* p_cameraManager;
@@ -95,7 +105,7 @@ namespace PE {
 		// ----- Private Variables ----- // 
 	private:
 		//start with pause i guess?, might want to change if youre testing stuff
-		GameStates m_currentGameState {GameStates::PAUSE};
+		GameStates m_currentGameState {GameStates::INACTIVE};
 		//for resume state to set back to
 		GameStates m_prevGameState {GameStates::MOVEMENT};
 	};

@@ -84,6 +84,7 @@
 #include "Logic/testScript2.h"
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
+#include "Logic/GameStateController.h"
 #include "GameStateManager.h"
 // Testing
 Logger engine_logger = Logger("ENGINE");
@@ -184,6 +185,10 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
+  
+    rttr::registration::class_<PE::GameStateController>("GameStateController")
+        .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
+        .property("SplashScreen", &PE::GameStateControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
