@@ -50,10 +50,16 @@ namespace PE
 		m_currentGameState = GameStates::LOSE;
 	}
 
-	void GameStateManager::SetAttackPlanState(EntityID)
+	void GameStateManager::SetAttackState(EntityID)
 	{
 		m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::ATTACK;
+	}
+
+	void GameStateManager::ResetDefaultState()
+	{
+		m_currentGameState = GameStates::PAUSE;
+		m_prevGameState = GameStates::MOVEMENT;
 	}
 
 	GameStates GameStateManager::GetGameState()
@@ -114,7 +120,7 @@ namespace PE
 		REGISTER_UI_FUNCTION(ResumeState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(IncrementGameState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(DecrementGameState, PE::GameStateManager);
-		REGISTER_UI_FUNCTION(SetAttackPlanState, PE::GameStateManager);
+		REGISTER_UI_FUNCTION(SetAttackState, PE::GameStateManager);
 	}
 
 

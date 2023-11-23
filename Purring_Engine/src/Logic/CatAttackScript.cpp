@@ -26,6 +26,8 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(CatScript, id);
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatAttackPLAN::OnMouseClick, this);
+		ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackPLAN::CatInTelegraph, this);
+		//ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, CatAttackPLAN::CatInTelegraph, this);
 	}
 	
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
@@ -65,7 +67,7 @@ namespace PE
 								}
 								else
 								{
-									EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false;
+									CatScript::ToggleEntity(telegraphID, false);
 								}
 							}
 							break;
@@ -91,15 +93,9 @@ namespace PE
 		for (auto const& telegraph : p_data->telegraphIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
-			EntityManager::GetInstance().Get<EntityDescriptor>(telegraph.second).isActive = false;
+			CatScript::ToggleEntity(telegraph.second, false);
 			EntityManager::GetInstance().Get<Graphics::Renderer>(telegraph.second).SetColor(m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, 1.f);
 		}
-	}
-
-	void CatAttackPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
-	{
-		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		m_mouseClick = true;
 	}
 
 	void CatAttackPLAN::ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition)
@@ -110,9 +106,12 @@ namespace PE
 			// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
 			m_showBoxes = true;
 			p_data->attackDirection = EnumCatAttackDirection::NONE;
-			for (auto const& boxID : p_data->telegraphIDs)
+			for (auto const& [attackDirection, boxID] : p_data->telegraphIDs)
 			{
-				EntityManager::GetInstance().Get<EntityDescriptor>(boxID.second).isActive = true;
+				if (!ignoresTelegraphs.count(boxID))
+					CatScript::ToggleEntity(boxID, true);
+				else
+					CatScript::ToggleEntity(boxID, false);
 			}
 		}
 		else if (m_mouseClick && !m_showBoxes && p_data->attackDirection == 0)
@@ -121,9 +120,42 @@ namespace PE
 		}
 	}
 
+	void CatAttackPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
+	{
+		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+		m_mouseClick = true;
+	}
+
+	void CatAttackPLAN::CatInTelegraph(const Event<CollisionEvents>& r_CE)
+	{
+		OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
+		//OnCollisionStayEvent OCSE = dynamic_cast<const OnCollisionStayEvent&>(r_CE);
+		for (auto const& [attackDir, telegraphID]:p_data->telegraphIDs)
+		{
+			if (OCEE.Entity1 == telegraphID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity2).name.find("Cat") != std::string::npos)
+			{
+				ignoresTelegraphs.emplace(telegraphID);
+			}
+			else if (OCEE.Entity2 == telegraphID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity1).name.find("Cat") != std::string::npos)
+			{
+				ignoresTelegraphs.emplace(telegraphID);
+			}
+			/*else if (OCSE.Entity1 == telegraphID && EntityManager::GetInstance().Get<EntityDescriptor>(OCSE.Entity2).name.find("Cat") != std::string::npos)
+			{
+				ignoresTelegraphs.emplace(telegraphID);
+			}
+			else if (OCSE.Entity2 == telegraphID && EntityManager::GetInstance().Get<EntityDescriptor>(OCSE.Entity1).name.find("Cat") != std::string::npos)
+			{
+				ignoresTelegraphs.emplace(telegraphID);
+			}*/
+		}
+	}
+
 
 
 	// ----- CAT ATTACK EXECUTION ----- //
+
+
 	void CatAttackEXECUTE::StateEnter(EntityID id) 
 	{
 		p_data = GETSCRIPTDATA(CatScript, id);
@@ -174,7 +206,7 @@ namespace PE
 		{
 			if (p_data->attackDirection != EnumCatAttackDirection::NONE && !projectileFired)
 			{
-				EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = true;
+				CatScript::ToggleEntity(p_data->projectileID, true);
 				EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
 				projectileFired = true;
 			}
@@ -196,7 +228,7 @@ namespace PE
 	{
 		// resets attack direction selection
 		p_data->attackDirection = EnumCatAttackDirection::NONE;
-		EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
+		CatScript::ToggleEntity(p_data->projectileID, false);
 	}
 
 	void CatAttackEXECUTE::ProjectileHitRat(const Event<CollisionEvents>& r_CE)
@@ -211,7 +243,7 @@ namespace PE
 			collidedEntities.second = OCEE.Entity2;
 			
 			// temp
-			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
+			CatScript::ToggleEntity(p_data->projectileID, false);
 			m_bulletCollided = true;
 		}
 		else if (OCEE.Entity2 == p_data->projectileID)
@@ -220,7 +252,7 @@ namespace PE
 			collidedEntities.second = OCEE.Entity1;
 
 			// temp
-			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
+			CatScript::ToggleEntity(p_data->projectileID, false);
 			m_bulletCollided = true;
 		}
 

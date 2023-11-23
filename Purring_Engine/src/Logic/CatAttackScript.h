@@ -34,8 +34,6 @@ namespace PE
 
 		virtual void StateExit(EntityID id) override;
 
-		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);
-
 		// ----- Getter ----- //
 		virtual std::string_view GetName() { return "AttackPLAN"; }
 
@@ -47,9 +45,12 @@ namespace PE
 		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
 		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
 		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
+		std::set<EntityID> ignoresTelegraphs;
 
 		// ----- Private Functions ----- //
+		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		void CatInTelegraph(const Event<CollisionEvents>& r_CE);
 	};
 
 	// ----- CAT ATTACK EXECUTE STATE ----- //

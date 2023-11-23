@@ -64,7 +64,7 @@ namespace PE
 		std::map<EnumCatAttackDirection, EntityID> telegraphIDs;
 		
 		// bullet variables
-		float bulletDelay{ 0.2f };
+		float bulletDelay{ 0.7f };
 		float bulletRange{ 3.f };
 		float bulletLifeTime{ 0.1f };
 		float bulletForce{ 1500.f };

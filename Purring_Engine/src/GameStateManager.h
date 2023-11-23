@@ -57,14 +57,21 @@ namespace PE {
 		 \brief			Set gamestate to Lose and save previous state
 		*************************************************************************************/
 		void SetLoseState();
+		
+		/*!***********************************************************************************
+		 \brief			Set current gamestate to pause and previous gamestate to movement
+		*************************************************************************************/
+		void ResetDefaultState();
+		
+		// temp
+		void SetAttackState(EntityID = -1);
+
 		/*!***********************************************************************************
 		 \brief			Get the current game state
 		 \return		The current game state
 		*************************************************************************************/
 		GameStates GetGameState();
-
-		// remove later //
-		void SetAttackPlanState(EntityID);
+		
 
 		// ----- Public Functions ----- // 
 	public:
