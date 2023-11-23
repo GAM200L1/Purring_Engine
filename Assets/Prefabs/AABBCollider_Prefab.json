@@ -11,7 +11,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "radius": 119.5,
+                    "radius": 0.0,
                     "scaleOffset": 1.0
                 },
                 "isTrigger": false,

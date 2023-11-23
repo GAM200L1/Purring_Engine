@@ -3540,7 +3540,7 @@ namespace PE {
 							if (prefabCID.at(i) == EntityManager::GetInstance().GetComponentID<Transform>())
 							{
 								Transform xform = EntityManager::GetInstance().Get<Transform>(pfid);
-								xform.position = vec2{ 0, 0 };
+								xform.position = EntityManager::GetInstance().Get<Transform>(id).position;
 								EntityFactory::GetInstance().LoadComponent(id, prefabCID.at(i), &xform);
 							}
 							else
