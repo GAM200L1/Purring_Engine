@@ -50,6 +50,7 @@
 #include "Graphics/Text.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
+#include "Logic/CatScript.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -2159,6 +2160,33 @@ namespace PE {
 									}
 								}
 
+							}
+
+							if (key == "CatScript")
+							{
+								CatScript* p_script = dynamic_cast<CatScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("CatScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										// cat stats
+										ImGui::Text("Cat Stats");
+										ImGui::Text("Cat Health: "); ImGui::SameLine(); ImGui::DragInt("##cathealth", &it->second.catHealth);
+										ImGui::Text("Cat Max Energy "); ImGui::SameLine(); ImGui::DragInt("##enemyidle", &it->second.catMaxEnergy);
+
+										// attack variables
+										ImGui::Text("Attack Stats");
+										ImGui::Text("Attack Damage: "); ImGui::SameLine(); ImGui::DragInt("##attackdamage", &it->second.attackDamage);
+										ImGui::Text("Required Attack Points: "); ImGui::SameLine(); ImGui::DragInt("##attackpoints", &it->second.requiredAttackPoints);
+										
+										// Projectile variabls
+										ImGui::Text("Projectile Stats");
+										ImGui::Text("Range: "); ImGui::SameLine(); ImGui::DragFloat("##projectilerange", &it->second.bulletRange);
+										ImGui::Text("Lifetime: "); ImGui::SameLine(); ImGui::DragFloat("##projectilelifetime", &it->second.bulletLifeTime);
+										ImGui::Text("Force: "); ImGui::SameLine(); ImGui::DragFloat("##projectileforce", &it->second.bulletForce);
+									}
+								}
 							}
 						}
 					}
