@@ -46,7 +46,7 @@ namespace PE
 		{ 
 			id; 
 			// teleport the player to the end of the path
-			p_data->pathQuads.back();
+			//p_data->pathQuads.back();
 		}
 
 		

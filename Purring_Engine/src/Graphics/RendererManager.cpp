@@ -162,7 +162,7 @@ namespace PE
             m_renderFrameBuffer.Bind();
 
             // If the window size has changed
-            if ((windowWidth > std::numeric_limits<float>::epsilon() && windowHeight > std::numeric_limits<float>::epsilon()) &&
+            if ((!CompareFloats(windowWidth, 0.f) && !CompareFloats(windowHeight, 0.f)) &&
                 (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight))
             {
                 m_cachedWindowWidth = windowWidth, m_cachedWindowHeight = windowHeight;
