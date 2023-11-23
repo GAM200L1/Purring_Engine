@@ -24,7 +24,8 @@
 #include "Physics/PhysicsManager.h"
 #include "Graphics/RendererManager.h"
 #include "GUISystem.h"
-
+#include "GameStateManager.h"
+#include "Input/InputSystem.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif
@@ -33,7 +34,7 @@ Logger event_logger = Logger("EVENT");
 
 namespace PE
 {
-
+	bool WindowManager::msepress = false;
 	/*!***********************************************************************************
 	 \brief     Default constructor for WindowManager. Initializes GLFW for window creation.
 
@@ -77,7 +78,18 @@ namespace PE
 	*************************************************************************************/
 	GLFWwindow* WindowManager::InitWindow(int width, int height, const char* p_title)
 	{
+#ifndef GAMERELEASE
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
+		p_monitor = glfwGetWindowMonitor(window);
+		p_currWindow = window;
+#else
+		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
+		GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, p_title, glfwGetPrimaryMonitor(), nullptr);
+
+		p_monitor = glfwGetWindowMonitor(window);
+		p_currWindow = window;
+#endif
+		GameStateManager::GetInstance().p_window = window;
 
 		if (!window)
 		{
@@ -100,6 +112,7 @@ namespace PE
 		glfwSetWindowCloseCallback(window, window_close_callback);					// For p_window closing
 		glfwSetWindowFocusCallback(window, window_focus_callback);					// For p_window focus events
 		glfwSetWindowPosCallback(window, window_pos_callback);						// For p_window position changes
+		glfwSetWindowIconifyCallback(window, window_iconify_callback);						// For p_window position changes
 
 		ADD_ALL_WINDOW_EVENT_LISTENER(WindowManager::OnWindowEvent, this)
 		ADD_ALL_MOUSE_EVENT_LISTENER(WindowManager::OnMouseEvent, this)
@@ -123,10 +136,16 @@ namespace PE
 	{
 #ifndef GAMERELEASE
 		Editor::GetInstance().AddEventLog(r_event.ToString());
+#else
+		if (r_event.GetType() == WindowEvents::WindowLostFocus)
+		{
+			GameStateManager::GetInstance().SetPauseState();	
+			if(msepress)
+				glfwIconifyWindow(p_currWindow);
+
+			msepress = true;
+		}
 #endif
-		//commented so it stops flooding the console
-		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
-		//event_logger.FlushLog();
 	}
 
 
@@ -172,95 +191,61 @@ namespace PE
 			KeyTriggeredEvent ev;
 			ev = dynamic_cast<const KeyTriggeredEvent&>(r_event);
 			//do step by step here
+#ifndef GAMERELEASE
 			if (PhysicsManager::GetStepPhysics())
 			{
+
 				if (ev.keycode == GLFW_KEY_N)
 				{
 					PhysicsManager::GetAdvanceStep() = true;
-#ifndef GAMERELEASE
 					Editor::GetInstance().AddEventLog("Advanced Step.\n");
+
+				}
+
+			}
 #endif
-				}
-			}
-
-			//// Movement
-			//if (ev.keycode == GLFW_KEY_W)
-			//{
-			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
-			//}
-			//if (ev.keycode == GLFW_KEY_A)
-			//{
-			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-			//}
-			//if (ev.keycode == GLFW_KEY_S)
-			//{
-			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-			//}
-			//if (ev.keycode == GLFW_KEY_D)
-			//{
-			//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-			//}
-			// dash
-			if (EntityManager::GetInstance().GetComponentPool<RigidBody>().HasEntity(1))
+#ifdef GAMERELEASE
+			static bool fs{};
+			//only on game release be able to change fullscreen
+			if (ev.keycode == GLFW_KEY_F11)
 			{
-				if (ev.keycode == GLFW_KEY_E)
+				const GLFWvidmode* mode = glfwGetVideoMode(p_monitor);
+
+				if (!fs) 
 				{
-					if (EntityManager::GetInstance().Get<RigidBody>(1).velocity.Dot(EntityManager::GetInstance().Get<RigidBody>(1).velocity) == 0.f)
-						EntityManager::GetInstance().Get<RigidBody>(1).velocity = vec2{ 1.f, 0.f };
-					EntityManager::GetInstance().Get<RigidBody>(1).ApplyLinearImpulse(EntityManager::GetInstance().Get<RigidBody>(1).velocity.GetNormalized() * 5000.f);
+					glfwSetWindowMonitor(p_currWindow, NULL, 30, 30, 1920, 1080, 0);
+					HWND windowHandle = GetActiveWindow();
+					long Style = GetWindowLong(windowHandle, GWL_STYLE);
+					Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
+					SetWindowLong(windowHandle, GWL_STYLE, Style);
+					glfwSetWindowAttrib(p_currWindow, GLFW_RESIZABLE, false);
+					fs = !fs;
+				}
+				else
+				{
+
+					glfwSetWindowMonitor(p_currWindow, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+					fs = !fs;
 				}
 			}
+#endif
 		}
-		else if (r_event.GetType() == KeyEvents::KeyPressed)
+#ifdef GAMERELEASE
+		else if (r_event.GetType() == KeyEvents::KeyRelease)
 		{
-			KeyPressedEvent ev;
-			ev = dynamic_cast<const KeyPressedEvent&>(r_event);
-			// ----- M1 Movement ----- //
-			if (EntityManager::GetInstance().GetComponentPool<RigidBody>().HasEntity(1))
+			KeyReleaseEvent ev;
+			ev = dynamic_cast<const KeyReleaseEvent&>(r_event);
+			if (ev.keycode == GLFW_KEY_LEFT_ALT)
 			{
-				//if (ev.keycode == GLFW_KEY_W)
-				//{
-				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,1.f } *5000.f);
-				//}
-				//if (ev.keycode == GLFW_KEY_A)
-				//{
-				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ -1.f,0.f }*5000.f);
-				//}
-				//if (ev.keycode == GLFW_KEY_S)
-				//{
-				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 0.f,-1.f }*5000.f);
-				//}
-				//if (ev.keycode == GLFW_KEY_D)
-				//{
-				//	EntityManager::GetInstance().Get<RigidBody>(1).ApplyForce(vec2{ 1.f,0.f }*5000.f);
-				//}
-
-				// rotation
-				if (ev.keycode == GLFW_KEY_X)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).rotationVelocity = -PE_PI;
-				}
-				if (ev.keycode == GLFW_KEY_Z)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(1).rotationVelocity = PE_PI;
-				}
-
-				// scale
-				if (ev.keycode == GLFW_KEY_EQUAL)
-				{
-					EntityManager::GetInstance().Get<Transform>(1).width *= 1.01f;
-					EntityManager::GetInstance().Get<Transform>(1).height *= 1.01f;
-				}
-				if (ev.keycode == GLFW_KEY_MINUS)
-				{
-					EntityManager::GetInstance().Get<Transform>(1).width *= 0.99f;
-					EntityManager::GetInstance().Get<Transform>(1).height *= 0.99f;
-				}
+				msepress = true;
 			}
 		}
+		if (InputSystem::IsKeyTriggered(GLFW_KEY_LEFT_ALT))
+			msepress = true;
+#endif
 	}
 
-	void WindowManager::TestFunction()
+	void WindowManager::TestFunction(EntityID)
 	{
 		std::cout << "hi im a test function" << std::endl;
 	}
@@ -275,11 +260,11 @@ namespace PE
 	 \param[in] fps     Current frames per second to be displayed in the window title.
 	 \return void       Does not return a value.
 	*************************************************************************************/
-	void WindowManager::UpdateTitle(GLFWwindow* p_window, double fps)
+	void WindowManager::UpdateTitle(GLFWwindow* window, double fps)
 	{
 		std::ostringstream titleStream;
 		titleStream << "Purring Engine | FPS: " << static_cast<int>(fps);
-		glfwSetWindowTitle(p_window, titleStream.str().c_str());
+		glfwSetWindowTitle(window, titleStream.str().c_str());
 	}
 
 
@@ -376,5 +361,23 @@ namespace PE
 		WME.ypos = ypos;
 
 		PE::SEND_WINDOW_EVENT(WME)
+	}
+
+	void WindowManager::window_iconify_callback(GLFWwindow* p_window, int iconified) {
+		if (iconified == GLFW_TRUE) {
+			// The window is being minimized
+			// You can perform any actions you want when the window is minimized here
+
+		}
+		else {
+			// The window is being restored
+			// You can perform any actions you want when the window is restored here
+#ifdef GAMERELEASE
+			if(!msepress)
+			glfwIconifyWindow(p_window);
+
+			msepress = false;
+#endif
+		}
 	}
 }

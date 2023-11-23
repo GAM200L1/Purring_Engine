@@ -24,7 +24,7 @@
 #include "Events/WindowEvent.h"
 #include "Events/KeyEvent.h"
 #include "System.h"
-
+typedef unsigned long long EntityID;
 namespace PE
 {
     /*!***********************************************************************************
@@ -100,7 +100,12 @@ namespace PE
         *************************************************************************************/
         void static window_focus_callback(GLFWwindow* p_window, int focus);
 
-
+        /*!***********************************************************************************
+         \brief     Callback for window iconify events.
+         \param     window Pointer to the window receiving or losing focus.
+         \param     iconify, 1 for when going to be iconified, 0 for when returning from being iconified
+        *************************************************************************************/
+        void static window_iconify_callback(GLFWwindow* window, int iconified);
 
 /*                                                                                          Event Handling Functions
 --------------------------------------------------------------------------------------------------------------------- */
@@ -122,6 +127,11 @@ namespace PE
         *************************************************************************************/
         void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
-        void TestFunction();
+        void TestFunction(EntityID);
+
+    private:
+        GLFWwindow* p_currWindow;
+        GLFWmonitor* p_monitor;
+        static bool msepress;
     };
 }

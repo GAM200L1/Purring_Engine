@@ -84,6 +84,7 @@
 #include "Logic/testScript2.h"
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
+#include "GameStateManager.h"
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -115,7 +116,8 @@ RTTR_REGISTRATION
     //    .property("x", &PE::vec2::x);
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
-        .property_readonly("Parent", &PE::EntityDescriptor::parent);
+        .property_readonly("Parent", &PE::EntityDescriptor::parent)
+        .property("Active", &PE::EntityDescriptor::isActive);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
@@ -192,13 +194,15 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::FollowScriptData>("FollowScript")
         .property("Size", &PE::FollowScriptData::Size)
-        .property("Distance", &PE::FollowScriptData::Distance)
         .property("Speed", &PE::FollowScriptData::Speed)
         .property("NumberOfFollower", &PE::FollowScriptData::NumberOfFollower)
         .property("FollowingObject", &PE::FollowScriptData::FollowingObject)
         .property("rotation", &PE::FollowScriptData::Rotation)
         .property("CurrentPosition", &PE::FollowScriptData::CurrentPosition)
-        .property("NextPosition", &PE::FollowScriptData::NextPosition);
+        .property("NextPosition", &PE::FollowScriptData::NextPosition)
+        .property("ToAttach", &PE::FollowScriptData::ToAttach)
+        .property("NumberOfAttacher", &PE::FollowScriptData::NumberOfAttachers)
+        .property("IsAttaching", &PE::FollowScriptData::IsAttaching);
 
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
         .property("NumberOfCamera", &PE::CameraManagerScriptData::NumberOfCamera)
@@ -226,7 +230,7 @@ PE::CoreApplication::CoreApplication()
     configFile >> configJson;
     int width = configJson["window"]["width"];
     int height = configJson["window"]["height"];
-    //float windowWidth{ static_cast<float>(width) }, windowHeight{ static_cast<float>(height) };
+    
     // Initialize Window
     m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
@@ -277,12 +281,11 @@ PE::CoreApplication::CoreApplication()
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
 
-    //EntityManager::GetInstance().Get<EntityDescriptor>(serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json")).name = "Background";
+    // EntityID bgId{ serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json") };
+    // EntityManager::GetInstance().Get<EntityDescriptor>(bgId).name = "Background";
+    // EntityManager::GetInstance().Get<Transform>(bgId).width = 1920.f;
+    // EntityManager::GetInstance().Get<Transform>(bgId).height = 1080.f;
     
-    // Creates an entity from file that is attached to the Character Controller
-    //EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Player_Prefab.json");
-    //EntityManager::GetInstance().Get<EntityDescriptor>(id).name = "Player";
-
     
 
     // Create button objects
@@ -495,7 +498,7 @@ void PE::CoreApplication::InitializeSystems()
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager, width, height };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
@@ -510,4 +513,7 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
+
+    GameStateManager::GetInstance().p_cameraManager = p_cameraManager;
+    GameStateManager::GetInstance().RegisterButtonFunctions();
 }

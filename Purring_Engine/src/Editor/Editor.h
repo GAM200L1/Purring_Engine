@@ -80,6 +80,10 @@ namespace PE {
 		*************************************************************************************/
 		void GetWindowSize(float&, float&);
 		/*!***********************************************************************************
+		 \brief Return the size of the y offset of the play window
+		*************************************************************************************/
+		float GetPlayWindowOffset();
+		/*!***********************************************************************************
 		 \brief get the boolean to show if the editor is active
 		 \return bool whether editor is active so we know we need to transfer the buffer
 		*************************************************************************************/
@@ -278,12 +282,12 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Plays a sound effect. Used by the buttons.		 
 		*************************************************************************************/
-		void PlayAudio1();
+		void PlayAudio1(EntityID);
 
 		/*!***********************************************************************************
 		 \brief Plays a different sound effect. Used by the buttons.		 
 		*************************************************************************************/
-		void PlayAudio2();
+		void PlayAudio2(EntityID);
 
 
 		// ----- Private Functions ----- // 
@@ -351,6 +355,7 @@ namespace PE {
 		//variable for assets browser
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
+		float m_playWindowOffset {27.f};
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
