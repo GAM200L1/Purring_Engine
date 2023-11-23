@@ -2961,6 +2961,7 @@ namespace PE {
 			static ImVec2 screenPosition; // coordinates from the top left corner
 			static ImVec2 currentPosition;
 			static vec2 startPosition;
+			if (m_mouseInScene)
 			if (ImGui::IsMouseClicked(0))
 			{
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
