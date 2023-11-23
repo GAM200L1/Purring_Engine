@@ -2930,7 +2930,7 @@ namespace PE {
 						}
 					}
 
-					if (m_currentSelectedObject >= 0)
+					if (m_currentSelectedObject != -1)
 					{
 						startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
 					}
@@ -2945,7 +2945,7 @@ namespace PE {
 			static bool moved = false;
 			static float height;
 			static float width;
-			if (m_currentSelectedObject >= 0)
+			if (m_currentSelectedObject != -1)
 			{
 				if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
 				{
@@ -2969,7 +2969,7 @@ namespace PE {
 			float currentRotation;
 			float currentHeight;
 			float currentWidth;
-			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0))
+			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0) && m_currentSelectedObject != -1)
 			{
 				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
@@ -3048,8 +3048,9 @@ namespace PE {
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 			}
 
-			if (!ImGui::IsMouseDown(0))
+			if (!ImGui::IsMouseDown(0) && m_currentSelectedObject != -1)
 			{
+
 				if (moved && EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position != vec2(clickedPosition.x, clickedPosition.y))
 				{
 					m_undoStack.AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
