@@ -49,7 +49,9 @@ namespace PE
 
 		bool m_mouseClicked{ false }; // Set to true when the mouse is pressed, false otherwise
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
-		int m_eventListener; // Stores the handler for the mouse click event
+		int m_mouseEventListener; // Stores the handler for the mouse click event
+		int m_collisionEnterEventListener; // Stores the handler for the collision enter event
+		int m_collisionStayEventListener; // Stores the handler for the collision stay event
 
 		// ----- Private Functions ----- //
 		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);

@@ -26,8 +26,8 @@ namespace PE
 	void CatAttackPLAN::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(CatScript, id);
-		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatAttackPLAN::OnMouseClick, this);
-		ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackPLAN::CatInTelegraph, this);
+		m_mouseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatAttackPLAN::OnMouseClick, this);
+		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackPLAN::CatInTelegraph, this);
 		//ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionStay, CatAttackPLAN::CatInTelegraph, this);
 	}
 	
@@ -91,7 +91,8 @@ namespace PE
 	
 	void CatAttackPLAN::StateExit(EntityID id)
 	{
-		//REMOVE_MOUSE_EVENT_LISTENER(m_eventListener);
+		REMOVE_MOUSE_EVENT_LISTENER(m_mouseEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
 
 		for (auto const& telegraph : p_data->telegraphIDs)
 		{
