@@ -144,8 +144,13 @@ namespace PE
          \brief     Private constructor for Meyer's Singleton.
         *************************************************************************************/
         AudioManager();
+
+        /*!***********************************************************************************
+         \brief     Private destructor for Meyer's Singleton.
+        *************************************************************************************/
         ~AudioManager();
 
+        // Audio Variables
         FMOD::System* m_system;
     };
 }

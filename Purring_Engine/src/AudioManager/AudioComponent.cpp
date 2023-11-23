@@ -1,3 +1,22 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     AudioComponent.cpp
+ \date     2-10-2023
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+
+ \brief    This file provides the implementation details for the AudioComponent class 
+           of the Purring Engine. It includes functionalities for managing audio playback, 
+           such as playing, pausing, resuming, and stopping audio tracks, as well as 
+           adjusting volume and setting looping preferences. The file also handles the 
+           serialization and deserialization of audio component states using JSON format. 
+           It ensures audio resources are effectively managed and integrates with the 
+           ResourceManager and AudioManager for efficient audio handling in the engine.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+*************************************************************************************/
 #include "prpch.h"
 #include "AudioComponent.h"
 #include "ResourceManager/ResourceManager.h"
