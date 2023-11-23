@@ -382,6 +382,21 @@ bool SerializationManager::LoadRigidBody(const EntityID& r_id, const nlohmann::j
     return true;
 }
 
+void LoadHelper(PE::CircleCollider& r_col, const nlohmann::json& r_json)
+{
+    if (r_json.contains("positionOffset"))
+        r_col.positionOffset = PE::vec2{r_json["positionOffset"]["x"].get<float>(), r_json["positionOffset"]["y"].get<float>() };
+    if (r_json.contains("scaleOffset"))
+        r_col.scaleOffset = r_json["scaleOffset"].get<float>();
+}
+void LoadHelper(PE::AABBCollider& r_col, const nlohmann::json& r_json)
+{
+    if (r_json.contains("positionOffset"))
+        r_col.positionOffset = PE::vec2{ r_json["positionOffset"]["x"].get<float>(), r_json["positionOffset"]["y"].get<float>() };
+    if (r_json.contains("scaleOffset"))
+        r_col.scaleOffset = PE::vec2{ r_json["scaleOffset"]["x"].get<float>(), r_json["scaleOffset"]["y"].get<float>() };
+}
+
 bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::json& r_json)
 {
     PE::Collider col;
@@ -394,6 +409,11 @@ bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::js
     {
         col.colliderVariant = PE::AABBCollider();
     }
+    std::visit([&](auto& col1)
+    {
+            LoadHelper(col1, r_json["Entity"]["components"]["Collider"]["data"]);
+    }, col.colliderVariant);
+
     if (r_json["Entity"]["components"]["Collider"].contains("isTrigger"))
         col.isTrigger = r_json["Entity"]["components"]["Collider"]["isTrigger"].get<bool>();
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Collider>(), static_cast<void*>(&col));
