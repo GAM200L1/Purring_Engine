@@ -3086,7 +3086,7 @@ namespace PE {
 
 	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
-		if (IsRunTime() && !IsEditorActive())
+		if (!IsEditorActive())
 		{
 			//get the current viewport so that i can get the full size of the window
 			ImGuiViewport* viewport = ImGui::GetMainViewport();
