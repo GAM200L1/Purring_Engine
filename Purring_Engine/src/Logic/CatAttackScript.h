@@ -48,6 +48,10 @@ namespace PE
 		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
 		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
 
+		bool m_mouseClicked{ false }; // Set to true when the mouse is pressed, false otherwise
+		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
+		int m_eventListener; // Stores the handler for the mouse click event
+
 		// ----- Private Functions ----- //
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 	};

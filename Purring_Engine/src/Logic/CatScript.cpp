@@ -27,6 +27,7 @@
 #include "prpch.h"
 #include "CatScript.h"
 #include "CatAttackScript.h"
+#include "CatMovementScript.h"
 #include "Data/SerializationManager.h"
 #include "ResourceManager/ResourceManager.h"
 
@@ -90,6 +91,14 @@ namespace PE
 				{
 
 				}
+				else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
+				{
+
+				}
+				else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
+				{
+
+				}
 		}
 
 		void CatScript::OnAttach(EntityID id)
@@ -123,19 +132,6 @@ namespace PE
 
 		void CatScript::OnDetach(EntityID id)
 		{
-
-				// Delete the boxes created for attack selection
-				for (auto const& telegraphID : m_scriptData[id].telegraphIDs)
-				{
-						EntityManager::GetInstance().RemoveEntity(telegraphID.second);
-				}
-
-				// Delete the entities created to visualise the path nodes
-				for (EntityID const& nodeId : m_scriptData[id].pathQuads)
-				{
-						EntityManager::GetInstance().RemoveEntity(nodeId);
-				}
-
 				if (m_scriptData.find(id) != m_scriptData.end())
 				{
 						delete m_scriptData[id].p_stateManager;
@@ -149,7 +145,7 @@ namespace PE
 				if (m_scriptData[id].p_stateManager) { return; }
 
 				m_scriptData[id].p_stateManager = new StateMachine{};
-				m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
+				m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
 		}
 
 
@@ -257,9 +253,15 @@ namespace PE
 				EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Graphics::Renderer>() };
 
 				EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(1.f, 1.f, 1.f, 1.f); // sets the color of the got to white
+
+				EntityManager::GetInstance().Get<Transform>(nodeId).width = m_scriptData[id].nodeSize;
+				EntityManager::GetInstance().Get<Transform>(nodeId).height = m_scriptData[id].nodeSize;
+				
 				EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).isActive = false;
 
 				m_scriptData[id].pathQuads.emplace_back(nodeId);
+
+				std::cout << "CreatePathNode(" << id << ") created " << nodeId << "\n";
 		}
 
 }

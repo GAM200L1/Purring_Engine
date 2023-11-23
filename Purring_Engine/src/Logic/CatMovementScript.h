@@ -33,9 +33,51 @@ namespace PE
 		virtual void StateExit(EntityID id) override;
 
 		/*!***********************************************************************************
-		 \brief Resets the energy level of the cat and disables all the path nodes.
+		 \brief Checks if the position is far away enough from the previous node to add a new 
+						node. If the proposed position is too far away, points are added in a straight 
+						line until the proposed position is reached or the cat runs out of energy.
+
+		 \param[in] r_position Proposed position to create the node at.
+		 \return vec2 Position that the node was created at. If no node was created, the 
+						position of the last node in the container is returned.
 		*************************************************************************************/
-		void ResetValues();
+		vec2 AttemptToDrawPath(vec2 const& r_position);
+
+		/*!***********************************************************************************
+		 \brief Adds a node to the container of path nodes and positions one of the path quads
+						where the path node should be.
+
+		 \param[in] r_nodePosition Position to create the path node at.
+		*************************************************************************************/
+		bool AddPathNode(vec2 const& r_nodePosition);
+
+
+		/*!***********************************************************************************
+		 \brief Sets the status of path drawing to false and move the cat to the last node 
+						in the path node list.
+
+		 \param[in] id ID of the cat entity.
+		*************************************************************************************/
+		void EndPathDrawing(EntityID const id);
+
+
+		// ----- Events ----- // 
+
+		/*!***********************************************************************************
+		 \brief Callback function for the mouse click event.
+
+		 \param[in] r_mouseEvent Details of the mouse click event.
+		*************************************************************************************/
+		void OnMouseClick(const Event<MouseEvents>& r_mouseEvent);
+
+
+		/*!***********************************************************************************
+		 \brief Callback function for the mouse release event.
+
+		 \param[in] r_mouseEvent Details of the mouse click event.
+		*************************************************************************************/
+		void OnMouseRelease(const Event<MouseEvents>& r_mouseEvent);
+
 
 		// ----- Getter ----- //
 		virtual std::string_view GetName() override { return "MovementPLAN"; }
@@ -43,6 +85,10 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		CatScriptData* p_data;
+		int m_clickEventListener{}, m_releaseEventListener{}; // Stores the handler for the mouse click and release events
+		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
+		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
+		bool m_mouseClickPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 	};
 
 

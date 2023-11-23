@@ -68,7 +68,8 @@ namespace PE
 		float bulletForce{ 6.f };
 
 		// movement variables
-		float minDistance{ 30.f }, maxDistance{ 50.f };
+		float minDistance{ 30.f }; float maxDistance{ 50.f };
+		float nodeSize{ 10.f }; // Size (in pixels) of each node
 		std::vector<vec2> pathPositions{};
 		std::vector<EntityID> pathQuads{};
 
