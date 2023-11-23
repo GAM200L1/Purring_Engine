@@ -218,6 +218,10 @@ private:
      \brief Function pointer map for initializing components.
     *************************************************************************************/
     typedef bool(SerializationManager::* FnptrVoidptrLoad)(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Map of function pointers for initializing components.
+    *************************************************************************************/
     std::map<std::string, FnptrVoidptrLoad> m_initializeComponent;
 };
 
