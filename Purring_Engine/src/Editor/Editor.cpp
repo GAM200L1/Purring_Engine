@@ -3046,7 +3046,7 @@ namespace PE {
 					{
 						auto save = serializationManager.SerializeEntityPrefab(1);
 						prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
-
+						prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 						std::ofstream outFile(prefabFP);
 						if (outFile)
 						{
@@ -3409,6 +3409,7 @@ namespace PE {
 			ImGui::Text("Select what entities to apply the prefab to:");
 			ImGui::Separator();
 			static std::set<EntityID> modify;
+			static std::map<EntityID, std::vector<bool>> modComps;
 			for (const auto& id : SceneView())
 			{
 				if (prefabTP != "" && prefabTP == EntityManager::GetInstance().Get<EntityDescriptor>(id).prefabType)
@@ -3416,9 +3417,47 @@ namespace PE {
 					bool tmp{ static_cast<bool>(modify.count(id)) };
 					ImGui::Checkbox((std::to_string(id) + ". " + EntityManager::GetInstance().Get<EntityDescriptor>(id).name).c_str(), &tmp);
 					if (tmp && !modify.count(id))
+					{
 						modify.emplace(id);
-					else if (!tmp && modify.count(id))
+						if (!modComps.count(id))
+						{
+							modComps.emplace(id, std::vector<bool>(prefabCID.size()));
+
+							for (auto b : modComps.at(id))
+							{
+								b = true;
+							}
+						}
+					}
+					if (!tmp && modify.count(id))
+					{
 						modify.erase(id);
+						modComps.erase(id);
+						
+					}
+
+					ImGui::Separator();
+					if (tmp)
+					{
+						ImGui::Indent();
+							
+						for (size_t i{}; i < modComps[id].size(); ++i)
+						{
+							if (prefabCID.at(i) == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+								continue;
+
+							bool tmp2 = modComps[id].at(i);
+							std::string name = EntityManager::GetInstance().m_componentNames.at(prefabCID.at(i)).c_str();
+							name += "##";
+							name += std::to_string(i);
+							name += std::to_string(id);
+							ImGui::Checkbox(name.c_str(), &tmp2);
+							modComps[id].at(i) = tmp2;
+						}
+
+						ImGui::Unindent();
+						ImGui::Separator();
+					}
 				}
 			}
 			ImGui::Separator();
@@ -3426,6 +3465,21 @@ namespace PE {
 			if (ImGui::Button("Apply"))
 			{
 				// exectue the changes!!
+				EntityID pfid = serializationManager.LoadFromFile(prefabFP);
+				for (auto id : modify)
+				{
+					for (size_t i{}; i < prefabCID.size(); ++i)
+					{
+						if (modComps.at(id).at(i) && prefabCID.at(i) != EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+						{
+							EntityFactory::GetInstance().LoadComponent(id, prefabCID.at(i), EntityManager::GetInstance().GetComponentPoolPointer(prefabCID.at(i))->Get(pfid));
+						}
+					}
+				}
+				EntityManager::GetInstance().RemoveEntity(pfid);
+				modify.clear();
+				modComps.clear();
+				*p_active = false;
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Cancel"))

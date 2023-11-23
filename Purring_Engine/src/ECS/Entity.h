@@ -69,6 +69,8 @@ namespace PE
 	{
 	public:
 		friend class Singleton<EntityManager>;
+		// map to contain the names
+		std::map<ComponentID, std::string, Comparer> m_componentNames;
 	// ----- Constructors ----- //
 	public:
 		/*!***********************************************************************************

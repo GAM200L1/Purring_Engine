@@ -366,6 +366,7 @@ namespace PE {
 		// variable for prefab editor
 		std::string prefabFP;
 		std::string prefabTP;
+		std::vector<ComponentID> prefabCID;
 	};
 }
 
