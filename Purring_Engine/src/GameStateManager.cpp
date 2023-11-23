@@ -34,15 +34,23 @@ namespace PE
 
 	void GameStateManager::SetPauseState(EntityID)
 	{
-		if (m_currentGameState != GameStates::INACTIVE)
+		if (m_currentGameState != GameStates::INACTIVE && m_currentGameState != GameStates::PAUSE && m_currentGameState != GameStates::SPLASHSCREEN)
 		{
-			if (m_currentGameState != GameStates::PAUSE)
-				m_prevGameState = m_currentGameState;
+			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::PAUSE;
 
 			//create pause menuy here
 
+			if (pausedOnce) {
+				pausedOnce = false;
+				DeleteMenu();
+			}
 
+			pauseBGID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/pausebg_Prefab.json");
+			resumeButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/resumegamebutton_Prefab.json");
+			howToPlayButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/howtoplaybutton_Prefab.json");
+			quitButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/quitgamebutton_Prefab.json");
+			pawsedID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/pawsed_Prefab.json");
 
 		}
 		//SerializationManager serializationManager;
@@ -114,14 +122,63 @@ namespace PE
 			m_currentGameState = m_prevGameState;
 			m_prevGameState = GameStates::PAUSE;
 			
-			//delete pause menu here
+			pausedOnce = true;
 
+			InactiveMenu();
 		}
 	}
 
 	void GameStateManager::ExitGame(EntityID)
 	{
 		glfwSetWindowShouldClose(p_window, GL_TRUE);
+	}
+
+	void GameStateManager::InactiveMenuButtons()
+	{
+		EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).toSave = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).toSave = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).toSave = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).toSave = false;
+	}
+
+	void GameStateManager::InactiveMenu()
+	{
+		EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(pauseBGID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = false;
+	}
+
+	void GameStateManager::DeleteMenu()
+	{
+
+		EntityManager::GetInstance().RemoveEntity(pauseBGID);
+
+
+		EntityManager::GetInstance().RemoveEntity(howToPlayButtonID);
+
+
+		EntityManager::GetInstance().RemoveEntity(quitButtonID);
+
+
+		EntityManager::GetInstance().RemoveEntity(resumeButtonID);
+
+
+		EntityManager::GetInstance().RemoveEntity(pawsedID);
+	}
+
+	void GameStateManager::ActiveMenu()
+	{
+		EntityManager::GetInstance().Get<EntityDescriptor>(resumeButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(pauseBGID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = false;
 	}
 
 	void GameStateManager::HowToPlay(EntityID)
@@ -156,6 +213,7 @@ namespace PE
 	}
 
 
+
 	void GameStateManager::RegisterButtonFunctions()
 	{
 		REGISTER_UI_FUNCTION(SetPauseState, PE::GameStateManager);
@@ -163,6 +221,10 @@ namespace PE
 		REGISTER_UI_FUNCTION(IncrementGameState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(DecrementGameState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(ExitGame, PE::GameStateManager);
+		REGISTER_UI_FUNCTION(HowToPlay, PE::GameStateManager);
+		REGISTER_UI_FUNCTION(AreYouSureExit, PE::GameStateManager);
+		REGISTER_UI_FUNCTION(ReturnToPauseMenuFromHowToPlay, PE::GameStateManager);
+		REGISTER_UI_FUNCTION(ReturnToPauseMenuFromExit, PE::GameStateManager);
 	}
 
 

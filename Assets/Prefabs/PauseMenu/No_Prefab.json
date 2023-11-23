@@ -32,7 +32,7 @@
                     1.0
                 ],
                 "m_hoveredTexture": "../Assets/Textures/Button_ResumeGame_Highlighted_512x128.png",
-                "m_onClicked": "ResumeState",
+                "m_onClicked": "ReturnToPauseMenuFromExit",
                 "m_onHovered": "",
                 "m_pressedColor": [
                     1.0,

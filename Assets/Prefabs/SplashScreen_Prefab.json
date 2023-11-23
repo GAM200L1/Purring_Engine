@@ -4,7 +4,7 @@
             "EntityDescriptor": {
                 "children": [],
                 "isActive": true,
-                "name": "GameObject",
+                "name": "SplashScreen",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },

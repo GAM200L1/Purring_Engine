@@ -87,6 +87,18 @@ namespace PE
 		rttr::instance GetScriptData(EntityID id);
 
 		/*!***********************************************************************************
+		 \brief     Handle window out of focus event.
+		 \param     Event containing window-specific details.
+		*************************************************************************************/
+		void OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event);
+
+		/*!***********************************************************************************
+		 \brief     Handle Key Press event.
+		 \param     Event containing window-specific details.
+		*************************************************************************************/
+		void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
+
+		/*!***********************************************************************************
 		 \brief Destructor for the test script
 
 		 \return void

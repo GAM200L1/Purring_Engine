@@ -35,6 +35,9 @@ namespace PE
 		{
 			GameStateManager::GetInstance().SetGameState(GameStates::SPLASHSCREEN);
 		}
+
+		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
+		ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
 	}
 	void GameStateController::Update(EntityID id, float deltaTime)
 	{
@@ -79,4 +82,30 @@ namespace PE
 		return rttr::instance(m_ScriptData.at(id));
 	}
 
+	void GameStateController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)
+	{
+		if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE)
+		{
+			GameStateManager::GetInstance().SetPauseState();
+		}
+	}
+
+	void GameStateController::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
+	{
+		PE::KeyTriggeredEvent KTE;
+
+		//dynamic cast
+		if (r_event.GetType() == PE::KeyEvents::KeyTriggered)
+		{
+			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
+
+			if (KTE.keycode == GLFW_KEY_ESCAPE)
+			{
+				if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE)
+				{
+					GameStateManager::GetInstance().SetPauseState();
+				}
+			}
+		}
+	}
 }

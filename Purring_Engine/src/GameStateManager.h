@@ -97,17 +97,35 @@ namespace PE {
 
 		void ExitGame(EntityID = -1);
 
+		//for use when resuming
+		void InactiveMenu();
+
+		//for use when calling the other functions
+		void InactiveMenuButtons();
+		void DeleteMenu();
+		void ActiveMenu();
+
 		// ----- Public Variables ----- // 
 	public:
 		Graphics::CameraManager* p_cameraManager;
 		GLFWwindow* p_window;
-
+		
 		// ----- Private Variables ----- // 
 	private:
 		//start with pause i guess?, might want to change if youre testing stuff
 		GameStates m_currentGameState {GameStates::INACTIVE};
 		//for resume state to set back to
 		GameStates m_prevGameState {GameStates::MOVEMENT};
+
+		SerializationManager serializationManager;
+		
+		EntityID pauseBGID,pawsedID,resumeButtonID,howToPlayButtonID,quitButtonID;
+
+		EntityID howToPlayID,returnButtonID;
+
+		EntityID areYouSureID, yesButtonID, noButtonID;
+
+		bool pausedOnce{false};
 	};
 
 }
