@@ -14,15 +14,17 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "radius": 50.0,
+                    "radius": 0.0,
                     "scaleOffset": 1.0
                 },
                 "isTrigger": false,
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {
+                "Prefab Type": "PlayerPrefab",
                 "children": [],
-                "name": "GameObject",
+                "isActive": true,
+                "name": "Player",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
@@ -45,14 +47,20 @@
                     "data": {
                         "HP": 100,
                         "PlayerState": 0,
-                        "speed": 100.0
+                        "speed": 124.0
+                    },
+                    "state": 0
+                },
+                "testScript": {
+                    "data": {
+                        "m_rotationSpeed": 11.0
                     },
                     "state": 0
                 }
             },
             "Transform": {
                 "height": 100.0,
-                "orientation": 0.0,
+                "orientation": 8.0,
                 "position": {
                     "x": 0.0,
                     "y": 0.0

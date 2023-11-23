@@ -8,7 +8,7 @@
         "showEditor": true,
         "showLogs": true,
         "showObjectList": true,
-        "showPerformanceWindow": true,
+        "showPerformanceWindow": false,
         "showPhysicsWindow": false,
         "showResourceWindow": true,
         "showSceneView": true,

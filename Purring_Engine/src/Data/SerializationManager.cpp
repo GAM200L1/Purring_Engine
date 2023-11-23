@@ -467,7 +467,7 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
     for (const auto& k : r_json["Entity"]["components"]["ScriptComponent"].items())
     {
         auto str = k.key().c_str();
-        PE::LogicSystem::m_scriptContainer[str]->OnAttach(r_id);
+        //PE::LogicSystem::m_scriptContainer[str]->OnAttach(r_id);
         if (PE::LogicSystem::m_scriptContainer.count(str))
         {
             rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(str)->GetScriptData(r_id);
@@ -511,8 +511,8 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                         else if (prop.get_type().get_name() == "structPE::vec2")
                         {
                             PE::vec2 val;
-
-
+                            val.x = data[prop.get_name().to_string().c_str()]["x"].get<float>();
+                            val.y = data[prop.get_name().to_string().c_str()]["x"].get<float>();
                             prop.set_value(inst, val);
                         }
                         else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")

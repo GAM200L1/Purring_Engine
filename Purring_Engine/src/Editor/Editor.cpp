@@ -2150,6 +2150,7 @@ namespace PE {
 
 					if (hasScripts)
 					{
+						m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
 							if (key == "testScript")
@@ -3480,6 +3481,7 @@ namespace PE {
 			ImGui::Separator();
 			static std::set<EntityID> modify;
 			static std::map<EntityID, std::vector<bool>> modComps;
+			int cnt{};
 			for (const auto& id : SceneView())
 			{
 				if (prefabTP != "" && prefabTP == EntityManager::GetInstance().Get<EntityDescriptor>(id).prefabType)
@@ -3528,13 +3530,11 @@ namespace PE {
 						ImGui::Unindent();
 						ImGui::Separator();
 					}
+					++cnt;
 				}
 			}
-			// if there is no entities to modify, set to inactive
-			if (modify.empty())
-			{
+			if (!cnt)
 				*p_active = false;
-			}
 			ImGui::Separator();
 
 			if (ImGui::Button("Apply"))
