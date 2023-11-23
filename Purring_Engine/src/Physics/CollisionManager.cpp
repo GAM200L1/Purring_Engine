@@ -97,8 +97,12 @@ namespace PE
 		engine_logger.AddLog(false, "CollisionManager initialized!", __FUNCTION__);
 	}
 
-	void CollisionManager::UpdateSystem(float)
+	void CollisionManager::UpdateSystem(float deltaTime)
 	{
+		// prevent warnings
+		deltaTime;
+		// Update the Collider's specs
+		UpdateColliders();
 
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
@@ -108,31 +112,20 @@ namespace PE
 				m_grid.ClearGrid();
 			return;
 		}
-
+#endif
 
 		if (m_grid.GetGridSize() != gridSize)
 		{
 			// sets up the grid if it did not exist during runtime
 			m_grid.SetupGrid(gridSize.x, gridSize.y);
 		}
-#endif
+
 		if(gridActive)
-			m_grid.UpdateGrid();
-
-		// Update the Collider's specs
-		UpdateColliders();
-
-#ifndef GAMERELEASE
-		if (!Editor::GetInstance().IsEditorActive())
-		{
-#endif
-			// Test for Collisions in the scene
-			TestColliders();
-			// Resolve the positions and velocities of the entities
-			ResolveCollision();
-#ifndef GAMERELEASE
-		}
-#endif
+		m_grid.UpdateGrid();
+		// Test for Collisions in the scene
+		TestColliders();
+		// Resolve the positions and velocities of the entities
+		ResolveCollision();
 	}
 
 	void CollisionManager::DestroySystem()
@@ -146,8 +139,6 @@ namespace PE
 	{
 		for (EntityID ColliderID : SceneView<Collider, Transform>())
 		{
-			// if the entity is not active, do not update collision
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID).isActive) { continue; }
 			Transform const& transform = EntityManager::GetInstance().Get<Transform>(ColliderID);
 			Collider& collider = EntityManager::GetInstance().Get<Collider>(ColliderID);
 			
@@ -175,15 +166,10 @@ namespace PE
 
 					for (EntityID ColliderID_1 : IDs)
 					{
-						// if the entity is not active, do not check for collision
-						if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_1).isActive) { continue; }
-
 						Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
+
 						for (EntityID ColliderID_2 : IDs)
 						{
-							// if the entity is not active, do not check for collision
-							if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_2).isActive) { continue; }
-
 							Collider& collider2 = EntityManager::GetInstance().Get<Collider>(ColliderID_2);
 
 							// if its the same don't check
@@ -260,16 +246,10 @@ namespace PE
 		{
 			for (EntityID ColliderID_1 : SceneView<Collider,Transform>())
 			{
-				// if the entity is not active, do not check for collision
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_1).isActive) { continue; }
-
 				Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
 
 				for (EntityID ColliderID_2 : SceneView<Collider, Transform>())
 				{
-					// if the entity is not active, do not check for collision
-					if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_2).isActive) { continue; }
-
 					Collider& collider2 = EntityManager::GetInstance().Get<Collider>(ColliderID_2);
 
 					// if its the same don't check

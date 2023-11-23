@@ -22,7 +22,6 @@
 #include "Events/EventHandler.h"
 #include "ECS/Entity.h"
 #include "System.h"
-#include "Math/Transform.h"
 #include <optional>
 #include <utility>
 
@@ -146,7 +145,7 @@ namespace PE
                         the Camera component for the primary camera used during runtime. 
                         If no runtime cameras exist, optional::has_value() will return false.
             *************************************************************************************/
-            std::optional <std::reference_wrapper<Camera>> GetMainCamera() const;
+            std::optional <std::reference_wrapper<Camera>> GetMainCamera();
 
             /*!***********************************************************************************
              \brief Returns a reference to the camera used to render UI.
@@ -165,34 +164,6 @@ namespace PE
              \return EntityID - The entity ID of the UI camera object.
             *************************************************************************************/
             static inline EntityID GetUiCameraId() { return m_uiCameraId; }
-
-            /*!***********************************************************************************
-             \brief  Returns a vec2 object with a position in window coordinates (with the origin
-                at the center of the window) converted to world coordinates. This function takes 
-                the ratio of the viewport to the window's dimensions into account.
-
-             \param[in] x x-coordinate of the position in viewport coordinates (with the origin
-                at the center of the window) to convert to world coordinates.
-             \param[in] y y-coordinate of the position in viewport coordinates (with the origin
-                at the center of the window) to convert to world coordinates.
-
-             \return vec2 - Converted position in world coordinates.
-            *************************************************************************************/
-            vec2 GetWindowToWorldPosition(float const x, float const y) const;
-
-            /*!***********************************************************************************
-             \brief  Returns a vec2 object with a position in window coordinates (with the origin
-                at the center of the window) converted to screen coordinates for the UI. This 
-                function takes the ratio of the viewport to the window's dimensions into account.
-
-             \param[in] x x-coordinate of the position in viewport coordinates (with the origin
-                at the center of the window) to convert to world coordinates.
-             \param[in] y y-coordinate of the position in viewport coordinates (with the origin
-                at the center of the window) to convert to world coordinates.
-
-             \return vec2 - Converted position in world coordinates.
-            *************************************************************************************/
-            static vec2 GetUiWindowToScreenPosition(float const x, float const y);
 
             /*!***********************************************************************************
              \brief Get the system's name, useful for debugging and identification.
@@ -270,8 +241,7 @@ namespace PE
         private:
             const EntityID defaultId{ std::numeric_limits<EntityID>::max() };
 
-            static float m_windowWidth, m_windowHeight; // Dimensions of the window being rendered to by the main camera or editor
-            float m_viewportWidth, m_viewportHeight; // Dimensions of the viewport of the main camera
+            static float m_windowWidth, m_windowHeight;
 
             std::string m_systemName{ "CameraManager" }; // Name of system
 

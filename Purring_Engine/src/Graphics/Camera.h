@@ -177,21 +177,6 @@ namespace PE
             *************************************************************************************/
             inline float GetViewportHeight() const { return m_viewportHeight; }
 
-            /*!***********************************************************************************
-            \brief  Returns a vec2 object with a position in viewport coordinates (with the origin  
-                at the center of the window) converted to world coordinates. 
-
-                NOTE: Does not take the relationship between the viewport and the window into account.
-                            
-            \param[in] x x-coordinate of the position in viewport coordinates (with the origin  
-                at the center of the window) to convert to world coordinates.                            
-            \param[in] y y-coordinate of the position in viewport coordinates (with the origin  
-                at the center of the window) to convert to world coordinates.
-
-            \return vec2 - Converted position in world coordinates.
-            *************************************************************************************/
-            vec2 GetViewportToWorldPosition(float const x, float const y) const;
-
 
             // ----- Public setters ----- // 
         public:

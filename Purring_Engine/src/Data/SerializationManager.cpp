@@ -134,7 +134,7 @@ std::string SerializationManager::OpenFileExplorerRequestPath()
 
         for (const auto& entityId : allEntityIds)
         {
-            if (entityId != PE::Graphics::CameraManager::GetUiCameraId() && PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(entityId).SaveEntity())
+            if (entityId != PE::Graphics::CameraManager::GetUiCameraId())
             {
                 nlohmann::json entityJson = SerializeEntity(static_cast<int>(entityId));
                 allEntitiesJson["Entities"].push_back(entityJson);

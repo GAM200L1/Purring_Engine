@@ -103,14 +103,6 @@ namespace PE
         *************************************************************************************/
         std::string GetName();
         /*!***********************************************************************************
-         \brief Returns the cursor position in viewport coordinates (with the origin at the
-                center of the window) through the arguments.
-         \param [In] window Pointer to the GLFW window
-         \param [In,out] x x-coordinate in window coordinates
-         \param [In,out] y y-coordinate in window coordinates
-        *************************************************************************************/
-        void static GetCursorViewportPosition(GLFWwindow* window, float& x, float& y);
-        /*!***********************************************************************************
          \brief To set the buffer time before counting a key press as hold
          \param [In] float buffer time
         *************************************************************************************/
@@ -125,15 +117,7 @@ namespace PE
          \param [In] int keycode to check
         *************************************************************************************/
         bool static IsKeyHeld(int keycode);
-        /*!***********************************************************************************
-         \brief Convert the x and y coordinates passed in from window coordinates (with the
-                origin in the top-left corner) to viewport coordinates (with the origin at 
-                the center of the window).
-         \param [In] window Pointer to the GLFW window
-         \param [In] x x-coordinate in window coordinates
-         \param [In] y y-coordinate in window coordinates
-        *************************************************************************************/
-        void static ConvertGLFWToTransform(GLFWwindow* window, float& x, float& y);
+        void static ConvertGLFWToTransform(GLFWwindow* window, double* x, double* y);
 
 
         // ----- Private Variables ----- // 

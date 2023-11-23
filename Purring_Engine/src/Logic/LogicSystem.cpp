@@ -68,10 +68,8 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 #endif
 	for (EntityID objectID : SceneView<ScriptComponent>())
 	{
-		if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
-			continue;
-
 		ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
+
 		for (auto& [key, state] : sc.m_scriptKeys)
 		{
 			if (m_scriptContainer.find(key) != m_scriptContainer.end())
