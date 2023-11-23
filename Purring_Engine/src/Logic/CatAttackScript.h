@@ -73,5 +73,10 @@ namespace PE
 		// ----- Private Variables ----- //
 		CatScriptData* p_data;
 		float m_attackDuration;
+		bool m_bulletCollided{ false };
+
+		// ----- Private Functions ----- //
+		void ProjectileHitRat(const Event<CollisionEvents>& r_CE);
+
 	};
 }

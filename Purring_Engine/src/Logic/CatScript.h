@@ -38,6 +38,7 @@ namespace PE
 	//! Enum denoting cardinal directions for attack
 	enum EnumCatAttackDirection
 	{
+		NONE = 0,
 		EAST = 1,
 		NORTH = 2,
 		WEST = 3,
@@ -59,13 +60,14 @@ namespace PE
 		// attack variables
 		int attackDamage{ 0 };
 		int requiredAttackPoints{ 0 };
-		int attackDirection{ 0 };
+		EnumCatAttackDirection attackDirection{ EnumCatAttackDirection::NONE };
 		std::map<EnumCatAttackDirection, EntityID> telegraphIDs;
 		
 		// bullet variables
+		float waitTimeForAnimation{ 0.2f };
 		float bulletRange{ 3.f };
-		float bulletLifeTime{ 1.f };
-		float bulletForce{ 6.f };
+		float bulletLifeTime{ 0.1f };
+		float bulletForce{ 1500.f };
 
 		// movement variables
 		std::vector<vec2> pathPositions{};

@@ -78,7 +78,10 @@ namespace PE
 				}
 				else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 				{
-
+					if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+					}
 				}
 		}
 
@@ -172,17 +175,27 @@ namespace PE
 
 				if (isXAxis)
 				{
+					// set the scale of the selection box
 						boxScaleOffset.y = 0.75f;
 						boxScaleOffset.x = m_scriptData[id].bulletRange;
-						boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(telegraphID).width);
+						EntityManager::GetInstance().Get<Transform>(telegraphID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
+						EntityManager::GetInstance().Get<Transform>(telegraphID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
+
+
+						boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (EntityManager::GetInstance().Get<Transform>(telegraphID).width * 0.5f);
 						boxPositionOffset.x *= (isNegative) ? -1 : 1;
 						dir = (isNegative) ? EnumCatAttackDirection::WEST : EnumCatAttackDirection::EAST;
 				}
 				else
 				{
+					// set the scale of the selection box
 						boxScaleOffset.x = 0.75f;
 						boxScaleOffset.y = m_scriptData[id].bulletRange;
-						boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).height * 0.5f) + (m_scriptData[id].bulletRange * 0.5f * EntityManager::GetInstance().Get<Transform>(telegraphID).height);
+						EntityManager::GetInstance().Get<Transform>(telegraphID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
+						EntityManager::GetInstance().Get<Transform>(telegraphID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
+
+
+						boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (EntityManager::GetInstance().Get<Transform>(telegraphID).height * 0.5f);
 						boxPositionOffset.y *= (isNegative) ? -1 : 1;
 						dir = (isNegative) ? EnumCatAttackDirection::SOUTH : EnumCatAttackDirection::NORTH;
 				}
@@ -190,10 +203,6 @@ namespace PE
 				// set the position of the selection box to be half the range away from the center of the cat
 				EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.x = boxPositionOffset.x;
 				EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.y = boxPositionOffset.y;
-
-				// set the scale of the selection box
-				EntityManager::GetInstance().Get<Transform>(telegraphID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
-				EntityManager::GetInstance().Get<Transform>(telegraphID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
 
 				// Load and Set the texture for the telegraphs
 				std::string telegraphTextureName = "../Assets/Textures/Telegraphs/Telegraph_Long_512x128.png";

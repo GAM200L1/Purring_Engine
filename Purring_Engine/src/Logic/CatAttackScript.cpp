@@ -109,7 +109,7 @@ namespace PE
 		{
 			// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
 			m_showBoxes = true;
-			p_data->attackDirection = 0;
+			p_data->attackDirection = EnumCatAttackDirection::NONE;
 			for (auto const& boxID : p_data->telegraphIDs)
 			{
 				EntityManager::GetInstance().Get<EntityDescriptor>(boxID.second).isActive = true;
@@ -127,6 +127,8 @@ namespace PE
 	void CatAttackEXECUTE::StateEnter(EntityID id) 
 	{
 		p_data = GETSCRIPTDATA(CatScript, id);
+		ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackEXECUTE::ProjectileHitRat, this);
+		
 		EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = true;
 		m_attackDuration = p_data->bulletLifeTime;
 		
@@ -154,15 +156,17 @@ namespace PE
 			break;
 		}
 		}
-		EntityManager::GetInstance().Get<Transform>(p_data->projectileID).position = EntityManager::GetInstance().Get<Transform>(id).position + (direction * 0.5f * EntityManager::GetInstance().Get<Transform>(id).width);
-		EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(direction * p_data->bulletForce * p_data->bulletRange);
+
+		EntityManager::GetInstance().Get<Transform>(p_data->projectileID).position = EntityManager::GetInstance().Get<Transform>(id).position + (direction * ((0.5f * EntityManager::GetInstance().Get<Transform>(id).width) + 0.5f * EntityManager::GetInstance().Get<Transform>(p_data->projectileID).width));
+		EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).velocity.Zero();
+		EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(direction * p_data->bulletForce);
 	}
 
 	void CatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 		{
-			if (m_attackDuration > 0.f)
+			if (m_attackDuration > 0.f && !m_bulletCollided)
 			{
 				m_attackDuration -= deltaTime;
 			}
@@ -170,6 +174,7 @@ namespace PE
 			{
 				p_data->p_stateManager->ChangeState(new CatAttackPLAN{}, id);
 				GameStateManager::GetInstance().SetPauseState();
+				m_bulletCollided = false;
 			}
 		}
 	}
@@ -177,9 +182,48 @@ namespace PE
 	void CatAttackEXECUTE::StateExit(EntityID id)
 	{
 		// resets attack direction selection
-		p_data->attackDirection = 0;
+		p_data->attackDirection = EnumCatAttackDirection::NONE;
 		EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
-		//EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
 	}
 
+	void CatAttackEXECUTE::ProjectileHitRat(const Event<CollisionEvents>& r_CE)
+	{
+		OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
+		
+		std::pair<EntityID, EntityID> collidedEntities;
+		// check which entity is the projectile. the projectile ID is stored in collidedEntities.first
+		if (OCEE.Entity1 == p_data->projectileID)
+		{
+			collidedEntities.first = OCEE.Entity1;
+			collidedEntities.second = OCEE.Entity2;
+			
+			// temp
+			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
+			m_bulletCollided = true;
+		}
+		else if (OCEE.Entity2 == p_data->projectileID)
+		{
+			collidedEntities.first = OCEE.Entity2;
+			collidedEntities.second = OCEE.Entity1;
+
+			// temp
+			EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
+			m_bulletCollided = true;
+		}
+
+		/*
+		if (EntityManager::GetInstance().Has<ScriptComponent>(collidedEntities.second))
+		{
+			for (auto const& [scriptName, scriptState] : EntityManager::GetInstance().Get<ScriptComponent>(collidedEntities.second).m_scriptKeys)
+			{
+				if (scriptName == "RatScript")
+				{
+					EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
+					m_bulletCollided = true;
+					return;
+				}
+			}
+			return;
+		}*/
+	}
 }
