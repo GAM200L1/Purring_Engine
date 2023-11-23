@@ -3472,7 +3472,16 @@ namespace PE {
 					{
 						if (modComps.at(id).at(i) && prefabCID.at(i) != EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
 						{
-							EntityFactory::GetInstance().LoadComponent(id, prefabCID.at(i), EntityManager::GetInstance().GetComponentPoolPointer(prefabCID.at(i))->Get(pfid));
+							if (prefabCID.at(i) == EntityManager::GetInstance().GetComponentID<Transform>())
+							{
+								Transform xform = EntityManager::GetInstance().Get<Transform>(pfid);
+								xform.position = vec2{ 0, 0 };
+								EntityFactory::GetInstance().LoadComponent(id, prefabCID.at(i), &xform);
+							}
+							else
+							{
+								EntityFactory::GetInstance().LoadComponent(id, prefabCID.at(i), EntityManager::GetInstance().GetComponentPoolPointer(prefabCID.at(i))->Get(pfid));
+							}
 						}
 					}
 				}

@@ -223,6 +223,11 @@ namespace PE {
 		*************************************************************************************/
 		void ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
 
+		/*!***********************************************************************************
+		 \brief render the prefab apply changes window
+
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
 		void ShowApplyWindow(bool*p_active);
 
 		/*!***********************************************************************************
@@ -363,7 +368,7 @@ namespace PE {
 		std::pair<std::string, int> m_entityToModify;
 		static bool m_fileDragged;
 
-		// variable for prefab editor
+		// variables for prefab editor
 		std::string prefabFP;
 		std::string prefabTP;
 		std::vector<ComponentID> prefabCID;
