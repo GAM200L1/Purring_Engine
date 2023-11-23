@@ -47,10 +47,8 @@ namespace PE
 		// ----- Public Functions ----- //
 		void CatScript::Init(EntityID id)
 		{
-				m_scriptData[id].p_stateManager = new StateMachine{};
-				m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
-
-				ResetValues(id);
+				// Make a statemanager and set the starting state
+				MakeStateManager(id);
 
 				//! Creates entities for the telegraph boxes
 				CreateAttackTelegraphs(id, true, false); // east box
@@ -63,10 +61,23 @@ namespace PE
 				m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
 				/*EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;*/
 				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
+				// Create as many entities to visualise the player path nodes  
+				// such that there is one node per energy level
+				m_scriptData[id].pathPositions.reserve(m_scriptData[id].catMaxEnergy);
+				m_scriptData[id].pathQuads.reserve(m_scriptData[id].catMaxEnergy);
+				for (std::size_t i{}; i < m_scriptData[id].catMaxEnergy; ++i)
+				{
+						CreatePathNode(id);
+				}
 		}
 
 		void CatScript::Update(EntityID id, float deltaTime)
 		{
+				if (!m_scriptData[id].p_stateManager) 
+				{
+						MakeStateManager(id);
+				}
+
 				m_scriptData[id].p_stateManager->Update(id, deltaTime);
 
 				if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
@@ -109,13 +120,6 @@ namespace PE
 						delete m_scriptData[id].p_stateManager;
 						m_scriptData[id] = CatScriptData{};
 				}
-
-				// Create as many entities to visualise the player path nodes  
-				// such that there is one node per energy level
-				for (std::size_t i{}; i < m_scriptData[id].catMaxEnergy; ++i)
-				{
-
-				}
 		}
 
 		void CatScript::OnDetach(EntityID id)
@@ -138,14 +142,18 @@ namespace PE
 						delete m_scriptData[id].p_stateManager;
 						m_scriptData.erase(id);
 				}
+		}		
+		
+		
+		void CatScript::MakeStateManager(EntityID id)
+		{
+				if (m_scriptData[id].p_stateManager) { return; }
+
+				m_scriptData[id].p_stateManager = new StateMachine{};
+				m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
 		}
 
-		/*!***********************************************************************************
-		 \brief Helper function to en/disables an entity.
 
-		 \param[in] id EntityID of the entity to en/disable.
-		 \param[in] setToActive Whether this entity should be set to active or inactive.
-		*************************************************************************************/
 		void CatScript::ToggleEntity(EntityID id, bool setToActive)
 		{
 				// Exit if the entity is not valid
@@ -155,7 +163,18 @@ namespace PE
 				EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
 		}
 
-		
+
+		void CatScript::PositionEntity(EntityID const transformId, vec2 const& r_position)
+		{
+				try
+				{
+						Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+						r_transform.position = r_position;
+				}
+				catch (...) { return; }
+		}
+
+
 		void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 		{
 				// create the east direction entity
@@ -233,32 +252,15 @@ namespace PE
 
 		}
 
-		/*!***********************************************************************************
-		 \brief Creates a path node to visualise the path drawn by the player.
-
-		 \param[in] id EntityID of the entity that this script is attached to.
-		*************************************************************************************/
 		void CatScript::CreatePathNode(EntityID id)
 		{
+				// create the east direction entity
+				EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Graphics::Renderer>() };
 
-		}
+				EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(1.f, 1.f, 1.f, 1.f); // sets the color of the got to white
+				EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).isActive = false;
 
-
-		/*!***********************************************************************************
-		 \brief Calls the reset function of the movement or attack planning states.
-
-		 \param[in] id EntityID of the entity that this script is attached to.
-		*************************************************************************************/
-		void CatScript::ResetValues(EntityID id)
-		{
-				if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
-				{
-
-				}
-				else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN") 
-				{
-
-				}
+				m_scriptData[id].pathQuads.emplace_back(nodeId);
 		}
 
 }

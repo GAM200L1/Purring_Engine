@@ -68,6 +68,7 @@ namespace PE
 		float bulletForce{ 6.f };
 
 		// movement variables
+		float minDistance{ 30.f }, maxDistance{ 50.f };
 		std::vector<vec2> pathPositions{};
 		std::vector<EntityID> pathQuads{};
 
@@ -101,12 +102,29 @@ namespace PE
 		virtual void OnDetach(EntityID id);
 
 		/*!***********************************************************************************
+		 \brief Creates a statemanager and sets the starting state. If the statemanager exists,
+						don't bother making a new one.
+
+		 \param[in] id EntityID of the entity to en/disable.
+		 \param[in] setToActive Whether this entity should be set to active or inactive.
+		*************************************************************************************/
+		void MakeStateManager(EntityID id);
+
+		/*!***********************************************************************************
 		 \brief Helper function to en/disables an entity.
 
 		 \param[in] id EntityID of the entity to en/disable.
 		 \param[in] setToActive Whether this entity should be set to active or inactive.
 		*************************************************************************************/
 		static void ToggleEntity(EntityID id, bool setToActive);
+
+		/*!***********************************************************************************
+		 \brief Adjusts the position of the transform to the value passed in.
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		*************************************************************************************/
+		static void PositionEntity(EntityID const transformId, vec2 const& r_position);
+
 
 		// ----- Getters/RTTR ----- //
 		std::map<EntityID, CatScriptData>& GetScriptData(){ return m_scriptData; }
@@ -137,13 +155,5 @@ namespace PE
 		 \param[in] id EntityID of the entity that this script is attached to.
 		*************************************************************************************/
 		void CreatePathNode(EntityID id);
-
-
-		/*!***********************************************************************************
-		 \brief Calls the reset function of the movement or attack planning states.
-
-		 \param[in] id EntityID of the entity that this script is attached to.
-		*************************************************************************************/
-		void ResetValues(EntityID id);
 	};
 }
