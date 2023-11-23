@@ -229,12 +229,14 @@ namespace PE {
 		{
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetColor(255,0,0,255);
 		}
-		AudioManager::GetInstance().PlaySound("audio_sound1");
+		AudioComponent audioComponent;
+		audioComponent.PlayAudioSound("audio_sound1");
 	}
 
 	void Editor::PlayAudio2(EntityID)
 	{
-		AudioManager::GetInstance().PlaySound("audio_sound2");
+		AudioComponent audioComponent;
+		audioComponent.PlayAudioSound("audio_sound2");
 	}
 
 	void Editor::ClearObjectList()
