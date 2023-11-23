@@ -48,6 +48,7 @@
                         "sceneID": 2
                     },
                     "GUI": {
+                        "disabled": false,
                         "m_UIType": 0,
                         "m_defaultColor": [
                             1.0,
@@ -84,7 +85,7 @@
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
-                            "g": 0.0,
+                            "g": 1.0,
                             "r": 1.0
                         },
                         "TextureKey": "../Assets/Textures/Button_White_128px.png"
@@ -129,6 +130,7 @@
                         "sceneID": 3
                     },
                     "GUI": {
+                        "disabled": false,
                         "m_UIType": 0,
                         "m_defaultColor": [
                             1.0,
@@ -165,10 +167,10 @@
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
-                            "g": 0.0,
+                            "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
                     },
                     "TextComponent": {
                         "Color": {
@@ -210,6 +212,7 @@
                         "sceneID": 4
                     },
                     "GUI": {
+                        "disabled": false,
                         "m_UIType": 0,
                         "m_defaultColor": [
                             1.0,
@@ -246,10 +249,10 @@
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
-                            "g": 0.0,
+                            "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
                     },
                     "TextComponent": {
                         "Color": {
@@ -291,6 +294,7 @@
                         "sceneID": 5
                     },
                     "GUI": {
+                        "disabled": false,
                         "m_UIType": 0,
                         "m_defaultColor": [
                             1.0,
@@ -327,10 +331,10 @@
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
-                            "g": 0.0,
+                            "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
                     },
                     "TextComponent": {
                         "Color": {
@@ -372,6 +376,7 @@
                         "sceneID": 6
                     },
                     "GUI": {
+                        "disabled": false,
                         "m_UIType": 0,
                         "m_defaultColor": [
                             1.0,
@@ -408,10 +413,10 @@
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
-                            "g": 0.0,
+                            "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
                     },
                     "TextComponent": {
                         "Color": {

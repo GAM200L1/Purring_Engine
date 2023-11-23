@@ -409,11 +409,16 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
 
 bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r_json)
 {
+    if (!r_json["Entity"]["components"].contains("GUI"))
+    {
+        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), nullptr);
+    }
     PE::GUI gui;
     gui.m_onClicked = r_json["Entity"]["components"]["GUI"]["m_onClicked"].get<std::string>();
     gui.m_onHovered = r_json["Entity"]["components"]["GUI"]["m_onHovered"].get<std::string>();
     gui.m_UIType = static_cast<PE::UIType>(r_json["Entity"]["components"]["GUI"]["m_UIType"].get<int>());
-    gui.disabled = r_json["Entity"]["components"]["GUI"]["disabled"].get<bool>();
+    if (r_json["Entity"]["components"]["GUI"].contains("disabled"))
+        gui.disabled = r_json["Entity"]["components"]["GUI"]["disabled"].get<bool>();
 
     gui.m_defaultTexture = r_json["Entity"]["components"]["GUI"]["m_defaultTexture"].get<std::string>();
     gui.m_hoveredTexture = r_json["Entity"]["components"]["GUI"]["m_hoveredTexture"].get<std::string>();
