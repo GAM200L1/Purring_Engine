@@ -63,6 +63,9 @@ namespace PE {
 		*************************************************************************************/
 		GameStates GetGameState();
 
+		// remove later //
+		void SetAttackPlanState(EntityID);
+
 		// ----- Public Functions ----- // 
 	public:
 		/*!***********************************************************************************

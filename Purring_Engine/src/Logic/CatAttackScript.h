@@ -37,7 +37,7 @@ namespace PE
 		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);
 
 		// ----- Getter ----- //
-		virtual std::string_view GetName() override;
+		virtual std::string_view GetName() { return "AttackPLAN"; }
 
 	private:
 		// ----- Private Variables ----- //
@@ -60,11 +60,11 @@ namespace PE
 		virtual ~CatAttackEXECUTE() { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
-		virtual void StateEnter(EntityID id) { id; }
+		virtual void StateEnter(EntityID id);
 
-		virtual void StateUpdate(EntityID id, float deltaTime) { id; deltaTime; }
+		virtual void StateUpdate(EntityID id, float deltaTime);
 
-		virtual void StateExit(EntityID id) { id; }
+		virtual void StateExit(EntityID id);
 
 		// ----- Getter ----- //
 		virtual std::string_view GetName() { return "AttackEXECUTE"; }
@@ -72,6 +72,6 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		CatScriptData* p_data;
-		
+		float m_attackDuration;
 	};
 }

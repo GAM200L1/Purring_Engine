@@ -31,9 +31,9 @@ namespace PE
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
 	{
 		// get the mouse cursor position
-		double mouseX{}, mouseY{};
+		float mouseX{}, mouseY{};
 		InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY); // I'll change this to take floats in next time...
-		vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(static_cast<float>(mouseX), static_cast<float>(mouseY)) };
+		vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
 
 		// if in attack planning phase, allow player to select a cat and plan that cats attacks
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
@@ -82,7 +82,7 @@ namespace PE
 		}
 		else if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 		{
-			p_data->m_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
+			p_data->p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
 		}
 	}
 	
@@ -92,12 +92,8 @@ namespace PE
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
 			EntityManager::GetInstance().Get<EntityDescriptor>(telegraph.second).isActive = false;
+			EntityManager::GetInstance().Get<Graphics::Renderer>(telegraph.second).SetColor(m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, 1.f);
 		}
-	}
-
-	std::string_view CatAttackPLAN::GetName()
-	{
-		return "AttackPLAN";
 	}
 
 	void CatAttackPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
@@ -119,11 +115,71 @@ namespace PE
 				EntityManager::GetInstance().Get<EntityDescriptor>(boxID.second).isActive = true;
 			}
 		}
+		else if (m_mouseClick && !m_showBoxes && p_data->attackDirection == 0)
+		{
+			m_showBoxes = false;
+		}
 	}
 
 
 
 	// ----- CAT ATTACK EXECUTION ----- //
+	void CatAttackEXECUTE::StateEnter(EntityID id) 
+	{
+		p_data = GETSCRIPTDATA(CatScript, id);
+		EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = true;
+		m_attackDuration = p_data->bulletLifeTime;
+		
+		vec2 direction{ 0.f, 0.f };
+		switch (p_data->attackDirection)
+		{
+		case EnumCatAttackDirection::EAST:
+		{
+			direction.x = 1.f;
+			break;
+		}
+		case EnumCatAttackDirection::NORTH:
+		{
+			direction.y = 1.f;
+			break;
+		}
+		case EnumCatAttackDirection::SOUTH:
+		{
+			direction.y = -1.f;
+			break;
+		}
+		case EnumCatAttackDirection::WEST:
+		{
+			direction.x = -1.f;
+			break;
+		}
+		}
+		EntityManager::GetInstance().Get<Transform>(p_data->projectileID).position = EntityManager::GetInstance().Get<Transform>(id).position + (direction * 0.5f * EntityManager::GetInstance().Get<Transform>(id).width);
+		EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(direction * p_data->bulletForce * p_data->bulletRange);
+	}
 
+	void CatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
+	{
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+		{
+			if (m_attackDuration > 0.f)
+			{
+				m_attackDuration -= deltaTime;
+			}
+			else
+			{
+				p_data->p_stateManager->ChangeState(new CatAttackPLAN{}, id);
+				GameStateManager::GetInstance().SetPauseState();
+			}
+		}
+	}
+
+	void CatAttackEXECUTE::StateExit(EntityID id)
+	{
+		// resets attack direction selection
+		p_data->attackDirection = 0;
+		EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
+		//EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+	}
 
 }
