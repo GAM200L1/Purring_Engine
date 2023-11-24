@@ -126,7 +126,7 @@ namespace PE {
 
 		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 		{
-			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("ratAttack");
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("ratAttack");
 		}
 
 		if (p_data->idleTimer <= 0)
@@ -200,7 +200,7 @@ namespace PE {
 
 		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 		{
-			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("ratAttack");
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("ratAttack");
 		}
 
 		if (p_data->alertTimer <= 0 && abs(p_data->distanceFromPlayer) <= p_data->TargetRange)
@@ -243,7 +243,7 @@ namespace PE {
 
 		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 		{
-			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("ratDeath");
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("ratDeath");
 		}
 
 		if (p_data->alertTimer < 0 && p_data->distanceFromPlayer <= p_data->TargetRange)
@@ -277,7 +277,7 @@ namespace PE {
 
 		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 		{
-			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("ratDeath");
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("ratDeath");
 		}
 
 		EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(toPlayer * p_data->speed/2);

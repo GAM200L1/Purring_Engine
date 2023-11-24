@@ -124,10 +124,15 @@ public:
     *************************************************************************************/
     void SaveToFile(const std::filesystem::path& filepath, int entityId);
 
+    void SaveAnimationToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
+
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
     *************************************************************************************/
     size_t LoadFromFile(const std::filesystem::path& filepath);
+
+    nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
+
 
     /*!************************************************************************
      \brief Serializes an entity's component to JSON.
