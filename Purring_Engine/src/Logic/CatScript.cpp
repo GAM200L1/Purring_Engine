@@ -149,7 +149,7 @@ namespace PE
 		if (m_scriptData[id].p_stateManager) { return; }
 
 		m_scriptData[id].p_stateManager = new StateMachine{};
-		m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
+		m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
 	}
 
 
@@ -197,7 +197,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Transform>(telegraphID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
 
 
-				boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (EntityManager::GetInstance().Get<Transform>(telegraphID).width * 0.5f);
+				boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (EntityManager::GetInstance().Get<Transform>(telegraphID).width * 0.5f) + 10.f;
 				boxPositionOffset.x *= (isNegative) ? -1 : 1;
 				dir = (isNegative) ? EnumCatAttackDirection::WEST : EnumCatAttackDirection::EAST;
 		}
@@ -210,7 +210,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Transform>(telegraphID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
 
 
-				boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (EntityManager::GetInstance().Get<Transform>(telegraphID).height * 0.5f);
+				boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (EntityManager::GetInstance().Get<Transform>(telegraphID).height * 0.5f) + 10.f;
 				boxPositionOffset.y *= (isNegative) ? -1 : 1;
 				dir = (isNegative) ? EnumCatAttackDirection::SOUTH : EnumCatAttackDirection::NORTH;
 		}

@@ -1,7 +1,7 @@
 {
     "Editor": {
         "firstLaunch": false,
-        "renderDebug": true,
+        "renderDebug": false,
         "showComponentWindow": true,
         "showConsole": true,
         "showEditor": true,
