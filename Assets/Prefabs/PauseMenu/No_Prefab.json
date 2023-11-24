@@ -17,7 +17,7 @@
                     1.0,
                     1.0
                 ],
-                "m_defaultTexture": "../Assets/Textures/Button_ResumeGame_512x128.png",
+                "m_defaultTexture": "../Assets/Textures/Button_No_512x128.png",
                 "m_disabledColor": [
                     0.5,
                     0.5,
@@ -31,7 +31,7 @@
                     1.0,
                     1.0
                 ],
-                "m_hoveredTexture": "../Assets/Textures/Button_ResumeGame_Highlighted_512x128.png",
+                "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                 "m_onClicked": "ReturnToPauseMenuFromExit",
                 "m_onHovered": "",
                 "m_pressedColor": [
@@ -40,7 +40,7 @@
                     1.0,
                     1.0
                 ],
-                "m_pressedTexture": "../Assets/Textures/Button_ResumeGame_Dark_512x128.png"
+                "m_pressedTexture": "../Assets/Textures/Button_No_Dark_512x128.png"
             },
             "GUIRenderer": {
                 "Color": {
@@ -49,13 +49,13 @@
                     "g": 1.0,
                     "r": 1.0
                 },
-                "TextureKey": "../Assets/Textures/Button_ResumeGame_512x128.png"
+                "TextureKey": "../Assets/Textures/Button_No_512x128.png"
             },
             "Transform": {
                 "height": 184.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 490.0,
+                    "x": 500.0,
                     "y": -334.0
                 },
                 "relativeposition": {

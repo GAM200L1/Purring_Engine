@@ -78,15 +78,18 @@ namespace PE
 			areYouSureID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/areyousure_Prefab.json");
 			yesButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/Yes_Prefab.json");
 			noButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/No_Prefab.json");
+			sadCatID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/sadcat_Prefab.json");
 
 
 			EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = false;
 			EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = false;
 			EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(sadCatID).isActive = false;
 
 			EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).toSave = false;
 			EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).toSave = false;
 			EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).toSave = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(sadCatID).toSave = false;
 		}
 	}
 
@@ -205,6 +208,7 @@ namespace PE
 			EntityManager::GetInstance().RemoveEntity(areYouSureID);
 			EntityManager::GetInstance().RemoveEntity(yesButtonID);
 			EntityManager::GetInstance().RemoveEntity(noButtonID);
+			EntityManager::GetInstance().RemoveEntity(sadCatID);
 
 			ays = false;
 		}
@@ -247,6 +251,7 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(sadCatID).isActive = false;
 	}
 
 	void GameStateManager::AreYouSureExit(EntityID)
@@ -258,6 +263,7 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = true;
 		EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = true;
 		EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = true;
+		EntityManager::GetInstance().Get<EntityDescriptor>(sadCatID).isActive = true;
 
 		ays = true;
 	}

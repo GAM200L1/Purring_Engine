@@ -155,7 +155,7 @@ namespace PE {
 
 		EntityID howToPlayID,returnButtonID;
 
-		EntityID areYouSureID, yesButtonID, noButtonID;
+		EntityID areYouSureID, yesButtonID, noButtonID, sadCatID;
 
 		bool htp{ false }, pausedOnce{ false }, ays{ false };
 	};

@@ -17,7 +17,7 @@
                     1.0,
                     1.0
                 ],
-                "m_defaultTexture": "../Assets/Textures/Button_ResumeGame_512x128.png",
+                "m_defaultTexture": "../Assets/Textures/Button_Return_512x128.png",
                 "m_disabledColor": [
                     0.5,
                     0.5,
@@ -31,7 +31,7 @@
                     1.0,
                     1.0
                 ],
-                "m_hoveredTexture": "../Assets/Textures/Button_ResumeGame_Highlighted_512x128.png",
+                "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
                 "m_onClicked": "ReturnToPauseMenuFromHowToPlay",
                 "m_onHovered": "",
                 "m_pressedColor": [
@@ -40,7 +40,7 @@
                     1.0,
                     1.0
                 ],
-                "m_pressedTexture": "../Assets/Textures/Button_ResumeGame_Dark_512x128.png"
+                "m_pressedTexture": "../Assets/Textures/Button_Return_Dark_512x128.png"
             },
             "GUIRenderer": {
                 "Color": {
@@ -49,7 +49,7 @@
                     "g": 0.0,
                     "r": 1.0
                 },
-                "TextureKey": ""
+                "TextureKey": "../Assets/Textures/Button_Return_512x128.png"
             },
             "Transform": {
                 "height": 118.0,

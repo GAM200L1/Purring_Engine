@@ -15,7 +15,7 @@
                     "g": 1.0,
                     "r": 1.0
                 },
-                "TextureKey": "../Assets/Textures/GamePawsed_Text_1024x256.png"
+                "TextureKey": "../Assets/Textures/AreYouSure_Text_1024x256.png"
             },
             "Transform": {
                 "height": 217.0,
