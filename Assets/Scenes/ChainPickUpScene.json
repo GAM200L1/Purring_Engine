@@ -137,6 +137,7 @@
                                 "NumberOfAttacher": 5,
                                 "NumberOfFollower": 1,
                                 "Size": 100.0,
+								"SoundID": 0,
                                 "Speed": 100.0,
                                 "ToAttach": [
                                     18446744073709551615,

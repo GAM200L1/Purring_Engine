@@ -34,6 +34,9 @@ namespace PE
 		bool IsAttaching{ false };
 		int NumberOfAttachers{ 1 };
 		std::vector<EntityID> ToAttach{};
+
+		//sound
+		EntityID SoundID;
 	};
 
 

@@ -210,6 +210,7 @@ RTTR_REGISTRATION
         .property("NextPosition", &PE::FollowScriptData::NextPosition)
         .property("ToAttach", &PE::FollowScriptData::ToAttach)
         .property("NumberOfAttacher", &PE::FollowScriptData::NumberOfAttachers)
+        .property("SoundID", &PE::FollowScriptData::SoundID)
         .property("IsAttaching", &PE::FollowScriptData::IsAttaching);
 
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")

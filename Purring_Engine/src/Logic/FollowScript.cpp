@@ -21,13 +21,13 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "AudioManager/AudioComponent.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE
 {
-	void FollowScript::Init(EntityID)
+	void FollowScript::Init(EntityID id)
 	{
-
 	}
 
 	void FollowScript::Update(EntityID id, float)
@@ -48,6 +48,9 @@ namespace PE
 						m_ScriptData[id].ToAttach.erase(m_ScriptData[id].ToAttach.begin() + index);
 						++m_ScriptData[id].NumberOfFollower;
 						--m_ScriptData[id].NumberOfAttachers;
+
+						if (EntityManager::GetInstance().Has<AudioComponent>(m_ScriptData[id].SoundID))
+							EntityManager::GetInstance().Get<AudioComponent>(m_ScriptData[id].SoundID).PlayAudioSound();
 					}
 				}
 			}
