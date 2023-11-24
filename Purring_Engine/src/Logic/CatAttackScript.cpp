@@ -135,10 +135,6 @@ namespace PE
 				}
 			}			
 		}
-		else if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
-		{
-			p_data->p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
-		}
 		m_mouseClick = false;
 	}
 	
@@ -285,8 +281,7 @@ namespace PE
 			}
 			else
 			{
-				p_data->p_stateManager->ChangeState(new CatAttackPLAN{}, id);
-				GameStateManager::GetInstance().SetPauseState();
+				GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id, 1.f);
 				m_bulletCollided = false;
 				projectileFired = false;
 			}

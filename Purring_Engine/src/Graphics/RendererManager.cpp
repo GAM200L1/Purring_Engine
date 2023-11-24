@@ -911,6 +911,9 @@ namespace PE
 
             for (const EntityID& id : SceneView<TextComponent, Transform>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
                 vec2 position{ EntityManager::GetInstance().Get<Transform>(id).position };
 

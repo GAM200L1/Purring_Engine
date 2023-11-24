@@ -235,7 +235,7 @@
                         },
                         "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
                         "Size": 1.0,
-                        "Text": "attack"
+                        "Text": "Execute"
                     },
                     "Transform": {
                         "height": 100.0,

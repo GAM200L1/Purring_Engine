@@ -106,11 +106,31 @@ namespace PE
 
 		virtual void StateExit(EntityID id) override;
 
+
+		/*!***********************************************************************************
+		 \brief Stop moving towards the end of the path.
+		*************************************************************************************/
+		void StopMoving(EntityID id);
+
 		// ----- Public Getters ----- //
 		virtual std::string_view GetName() override { return "MovementEXECUTE"; }
+
+
+		// ----- Events ----- // 
+
+		/*!***********************************************************************************
+		 \brief Callback function for the collision enter event. Checks if the player has 
+						collided with the rat.
+
+		 \param[in] r_mouseEvent Details of the collision event.
+		*************************************************************************************/
+		void OnCollisionEnter(const Event<CollisionEvents>& r_collisionEvent);
 
 	private:
 		// ----- Private Variables ----- //
 		CatScriptData* p_data;
+		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
+		bool m_collidedWithRat{ false }; // Set to true when the cat has collided with a rat
+		bool m_doneMoving{ false }; // Set to true when the cat has reached the end of their path
 	};
 }

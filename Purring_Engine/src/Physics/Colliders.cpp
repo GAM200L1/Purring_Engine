@@ -22,7 +22,7 @@ namespace PE
 	void Update(AABBCollider& r_AABB, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_AABB.center = r_position + r_AABB.positionOffset;
-		r_AABB.scale = vec2{ r_scale.x * r_AABB.scaleOffset.x, r_scale.y * r_AABB.scaleOffset.y };
+		r_AABB.scale = vec2{ std::abs(r_scale.x * r_AABB.scaleOffset.x), std::abs(r_scale.y * r_AABB.scaleOffset.y) };
 		r_AABB.min = r_AABB.center - (r_AABB.scale * 0.5f);
 		r_AABB.max = r_AABB.center + (r_AABB.scale * 0.5f);
 	}
@@ -33,7 +33,7 @@ namespace PE
 	void Update(CircleCollider& r_circle, vec2 const& r_position, vec2 const& r_scale)
 	{
 		r_circle.center = r_position + r_circle.positionOffset;
-		r_circle.radius = (r_scale.x > r_scale.y)? r_scale.x : r_scale.y; // Collider radius is based on larger axis
+		r_circle.radius = std::abs((r_scale.x > r_scale.y) ? r_scale.x : r_scale.y); // Collider radius is based on larger axis
 		r_circle.radius *= 0.5f * r_circle.scaleOffset;
 	}
 

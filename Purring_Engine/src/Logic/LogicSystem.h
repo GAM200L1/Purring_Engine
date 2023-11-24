@@ -29,6 +29,7 @@
 
 #define REGISTER_SCRIPT(name) 	PE::LogicSystem::m_scriptContainer[#name] = new name()
 #define GETSCRIPTDATA(script,id) &reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData()[id]
+#define GETSCRIPTINSTANCEPOINTER(script) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])
 
 namespace PE {
 	class LogicSystem : public System

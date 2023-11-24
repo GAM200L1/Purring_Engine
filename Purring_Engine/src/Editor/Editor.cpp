@@ -2346,7 +2346,8 @@ namespace PE {
 										// cat stats
 										ImGui::Text("Cat Stats");
 										ImGui::Text("Cat Health: "); ImGui::SameLine(); ImGui::DragInt("##cathealth", &it->second.catHealth);
-										ImGui::Text("Cat Max Energy "); ImGui::SameLine(); ImGui::DragInt("##enemyidle", &it->second.catMaxEnergy);
+										ImGui::Text("Cat Max Energy "); ImGui::SameLine(); ImGui::DragInt("##catmaxenergy", &it->second.catMaxEnergy);
+										ImGui::Text("Cat Speed "); ImGui::SameLine(); ImGui::DragFloat("##catspeed", &it->second.movementSpeed);
 
 										// attack variables
 										ImGui::Text("Attack Stats");
@@ -3419,6 +3420,7 @@ namespace PE {
 		if (
 			ImGui::Button("Stop")
 			) {
+			GameStateManager::GetInstance().ResetDefaultState();
 			m_showEditor = true;
 			toDisable = true;
 			if (m_isRunTime)
