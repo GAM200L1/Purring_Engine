@@ -101,7 +101,11 @@ namespace PE
 
 			if (KTE.keycode == GLFW_KEY_ESCAPE)
 			{
-				if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE)
+				if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+				{
+					GameStateManager::GetInstance().ResumeState();
+				}
+				else if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE)
 				{
 					GameStateManager::GetInstance().SetPauseState();
 				}

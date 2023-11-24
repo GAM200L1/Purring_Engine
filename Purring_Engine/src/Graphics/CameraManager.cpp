@@ -363,6 +363,42 @@ namespace PE
 
         void CameraManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
         {
+            if (r_event.GetType() == KeyEvents::KeyTriggered)
+            {
+                KeyTriggeredEvent event;
+                event = dynamic_cast<const KeyTriggeredEvent&>(r_event);
+
+#ifndef GAMERELEASE
+                // Move the editor camera
+                if (event.keycode == GLFW_KEY_UP)
+                {
+                    GetEditorCamera().AdjustPosition(0.f, 10.f);
+                }
+                if (event.keycode == GLFW_KEY_DOWN)
+                {
+                    GetEditorCamera().AdjustPosition(0.f, -10.f);
+                }
+                if (event.keycode == GLFW_KEY_LEFT)
+                {
+                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
+                }
+                if (event.keycode == GLFW_KEY_RIGHT)
+                {
+                    GetEditorCamera().AdjustPosition(10.f, 0.f);
+                }
+
+                // Rotate the editor camera
+                if (event.keycode == GLFW_KEY_COMMA)
+                {
+                    GetEditorCamera().AdjustRotationRadians(0.1f);
+                }
+                if (event.keycode == GLFW_KEY_PERIOD)
+                {
+                    GetEditorCamera().AdjustRotationRadians(-0.1f);
+                }
+#endif // !GAMERELEASE
+            }
+
             if (r_event.GetType() == KeyEvents::KeyPressed)
             {
                 KeyPressedEvent event;

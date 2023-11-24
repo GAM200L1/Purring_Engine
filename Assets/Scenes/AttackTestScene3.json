@@ -134,7 +134,7 @@
                                     18446744073709551615
                                 ],
                                 "IsAttaching": true,
-								"LookTowardsMovement" : false,
+                                "LookTowardsMovement": false,
                                 "NextPosition": {
                                     "0": {
                                         "x": 0.0,
@@ -268,8 +268,8 @@
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
+                            "radius": 16.0,
+                            "scaleOffset": 0.5
                         },
                         "isTrigger": false,
                         "type": "CircleCollider"

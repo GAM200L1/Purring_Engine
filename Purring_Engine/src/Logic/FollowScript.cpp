@@ -39,7 +39,7 @@ namespace PE
 			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index])) 
+				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index]) && GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE) 
 				{
 					Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].ToAttach[index]);
 					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)

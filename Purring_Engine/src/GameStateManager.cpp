@@ -191,6 +191,20 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = false;
+
+		if (htp)
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = false;
+		}
+
+		if (ays)
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(sadCatID).isActive = false;
+		}
 	}
 
 	void GameStateManager::DeleteMenu()
