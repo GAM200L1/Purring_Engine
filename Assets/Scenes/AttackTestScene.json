@@ -165,7 +165,7 @@
                     "EntityDescriptor": {
                         "children": [],
                         "isActive": true,
-                        "name": "other cat",
+                        "name": "Other Cat",
                         "parent": null,
                         "sceneID": 4
                     },

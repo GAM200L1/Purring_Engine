@@ -16,6 +16,7 @@
 
 #include "prpch.h"
 #include "CatMovementScript.h"
+#include "CatAttackScript.h"
 #include "Physics/CollisionManager.h"
 
 namespace PE
@@ -110,7 +111,10 @@ namespace PE
 					// The mouse has been released, so end the path
 					EndPathDrawing(id);
 			}
-			
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
+			{
+				p_data->p_stateManager->ChangeState(new CatAttackPLAN{}, id);
+			}
 			// Store the current frame's mouse click status
 			m_mouseClickPrevious = m_mouseClick;
 		}
