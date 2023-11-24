@@ -158,8 +158,5 @@ namespace PE
 		 \param[in] id EntityID of the entity that this script is attached to.
 		*************************************************************************************/
 		void CreatePathNode(EntityID id);
-
-
-		void ResetValues(EntityID id);
 	};
 }

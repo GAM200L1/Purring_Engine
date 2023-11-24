@@ -245,16 +245,4 @@ namespace PE
 		std::cout << "CreatePathNode(" << id << ") created " << nodeId << "\n";
 	}
 
-	void CatScript::ResetValues(EntityID id)
-	{
-		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
-		{
-
-		}
-		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN") 
-		{
-
-		}
-	}
-
 }
