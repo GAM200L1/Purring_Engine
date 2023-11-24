@@ -60,25 +60,6 @@ namespace PE {
 				if (KTE.keycode == GLFW_KEY_F9)
 					m_showTestWindows = !m_showTestWindows;
 
-				if (KTE.keycode == GLFW_KEY_ESCAPE)
-				{
-						m_showEditor = true;
-
-						if (m_isRunTime)
-						{
-								ClearObjectList();
-								serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-								engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-						}
-
-						if (m_showEditor)
-								m_isRunTime = false;
-
-						m_showGameView = false;
-						// This will load all entities from the file
-
-				}
-
 				if (KTE.keycode == GLFW_KEY_F10)
 						ToggleDebugRender();				
 				

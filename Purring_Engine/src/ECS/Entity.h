@@ -69,6 +69,8 @@ namespace PE
 	{
 	public:
 		friend class Singleton<EntityManager>;
+		// map to contain the names
+		std::map<ComponentID, std::string, Comparer> m_componentNames;
 	// ----- Constructors ----- //
 	public:
 		/*!***********************************************************************************
@@ -289,6 +291,14 @@ namespace PE
 		void Remove(EntityID id);
 
 		/*!***********************************************************************************
+		 \brief Removes a component from an entity
+
+		 \param[in] r_cID 		Component to remove
+		 \param[in] id 			Entity to remove
+		*************************************************************************************/
+		void Remove(EntityID id, const ComponentID& r_cID);
+
+		/*!***********************************************************************************
 		 \brief Removes an entity
 		 
 		 \param[in] id Entity to remove
@@ -374,7 +384,7 @@ namespace PE
 		 \param[in] id 	ID of the entity to handle
 		 \param[in] add Add or remove flag, true = add, false = remove from pool
 		*************************************************************************************/
-		void UpdateVectors(EntityID id, bool add = true)
+		void UpdateVectors(EntityID id, bool add = true, ComponentID comp = ALL)
 		{
 			if (add)
 			{
@@ -384,32 +394,37 @@ namespace PE
 				}
 				for (const auto& vec : m_poolsEntity)
 				{
+					if (vec.first == ALL)
+						continue;
 					const size_t cnt = vec.first.count();
 					size_t cnt2{};
 					for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
 					{
-						if ((vec.first & pool.first).any() && pool.second->HasEntity(id)) 
-						if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
-						{
-							++cnt2;
-						}
+						if ((vec.first & pool.first).any() && pool.second->HasEntity(id))
+							if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
+							{
+								++cnt2;
+							}
 					}
-					if (cnt2 == cnt)
+					if (cnt2 == cnt && std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
 						m_poolsEntity[vec.first].emplace_back(id);
 				}
 			}
 			else
 			{
-				if (!m_entities.count(id) &&
-					(std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) != m_poolsEntity[ALL].end()))
+				if (!m_entities.count(id))
 				{
-					m_poolsEntity[ALL].erase(std::remove(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id), m_poolsEntity[ALL].end());
+					while (std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) != m_poolsEntity[ALL].end())
+						m_poolsEntity[ALL].erase(std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id));
 				}
-				for (const auto& pool : m_poolsEntity)
+				for (auto& pool : m_poolsEntity)
 				{
-					if ((std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					if (comp == ALL || (pool.first & comp).any())
 					{
-						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
+						if (pool.first != ALL && (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+						{
+							m_poolsEntity[pool.first].erase(std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id));
+						}
 					}
 				}
 			}
@@ -547,21 +562,42 @@ namespace PE
 		if (!Has<T>(id))
 			return; // log in the future
 		const ComponentID componentID = GetComponentID<T>();
-		size_t lastEntID = (*std::prev(m_componentPools[componentID]->m_idxMap.end())).first;
-		size_t poolID = m_componentPools[componentID]->m_idxMap[id];
-		if (m_componentPools[componentID]->m_idxMap.size() > 1)
+		size_t lastEntID = (*std::prev(m_componentPools[componentID]->idxMap.end())).first;
+		size_t poolID = m_componentPools[componentID]->idxMap[id];
+		if (lastEntID != id && m_componentPools[componentID]->idxMap.size() > 1)
 		{
 			std::swap(Get<T>(id), Get<T>(lastEntID));
 		}
 		// remove the current component, and the last component from the map
-		m_componentPools[componentID]->remove(id);
-		m_componentPools[componentID]->remove(lastEntID);
-		// re-empalce the "last" entity inplace to the existing id's position
-		m_componentPools[componentID]->m_idxMap.emplace(lastEntID, poolID);
-		--(m_componentPools[componentID]->m_size);
-		UpdateVectors(id, false);
+		m_componentPools[componentID]->Remove(id);
+		if (lastEntID != id)
+		{
+			m_componentPools[componentID]->Remove(lastEntID);
+			// re-empalce the "last" entity inplace to the existing id's position
+			m_componentPools[componentID]->idxMap.emplace(lastEntID, poolID);
+		}
+		--(m_componentPools[componentID]->size);
+		UpdateVectors(id, false, componentID);
 	}
 
+	//void EntityManager::Remove(EntityID id, const ComponentID& r_cID)
+	//{
+	//	if (!Has(id, r_cID))
+	//		return; // log in the future
+	//	size_t lastEntID = (*std::prev(m_componentPools[r_cID]->idxMap.end())).first;
+	//	size_t poolID = m_componentPools[r_cID]->idxMap[id];
+	//	if (m_componentPools[r_cID]->idxMap.size() > 1)
+	//	{
+	//		std::swap(Get(id), Get<T>(lastEntID));
+	//	}
+	//	// remove the current component, and the last component from the map
+	//	m_componentPools[r_cID]->Remove(id);
+	//	m_componentPools[r_cID]->Remove(lastEntID);
+	//	// re-empalce the "last" entity inplace to the existing id's position
+	//	m_componentPools[r_cID]->idxMap.emplace(lastEntID, poolID);
+	//	--(m_componentPools[r_cID]->size);
+	//	UpdateVectors(id, false);
+	//}
 	/*!***********************************************************************************
 	 \brief Entity descriptor struct, used for idenifying/holding various useful data
 
@@ -569,7 +605,7 @@ namespace PE
 	struct EntityDescriptor
 	{
 		// name of the entity
-		std::string name{"GameObject"};
+		std::string name{ "GameObject" };
 
 		// the parent of the entity
 		std::optional<EntityID> parent;
@@ -585,9 +621,12 @@ namespace PE
 		bool toSave{ true };    // used for whether the entity should be saved or not
 
 		inline bool SaveEntity() { return toSave && isAlive; }
+
+		std::string prefabType{ "" };
+
 		/*!***********************************************************************************
 		 \brief Serializes this struct into a json file
-		 
+
 		 \param[in] id 				Entity ID of who owns this descriptor struct
 		 \return nlohmann::json 	The generated json
 		*************************************************************************************/
@@ -609,7 +648,7 @@ namespace PE
 
 		/*!***********************************************************************************
 		 \brief Deserializes the input json file into a copy of the entity descriptor
-		 
+
 		 \param[in] j 				Json file to read from
 		 \return EntityDescriptor 	Copy of the resulting EntityDescriptor
 		*************************************************************************************/

@@ -53,7 +53,7 @@ namespace PE
 
 			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
+				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("../Assets/Animations/catAttack_Anim.json");
 			}			
 			MovePlayer(id,deltaTime);
 			break;
@@ -61,7 +61,7 @@ namespace PE
 
 			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("../Assets/Animations/catWalk_Anim.json");
 			}
 			MovePlayer(id,deltaTime);
 			break;

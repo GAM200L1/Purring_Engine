@@ -57,6 +57,10 @@ void Logger::SetFlag(const LoggerFlag& r_flag, const bool& r_set)
 
 void Logger::AddLog(const bool& r_isError, const std::string& r_msg, const char fnName[])
 {
+#ifdef GAMERELEASE
+	return;
+#endif // GAMERELEASE
+
 	const std::string type = (r_isError) ? "ERROR" : "MESSAGE";
 	m_logBuffer << "[" << m_currTime << "]"
 				<< "<" << instanceName << ">"
@@ -73,6 +77,9 @@ void Logger::AddLog(const bool& r_isError, const std::string& r_msg, const char 
 
 void Logger::FlushLog()
 {
+#ifdef GAMERELEASE
+	return;
+#endif // GAMERELEASE
 	// if log buffer is empty, return
 	if (m_logBuffer.str().empty() || !LOG)
 		return;

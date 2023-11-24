@@ -79,7 +79,7 @@ namespace PE
 		 
 		 \return std::shared_ptr<const Font> 
 		*************************************************************************************/
-		inline std::shared_ptr<const Font> GetFont() const { return m_font; }
+		inline std::shared_ptr<Font> GetFont() const { return m_font; }
 
 		/*!***********************************************************************************
 		 \brief Get the Font Key 
@@ -135,7 +135,7 @@ namespace PE
 		 
 		 \param[in] color 
 		*************************************************************************************/
-		void SetColor(glm::vec4 const& color);
+		void SetColor(float const r = 0.f, float const g = 0.f, float const b = 0.f, float const a = 1.f);
 
 		/*!***********************************************************************************
 		 \brief Serializes the specified entity's TextComponent into a json file, returns a

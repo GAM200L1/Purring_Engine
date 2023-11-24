@@ -77,6 +77,13 @@ namespace PE
 
 	void CatScript::Update(EntityID id, float deltaTime)
 	{
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; }
+
+		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; }
+
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; }*/
+
+
 		if (!m_scriptData[id].p_stateManager) 
 		{
 			m_scriptData[id].catID = id;
@@ -117,10 +124,10 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 		{
-			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
-			}
+			//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+			//{
+			//	//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+			//}
 
 			// Check if the state should be changed
 			if (CheckShouldStateChange(id, deltaTime))
@@ -134,10 +141,10 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 		{
-				if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
-				{
-					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
-				}
+				//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
+				//{
+				//	EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
+				//}
 
 				// Check if the state should be changed
 				if (CheckShouldStateChange(id, deltaTime))

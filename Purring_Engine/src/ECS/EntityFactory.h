@@ -342,6 +342,7 @@ namespace PE
 		return ret;
 	}
 
+
 	template<typename... CT>
 	EntityID EntityFactory::CreateEntity(CT ... args)
 	{
@@ -380,4 +381,3 @@ namespace PE
 	}
 
 }
-

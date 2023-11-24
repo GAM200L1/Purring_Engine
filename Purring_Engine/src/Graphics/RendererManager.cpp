@@ -176,19 +176,41 @@ namespace PE
 #ifndef GAMERELEASE
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
-
-                if (Editor::GetInstance().IsEditorActive())
-                {
-                    // Update the ui camera viewport size
-                    r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
-                }
 #endif // !GAMERELEASE
             }
 
 #ifndef GAMERELEASE
-            if (!Editor::GetInstance().IsEditorActive())
+            if (Editor::GetInstance().IsEditorActive())
             {
-                // Update the ui camera viewport size
+                // Update the ui camera viewport size to the size of the editor window
+                r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+            }
+            else
+            {
+                // Update the ui camera viewport size to the size of the main camera if it exists,
+                // or the cached start window size
+                std::optional<std::reference_wrapper<Camera>> optional_mainCamera{r_cameraManager.GetMainCamera()};
+
+                if (optional_mainCamera.has_value()) 
+                {
+                    r_cameraManager.GetUiCamera().SetViewDimensions(optional_mainCamera.value().get().GetViewportWidth(), optional_mainCamera.value().get().GetViewportHeight());
+                }
+                else 
+                {
+                    r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
+                }
+            }
+#else
+            // Update the ui camera viewport size to the size of the main camera if it exists,
+            // or the cached start window size
+            std::optional<std::reference_wrapper<Camera>> optional_mainCamera{ r_cameraManager.GetMainCamera() };
+
+            if (optional_mainCamera.has_value())
+            {
+                r_cameraManager.GetUiCamera().SetViewDimensions(optional_mainCamera.value().get().GetViewportWidth(), optional_mainCamera.value().get().GetViewportHeight());
+            }
+            else
+            {
                 r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
             }
 #endif // !GAMERELEASE
@@ -423,15 +445,11 @@ namespace PE
                         count = 0;
                     }
 
-                    auto textureIterator{ ResourceManager::GetInstance().Textures.find(renderer.GetTextureKey()) };
+                    std::shared_ptr<Texture> texture { ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
 
-                    // Check if texture program is valid
-                    if (textureIterator == ResourceManager::GetInstance().Textures.end())
+                    // Check if texture is null
+                    if (!texture)
                     {
-                        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                        engine_logger.SetTime();
-                        engine_logger.AddLog(false, "Texture " + renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
-
                         // Remove the texture and set the object to neon pink
                         renderer.SetTextureKey("");
                         renderer.SetColor(1.f, 0.f, 1.f, 1.f);
@@ -451,7 +469,7 @@ namespace PE
 
                         // Bind the new texture
                         GLint textureUnit{ 0 };
-                        p_texture = textureIterator->second;
+                        p_texture = texture;
                         p_texture->Bind(textureUnit);
                         r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
 
@@ -670,15 +688,11 @@ namespace PE
             }
             else 
             {
-                auto textureIterator{ ResourceManager::GetInstance().Textures.find(r_renderer.GetTextureKey()) };
+                std::shared_ptr<Texture> texture{ ResourceManager::GetInstance().GetTexture(r_renderer.GetTextureKey()) };
 
-                // Check if shader program is valid
-                if (textureIterator == ResourceManager::GetInstance().Textures.end())
+                // Check if texture is null
+                if (!texture)
                 {
-                    engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                    engine_logger.SetTime();
-                    engine_logger.AddLog(false, "Texture " + r_renderer.GetTextureKey() + " does not exist.", __FUNCTION__);
-
                     // Remove the texture and set the object to neon pink
                     r_renderer.SetTextureKey("");
                     r_renderer.SetColor(1.f, 0.f, 1.f, 1.f);
@@ -687,7 +701,7 @@ namespace PE
                 }
                 else 
                 {
-                    p_texture = textureIterator->second;
+                    p_texture = texture;
                     GLint textureUnit{ 0 };
                     p_texture->Bind(textureUnit);
                     r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);

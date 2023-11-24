@@ -1,0 +1,71 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "children": [],
+                "isActive": true,
+                "name": "yesbutton",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "GUI": {
+                "disabled": false,
+                "m_UIType": 0,
+                "m_defaultColor": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "m_defaultTexture": "../Assets/Textures/Button_Yes_512x128.png",
+                "m_disabledColor": [
+                    0.5,
+                    0.5,
+                    0.5,
+                    1.0
+                ],
+                "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                "m_hoveredColor": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
+                "m_onClicked": "ExitGame",
+                "m_onHovered": "",
+                "m_pressedColor": [
+                    1.0,
+                    1.0,
+                    1.0,
+                    1.0
+                ],
+                "m_pressedTexture": "../Assets/Textures/Button_Yes_Dark_512x128.png"
+            },
+            "GUIRenderer": {
+                "Color": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "TextureKey": "../Assets/Textures/Button_Yes_512x128.png"
+            },
+            "Transform": {
+                "height": 184.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": -500.0,
+                    "y": -334.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 624.0
+            }
+        },
+        "name": ""
+    }
+}

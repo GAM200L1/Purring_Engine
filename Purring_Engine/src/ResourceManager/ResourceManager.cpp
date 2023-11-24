@@ -39,6 +39,10 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "ResourceManager.h"
+#include "Data/SerializationManager.h"
+#include "Logging/Logger.h"
+
+extern Logger engine_logger;
 
 namespace PE
 {
@@ -70,15 +74,36 @@ namespace PE
     //    //return m_shaderPrograms[r_key];
     //}
 
-    void ResourceManager::LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath)
+    bool ResourceManager::LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath)
     {
         Textures[r_name] = std::make_shared<Graphics::Texture>();
         if (!Textures[r_name]->CreateTexture(r_filePath))
         {
             // fail to create texture, delete key
-            std::cout << "Couldn't create texture " << r_filePath << std::endl;
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Texture " + r_name + " does not exist.", __FUNCTION__);
+
             Textures.erase(r_name);
+            return false;
         }
+        return true;
+    }
+
+    bool ResourceManager::LoadIconFromFile(std::string const& r_name, std::string const& r_filePath)
+    {
+        Icons[r_name] = std::make_shared<Graphics::Texture>();
+        if (!Icons[r_name]->CreateTexture(r_filePath))
+        {
+            // fail to create texture, delete key
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Icon " + r_name + " does not exist.", __FUNCTION__);
+
+            Icons.erase(r_name);
+            return false;
+        }
+        return false;
     }
 
     void ResourceManager::LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath)
@@ -126,20 +151,165 @@ namespace PE
         return key;
     }
 
-    void ResourceManager::LoadFontFromFile(std::string const& r_key, std::string const& r_filePath)
+    bool ResourceManager::LoadFontFromFile(std::string const& r_key, std::string const& r_filePath)
     {
         Fonts[r_key] = std::make_shared<Font>();
 
         if (!Fonts[r_key]->Initialize(r_filePath))
         {
-            std::cout << "Fail to load font" << r_filePath << std::endl;
+            // fail to load font, delete key
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Font " + r_key + " does not exist.", __FUNCTION__);
+
             Fonts.erase(r_key);
+            return false;
         }
+
+        return true;
+    }
+
+    bool ResourceManager::LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath)
+    {
+        Animations[r_key] = std::make_shared<Animation>();
+        Animations[r_key]->SetAnimationID(r_key);
+
+        if (!Animations[r_key]->LoadAnimation(r_filePath))
+        {
+            // fail to load animation, delete key
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Animation " + r_key + " does not exist.", __FUNCTION__);
+
+            Animations.erase(r_key);
+            return false;
+        }
+
+        return true;
+        //std::string animationID = AnimationManager::CreateAnimation(r_key);
+        //nlohmann::json animationJson;
+
+        //// Read the JSON file
+        //std::ifstream i(r_filePath);
+        //if (i.is_open() && nlohmann::json::accept(i))
+        //{
+        //    i >> animationJson;
+        //    i.close();
+
+        //    try
+        //    {
+        //        auto animation = std::make_shared<Animation>(Animation::Deserialize(animationJson));
+
+        //        // If deserialization successful, add it to the Animations map
+        //        Animations[r_key] = animation;
+        //    }
+        //    catch (const std::exception& e)
+        //    {
+        //        std::cout << "Couldn't create animation " << r_filePath << ". Error: " << e.what() << std::endl;
+        //        Animations.erase(r_key);
+        //    }
+        //}
+        //else
+        //{
+        //    std::cout << "Couldn't open animation file " << r_filePath << std::endl;                // Handle file not opening correctly
+        //    Animations.erase(r_key);
+        //}
     }
 
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
     {
+        // if texture is not found
+        if (Textures.find(r_name) == Textures.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Texture " + r_name + " not loaded, loading texture.", __FUNCTION__);
+
+            // load texture
+            if (LoadTextureFromFile(r_name, r_name))
+            {
+                return Textures[r_name];
+            }
+            else
+            {
+                // this will crash the program if unable to load
+                return nullptr;
+            }
+        }
+
         return Textures[r_name];
+    }
+
+    std::shared_ptr<Graphics::Texture> ResourceManager::GetIcon(std::string const& r_name)
+    {
+        // if texture is not found
+        if (Icons.find(r_name) == Icons.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Icon " + r_name + " not loaded, loading icon.", __FUNCTION__);
+
+            // load texture
+            if (LoadIconFromFile(r_name, r_name))
+            {
+                return Icons[r_name];
+            }
+            else
+            {
+                // this will crash the program if unable to load
+                return nullptr;
+            }
+        }
+
+        return Icons[r_name];
+    }
+
+    std::shared_ptr<Animation> ResourceManager::GetAnimation(std::string const& r_name)
+    {
+        // if animation is not found, load it
+        if (Animations.find(r_name) == Animations.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Animation " + r_name + " not loaded, loading animation.", __FUNCTION__);
+
+            // load animation
+            if (LoadAnimationFromFile(r_name, r_name))
+            {
+                return Animations[r_name];
+            }
+            else
+            {
+                // return default animation
+                return nullptr;
+            }
+		}
+
+        return Animations[r_name];
+	}
+
+    std::shared_ptr<Font> ResourceManager::GetFont(std::string const& r_name)
+    {
+        // if font is not found, load it
+        if (Fonts.find(r_name) == Fonts.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Font " + r_name + " not loaded, loading font.", __FUNCTION__);
+
+            // load font
+            if (LoadFontFromFile(r_name, r_name))
+            {
+                return Fonts[r_name];
+            }
+            else
+            {
+                // return default font
+                return nullptr;
+            }
+        }
+
+        return Fonts[r_name];
     }
 
     void ResourceManager::UnloadResources()
@@ -148,6 +318,8 @@ namespace PE
         Textures.clear();
         Sounds.clear();
         Fonts.clear();
+        Icons.clear();
+        Animations.clear();
     }
 
 }

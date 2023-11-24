@@ -118,7 +118,7 @@ namespace PE
     void TextComponent::SetFont(std::string fontKey)
     {
         m_fontKey = fontKey;
-        m_font = ResourceManager::GetInstance().Fonts[fontKey];
+        m_font = ResourceManager::GetInstance().GetFont(fontKey);
     }
 
     void TextComponent::SetText(std::string const& r_text)
@@ -131,8 +131,8 @@ namespace PE
         m_size = size;
     }
 
-    void TextComponent::SetColor(glm::vec4 const& r_color)
+    void TextComponent::SetColor(float const r, float const g, float const b, float const a)
     {
-        m_color = r_color;
+        m_color = glm::vec4{ glm::clamp(r, 0.f, 1.f), glm::clamp(g, 0.f, 1.f), glm::clamp(b, 0.f, 1.f), glm::clamp(a, 0.f, 1.f) };
     }
 }

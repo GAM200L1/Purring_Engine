@@ -21,7 +21,7 @@
 #include "Data/SerializationManager.h"
 
 namespace PE {
-	enum class GameStates {MOVEMENT, ATTACK, EXECUTE, PAUSE, WIN, LOSE };
+	enum class GameStates {MOVEMENT, ATTACK, EXECUTE, PAUSE, WIN, LOSE, SPLASHSCREEN, INACTIVE };
 
 	class GameStateManager : public Singleton<GameStateManager>
 	{
@@ -94,17 +94,77 @@ namespace PE {
 		*************************************************************************************/
 		void RegisterButtonFunctions();
 
+		/*!***********************************************************************************
+		 \brief			open how to play window
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
+		void HowToPlay(EntityID = -1);
+
+		/*!***********************************************************************************
+		 \brief			return to pause menu from hwo to play 
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
+		void ReturnToPauseMenuFromHowToPlay(EntityID = -1);
+
+		/*!***********************************************************************************
+		 \brief			return to pause menu from are you sure
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
+		void ReturnToPauseMenuFromExit(EntityID = -1);
+
+		/*!***********************************************************************************
+		 \brief			enter confirmation prompt to exit
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
+		void AreYouSureExit(EntityID = -1);
+
+		/*!***********************************************************************************
+		 \brief			exit the game
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
+		void ExitGame(EntityID = -1);
+
+		/*!***********************************************************************************
+		 \brief			Set the entire pause menu to inactive
+		*************************************************************************************/
+		void InactiveMenu();
+
+		/*!***********************************************************************************
+		 \brief			Set the entire pause menu except for the black background to inactive
+		*************************************************************************************/
+		void InactiveMenuButtons();
+
+		/*!***********************************************************************************
+		 \brief			Delete the entire pause menu UI
+		*************************************************************************************/
+		void DeleteMenu();
+
+		/*!***********************************************************************************
+		 \brief			Set the entire pause menu except for the black background to active
+		*************************************************************************************/
+		void ActiveMenuButtons();
+
 		// ----- Public Variables ----- // 
 	public:
 		Graphics::CameraManager* p_cameraManager;
 		GLFWwindow* p_window;
-
+		
 		// ----- Private Variables ----- // 
 	private:
 		//start with pause i guess?, might want to change if youre testing stuff
-		GameStates m_currentGameState {GameStates::PAUSE};
+		GameStates m_currentGameState {GameStates::INACTIVE};
 		//for resume state to set back to
 		GameStates m_prevGameState {GameStates::MOVEMENT};
+
+		SerializationManager serializationManager;
+		
+		EntityID pauseBGID,pawsedID,resumeButtonID,howToPlayButtonID,quitButtonID;
+
+		EntityID howToPlayID,returnButtonID;
+
+		EntityID areYouSureID, yesButtonID, noButtonID, sadCatID;
+
+		bool htp{ false }, pausedOnce{ false }, ays{ false };
 	};
 
 }

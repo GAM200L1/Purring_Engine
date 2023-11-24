@@ -34,6 +34,7 @@
 #include "FollowScript.h"
 #include "CameraManagerScript.h"
 #include "CatScript.h"
+#include "GameStateController.h"
 
 
 #ifndef GAMERELEASE
@@ -59,6 +60,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(FollowScript);
 	REGISTER_SCRIPT(CameraManagerScript);
 	REGISTER_SCRIPT(CatScript);
+	REGISTER_SCRIPT(GameStateController);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
