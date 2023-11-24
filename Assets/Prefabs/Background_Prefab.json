@@ -1,12 +1,14 @@
 {
     "Entity": {
         "components": {
-	   "EntityDescriptor": {
-                        "children": [],
-                        "name": "Background",
-                        "parent": null,
-                        "sceneID": 18446744073709551615
-                    },
+            "EntityDescriptor": {
+                "Prefab Type": "Background",
+                "children": [],
+                "isActive": true,
+                "name": "Background",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
             "Renderer": {
                 "Color": {
                     "a": 1.0,
@@ -23,6 +25,11 @@
                     "x": 0.0,
                     "y": 0.0
                 },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
                 "width": 1000.0
             }
         },
