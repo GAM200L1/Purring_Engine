@@ -72,8 +72,8 @@ namespace PE
 		// movement variables
 		float minDistance{ 30.f }; float maxDistance{ 50.f };
 		float nodeSize{ 10.f }; // Size (in pixels) of each node
-		float movementSpeed{ 10.f }; // Speed to move the cat along the path
-		float forgivenessOffset{ 10.f }; // Amount that the cat can be offset from the path node before attempting to move to the next one
+		float movementSpeed{ 300.f }; // Speed to move the cat along the path
+		float forgivenessOffset{ 1.f }; // Amount that the cat can be offset from the path node before attempting to move to the next one
 		unsigned currentPositionIndex{}; // Index of the position in the pathPositions container that the cat should move towards
 		
 		std::vector<vec2> pathPositions{};

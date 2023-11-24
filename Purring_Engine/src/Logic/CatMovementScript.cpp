@@ -268,7 +268,7 @@ namespace PE
 					if (!m_doneMoving)
 					{
 							// Get the direction of the cat from the point they're moving towards
-							vec2 directionToMove{ p_data->pathPositions[p_data->currentPositionIndex] - currentCatPosition};
+							vec2 directionToMove{ (p_data->pathPositions[p_data->currentPositionIndex] - currentCatPosition).GetNormalized()};
 							 
 							// Get the vector to move
 							float amtToMove{p_data->movementSpeed * deltaTime};
