@@ -68,6 +68,7 @@ namespace PE
         std::map<std::string, std::shared_ptr<Graphics::Texture>> Textures;
         std::map<std::string, std::shared_ptr<AudioManager::Audio>> Sounds;
         std::map<std::string, std::shared_ptr<Font>> Fonts;
+        std::map<std::string, std::shared_ptr<Graphics::Texture>> Icons;
         std::map<std::string, std::shared_ptr<Animation>> Animations;
 
         // Unloads all resources that were previously loaded
@@ -99,7 +100,15 @@ namespace PE
             \param[in] r_name Name of texture.
             \param[in] r_filePath File path of texture.
         *************************************************************************************/
-        void LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
+        bool LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Loads icon from file and inserts into Icons map container.
+
+            \param[in] r_name Name of icon.
+            \param[in] r_filePath File path of icon.
+        *************************************************************************************/
+        bool LoadIconFromFile(std::string const& r_name, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Loads audio from file and inserts into Sounds map container.
@@ -123,7 +132,7 @@ namespace PE
             \param[in] r_key Name of font file.
             \param[in] r_filePath File path of font.
         *************************************************************************************/
-        void LoadFontFromFile(std::string const& r_key, std::string const& r_filePath);
+        bool LoadFontFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Loads animation from file and inserts into Animations map container.
@@ -131,7 +140,7 @@ namespace PE
             \param[in] r_key Name of animation file.
             \param[in] r_filePath File path of animation.
         *************************************************************************************/
-        void LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
+        bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.
@@ -143,6 +152,15 @@ namespace PE
         std::shared_ptr<Graphics::Texture> GetTexture(std::string const& r_name);
 
         /*!***********************************************************************************
+            \brief Gets the icon object store in the resource manager.
+
+            \param[in] r_name Name of icon.
+
+            \return Icon object in map.
+        *************************************************************************************/
+        std::shared_ptr<Graphics::Texture> GetIcon(std::string const& r_name);
+
+        /*!***********************************************************************************
             \brief Gets the animation stored in the resource manager.
             
             \param[in] r_name Name of animation
@@ -150,6 +168,15 @@ namespace PE
             \return Animation in map.
         *************************************************************************************/
         std::shared_ptr<Animation> GetAnimation(std::string const& r_name);
+
+        /*!***********************************************************************************
+            \brief Gets the font stored in the resource manager.
+
+            \param[in] r_name Name of font
+
+            \return Font in map.
+        *************************************************************************************/
+        std::shared_ptr<Font> GetFont(std::string const& r_name);
     private:
         // constructor
         ResourceManager()

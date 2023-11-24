@@ -118,7 +118,7 @@ namespace PE
     void TextComponent::SetFont(std::string fontKey)
     {
         m_fontKey = fontKey;
-        m_font = ResourceManager::GetInstance().Fonts[fontKey];
+        m_font = ResourceManager::GetInstance().GetFont(fontKey);
     }
 
     void TextComponent::SetText(std::string const& r_text)
