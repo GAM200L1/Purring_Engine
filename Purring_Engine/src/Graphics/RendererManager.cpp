@@ -162,7 +162,7 @@ namespace PE
             m_renderFrameBuffer.Bind();
 
             // If the window size has changed
-            if ((windowWidth > std::numeric_limits<float>::epsilon() && windowHeight > std::numeric_limits<float>::epsilon()) &&
+            if ((!CompareFloats(windowWidth, 0.f) && !CompareFloats(windowHeight, 0.f)) &&
                 (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight))
             {
                 m_cachedWindowWidth = windowWidth, m_cachedWindowHeight = windowHeight;
@@ -911,6 +911,9 @@ namespace PE
 
             for (const EntityID& id : SceneView<TextComponent, Transform>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
                 vec2 position{ EntityManager::GetInstance().Get<Transform>(id).position };
 

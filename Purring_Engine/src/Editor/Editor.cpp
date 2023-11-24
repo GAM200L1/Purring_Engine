@@ -6,7 +6,7 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
- \par      code %:     95%
+ \par      code %:     90%
  \par      changes:    Defined all the logic for rendering the editor UI through ImGUI.
 
  \co-author            Krystal Yamin
@@ -14,6 +14,12 @@
  \par      code %:     5%
  \par      changes:    02-11-2023
                        Added object picking logic.
+
+ \co-author            Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    02-11-2023
+					   Added animation editor, collision layer matrix.
 
  \brief
 	cpp file containing the definition of the editor class, which contains 
@@ -26,6 +32,7 @@
 #include "Editor.h"
 #include "Memory/MemoryManager.h"
 #include "AudioManager/AudioManager.h"
+#include "AudioManager/AudioComponent.h"
 #include "Time/FrameRateTargetControl.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
@@ -50,6 +57,7 @@
 #include "Graphics/Text.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
+#include "Layers/CollisionLayer.h"
 #include "Logic/CatScript.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
@@ -125,8 +133,8 @@ namespace PE {
 		m_mouseInScene = false;
 		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
-		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
-		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
+		//REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
+		//REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
@@ -228,12 +236,14 @@ namespace PE {
 		{
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetColor(255,0,0,255);
 		}
-		AudioManager::GetInstance().PlaySound("audio_sound1");
+		AudioComponent audioComponent;
+		audioComponent.PlayAudioSound("audio_sound1");
 	}
 
 	void Editor::PlayAudio2(EntityID)
 	{
-		AudioManager::GetInstance().PlaySound("audio_sound2");
+		AudioComponent audioComponent;
+		audioComponent.PlayAudioSound("audio_sound2");
 	}
 
 	void Editor::ClearObjectList()
@@ -708,9 +718,11 @@ namespace PE {
 							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
+						if (m_currentSelectedObject != -1)
 						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 
 						//create undo here
+						if (m_currentSelectedObject != -1)
 						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 						//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
@@ -742,33 +754,39 @@ namespace PE {
 			}
 			if (ImGui::BeginPopup("Object"))
 			{
-				if (ImGui::Selectable("Create Empty Object"))
+				if (ImGui::BeginMenu("Create Empty Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
-					m_undoStack.AddChange(new CreateObjectUndo(s_id));
-				}
-				//if (ImGui::Selectable("Create UI Object"))
-				//{
-					if (ImGui::BeginMenu("Create UI Object"))
+					if (ImGui::MenuItem("Create Empty Object"))
 					{
-						if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						ImGui::EndMenu();
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
-
+					if (ImGui::MenuItem("Create Audio Object"))
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Audio_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Create UI Object"))
+				{
+					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					ImGui::EndMenu();
+				}
 					//EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
 					//m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				//}
@@ -799,26 +817,26 @@ namespace PE {
 				ImGui::SeparatorText("Audio Test");
 				if (ImGui::Button("Play SFX 1"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound1");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound1");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Play SFX 2"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound2");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound2");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Play SFX 3"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound3");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound3");
 				}
 				if (ImGui::Button("Play Background Music"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
+					//AudioManager::GetInstance().PlayAudioSound("audio_backgroundMusic");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Stop All Audio"))
 				{
-					AudioManager::GetInstance().StopAllSounds();
+					//AudioManager::GetInstance().StopAllSounds();
 				}
 				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
 				{
@@ -1291,6 +1309,24 @@ namespace PE {
 								}
 								ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(m_currentSelectedObject).isTrigger);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								auto& collisionLayers{ CollisionLayerManager::GetInstance().GetCollisionLayers() };
+
+								std::vector<const char*> layerNames;
+
+								for (auto& collisionLayer : collisionLayers)
+								{
+									layerNames.push_back(collisionLayer->GetCollisionLayerName().c_str());
+								}
+
+								int currentLayerIndex = static_cast<int>(EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex);
+								ImGui::Text("Collision Layer: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+								//set combo box for the different collider types
+								if (ImGui::Combo("##Collision Layers", &currentLayerIndex, layerNames.data(), static_cast<unsigned>(layerNames.size())))
+								{
+									EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex = currentLayerIndex;
+								}
 							}
 						}
 
@@ -1915,6 +1951,143 @@ namespace PE {
 							}
 						}
 
+						//// ---------- Audio Component ---------- //
+						if (name == EntityManager::GetInstance().GetComponentID<AudioComponent>())
+						{
+							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								AudioComponent audioComponent;
+								static bool isSoundPaused = false;
+								static bool isLooping = false;
+
+								// Vector of filepaths for audio files
+								std::vector<std::filesystem::path> audioFilePaths;
+								int index = -1;							// Initialize with -1 to indicate no selection
+								int i = 0;
+
+								for (auto it = ResourceManager::GetInstance().Sounds.begin(); it != ResourceManager::GetInstance().Sounds.end(); ++it, ++i)
+								{
+									audioFilePaths.emplace_back(it->first);
+									// If current entity's audio component is using this audio file, remember its index
+									if (it->first == EntityManager::GetInstance().Get<AudioComponent>(entityID).GetAudioKey())
+										index = i;
+								}
+
+								// Vector of the names of audio files
+								std::vector<std::string> loadedAudioKeys;
+
+								// Get the keys of audio already loaded by the resource manager
+								for (auto const& r_filepath : audioFilePaths)
+								{
+									loadedAudioKeys.emplace_back(r_filepath.filename().string());
+								}
+
+								// Placeholder combo box label
+								std::string comboBoxLabel = "Drag-in or Select an audio...";
+								if (index >= 0 && index < loadedAudioKeys.size())
+								{
+									comboBoxLabel = loadedAudioKeys[index];
+									currentSoundID = audioFilePaths[index].string();
+								}
+
+								if (!loadedAudioKeys.empty())
+								{
+									ImGui::Text("Audio: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(320.0f);
+									if (ImGui::BeginCombo("##Audio", comboBoxLabel.c_str()))
+									{
+										for (int n = 0; n < loadedAudioKeys.size(); ++n)
+										{
+											bool isSelected = (comboBoxLabel == loadedAudioKeys[n]);
+											if (ImGui::Selectable(loadedAudioKeys[n].c_str(), isSelected))
+											{
+												EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(audioFilePaths[n].string());
+												currentSoundID = audioFilePaths[n].string();
+												comboBoxLabel = loadedAudioKeys[n];
+												if (isSelected)
+												{
+													ImGui::SetItemDefaultFocus();
+												}
+											}
+										}
+										ImGui::EndCombo();
+									}
+
+									// Check if mouse is hovering over the texture preview for drag and drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("Audio", static_cast<int>(entityID));
+									}
+								}
+								// Audio playback controls
+								if (ImGui::Checkbox("Loop", &isLooping))
+								{
+									audioComponent.SetLoop(isLooping);
+								}
+
+
+								if (ImGui::Button("Play"))
+								{
+									std::cout << "[Editor] Play button pressed. Current Sound ID: " << currentSoundID << std::endl;
+									if (!currentSoundID.empty())
+									{
+										audioComponent.SetLoop(isLooping);
+										audioComponent.PlayAudioSound(currentSoundID);
+										isSoundPaused = false;
+									}
+								}
+
+								ImGui::SameLine();
+								if (isSoundPaused)
+								{
+									if (ImGui::Button("Resume"))
+									{
+										if (!currentSoundID.empty())
+										{
+											audioComponent.ResumeSound(currentSoundID);
+											isSoundPaused = false;
+										}
+									}
+								}
+								else
+								{
+									if (ImGui::Button("Pause"))
+									{
+										if (!currentSoundID.empty())
+										{
+											audioComponent.PauseSound(currentSoundID);
+											isSoundPaused = true;
+										}
+									}
+								}
+								ImGui::SameLine();
+								if (ImGui::Button("Stop"))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.StopSound(currentSoundID);
+									}
+								}
+
+								// Volume control for selected sound
+								static float volume = 1.0f;
+								if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.SetVolume(currentSoundID, volume);
+									}
+								}
+
+								// Global volume control (affecting all sounds)
+								static float globalVolume = 1.0f;
+								if (ImGui::SliderFloat("Global Volume", &globalVolume, 0.0f, 1.0f))
+								{
+									AudioManager::GetInstance().SetGlobalVolume(globalVolume);
+								}
+							}
+						}
+
 						// ---------- Text Component ---------- //
 
 						if (name == EntityManager::GetInstance().GetComponentID<TextComponent>())
@@ -2085,7 +2258,7 @@ namespace PE {
 										}
 										else
 										{
-											it->second.NumberOfFollower = 5;
+											it->second.NumberOfFollower = 6;
 										}
 
 										for (int i = 0; i < it->second.NumberOfFollower; i++)
@@ -2173,7 +2346,8 @@ namespace PE {
 										// cat stats
 										ImGui::Text("Cat Stats");
 										ImGui::Text("Cat Health: "); ImGui::SameLine(); ImGui::DragInt("##cathealth", &it->second.catHealth);
-										ImGui::Text("Cat Max Energy "); ImGui::SameLine(); ImGui::DragInt("##enemyidle", &it->second.catMaxEnergy);
+										ImGui::Text("Cat Max Energy "); ImGui::SameLine(); ImGui::DragInt("##catmaxenergy", &it->second.catMaxEnergy);
+										ImGui::Text("Cat Speed "); ImGui::SameLine(); ImGui::DragFloat("##catspeed", &it->second.movementSpeed);
 
 										// attack variables
 										ImGui::Text("Attack Stats");
@@ -2255,6 +2429,13 @@ namespace PE {
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
 								else
 									AddErrorLog("ALREADY HAS ANIMATION");
+							}
+							if (ImGui::Selectable("Add Audio"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AudioComponent>() });
+								else
+									AddErrorLog("ALREADY HAS AUDIO");
 							}
 						}
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 
@@ -2363,7 +2544,7 @@ namespace PE {
 						std::string const extension{ m_files[n].filename().extension().string() };
 						if (extension == "")
 							icon = "../Assets/Icons/Directory_Icon.png";
-						else if (extension == ".mp3")
+						else if (extension == ".mp3" || extension == ".wav")
 							icon = "../Assets/Icons/Audio_Icon.png";
 						else if (extension == ".ttf")
 							icon = "../Assets/Icons/Font_Icon.png";
@@ -2393,7 +2574,7 @@ namespace PE {
 								std::string iconDraggedExtension = m_files[n].extension().string();
 								if (iconDraggedExtension == "")
 									iconDragged = "../Assets/Icons/Directory_Icon.png";
-								else if (iconDraggedExtension == ".mp3")
+								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav")
 									iconDragged = "../Assets/Icons/Audio_Icon.png";
 								else if (iconDraggedExtension == ".ttf")
 									iconDragged = "../Assets/Icons/Font_Icon.png";
@@ -2456,6 +2637,18 @@ namespace PE {
 									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
 								}
 							}
+							if (extension == ".mp3" || extension == ".wav")
+							{
+								std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
+								std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
+								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;								if (!newAudioKey.empty())
+								{
+									EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
+									this->currentSoundID = newAudioKey;  // Update currentSoundID
+									std::cout << "currentSoundID updated to: " << currentSoundID << std::endl;
+								}
+							}
+
 							// add remaining editable assets audio etc
 						}
 
@@ -2805,6 +2998,75 @@ namespace PE {
 			{
 				ToggleDebugRender();
 			}
+
+			ImGui::SeparatorText("Collision Layer Matrix");
+
+			auto& collisionLayers { CollisionLayerManager::GetInstance().GetCollisionLayers() };
+			
+			std::vector<const char*> column_names{ "" };
+			std::vector<const char*> row_names;
+
+			for(auto& collisionLayer : collisionLayers)
+			{
+				column_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
+				row_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
+			}
+		
+			unsigned counter{};
+			const int columns_count = static_cast<int>(column_names.size());
+			static ImGuiTableFlags table_flags = ImGuiTableFlags_SizingFixedFit| ImGuiTableFlags_Hideable;
+
+				if (ImGui::BeginTable("collisionlayer", columns_count, table_flags))
+				{
+					ImGui::TableSetupColumn(column_names[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder);
+					for (int n = columns_count - 1; n > 0 ; --n)
+						ImGui::TableSetupColumn(column_names[n], ImGuiTableColumnFlags_WidthFixed);
+
+					ImGui::TableHeadersRow();       // Draw remaining headers and allow access to context-menu and other functions.
+					for (auto const& p_collisionLayer : collisionLayers)
+					{
+						ImGui::PushID(p_collisionLayer->GetCollisionLayerIndex());
+						ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
+						ImGui::AlignTextToFramePadding();
+						ImGui::Text(row_names[p_collisionLayer->GetCollisionLayerIndex()], p_collisionLayer->GetCollisionLayerIndex());
+						for (unsigned i{ static_cast<unsigned>(p_collisionLayer->GetCollisionLayerSignature().size()) }, column{ 1 }; i != 0; ++column)
+							if (ImGui::TableSetColumnIndex(column))
+							{
+								bool bit = p_collisionLayer->IsCollidingWith(--i);
+								ImGui::PushID(column);
+								if(column < static_cast<unsigned>(columns_count) - counter)
+									if (ImGui::Checkbox("", &bit))
+									{
+										// flip the bit
+										p_collisionLayer->FlipCollisionLayerBit(i);
+
+										// check if its not flipping its own bit
+										if (p_collisionLayer->GetCollisionLayerIndex() != i)
+										{
+											// flip the bit of the other collision layer
+											collisionLayers[i]->FlipCollisionLayerBit(p_collisionLayer->GetCollisionLayerIndex());
+										}
+									}
+								ImGui::PopID();
+							}
+						ImGui::PopID();
+						++counter;
+					}
+					ImGui::EndTable();
+				}
+
+				// print debug layer signature
+				//for (auto const& p_collisionLayer : collisionLayers)
+				//{
+				//	ImGui::Text((p_collisionLayer->GetCollisionLayerName() + ": ").c_str());
+				//	for (std::size_t i{ p_collisionLayer->GetCollisionLayerSignature().size()}; i != 0 ;)
+				//	{
+				//		ImGui::SameLine();
+				//		ImGui::Text(" %d ", p_collisionLayer->IsCollidingWith(--i));
+				//	}
+				//}
+
 			ImGui::End(); //imgui close
 		}
 	}
@@ -2956,7 +3218,7 @@ namespace PE {
 						}
 					}
 
-					if (m_currentSelectedObject >= 0)
+					if (m_currentSelectedObject != -1)
 					{
 						startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
 					}
@@ -2971,7 +3233,7 @@ namespace PE {
 			static bool moved = false;
 			static float height;
 			static float width;
-			if (m_currentSelectedObject >= 0)
+			if (m_currentSelectedObject != -1)
 			{
 				if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
 				{
@@ -2995,7 +3257,7 @@ namespace PE {
 			float currentRotation;
 			float currentHeight;
 			float currentWidth;
-			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0))
+			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0) && m_currentSelectedObject != -1)
 			{
 				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
@@ -3074,8 +3336,9 @@ namespace PE {
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 			}
 
-			if (!ImGui::IsMouseDown(0))
+			if (!ImGui::IsMouseDown(0) && m_currentSelectedObject != -1)
 			{
+
 				if (moved && EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position != vec2(clickedPosition.x, clickedPosition.y))
 				{
 					m_undoStack.AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
@@ -3111,7 +3374,7 @@ namespace PE {
 
 	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
-		if (IsRunTime() && !IsEditorActive())
+		if (!IsEditorActive())
 		{
 			//get the current viewport so that i can get the full size of the window
 			ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -3154,9 +3417,9 @@ namespace PE {
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
-		if (
-			ImGui::Button("Stop")
-			) {
+		if (ImGui::Button("Stop")) 
+		{
+			GameStateManager::GetInstance().ResetDefaultState();
 			m_showEditor = true;
 			toDisable = true;
 			if (m_isRunTime)

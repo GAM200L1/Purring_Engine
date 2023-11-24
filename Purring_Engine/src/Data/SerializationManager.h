@@ -32,6 +32,7 @@
 //#include "ECS/Components.h"
 //#include "ECS/Entity.h"
 #include "Math/Transform.h"
+#include "Math/MathCustom.h"
 #include "Physics/RigidBody.h"
 #include "Physics/Colliders.h"
 #include "Graphics/Renderer.h"
@@ -39,6 +40,7 @@
 #include "Data/JsonUtils.h"
 #include "GUISystem.h"
 #include <type_traits>
+#include "AudioManager/AudioComponent.h"
 
 struct StructPlayerStats
 {
@@ -201,6 +203,9 @@ private:
     *************************************************************************************/
     bool LoadScriptComponent(const size_t& r_id, const nlohmann::json& r_json);
 
+    bool LoadAudioComponent(const size_t& r_id, const nlohmann::json& r_json);
+
+
     // ----- Private Methods ----- //
 private:
     /*!***********************************************************************************
@@ -217,6 +222,10 @@ private:
      \brief Function pointer map for initializing components.
     *************************************************************************************/
     typedef bool(SerializationManager::* FnptrVoidptrLoad)(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
+     \brief Map of function pointers for initializing components.
+    *************************************************************************************/
     std::map<std::string, FnptrVoidptrLoad> m_initializeComponent;
 };
 
@@ -231,19 +240,37 @@ private:
  \param jsonKey Key for the serialized component in the JSON object.
  \param json JSON object to store the serialized component.
 *******************************************************************************/
+//template<typename ComponentType>
+//void SerializationManager::SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json)
+//{
+//    PE::EntityManager& entityManager = PE::EntityManager::GetInstance();
+//    if (entityManager.Has(static_cast<EntityID>(entityId), entityManager.GetComponentID<ComponentType>()))
+//    {
+//       /* ComponentType* component = static_cast<ComponentType*>(
+//            entityManager.GetComponentPoolPointer(entityManager.GetComponentID<ComponentType>())->Get(static_cast<EntityID>(entityId))
+//            );*/
+//        ComponentType& component = entityManager.Get<ComponentType>(entityId);
+//
+//        json["Entity"]["components"][jsonKey] = component.ToJson(static_cast<EntityID>(entityId));
+//        
+//    }
+//}
 template<typename ComponentType>
 void SerializationManager::SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json)
 {
     PE::EntityManager& entityManager = PE::EntityManager::GetInstance();
     if (entityManager.Has(static_cast<EntityID>(entityId), entityManager.GetComponentID<ComponentType>()))
     {
-       /* ComponentType* component = static_cast<ComponentType*>(
-            entityManager.GetComponentPoolPointer(entityManager.GetComponentID<ComponentType>())->Get(static_cast<EntityID>(entityId))
-            );*/
         ComponentType& component = entityManager.Get<ComponentType>(entityId);
 
-        json["Entity"]["components"][jsonKey] = component.ToJson(static_cast<EntityID>(entityId));
-        
+        if constexpr (std::is_same<ComponentType, PE::AudioComponent>::value)
+        {
+            json["Entity"]["components"][jsonKey] = component.ToJson();
+        }
+        else
+        {
+            json["Entity"]["components"][jsonKey] = component.ToJson(static_cast<EntityID>(entityId));
+        }
     }
 }
 

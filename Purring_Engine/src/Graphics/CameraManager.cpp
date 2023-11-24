@@ -192,15 +192,15 @@ namespace PE
                 // Get the size of the render window
                 float editorWindowSizeX{}, editorWindowSizeY{};
                 Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
-                float widthRatio{ (editorWindowSizeX < std::numeric_limits<float>::epsilon()) ? m_viewportWidth / editorWindowSizeX : 1.f };
-                float heightRatio{ (editorWindowSizeY < std::numeric_limits<float>::epsilon()) ? m_viewportHeight / editorWindowSizeY : 1.f };
+                float widthRatio{ !CompareFloats(editorWindowSizeX, 0.f) ? m_viewportWidth / editorWindowSizeX : 1.f };
+                float heightRatio{ !CompareFloats(editorWindowSizeY, 0.f) ? m_viewportHeight / editorWindowSizeY : 1.f };
 
                 // Adjust scale of the position
                 vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * widthRatio, y * heightRatio) };
                 ret.y += Editor::GetInstance().GetPlayWindowOffset();
 #else
-                float widthRatio{ (m_windowWidth < std::numeric_limits<float>::epsilon()) ? m_viewportWidth / m_windowWidth : 1.f };
-                float heightRatio{ (m_windowHeight < std::numeric_limits<float>::epsilon()) ? m_viewportHeight / m_windowHeight : 1.f };
+                float widthRatio{ !CompareFloats(m_windowWidth, 0.f) ? m_viewportWidth / m_windowWidth : 1.f };
+                float heightRatio{ !CompareFloats(m_windowHeight, 0.f) ? m_viewportHeight / m_windowHeight : 1.f };
                 vec2 ret{ r_mainCamera.GetViewportToWorldPosition(x * widthRatio, y * heightRatio) };
 #endif // !GAMERELEASE
 
@@ -397,22 +397,6 @@ namespace PE
                     GetEditorCamera().AdjustRotationRadians(-0.1f);
                 }
 #endif // !GAMERELEASE
-
-                // Zoom the main runtime camera in and out
-                if (event.keycode == GLFW_KEY_C)
-                {
-                    std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
-                    if (mainCamera) {
-                        mainCamera.value().get().AdjustMagnification(0.5f);
-                    }
-                }
-                if (event.keycode == GLFW_KEY_V)
-                {
-                    std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
-                    if (mainCamera) {
-                        mainCamera.value().get().AdjustMagnification(-0.5f);
-                    }
-                }
             }            
         }
 

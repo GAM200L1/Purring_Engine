@@ -35,18 +35,9 @@
 
 namespace PE
 {
-	//! Enum denoting cardinal directions for attack
-	enum EnumCatAttackDirection
-	{
-		NONE = 0,
-		EAST = 1,
-		NORTH = 2,
-		WEST = 3,
-		SOUTH = 4
-	};
 
 	//! struct with variables needed by cat scripts
-	struct CatScriptData
+	struct FollowerCatScriptData
 	{
 		// reference entities
 		EntityID catID{ 0 };
@@ -72,33 +63,26 @@ namespace PE
 		// movement variables
 		float minDistance{ 30.f }; float maxDistance{ 50.f };
 		float nodeSize{ 10.f }; // Size (in pixels) of each node
-		float movementSpeed{ 300.f }; // Speed to move the cat along the path
-		float forgivenessOffset{ 1.f }; // Amount that the cat can be offset from the path node before attempting to move to the next one
-		unsigned currentPositionIndex{}; // Index of the position in the pathPositions container that the cat should move towards
-		
 		std::vector<vec2> pathPositions{};
 		std::vector<EntityID> pathQuads{};
 
 		// state manager
 		StateMachine* p_stateManager;
-		bool shouldChangeState{};
-		bool delaySet{ false };
-		float timeBeforeChangingState{0.f};
 	};
 
 
 	// ----- CAT SCRIPT ----- //
-	class CatScript : public Script
+	class FollowerCatScript : public Script
 	{
 	public:
 		// ----- Public Variables ------ //
 
-		std::map<EntityID, CatScriptData> m_scriptData;
+		std::map<EntityID, FollowerCatScriptData> m_scriptData;
 
 	public:
 
 		// ----- Destructor ----- //
-		virtual ~CatScript();
+		virtual ~FollowerCatScript();
 
 		// ----- Public Functions ----- //
 		virtual void Init(EntityID id);
@@ -121,26 +105,6 @@ namespace PE
 		void MakeStateManager(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief Sets the flag for the state to be changed after the delay passed in.
-
-		 \param[in] id EntityID of the entity to change the state of.
-		 \param[in] stateChangeDelay Time in seconds before switching to the next state. 
-										Set to zero by default.
-		*************************************************************************************/
-		void TriggerStateChange(EntityID id, float const stateChangeDelay = 0.f);
-
-		/*!***********************************************************************************
-		 \brief Changes the state if the flag has been set and the delay is zero and below.
-
-		 \param[in] id EntityID of the entity to change the state of.
-		 \param[in] deltaTime Time in seconds that have passed since the last frame.
-
-		 \return true - True if the state should change.
-		 \return false - False if the state should NOT change.
-		*************************************************************************************/
-		bool CheckShouldStateChange(EntityID id, float const deltaTime);
-
-		/*!***********************************************************************************
 		 \brief Helper function to en/disables an entity.
 
 		 \param[in] id EntityID of the entity to en/disable.
@@ -152,37 +116,12 @@ namespace PE
 		 \brief Adjusts the position of the transform to the value passed in.
 
 		 \param[in] transformId ID of the entity to update the transform of.
-		 \param[in] r_position Position to set the transform to.
 		*************************************************************************************/
 		static void PositionEntity(EntityID const transformId, vec2 const& r_position);
 
-		/*!***********************************************************************************
-		 \brief Adjusts the scale of the transform to the value passed in.
-
-		 \param[in] transformId ID of the entity to update the transform of.
-		 \param[in] width Width to set the transform to.
-		 \param[in] height Height to set the transform to.
-		*************************************************************************************/
-		static void ScaleEntity(EntityID const transformId, float const width, float const height);
-
 
 		// ----- Getters/RTTR ----- //
-
-		/*!***********************************************************************************
-		 \brief Returns the position of the transform of the entity passed in.
-
-		 \param[in] transformId ID of the entity to retrieve the position of.
-		*************************************************************************************/
-		static vec2 GetEntityPosition(EntityID const transformId);
-
-		/*!***********************************************************************************
-		 \brief Returns the scale of the transform of the entity passed in.
-
-		 \param[in] transformId ID of the entity to retrieve the scale of.
-		*************************************************************************************/
-		static vec2 GetEntityScale(EntityID const transformId);
-
-		std::map<EntityID, CatScriptData>& GetScriptData(){ return m_scriptData; }
+		std::map<EntityID, FollowerCatScriptData>& GetScriptData(){ return m_scriptData; }
 
 		rttr::instance GetScriptData(EntityID id){ return rttr::instance(m_scriptData.at(id)); }
 	
@@ -210,5 +149,8 @@ namespace PE
 		 \param[in] id EntityID of the entity that this script is attached to.
 		*************************************************************************************/
 		void CreatePathNode(EntityID id);
+
+
+		void ResetValues(EntityID id);
 	};
 }

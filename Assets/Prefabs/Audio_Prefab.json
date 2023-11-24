@@ -1,0 +1,18 @@
+        {
+            "Entity": {
+                "components": {
+                    "AudioComponent": {
+                        "audioKey": "",
+                        "loop": false
+                    },
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "Audio Object",
+                        "parent": null,
+                        "sceneID": 18446744073709551615
+                    }
+                },
+                "name": ""
+            }
+        }
