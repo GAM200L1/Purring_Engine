@@ -139,7 +139,7 @@
                         "isActive": true,
                         "name": "Player",
                         "parent": null,
-                        "sceneID": 4
+                        "sceneID": 18446744073709551614
                     },
                     "Renderer": {
                         "Color": {

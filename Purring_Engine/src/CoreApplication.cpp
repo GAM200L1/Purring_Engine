@@ -119,7 +119,8 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
-        .property("Active", &PE::EntityDescriptor::isActive);
+        .property("Active", &PE::EntityDescriptor::isActive)
+        .property("Prefab Type", &PE::EntityDescriptor::prefabType);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
@@ -191,8 +192,8 @@ RTTR_REGISTRATION
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
-        .method("GetCurrentAnimation", &PE::AnimationComponent::GetAnimationID)
-        .method("SetCurrentAntimation", &PE::AnimationComponent::SetAnimationID);
+        .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
+        .method("SetCurrentAnimationID", &PE::AnimationComponent::SetCurrentAnimationID);
 
     rttr::registration::class_<PE::FollowScriptData>("FollowScript")
         .property("Size", &PE::FollowScriptData::Size)
@@ -322,46 +323,6 @@ PE::CoreApplication::CoreApplication()
     //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
     //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;
-
-    // Create animations here for now
-    std::string playerWalkAnimation, playerAttackAnimation, ratAttackAnimation, ratDeathAnimation;
-    playerWalkAnimation = AnimationManager::CreateAnimation("playerWalk", catWalkSpriteSheet);
-    playerAttackAnimation = AnimationManager::CreateAnimation("playerAttack", catAttackSpriteSheet);
-    ratAttackAnimation = AnimationManager::CreateAnimation("ratAttack", ratAttackSpriteSheet);
-    ratDeathAnimation = AnimationManager::CreateAnimation("ratDeath", ratDeathSpriteSheet);
-
-    // animation 1
-    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerWalkAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
-
-    // animation 2
-    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(playerAttackAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
-
-    // animation 3
-    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratAttackAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
-
-    // animation 4
-    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 0.f, 0.f }, { 1.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 1.f / 6.f, 0.f }, { 2.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 2.f / 6.f, 0.f }, { 3.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 3.f / 6.f, 0.f }, { 4.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 4.f / 6.f, 0.f }, { 5.f / 6.f, 1.f }, 1.f / 6.f);
-    AnimationManager::AddFrameToAnimation(ratDeathAnimation, { 5.f / 6.f, 0.f }, { 1.f, 1.f }, 1.f / 6.f);
-
 }
 
 PE::CoreApplication::~CoreApplication()
