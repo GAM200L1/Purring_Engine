@@ -28,32 +28,43 @@ namespace PE
 
 	void GameStateManager::SetGameState(GameStates gameState)
 	{
-		m_prevGameState = m_currentGameState;
+		if (m_currentGameState != gameState)
+			m_prevGameState = m_currentGameState;
 		m_currentGameState = gameState;
 	}
 
 	void GameStateManager::SetPauseState(EntityID)
 	{
-		m_prevGameState = m_currentGameState;
+		if (m_currentGameState != GameStates::PAUSE)
+			m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::PAUSE;
 	}
 
 	void GameStateManager::SetWinState()
 	{
-		m_prevGameState = m_currentGameState;
+		if (m_currentGameState != GameStates::WIN)
+			m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::WIN;
 	}
 
 	void GameStateManager::SetLoseState()
 	{
-		m_prevGameState = m_currentGameState;
+		if (m_currentGameState != GameStates::LOSE)
+			m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::LOSE;
 	}
 
-	void GameStateManager::SetAttackPlanState(EntityID)
+	void GameStateManager::SetAttackState(EntityID)
 	{
-		m_prevGameState = m_currentGameState;
+		if (m_currentGameState != GameStates::ATTACK)
+			m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::ATTACK;
+	}
+
+	void GameStateManager::ResetDefaultState()
+	{
+		m_currentGameState = GameStates::PAUSE;
+		m_prevGameState = GameStates::MOVEMENT;
 	}
 
 	GameStates GameStateManager::GetGameState()
@@ -114,7 +125,7 @@ namespace PE
 		REGISTER_UI_FUNCTION(ResumeState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(IncrementGameState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(DecrementGameState, PE::GameStateManager);
-		REGISTER_UI_FUNCTION(SetAttackPlanState, PE::GameStateManager);
+		REGISTER_UI_FUNCTION(SetAttackState, PE::GameStateManager);
 	}
 
 

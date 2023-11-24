@@ -20,6 +20,7 @@
 #include "Logging/Logger.h"
 #include "Data/json.hpp"
 #include "Events/EventHandler.h"
+#include "Layers/CollisionLayer.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -47,6 +48,9 @@ namespace PE
 				gridSize.y = cfgJson["Gridsize"]["y"].get<float>();
 			}
 		}
+
+		// initilize collision layer manager
+		CollisionLayerManager::GetInstance();
 		
 	}
 
@@ -99,6 +103,8 @@ namespace PE
 
 	void CollisionManager::UpdateSystem(float)
 	{
+		// Update the Collider's specs
+		UpdateColliders();
 
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
@@ -106,9 +112,7 @@ namespace PE
 			// clears the grid if it exists when the editor is open
 			if (m_grid.GridExists())
 				m_grid.ClearGrid();
-			return;
 		}
-
 
 		if (m_grid.GetGridSize() != gridSize)
 		{
@@ -116,14 +120,20 @@ namespace PE
 			m_grid.SetupGrid(gridSize.x, gridSize.y);
 		}
 #endif
-		if(gridActive)
-			m_grid.UpdateGrid();
-
-		// Update the Collider's specs
-		UpdateColliders();
+		
+		// updates the grid during runtime
+#ifndef GAMERELEASE
+		if (Editor::GetInstance().IsRunTime())
+		{
+#endif
+			if (gridActive)
+				m_grid.UpdateGrid();
+#ifndef GAMERELEASE
+		}
+#endif
 
 #ifndef GAMERELEASE
-		if (!Editor::GetInstance().IsEditorActive())
+		if (Editor::GetInstance().IsRunTime())
 		{
 #endif
 			// Test for Collisions in the scene
@@ -192,6 +202,8 @@ namespace PE
 							if (ColliderID_1 == ColliderID_2) { continue; }
 							// if they have been checked before don't check again
 							if (collider1.collisionChecked.count(ColliderID_2)) { continue; }
+							// if the layers are not colliding, don't check
+							if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
 
 							std::visit([&](auto& col1)
 								{
@@ -330,6 +342,8 @@ namespace PE
 					if (ColliderID_1 == ColliderID_2) { continue; }
 					// if they have been checked before don't check again
 					if (collider1.collisionChecked.count(ColliderID_2)) { continue; }
+					// if the layers are not colliding, don't check
+					if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
 
 					std::visit([&](auto& col1)
 						{

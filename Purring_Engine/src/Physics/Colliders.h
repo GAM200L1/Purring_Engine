@@ -22,6 +22,7 @@
 #include "Math/Transform.h"
 #include "ECS/Components.h"
 #include "RigidBody.h"
+#include "Layers/CollisionLayer.h"
 
 namespace PE
 {
@@ -169,8 +170,9 @@ namespace PE
 		std::variant<AABBCollider, CircleCollider> colliderVariant; // contains the different types of colliders
 		std::set<size_t> collisionChecked; // contains the IDs of the entities which the collider has checked for collision against
 		bool isTrigger{ false }; // determines whether the collider will need to resolve its collision
+		unsigned collisionLayerIndex{ 0 }; // determines which collision layer the collider is in
 
-		// ----- Public Methods ----- //
+		// ----- Public MethodsSS ----- //
 		public:
 
 			/*!***********************************************************************************
@@ -195,6 +197,8 @@ namespace PE
 					j["data"] = std::get<CircleCollider>(colliderVariant).ToJson();
 				}
 				j["isTrigger"] = isTrigger;
+				j["collisionLayerIndex"] = collisionLayerIndex;
+
 				return j;
 			}
 
@@ -219,6 +223,7 @@ namespace PE
 					collider.colliderVariant = CircleCollider::FromJson(r_j["data"]);
 				}
 				collider.isTrigger = r_j["isTrigger"];
+				collider.collisionLayerIndex = r_j["collisionLayerIndex"];
 				return collider;
 			}
 	};

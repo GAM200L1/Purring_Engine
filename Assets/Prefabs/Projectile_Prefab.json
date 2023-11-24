@@ -4,14 +4,14 @@
             "Collider": {
                 "data": {
                     "center": {
-                        "x": 0.0,
-                        "y": 0.0
+                        "x": -259.0,
+                        "y": 102.0
                     },
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "radius": 0.0,
+                    "radius": 16.0,
                     "scaleOffset": 1.0
                 },
                 "isTrigger": false,
@@ -34,12 +34,12 @@
                 "TextureKey": "../Assets/Textures/Cat_Hairball_512px.png"
             },
             "RigidBody": {
-                "linearDrag": 0.0,
+                "linearDrag": 2.0,
                 "mass": 1.0,
                 "type": 1
             },
             "Transform": {
-                "height": 50.0,
+                "height": 32.0,
                 "orientation": 0.0,
                 "position": {
                     "x": -259.0,
@@ -50,7 +50,7 @@
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 50.0
+                "width": 32.0
             }
         },
         "name": ""

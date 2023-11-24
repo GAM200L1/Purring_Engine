@@ -34,8 +34,6 @@ namespace PE
 
 		virtual void StateExit(EntityID id) override;
 
-		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);
-
 		// ----- Getter ----- //
 		virtual std::string_view GetName() { return "AttackPLAN"; }
 
@@ -47,13 +45,18 @@ namespace PE
 		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
 		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
 		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
+		std::set<EntityID> ignoresTelegraphs;
 
 		bool m_mouseClicked{ false }; // Set to true when the mouse is pressed, false otherwise
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
-		int m_eventListener; // Stores the handler for the mouse click event
+		int m_mouseEventListener; // Stores the handler for the mouse click event
+		int m_collisionEnterEventListener; // Stores the handler for the collision enter event
+		int m_collisionStayEventListener; // Stores the handler for the collision stay event
 
 		// ----- Private Functions ----- //
+		void ShowAttackSelection(EntityID id, vec2 const& r_cursorPosition);
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		void CatInTelegraph(const Event<CollisionEvents>& r_CE);
 	};
 
 	// ----- CAT ATTACK EXECUTE STATE ----- //
@@ -77,5 +80,11 @@ namespace PE
 		// ----- Private Variables ----- //
 		CatScriptData* p_data;
 		float m_attackDuration;
+		bool m_bulletCollided{ false };
+		float m_bulletDelay{ 0.f };
+		vec2 m_bulletImpulse;
+		// ----- Private Functions ----- //
+		void ProjectileHitRat(const Event<CollisionEvents>& r_CE);
+
 	};
 }

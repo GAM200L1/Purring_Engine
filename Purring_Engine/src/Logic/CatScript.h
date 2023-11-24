@@ -38,6 +38,7 @@ namespace PE
 	//! Enum denoting cardinal directions for attack
 	enum EnumCatAttackDirection
 	{
+		NONE = 0,
 		EAST = 1,
 		NORTH = 2,
 		WEST = 3,
@@ -48,7 +49,7 @@ namespace PE
 	struct CatScriptData
 	{
 		// reference entities
-		EntityID catID{ 1 };
+		EntityID catID{ 0 };
 		EntityID projectileID{ 0 };
 
 		// cat stats
@@ -59,13 +60,14 @@ namespace PE
 		// attack variables
 		int attackDamage{ 0 };
 		int requiredAttackPoints{ 0 };
-		int attackDirection{ 0 };
+		EnumCatAttackDirection attackDirection{ EnumCatAttackDirection::NONE };
 		std::map<EnumCatAttackDirection, EntityID> telegraphIDs;
 		
 		// bullet variables
+		float bulletDelay{ 0.7f };
 		float bulletRange{ 3.f };
-		float bulletLifeTime{ 1.f };
-		float bulletForce{ 6.f };
+		float bulletLifeTime{ 0.1f };
+		float bulletForce{ 1500.f };
 
 		// movement variables
 		float minDistance{ 30.f }; float maxDistance{ 50.f };
@@ -156,5 +158,8 @@ namespace PE
 		 \param[in] id EntityID of the entity that this script is attached to.
 		*************************************************************************************/
 		void CreatePathNode(EntityID id);
+
+
+		void ResetValues(EntityID id);
 	};
 }
