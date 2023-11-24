@@ -87,8 +87,8 @@ namespace PE
 			//checking rotation to set
 			float rotationOffset = newRotation - m_ScriptData[id].Rotation;
 
-			if (rotationOffset != 0)
-				EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
+			//if (rotationOffset != 0)
+			//	EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
 
 			//EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
 
