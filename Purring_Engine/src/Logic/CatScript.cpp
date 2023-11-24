@@ -85,23 +85,54 @@ namespace PE
 
 		if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 		{
-            if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
+      if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
 			{
 				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
 			}
-        }
+
+			//// Check if the state should be changed
+			//if (CheckShouldStateChange(id, deltaTime))
+			//{
+			//		m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
+			//		GameStateManager::GetInstance().IncrementGameState();
+			//}
+    }
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 		{
 			// if player is planning attack, set animation to idle
 			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+
+			//// Check if the state should be changed
+			//if (CheckShouldStateChange(id, deltaTime))
+			//{
+			//		m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
+			//		GameStateManager::GetInstance().IncrementGameState();
+			//}
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
 		{
-
+				//// Check if the state should be changed
+				//if (CheckShouldStateChange(id, deltaTime))
+				//{
+				//		//m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id); // --------------- @TODO KRYSTAL uncomment this
+				//		//GameStateManager::GetInstance().IncrementGameState();
+				//		m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
+				//}
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 		{
 
+				if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+				{
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+				}
+
+				//// Check if the state should be changed
+				//if (CheckShouldStateChange(id, deltaTime))
+				//{
+				//		//m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id); --------------- @TODO KRYSTAL uncomment this
+				//		m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
+				//}
 		}
 	}
 
@@ -153,6 +184,32 @@ namespace PE
 	}
 
 
+	void CatScript::TriggerStateChange(EntityID id, float const stateChangeDelay)
+	{
+			m_scriptData[id].shouldChangeState = true;
+			m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
+	}	
+
+
+	bool CatScript::CheckShouldStateChange(EntityID id, float const deltaTime)
+	{
+			if (m_scriptData[id].shouldChangeState)
+			{
+					if (m_scriptData[id].timeBeforeChangingState > 0.f)
+					{
+							m_scriptData[id].timeBeforeChangingState -= deltaTime;
+							return false;
+					}
+					else
+					{
+							return true;
+					}
+			}
+
+			return false;
+	}
+
+
 	void CatScript::ToggleEntity(EntityID id, bool setToActive)
 	{
 			// Exit if the entity is not valid
@@ -171,6 +228,40 @@ namespace PE
 				r_transform.position = r_position;
 			}
 			catch (...) { return; }
+	}	
+
+
+	void CatScript::ScaleEntity(EntityID const transformId, float const width, float const height)
+	{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.width = width;
+				r_transform.height = height;
+			}
+			catch (...) { return; }
+	}	
+
+
+	vec2 CatScript::GetEntityPosition(EntityID const transformId)
+	{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				return r_transform.position;
+			}
+			catch (...) { return vec2{}; }
+	}
+
+
+	vec2 CatScript::GetEntityScale(EntityID const transformId)
+	{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				return vec2{ r_transform.width, r_transform.height };
+			}
+			catch (...) { return vec2{}; }
 	}
 
 

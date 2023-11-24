@@ -111,10 +111,6 @@ namespace PE
 					// The mouse has been released, so end the path
 					EndPathDrawing(id);
 			}
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
-			{
-				p_data->p_stateManager->ChangeState(new CatAttackPLAN{}, id);
-			}
 			// Store the current frame's mouse click status
 			m_mouseClickPrevious = m_mouseClick;
 		}
@@ -223,32 +219,104 @@ namespace PE
 		// ----- Movement Execution Functions ----- //
 		void CatMovementEXECUTE::StateEnter(EntityID id)  
 		{
+			std::cout << "CatMovementEXECUTE::StateEnter(" << id << ")\n";
 		  p_data = GETSCRIPTDATA(CatScript, id);
+			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovementEXECUTE::OnCollisionEnter, this);
 			CatScript::PositionEntity(id, p_data->pathPositions.front());
+			m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 		}
 
 		void CatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)  
 		{ 
-			id; deltaTime;
-			// Check if pause state
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+			// Check if pause state -------------------------------------------------------------------@TODO KRYSTAL uncomment this
+			//if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+			//{
+			//		return;
+			//}
+
+			if (!m_doneMoving)
 			{
-					return;
+					vec2 currentCatPosition{};
+					try
+					{
+							Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) }; // Get the transform of the player
+							currentCatPosition = r_transform.position;
+					}
+					catch (...) { return; }
+
+					// IF the cat is close enough to the node they're moving towards
+					float distanceFromNode{ currentCatPosition.Distance(p_data->pathPositions[p_data->currentPositionIndex]) };
+					if (distanceFromNode <= p_data->forgivenessOffset)
+					{
+							// Deactivate this node
+							CatScript::ToggleEntity(p_data->pathQuads[p_data->currentPositionIndex], false);
+
+							if (p_data->currentPositionIndex >= (p_data->pathPositions.size() - 1)) 
+							{
+									//	This is the last node, so stop the movement of the cat
+									StopMoving(id);
+							}
+							else
+							{
+									++(p_data->currentPositionIndex);
+
+									// Recalculate distance
+									distanceFromNode = currentCatPosition.Distance(p_data->pathPositions[p_data->currentPositionIndex]);
+							}
+					}
+
+					if (!m_doneMoving)
+					{
+							// Get the direction of the cat from the point they're moving towards
+							vec2 directionToMove{ p_data->pathPositions[p_data->currentPositionIndex] - currentCatPosition};
+							 
+							// Get the vector to move
+							float amtToMove{p_data->movementSpeed * deltaTime};
+							directionToMove *= ((distanceFromNode > amtToMove) ? amtToMove : distanceFromNode);
+
+							// Update the position of the cat
+							CatScript::PositionEntity(id, currentCatPosition + directionToMove);
+
+							// Ensure the cat is facing the direction of their movement
+							vec2 newScale{ CatScript::GetEntityScale(id) };
+							newScale.x = std::abs(newScale.x) * ((directionToMove.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the cat is facing left
+							CatScript::ScaleEntity(id, newScale.x, newScale.y);
+					}
 			}
-
-			// IF  the cat is within a certain threshold from the current node
-				// IF  this is the last node, stop the movement of the cat
-				// ELSE  change the node to move towards to the next node
-						// Deactivate the next node
-
-			// Check where the cat is in relation to the end of the last node
-			// Start moving the cat
-
+			else
+			{
+					// Wait a second before changing state
+					GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id, 1.f);
+			}
 		}
 
 		void CatMovementEXECUTE::StateExit(EntityID id)  
 		{
+				std::cout << "CatMovementEXECUTE::StateExit(" << id << ")\n";
+				REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+				StopMoving(id);
+		}
+
+
+		void CatMovementEXECUTE::StopMoving(EntityID id)
+		{
+				m_doneMoving = true;
+
 				// Position the player at the end of the path
 				CatScript::PositionEntity(id, p_data->pathPositions.back());
+		}
+
+
+		void CatMovementEXECUTE::OnCollisionEnter(const Event<CollisionEvents>& r_collisionEvent)
+		{
+				OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEvent)};
+
+				// Check if the rat is colliding with the cat
+				if ((EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity1).name.find("Rat") != std::string::npos && OCEE.Entity2 == p_data->catID)
+						|| (EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity2).name.find("Rat") != std::string::npos && OCEE.Entity1 == p_data->catID))
+				{
+						m_collidedWithRat = true;
+				}
+
 		}
 }
