@@ -36,7 +36,7 @@
 #include "Logic/LogicSystem.h"
 #include "Logic/PlayerControllerScript.h"
 #include "Graphics/Text.h"
-//#include "AudioManager/AudioComponent.h"
+#include "Math/MathCustom.h"
 
 // RTTR stuff
 #include <rttr/variant.h>
@@ -414,13 +414,54 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
 
 bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r_json)
 {
+    if (!r_json["Entity"]["components"].contains("GUI"))
+    {
+        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), nullptr);
+    }
     PE::GUI gui;
     gui.m_onClicked = r_json["Entity"]["components"]["GUI"]["m_onClicked"].get<std::string>();
     gui.m_onHovered = r_json["Entity"]["components"]["GUI"]["m_onHovered"].get<std::string>();
     gui.m_UIType = static_cast<PE::UIType>(r_json["Entity"]["components"]["GUI"]["m_UIType"].get<int>());
+    if (r_json["Entity"]["components"]["GUI"].contains("disabled"))
+        gui.disabled = r_json["Entity"]["components"]["GUI"]["disabled"].get<bool>();
+
+    gui.m_defaultTexture = r_json["Entity"]["components"]["GUI"]["m_defaultTexture"].get<std::string>();
+    gui.m_hoveredTexture = r_json["Entity"]["components"]["GUI"]["m_hoveredTexture"].get<std::string>();
+    gui.m_pressedTexture = r_json["Entity"]["components"]["GUI"]["m_pressedTexture"].get<std::string>();
+    gui.m_disabledTexture = r_json["Entity"]["components"]["GUI"]["m_disabledTexture"].get<std::string>();
+
+    gui.m_defaultColor = PE::vec4(
+        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][0].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][1].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][2].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][3].get<float>()
+    );
+
+    gui.m_hoveredColor = PE::vec4(
+        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][0].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][1].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][2].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][3].get<float>()
+    );
+
+    gui.m_pressedColor = PE::vec4(
+        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][0].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][1].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][2].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][3].get<float>()
+    );
+
+    gui.m_disabledColor = PE::vec4(
+        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][0].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][1].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][2].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][3].get<float>()
+    );
+
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), static_cast<void*>(&gui));
     return true;
 }
+
 
 bool SerializationManager::LoadGUIRenderer(const EntityID& r_id, const nlohmann::json& r_json)
 {

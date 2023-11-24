@@ -36,6 +36,10 @@ namespace PE
 	{
 		m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::PAUSE;
+
+		//SerializationManager serializationManager;
+		//serializationManager.LoadAllEntitiesFromFile("..Assets/Prefabs/PauseMenu_Prefab.json");
+		// store the entityIDs of the created pause menu entities to be remove in resumestate
 	}
 
 	void GameStateManager::SetWinState()
@@ -99,6 +103,13 @@ namespace PE
 		{
 			m_currentGameState = m_prevGameState;
 			m_prevGameState = GameStates::PAUSE;
+
+			//// Iterate over the pause menu entities and remove or deactivate them
+			//for (auto& entityId : pauseMenuEntityIds)
+			//{
+			//	// Assuming you have a function to remove or deactivate entities
+			//	RemoveOrDeactivateEntity(entityId);
+			//}
 		}
 	}
 
