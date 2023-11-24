@@ -110,7 +110,15 @@ namespace PE
         void LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
-            \brief Loads font from file and inserts into Fonts map container.
+            \brief Loads audio from file and inserts into Sounds map container.
+
+            \param[in] r_key Name of audio file.
+            \param[in] r_filePath File path of audio.
+        *************************************************************************************/
+        std::string ResourceManager::LoadDraggedAudio(std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Loads font from file and inserts into Sounds map container.
 
             \param[in] r_key Name of font file.
             \param[in] r_filePath File path of font.
@@ -150,4 +158,3 @@ namespace PE
         }
     };
 }
-

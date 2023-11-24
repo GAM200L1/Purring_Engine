@@ -350,6 +350,9 @@ namespace PE {
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
 
+		// Audio varaiables
+		std::string currentSoundID;
+
 		UndoStack m_undoStack;
 
 		//variable for assets browser

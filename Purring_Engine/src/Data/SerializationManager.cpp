@@ -37,6 +37,7 @@
 #include "Logic/PlayerControllerScript.h"
 #include "Graphics/Text.h"
 #include "Math/MathCustom.h"
+
 // RTTR stuff
 #include <rttr/variant.h>
 #include <rttr/type.h>
@@ -238,6 +239,8 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::ScriptComponent>(entityId, "ScriptComponent", j);
     SerializeComponent<PE::AnimationComponent>(entityId, "AnimationComponent", j);
     SerializeComponent<PE::TextComponent>(entityId, "TextComponent", j);
+    SerializeComponent<PE::AudioComponent>(entityId, "AudioComponent", j);
+
 
     return j; 
 }
@@ -368,6 +371,8 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("ScriptComponent", &SerializationManager::LoadScriptComponent);
     m_initializeComponent.emplace("AnimationComponent", &SerializationManager::LoadAnimationComponent);
     m_initializeComponent.emplace("TextComponent", &SerializationManager::LoadTextComponent);
+    m_initializeComponent.emplace("AudioComponent", &SerializationManager::LoadAudioComponent);
+
 }
 
 bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
@@ -596,4 +601,20 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
     }
 
     return true;
+}
+
+bool SerializationManager::LoadAudioComponent(const size_t& r_id, const nlohmann::json& r_json)
+{
+    if (r_json["Entity"]["components"].contains("AudioComponent"))
+    {
+        PE::AudioComponent audioComponent;
+
+        // Example of setting properties, adjust according to your actual component properties
+        audioComponent.SetAudioKey(r_json["Entity"]["components"]["AudioComponent"]["audioKey"].get<std::string>());
+        audioComponent.SetLoop(r_json["Entity"]["components"]["AudioComponent"]["loop"].get<bool>());
+
+        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::AudioComponent>(), static_cast<void*>(&audioComponent));
+        return true;
+    }
+    return false;
 }

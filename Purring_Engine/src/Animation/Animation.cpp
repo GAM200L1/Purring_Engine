@@ -234,7 +234,7 @@ namespace PE
 		m_totalSprites = r_j["totalSprites"].get<unsigned>();
 		m_frameRate = r_j["frameRate"].get<unsigned>();
 
-		if(j.contains("animationFrames"))
+		if(r_j.contains("animationFrames"))
 		for (const auto& frameJson : r_j["animationFrames"])
 		{
 			AnimationFrame frame;
