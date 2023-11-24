@@ -321,7 +321,7 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "Size": 1.0,
                         "Text": "next"
                     },
@@ -404,7 +404,7 @@
                             "y": 0.0,
                             "z": 0.0
                         },
-                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf",
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
                         "Size": 1.0,
                         "Text": "resume"
                     },
