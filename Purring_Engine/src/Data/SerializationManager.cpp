@@ -304,6 +304,20 @@ void SerializationManager::SaveToFile(const std::filesystem::path& filepath, int
     }
 }
 
+void SerializationManager::SaveAnimationToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData)
+{
+    std::ofstream outFile(filepath);
+    if (outFile)
+    {
+        outFile << serializedData.dump(4);
+        outFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
+
 size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
 {
     if (!std::filesystem::exists(filepath))
@@ -326,6 +340,23 @@ size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
         return MAXSIZE_T;
     }
 }
+
+nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem::path& filepath)
+{
+    nlohmann::json loadedData;
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        inFile >> loadedData;
+        inFile.close();
+    }
+    else {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+    }
+    return loadedData;
+}
+
+
 
 void SerializationManager::LoadLoaders()
 {
@@ -391,7 +422,7 @@ bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::js
     }
     if (r_json["Entity"]["components"]["Collider"].contains("isTrigger"))
         col.isTrigger = r_json["Entity"]["components"]["Collider"]["isTrigger"].get<bool>();
-    if (r_json["Entity"]["components"]["Collider"].contains("isTrigger"))
+    if (r_json["Entity"]["components"]["Collider"].contains("collisionLayerIndex"))
         col.collisionLayerIndex = r_json["Entity"]["components"]["Collider"]["collisionLayerIndex"].get<unsigned>();
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Collider>(), static_cast<void*>(&col));
     return true;

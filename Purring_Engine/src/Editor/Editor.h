@@ -197,6 +197,12 @@ namespace PE {
 		*************************************************************************************/
 		void ShowPerformanceWindow(bool* p_active);
 		/*!***********************************************************************************
+		 \brief render the animation editor window
+
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowAnimationWindow(bool* p_active);
+		/*!***********************************************************************************
 		 \brief render the docking port window
 
 		 \param[in] bool* reference to the boolean that sets the window active
@@ -327,6 +333,7 @@ namespace PE {
 		bool m_showPhysicsWindow;
 		bool m_firstLaunch;
 		bool m_showGameView;
+		bool m_showAnimationWindow;
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;
