@@ -281,7 +281,7 @@ namespace PE
 			}
 			else
 			{
-				GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id, 1.f);
+				GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id);
 				m_bulletCollided = false;
 				projectileFired = false;
 			}
@@ -308,35 +308,23 @@ namespace PE
 			{
 				collidedEntities.first = OCEE.Entity1;
 				collidedEntities.second = OCEE.Entity2;
-
-				// temp
-				CatScript::ToggleEntity(p_data->projectileID, false);
-				m_bulletCollided = true;
 			}
 			else if (OCEE.Entity2 == p_data->projectileID)
 			{
 				collidedEntities.first = OCEE.Entity2;
 				collidedEntities.second = OCEE.Entity1;
-
-				// temp
-				CatScript::ToggleEntity(p_data->projectileID, false);
-				m_bulletCollided = true;
 			}
-		}
 
-		/*
-		if (EntityManager::GetInstance().Has<ScriptComponent>(collidedEntities.second))
-		{
-			for (auto const& [scriptName, scriptState] : EntityManager::GetInstance().Get<ScriptComponent>(collidedEntities.second).m_scriptKeys)
+			if (EntityManager::GetInstance().Has<ScriptComponent>(collidedEntities.second))
 			{
-				if (scriptName == "RatScript")
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(collidedEntities.second).name.find("Rat") != std::string::npos)
 				{
 					EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
 					m_bulletCollided = true;
 					return;
 				}
 			}
-			return;
-		}*/
+		}
+
 	}
 }

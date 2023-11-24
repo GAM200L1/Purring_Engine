@@ -203,14 +203,16 @@ namespace PE
 		}
 
 
-		void CatMovementPLAN::OnMouseClick(const Event<MouseEvents>&)
+		void CatMovementPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 		{
+			if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
 				m_mouseClick = true;
 		}
 
 
-		void CatMovementPLAN::OnMouseRelease(const Event<MouseEvents>&)
+		void CatMovementPLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
 		{
+			if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
 				m_mouseClick = false;
 		}
 
@@ -224,6 +226,7 @@ namespace PE
 		  p_data = GETSCRIPTDATA(CatScript, id);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovementEXECUTE::OnCollisionEnter, this);
 			CatScript::PositionEntity(id, p_data->pathPositions.front());
+			p_data->currentPositionIndex = 0;
 			m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 		}
 
@@ -237,6 +240,11 @@ namespace PE
 
 			if (!m_doneMoving)
 			{
+					if(p_data->currentPositionIndex >= p_data->pathPositions.size())
+					{
+							m_doneMoving = true;
+					}
+
 					vec2 currentCatPosition{};
 					try
 					{
@@ -287,7 +295,7 @@ namespace PE
 			else
 			{
 					// Wait a second before changing state
-					GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id, 1.f);
+					GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id, 0.5f);
 			}
 		}
 

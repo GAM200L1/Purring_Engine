@@ -200,8 +200,10 @@ namespace PE
 
 	void CatScript::TriggerStateChange(EntityID id, float const stateChangeDelay)
 	{
+		if (m_scriptData[id].delaySet) { return; }
 			m_scriptData[id].shouldChangeState = true;
 			m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
+			m_scriptData[id].delaySet = true;
 	}	
 
 
@@ -211,6 +213,7 @@ namespace PE
 			{
 					if (m_scriptData[id].timeBeforeChangingState > 0.f)
 					{
+						std::cout << m_scriptData[id].timeBeforeChangingState << std::endl;
 							m_scriptData[id].timeBeforeChangingState -= deltaTime;
 							return false;
 					}
@@ -218,6 +221,7 @@ namespace PE
 					{
 							m_scriptData[id].shouldChangeState = false;
 							m_scriptData[id].timeBeforeChangingState = 0.f;
+							m_scriptData[id].delaySet = false;
 							return true;
 					}
 			}

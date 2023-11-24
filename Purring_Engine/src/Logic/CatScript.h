@@ -82,6 +82,7 @@ namespace PE
 		// state manager
 		StateMachine* p_stateManager;
 		bool shouldChangeState{};
+		bool delaySet{ false };
 		float timeBeforeChangingState{0.f};
 	};
 
