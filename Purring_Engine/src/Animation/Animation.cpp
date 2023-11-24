@@ -192,7 +192,8 @@ namespace PE
 
 	AnimationComponent& AnimationComponent::Deserialize(const nlohmann::json& r_j)
 	{
-		m_currentAnimationID = r_j["CurrentAnimationID"].get<std::string>();
+		if (r_j.contains("CurrentAnimationID"))
+			m_currentAnimationID = r_j["CurrentAnimationID"].get<std::string>();
 		return *this;
 	}
 

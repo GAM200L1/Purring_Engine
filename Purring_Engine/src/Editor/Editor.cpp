@@ -2032,24 +2032,12 @@ namespace PE {
 								// setting animations
 								std::vector<const char*> key;
 								key.push_back("");
-
-								//to get all the animation keys for the entity
-								for (auto const& tmp : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+								if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
 								{
-									key.push_back(tmp.c_str());
-								}
-								int index{};
-								for (std::string str : key)
-								{
-									if (str == EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationID())
-										break;
-									index++;
-								}
-
-									//to get all the keys
-									for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
+									//to get all the animation keys for the entity
+									for (auto const& tmp : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
 									{
-										key.push_back(it->first.c_str());
+										key.push_back(tmp.c_str());
 									}
 									int index{};
 									for (std::string str : key)
@@ -2062,15 +2050,15 @@ namespace PE {
 									//create a combo box of texture ids
 									ImGui::SetNextItemWidth(200.0f);
 									if (!key.empty())
-								    {
-								    	ImGui::Text("Animations: "); ImGui::SameLine();
-									    ImGui::SetNextItemWidth(200.0f);
-								    	//set selected texture id
-								    	if (ImGui::Combo("##Animation", &index, key.data(), static_cast<int>(key.size())))
-								    	{
-								    		EntityManager::GetInstance().Get<AnimationComponent>(entityID).SetCurrentAnimationID(key[index]);
-								    	}
-								    }
+									{
+										ImGui::Text("Animations: "); ImGui::SameLine();
+										ImGui::SetNextItemWidth(200.0f);
+										//set selected texture id
+										if (ImGui::Combo("##Animation", &index, key.data(), static_cast<int>(key.size())))
+										{
+											EntityManager::GetInstance().Get<AnimationComponent>(entityID).SetCurrentAnimationID(key[index]);
+										}
+									}
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Separator();
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
