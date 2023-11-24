@@ -173,48 +173,38 @@ namespace PE
 
 	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{
-		// create the east direction entity
+		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);
+
 		EntityID telegraphID = EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>();
-		EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = AABBCollider();
-		EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
+		Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
-		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id;
-		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
+		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false; // telegraph to not show until attack planning
 
-		vec2 boxPositionOffset{ 0.f,0.f };
-		vec2 boxScaleOffset{ 1.f,1.f };
+		// set size of telegraph
+		telegraphTransform.height = catTransform.height * 0.75f;
+		telegraphTransform.width = catTransform.width * m_scriptData[id].bulletRange;
 		EnumCatAttackDirection dir;
+		AABBCollider telegraphCollider;
 
 		if (isXAxis)
 		{
-			// set the scale of the selection box
-				boxScaleOffset.y = 0.75f;
-				boxScaleOffset.x = m_scriptData[id].bulletRange;
-				EntityManager::GetInstance().Get<Transform>(telegraphID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
-				EntityManager::GetInstance().Get<Transform>(telegraphID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
-
-
-				boxPositionOffset.x = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (EntityManager::GetInstance().Get<Transform>(telegraphID).width * 0.5f) + 10.f;
-				boxPositionOffset.x *= (isNegative) ? -1 : 1;
-				dir = (isNegative) ? EnumCatAttackDirection::WEST : EnumCatAttackDirection::EAST;
+			telegraphTransform.relPosition.x = ((isNegative) ? -1.f : 1.f) * ((telegraphTransform.width * 0.5f) + (catTransform.width * 0.5f) + 10.f);
+			dir = (isNegative) ? EnumCatAttackDirection::WEST : EnumCatAttackDirection::EAST;
 		}
 		else
 		{
-			// set the scale of the selection box
-				boxScaleOffset.x = 0.75f;
-				boxScaleOffset.y = m_scriptData[id].bulletRange;
-				EntityManager::GetInstance().Get<Transform>(telegraphID).width = EntityManager::GetInstance().Get<Transform>(id).width * boxScaleOffset.x;
-				EntityManager::GetInstance().Get<Transform>(telegraphID).height = EntityManager::GetInstance().Get<Transform>(id).height * boxScaleOffset.y;
+			telegraphTransform.relOrientation = PE_PI * 0.5f;
+			telegraphTransform.relPosition.y = ((isNegative) ? -1.f : 1.f) * ((telegraphTransform.width * 0.5f) + (catTransform.width * 0.5f) + 10.f);
 
+			telegraphCollider.scaleOffset.x = telegraphTransform.height / telegraphTransform.width;
+			telegraphCollider.scaleOffset.y = telegraphTransform.width / telegraphTransform.height;
 
-				boxPositionOffset.y = (EntityManager::GetInstance().Get<Transform>(id).width * 0.5f) + (EntityManager::GetInstance().Get<Transform>(telegraphID).height * 0.5f) + 10.f;
-				boxPositionOffset.y *= (isNegative) ? -1 : 1;
-				dir = (isNegative) ? EnumCatAttackDirection::SOUTH : EnumCatAttackDirection::NORTH;
+			dir = (isNegative) ? EnumCatAttackDirection::SOUTH : EnumCatAttackDirection::NORTH;
 		}
 
-		// set the position of the selection box to be half the range away from the center of the cat
-		EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.x = boxPositionOffset.x;
-		EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.y = boxPositionOffset.y;
+		EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = telegraphCollider;
+		EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
 
 		// Load and Set the texture for the telegraphs
 		std::string telegraphTextureName = "../Assets/Textures/Telegraphs/Telegraph_Long_512x128.png";
