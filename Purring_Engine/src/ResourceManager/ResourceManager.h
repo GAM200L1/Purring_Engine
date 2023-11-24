@@ -100,7 +100,7 @@ namespace PE
             \param[in] r_name Name of texture.
             \param[in] r_filePath File path of texture.
         *************************************************************************************/
-        void LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
+        bool LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Loads icon from file and inserts into Icons map container.
@@ -108,7 +108,7 @@ namespace PE
             \param[in] r_name Name of icon.
             \param[in] r_filePath File path of icon.
         *************************************************************************************/
-        void LoadIconFromFile(std::string const& r_name, std::string const& r_filePath);
+        bool LoadIconFromFile(std::string const& r_name, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Loads audio from file and inserts into Sounds map container.
@@ -134,6 +134,15 @@ namespace PE
             \return Texture object in map.
         *************************************************************************************/
         std::shared_ptr<Graphics::Texture> GetTexture(std::string const& r_name);
+
+        /*!***********************************************************************************
+            \brief Gets the icon object store in the resource manager.
+
+            \param[in] r_name Name of icon.
+
+            \return Icon object in map.
+        *************************************************************************************/
+        std::shared_ptr<Graphics::Texture> GetIcon(std::string const& r_name);
     private:
         // constructor
         ResourceManager()

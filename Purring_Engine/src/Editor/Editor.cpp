@@ -299,13 +299,12 @@ namespace PE {
 
 		ImGui_ImplOpenGL3_Init("#version 450");
 
-		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Directory_Icon.png", "../Assets/Icons/Directory_Icon.png");
-		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Audio_Icon.png"	, "../Assets/Icons/Audio_Icon.png");
-		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Font_Icon.png", "../Assets/Icons/Font_Icon.png");
-		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Prefabs_Icon.png", "../Assets/Icons/Prefabs_Icon.png");
-		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Other_Icon.png", "../Assets/Icons/Other_Icon.png");
-		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Icons/Texture_Icon.png", "../Assets/Icons/Texture_Icon.png");
-
+		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Directory_Icon.png", "../Assets/Icons/Directory_Icon.png");
+		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Audio_Icon.png"	, "../Assets/Icons/Audio_Icon.png");
+		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Font_Icon.png", "../Assets/Icons/Font_Icon.png");
+		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Prefabs_Icon.png", "../Assets/Icons/Prefabs_Icon.png");
+		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Other_Icon.png", "../Assets/Icons/Other_Icon.png");
+		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Texture_Icon.png", "../Assets/Icons/Texture_Icon.png");
 	}
 
 	void Editor::Render(Graphics::FrameBuffer& r_frameBuffer)
@@ -2310,10 +2309,11 @@ namespace PE {
 						{
 							if (r_filepath.extension() == ".png")
 							{
-								if (ResourceManager::GetInstance().Textures.find(r_filepath.string()) != ResourceManager::GetInstance().Textures.end())
-								{
-									ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
-								}
+								//if (ResourceManager::GetInstance().Textures.find(r_filepath.string()) != ResourceManager::GetInstance().Textures.end())
+								//{
+								//	ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
+								//}
+								ResourceManager::GetInstance().GetTexture(r_filepath.string());
 							}
 						}
 						m_fileDragged = false;
@@ -2347,7 +2347,7 @@ namespace PE {
 						else
 							icon = "../Assets/Icons/Other_Icon.png";
 
-						ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(icon)->GetTextureID(), ImVec2(50, 50), { 0,1 }, { 1,0 });
+						ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetIcon(icon)->GetTextureID(), ImVec2(50, 50), { 0,1 }, { 1,0 });
 						ImGui::Text(m_files[n].filename().string().c_str()); // text
 					}
 					ImGui::EndChild();
@@ -2404,7 +2404,7 @@ namespace PE {
 					ImGui::SetNextWindowSize(ImVec2(50, 50));
 					std::string test = std::to_string(draggedItemIndex);
 					ImGui::Begin(test.c_str(), nullptr, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
-					ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(iconDragged)->GetTextureID(), ImVec2(34,34), { 0,1 }, { 1,0 });
+					ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetIcon(iconDragged)->GetTextureID(), ImVec2(34,34), { 0,1 }, { 1,0 });
 					ImGui::End();
 					
 					// Check if the mouse button is released

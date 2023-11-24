@@ -39,6 +39,9 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "ResourceManager.h"
+#include "Logging/Logger.h"
+
+extern Logger engine_logger;
 
 namespace PE
 {
@@ -70,26 +73,36 @@ namespace PE
     //    //return m_shaderPrograms[r_key];
     //}
 
-    void ResourceManager::LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath)
+    bool ResourceManager::LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath)
     {
         Textures[r_name] = std::make_shared<Graphics::Texture>();
         if (!Textures[r_name]->CreateTexture(r_filePath))
         {
             // fail to create texture, delete key
-            std::cout << "Couldn't create texture " << r_filePath << std::endl;
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Texture " + r_name + " does not exist.", __FUNCTION__);
+
             Textures.erase(r_name);
+            return false;
         }
+        return true;
     }
 
-    void ResourceManager::LoadIconFromFile(std::string const& r_name, std::string const& r_filePath)
+    bool ResourceManager::LoadIconFromFile(std::string const& r_name, std::string const& r_filePath)
     {
         Icons[r_name] = std::make_shared<Graphics::Texture>();
-        if (!Textures[r_name]->CreateTexture(r_filePath))
+        if (!Icons[r_name]->CreateTexture(r_filePath))
         {
             // fail to create texture, delete key
-            std::cout << "Couldn't create icon " << r_filePath << std::endl;
-            Textures.erase(r_name);
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Icon " + r_name + " does not exist.", __FUNCTION__);
+
+            Icons.erase(r_name);
+            return false;
         }
+        return false;
     }
 
     void ResourceManager::LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath)
@@ -122,7 +135,50 @@ namespace PE
 
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
     {
+        // if texture is not found
+        if (Textures.find(r_name) == Textures.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Texture " + r_name + " not loaded, loading texture.", __FUNCTION__);
+
+            // load texture
+            if (LoadTextureFromFile(r_name, r_name))
+            {
+                return Textures[r_name];
+            }
+            else
+            {
+                // this will crash the program if unable to load
+				return nullptr;
+			}
+		}
+        
         return Textures[r_name];
+    }
+
+    std::shared_ptr<Graphics::Texture> ResourceManager::GetIcon(std::string const& r_name)
+    {
+        // if texture is not found
+        if (Icons.find(r_name) == Icons.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Icon " + r_name + " not loaded, loading icon.", __FUNCTION__);
+
+            // load texture
+            if (LoadIconFromFile(r_name, r_name))
+            {
+                return Icons[r_name];
+            }
+            else
+            {
+                // this will crash the program if unable to load
+                return nullptr;
+            }
+        }
+
+        return Icons[r_name];
     }
 
     void ResourceManager::UnloadResources()
@@ -131,6 +187,8 @@ namespace PE
         Textures.clear();
         Sounds.clear();
         Fonts.clear();
+        Icons.clear();
+        Animations.clear();
     }
 
 }
