@@ -51,22 +51,22 @@ namespace PE
 		m_spriteSheetKey = spriteSheetKey;
 	}
 
-	void Animation::AddFrame(vec2 const& minUV, vec2 const& maxUV, float duration)
+	void Animation::AddFrame(vec2 const& r_minUV, vec2 const& r_maxUV, float duration)
 	{
-		m_animationFrames.emplace_back(AnimationFrame{ minUV, maxUV, duration });
+		m_animationFrames.emplace_back(AnimationFrame{ r_minUV, r_maxUV, duration });
 	}
 
-	void Animation::UpdateAnimationFrame(float deltaTime, float& currentFrameTime, unsigned& currentFrameIndex)
+	void Animation::UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex)
 	{
-		currentFrameTime += deltaTime;
+		r_currentFrameTime += deltaTime;
 
 		try
 		{
-			if (currentFrameTime >= m_animationFrames.at(currentFrameIndex).m_duration)
+			if (r_currentFrameTime >= m_animationFrames.at(r_currentFrameIndex).m_duration)
 			{
 				// move on the the next frame when current frame duration is reached
-				currentFrameIndex = (currentFrameIndex + 1) % m_animationFrames.size();
-				currentFrameTime = 0.f;
+				r_currentFrameIndex = (r_currentFrameIndex + 1) % m_animationFrames.size();
+				r_currentFrameTime = 0.f;
 			}
 		}
 		catch (const std::out_of_range&)
@@ -131,12 +131,12 @@ namespace PE
 		}
 	}
 
-	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& minUV, vec2 const& maxUV)
+	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& r_minUV, vec2 const& r_maxUV)
 	{
 		try
 		{
-			m_animationFrames.at(currentFrameIndex).m_minUV = minUV;
-			m_animationFrames.at(currentFrameIndex).m_maxUV = maxUV;
+			m_animationFrames.at(currentFrameIndex).m_minUV = r_minUV;
+			m_animationFrames.at(currentFrameIndex).m_maxUV = r_maxUV;
 		}
 		catch (std::out_of_range const&)
 		{
@@ -190,9 +190,9 @@ namespace PE
 		return j;
 	}
 
-	AnimationComponent& AnimationComponent::Deserialize(const nlohmann::json& j)
+	AnimationComponent& AnimationComponent::Deserialize(const nlohmann::json& r_j)
 	{
-		m_currentAnimationID = j["CurrentAnimationID"].get<std::string>();
+		m_currentAnimationID = r_j["CurrentAnimationID"].get<std::string>();
 		return *this;
 	}
 
@@ -227,15 +227,15 @@ namespace PE
 		return j;
 	}
 
-	Animation& Animation::Deserialize(const nlohmann::json& j)
+	Animation& Animation::Deserialize(const nlohmann::json& r_j)
 	{
-		m_animationID = j["animationID"].get<std::string>();
-		m_spriteSheetKey = j["spriteSheetKey"].get<std::string>();
-		m_totalSprites = j["totalSprites"].get<unsigned>();
-		m_frameRate = j["frameRate"].get<unsigned>();
+		m_animationID = r_j["animationID"].get<std::string>();
+		m_spriteSheetKey = r_j["spriteSheetKey"].get<std::string>();
+		m_totalSprites = r_j["totalSprites"].get<unsigned>();
+		m_frameRate = r_j["frameRate"].get<unsigned>();
 
 		if(j.contains("animationFrames"))
-		for (const auto& frameJson : j["animationFrames"])
+		for (const auto& frameJson : r_j["animationFrames"])
 		{
 			AnimationFrame frame;
 			frame.m_minUV.x = frameJson["minUV"][0].get<float>(); // Assign x
@@ -342,11 +342,11 @@ namespace PE
 		return animationID;
 	}
 
-	void AnimationManager::AddFrameToAnimation(std::string animationID, vec2 const& minUV, vec2 const& maxUV, float duration)
+	void AnimationManager::AddFrameToAnimation(std::string animationID, vec2 const& r_minUV, vec2 const& r_maxUV, float duration)
 	{
 		if (ResourceManager::GetInstance().Animations.find(animationID) != ResourceManager::GetInstance().Animations.end())
 		{
-			ResourceManager::GetInstance().Animations[animationID]->AddFrame(minUV, maxUV, duration);
+			ResourceManager::GetInstance().Animations[animationID]->AddFrame(r_minUV, r_maxUV, duration);
 		}
 	}
 

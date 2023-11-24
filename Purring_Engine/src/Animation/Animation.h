@@ -117,7 +117,7 @@ namespace PE
 
 		// \param[in] j JSON object containing the values to load into the renderer component.
 		//*************************************************************************************/
-		AnimationComponent& Deserialize(const nlohmann::json& j);
+		AnimationComponent& Deserialize(const nlohmann::json& r_j);
 
 		std::set<std::string> m_animationsID; // Stores all animations for the component // not in use now
 		std::string m_currentAnimationID{}; // current playing animation
@@ -170,14 +170,14 @@ namespace PE
 		 \param[in] maxUV maxUV coords for the texture to display in this frame.
 		 \param[in] duration Duration this frame will be displayed in seconds.
 		*************************************************************************************/
-		void AddFrame(vec2 const& minUV, vec2 const& maxUV,  float duration);
+		void AddFrame(vec2 const& r_minUV, vec2 const& r_maxUV,  float duration);
 
 		/*!***********************************************************************************
 		 \brief Update the animation based on elapsed time.
 
 		 \param[in] deltaTime Time since last update.
 		*************************************************************************************/
-		void UpdateAnimationFrame(float deltaTime, float& currentFrameTime, unsigned& currentFrameIndex);
+		void UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex);
 
 		/*!***********************************************************************************
 			\brief Get the current frame of the animation.
@@ -192,7 +192,7 @@ namespace PE
 
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, unsigned framesToHold);
 
-		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& minUV, vec2 const& maxUV);
+		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& r_minUV, vec2 const& r_maxUV);
 
 		void SetCurrentAnimationFrameRate(unsigned frameRate);
 
@@ -209,7 +209,7 @@ namespace PE
 		float GetAnimationDuration();
 
 		nlohmann::json Animation::ToJson() const;
-		Animation& Deserialize(const nlohmann::json& j);
+		Animation& Deserialize(const nlohmann::json& r_j);
 
 
 		// ----- Private Variables ----- //
@@ -269,7 +269,7 @@ namespace PE
 		 \param[in] textureKey Identifier for the texture to display in this frame.
 		 \param[in] duration Duration this frame will be displayed in seconds.
 		*************************************************************************************/
-		static void AddFrameToAnimation(std::string animationID, vec2 const& minUV, vec2 const& maxUV, float duration);
+		static void AddFrameToAnimation(std::string animationID, vec2 const& r_minUV, vec2 const& r_maxUV, float duration);
 
 		/*!***********************************************************************************
 		 \brief Update the specified animation based on elapsed time.
