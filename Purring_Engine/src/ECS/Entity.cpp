@@ -65,14 +65,28 @@ namespace PE
 		{
 			engine_logger.AddLog(false, "Allocating new ID for New Entity!", __FUNCTION__);
 			id = (m_removed.empty()) ? m_entities.size() : *(m_removed.begin()); // re-assgin the id
-
 			// if the removed set was not empty, that means an id was used, remove it.
+			
 			if (!m_removed.empty())
 				m_removed.erase(id);
+			else
+				++m_entityCounter;
 		}
-		
+
 		m_entities.emplace(id);
-		++m_entityCounter;
+
+		if (id >= m_entities.size())
+		{
+			for (size_t i{}; i < id; ++i)
+			{
+				if (!m_entities.count(i))
+				{
+					m_removed.emplace(i);
+				}
+			}
+		}
+
+
 		// Assign Descriptor component
 		Assign(id, GetComponentID<EntityDescriptor>());
 		Get<EntityDescriptor>(id).name = "GameObject";
