@@ -83,15 +83,15 @@ namespace PE
 
 		if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 		{
-            if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
-			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
-			}
+   //         if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
+			//{
+			//	//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
+			//}
         }
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 		{
 			// if player is planning attack, set animation to idle
-			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+			//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
 		{

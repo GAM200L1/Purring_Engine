@@ -38,15 +38,11 @@ namespace PE
 		{
 				//std::cout << "CatMovementPLAN::StateUpdate( " << id << " )\n";
 			// Check if pause state -------------------------------------------------------------------@TODO KRYSTAL uncomment this
-		 // if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) 
-		 // {
-			//		EndPathDrawing(id);
-			//		return;
-			//}
-			//if (m_mouseClick) 
-			//{
-			//		std::cout << "Mouse clicked\n";
-			//}
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) 
+			{
+					EndPathDrawing(id);
+					return;
+			}
 
 			if (m_invalidPath && !m_mouseClick && m_mouseClickPrevious)
 			{
@@ -278,10 +274,10 @@ namespace PE
 		void CatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)  
 		{ 
 			// Check if pause state -------------------------------------------------------------------@TODO KRYSTAL uncomment this
-			//if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
-			//{
-			//		return;
-			//}
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+			{
+				return;
+			}
 
 			if (!m_doneMoving)
 			{

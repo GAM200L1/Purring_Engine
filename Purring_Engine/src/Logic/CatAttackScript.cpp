@@ -42,6 +42,8 @@ namespace PE
 	
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
 	{
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
+		
 		// get the mouse cursor position
 		float mouseX{}, mouseY{};
 		InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY); 
@@ -267,6 +269,7 @@ namespace PE
 
 	void CatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
 		static bool projectileFired{ false };
 		if (m_bulletDelay > 0.f)
 		{
