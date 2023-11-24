@@ -374,7 +374,7 @@ namespace PE
 		 \param[in] id 	ID of the entity to handle
 		 \param[in] add Add or remove flag, true = add, false = remove from pool
 		*************************************************************************************/
-		void UpdateVectors(EntityID id, bool add = true)
+		void UpdateVectors(EntityID id, bool add = true, ComponentID comp = ALL)
 		{
 			if (add)
 			{
@@ -384,32 +384,37 @@ namespace PE
 				}
 				for (const auto& vec : m_poolsEntity)
 				{
+					if (vec.first == ALL)
+						continue;
 					const size_t cnt = vec.first.count();
 					size_t cnt2{};
 					for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
 					{
-						if ((vec.first & pool.first).any() && pool.second->HasEntity(id)) 
-						if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
-						{
-							++cnt2;
-						}
+						if ((vec.first & pool.first).any() && pool.second->HasEntity(id))
+							if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
+							{
+								++cnt2;
+							}
 					}
-					if (cnt2 == cnt)
+					if (cnt2 == cnt && std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
 						m_poolsEntity[vec.first].emplace_back(id);
 				}
 			}
 			else
 			{
-				if (!m_entities.count(id) &&
-					(std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) != m_poolsEntity[ALL].end()))
+				if (!m_entities.count(id))
 				{
-					m_poolsEntity[ALL].erase(std::remove(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id), m_poolsEntity[ALL].end());
+					while (std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) != m_poolsEntity[ALL].end())
+						m_poolsEntity[ALL].erase(std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id));
 				}
-				for (const auto& pool : m_poolsEntity)
+				for (auto& pool : m_poolsEntity)
 				{
-					if ((std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+					if (comp == ALL || (pool.first & comp).any())
 					{
-						m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
+						if (pool.first != ALL && (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
+						{
+							m_poolsEntity[pool.first].erase(std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id));
+						}
 					}
 				}
 			}
