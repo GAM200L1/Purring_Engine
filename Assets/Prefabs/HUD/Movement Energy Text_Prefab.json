@@ -1,0 +1,39 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "children": [],
+                "isActive": true,
+                "name": "MovementEnergyText",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "TextComponent": {
+                "Color": {
+                    "w": 1.0,
+                    "x": 0.29019609093666077,
+                    "y": 0.25882354378700256,
+                    "z": 0.22745098173618317
+                },
+                "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                "Size": 0.949999988079071,
+                "Text": "Movement Energy:"
+            },
+            "Transform": {
+                "height": 21.850000381469727,
+                "orientation": 0.0,
+                "position": {
+                    "x": -546.0,
+                    "y": -401.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 334.3999938964844
+            }
+        },
+        "name": ""
+    }
+}

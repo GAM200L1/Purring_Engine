@@ -49,6 +49,7 @@
 #include "Logic/EnemyTestScript.h"
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
+#include "Logic/GameStateController.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
@@ -2329,6 +2330,21 @@ namespace PE {
 						m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
+							if (key == "GameStateController")
+							{
+								GameStateController* p_Script = dynamic_cast<GameStateController*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("GameStateController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act",&it->second.GameStateManagerActive);
+										int id = static_cast<int> (it->second.SplashScreen);
+										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##sscreen", &id);
+										if (id != m_currentSelectedObject)
+											it->second.SplashScreen = id;
+									}
+							}
+
 							if (key == "testScript")
 							{
 								testScript* p_Script = dynamic_cast<testScript*>(val);
@@ -2391,7 +2407,7 @@ namespace PE {
 										}
 										else
 										{
-											it->second.NumberOfFollower = 6;
+											it->second.NumberOfFollower = 5;
 										}
 
 										for (int i = 0; i < it->second.NumberOfFollower; i++)
@@ -3859,6 +3875,7 @@ namespace PE {
 			static ImVec2 screenPosition; // coordinates from the top left corner
 			static ImVec2 currentPosition;
 			static vec2 startPosition;
+			if (m_mouseInScene)
 			if (ImGui::IsMouseClicked(0))
 			{
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner

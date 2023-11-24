@@ -176,19 +176,41 @@ namespace PE
 #ifndef GAMERELEASE
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
-
-                if (Editor::GetInstance().IsEditorActive())
-                {
-                    // Update the ui camera viewport size
-                    r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
-                }
 #endif // !GAMERELEASE
             }
 
 #ifndef GAMERELEASE
-            if (!Editor::GetInstance().IsEditorActive())
+            if (Editor::GetInstance().IsEditorActive())
             {
-                // Update the ui camera viewport size
+                // Update the ui camera viewport size to the size of the editor window
+                r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+            }
+            else
+            {
+                // Update the ui camera viewport size to the size of the main camera if it exists,
+                // or the cached start window size
+                std::optional<std::reference_wrapper<Camera>> optional_mainCamera{r_cameraManager.GetMainCamera()};
+
+                if (optional_mainCamera.has_value()) 
+                {
+                    r_cameraManager.GetUiCamera().SetViewDimensions(optional_mainCamera.value().get().GetViewportWidth(), optional_mainCamera.value().get().GetViewportHeight());
+                }
+                else 
+                {
+                    r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
+                }
+            }
+#else
+            // Update the ui camera viewport size to the size of the main camera if it exists,
+            // or the cached start window size
+            std::optional<std::reference_wrapper<Camera>> optional_mainCamera{ r_cameraManager.GetMainCamera() };
+
+            if (optional_mainCamera.has_value())
+            {
+                r_cameraManager.GetUiCamera().SetViewDimensions(optional_mainCamera.value().get().GetViewportWidth(), optional_mainCamera.value().get().GetViewportHeight());
+            }
+            else
+            {
                 r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
             }
 #endif // !GAMERELEASE

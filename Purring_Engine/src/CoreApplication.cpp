@@ -85,6 +85,7 @@
 #include "Logic/testScript2.h"
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
+#include "Logic/GameStateController.h"
 #include "GameStateManager.h"
 // Testing
 Logger engine_logger = Logger("ENGINE");
@@ -187,6 +188,10 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
+  
+    rttr::registration::class_<PE::GameStateController>("GameStateController")
+        .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
+        .property("SplashScreen", &PE::GameStateControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
@@ -255,9 +260,9 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
 
     // Load Fonts
-    std::string fontHeader{ "../Assets/Fonts/Kalam/Kalam-Regular.ttf" }, fontBody{ "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf" };
-    ResourceManager::GetInstance().LoadFontFromFile(fontHeader, "../Assets/fonts/Kalam/Kalam-Regular.ttf");
-    ResourceManager::GetInstance().LoadFontFromFile(fontBody, "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf");    
+    std::string fontHeader{ "../Assets/Fonts/Kalam/Kalam-Bold.ttf" }, fontBody{ "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf" };
+    ResourceManager::GetInstance().LoadFontFromFile(fontHeader, "../Assets/fonts/Kalam/Kalam-Bold.ttf");
+    ResourceManager::GetInstance().LoadFontFromFile(fontBody, "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf");    
 
     // Animation textures
     std::string catWalkSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png" };
