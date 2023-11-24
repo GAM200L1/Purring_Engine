@@ -41,8 +41,6 @@ namespace PE
 
     void AudioComponent::PlayAudioSound()
     {
-       // std::cout << "[PlayAudioSound] Attempting to play sound with id: " << r_id << std::endl;
-
         // Check the file extension
         std::string fileExtension = m_audioKey.substr(m_audioKey.find_last_of('.') + 1);
         if (fileExtension != "mp3")
@@ -54,19 +52,8 @@ namespace PE
         auto it = ResourceManager::GetInstance().Sounds.find(m_audioKey);
         if (it != ResourceManager::GetInstance().Sounds.end())
         {
-            FMOD::Channel* channel = it->second->GetChannel();
-            if (channel)
-            {
-                bool isPlaying = false;
-                channel->isPlaying(&isPlaying);
-                if (isPlaying)
-                {
-                    std::cout << "Sound with id: " << m_audioKey << " is already playing." << std::endl;
-                    return;
-                }
-            }
-
             FMOD::System* system = AudioManager::GetInstance().GetFMODSystem();
+            FMOD::Channel* channel = nullptr;
             FMOD_RESULT result = system->playSound(it->second->GetSound(), nullptr, false, &channel);
 
             if (result == FMOD_OK)
@@ -84,6 +71,8 @@ namespace PE
                     channel->setLoopCount(-1);
                     std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
                 }
+
+                // You may want to add additional logic here to manage multiple channels
             }
             else
             {

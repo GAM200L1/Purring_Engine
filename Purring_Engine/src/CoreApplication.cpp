@@ -485,7 +485,7 @@ void PE::CoreApplication::InitializeAudio()
     {
         engine_logger.AddLog(false, "AudioManager initialized!", __FUNCTION__);
     }
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound1", "../Assets/Audio/audioSFX_sound1.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("audioSFX_sound1.mp3", "../Assets/Audio/audioSFX_sound1.mp3");
     ResourceManager::GetInstance().LoadAudioFromFile("audio_sound2", "../Assets/Audio/audioSFX_sound2.mp3");
     ResourceManager::GetInstance().LoadAudioFromFile("audio_sound3", "../Assets/Audio/audioSFX_sound3.mp3");
     ResourceManager::GetInstance().LoadAudioFromFile("audio_backgroundMusic", "../Assets/Audio/audioSFX_backgroundMusic.mp3");
