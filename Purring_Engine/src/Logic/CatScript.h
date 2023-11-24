@@ -54,7 +54,6 @@ namespace PE
 
 		// cat stats
 		int catHealth{ 0 };		
-		int catEnergy{ 0 };
 		int catMaxEnergy{ 21 };
 
 		// attack variables
@@ -181,11 +180,48 @@ namespace PE
 		 \param[in] transformId ID of the entity to retrieve the scale of.
 		*************************************************************************************/
 		static vec2 GetEntityScale(EntityID const transformId);
+		
+		/*!***********************************************************************************
+		 \brief Returns the current energy the player has left.
+
+		 \return int - Returns the current energy the player has left.
+		*************************************************************************************/
+		static inline int GetCurrentEnergyLevel() { return catEnergy; }
+		
+		/*!***********************************************************************************
+		 \brief Returns the maximum energy that the cat can have.
+
+		 \return int - Returns the maximum energy that the cat can have.
+		*************************************************************************************/
+		static inline int GetMaximumEnergyLevel() { return catMaxEnergy; }
+		
+		/*!***********************************************************************************
+		 \brief Sets the energy the player has left.
+
+		 \param[in] int - Energy level to set.
+		*************************************************************************************/
+		static void SetCurrentEnergyLevel(int const energyLevel) { catEnergy = energyLevel; }
+		
+		/*!***********************************************************************************
+		 \brief Sets the maximum energy the player can have.
+
+		 \param[in] int - Energy level to set.
+		*************************************************************************************/
+		static void SetMaximumEnergyLevel(int const energyLevel) { catMaxEnergy = energyLevel; }
+
 
 		std::map<EntityID, CatScriptData>& GetScriptData(){ return m_scriptData; }
 
 		rttr::instance GetScriptData(EntityID id){ return rttr::instance(m_scriptData.at(id)); }
 	
+
+	private:
+
+	  // ----- Private Variables ----- //
+		static int catEnergy; // Current energy level of the cat
+		static int catMaxEnergy; // Maximum energy of the cat
+
+
 	private:
 
 		// ----- Private Functions ----- //

@@ -30,7 +30,7 @@ namespace PE
 			m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovementPLAN::OnMouseRelease, this);
 		
 			// reset to max energy
-			p_data->catEnergy = p_data->catMaxEnergy; 
+			CatScript::SetCurrentEnergyLevel(CatScript::GetMaximumEnergyLevel());
 
 			// Clear all the path data
 			p_data->pathPositions.clear();
@@ -69,7 +69,7 @@ namespace PE
 			//}
 
 			// Check if the mouse has just been clicked
-			if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && p_data->catEnergy)
+			if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && CatScript::GetCurrentEnergyLevel())
 			{
 					// Get the position of the cat
 					float mouseX{}, mouseY{};
@@ -89,7 +89,7 @@ namespace PE
 			// If the mouse is being pressed
 			if (m_mouseClick && m_pathBeingDrawn)
 			{
-					if(p_data->catEnergy) // Check if the player has sufficient energy
+					if(CatScript::GetCurrentEnergyLevel()) // Check if the player has sufficient energy
 					{
 							// Get the mouse position
 							float mouseX{}, mouseY{};
@@ -170,11 +170,11 @@ namespace PE
 		bool CatMovementPLAN::AddPathNode(vec2 const& r_nodePosition)
 		{
 				std::cout << "AddPathNode at " << r_nodePosition.x << ", " << r_nodePosition.y 
-						<< ", energy: " << p_data->catEnergy << "\n";
+						<< ", energy: " << CatScript::GetCurrentEnergyLevel() << "\n";
 
 				// Check if the player has sufficient energy left
 				if (p_data->pathPositions.size() == p_data->pathQuads.size()) {
-						p_data->catEnergy = 0;
+						CatScript::SetCurrentEnergyLevel(0);
 						return false;
 				}
 
@@ -187,7 +187,7 @@ namespace PE
 				p_data->pathPositions.emplace_back(r_nodePosition);
 
 				// Reduce the player's energy
-			  p_data->catEnergy = p_data->catMaxEnergy - p_data->pathPositions.size();
+				CatScript::SetCurrentEnergyLevel(CatScript::GetMaximumEnergyLevel() - static_cast<int>(p_data->pathPositions.size()));
 
 				return true;
 		}

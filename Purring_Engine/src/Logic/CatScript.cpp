@@ -33,6 +33,10 @@
 
 namespace PE
 {
+	int CatScript::catEnergy{};  // Current energy level of the cat
+	int CatScript::catMaxEnergy{ 21 }; // Maximum energy of the cat
+
+
 	// ----- Destructor ----- //
 	CatScript::~CatScript()
 	{
@@ -63,9 +67,9 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
 		// Create as many entities to visualise the player path nodes  
 		// such that there is one node per energy level
-		m_scriptData[id].pathPositions.reserve(m_scriptData[id].catMaxEnergy);
-		m_scriptData[id].pathQuads.reserve(m_scriptData[id].catMaxEnergy);
-		for (std::size_t i{}; i < m_scriptData[id].catMaxEnergy; ++i)
+		m_scriptData[id].pathPositions.reserve(CatScript::GetMaximumEnergyLevel());
+		m_scriptData[id].pathQuads.reserve(CatScript::GetMaximumEnergyLevel());
+		for (std::size_t i{}; i < CatScript::GetMaximumEnergyLevel(); ++i)
 		{
 			CreatePathNode(id);
 		}
@@ -177,6 +181,9 @@ namespace PE
 
 		m_scriptData[id].shouldChangeState = false;
 		m_scriptData[id].timeBeforeChangingState = 0.f;
+
+		// Set the cat max energy to the value set in the editor
+		catMaxEnergy = m_scriptData[id].catMaxEnergy;
 	}
 
 	void CatScript::OnDetach(EntityID id)
