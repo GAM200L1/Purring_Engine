@@ -3417,9 +3417,8 @@ namespace PE {
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
-		if (
-			ImGui::Button("Stop")
-			) {
+		if (ImGui::Button("Stop")) 
+		{
 			GameStateManager::GetInstance().ResetDefaultState();
 			m_showEditor = true;
 			toDisable = true;

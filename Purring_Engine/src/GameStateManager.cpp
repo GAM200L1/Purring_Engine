@@ -60,9 +60,7 @@ namespace PE
 
 	void GameStateManager::SetAttackState(EntityID)
 	{
-		if (m_currentGameState != GameStates::EXECUTE)
-			m_prevGameState = m_currentGameState;
-		m_currentGameState = GameStates::EXECUTE;
+		std::cout << (int)GameStateManager::GetInstance().GetGameState() << std::endl;
 	}
 
 	void GameStateManager::ResetDefaultState()

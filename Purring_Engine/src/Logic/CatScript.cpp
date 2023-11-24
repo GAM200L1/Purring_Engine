@@ -88,13 +88,13 @@ namespace PE
 		{
       // if player is planning movement, set animation to idle(?)
 			// Check if the state should be changed
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
 			{
-					TriggerStateChange(id); // immediate state change
-					if (CheckShouldStateChange(id, deltaTime))
-					{
-							m_scriptData[id].p_stateManager->ChangeState(new CatMovementEXECUTE{}, id);
-					}
+				TriggerStateChange(id); // immediate state change
+				if (CheckShouldStateChange(id, deltaTime))
+				{
+						m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
+				}
 			}
     }
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")

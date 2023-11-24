@@ -35,18 +35,9 @@
 
 namespace PE
 {
-	//! Enum denoting cardinal directions for attack
-	enum EnumCatAttackDirection
-	{
-		NONE = 0,
-		EAST = 1,
-		NORTH = 2,
-		WEST = 3,
-		SOUTH = 4
-	};
 
 	//! struct with variables needed by cat scripts
-	struct CatScriptData
+	struct FollowerCatScriptData
 	{
 		// reference entities
 		EntityID catID{ 0 };
@@ -81,17 +72,17 @@ namespace PE
 
 
 	// ----- CAT SCRIPT ----- //
-	class CatScript : public Script
+	class FollowerCatScript : public Script
 	{
 	public:
 		// ----- Public Variables ------ //
 
-		std::map<EntityID, CatScriptData> m_scriptData;
+		std::map<EntityID, FollowerCatScriptData> m_scriptData;
 
 	public:
 
 		// ----- Destructor ----- //
-		virtual ~CatScript();
+		virtual ~FollowerCatScript();
 
 		// ----- Public Functions ----- //
 		virtual void Init(EntityID id);
@@ -130,7 +121,7 @@ namespace PE
 
 
 		// ----- Getters/RTTR ----- //
-		std::map<EntityID, CatScriptData>& GetScriptData(){ return m_scriptData; }
+		std::map<EntityID, FollowerCatScriptData>& GetScriptData(){ return m_scriptData; }
 
 		rttr::instance GetScriptData(EntityID id){ return rttr::instance(m_scriptData.at(id)); }
 	

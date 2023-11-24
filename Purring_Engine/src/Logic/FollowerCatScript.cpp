@@ -26,6 +26,7 @@
 
 #include "prpch.h"
 #include "CatScript.h"
+#include "FollowerCatScript.h"
 #include "CatAttackScript.h"
 #include "CatMovementScript.h"
 #include "Data/SerializationManager.h"
@@ -34,7 +35,7 @@
 namespace PE
 {
 	// ----- Destructor ----- //
-	CatScript::~CatScript()
+	FollowerCatScript::~FollowerCatScript()
 	{
 			for (auto& [key, value] : m_scriptData)
 			{
@@ -43,7 +44,7 @@ namespace PE
 	}
 
 	// ----- Public Functions ----- //
-	void CatScript::Init(EntityID id)
+	void FollowerCatScript::Init(EntityID id)
 	{
 		m_scriptData[id].catID = id;
 		// Make a statemanager and set the starting state
@@ -71,7 +72,7 @@ namespace PE
 		}
 	}
 
-	void CatScript::Update(EntityID id, float deltaTime)
+	void FollowerCatScript::Update(EntityID id, float deltaTime)
 	{
 		if (!m_scriptData[id].p_stateManager) 
 		{
@@ -102,7 +103,7 @@ namespace PE
 		}
 	}
 
-	void CatScript::OnAttach(EntityID id)
+	void FollowerCatScript::OnAttach(EntityID id)
 	{
 		// check if the given entity has transform, rigidbody, and collider. if it does not, assign it one
 		if (!EntityManager::GetInstance().Has<Transform>(id))
@@ -122,16 +123,16 @@ namespace PE
 
 		if (m_scriptData.find(id) == m_scriptData.end())
 		{
-				m_scriptData[id] = CatScriptData{};
+				m_scriptData[id] = FollowerCatScriptData{};
 		}
 		else
 		{
 				delete m_scriptData[id].p_stateManager;
-				m_scriptData[id] = CatScriptData{};
+				m_scriptData[id] = FollowerCatScriptData{};
 		}
 	}
 
-	void CatScript::OnDetach(EntityID id)
+	void FollowerCatScript::OnDetach(EntityID id)
 	{
 		if (m_scriptData.find(id) != m_scriptData.end())
 		{
@@ -141,7 +142,7 @@ namespace PE
 	}		
 		
 		
-	void CatScript::MakeStateManager(EntityID id)
+	void FollowerCatScript::MakeStateManager(EntityID id)
 	{
 		if (m_scriptData[id].p_stateManager) { return; }
 
@@ -150,7 +151,7 @@ namespace PE
 	}
 
 
-	void CatScript::ToggleEntity(EntityID id, bool setToActive)
+	void FollowerCatScript::ToggleEntity(EntityID id, bool setToActive)
 	{
 			// Exit if the entity is not valid
 			if (!EntityManager::GetInstance().IsEntityValid(id)) { return; }
@@ -160,7 +161,7 @@ namespace PE
 	}
 
 
-	void CatScript::PositionEntity(EntityID const transformId, vec2 const& r_position)
+	void FollowerCatScript::PositionEntity(EntityID const transformId, vec2 const& r_position)
 	{
 			try
 			{
@@ -171,7 +172,7 @@ namespace PE
 	}
 
 
-	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
+	void FollowerCatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);
 
@@ -215,7 +216,7 @@ namespace PE
 		m_scriptData[id].telegraphIDs.emplace(dir, telegraphID);
 	}
 
-	void CatScript::CreatePathNode(EntityID id)
+	void FollowerCatScript::CreatePathNode(EntityID id)
 	{
 		// create the east direction entity
 		EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Graphics::Renderer>() };
@@ -232,7 +233,7 @@ namespace PE
 		std::cout << "CreatePathNode(" << id << ") created " << nodeId << "\n";
 	}
 
-	void CatScript::ResetValues(EntityID id)
+	void FollowerCatScript::ResetValues(EntityID id)
 	{
 		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
 		{
