@@ -64,9 +64,6 @@ namespace PE {
 		 \brief			Set current gamestate to pause and previous gamestate to movement
 		*************************************************************************************/
 		void ResetDefaultState();
-		
-		// temp
-		void SetAttackState(EntityID = -1);
 
 		/*!***********************************************************************************
 		 \brief			Get the current game state
