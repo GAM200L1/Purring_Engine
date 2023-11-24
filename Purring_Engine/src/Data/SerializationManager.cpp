@@ -547,6 +547,8 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                 {
                     for (auto& prop : rttr::type::get_by_name(str).get_properties())
                     {
+                        if (!data.contains(prop.get_name().to_string().c_str()))
+                            continue;
                         if (prop.get_type().get_name() == "float")
                         {
                             float val = data[prop.get_name().to_string().c_str()].get<float>();
