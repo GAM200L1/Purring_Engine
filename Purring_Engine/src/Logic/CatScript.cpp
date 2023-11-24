@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     CatAttackScript.h
+ \file     CatAttackScript.cpp
  \date     15-11-2023
 
  \author               Liew Yeni
@@ -22,8 +22,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
 *************************************************************************************/
-#pragma once
-
 #include "prpch.h"
 #include "CatScript.h"
 #include "CatAttackScript.h"
