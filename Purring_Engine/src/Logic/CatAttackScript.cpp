@@ -37,6 +37,7 @@ namespace PE
 		m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatAttackPLAN::CatInTelegraph, this);
 		m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatAttackPLAN::CatInTelegraph, this);
 		m_mouseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatAttackPLAN::OnMouseClick, this);
+
 	}
 	
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
@@ -47,7 +48,16 @@ namespace PE
 		vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
 
 		// if havent checked if the telegraphs are intersecting with the cats, go over this update (it should check after)
-		if (!m_checkedIgnored) { return; }
+		if (!m_checkedIgnored) 
+		{ 
+			for (auto const& [attackDirection, boxID] : p_data->telegraphIDs)
+			{
+				CatScript::ToggleEntity(boxID, false);
+				EntityManager::GetInstance().Get<Graphics::Renderer>(boxID).SetColor(m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, 1.f);
+			}
+			m_checkedIgnored = true;
+			return; 
+		}
 		
 		// if in attack planning phase, allow player to select a cat and plan that cats attacks
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
@@ -103,6 +113,20 @@ namespace PE
 			}
 			else
 			{
+				if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
+				{
+					// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
+					m_showBoxes = true;
+					p_data->attackDirection = EnumCatAttackDirection::NONE;
+
+					for (auto const& telegraph : p_data->telegraphIDs)
+					{
+						if (!m_ignoresTelegraphs.count(telegraph.second))
+							CatScript::ToggleEntity(telegraph.second, true);
+						else
+							CatScript::ToggleEntity(telegraph.second, false);
+					}
+				}
 				if (p_data->attackDirection != EnumCatAttackDirection::NONE)
 				{
 					AABBCollider const& telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(p_data->telegraphIDs[p_data->attackDirection]).colliderVariant);
@@ -119,31 +143,20 @@ namespace PE
 						}
 					}
 				}
-				if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
-				{
-					// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
-					m_showBoxes = true;
-					p_data->attackDirection = EnumCatAttackDirection::NONE;
-
-					for (auto const& telegraph : p_data->telegraphIDs)
-					{
-						if (!m_ignoresTelegraphs.count(telegraph.second))
-							CatScript::ToggleEntity(telegraph.second, true);
-						else
-							CatScript::ToggleEntity(telegraph.second, false);
-					}
-				}
 			}			
 		}
 		m_mouseClick = false;
 	}
 	
-	void CatAttackPLAN::StateExit(EntityID id)
+	void CatAttackPLAN::StateCleanUp()
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
 		REMOVE_MOUSE_EVENT_LISTENER(m_mouseEventListener);
+	}
 
+	void CatAttackPLAN::StateExit(EntityID id)
+	{
 		for (auto const& telegraph : p_data->telegraphIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
@@ -188,10 +201,6 @@ namespace PE
 				{
 					m_ignoresTelegraphs.emplace(telegraphID);
 				}
-
-				// sets entities back to false once this is checked
-				CatScript::ToggleEntity(telegraphID, false);
-				EntityManager::GetInstance().Get<Graphics::Renderer>(telegraphID).SetColor(m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, 1.f);
 			}
 		}
 		else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
@@ -207,13 +216,9 @@ namespace PE
 				{
 					m_ignoresTelegraphs.emplace(telegraphID);
 				}
-
-				// sets entities back to false once this is checked
-				CatScript::ToggleEntity(telegraphID, false);
-				EntityManager::GetInstance().Get<Graphics::Renderer>(telegraphID).SetColor(m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, 1.f);
 			}
 		}
-		m_checkedIgnored = true;
+		//m_checkedIgnored = true;
 	}
 
 
@@ -281,16 +286,20 @@ namespace PE
 			}
 			else
 			{
-				GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id, 1.f);
+				GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id);
 				m_bulletCollided = false;
 				projectileFired = false;
 			}
 		}
 	}
 
-	void CatAttackEXECUTE::StateExit(EntityID id)
+	void CatAttackEXECUTE::StateCleanUp()
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
+	}
+
+	void CatAttackEXECUTE::StateExit(EntityID id)
+	{
 		// resets attack direction selection
 		p_data->attackDirection = EnumCatAttackDirection::NONE;
 		CatScript::ToggleEntity(p_data->projectileID, false);
@@ -308,35 +317,23 @@ namespace PE
 			{
 				collidedEntities.first = OCEE.Entity1;
 				collidedEntities.second = OCEE.Entity2;
-
-				// temp
-				CatScript::ToggleEntity(p_data->projectileID, false);
-				m_bulletCollided = true;
 			}
 			else if (OCEE.Entity2 == p_data->projectileID)
 			{
 				collidedEntities.first = OCEE.Entity2;
 				collidedEntities.second = OCEE.Entity1;
-
-				// temp
-				CatScript::ToggleEntity(p_data->projectileID, false);
-				m_bulletCollided = true;
 			}
-		}
 
-		/*
-		if (EntityManager::GetInstance().Has<ScriptComponent>(collidedEntities.second))
-		{
-			for (auto const& [scriptName, scriptState] : EntityManager::GetInstance().Get<ScriptComponent>(collidedEntities.second).m_scriptKeys)
+			if (EntityManager::GetInstance().Has<ScriptComponent>(collidedEntities.second))
 			{
-				if (scriptName == "RatScript")
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(collidedEntities.second).name.find("Rat") != std::string::npos)
 				{
 					EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
 					m_bulletCollided = true;
 					return;
 				}
 			}
-			return;
-		}*/
+		}
+
 	}
 }

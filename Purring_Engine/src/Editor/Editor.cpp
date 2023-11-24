@@ -3871,7 +3871,7 @@ namespace PE {
 				if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
 					|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight)
 				{
-					std::cout << "is outside viewport";
+					
 				}
 				else
 				{

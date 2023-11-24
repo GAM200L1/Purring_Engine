@@ -30,6 +30,8 @@ namespace PE
 
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 
+		virtual void StateCleanUp();
+
 		virtual void StateExit(EntityID id) override;
 
 		/*!***********************************************************************************
@@ -78,6 +80,9 @@ namespace PE
 		*************************************************************************************/
 		void OnMouseRelease(const Event<MouseEvents>& r_mouseEvent);
 
+		void OnCollisionWithRat(const Event<CollisionEvents>& r_TE);
+
+		void ResetDrawnPath();
 
 		// ----- Getter ----- //
 		virtual std::string_view GetName() override { return "MovementPLAN"; }
@@ -85,10 +90,11 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		CatScriptData* p_data;
-		int m_clickEventListener{}, m_releaseEventListener{}; // Stores the handler for the mouse click and release events
+		int m_clickEventListener{}, m_releaseEventListener{}, m_collisionEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
 		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
 		bool m_mouseClickPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
+		bool m_invalidPath{ false };
 	};
 
 
@@ -103,6 +109,8 @@ namespace PE
 		virtual void StateEnter(EntityID id) override;
 
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
+
+		virtual void StateCleanUp();
 
 		virtual void StateExit(EntityID id) override;
 

@@ -26,32 +26,12 @@ namespace PE
 		{
 			std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 			p_data = GETSCRIPTDATA(CatScript, id);
+			EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
 			m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatMovementPLAN::OnMouseClick, this);
 			m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovementPLAN::OnMouseRelease, this);
-		
-			// reset to max energy
-			p_data->catEnergy = p_data->catMaxEnergy; 
+			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovementPLAN::OnCollisionWithRat, this);
 
-			// Clear all the path data
-			p_data->pathPositions.clear();
-
-			// Disable all the path nodes
-			for (EntityID const& nodeId : p_data->pathQuads)
-			{
-					CatScript::ToggleEntity(nodeId, false);
-			}
-
-			// Teleport the player to the start of the path
-			try
-			{
-					Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
-					p_data->pathPositions.emplace_back(r_transform.position);
-			}
-			catch (...) 
-			{
-					p_data->pathPositions.emplace_back(vec2{ 0.f, 0.f });
-					return; 
-			}
+			ResetDrawnPath();
 		}
 
 		void CatMovementPLAN::StateUpdate(EntityID id, float deltaTime)
@@ -68,8 +48,18 @@ namespace PE
 			//		std::cout << "Mouse clicked\n";
 			//}
 
+			if (m_invalidPath && !m_mouseClick && m_mouseClickPrevious)
+			{
+				ResetDrawnPath();
+				m_invalidPath = false;
+				for (auto nodeID : p_data->pathQuads)
+				{
+					EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(1.f, 1.f, 1.f, 1.f);
+				}
+			}
+
 			// Check if the mouse has just been clicked
-			if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && p_data->catEnergy)
+			if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && CatScript::GetCurrentEnergyLevel())
 			{
 					// Get the position of the cat
 					float mouseX{}, mouseY{};
@@ -89,38 +79,43 @@ namespace PE
 			// If the mouse is being pressed
 			if (m_mouseClick && m_pathBeingDrawn)
 			{
-					if(p_data->catEnergy) // Check if the player has sufficient energy
-					{
-							// Get the mouse position
-							float mouseX{}, mouseY{};
-							InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
-							vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
+				if(CatScript::GetCurrentEnergyLevel()) // Check if the player has sufficient energy
+				{
+					// Get the mouse position
+					float mouseX{}, mouseY{};
+					InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
+					vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
 
-							// Attempt to create a node at the position of the cursor
-							// and position the cat where the node is
-							CatScript::PositionEntity(id, AttemptToDrawPath(cursorPosition));
-					}
-					else // Path is being drawn but the player has run out of energy
-					{
-							// End the path drawing
-							EndPathDrawing(id);
-					}
+					// Attempt to create a node at the position of the cursor
+					// and position the cat where the node is
+					CatScript::PositionEntity(id, AttemptToDrawPath(cursorPosition));
+				}
+				else // Path is being drawn but the player has run out of energy
+				{
+					// End the path drawing
+					EndPathDrawing(id);
+				}
 			} 
 			else if (!m_mouseClick && m_mouseClickPrevious && m_pathBeingDrawn)
 			{
-					// The mouse has been released, so end the path
-					EndPathDrawing(id);
+				// The mouse has been released, so end the path
+				EndPathDrawing(id);
 			}
 			// Store the current frame's mouse click status
 			m_mouseClickPrevious = m_mouseClick;
 		}
 
+		void CatMovementPLAN::StateCleanUp()
+		{
+			REMOVE_MOUSE_EVENT_LISTENER(m_clickEventListener);
+			REMOVE_MOUSE_EVENT_LISTENER(m_releaseEventListener);
+			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+		}
+
 		void CatMovementPLAN::StateExit(EntityID id)
 		{
 			std::cout << "CatMovementPLAN::StateExit( " << id << " )\n";
-			REMOVE_MOUSE_EVENT_LISTENER(m_clickEventListener);
-			REMOVE_MOUSE_EVENT_LISTENER(m_releaseEventListener);
-
+			EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
 			EndPathDrawing(id);
 		}
 
@@ -170,11 +165,11 @@ namespace PE
 		bool CatMovementPLAN::AddPathNode(vec2 const& r_nodePosition)
 		{
 				std::cout << "AddPathNode at " << r_nodePosition.x << ", " << r_nodePosition.y 
-						<< ", energy: " << p_data->catEnergy << "\n";
+						<< ", energy: " << CatScript::GetCurrentEnergyLevel() << "\n";
 
 				// Check if the player has sufficient energy left
 				if (p_data->pathPositions.size() == p_data->pathQuads.size()) {
-						p_data->catEnergy = 0;
+						CatScript::SetCurrentEnergyLevel(0);
 						return false;
 				}
 
@@ -187,7 +182,7 @@ namespace PE
 				p_data->pathPositions.emplace_back(r_nodePosition);
 
 				// Reduce the player's energy
-			  p_data->catEnergy = p_data->catMaxEnergy - p_data->pathPositions.size();
+				CatScript::SetCurrentEnergyLevel(CatScript::GetMaximumEnergyLevel() - static_cast<int>(p_data->pathPositions.size()));
 
 				return true;
 		}
@@ -202,19 +197,71 @@ namespace PE
 				CatScript::PositionEntity(id, p_data->pathPositions.back());
 		}
 
-
-		void CatMovementPLAN::OnMouseClick(const Event<MouseEvents>&)
+		void CatMovementPLAN::ResetDrawnPath()
 		{
-				m_mouseClick = true;
+			// reset to max energy
+			CatScript::SetCurrentEnergyLevel(CatScript::GetMaximumEnergyLevel());
+
+			// Clear all the path data
+			if (!p_data->pathPositions.empty())
+				CatScript::PositionEntity(p_data->catID, p_data->pathPositions.front());
+
+			p_data->pathPositions.clear();
+
+			// Disable all the path nodes
+			for (EntityID const& nodeId : p_data->pathQuads)
+			{
+				CatScript::ToggleEntity(nodeId, false);
+			}
+
+			// Teleport the player to the start of the path
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(p_data->catID) };
+				p_data->pathPositions.emplace_back(r_transform.position);
+			}
+			catch (...)
+			{
+				p_data->pathPositions.emplace_back(vec2{ 0.f, 0.f });
+				return;
+			}
+		}
+
+		void CatMovementPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
+		{
+			if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
+			{
+				MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
+				if (MBPE.button == 1 && !p_data->pathPositions.empty())
+					ResetDrawnPath();
+				else
+					m_mouseClick = true;
+			}
 		}
 
 
-		void CatMovementPLAN::OnMouseRelease(const Event<MouseEvents>&)
+		void CatMovementPLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
 		{
+			if (r_ME.GetType() == MouseEvents::MouseButtonReleased)
 				m_mouseClick = false;
 		}
 
-
+		void CatMovementPLAN::OnCollisionWithRat(const Event<CollisionEvents>& r_CE)
+		{
+			if (r_CE.GetType() == CollisionEvents::OnTriggerStay)
+			{
+				OnTriggerStayEvent OCEE = dynamic_cast<const OnTriggerStayEvent&>(r_CE);
+				if ((OCEE.Entity1 == p_data->catID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity2).name.find("Rat") != std::string::npos)
+					|| (OCEE.Entity2 == p_data->catID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity1).name.find("Rat") != std::string::npos))
+				{
+					for (auto nodeID : p_data->pathQuads)
+					{
+						EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(1.f, 0.f, 0.f, 1.f);
+					}
+					m_invalidPath = true;
+				}
+			}
+		}
 
 
 		// ----- Movement Execution Functions ----- //
@@ -224,6 +271,7 @@ namespace PE
 		  p_data = GETSCRIPTDATA(CatScript, id);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovementEXECUTE::OnCollisionEnter, this);
 			CatScript::PositionEntity(id, p_data->pathPositions.front());
+			p_data->currentPositionIndex = 0;
 			m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 		}
 
@@ -237,6 +285,11 @@ namespace PE
 
 			if (!m_doneMoving)
 			{
+					if(p_data->currentPositionIndex >= p_data->pathPositions.size())
+					{
+							m_doneMoving = true;
+					}
+
 					vec2 currentCatPosition{};
 					try
 					{
@@ -287,15 +340,21 @@ namespace PE
 			else
 			{
 					// Wait a second before changing state
-					GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id, 1.f);
+					GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id, 0.5f);
 			}
+		}
+
+		void CatMovementEXECUTE::StateCleanUp()
+		{
+			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 		}
 
 		void CatMovementEXECUTE::StateExit(EntityID id)  
 		{
 				std::cout << "CatMovementEXECUTE::StateExit(" << id << ")\n";
-				REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+				
 				StopMoving(id);
+				p_data->pathPositions.clear();
 		}
 
 
