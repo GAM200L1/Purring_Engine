@@ -419,10 +419,6 @@ namespace PE {
 				ImGui::SameLine();
 				if (ImGui::Button("No"))
 				{
-					m_isPrefabMode = false;
-					ClearObjectList();
-					serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-					engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					ImGui::ClosePopupToLevel(0, true);
 				}
 
