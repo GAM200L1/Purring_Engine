@@ -43,9 +43,9 @@ namespace PE
     {
         // Check the file extension
         std::string fileExtension = m_audioKey.substr(m_audioKey.find_last_of('.') + 1);
-        if (fileExtension != "mp3")
+        if (fileExtension != "wav")
         {
-            AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.mp3', but got '." + fileExtension + "' for id: " + m_audioKey, "File Type Error");
+            AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '." + fileExtension + "' for id: " + m_audioKey, "File Type Error");
             return;
         }
 

@@ -337,7 +337,7 @@
             "Entity": {
                 "components": {
                     "AudioComponent": {
-                        "audioKey": "audioSFX_sound1.mp3",
+                        "audioKey": "vo_Cat_Selected4.wav",
                         "loop": false
                     },
                     "EntityDescriptor": {
