@@ -67,7 +67,7 @@ namespace PE
 		float bulletDelay{ 0.7f };
 		float bulletRange{ 3.f };
 		float bulletLifeTime{ 0.1f };
-		float bulletForce{ 1500.f };
+		float bulletForce{ 1000.f };
 
 		// movement variables
 		float minDistance{ 30.f }; float maxDistance{ 50.f };

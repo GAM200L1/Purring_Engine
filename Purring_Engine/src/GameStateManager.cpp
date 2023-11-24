@@ -129,7 +129,6 @@ namespace PE
 		REGISTER_UI_FUNCTION(ResumeState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(IncrementGameState, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(DecrementGameState, PE::GameStateManager);
-		REGISTER_UI_FUNCTION(SetAttackState, PE::GameStateManager);
 	}
 
 
