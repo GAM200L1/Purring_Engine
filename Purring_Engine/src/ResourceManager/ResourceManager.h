@@ -110,12 +110,28 @@ namespace PE
         void LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
+            \brief Loads audio from file and inserts into Sounds map container.
+
+            \param[in] r_key Name of audio file.
+            \param[in] r_filePath File path of audio.
+        *************************************************************************************/
+        std::string ResourceManager::LoadDraggedAudio(std::string const& r_filePath);
+
+        /*!***********************************************************************************
             \brief Loads font from file and inserts into Sounds map container.
 
             \param[in] r_key Name of font file.
             \param[in] r_filePath File path of font.
         *************************************************************************************/
         void LoadFontFromFile(std::string const& r_key, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Loads animation from file and inserts into Animations map container.
+
+            \param[in] r_key Name of animation file.
+            \param[in] r_filePath File path of animation.
+        *************************************************************************************/
+        void LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.
@@ -125,6 +141,15 @@ namespace PE
             \return Texture object in map.
         *************************************************************************************/
         std::shared_ptr<Graphics::Texture> GetTexture(std::string const& r_name);
+
+        /*!***********************************************************************************
+            \brief Gets the animation stored in the resource manager.
+            
+            \param[in] r_name Name of animation
+                                
+            \return Animation in map.
+        *************************************************************************************/
+        std::shared_ptr<Animation> GetAnimation(std::string const& r_name);
     private:
         // constructor
         ResourceManager()
@@ -133,4 +158,3 @@ namespace PE
         }
     };
 }
-

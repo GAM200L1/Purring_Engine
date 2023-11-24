@@ -312,6 +312,9 @@ namespace PE
 		*************************************************************************************/
 		bool InitializeTextComponent(const EntityID& r_id, void* p_data);
 
+		bool InitializeAudioComponent(const EntityID& r_id, void* p_data);
+
+
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap
 		 

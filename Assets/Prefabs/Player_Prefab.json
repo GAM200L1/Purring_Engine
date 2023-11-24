@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AnimationComponent": {
-                "CurrentAnimationIndex": "playerWalk"
+                "CurrentAnimationID": "playerWalk"
             },
             "Collider": {
                 "data": {

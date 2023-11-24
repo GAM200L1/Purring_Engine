@@ -130,14 +130,14 @@ namespace PE
 
              \param[in] maxUV Minimum UV coordinates to set m_minUV to
             *************************************************************************************/
-            void Renderer::SetUVCoordinatesMin(glm::vec2 const& minUV);
+            void Renderer::SetUVCoordinatesMin(vec2 const& minUV);
 
             /*!***********************************************************************************
              \brief Set Maximum UV coordinates of the renderer texture.
 
              \param[in] maxUV Maximum UV coordinates to set m_maxUV to
             *************************************************************************************/
-            void Renderer::SetUVCoordinatesMax(glm::vec2 const& maxUV);
+            void Renderer::SetUVCoordinatesMax(vec2 const& maxUV);
 
             /*!***********************************************************************************
              \brief Serializes the data attached to this renderer.

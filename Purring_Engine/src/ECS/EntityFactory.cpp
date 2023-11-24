@@ -19,6 +19,7 @@
 #include "GUISystem.h"
 #include "Graphics/GUIRenderer.h"
 #include "Graphics/Text.h"
+#include "AudioManager/AudioComponent.h"
 extern Logger engine_logger;
 
 
@@ -70,18 +71,19 @@ namespace PE
 	
 	void EntityFactory::LoadComponents()
 	{
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<EntityDescriptor>(), &EntityFactory::InitializeED);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<RigidBody>(), &EntityFactory::InitializeRigidBody);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Collider>(), &EntityFactory::InitializeCollider);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Transform>(), &EntityFactory::InitializeTransform);
-		//m_initializeComponent.emplace(p_entityManager->GetComponentID<PlayerStats>(), &EntityFactory::InitializePlayerStats);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(), &EntityFactory::InitializeRenderer);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(), &EntityFactory::InitializeCamera);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(), &EntityFactory::InitializeGUI);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(), &EntityFactory::InitializeAnimationComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<EntityDescriptor>(),		&EntityFactory::InitializeED);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<RigidBody>(),				&EntityFactory::InitializeRigidBody);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Collider>(),				&EntityFactory::InitializeCollider);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Transform>(),				&EntityFactory::InitializeTransform);
+		//m_initializeComponent.emplace(p_entityManager->GetComponentID<PlayerStats>(),			&EntityFactory::InitializePlayerStats);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(),	&EntityFactory::InitializeRenderer);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(),		&EntityFactory::InitializeScriptComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(),		&EntityFactory::InitializeCamera);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(),					&EntityFactory::InitializeGUI);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(),	&EntityFactory::InitializeAnimationComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(), &EntityFactory::InitializeTextComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(),			&EntityFactory::InitializeTextComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<AudioComponent>(),		&EntityFactory::InitializeAudioComponent);
 	}
 
 
@@ -271,7 +273,6 @@ namespace PE
 		return true;
 	}
 
-
 	bool EntityFactory::InitializeAnimationComponent(const EntityID& r_id, void* p_data)
 	{
 		EntityManager::GetInstance().Get<AnimationComponent>(r_id) =
@@ -291,6 +292,18 @@ namespace PE
 			*reinterpret_cast<TextComponent*>(p_data);
 		return true;
 	}
+
+	bool EntityFactory::InitializeAudioComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<AudioComponent>(r_id) =
+			(p_data == nullptr) ?
+			AudioComponent()
+			:
+			*reinterpret_cast<AudioComponent*>(p_data);
+		return true;
+	}
+
+	
 
 	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)
 	{

@@ -43,14 +43,14 @@ namespace PE
             m_textureKey = r_newKey;
         }
 
-        void Renderer::SetUVCoordinatesMin(glm::vec2 const& minUV)
+        void Renderer::SetUVCoordinatesMin(vec2 const& minUV)
         {
-            m_minUV = minUV;
+            m_minUV = glm::vec2{ minUV.x, minUV.y };
         }
 
-        void Renderer::SetUVCoordinatesMax(glm::vec2 const& maxUV)
+        void Renderer::SetUVCoordinatesMax(vec2 const& maxUV)
         {
-            m_maxUV = maxUV;
+            m_maxUV = glm::vec2{ maxUV.x, maxUV.y };
         }
 
 

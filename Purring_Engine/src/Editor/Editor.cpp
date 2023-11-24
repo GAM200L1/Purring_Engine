@@ -6,7 +6,7 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
- \par      code %:     95%
+ \par      code %:     90%
  \par      changes:    Defined all the logic for rendering the editor UI through ImGUI.
 
  \co-author            Krystal Yamin
@@ -14,6 +14,12 @@
  \par      code %:     5%
  \par      changes:    02-11-2023
                        Added object picking logic.
+
+ \co-author            Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho\@digipen.edu
+ \par      code %:     5%
+ \par      changes:    02-11-2023
+					   Added animation editor, collision layer matrix.
 
  \brief
 	cpp file containing the definition of the editor class, which contains 
@@ -26,6 +32,7 @@
 #include "Editor.h"
 #include "Memory/MemoryManager.h"
 #include "AudioManager/AudioManager.h"
+#include "AudioManager/AudioComponent.h"
 #include "Time/FrameRateTargetControl.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
@@ -50,6 +57,7 @@
 #include "Graphics/Text.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
+#include "Layers/CollisionLayer.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -79,6 +87,7 @@ namespace PE {
 			m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
 			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
 			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
+			m_showAnimationWindow = configJson["Editor"]["showAnimationWindow"].get<bool>();
 			m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
@@ -100,6 +109,7 @@ namespace PE {
 			m_showComponentWindow = true;
 			m_showResourceWindow = true;
 			m_showPerformanceWindow = false;
+			m_showAnimationWindow = false;
 			m_showPhysicsWindow = false;
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
@@ -128,8 +138,8 @@ namespace PE {
 		m_mouseInScene = false;
 		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
-		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
-		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
+		//REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
+		//REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
@@ -151,6 +161,7 @@ namespace PE {
 		configJson["Editor"]["showComponentWindow"] = m_showComponentWindow;
 		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
+		configJson["Editor"]["showAnimationWindow"] = m_showAnimationWindow;
 		configJson["Editor"]["showPhysicsWindow"] = m_showPhysicsWindow;
 		//show the entire gui 
 		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
@@ -232,12 +243,14 @@ namespace PE {
 		{
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetColor(255,0,0,255);
 		}
-		AudioManager::GetInstance().PlaySound("audio_sound1");
+		AudioComponent audioComponent;
+		audioComponent.PlayAudioSound("audio_sound1");
 	}
 
 	void Editor::PlayAudio2(EntityID)
 	{
-		AudioManager::GetInstance().PlaySound("audio_sound2");
+		AudioComponent audioComponent;
+		audioComponent.PlayAudioSound("audio_sound2");
 	}
 
 	void Editor::ClearObjectList()
@@ -347,6 +360,8 @@ namespace PE {
 
 			//performance window showing time used per system
 			if (m_showPerformanceWindow) ShowPerformanceWindow(&m_showPerformanceWindow);
+
+			if (m_showAnimationWindow) ShowAnimationWindow(&m_showAnimationWindow);
 
 			if (m_showPhysicsWindow) ShowPhysicsWindow(&m_showPhysicsWindow);
 
@@ -774,9 +789,11 @@ namespace PE {
 							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
 								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 						}
+						if (m_currentSelectedObject != -1)
 						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 
 						//create undo here
+						if (m_currentSelectedObject != -1)
 						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 						//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
@@ -808,33 +825,39 @@ namespace PE {
 			}
 			if (ImGui::BeginPopup("Object"))
 			{
-				if (ImGui::Selectable("Create Empty Object"))
+				if (ImGui::BeginMenu("Create Empty Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
-					m_undoStack.AddChange(new CreateObjectUndo(s_id));
-				}
-				//if (ImGui::Selectable("Create UI Object"))
-				//{
-					if (ImGui::BeginMenu("Create UI Object"))
+					if (ImGui::MenuItem("Create Empty Object"))
 					{
-						if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						ImGui::EndMenu();
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
-
+					if (ImGui::MenuItem("Create Audio Object"))
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Audio_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Create UI Object"))
+				{
+					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					ImGui::EndMenu();
+				}
 					//EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
 					//m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				//}
@@ -865,26 +888,26 @@ namespace PE {
 				ImGui::SeparatorText("Audio Test");
 				if (ImGui::Button("Play SFX 1"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound1");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound1");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Play SFX 2"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound2");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound2");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Play SFX 3"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound3");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound3");
 				}
 				if (ImGui::Button("Play Background Music"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
+					//AudioManager::GetInstance().PlayAudioSound("audio_backgroundMusic");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Stop All Audio"))
 				{
-					AudioManager::GetInstance().StopAllSounds();
+					//AudioManager::GetInstance().StopAllSounds();
 				}
 				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
 				{
@@ -1380,8 +1403,28 @@ namespace PE {
 									}
 									ImGui::Checkbox("Is Trigger", &EntityManager::GetInstance().Get<Collider>(entityID).isTrigger);
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+                                    
+                                   
+								    auto& collisionLayers{ CollisionLayerManager::GetInstance().GetCollisionLayers() };
+
+								    std::vector<const char*> layerNames;
+
+								    for (auto& collisionLayer : collisionLayers)
+								    {
+								    	layerNames.push_back(collisionLayer->GetCollisionLayerName().c_str());
+								    }
+
+								    int currentLayerIndex = static_cast<int>(EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex);
+								    ImGui::Text("Collision Layer: "); ImGui::SameLine();
+								    ImGui::SetNextItemWidth(200.0f);
+								    //set combo box for the different collider types
+								    if (ImGui::Combo("##Collision Layers", &currentLayerIndex, layerNames.data(), static_cast<unsigned>(layerNames.size())))
+								    {
+								    	EntityManager::GetInstance().Get<Collider>(entityID).collisionLayerIndex = currentLayerIndex;
+								    }
+							
 								}
-							}
+}
 						}
 
 						// ---------- RENDERER ---------- //
@@ -1960,7 +2003,8 @@ namespace PE {
 							}
 						}
 
-						// Animation component
+						// ---------- ANIMATION COMPONENT ---------- //
+
 						if (name == EntityManager::GetInstance().GetComponentID<AnimationComponent>() && EntityManager::GetInstance().Has<AnimationComponent>(entityID))
 						{
 							//if (ImGui::CollapsingHeader(name.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
@@ -1984,11 +2028,23 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f)); //add space
-								if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+
+								// setting animations
+								std::vector<const char*> key;
+								key.push_back("");
+
+								//to get all the animation keys for the entity
+								for (auto const& tmp : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
 								{
-									// setting textures
-									std::vector<const char*> key;
-									key.push_back("");
+									key.push_back(tmp.c_str());
+								}
+								int index{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationID())
+										break;
+									index++;
+								}
 
 									//to get all the keys
 									for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
@@ -2006,15 +2062,15 @@ namespace PE {
 									//create a combo box of texture ids
 									ImGui::SetNextItemWidth(200.0f);
 									if (!key.empty())
-									{
-										ImGui::Text("Animations: "); ImGui::SameLine();
-										ImGui::SetNextItemWidth(200.0f);
-										//set selected texture id
-										if (ImGui::Combo("##Animation", &index, key.data(), static_cast<int>(key.size())))
-										{
-											EntityManager::GetInstance().Get<AnimationComponent>(entityID).SetCurrentAnimationIndex(key[index]);
-										}
-									}
+								    {
+								    	ImGui::Text("Animations: "); ImGui::SameLine();
+									    ImGui::SetNextItemWidth(200.0f);
+								    	//set selected texture id
+								    	if (ImGui::Combo("##Animation", &index, key.data(), static_cast<int>(key.size())))
+								    	{
+								    		EntityManager::GetInstance().Get<AnimationComponent>(entityID).SetCurrentAnimationID(key[index]);
+								    	}
+								    }
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Separator();
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -2034,6 +2090,143 @@ namespace PE {
 									//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
 
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+								}
+							}
+						}
+
+						//// ---------- Audio Component ---------- //
+						if (name == EntityManager::GetInstance().GetComponentID<AudioComponent>())
+						{
+							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								AudioComponent audioComponent;
+								static bool isSoundPaused = false;
+								static bool isLooping = false;
+
+								// Vector of filepaths for audio files
+								std::vector<std::filesystem::path> audioFilePaths;
+								int index = -1;							// Initialize with -1 to indicate no selection
+								int i = 0;
+
+								for (auto it = ResourceManager::GetInstance().Sounds.begin(); it != ResourceManager::GetInstance().Sounds.end(); ++it, ++i)
+								{
+									audioFilePaths.emplace_back(it->first);
+									// If current entity's audio component is using this audio file, remember its index
+									if (it->first == EntityManager::GetInstance().Get<AudioComponent>(entityID).GetAudioKey())
+										index = i;
+								}
+
+								// Vector of the names of audio files
+								std::vector<std::string> loadedAudioKeys;
+
+								// Get the keys of audio already loaded by the resource manager
+								for (auto const& r_filepath : audioFilePaths)
+								{
+									loadedAudioKeys.emplace_back(r_filepath.filename().string());
+								}
+
+								// Placeholder combo box label
+								std::string comboBoxLabel = "Drag-in or Select an audio...";
+								if (index >= 0 && index < loadedAudioKeys.size())
+								{
+									comboBoxLabel = loadedAudioKeys[index];
+									currentSoundID = audioFilePaths[index].string();
+								}
+
+								if (!loadedAudioKeys.empty())
+								{
+									ImGui::Text("Audio: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(320.0f);
+									if (ImGui::BeginCombo("##Audio", comboBoxLabel.c_str()))
+									{
+										for (int n = 0; n < loadedAudioKeys.size(); ++n)
+										{
+											bool isSelected = (comboBoxLabel == loadedAudioKeys[n]);
+											if (ImGui::Selectable(loadedAudioKeys[n].c_str(), isSelected))
+											{
+												EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(audioFilePaths[n].string());
+												currentSoundID = audioFilePaths[n].string();
+												comboBoxLabel = loadedAudioKeys[n];
+												if (isSelected)
+												{
+													ImGui::SetItemDefaultFocus();
+												}
+											}
+										}
+										ImGui::EndCombo();
+									}
+
+									// Check if mouse is hovering over the texture preview for drag and drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("Audio", static_cast<int>(entityID));
+									}
+								}
+								// Audio playback controls
+								if (ImGui::Checkbox("Loop", &isLooping))
+								{
+									audioComponent.SetLoop(isLooping);
+								}
+
+
+								if (ImGui::Button("Play"))
+								{
+									std::cout << "[Editor] Play button pressed. Current Sound ID: " << currentSoundID << std::endl;
+									if (!currentSoundID.empty())
+									{
+										audioComponent.SetLoop(isLooping);
+										audioComponent.PlayAudioSound(currentSoundID);
+										isSoundPaused = false;
+									}
+								}
+
+								ImGui::SameLine();
+								if (isSoundPaused)
+								{
+									if (ImGui::Button("Resume"))
+									{
+										if (!currentSoundID.empty())
+										{
+											audioComponent.ResumeSound(currentSoundID);
+											isSoundPaused = false;
+										}
+									}
+								}
+								else
+								{
+									if (ImGui::Button("Pause"))
+									{
+										if (!currentSoundID.empty())
+										{
+											audioComponent.PauseSound(currentSoundID);
+											isSoundPaused = true;
+										}
+									}
+								}
+								ImGui::SameLine();
+								if (ImGui::Button("Stop"))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.StopSound(currentSoundID);
+									}
+								}
+
+								// Volume control for selected sound
+								static float volume = 1.0f;
+								if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.SetVolume(currentSoundID, volume);
+									}
+								}
+
+								// Global volume control (affecting all sounds)
+								static float globalVolume = 1.0f;
+								if (ImGui::SliderFloat("Global Volume", &globalVolume, 0.0f, 1.0f))
+								{
+									AudioManager::GetInstance().SetGlobalVolume(globalVolume);
 								}
 							}
 						}
@@ -2139,7 +2332,7 @@ namespace PE {
 									ImGui::Text("Change Color: "); ImGui::SameLine();
 									ImGui::ColorEdit4("##Change Color Text", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
 
-									EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor({ color.x, color.y, color.z, color.w });
+								    EntityManager::GetInstance().Get<TextComponent>(entityID).SetColor(color.x, color.y, color.z, color.w);
 
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
@@ -2215,7 +2408,7 @@ namespace PE {
 										}
 										else
 										{
-											it->second.NumberOfFollower = 5;
+											it->second.NumberOfFollower = 6;
 										}
 
 										for (int i = 0; i < it->second.NumberOfFollower; i++)
@@ -2358,6 +2551,13 @@ namespace PE {
 								else
 									AddErrorLog("ALREADY HAS ANIMATION");
 							}
+							if (ImGui::Selectable("Add Audio"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AudioComponent>() });
+								else
+									AddErrorLog("ALREADY HAS AUDIO");
+							}
 						}
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 
 						{
@@ -2466,7 +2666,7 @@ namespace PE {
 						std::string const extension{ m_files[n].filename().extension().string() };
 						if (extension == "")
 							icon = "../Assets/Icons/Directory_Icon.png";
-						else if (extension == ".mp3")
+						else if (extension == ".mp3" || extension == ".wav")
 							icon = "../Assets/Icons/Audio_Icon.png";
 						else if (extension == ".ttf")
 							icon = "../Assets/Icons/Font_Icon.png";
@@ -2496,7 +2696,7 @@ namespace PE {
 								std::string iconDraggedExtension = m_files[n].extension().string();
 								if (iconDraggedExtension == "")
 									iconDragged = "../Assets/Icons/Directory_Icon.png";
-								else if (iconDraggedExtension == ".mp3")
+								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav")
 									iconDragged = "../Assets/Icons/Audio_Icon.png";
 								else if (iconDraggedExtension == ".ttf")
 									iconDragged = "../Assets/Icons/Font_Icon.png";
@@ -2624,6 +2824,18 @@ namespace PE {
 									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
 								}
 							}
+							if (extension == ".mp3" || extension == ".wav")
+							{
+								std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
+								std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
+								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;								if (!newAudioKey.empty())
+								{
+									EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
+									this->currentSoundID = newAudioKey;  // Update currentSoundID
+									std::cout << "currentSoundID updated to: " << currentSoundID << std::endl;
+								}
+							}
+
 							// add remaining editable assets audio etc
 						}
 
@@ -2711,6 +2923,406 @@ namespace PE {
 			//		ImGui::EndTooltip();
 			//	}
 			//}
+			ImGui::End(); //imgui close
+		}
+	}
+
+	void Editor::ShowAnimationWindow(bool* p_active)
+	{
+		if (IsEditorActive())
+		if (!ImGui::Begin("Animation Editor", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
+		{
+			ImGui::End(); //imgui close
+		}
+		else
+		{
+			ImGui::SeparatorText("Rendering settings");
+			std::map<const char*, EntityID> entities;
+			std::vector<const char*> entityList;
+			std::vector<const char*> animationList;
+
+			static std::optional<EntityID> currentEntityID;
+			static std::string currentAnimationID;
+
+			int entityIndex{};
+			int animationIndex{};
+
+			// animation data
+			static float previewCurrentFrameTime;
+			static unsigned previewCurrentFrameIndex;
+			std::shared_ptr<Graphics::Texture> texture;
+			std::shared_ptr<Animation> currentAnimation;
+			int frameCount{};
+			int totalSprites{};
+			int frameRate{};
+			float animationDuration{};
+
+			// frame data
+			float frameTime{};
+			ImVec2 minUV;
+			ImVec2 maxUV;
+			int framesHeld{};
+
+			static bool playAnimation{ false };
+
+
+			// get all the entities with animation component
+			for (EntityID id : SceneView<AnimationComponent>())
+			{
+				entities[EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str()] = id;
+				entityList.push_back(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str());
+			}
+
+			std::vector<std::filesystem::path> animationFilePaths;
+			std::vector<std::string> loadedAnimationKeys;
+			// get all animations from resource manager
+			for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
+			{
+				animationFilePaths.emplace_back(it->first);
+			}
+
+			for(auto const& r_path : animationFilePaths)
+			{
+				loadedAnimationKeys.push_back(r_path.stem().string());
+			}
+
+			for (auto const& r_str : loadedAnimationKeys)
+			{
+				animationList.push_back(r_str.c_str());
+			}
+
+			// get index of current animation for combo box
+			for (auto const& r_path : animationFilePaths)
+			{
+				if (r_path.string() == currentAnimationID)
+					break;
+				++animationIndex;
+			}
+
+			// get index of current entity for combo box
+			for (std::string str : entityList)
+			{
+				if (currentEntityID.has_value())
+				{
+					if (str == EntityManager::GetInstance().Get<EntityDescriptor>(currentEntityID.value()).name)
+					break;
+				}
+				++entityIndex;
+			}
+
+			ImGui::SetNextItemWidth(300.f);
+			if (ImGui::Combo("Entity", &entityIndex, entityList.data(), static_cast<int>(entityList.size())))
+			{
+				currentEntityID = entities[entityList[entityIndex]];
+			}
+
+			ImGui::SetNextItemWidth(300.f);
+			if (ImGui::Combo("Animation", &animationIndex, animationList.data(), static_cast<int>(animationList.size())))
+			{
+				currentAnimationID = animationFilePaths[animationIndex].string();
+			}
+
+			if (ImGui::Button("Create Animation"))
+			{
+				// Get the file path using the file explorer
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+				// Check if filePath is not empty
+				if (!filePath.empty())
+				{
+					// format filepath to be relative to the Assets folder
+					std::replace(filePath.begin(), filePath.end(), '\\', '/');
+					filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + "_Anim.json";
+
+					// Create a new animation
+					currentAnimationID = AnimationManager::CreateAnimation(filePath);
+
+					// Serialize the current animation data to JSON
+					nlohmann::json serializedAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID)->ToJson();
+
+					serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
+					std::cout << "Animation created successfully at " << filePath << std::endl;
+				}
+				else
+				{
+					std::cerr << "No file path was selected for saving." << std::endl;
+				}
+			}
+
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::SeparatorText("Sprite Sheet");
+
+			// if there's animation to preview
+			if (currentAnimationID != "")
+			{
+				currentAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID);
+
+				// get max frames
+				frameCount = currentAnimation->GetFrameCount() ? currentAnimation->GetFrameCount() - 1 : 0;
+				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+				frameRate = currentAnimation->GetFrameRate();
+				animationDuration = currentAnimation->GetAnimationDuration();
+
+				// if animation has spritesheet, get the texture
+				if (currentAnimation->GetSpriteSheetKey() != "")
+				{
+					texture = ResourceManager::GetInstance().GetTexture(currentAnimation->GetSpriteSheetKey());
+
+					minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+							  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+					maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+							  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
+				}
+			}
+			else
+			{
+				// reset preview animation
+				previewCurrentFrameTime = 0.f;
+				previewCurrentFrameIndex = 0;
+			}
+
+			// spritesheet selection for animation
+			// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
+			std::vector<std::filesystem::path> filepaths;
+			int textureIndex{ 0 };
+			for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+			{
+				filepaths.emplace_back(it->first);
+			}
+
+			// Vector of the names of textures that have already been loaded
+			std::vector<std::string> loadedTextureKeys;
+			std::vector<const char*> textureList;
+
+			// get the keys of textures already loaded by the resource manager
+			for (auto const& r_filepath : filepaths)
+			{
+				loadedTextureKeys.push_back(r_filepath.stem().string());
+			}
+
+			for (auto const& r_filepath : filepaths)
+			{
+				if (currentAnimation)
+					if (r_filepath.string() == currentAnimation->GetSpriteSheetKey())
+						break;
+				++textureIndex;
+			}
+
+			for (auto const& r_str : loadedTextureKeys)
+			{
+				textureList.push_back(r_str.c_str());
+			}
+
+			// Displays the current spritesheet set on the animation
+			if (ImGui::BeginChild("currentTexture", ImVec2{ 116,116 }, true))
+			{
+				// if theres a spritesheet texture
+				if (texture)
+					ImGui::Image((void*)(intptr_t)texture->GetTextureID(), ImVec2{ 100, 100 }, minUV, maxUV);
+				ImGui::EndChild();
+			}
+
+			ImGui::SetNextItemWidth(300.f);
+			if (ImGui::Combo("Spritesheet", &textureIndex, textureList.data(), static_cast<int>(textureList.size())))
+			{
+				if(currentAnimation)
+					currentAnimation->SetSpriteSheetKey(filepaths[textureIndex].string());
+			}
+
+			if (ImGui::Button("Play"))
+			{
+				playAnimation = true;
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Stop"))
+			{
+				playAnimation = false;
+			}
+
+			// slider
+			ImGui::SameLine();
+			int frame{ static_cast<int>(previewCurrentFrameIndex)};
+			ImGui::SetNextItemWidth(300);
+
+			if (ImGui::SliderInt("##FrameSlider", &frame, 0, frameCount))
+			{
+				previewCurrentFrameIndex = static_cast<unsigned>(frame);
+			}
+
+			ImGui::SameLine();
+			ImGui::Text("%d:%.f", static_cast<int>(animationDuration), (animationDuration - static_cast<int>(animationDuration)) * 100.f);
+
+			if (currentAnimation)
+			{
+				// update preview animation
+				if (playAnimation)
+					currentAnimation->UpdateAnimationFrame(TimeManager::GetInstance().GetDeltaTime(), previewCurrentFrameTime, previewCurrentFrameIndex);
+
+				// update frame display parameters
+				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+				minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+						  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+				maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+						  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
+			}
+
+			if (ImGui::Button("Add Animation"))
+			{
+				if (currentEntityID.has_value())
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(currentEntityID.value()).AddAnimationToComponent(currentAnimationID);
+				}
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Remove Animation"))
+			{
+				if (currentEntityID.has_value())
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(currentEntityID.value()).RemoveAnimationFromComponent(currentAnimationID);
+				}
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Save"))
+			{
+				if (currentAnimation)
+				{
+					std::string filePath = currentAnimation->GetAnimationID();
+
+					// Serialize the current animation data to JSON
+					nlohmann::json serializedAnimation = currentAnimation->ToJson();
+
+					// Check if filePath is not empty
+					if (!filePath.empty())
+					{
+						serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
+						std::cout << "Animation saved successfully to " << filePath << std::endl;
+					}
+					else
+					{
+						std::cerr << "No file path was selected for saving." << std::endl;
+					}
+				}
+			}
+
+			ImGui::SameLine();
+			if (ImGui::Button("Load"))
+			{
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+				// Check if filePath is not empty
+				if (!filePath.empty())
+				{
+					nlohmann::json loadedAnimationData = serializationManager.LoadAnimationFromFile(filePath);
+
+					if (!loadedAnimationData.is_null())
+					{
+						// create animation to load into
+						currentAnimationID = AnimationManager::CreateAnimation(loadedAnimationData["animationID"].get<std::string>());
+
+						currentAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID);
+						currentAnimation->Deserialize(loadedAnimationData);
+
+						// Update texture for preview
+						if (currentAnimation->GetSpriteSheetKey() != "")
+						{
+							texture = ResourceManager::GetInstance().GetTexture(currentAnimation->GetSpriteSheetKey());
+						}
+
+						// Set preview frame data to first frame of the loaded animation
+						previewCurrentFrameIndex = 0; // Reset to first frame
+						frameCount = currentAnimation->GetFrameCount();
+						frameRate = currentAnimation->GetFrameRate();
+						animationDuration = currentAnimation->GetAnimationDuration();
+						frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+						minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
+						maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+
+						//// debugging code- hans
+						//std::cout << "Loaded Animation Data:\n" << loadedAnimationData.dump(4) << std::endl;
+					}
+					else
+					{
+						std::cerr << "Failed to load animation data from file." << std::endl;
+					}
+				}
+				else
+				{
+					std::cerr << "No file path was selected for loading." << std::endl;
+				}
+			}
+
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::SeparatorText("Animation Properties");
+			ImGui::Columns(2, "TwoSections", true);
+			//ImGui::Text("Name");
+			//ImGui::Dummy(ImVec2(0, 5));
+			//ImGui::Text("looped");
+			//ImGui::Dummy(ImVec2(0, 5));
+			ImGui::Text("Total Sprites");
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::Text("Frame Rate");
+			ImGui::Dummy(ImVec2(0, 5));
+			ImGui::Text("Frames Held");
+			ImGui::Dummy(ImVec2(0, 5));
+
+			ImGui::NextColumn();/*
+			static std::string text{};
+			ImGui::InputText("##name", &text);
+			static bool looped{};
+			ImGui::Checkbox("##looped", &looped);*/
+
+
+
+			if (currentAnimation)
+			{
+				totalSprites = currentAnimation->GetFrameCount();
+				animationDuration = currentAnimation->GetAnimationDuration();
+				frameRate = currentAnimation->GetFrameRate();
+			}
+
+			// edit total sprites in an animation
+			if (ImGui::InputInt("##totalSprites", &totalSprites))
+			{
+				totalSprites = totalSprites < 0 ? 0 : totalSprites;
+
+				playAnimation = false;
+				if(currentAnimation)
+					currentAnimation->CreateAnimationFrames(totalSprites);
+
+				// update frame duration
+				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+
+				// check if index is same size as total sprites
+				if (previewCurrentFrameIndex == static_cast<unsigned>(totalSprites))
+				{
+					// set index to last sprite if not zero
+					previewCurrentFrameIndex = totalSprites ? totalSprites - 1 : 0;
+				}
+			}
+
+			if (ImGui::InputInt("##frameRate", &frameRate))
+			{
+				currentAnimation->SetCurrentAnimationFrameRate(frameRate);
+			}
+
+			// get frames held
+			framesHeld = static_cast<int>(static_cast<float>(frameRate) * frameTime);
+
+			ImGui::InputInt("##framesHeld", &framesHeld);
+
+			// update animation frame data
+			if (currentAnimation)
+			{
+				currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, static_cast<unsigned>(framesHeld));
+			}
+
+			// save animation here
+
 			ImGui::End(); //imgui close
 		}
 	}
@@ -2921,6 +3533,10 @@ namespace PE {
 							{
 								m_showPerformanceWindow = !m_showPerformanceWindow;
 							}
+							if (ImGui::MenuItem("AnimationEditor", "", m_showAnimationWindow, !m_showAnimationWindow))
+							{
+								m_showAnimationWindow = !m_showAnimationWindow;
+							}
 							if (ImGui::MenuItem("PhysicsWindow", "", m_showPhysicsWindow, !m_showPhysicsWindow))
 							{
 								m_showPhysicsWindow = !m_showPhysicsWindow;
@@ -2940,6 +3556,7 @@ namespace PE {
 								m_firstLaunch = true;
 								m_showResourceWindow = false;
 								m_showPerformanceWindow = false;
+								m_showAnimationWindow = false;
 							}
 							ImGui::EndMenu();
 						}
@@ -2994,6 +3611,75 @@ namespace PE {
 			{
 				ToggleDebugRender();
 			}
+
+			ImGui::SeparatorText("Collision Layer Matrix");
+
+			auto& collisionLayers { CollisionLayerManager::GetInstance().GetCollisionLayers() };
+			
+			std::vector<const char*> column_names{ "" };
+			std::vector<const char*> row_names;
+
+			for(auto& collisionLayer : collisionLayers)
+			{
+				column_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
+				row_names.push_back(collisionLayer->GetCollisionLayerName().c_str());
+			}
+		
+			unsigned counter{};
+			const int columns_count = static_cast<int>(column_names.size());
+			static ImGuiTableFlags table_flags = ImGuiTableFlags_SizingFixedFit| ImGuiTableFlags_Hideable;
+
+				if (ImGui::BeginTable("collisionlayer", columns_count, table_flags))
+				{
+					ImGui::TableSetupColumn(column_names[0], ImGuiTableColumnFlags_NoHide | ImGuiTableColumnFlags_NoReorder);
+					for (int n = columns_count - 1; n > 0 ; --n)
+						ImGui::TableSetupColumn(column_names[n], ImGuiTableColumnFlags_WidthFixed);
+
+					ImGui::TableHeadersRow();       // Draw remaining headers and allow access to context-menu and other functions.
+					for (auto const& p_collisionLayer : collisionLayers)
+					{
+						ImGui::PushID(p_collisionLayer->GetCollisionLayerIndex());
+						ImGui::TableNextRow();
+						ImGui::TableSetColumnIndex(0);
+						ImGui::AlignTextToFramePadding();
+						ImGui::Text(row_names[p_collisionLayer->GetCollisionLayerIndex()], p_collisionLayer->GetCollisionLayerIndex());
+						for (unsigned i{ static_cast<unsigned>(p_collisionLayer->GetCollisionLayerSignature().size()) }, column{ 1 }; i != 0; ++column)
+							if (ImGui::TableSetColumnIndex(column))
+							{
+								bool bit = p_collisionLayer->IsCollidingWith(--i);
+								ImGui::PushID(column);
+								if(column < static_cast<unsigned>(columns_count) - counter)
+									if (ImGui::Checkbox("", &bit))
+									{
+										// flip the bit
+										p_collisionLayer->FlipCollisionLayerBit(i);
+
+										// check if its not flipping its own bit
+										if (p_collisionLayer->GetCollisionLayerIndex() != i)
+										{
+											// flip the bit of the other collision layer
+											collisionLayers[i]->FlipCollisionLayerBit(p_collisionLayer->GetCollisionLayerIndex());
+										}
+									}
+								ImGui::PopID();
+							}
+						ImGui::PopID();
+						++counter;
+					}
+					ImGui::EndTable();
+				}
+
+				// print debug layer signature
+				//for (auto const& p_collisionLayer : collisionLayers)
+				//{
+				//	ImGui::Text((p_collisionLayer->GetCollisionLayerName() + ": ").c_str());
+				//	for (std::size_t i{ p_collisionLayer->GetCollisionLayerSignature().size()}; i != 0 ;)
+				//	{
+				//		ImGui::SameLine();
+				//		ImGui::Text(" %d ", p_collisionLayer->IsCollidingWith(--i));
+				//	}
+				//}
+
 			ImGui::End(); //imgui close
 		}
 	}
@@ -3224,7 +3910,7 @@ namespace PE {
 						}
 					}
 
-					if (m_currentSelectedObject >= 0)
+					if (m_currentSelectedObject != -1)
 					{
 						startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
 					}
@@ -3239,7 +3925,7 @@ namespace PE {
 			static bool moved = false;
 			static float height;
 			static float width;
-			if (m_currentSelectedObject >= 0)
+			if (m_currentSelectedObject != -1)
 			{
 				if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
 				{
@@ -3263,7 +3949,7 @@ namespace PE {
 			float currentRotation;
 			float currentHeight;
 			float currentWidth;
-			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0))
+			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0) && m_currentSelectedObject != -1)
 			{
 				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
@@ -3342,8 +4028,9 @@ namespace PE {
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 			}
 
-			if (!ImGui::IsMouseDown(0))
+			if (!ImGui::IsMouseDown(0) && m_currentSelectedObject != -1)
 			{
+
 				if (moved && EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position != vec2(clickedPosition.x, clickedPosition.y))
 				{
 					m_undoStack.AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
@@ -3379,7 +4066,7 @@ namespace PE {
 
 	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
-		if (IsRunTime() && !IsEditorActive())
+		if (!IsEditorActive())
 		{
 			//get the current viewport so that i can get the full size of the window
 			ImGuiViewport* viewport = ImGui::GetMainViewport();
@@ -3868,5 +4555,11 @@ namespace PE {
 		colors[ImGuiCol_TabActive] = ImLerp(colors[ImGuiCol_HeaderActive], colors[ImGuiCol_TitleBgActive], 0.60f);
 		colors[ImGuiCol_TabUnfocused] = ImLerp(colors[ImGuiCol_Tab], colors[ImGuiCol_TitleBg], 0.80f);
 		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
+	}
+
+	std::string GenerateTimestampID() {
+		auto now = std::chrono::system_clock::now();
+		auto now_c = std::chrono::system_clock::to_time_t(now);
+		return std::to_string(now_c);
 	}
 }
