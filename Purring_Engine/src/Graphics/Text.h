@@ -79,7 +79,7 @@ namespace PE
 		 
 		 \return std::shared_ptr<const Font> 
 		*************************************************************************************/
-		inline std::shared_ptr<const Font> GetFont() const { return m_font; }
+		inline std::shared_ptr<Font> GetFont() const { return m_font; }
 
 		/*!***********************************************************************************
 		 \brief Get the Font Key 

@@ -151,15 +151,22 @@ namespace PE
         return key;
     }
 
-    void ResourceManager::LoadFontFromFile(std::string const& r_key, std::string const& r_filePath)
+    bool ResourceManager::LoadFontFromFile(std::string const& r_key, std::string const& r_filePath)
     {
         Fonts[r_key] = std::make_shared<Font>();
 
         if (!Fonts[r_key]->Initialize(r_filePath))
         {
-            std::cout << "Fail to load font" << r_filePath << std::endl;
+            // fail to load font, delete key
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Font " + r_key + " does not exist.", __FUNCTION__);
+
             Fonts.erase(r_key);
+            return false;
         }
+
+        return true;
     }
 
     bool ResourceManager::LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath)
@@ -280,6 +287,30 @@ namespace PE
 
         return Animations[r_name];
 	}
+
+    std::shared_ptr<Font> ResourceManager::GetFont(std::string const& r_name)
+    {
+        // if font is not found, load it
+        if (Fonts.find(r_name) == Fonts.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Font " + r_name + " not loaded, loading font.", __FUNCTION__);
+
+            // load font
+            if (LoadFontFromFile(r_name, r_name))
+            {
+                return Fonts[r_name];
+            }
+            else
+            {
+                // return default font
+                return nullptr;
+            }
+        }
+
+        return Fonts[r_name];
+    }
 
     void ResourceManager::UnloadResources()
     {
