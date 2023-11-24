@@ -185,6 +185,9 @@ namespace PE
 				// Add the position to the path positions list
 				p_data->pathPositions.emplace_back(r_nodePosition);
 
+				// Reduce the player's energy
+				--p_data->catEnergy;
+
 				return true;
 		}
 

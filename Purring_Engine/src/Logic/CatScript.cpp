@@ -46,6 +46,8 @@ namespace PE
 		// ----- Public Functions ----- //
 		void CatScript::Init(EntityID id)
 		{
+				m_scriptData[id].catID = id;
+
 				// Make a statemanager and set the starting state
 				MakeStateManager(id);
 
