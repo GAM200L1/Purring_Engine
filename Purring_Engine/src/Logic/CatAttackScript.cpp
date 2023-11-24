@@ -148,12 +148,15 @@ namespace PE
 		m_mouseClick = false;
 	}
 	
-	void CatAttackPLAN::StateExit(EntityID id)
+	void CatAttackPLAN::StateCleanUp()
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
 		REMOVE_MOUSE_EVENT_LISTENER(m_mouseEventListener);
+	}
 
+	void CatAttackPLAN::StateExit(EntityID id)
+	{
 		for (auto const& telegraph : p_data->telegraphIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
@@ -290,9 +293,13 @@ namespace PE
 		}
 	}
 
-	void CatAttackEXECUTE::StateExit(EntityID id)
+	void CatAttackEXECUTE::StateCleanUp()
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
+	}
+
+	void CatAttackEXECUTE::StateExit(EntityID id)
+	{
 		// resets attack direction selection
 		p_data->attackDirection = EnumCatAttackDirection::NONE;
 		CatScript::ToggleEntity(p_data->projectileID, false);

@@ -80,7 +80,7 @@ namespace PE
 
 		}
 
-		int button = -1; //lmb 1, mmb 2, rmb 3
+		int button = -1; //lmb 1, rmb 2, mmb 3
 		float repeat = 0;
 		int x = -1, y = -1;
 		int transX = -1, transY = -1;
@@ -111,7 +111,7 @@ namespace PE
 
 		}
 
-		int button = -1; //lmb 1, mmb 2, rmb 3
+		int button = -1; //lmb 1, rmb 2, mmb 3
 		int x = -1, y = -1;
 		float repeat = 0;
 	};
@@ -138,7 +138,7 @@ namespace PE
 			return ss.str();
 		}
 
-		int button = -1; //lmb 1, mmb 2, rmb 3
+		int button = -1; //lmb 1, rmb 2, mmb 3
 		int x = -1, y = -1;
 	};
 
