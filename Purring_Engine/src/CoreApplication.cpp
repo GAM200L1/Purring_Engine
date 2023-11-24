@@ -53,6 +53,7 @@
 
 // Audio
 #include "AudioManager/AudioManager.h"
+#include "AudioManager/AudioComponent.h"
 
 // Time Management
 #include "Time/TimeManager.h"
@@ -108,6 +109,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
     REGISTERCOMPONENT(PE::TextComponent);
+    REGISTERCOMPONENT(PE::AudioComponent);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -549,6 +551,7 @@ void PE::CoreApplication::InitializeSystems()
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
+    //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
     AddSystem(p_inputSystem);
     AddSystem(p_guisystem);
@@ -558,6 +561,7 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
     AddSystem(p_rendererManager);
+    //AddSystem(p_audioManager);
 
     GameStateManager::GetInstance().p_cameraManager = p_cameraManager;
     GameStateManager::GetInstance().RegisterButtonFunctions();

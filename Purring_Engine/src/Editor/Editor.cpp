@@ -32,6 +32,7 @@
 #include "Editor.h"
 #include "Memory/MemoryManager.h"
 #include "AudioManager/AudioManager.h"
+#include "AudioManager/AudioComponent.h"
 #include "Time/FrameRateTargetControl.h"
 #include "Time/TimeManager.h"
 #include "ResourceManager/ResourceManager.h"
@@ -132,8 +133,8 @@ namespace PE {
 		m_mouseInScene = false;
 		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
-		REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
-		REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
+		//REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
+		//REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
@@ -235,12 +236,14 @@ namespace PE {
 		{
 			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetColor(255,0,0,255);
 		}
-		AudioManager::GetInstance().PlaySound("audio_sound1");
+		AudioComponent audioComponent;
+		audioComponent.PlayAudioSound("audio_sound1");
 	}
 
 	void Editor::PlayAudio2(EntityID)
 	{
-		AudioManager::GetInstance().PlaySound("audio_sound2");
+		AudioComponent audioComponent;
+		audioComponent.PlayAudioSound("audio_sound2");
 	}
 
 	void Editor::ClearObjectList()
@@ -751,33 +754,39 @@ namespace PE {
 			}
 			if (ImGui::BeginPopup("Object"))
 			{
-				if (ImGui::Selectable("Create Empty Object"))
+				if (ImGui::BeginMenu("Create Empty Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
-					m_undoStack.AddChange(new CreateObjectUndo(s_id));
-				}
-				//if (ImGui::Selectable("Create UI Object"))
-				//{
-					if (ImGui::BeginMenu("Create UI Object"))
+					if (ImGui::MenuItem("Create Empty Object"))
 					{
-						if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
-						{
-							EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
-							m_undoStack.AddChange(new CreateObjectUndo(s_id));
-						}
-						ImGui::EndMenu();
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
-
+					if (ImGui::MenuItem("Create Audio Object"))
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Audio_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					ImGui::EndMenu();
+				}
+				if (ImGui::BeginMenu("Create UI Object"))
+				{
+					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
+					ImGui::EndMenu();
+				}
 					//EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
 					//m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				//}
@@ -808,26 +817,26 @@ namespace PE {
 				ImGui::SeparatorText("Audio Test");
 				if (ImGui::Button("Play SFX 1"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound1");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound1");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Play SFX 2"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound2");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound2");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Play SFX 3"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_sound3");
+					//AudioManager::GetInstance().PlayAudioSound("audio_sound3");
 				}
 				if (ImGui::Button("Play Background Music"))
 				{
-					AudioManager::GetInstance().PlaySound("audio_backgroundMusic");
+					//AudioManager::GetInstance().PlayAudioSound("audio_backgroundMusic");
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("Stop All Audio"))
 				{
-					AudioManager::GetInstance().StopAllSounds();
+					//AudioManager::GetInstance().StopAllSounds();
 				}
 				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
 				{
@@ -1944,6 +1953,143 @@ namespace PE {
 							}
 						}
 
+						//// ---------- Audio Component ---------- //
+						if (name == EntityManager::GetInstance().GetComponentID<AudioComponent>())
+						{
+							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								AudioComponent audioComponent;
+								static bool isSoundPaused = false;
+								static bool isLooping = false;
+
+								// Vector of filepaths for audio files
+								std::vector<std::filesystem::path> audioFilePaths;
+								int index = -1;							// Initialize with -1 to indicate no selection
+								int i = 0;
+
+								for (auto it = ResourceManager::GetInstance().Sounds.begin(); it != ResourceManager::GetInstance().Sounds.end(); ++it, ++i)
+								{
+									audioFilePaths.emplace_back(it->first);
+									// If current entity's audio component is using this audio file, remember its index
+									if (it->first == EntityManager::GetInstance().Get<AudioComponent>(entityID).GetAudioKey())
+										index = i;
+								}
+
+								// Vector of the names of audio files
+								std::vector<std::string> loadedAudioKeys;
+
+								// Get the keys of audio already loaded by the resource manager
+								for (auto const& r_filepath : audioFilePaths)
+								{
+									loadedAudioKeys.emplace_back(r_filepath.filename().string());
+								}
+
+								// Placeholder combo box label
+								std::string comboBoxLabel = "Drag-in or Select an audio...";
+								if (index >= 0 && index < loadedAudioKeys.size())
+								{
+									comboBoxLabel = loadedAudioKeys[index];
+									currentSoundID = audioFilePaths[index].string();
+								}
+
+								if (!loadedAudioKeys.empty())
+								{
+									ImGui::Text("Audio: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(320.0f);
+									if (ImGui::BeginCombo("##Audio", comboBoxLabel.c_str()))
+									{
+										for (int n = 0; n < loadedAudioKeys.size(); ++n)
+										{
+											bool isSelected = (comboBoxLabel == loadedAudioKeys[n]);
+											if (ImGui::Selectable(loadedAudioKeys[n].c_str(), isSelected))
+											{
+												EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(audioFilePaths[n].string());
+												currentSoundID = audioFilePaths[n].string();
+												comboBoxLabel = loadedAudioKeys[n];
+												if (isSelected)
+												{
+													ImGui::SetItemDefaultFocus();
+												}
+											}
+										}
+										ImGui::EndCombo();
+									}
+
+									// Check if mouse is hovering over the texture preview for drag and drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("Audio", static_cast<int>(entityID));
+									}
+								}
+								// Audio playback controls
+								if (ImGui::Checkbox("Loop", &isLooping))
+								{
+									audioComponent.SetLoop(isLooping);
+								}
+
+
+								if (ImGui::Button("Play"))
+								{
+									std::cout << "[Editor] Play button pressed. Current Sound ID: " << currentSoundID << std::endl;
+									if (!currentSoundID.empty())
+									{
+										audioComponent.SetLoop(isLooping);
+										audioComponent.PlayAudioSound(currentSoundID);
+										isSoundPaused = false;
+									}
+								}
+
+								ImGui::SameLine();
+								if (isSoundPaused)
+								{
+									if (ImGui::Button("Resume"))
+									{
+										if (!currentSoundID.empty())
+										{
+											audioComponent.ResumeSound(currentSoundID);
+											isSoundPaused = false;
+										}
+									}
+								}
+								else
+								{
+									if (ImGui::Button("Pause"))
+									{
+										if (!currentSoundID.empty())
+										{
+											audioComponent.PauseSound(currentSoundID);
+											isSoundPaused = true;
+										}
+									}
+								}
+								ImGui::SameLine();
+								if (ImGui::Button("Stop"))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.StopSound(currentSoundID);
+									}
+								}
+
+								// Volume control for selected sound
+								static float volume = 1.0f;
+								if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
+								{
+									if (!currentSoundID.empty())
+									{
+										audioComponent.SetVolume(currentSoundID, volume);
+									}
+								}
+
+								// Global volume control (affecting all sounds)
+								static float globalVolume = 1.0f;
+								if (ImGui::SliderFloat("Global Volume", &globalVolume, 0.0f, 1.0f))
+								{
+									AudioManager::GetInstance().SetGlobalVolume(globalVolume);
+								}
+							}
+						}
+
 						// ---------- Text Component ---------- //
 
 						if (name == EntityManager::GetInstance().GetComponentID<TextComponent>())
@@ -2272,6 +2418,13 @@ namespace PE {
 								else
 									AddErrorLog("ALREADY HAS ANIMATION");
 							}
+							if (ImGui::Selectable("Add Audio"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AudioComponent>() });
+								else
+									AddErrorLog("ALREADY HAS AUDIO");
+							}
 						}
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 
 						{
@@ -2379,7 +2532,7 @@ namespace PE {
 						std::string const extension{ m_files[n].filename().extension().string() };
 						if (extension == "")
 							icon = "../Assets/Icons/Directory_Icon.png";
-						else if (extension == ".mp3")
+						else if (extension == ".mp3" || extension == ".wav")
 							icon = "../Assets/Icons/Audio_Icon.png";
 						else if (extension == ".ttf")
 							icon = "../Assets/Icons/Font_Icon.png";
@@ -2409,7 +2562,7 @@ namespace PE {
 								std::string iconDraggedExtension = m_files[n].extension().string();
 								if (iconDraggedExtension == "")
 									iconDragged = "../Assets/Icons/Directory_Icon.png";
-								else if (iconDraggedExtension == ".mp3")
+								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav")
 									iconDragged = "../Assets/Icons/Audio_Icon.png";
 								else if (iconDraggedExtension == ".ttf")
 									iconDragged = "../Assets/Icons/Font_Icon.png";
@@ -2472,6 +2625,18 @@ namespace PE {
 									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
 								}
 							}
+							if (extension == ".mp3" || extension == ".wav")
+							{
+								std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
+								std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
+								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;								if (!newAudioKey.empty())
+								{
+									EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
+									this->currentSoundID = newAudioKey;  // Update currentSoundID
+									std::cout << "currentSoundID updated to: " << currentSoundID << std::endl;
+								}
+							}
+
 							// add remaining editable assets audio etc
 						}
 
