@@ -514,7 +514,7 @@
             "Entity": {
                 "components": {
                     "AnimationComponent": {
-                        "CurrentAnimationIndex": "playerWalk"
+                        "CurrentAnimationIndex": "ratAttack"
                     },
                     "Collider": {
                         "collisionLayerIndex": 0,
@@ -547,7 +547,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Rat_Brawler_128px.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,

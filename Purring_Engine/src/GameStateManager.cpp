@@ -58,11 +58,6 @@ namespace PE
 		m_currentGameState = GameStates::LOSE;
 	}
 
-	void GameStateManager::SetAttackState(EntityID)
-	{
-		std::cout << (int)GameStateManager::GetInstance().GetGameState() << std::endl;
-	}
-
 	void GameStateManager::ResetDefaultState()
 	{
 		m_currentGameState = GameStates::PAUSE;
