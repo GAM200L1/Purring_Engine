@@ -197,6 +197,12 @@ namespace PE {
 		*************************************************************************************/
 		void ShowPerformanceWindow(bool* p_active);
 		/*!***********************************************************************************
+		 \brief render the animation editor window
+
+		 \param[in] bool* reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowAnimationWindow(bool* p_active);
+		/*!***********************************************************************************
 		 \brief render the docking port window
 
 		 \param[in] bool* reference to the boolean that sets the window active
@@ -222,6 +228,13 @@ namespace PE {
 		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
+
+		/*!***********************************************************************************
+		 \brief render the prefab apply changes window
+
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowApplyWindow(bool*p_active);
 
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
@@ -327,9 +340,14 @@ namespace PE {
 		bool m_showPhysicsWindow;
 		bool m_firstLaunch;
 		bool m_showGameView;
+		bool m_showAnimationWindow;
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;
+
+		bool m_isPrefabMode;
+		bool m_applyPrefab;
+
 
 		//variables for logging
 		std::vector<std::string> m_logOutput;
@@ -337,11 +355,15 @@ namespace PE {
 		std::string m_input;
 		std::string m_findText;
 		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
+		
 
 		//variable for objects
 		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
+
+		// Audio varaiables
+		std::string currentSoundID;
 
 		UndoStack m_undoStack;
 
@@ -355,6 +377,11 @@ namespace PE {
 		std::vector<std::filesystem::path> m_files;
 		std::pair<std::string, int> m_entityToModify;
 		static bool m_fileDragged;
+
+		// variables for prefab editor
+		std::string prefabFP;
+		std::string prefabTP;
+		std::vector<ComponentID> prefabCID;
 	};
 }
 

@@ -1,17 +1,19 @@
 {
     "Editor": {
         "firstLaunch": false,
+        "isPrefabMode": false,
         "renderDebug": true,
+        "showAnimationWindow": false,
         "showComponentWindow": true,
-        "showConsole": true,
+        "showConsole": false,
         "showEditor": true,
         "showLogs": true,
         "showObjectList": true,
-        "showPerformanceWindow": true,
+        "showPerformanceWindow": false,
         "showPhysicsWindow": false,
         "showResourceWindow": true,
         "showSceneView": true,
-        "showTestWindows": true
+        "showTestWindows": false
     },
     "window": {
         "height": 1080,

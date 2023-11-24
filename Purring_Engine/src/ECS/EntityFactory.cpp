@@ -19,6 +19,7 @@
 #include "GUISystem.h"
 #include "Graphics/GUIRenderer.h"
 #include "Graphics/Text.h"
+#include "AudioManager/AudioComponent.h"
 extern Logger engine_logger;
 
 
@@ -70,18 +71,19 @@ namespace PE
 	
 	void EntityFactory::LoadComponents()
 	{
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<EntityDescriptor>(), &EntityFactory::InitializeED);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<RigidBody>(), &EntityFactory::InitializeRigidBody);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Collider>(), &EntityFactory::InitializeCollider);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Transform>(), &EntityFactory::InitializeTransform);
-		//m_initializeComponent.emplace(p_entityManager->GetComponentID<PlayerStats>(), &EntityFactory::InitializePlayerStats);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(), &EntityFactory::InitializeRenderer);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(), &EntityFactory::InitializeScriptComponent);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(), &EntityFactory::InitializeCamera);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(), &EntityFactory::InitializeGUI);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(), &EntityFactory::InitializeAnimationComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<EntityDescriptor>(),		&EntityFactory::InitializeED);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<RigidBody>(),				&EntityFactory::InitializeRigidBody);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Collider>(),				&EntityFactory::InitializeCollider);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Transform>(),				&EntityFactory::InitializeTransform);
+		//m_initializeComponent.emplace(p_entityManager->GetComponentID<PlayerStats>(),			&EntityFactory::InitializePlayerStats);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(),	&EntityFactory::InitializeRenderer);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(),		&EntityFactory::InitializeScriptComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(),		&EntityFactory::InitializeCamera);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(),					&EntityFactory::InitializeGUI);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(),	&EntityFactory::InitializeAnimationComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(), &EntityFactory::InitializeTextComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(),			&EntityFactory::InitializeTextComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<AudioComponent>(),		&EntityFactory::InitializeAudioComponent);
 	}
 
 
@@ -156,7 +158,87 @@ namespace PE
 
 		for (auto [k, v] : EntityManager::GetInstance().Get<ScriptComponent>(r_id).m_scriptKeys)
 		{
-			PE::LogicSystem::m_scriptContainer[k]->OnAttach(r_id);
+			try
+			{
+				PE::LogicSystem::m_scriptContainer[k]->GetScriptData(r_id);
+			}
+			catch (const std::out_of_range& err)
+			{
+				UNREFERENCED_PARAMETER(err);
+				engine_logger.AddLog(false, "Script Data did not exist!! Attatching new one...", __FUNCTION__);
+				PE::LogicSystem::m_scriptContainer[k]->OnAttach(r_id);
+			}
+
+			if (p_data != nullptr)
+			{
+				EntityID frm{ MAXSIZE_T };
+				for (auto [id, idx] : EntityManager::GetInstance().GetComponentPool<ScriptComponent>().idxMap)
+				{
+					if (EntityManager::GetInstance().GetComponentPool<ScriptComponent>().Get(id) == p_data)
+					{
+						frm = id;
+						break;
+					}
+				}
+				
+
+				rttr::instance to = PE::LogicSystem::m_scriptContainer[k]->GetScriptData(r_id);
+
+				try
+				{
+					rttr::instance from = PE::LogicSystem::m_scriptContainer[k]->GetScriptData(frm);
+
+					for (auto& prop : rttr::type::get_by_name(k).get_properties())
+					{
+						if (prop.get_type().get_name() == "float")
+						{
+							float val = prop.get_value(from).get_value<float>();
+							prop.set_value(to, val);
+						}
+						else if (prop.get_type().get_name() == "enumPE::PlayerState")
+						{
+							PE::PlayerState val = prop.get_value(from).get_value<PE::PlayerState>();
+							prop.set_value(to, val);
+						}
+						else if (prop.get_type().get_name() == "int")
+						{
+							int val = prop.get_value(from).get_value<int>();
+							prop.set_value(to, val);
+						}
+						else if (prop.get_type().get_name() == "unsigned__int64")
+						{
+							EntityID val = prop.get_value(from).get_value<EntityID>();
+							prop.set_value(to, val);
+						}
+						else if (prop.get_type().get_name() == "bool")
+						{
+							bool val = prop.get_value(from).get_value<bool>();
+							prop.set_value(to, val);
+						}
+						else if (prop.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
+						{
+							std::vector<EntityID> val = prop.get_value(from).get_value<std::vector<EntityID>>();
+							prop.set_value(to, val);
+						}
+						else if (prop.get_type().get_name() == "structPE::vec2")
+						{
+							PE::vec2 val = prop.get_value(from).get_value<PE::vec2>();
+							prop.set_value(to, val);
+						}
+						else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+						{
+							std::vector<PE::vec2> val = prop.get_value(from).get_value<std::vector<PE::vec2>>();
+							prop.set_value(to, val);
+						}
+					}
+				}
+				catch (const std::out_of_range& err)
+				{
+					UNREFERENCED_PARAMETER(err);
+					engine_logger.AddLog(false, "Script Data did not exist!! skipping copy data...", __FUNCTION__);
+					
+				}
+			}
 		}
 		return true;
 	}
@@ -191,7 +273,6 @@ namespace PE
 		return true;
 	}
 
-
 	bool EntityFactory::InitializeAnimationComponent(const EntityID& r_id, void* p_data)
 	{
 		EntityManager::GetInstance().Get<AnimationComponent>(r_id) =
@@ -211,6 +292,18 @@ namespace PE
 			*reinterpret_cast<TextComponent*>(p_data);
 		return true;
 	}
+
+	bool EntityFactory::InitializeAudioComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<AudioComponent>(r_id) =
+			(p_data == nullptr) ?
+			AudioComponent()
+			:
+			*reinterpret_cast<AudioComponent*>(p_data);
+		return true;
+	}
+
+	
 
 	EntityID EntityFactory::CreateFromPrefab(const char* p_prefab)
 	{

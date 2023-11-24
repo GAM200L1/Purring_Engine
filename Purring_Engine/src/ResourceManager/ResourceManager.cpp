@@ -39,6 +39,7 @@
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
 #include "ResourceManager.h"
+#include "Data/SerializationManager.h"
 #include "Logging/Logger.h"
 
 extern Logger engine_logger;
@@ -122,6 +123,34 @@ namespace PE
         }
     }
 
+    std::string ResourceManager::LoadDraggedAudio(std::string const& r_filePath)
+    {
+        // Extract the file name with the extension
+        std::filesystem::path filePath(r_filePath);
+        std::cout << "[LoadDraggedAudio] Loading audio from path: " << r_filePath << std::endl;
+
+        std::string key = filePath.filename().string(); // Key generation with file extension
+        std::cout << "[LoadDraggedAudio] Generated key: " << key << std::endl;
+
+        // Load the audio file
+        Sounds[key] = std::make_shared<AudioManager::Audio>();
+
+        if (AudioManager::GetInstance().GetFMODSystem() == nullptr)
+        {
+            std::cout << "NO SYSTEM";
+        }
+
+        if (!Sounds[key]->LoadSound(r_filePath, AudioManager::GetInstance().GetFMODSystem()))
+        {
+            std::cout << "Failed to load sound from path: " << r_filePath << std::endl;
+            Sounds.erase(key);
+            return "";
+        }
+
+        std::cout << "Loaded sound: " << key << " from path: " << r_filePath << std::endl;
+        return key;
+    }
+
     void ResourceManager::LoadFontFromFile(std::string const& r_key, std::string const& r_filePath)
     {
         Fonts[r_key] = std::make_shared<Font>();
@@ -131,6 +160,38 @@ namespace PE
             std::cout << "Fail to load font" << r_filePath << std::endl;
             Fonts.erase(r_key);
         }
+    }
+
+    void ResourceManager::LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath)
+    {
+        //std::string animationID = AnimationManager::CreateAnimation(r_key);
+        //nlohmann::json animationJson;
+
+        //// Read the JSON file
+        //std::ifstream i(r_filePath);
+        //if (i.is_open() && nlohmann::json::accept(i))
+        //{
+        //    i >> animationJson;
+        //    i.close();
+
+        //    try
+        //    {
+        //        auto animation = std::make_shared<Animation>(Animation::Deserialize(animationJson));
+
+        //        // If deserialization successful, add it to the Animations map
+        //        Animations[r_key] = animation;
+        //    }
+        //    catch (const std::exception& e)
+        //    {
+        //        std::cout << "Couldn't create animation " << r_filePath << ". Error: " << e.what() << std::endl;
+        //        Animations.erase(r_key);
+        //    }
+        //}
+        //else
+        //{
+        //    std::cout << "Couldn't open animation file " << r_filePath << std::endl;                // Handle file not opening correctly
+        //    Animations.erase(r_key);
+        //}
     }
 
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
@@ -150,10 +211,10 @@ namespace PE
             else
             {
                 // this will crash the program if unable to load
-				return nullptr;
-			}
-		}
-        
+                return nullptr;
+            }
+        }
+
         return Textures[r_name];
     }
 
@@ -180,6 +241,20 @@ namespace PE
 
         return Icons[r_name];
     }
+
+    std::shared_ptr<Animation> ResourceManager::GetAnimation(std::string const& r_name)
+    {
+        if (Animations.find(r_name) != Animations.end())
+        {
+			return Animations[r_name];
+		}
+        else
+        {
+			// return default animation
+			std::cout << "Animation " << r_name << " not found" << std::endl;
+			return nullptr;
+		}
+	}
 
     void ResourceManager::UnloadResources()
     {

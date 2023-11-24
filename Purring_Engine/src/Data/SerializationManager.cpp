@@ -36,6 +36,7 @@
 #include "Logic/LogicSystem.h"
 #include "Logic/PlayerControllerScript.h"
 #include "Graphics/Text.h"
+#include "Math/MathCustom.h"
 
 // RTTR stuff
 #include <rttr/variant.h>
@@ -238,6 +239,8 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::ScriptComponent>(entityId, "ScriptComponent", j);
     SerializeComponent<PE::AnimationComponent>(entityId, "AnimationComponent", j);
     SerializeComponent<PE::TextComponent>(entityId, "TextComponent", j);
+    SerializeComponent<PE::AudioComponent>(entityId, "AudioComponent", j);
+
 
     return j; 
 }
@@ -245,19 +248,21 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
 nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
 {
     PE::EntityDescriptor tmp;
+    tmp.name = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).name;
+    if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType == "")
+        tmp.prefabType = tmp.name;
+    else
+        tmp.prefabType = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType;
+
     std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
     nlohmann::json ret = SerializeEntity(entityId);
     std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
     return ret;
 }
 
-
-
-
 size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
 {
     StructEntity entity;
-
 
     if (m_initializeComponent.empty())
         LoadLoaders();
@@ -305,6 +310,20 @@ void SerializationManager::SaveToFile(const std::filesystem::path& filepath, int
     }
 }
 
+void SerializationManager::SaveAnimationToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData)
+{
+    std::ofstream outFile(filepath);
+    if (outFile)
+    {
+        outFile << serializedData.dump(4);
+        outFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
+
 size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
 {
     if (!std::filesystem::exists(filepath))
@@ -328,6 +347,23 @@ size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
     }
 }
 
+nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem::path& filepath)
+{
+    nlohmann::json loadedData;
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        inFile >> loadedData;
+        inFile.close();
+    }
+    else {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+    }
+    return loadedData;
+}
+
+
+
 void SerializationManager::LoadLoaders()
 {
     m_initializeComponent.emplace("Transform", &SerializationManager::LoadTransform);
@@ -341,6 +377,8 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("ScriptComponent", &SerializationManager::LoadScriptComponent);
     m_initializeComponent.emplace("AnimationComponent", &SerializationManager::LoadAnimationComponent);
     m_initializeComponent.emplace("TextComponent", &SerializationManager::LoadTextComponent);
+    m_initializeComponent.emplace("AudioComponent", &SerializationManager::LoadAudioComponent);
+
 }
 
 bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
@@ -376,6 +414,21 @@ bool SerializationManager::LoadRigidBody(const EntityID& r_id, const nlohmann::j
     return true;
 }
 
+void LoadHelper(PE::CircleCollider& r_col, const nlohmann::json& r_json)
+{
+    if (r_json.contains("positionOffset"))
+        r_col.positionOffset = PE::vec2{r_json["positionOffset"]["x"].get<float>(), r_json["positionOffset"]["y"].get<float>() };
+    if (r_json.contains("scaleOffset"))
+        r_col.scaleOffset = r_json["scaleOffset"].get<float>();
+}
+void LoadHelper(PE::AABBCollider& r_col, const nlohmann::json& r_json)
+{
+    if (r_json.contains("positionOffset"))
+        r_col.positionOffset = PE::vec2{ r_json["positionOffset"]["x"].get<float>(), r_json["positionOffset"]["y"].get<float>() };
+    if (r_json.contains("scaleOffset"))
+        r_col.scaleOffset = PE::vec2{ r_json["scaleOffset"]["x"].get<float>(), r_json["scaleOffset"]["y"].get<float>() };
+}
+
 bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::json& r_json)
 {
     PE::Collider col;
@@ -388,8 +441,15 @@ bool SerializationManager::LoadCollider(const EntityID& r_id, const nlohmann::js
     {
         col.colliderVariant = PE::AABBCollider();
     }
+    std::visit([&](auto& col1)
+    {
+            LoadHelper(col1, r_json["Entity"]["components"]["Collider"]["data"]);
+    }, col.colliderVariant);
+
     if (r_json["Entity"]["components"]["Collider"].contains("isTrigger"))
         col.isTrigger = r_json["Entity"]["components"]["Collider"]["isTrigger"].get<bool>();
+    if (r_json["Entity"]["components"]["Collider"].contains("collisionLayerIndex"))
+        col.collisionLayerIndex = r_json["Entity"]["components"]["Collider"]["collisionLayerIndex"].get<unsigned>();
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Collider>(), static_cast<void*>(&col));
     return true;
 }
@@ -411,13 +471,54 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
 
 bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r_json)
 {
+    if (!r_json["Entity"]["components"].contains("GUI"))
+    {
+        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), nullptr);
+    }
     PE::GUI gui;
     gui.m_onClicked = r_json["Entity"]["components"]["GUI"]["m_onClicked"].get<std::string>();
     gui.m_onHovered = r_json["Entity"]["components"]["GUI"]["m_onHovered"].get<std::string>();
     gui.m_UIType = static_cast<PE::UIType>(r_json["Entity"]["components"]["GUI"]["m_UIType"].get<int>());
+    if (r_json["Entity"]["components"]["GUI"].contains("disabled"))
+        gui.disabled = r_json["Entity"]["components"]["GUI"]["disabled"].get<bool>();
+
+    gui.m_defaultTexture = r_json["Entity"]["components"]["GUI"]["m_defaultTexture"].get<std::string>();
+    gui.m_hoveredTexture = r_json["Entity"]["components"]["GUI"]["m_hoveredTexture"].get<std::string>();
+    gui.m_pressedTexture = r_json["Entity"]["components"]["GUI"]["m_pressedTexture"].get<std::string>();
+    gui.m_disabledTexture = r_json["Entity"]["components"]["GUI"]["m_disabledTexture"].get<std::string>();
+
+    gui.m_defaultColor = PE::vec4(
+        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][0].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][1].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][2].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][3].get<float>()
+    );
+
+    gui.m_hoveredColor = PE::vec4(
+        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][0].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][1].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][2].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][3].get<float>()
+    );
+
+    gui.m_pressedColor = PE::vec4(
+        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][0].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][1].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][2].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][3].get<float>()
+    );
+
+    gui.m_disabledColor = PE::vec4(
+        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][0].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][1].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][2].get<float>(),
+        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][3].get<float>()
+    );
+
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), static_cast<void*>(&gui));
     return true;
 }
+
 
 bool SerializationManager::LoadGUIRenderer(const EntityID& r_id, const nlohmann::json& r_json)
 {
@@ -461,7 +562,7 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
     for (const auto& k : r_json["Entity"]["components"]["ScriptComponent"].items())
     {
         auto str = k.key().c_str();
-        PE::LogicSystem::m_scriptContainer[str]->OnAttach(r_id);
+        //PE::LogicSystem::m_scriptContainer[str]->OnAttach(r_id);
         if (PE::LogicSystem::m_scriptContainer.count(str))
         {
             rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(str)->GetScriptData(r_id);
@@ -505,8 +606,8 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                         else if (prop.get_type().get_name() == "structPE::vec2")
                         {
                             PE::vec2 val;
-
-
+                            val.x = data[prop.get_name().to_string().c_str()]["x"].get<float>();
+                            val.y = data[prop.get_name().to_string().c_str()]["x"].get<float>();
                             prop.set_value(inst, val);
                         }
                         else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
@@ -526,4 +627,20 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
     }
 
     return true;
+}
+
+bool SerializationManager::LoadAudioComponent(const size_t& r_id, const nlohmann::json& r_json)
+{
+    if (r_json["Entity"]["components"].contains("AudioComponent"))
+    {
+        PE::AudioComponent audioComponent;
+
+        // Example of setting properties, adjust according to your actual component properties
+        audioComponent.SetAudioKey(r_json["Entity"]["components"]["AudioComponent"]["audioKey"].get<std::string>());
+        audioComponent.SetLoop(r_json["Entity"]["components"]["AudioComponent"]["loop"].get<bool>());
+
+        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::AudioComponent>(), static_cast<void*>(&audioComponent));
+        return true;
+    }
+    return false;
 }
