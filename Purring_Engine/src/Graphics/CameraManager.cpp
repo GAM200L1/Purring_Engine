@@ -397,22 +397,6 @@ namespace PE
                     GetEditorCamera().AdjustRotationRadians(-0.1f);
                 }
 #endif // !GAMERELEASE
-
-                // Zoom the main runtime camera in and out
-                if (event.keycode == GLFW_KEY_C)
-                {
-                    std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
-                    if (mainCamera) {
-                        mainCamera.value().get().AdjustMagnification(0.5f);
-                    }
-                }
-                if (event.keycode == GLFW_KEY_V)
-                {
-                    std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
-                    if (mainCamera) {
-                        mainCamera.value().get().AdjustMagnification(-0.5f);
-                    }
-                }
             }            
         }
 
