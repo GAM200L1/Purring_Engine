@@ -83,56 +83,67 @@ namespace PE
 
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
 
-		if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
-		{
-      if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
-			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
-			}
 
-			//// Check if the state should be changed
-			//if (CheckShouldStateChange(id, deltaTime))
-			//{
-			//		m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
-			//		GameStateManager::GetInstance().IncrementGameState();
-			//}
+		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
+		{
+      // if player is planning movement, set animation to idle(?)
+			// Check if the state should be changed
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+			{
+					TriggerStateChange(id); // immediate state change
+					if (CheckShouldStateChange(id, deltaTime))
+					{
+							m_scriptData[id].p_stateManager->ChangeState(new CatMovementEXECUTE{}, id);
+					}
+			}
     }
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 		{
 			// if player is planning attack, set animation to idle
-			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
 
-			//// Check if the state should be changed
-			//if (CheckShouldStateChange(id, deltaTime))
-			//{
-			//		m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
-			//		GameStateManager::GetInstance().IncrementGameState();
-			//}
-		}
-		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
-		{
-				//// Check if the state should be changed
-				//if (CheckShouldStateChange(id, deltaTime))
-				//{
-				//		//m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id); // --------------- @TODO KRYSTAL uncomment this
-				//		//GameStateManager::GetInstance().IncrementGameState();
-				//		m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
-				//}
+			// Check if the state should be changed
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+			{
+					TriggerStateChange(id); // immediate state change
+					if (CheckShouldStateChange(id, deltaTime)) 
+					{
+							m_scriptData[id].p_stateManager->ChangeState(new CatMovementEXECUTE{}, id);
+					}
+			}
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 		{
-
 				if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 				{
 						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
 				}
 
-				//// Check if the state should be changed
-				//if (CheckShouldStateChange(id, deltaTime))
-				//{
-				//		//m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id); --------------- @TODO KRYSTAL uncomment this
-				//		m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
-				//}
+				// Check if the state should be changed
+				if (CheckShouldStateChange(id, deltaTime))
+				{
+						//m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id); // --------------- @TODO KRYSTAL uncomment this
+						//GameStateManager::GetInstance().IncrementGameState();
+
+						// trigger state change called in MovementEXECUTE state update
+						m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
+				}
+		}
+		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
+		{
+				if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
+				{
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
+				}
+
+				// Check if the state should be changed
+				if (CheckShouldStateChange(id, deltaTime))
+				{
+						//m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id); --------------- @TODO KRYSTAL uncomment this
+						
+						// trigger state change called in AttackEXECUTE state update
+						m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
+						GameStateManager::GetInstance().IncrementGameState();
+				}
 		}
 	}
 
@@ -163,6 +174,9 @@ namespace PE
 				delete m_scriptData[id].p_stateManager;
 				m_scriptData[id] = CatScriptData{};
 		}
+
+		m_scriptData[id].shouldChangeState = false;
+		m_scriptData[id].timeBeforeChangingState = 0.f;
 	}
 
 	void CatScript::OnDetach(EntityID id)
@@ -202,6 +216,8 @@ namespace PE
 					}
 					else
 					{
+							m_scriptData[id].shouldChangeState = false;
+							m_scriptData[id].timeBeforeChangingState = 0.f;
 							return true;
 					}
 			}
