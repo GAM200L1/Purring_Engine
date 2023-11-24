@@ -354,7 +354,7 @@
                         "isActive": true,
                         "name": "GUIButton",
                         "parent": null,
-                        "sceneID": 8
+                        "sceneID": 7
                     },
                     "GUI": {
                         "disabled": false,
@@ -438,8 +438,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -248.0,
-                                "y": -191.0
+                                "x": -239.0,
+                                "y": -177.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -454,9 +454,9 @@
                     "EntityDescriptor": {
                         "children": [],
                         "isActive": true,
-                        "name": "Rat",
+                        "name": "Cat2",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 8
                     },
                     "Renderer": {
                         "Color": {
@@ -477,8 +477,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -248.0,
-                            "y": -191.0
+                            "x": -239.0,
+                            "y": -177.0
                         },
                         "relativeposition": {
                             "x": 0.0,
