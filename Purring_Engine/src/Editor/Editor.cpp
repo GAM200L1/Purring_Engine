@@ -2352,7 +2352,7 @@ namespace PE {
 									{
 										ImGui::SetNextItemWidth(100.0f);
 										ImGui::InputInt("Distance Offset", &it->second.Size,0,0);
-
+										ImGui::Checkbox("Look Towards", &it->second.LookTowardsMovement);
 										int j = it->second.NumberOfFollower;
 										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
 										if (j <= 5 && j >= 0)

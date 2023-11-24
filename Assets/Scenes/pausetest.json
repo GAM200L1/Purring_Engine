@@ -131,10 +131,10 @@
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
-                            "g": 0.0,
+                            "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/SplashScreen_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,

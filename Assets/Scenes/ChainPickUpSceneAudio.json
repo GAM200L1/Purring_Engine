@@ -114,6 +114,7 @@
                                     18446744073709551615
                                 ],
                                 "IsAttaching": true,
+								"LookTowardsMovement" : true,
                                 "NextPosition": {
                                     "0": {
                                         "x": 0.0,
