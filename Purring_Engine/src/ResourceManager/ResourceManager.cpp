@@ -162,8 +162,23 @@ namespace PE
         }
     }
 
-    void ResourceManager::LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath)
+    bool ResourceManager::LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath)
     {
+        Animations[r_key] = std::make_shared<Animation>();
+        Animations[r_key]->SetAnimationID(r_key);
+
+        if (!Animations[r_key]->LoadAnimation(r_filePath))
+        {
+            // fail to load animation, delete key
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Animation " + r_key + " does not exist.", __FUNCTION__);
+
+            Animations.erase(r_key);
+            return false;
+        }
+
+        return true;
         //std::string animationID = AnimationManager::CreateAnimation(r_key);
         //nlohmann::json animationJson;
 
@@ -244,16 +259,26 @@ namespace PE
 
     std::shared_ptr<Animation> ResourceManager::GetAnimation(std::string const& r_name)
     {
-        if (Animations.find(r_name) != Animations.end())
+        // if animation is not found, load it
+        if (Animations.find(r_name) == Animations.end())
         {
-			return Animations[r_name];
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Animation " + r_name + " not loaded, loading animation.", __FUNCTION__);
+
+            // load animation
+            if (LoadAnimationFromFile(r_name, r_name))
+            {
+                return Animations[r_name];
+            }
+            else
+            {
+                // return default animation
+                return nullptr;
+            }
 		}
-        else
-        {
-			// return default animation
-			std::cout << "Animation " << r_name << " not found" << std::endl;
-			return nullptr;
-		}
+
+        return Animations[r_name];
 	}
 
     void ResourceManager::UnloadResources()

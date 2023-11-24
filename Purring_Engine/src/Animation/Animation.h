@@ -208,6 +208,8 @@ namespace PE
 
 		float GetAnimationDuration();
 
+		bool LoadAnimation(std::string const& r_filePath);
+
 		nlohmann::json Animation::ToJson() const;
 		Animation& Deserialize(const nlohmann::json& r_j);
 

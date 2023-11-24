@@ -140,7 +140,7 @@ namespace PE
             \param[in] r_key Name of animation file.
             \param[in] r_filePath File path of animation.
         *************************************************************************************/
-        void LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
+        bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.
