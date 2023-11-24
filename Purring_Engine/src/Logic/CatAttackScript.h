@@ -32,6 +32,8 @@ namespace PE
 
 		virtual void StateUpdate(EntityID id, float deltaTime) override;
 
+		virtual void StateCleanUp();
+
 		virtual void StateExit(EntityID id) override;
 
 		// ----- Getter ----- //
@@ -71,6 +73,8 @@ namespace PE
 		virtual void StateEnter(EntityID id);
 
 		virtual void StateUpdate(EntityID id, float deltaTime);
+
+		virtual void StateCleanUp();
 
 		virtual void StateExit(EntityID id);
 

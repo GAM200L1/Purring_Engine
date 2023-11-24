@@ -90,17 +90,17 @@ namespace PE
 
 		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
 		{
-      // if player is planning movement, set animation to idle(?)
+			// if player is planning movement, set animation to idle(?)
 			// Check if the state should be changed
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
 			{
 				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime))
 				{
-						m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
+					m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
 				}
 			}
-    }
+		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 		{
 			// if player is planning attack, set animation to idle
@@ -108,45 +108,45 @@ namespace PE
 			// Check if the state should be changed
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 			{
-					TriggerStateChange(id); // immediate state change
-					if (CheckShouldStateChange(id, deltaTime)) 
-					{
-							m_scriptData[id].p_stateManager->ChangeState(new CatMovementEXECUTE{}, id);
-					}
+				TriggerStateChange(id); // immediate state change
+				if (CheckShouldStateChange(id, deltaTime)) 
+				{
+					m_scriptData[id].p_stateManager->ChangeState(new CatMovementEXECUTE{}, id);
+				}
 			}
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 		{
-				if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-				{
-						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
-				}
+			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+			{
+				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
+			}
 
-				// Check if the state should be changed
-				if (CheckShouldStateChange(id, deltaTime))
-				{
-						//m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id); // --------------- @TODO KRYSTAL uncomment this
-						//GameStateManager::GetInstance().IncrementGameState();
+			// Check if the state should be changed
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+				//m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id); // --------------- @TODO KRYSTAL uncomment this
+				//GameStateManager::GetInstance().IncrementGameState();
 
-						// trigger state change called in MovementEXECUTE state update
-						m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
-				}
+				// trigger state change called in MovementEXECUTE state update
+				m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
+			}
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 		{
 				if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
 				{
-						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
+					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
 				}
 
 				// Check if the state should be changed
 				if (CheckShouldStateChange(id, deltaTime))
 				{
-						//m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id); --------------- @TODO KRYSTAL uncomment this
+					//m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id); --------------- @TODO KRYSTAL uncomment this
 						
-						// trigger state change called in AttackEXECUTE state update
-						m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
-						GameStateManager::GetInstance().IncrementGameState();
+					// trigger state change called in AttackEXECUTE state update
+					m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
+					GameStateManager::GetInstance().IncrementGameState();
 				}
 		}
 	}
@@ -156,27 +156,27 @@ namespace PE
 		// check if the given entity has transform, rigidbody, and collider. if it does not, assign it one
 		if (!EntityManager::GetInstance().Has<Transform>(id))
 		{
-				EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Transform>() });
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Transform>() });
 		}
 		if (!EntityManager::GetInstance().Has<RigidBody>(id))
 		{
-				EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
-				EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
+			EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
 		}
 		if (!EntityManager::GetInstance().Has<Collider>(id))
 		{
-				EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Collider>() });
-				EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider(); // cat default colliders is circle
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Collider>() });
+			EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider(); // cat default colliders is circle
 		}
 
 		if (m_scriptData.find(id) == m_scriptData.end())
 		{
-				m_scriptData[id] = CatScriptData{};
+			m_scriptData[id] = CatScriptData{};
 		}
 		else
 		{
-				delete m_scriptData[id].p_stateManager;
-				m_scriptData[id] = CatScriptData{};
+			delete m_scriptData[id].p_stateManager;
+			m_scriptData[id] = CatScriptData{};
 		}
 
 		m_scriptData[id].shouldChangeState = false;
@@ -190,8 +190,8 @@ namespace PE
 	{
 		if (m_scriptData.find(id) != m_scriptData.end())
 		{
-				delete m_scriptData[id].p_stateManager;
-				m_scriptData.erase(id);
+			delete m_scriptData[id].p_stateManager;
+			m_scriptData.erase(id);
 		}
 	}		
 		
@@ -208,30 +208,30 @@ namespace PE
 	void CatScript::TriggerStateChange(EntityID id, float const stateChangeDelay)
 	{
 		if (m_scriptData[id].delaySet) { return; }
-			m_scriptData[id].shouldChangeState = true;
-			m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
-			m_scriptData[id].delaySet = true;
+
+		m_scriptData[id].shouldChangeState = true;
+		m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
+		m_scriptData[id].delaySet = true;
 	}	
 
 
 	bool CatScript::CheckShouldStateChange(EntityID id, float const deltaTime)
 	{
-			if (m_scriptData[id].shouldChangeState)
+		if (m_scriptData[id].shouldChangeState)
+		{
+			if (m_scriptData[id].timeBeforeChangingState > 0.f)
 			{
-					if (m_scriptData[id].timeBeforeChangingState > 0.f)
-					{
-						std::cout << m_scriptData[id].timeBeforeChangingState << std::endl;
-							m_scriptData[id].timeBeforeChangingState -= deltaTime;
-							return false;
-					}
-					else
-					{
-							m_scriptData[id].shouldChangeState = false;
-							m_scriptData[id].timeBeforeChangingState = 0.f;
-							m_scriptData[id].delaySet = false;
-							return true;
-					}
+				m_scriptData[id].timeBeforeChangingState -= deltaTime;
+				return false;
 			}
+			else
+			{
+				m_scriptData[id].shouldChangeState = false;
+				m_scriptData[id].timeBeforeChangingState = 0.f;
+				m_scriptData[id].delaySet = false;
+				return true;
+			}
+		}
 
 			return false;
 	}
