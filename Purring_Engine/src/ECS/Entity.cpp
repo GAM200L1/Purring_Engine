@@ -226,9 +226,10 @@ namespace PE
 		}
 
 		j["children"] = children;
-
 		j["sceneID"] = sceneID;
 		j["isActive"] = isActive;
+
+		j["Prefab Type"] = prefabType;
 
 		return j;
 	}
@@ -254,6 +255,11 @@ namespace PE
 		if (j.contains("isActive"))
 		{
 			desc.isActive = j["isActive"];
+		}
+
+		if (j.contains("Prefab Type"))
+		{
+			desc.prefabType = j["Prefab Type"].get<std::string>();
 		}
 
 		return desc;

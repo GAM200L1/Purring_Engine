@@ -1,9 +1,11 @@
 {
     "Editor": {
         "firstLaunch": false,
+        "isPrefabMode": false,
         "renderDebug": true,
+        "showAnimationWindow": false,
         "showComponentWindow": true,
-        "showConsole": true,
+        "showConsole": false,
         "showEditor": true,
         "showLogs": true,
         "showObjectList": true,

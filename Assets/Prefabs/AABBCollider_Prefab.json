@@ -1,14 +1,35 @@
 {
     "Entity": {
         "components": {
-	   "EntityDescriptor": {
-                        "children": [],
-                        "name": "GUIButton",
-                        "parent": null,
-                        "sceneID": 18446744073709551615
-                    },
             "Collider": {
+                "data": {
+                    "max": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "min": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "scaleOffset": {
+                        "x": 1.0,
+                        "y": 1.0
+                    }
+                },
+                "isTrigger": false,
                 "type": "AABBCollider"
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "a",
+                "children": [],
+                "isActive": true,
+                "name": "AABB_tst2345",
+                "parent": null,
+                "sceneID": 18446744073709551615
             },
             "Renderer": {
                 "Color": {
@@ -20,6 +41,7 @@
                 "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
             },
             "RigidBody": {
+                "linearDrag": 2.0,
                 "mass": 10.0,
                 "type": 1
             },
@@ -30,9 +52,14 @@
                     "x": 0.0,
                     "y": 0.0
                 },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
                 "width": 50.0
             }
         },
-        "name": "Circle Collider Prefab"
+        "name": ""
     }
 }
