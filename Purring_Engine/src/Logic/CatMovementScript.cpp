@@ -169,7 +169,8 @@ namespace PE
 
 		bool CatMovementPLAN::AddPathNode(vec2 const& r_nodePosition)
 		{
-				std::cout << "AddPathNode at " << r_nodePosition.x << ", " << r_nodePosition.y << "\n";
+				std::cout << "AddPathNode at " << r_nodePosition.x << ", " << r_nodePosition.y 
+						<< ", energy: " << p_data->catEnergy << "\n";
 
 				// Check if the player has sufficient energy left
 				if (p_data->pathPositions.size() == p_data->pathQuads.size()) {
@@ -186,7 +187,7 @@ namespace PE
 				p_data->pathPositions.emplace_back(r_nodePosition);
 
 				// Reduce the player's energy
-				--p_data->catEnergy;
+			  p_data->catEnergy = p_data->catMaxEnergy - p_data->pathPositions.size();
 
 				return true;
 		}
