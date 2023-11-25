@@ -84,6 +84,20 @@ namespace PE
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; } // do something when they lose */
 
 
+		if (m_scriptData[id].catHealth <= 0)
+		{
+			// idk if need these
+
+			// TODO ------------------------------------------------------------ //
+			// Add function here to get player to be in DEATH animation when HP reaches 0
+			// ----------------------------------------------------------------- //
+
+			// Set game state to lose when player HP is 0
+			// probably some DT stuff to let the animation run
+			// GameStateManager::GetInstance().SetGameState(GameStates::LOSE);
+			// return;
+		}
+
 		if (!m_scriptData[id].p_stateManager) 
 		{
 			m_scriptData[id].catID = id;
