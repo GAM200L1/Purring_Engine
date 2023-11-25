@@ -300,7 +300,7 @@
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Highlighted_512x128.png",
-                        "m_onClicked": "",
+                        "m_onClicked": "IncrementGameState",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -851,6 +851,7 @@
                                 "pawOverlay": 6,
                                 "planAttackText": 15,
                                 "planMovementText": 16,
+                                "slashText": 9,
                                 "turnBackground": 4,
                                 "turnNumberText": 18
                             },

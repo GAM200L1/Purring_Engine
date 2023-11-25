@@ -24,8 +24,12 @@ namespace PE
 	{
 		bool GameStateManagerActive;
 		EntityID SplashScreen;
-		float SplashTimer{2}; // Time in seconds that the splashscreen is displayed for
-		float maxFadeTime{ 2 }; // Time in seconds that it takes the HUD to fade in and out
+		float SplashTimer{ 2.f }; // Time in seconds that the splashscreen is displayed for
+		float maxFadeTime{ 2.f }; // Time in seconds that it takes the HUD to fade in and out
+		float executingFadeSpeed{ 3.f }; // Time in seconds that it takes the HUD to fade in and out
+
+		// Turn counter
+		int turnCounter{};
 
 		// Statement that fades in and out during the execution phase
 		EntityID executingStatement;
@@ -117,7 +121,7 @@ namespace PE
 		void EndPhaseButton(EntityID id, bool endMovement);
 		
 		/*!***********************************************************************************
-		 \brief Fades the text in and out over time.
+		 \brief Fades the "Executing..." text in and out over time.
 
 		 \param[in] id - ID of the entity that the script instance is attached to.
 		 \param[in] deltaTime - Time in seconds since the last frame. Used to determine how 
@@ -126,13 +130,22 @@ namespace PE
 		void UpdateExecuteHUD(EntityID id, float const deltaTime);
 		
 		/*!***********************************************************************************
-		 \brief Fades the text in and out over time.
+		 \brief Updates the turn count.
 
 		 \param[in] id - ID of the entity that the script instance is attached to.
 		 \param[in] turnCount - The turn number to set the turn count text to.
 		 \param[in] isMovement - Whether the current state is the movement state.
 		*************************************************************************************/
 		void UpdateTurnHUD(EntityID id, int const turnCount, bool isMovement);
+		
+		/*!***********************************************************************************
+		 \brief Updates the energy level UI.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] currentEnergy - Amount of energy the player has left.
+		 \param[in] maximumEnergy - Maximum amount of energy the player has.
+		*************************************************************************************/
+		void UpdateEnergyHUD(EntityID id, int const currentEnergy, int const maximumEnergy);
 
 		/*!***********************************************************************************
 		 \brief Toggle the HUD that appears during the planning phase.

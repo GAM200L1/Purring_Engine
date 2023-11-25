@@ -32,6 +32,8 @@
 #include "GameStateManager.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Text.h"
+#include "CatScript.h"
+
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -42,9 +44,13 @@ namespace PE
 		if (m_ScriptData[id].GameStateManagerActive)
 		{
 				GameStateManager::GetInstance().SetGameState(GameStates::SPLASHSCREEN);
+
 				TogglePlanningHUD(id, true);
 				ToggleExecutionHUD(id, false);
 				ToggleSplashscreen(id, true);
+
+				UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
+				UpdateEnergyHUD(id, CatScript::GetMaximumEnergyLevel() - 1, CatScript::GetMaximumEnergyLevel() - 1);
 		}
 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
@@ -73,8 +79,10 @@ namespace PE
 					TogglePlanningHUD(id, true); 
 					ToggleExecutionHUD(id, false);
 					EndPhaseButton(id, true);
+					UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
 
 					// Update the energy level
+					UpdateEnergyHUD(id, CatScript::GetCurrentEnergyLevel(), CatScript::GetMaximumEnergyLevel() - 1);
 					break;
 			}
 			case GameStates::ATTACK:
@@ -82,6 +90,8 @@ namespace PE
 					TogglePlanningHUD(id, true);
 					ToggleExecutionHUD(id, false);
 					EndPhaseButton(id, false);
+					UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), false);
+
 					break;
 			}
 			case GameStates::EXECUTE:
@@ -106,6 +116,13 @@ namespace PE
 	void GameStateController::OnAttach(EntityID id)
 	{
 		m_ScriptData[id] = GameStateControllerData();
+
+		TogglePlanningHUD(id, true);
+		ToggleExecutionHUD(id, false);
+		ToggleSplashscreen(id, true);
+
+		UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
+		UpdateEnergyHUD(id, CatScript::GetMaximumEnergyLevel() - 1, CatScript::GetMaximumEnergyLevel() - 1);
 	}
 
 	void GameStateController::OnDetach(EntityID id)
@@ -136,17 +153,29 @@ namespace PE
 			static float timePassed{};
 			timePassed += deltaTime;
 
-			// Fade the color in and out over time
-			TextComponent& r_text{ EntityManager::GetInstance().Get<TextComponent>(id) };
-			r_text.SetAlpha(std::sin(timePassed) + 1.f * 0.5f);
+			if (EntityManager::GetInstance().Has(m_ScriptData[id].executingStatement, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+			{
+					// Fade the color in and out over time
+					TextComponent& r_text{ EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].executingStatement) };
+					r_text.SetAlpha(std::sin(timePassed * m_ScriptData[id].executingFadeSpeed) + 1.f * 0.5f);
+			}
 	}
 
 	void GameStateController::UpdateTurnHUD(EntityID id, int const turnCount, bool isMovement)
 	{
-			EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].turnNumberText).SetText(std::string{"Turn " + std::to_string(turnCount)});
+			if (EntityManager::GetInstance().Has(m_ScriptData[id].turnNumberText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].turnNumberText).SetText(std::string{"Turn " + std::to_string(turnCount)});
 
 			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].planMovementText).isActive = isMovement;
 			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].planAttackText).isActive = !isMovement;
+	}
+
+	void GameStateController::UpdateEnergyHUD(EntityID id, int const currentEnergy, int const maximumEnergy)
+	{
+			if (EntityManager::GetInstance().Has(m_ScriptData[id].currentEnergyText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].currentEnergyText).SetText(std::to_string(currentEnergy));
+			if (EntityManager::GetInstance().Has(m_ScriptData[id].maxEnergyText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].maxEnergyText).SetText(std::to_string(maximumEnergy));
 	}
 
 	void GameStateController::TogglePlanningHUD(EntityID id, bool enable)

@@ -198,6 +198,7 @@ RTTR_REGISTRATION
         .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
         .property("energyHeader", &PE::GameStateControllerData::energyHeader)
         .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
+        .property("slashText", &PE::GameStateControllerData::slashText)
         .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
         .property("energyBackground", &PE::GameStateControllerData::energyBackground)
         .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
