@@ -156,6 +156,9 @@ namespace PE
 					GameStateManager::GetInstance().IncrementGameState();
 				}
 		}
+	
+		if(m_scriptData[id].catHealth <= 0)
+			GameStateManager::GetInstance().SetLoseState();
 	}
 
 	void CatScript::OnAttach(EntityID id)

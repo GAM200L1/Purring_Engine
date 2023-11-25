@@ -137,6 +137,7 @@ namespace PE {
 			//loop through all listerners if the event is not handled we process it.
 			for (auto&& listener : m_Listerners.at(event.GetType()))
 			{
+				if(listener)
 				if (!event.Handled()) listener(event);
 			}
 		}
