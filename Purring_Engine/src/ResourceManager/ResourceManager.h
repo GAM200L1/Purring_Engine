@@ -116,7 +116,7 @@ namespace PE
             \param[in] r_key Name of audio file.
             \param[in] r_filePath File path of audio.
         *************************************************************************************/
-        void LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath);
+        bool LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath);
 
         /*!***********************************************************************************
             \brief Loads audio from file and inserts into Sounds map container.
@@ -177,6 +177,15 @@ namespace PE
             \return Font in map.
         *************************************************************************************/
         std::shared_ptr<Font> GetFont(std::string const& r_name);
+
+        /*!***********************************************************************************
+            \brief Gets the audio stored in the resource manager.
+
+            \param[in] r_name Name of audio
+
+            \return Audio in map.
+        *************************************************************************************/
+        std::shared_ptr<AudioManager::Audio> GetAudio(std::string const& r_name);
     private:
         // constructor
         ResourceManager()

@@ -49,16 +49,16 @@ namespace PE
             return;
         }
 
-        auto it = ResourceManager::GetInstance().Sounds.find(m_audioKey);
-        if (it != ResourceManager::GetInstance().Sounds.end())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio)
         {
             FMOD::System* system = AudioManager::GetInstance().GetFMODSystem();
             FMOD::Channel* channel = nullptr;
-            FMOD_RESULT result = system->playSound(it->second->GetSound(), nullptr, false, &channel);
+            FMOD_RESULT result = system->playSound(audio->GetSound(), nullptr, false, &channel);
 
             if (result == FMOD_OK)
             {
-                it->second->SetChannel(channel);
+                audio->SetChannel(channel);
                 std::cout << "Sound played successfully with id: " << m_audioKey << std::endl;
 
                 // Set the loop mode based on the m_loop flag
@@ -90,10 +90,10 @@ namespace PE
     {
         std::cout << "Setting volume for sound with id: " << m_audioKey << " to " << volume << std::endl;
 
-        auto it = ResourceManager::GetInstance().Sounds.find(m_audioKey);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio && audio->GetChannel())
         {
-            it->second->GetChannel()->setVolume(volume);
+            audio->GetChannel()->setVolume(volume);
             std::cout << "Volume set successfully for sound with id: " << m_audioKey << std::endl;
         }
         else
@@ -104,30 +104,30 @@ namespace PE
 
     void AudioComponent::PauseSound()
     {
-        auto it = ResourceManager::GetInstance().Sounds.find(m_audioKey);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio && audio->GetChannel())
         {
-            it->second->GetChannel()->setPaused(true);
+            audio->GetChannel()->setPaused(true);
         }
         isPaused = true;
     }
 
     void AudioComponent::ResumeSound()
     {
-        auto it = ResourceManager::GetInstance().Sounds.find(m_audioKey);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio && audio->GetChannel())
         {
-            it->second->GetChannel()->setPaused(false);
+            audio->GetChannel()->setPaused(false);
         }
         isPaused = false;
     }
 
     void AudioComponent::StopSound()
     {
-        auto it = ResourceManager::GetInstance().Sounds.find(m_audioKey);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio && audio->GetChannel())
         {
-            it->second->GetChannel()->stop();
+            audio->GetChannel()->stop();
         }
     }
 
