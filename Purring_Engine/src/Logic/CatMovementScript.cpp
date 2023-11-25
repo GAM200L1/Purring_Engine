@@ -55,9 +55,7 @@ namespace PE
 			if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && CatScript::GetCurrentEnergyLevel())
 			{
 					// Get the position of the cat
-					float mouseX{}, mouseY{};
-					InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
-					vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
+					vec2 cursorPosition{ CatScript::GetCursorPositionInWorld() };
 
 					// Check if the cat has been clicked
 					CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
@@ -75,9 +73,7 @@ namespace PE
 				if(CatScript::GetCurrentEnergyLevel()) // Check if the player has sufficient energy
 				{
 					// Get the mouse position
-					float mouseX{}, mouseY{};
-					InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
-					vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
+					vec2 cursorPosition{ CatScript::GetCursorPositionInWorld() };
 
 					// Attempt to create a node at the position of the cursor
 					// and position the cat where the node is

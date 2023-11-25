@@ -180,7 +180,14 @@ namespace PE
 		 \param[in] transformId ID of the entity to retrieve the scale of.
 		*************************************************************************************/
 		static vec2 GetEntityScale(EntityID const transformId);
-		
+
+		/*!***********************************************************************************
+		 \brief Returns the position of the cursor in the world.
+
+		 \return int - Returns the current energy the player has left.
+		*************************************************************************************/
+		static vec2 GetCursorPositionInWorld();
+
 		/*!***********************************************************************************
 		 \brief Returns the current energy the player has left.
 

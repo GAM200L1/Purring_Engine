@@ -299,6 +299,14 @@ namespace PE
 	}
 
 
+	vec2 CatScript::GetCursorPositionInWorld()
+	{
+			float mouseX{}, mouseY{};
+			InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
+			return GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY);
+	}
+
+
 	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);

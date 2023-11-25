@@ -45,9 +45,7 @@ namespace PE
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
 		
 		// get the mouse cursor position
-		float mouseX{}, mouseY{};
-		InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY); 
-		vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
+		vec2 cursorPosition{ CatScript::GetCursorPositionInWorld() };
 
 		// if havent checked if the telegraphs are intersecting with the cats, go over this update (it should check after)
 		if (!m_checkedIgnored) 
