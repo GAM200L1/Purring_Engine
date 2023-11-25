@@ -26,7 +26,7 @@ namespace PE
 		bool GameStateManagerActive;
 		EntityID SplashScreen;
 		float SplashTimer{ 2.f }; // Time in seconds that the splashscreen is displayed for
-		float maxFadeTime{ 2.f }; // Time in seconds that it takes the HUD to fade in and out
+		float maxFadeTime{ 0.5f }; // Time in seconds that it takes the HUD to fade in and out
 		float executingFadeSpeed{ 3.f }; // Time in seconds that it takes the executing text to fade in and out
 		float timeSinceEnteredState; //Time in seconds since the state has first been entered
 		float timeSinceExitedState; //Time in seconds since the state has first been exited
