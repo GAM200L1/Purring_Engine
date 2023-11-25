@@ -57,7 +57,7 @@ namespace PE
 						if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 						{
 							std::cout<<"CatScript found"<<std::endl;
-							CatScript::SetMaximumEnergyLevel(CatScript::GetCurrentEnergyLevel() + 2);
+							CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
 							CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
 							cd->catHealth++;
 						}
