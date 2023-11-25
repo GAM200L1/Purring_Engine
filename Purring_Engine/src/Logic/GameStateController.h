@@ -51,6 +51,8 @@ namespace PE
 
 		// Buttons
 		EntityID endTurnButton, endMovementText, endTurnText;
+
+		int keyEventHandlerId, outOfFocusEventHandlerId;
 	};
 
 	class GameStateController : public Script
@@ -267,8 +269,6 @@ namespace PE
 	private:
 		std::map<EntityID, GameStateControllerData> m_ScriptData;
 		SerializationManager serializationManager;
-
-		int keyEventHandlerId,outOfFocusEventHandlerId;
 	};
 
 

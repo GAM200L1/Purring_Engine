@@ -53,8 +53,8 @@ namespace PE
 				UpdateEnergyHUD(id, CatScript::GetMaximumEnergyLevel() - 1, CatScript::GetMaximumEnergyLevel() - 1);
 		}
 
-		keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
-		outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
+		m_ScriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
+		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
 	}
 	void GameStateController::Update(EntityID id, float deltaTime)
 	{
@@ -162,10 +162,14 @@ namespace PE
 
 		m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
 	}
-	void GameStateController::Destroy(EntityID)
+	void GameStateController::Destroy(EntityID id)
 	{
-		REMOVE_KEY_EVENT_LISTENER(keyEventHandlerId);
-		REMOVE_WINDOW_EVENT_LISTENER(outOfFocusEventHandlerId);
+		auto it = m_ScriptData.find(id);
+		if (it != m_ScriptData.end())
+		{
+			REMOVE_KEY_EVENT_LISTENER(m_ScriptData[id].keyEventHandlerId);
+			REMOVE_WINDOW_EVENT_LISTENER(m_ScriptData[id].outOfFocusEventHandlerId);
+		}
 	}
 
 	GameStateController::~GameStateController()
