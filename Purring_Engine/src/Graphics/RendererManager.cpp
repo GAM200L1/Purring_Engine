@@ -965,7 +965,7 @@ namespace PE
                     glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 
                     // update content of VBO memory
-                    glBindBuffer(GL_ARRAY_BUFFER, textComponent.GetFont()->m_vertexArrayObject);
+                    glBindBuffer(GL_ARRAY_BUFFER, textComponent.GetFont()->m_vertexBufferObject);
                     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
                     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
