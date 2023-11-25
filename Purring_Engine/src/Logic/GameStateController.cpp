@@ -53,8 +53,8 @@ namespace PE
 				UpdateEnergyHUD(id, CatScript::GetMaximumEnergyLevel() - 1, CatScript::GetMaximumEnergyLevel() - 1);
 		}
 
-		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
-		ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
+		keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
+		outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
 	}
 	void GameStateController::Update(EntityID id, float deltaTime)
 	{
@@ -66,7 +66,8 @@ namespace PE
 			if (m_ScriptData[id].SplashTimer <= 0)
 			{
 				ToggleSplashscreen(id, false);
-				GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);		
+				GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);	
+				m_ScriptData[id].prevState = GameStates::SPLASHSCREEN;
 			}
 		} 
 		else
@@ -76,13 +77,40 @@ namespace PE
 			{
 			case GameStates::MOVEMENT:
 			{
-					TogglePlanningHUD(id, true); 
-					ToggleExecutionHUD(id, false);
-					EndPhaseButton(id, true);
-					UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
+				float fadeOutSpeed = std::clamp(m_ScriptData[id].timeSinceExitedState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
+				float fadeInSpeed = std::clamp(m_ScriptData[id].timeSinceEnteredState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
+					if (m_ScriptData[id].prevState == GameStates::EXECUTE)
+					{
+						m_ScriptData[id].timeSinceEnteredState = 0;
+						m_ScriptData[id].timeSinceExitedState = m_ScriptData[id].maxFadeTime;
+						TogglePlanningHUD(id, true);
+
+						EndPhaseButton(id, true);
+						UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
+
+						FadeExecutionHUD(id, fadeOutSpeed);
+						FadePlanningHUD(id, fadeInSpeed);
+					}
+
+					m_ScriptData[id].timeSinceExitedState -= deltaTime;
+					m_ScriptData[id].timeSinceEnteredState += deltaTime;
+
+
+
+
+					if (fadeInSpeed >= 1)
+					{
+						ToggleExecutionHUD(id, false);
+
+						if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
+						{
+							EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = false;
+						}
+					}
 
 					// Update the energy level
 					UpdateEnergyHUD(id, CatScript::GetCurrentEnergyLevel(), CatScript::GetMaximumEnergyLevel() - 1);
+
 					break;
 			}
 			case GameStates::ATTACK:
@@ -96,17 +124,48 @@ namespace PE
 			}
 			case GameStates::EXECUTE:
 			{
-					TogglePlanningHUD(id, false);
-					ToggleExecutionHUD(id, true);
+
+					if (m_ScriptData[id].prevState == GameStates::ATTACK) 
+					{
+						m_ScriptData[id].timeSinceEnteredState = 0;
+						m_ScriptData[id].timeSinceExitedState = m_ScriptData[id].maxFadeTime;
+						ToggleExecutionHUD(id, true);
+					}
+					
+					m_ScriptData[id].timeSinceExitedState -= deltaTime;
+					m_ScriptData[id].timeSinceEnteredState += deltaTime;
+
+					float fadeOutSpeed = std::clamp(m_ScriptData[id].timeSinceExitedState/m_ScriptData[id].maxFadeTime, 0.f, 1.f);
+					float fadeInSpeed = std::clamp(m_ScriptData[id].timeSinceEnteredState/m_ScriptData[id].maxFadeTime, 0.f, 1.f);
+
+					FadePlanningHUD(id, fadeOutSpeed);
+
+					if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
+					{
+						EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = true;
+					}
+					
+					FadeExecutionHUD(id, fadeInSpeed);
+
+					if (fadeInSpeed >= 1)
+					{
+						TogglePlanningHUD(id, false);
+					}
+
 					UpdateExecuteHUD(id, deltaTime);
+
 					break;
 			}
 			default: { break; }
 			}
 		}
+
+		m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
 	}
 	void GameStateController::Destroy(EntityID)
 	{
+		REMOVE_KEY_EVENT_LISTENER(keyEventHandlerId);
+		REMOVE_WINDOW_EVENT_LISTENER(outOfFocusEventHandlerId);
 	}
 
 	GameStateController::~GameStateController()
@@ -320,6 +379,7 @@ namespace PE
 					GameStateManager::GetInstance().SetPauseState();
 				}
 			}
+
 		}
 	}
 }
