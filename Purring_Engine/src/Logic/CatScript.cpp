@@ -75,12 +75,26 @@ namespace PE
 
 	void CatScript::Update(EntityID id, float deltaTime)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; }
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
 
-		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; }
+		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; } // do something when they win
 
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; }*/
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; } // do something when they lose */
 
+
+		if (m_scriptData[id].catHealth <= 0)
+		{
+			// idk if need these
+
+			// TODO ------------------------------------------------------------ //
+			// Add function here to get player to be in DEATH animation when HP reaches 0
+			// ----------------------------------------------------------------- //
+
+			// Set game state to lose when player HP is 0
+			// probably some DT stuff to let the animation run
+			// GameStateManager::GetInstance().SetGameState(GameStates::LOSE);
+			// return;
+		}
 
 		if (!m_scriptData[id].p_stateManager) 
 		{
@@ -95,8 +109,11 @@ namespace PE
 
 		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
 		{
-			// if player is planning movement, set animation to idle(?)
-			// Check if the state should be changed
+			// TODO ------------------------------------------------------------ //
+			// Add function here to get player to be in IDLE animation when planning movement
+			// ----------------------------------------------------------------- //
+			
+			// If current gamestate is set to attack planning, change state to CatAttackPLAN
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
 			{
 				TriggerStateChange(id); // immediate state change
@@ -108,7 +125,9 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 		{
-			// if player is planning attack, set animation to idle
+			// TODO ------------------------------------------------------------ //
+			// Add function here to get player to be in IDLE animation when planning movement
+			// ----------------------------------------------------------------- //
 
 			// Check if the state should be changed
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
@@ -122,6 +141,10 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 		{
+			// TODO ------------------------------------------------------------ //
+			// Add function here to get player to be in MOVEMENT animation when planning movement
+			// ----------------------------------------------------------------- //
+			// this was the original code idk how its done now
 			//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 			//{
 			//	//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
@@ -130,29 +153,27 @@ namespace PE
 			// Check if the state should be changed
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				//m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id); // --------------- @TODO KRYSTAL uncomment this
-				//GameStateManager::GetInstance().IncrementGameState();
-
 				// trigger state change called in MovementEXECUTE state update
 				m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
 			}
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 		{
-				//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
-				//{
-				//	EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
-				//}
+			// TODO ------------------------------------------------------------ //
+			// Add function here to get player to be in ATTACK animation when planning movement
+			// ----------------------------------------------------------------- //
+			//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
+			//{
+			//	EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
+			//}
 
-				// Check if the state should be changed
-				if (CheckShouldStateChange(id, deltaTime))
-				{
-					//m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id); --------------- @TODO KRYSTAL uncomment this
-						
-					// trigger state change called in AttackEXECUTE state update
-					m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
-					GameStateManager::GetInstance().IncrementGameState();
-				}
+			// Check if the state should be changed
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+				// trigger state change called in AttackEXECUTE state update
+				m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
+				GameStateManager::GetInstance().IncrementGameState();
+			}
 		}
 	}
 
