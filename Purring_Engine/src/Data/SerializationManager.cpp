@@ -347,7 +347,7 @@ size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
     }
 }
 
-size_t SerializationManager::DeleteAllObjectAndLoadFromFile(const std::filesystem::path& filepath)
+void SerializationManager::DeleteAllObjectAndLoadAllEntitiesFromFile(const std::filesystem::path& filepath)
 {
     //delete all objects
     for (int n = static_cast<int>(PE::EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
@@ -359,6 +359,8 @@ size_t SerializationManager::DeleteAllObjectAndLoadFromFile(const std::filesyste
         }
 
     }
+
+
     if (!std::filesystem::exists(filepath))
     {
         std::cerr << "File does not exist: " << filepath << std::endl;

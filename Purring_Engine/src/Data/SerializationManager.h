@@ -134,7 +134,7 @@ public:
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
     *************************************************************************************/
-    size_t DeleteAllObjectAndLoadAllEntitiesFromFile(const std::filesystem::path& filepath);
+    void DeleteAllObjectAndLoadAllEntitiesFromFile(const std::filesystem::path& filepath);
 
 
     nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);

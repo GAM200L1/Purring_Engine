@@ -164,6 +164,8 @@ namespace PE
 	}
 	void GameStateController::Destroy(EntityID)
 	{
+		REMOVE_KEY_EVENT_LISTENER(keyEventHandlerId);
+		REMOVE_WINDOW_EVENT_LISTENER(outOfFocusEventHandlerId);
 	}
 
 	GameStateController::~GameStateController()
