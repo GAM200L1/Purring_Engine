@@ -2,6 +2,7 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
+				"Prefab Type": "areyousure",
                 "children": [],
                 "isActive": true,
                 "name": "areyousure",

@@ -2,10 +2,10 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
-				"Prefab Type": "SadCat",
+				"Prefab Type": "HappyCat",
                 "children": [],
                 "isActive": true,
-                "name": "SadCat",
+                "name": "HappyCat",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
@@ -16,13 +16,13 @@
                     "g": 1.0,
                     "r": 1.0
                 },
-                "TextureKey": "../Assets/Textures/SadCat_1920x1080.png"
+                "TextureKey": "../Assets/Textures/HappyCat_1920x1080.png"
             },
             "Transform": {
                 "height": 1080.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 47.0,
+                    "x": 64.0,
                     "y": 0.0
                 },
                 "relativeposition": {

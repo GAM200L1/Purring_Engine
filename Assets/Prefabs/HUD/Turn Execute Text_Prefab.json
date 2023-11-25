@@ -2,6 +2,7 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
+				"Prefab Type": "Turn Execute Text",
                 "children": [],
                 "isActive": true,
                 "name": "Turn Execute Text",

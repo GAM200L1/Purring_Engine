@@ -2,6 +2,7 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
+				"Prefab Type": "HowToPlayObj",
                 "children": [],
                 "isActive": true,
                 "name": "HowToPlayObj",

@@ -2,6 +2,7 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
+				"Prefab Type": "SplashScreen",
                 "children": [],
                 "isActive": true,
                 "name": "SplashScreen",

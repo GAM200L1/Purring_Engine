@@ -2,6 +2,7 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
+                "Prefab Type": "PauseBG",
                 "children": [],
                 "isActive": true,
                 "name": "PauseBG",

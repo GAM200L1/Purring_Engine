@@ -2,6 +2,7 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
+				"Prefab Type": "return button",
                 "children": [],
                 "isActive": true,
                 "name": "return button",

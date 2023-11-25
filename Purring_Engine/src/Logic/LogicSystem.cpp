@@ -92,6 +92,7 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 					break;
 				case ScriptState::EXIT:
 					m_scriptContainer.find(key)->second->Destroy(objectID);
+					state = ScriptState::DEAD;
 					break;
 				}
 			}
@@ -118,9 +119,23 @@ void PE::LogicSystem::DeleteScriptData(EntityID id)
 	{
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
+		{ 
 #endif
-		m_scriptContainer.find(key)->second->Destroy(id);
-
+			//for (EntityID objectID : SceneView<ScriptComponent>())
+			//{
+			//	ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
+			//	for (auto& [key, state] : sc.m_scriptKeys)
+			//	{
+			//		if (state == ScriptState::UPDATE)
+			//		{
+						m_scriptContainer.find(key)->second->Destroy(id);
+			//			state = ScriptState::DEAD;
+			//		}
+			//	}
+			//}
+#ifndef GAMERELEASE
+		}
+#endif
 		val->OnDetach(id);
 	}
 

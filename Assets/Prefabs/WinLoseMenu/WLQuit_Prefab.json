@@ -2,10 +2,10 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
-				"Prefab Type": "QuitGameButton",
+				"Prefab Type": "wlquitbutton",
                 "children": [],
                 "isActive": true,
-                "name": "QuitGameButton",
+                "name": "wlquitbutton",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
@@ -33,7 +33,7 @@
                     1.0
                 ],
                 "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
-                "m_onClicked": "AreYouSureExit",
+                "m_onClicked": "WLAreYouSureExit",
                 "m_onHovered": "",
                 "m_pressedColor": [
                     1.0,
@@ -56,8 +56,8 @@
                 "height": 184.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 0.0,
-                    "y": -254.0
+                    "x": 500.0,
+                    "y": -310.0
                 },
                 "relativeposition": {
                     "x": 0.0,

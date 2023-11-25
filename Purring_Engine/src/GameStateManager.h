@@ -119,17 +119,28 @@ namespace PE {
 		*************************************************************************************/
 		void ReturnToPauseMenuFromExit(EntityID = -1);
 
+		void RestartGame(EntityID);
+
+		void ReturnToWinLoseScreenFromExit(EntityID);
+
 		/*!***********************************************************************************
 		 \brief			enter confirmation prompt to exit
 		 \param [In]	EntityID needed to save as a button function
 		*************************************************************************************/
 		void AreYouSureExit(EntityID = -1);
 
+
+		void WLAreYouSureExit(EntityID = -1);
+
 		/*!***********************************************************************************
 		 \brief			exit the game
 		 \param [In]	EntityID needed to save as a button function
 		*************************************************************************************/
 		void ExitGame(EntityID = -1);
+
+		void ToggleWin(bool);
+
+		void ToggleLose(bool);
 
 		/*!***********************************************************************************
 		 \brief			Set the entire pause menu to inactive
@@ -165,13 +176,25 @@ namespace PE {
 
 		SerializationManager serializationManager;
 		
+		//pause menu
 		EntityID pauseBGID,pawsedID,resumeButtonID,howToPlayButtonID,quitButtonID;
 
+		//how to play page
 		EntityID howToPlayID,returnButtonID;
 
+		//are you sure page
 		EntityID areYouSureID, yesButtonID, noButtonID, sadCatID;
 
-		bool howToPlay{ false }, pausedOnce{ false }, areYouSure{ false };
+		//lose page
+		EntityID loseTextID, loseCatID;
+
+		//win page
+		EntityID winTextID, winCatID;
+
+		//Reused
+		EntityID endGameRestartButtonID, endGameExitButtonID, endGameBGID;
+
+		bool howToPlay{ false }, pausedOnce{ false }, areYouSure{ false }, Won{ false }, Lost{ false };
 
 		int m_turnNumber{}; // Number of turns that the player has gone through since the beginning of the game
 	};
