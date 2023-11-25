@@ -25,6 +25,7 @@ namespace PE
 		bool GameStateManagerActive;
 		EntityID SplashScreen;
 		float SplashTimer{2};
+		float resetToMovementTimer{ 1.f };
 	};
 
 	class GameStateController : public Script

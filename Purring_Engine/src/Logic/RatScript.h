@@ -15,3 +15,201 @@
 *************************************************************************************/
 #pragma once
 #include "Script.h"
+#include "StateManager.h"
+#include "ECS/Entity.h"
+#include "Math/MathCustom.h"
+
+namespace PE
+{
+	struct RatScriptData
+	{
+		// reference entities
+		EntityID ratID{ 0 };
+		EntityID psudoRatID{ 0 };
+		EntityID mainCatID{ 0 };
+		
+		// rat stats
+		int health{ 0 };
+
+		// movement variables
+		float movementSpeed{ 0.f };
+
+		// attack entities and variables
+		EntityID arrowTelegraphID{ 0 };
+		EntityID attackTelegraphID{ 0 };
+		EntityID detectionTelegraphID{ 0 };
+		float detectionRadius{ 0.f };
+
+		// state management
+		StateMachine* p_stateManager;
+		bool shouldChangeState{};
+		bool delaySet{ false };
+		float timeBeforeChangingState{ 0.f };
+	};
+
+	class RatScript : public Script
+	{
+	public:
+		// ----- Public Variables ------ //
+
+		std::map<EntityID, RatScriptData> m_scriptData;
+
+	public:
+
+		// ----- Destructor ----- //
+		virtual ~RatScript();
+
+		// ----- Public Functions ----- //
+		virtual void Init(EntityID id);
+
+		virtual void Update(EntityID id, float deltaTime);
+
+		virtual void Destroy(EntityID id) {}
+
+		virtual void OnAttach(EntityID id);
+
+		virtual void OnDetach(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed after the delay passed in.
+
+		 \param[in] id EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void TriggerStateChange(EntityID id, float const stateChangeDelay = 0.f);
+
+		/*!***********************************************************************************
+		 \brief Changes the state if the flag has been set and the delay is zero and below.
+
+		 \param[in] id EntityID of the entity to change the state of.
+		 \param[in] deltaTime Time in seconds that have passed since the last frame.
+
+		 \return true - True if the state should change.
+		 \return false - False if the state should NOT change.
+		*************************************************************************************/
+		bool CheckShouldStateChange(EntityID id, float const deltaTime);
+
+		/*!***********************************************************************************
+		 \brief Helper function to en/disables an entity.
+
+		 \param[in] id EntityID of the entity to en/disable.
+		 \param[in] setToActive Whether this entity should be set to active or inactive.
+		*************************************************************************************/
+		static void ToggleEntity(EntityID id, bool setToActive);
+
+		/*!***********************************************************************************
+		 \brief Adjusts the position of the transform to the value passed in.
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] r_position Position to set the transform to.
+		*************************************************************************************/
+		static void PositionEntity(EntityID const transformId, vec2 const& r_position);
+
+		/*!***********************************************************************************
+		 \brief Adjusts the scale of the transform to the value passed in.
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] width Width to set the transform to.
+		 \param[in] height Height to set the transform to.
+		*************************************************************************************/
+		static void ScaleEntity(EntityID const transformId, float const width, float const height);
+
+
+		// ----- Getters/RTTR ----- //
+
+		/*!***********************************************************************************
+		 \brief Returns the position of the transform of the entity passed in.
+
+		 \param[in] transformId ID of the entity to retrieve the position of.
+		*************************************************************************************/
+		static vec2 GetEntityPosition(EntityID const transformId);
+
+		/*!***********************************************************************************
+		 \brief Returns the scale of the transform of the entity passed in.
+
+		 \param[in] transformId ID of the entity to retrieve the scale of.
+		*************************************************************************************/
+		static vec2 GetEntityScale(EntityID const transformId);
+
+	private:
+		// ----- Private Functions ----- //
+		void CreateAttackTelegraphs(EntityID id);
+	};
+
+	class RatIDLE : public State
+	{
+	public:
+		// ----- Destructor ----- //
+		virtual ~RatIDLE() { p_data = nullptr; }
+
+		// ----- Public Functions ----- //
+		virtual void StateEnter(EntityID id) override;
+
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+
+		virtual void StateCleanUp();
+
+		virtual void StateExit(EntityID id) override;
+
+		// ----- Getter ----- //
+		virtual std::string_view GetName() { return "IDLE"; }
+
+	private:
+		// ----- Private Variables ----- //
+		RatScriptData* p_data;
+
+		// ----- Private Functions ----- //
+		float GetDistanceFromPlayer(EntityID id);
+	};
+
+
+	class RatMovementEXECUTE : public State
+	{
+	public:
+		// ----- Destructor ----- //
+		virtual ~RatMovementEXECUTE() { p_data = nullptr; }
+
+		// ----- Public Functions ----- //
+		virtual void StateEnter(EntityID id) override;
+
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+
+		virtual void StateCleanUp();
+
+		virtual void StateExit(EntityID id) override;
+
+		// ----- Getter ----- //
+		virtual std::string_view GetName() { return "MovementEXECUTE"; }
+
+	private:
+		// ----- Private Variables ----- //
+		RatScriptData* p_data;
+	};
+
+
+
+	class RatAttackEXECUTE : public State
+	{
+	public:
+		// ----- Destructor ----- //
+		virtual ~RatAttackEXECUTE() { p_data = nullptr; }
+
+		// ----- Public Functions ----- //
+		virtual void StateEnter(EntityID id) override;
+
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+
+		virtual void StateCleanUp();
+
+		virtual void StateExit(EntityID id) override;
+
+		// ----- Getter ----- //
+		virtual std::string_view GetName() { return "AttackEXECUTE"; }
+
+	private:
+		// ----- Private Variables ----- //
+		RatScriptData* p_data;
+	};
+
+}

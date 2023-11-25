@@ -51,6 +51,20 @@ namespace PE
 				GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);		
 			}
 		}
+		/*else if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+		{
+			if ()
+			{
+				static float timer{ m_ScriptData[id].resetToMovementTimer };
+
+				timer -= deltaTime;
+				if (timer <= 0.f)
+				{
+					GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);
+					timer = m_ScriptData[id].resetToMovementTimer;
+				}
+			}
+		}*/
 	}
 	void GameStateController::Destroy(EntityID)
 	{

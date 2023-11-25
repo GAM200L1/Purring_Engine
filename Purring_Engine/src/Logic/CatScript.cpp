@@ -59,7 +59,6 @@ namespace PE
 
 		//! Creates an entity for the projectile
 		SerializationManager serializationManager;
-		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/Cat_Hairball_512px.png", "../Assets/Textures/Cat_Hairball_512px.png");
 		m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
 		/*EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;*/
 		EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
@@ -172,7 +171,6 @@ namespace PE
 			{
 				// trigger state change called in AttackEXECUTE state update
 				m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
-				GameStateManager::GetInstance().IncrementGameState();
 			}
 		}
 	}
@@ -321,8 +319,10 @@ namespace PE
 	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);
+		
+		SerializationManager serializationManager;
 
-		EntityID telegraphID = EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>();
+		EntityID telegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/CatAttackTelegraph_Prefab.json");
 		Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
@@ -352,12 +352,6 @@ namespace PE
 
 		EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = telegraphCollider;
 		EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
-
-		// Load and Set the texture for the telegraphs
-		std::string telegraphTextureName = "../Assets/Textures/Telegraphs/Telegraph_Long_512x128.png";
-		ResourceManager::GetInstance().LoadTextureFromFile(telegraphTextureName, telegraphTextureName);
-		EntityManager::GetInstance().Get<Graphics::Renderer>(telegraphID).SetTextureKey(telegraphTextureName);
-
 
 		m_scriptData[id].telegraphIDs.emplace(dir, telegraphID);
 	}
