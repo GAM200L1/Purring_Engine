@@ -166,7 +166,8 @@ namespace PE {
 	public:
 		Graphics::CameraManager* p_cameraManager;
 		GLFWwindow* p_window;
-		
+		bool godMode{}; // boolean for cheatcode
+
 		// ----- Private Variables ----- // 
 	private:
 		// State that is currently active

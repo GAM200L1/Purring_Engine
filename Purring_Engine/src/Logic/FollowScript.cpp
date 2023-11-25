@@ -68,17 +68,32 @@ namespace PE
 						std::cout << "CatScript found" << std::endl;
 						CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
 						CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
-						cd->catHealth++;
+						cd->catHealth = m_ScriptData[id].NumberOfFollower;
 					}
 				}
 			}
+
 			if (m_ScriptData[id].NumberOfAttachers == 1)
 			{
 				m_ScriptData[id].IsAttaching = false;
 
 			}
 		}
-
+		if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+		{
+			CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
+			std::cout << cd->catHealth << std::endl;
+			if(cd->catHealth >= 1)
+			if (cd->catHealth < m_ScriptData[id].NumberOfFollower)
+			{
+				for (int i = cd->catHealth; i < m_ScriptData[id].NumberOfFollower; ++i)
+				{
+					EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingObject[i]).isActive = false;
+					m_ScriptData[id].NumberOfFollower--;
+					CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() - 2);
+				}
+			}
+		}
 		for (int i = m_ScriptData[id].NumberOfFollower; i < 5; ++i)
 		{
 			m_ScriptData[id].FollowingObject[i] = static_cast<EntityID>(-1);
@@ -149,6 +164,14 @@ namespace PE
 
 		}
 
+		if (InputSystem::IsKeyTriggered(GLFW_KEY_Q))
+		{
+			if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+			{
+				CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
+				cd->catHealth--;
+			}
+		}
 	}
 
 	void FollowScript::Destroy(EntityID)

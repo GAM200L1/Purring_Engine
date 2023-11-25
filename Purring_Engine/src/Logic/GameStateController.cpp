@@ -401,6 +401,12 @@ namespace PE
 			{
 				GameStateManager::GetInstance().SetLoseState();
 			}
+
+			if (KTE.keycode == GLFW_KEY_F3)
+			{
+				GameStateManager::GetInstance().godMode = !GameStateManager::GetInstance().godMode;
+			}
+
 		}
 	}
 }
