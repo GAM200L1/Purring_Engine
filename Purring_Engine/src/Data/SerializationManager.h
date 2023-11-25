@@ -131,6 +131,12 @@ public:
     *************************************************************************************/
     size_t LoadFromFile(const std::filesystem::path& filepath);
 
+    /*!***********************************************************************************
+     \brief Load an entity from a serialized file, returning its ID.
+    *************************************************************************************/
+    size_t DeleteAllObjectAndLoadAllEntitiesFromFile(const std::filesystem::path& filepath);
+
+
     nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
 
 

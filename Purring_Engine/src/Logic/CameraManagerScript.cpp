@@ -44,7 +44,6 @@ namespace PE
 			ChangeCamera(id);
 			m_keyPressed = false;
 		}
-
 	}
 	void CameraManagerScript::Destroy(EntityID)
 	{

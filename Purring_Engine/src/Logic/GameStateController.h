@@ -223,6 +223,8 @@ namespace PE
 	private:
 		std::map<EntityID, GameStateControllerData> m_ScriptData;
 		SerializationManager serializationManager;
+
+		int keyEventHandlerId,outOfFocusEventHandlerId;
 	};
 
 
