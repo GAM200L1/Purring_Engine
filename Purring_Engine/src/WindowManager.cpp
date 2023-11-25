@@ -34,13 +34,9 @@ Logger event_logger = Logger("EVENT");
 
 namespace PE
 {
+	// Initialize static variables
 	bool WindowManager::msepress = false;
-	/*!***********************************************************************************
-	 \brief     Default constructor for WindowManager. Initializes GLFW for window creation.
 
-	 \tparam T          This function does not use a template.
-	 \return T          Does not return a value, as this is a constructor.
-	*************************************************************************************/
 	WindowManager::WindowManager()
 	{
 		// Attempt to initialize GLFW
@@ -52,30 +48,12 @@ namespace PE
 	}
 
 
-
-	/*!***********************************************************************************
-	 \brief     Destructor for WindowManager. Calls Cleanup to release resources.
-
-	 \tparam T          This function does not use a template.
-	 \return void       Does not return a value, as this is a destructor.
-	*************************************************************************************/
 	WindowManager::~WindowManager()
 	{
 		Cleanup();
 	}
 
 
-
-	/*!***********************************************************************************
-	 \brief     Initializes a new GLFW window with the specified dimensions and title,
-				and sets up all necessary callbacks.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] width   The width of the new window.
-	 \param[in] height  The height of the new window.
-	 \param[in] p_title The title to be displayed on the new window.
-	 \return GLFWwindow* Pointer to the newly created GLFW window, or nullptr if initialization fails.
-	*************************************************************************************/
 	GLFWwindow* WindowManager::InitWindow(int width, int height, const char* p_title)
 	{
 #ifndef GAMERELEASE
@@ -124,142 +102,12 @@ namespace PE
 	}
 
 
-
-	/*!***********************************************************************************
-	 \brief     Handles window-related events by adding them to the event log.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] e       Event of type PE::WindowEvents containing the details of the window event.
-	 \return void       Does not return a value.
-	*************************************************************************************/
-	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event)
-	{
-#ifndef GAMERELEASE
-		Editor::GetInstance().AddEventLog(r_event.ToString());
-#else
-		if (r_event.GetType() == WindowEvents::WindowLostFocus)
-		{
-			GameStateManager::GetInstance().SetPauseState();	
-			if(msepress)
-				glfwIconifyWindow(p_currWindow);
-
-			msepress = true;
-		}
-#endif
-	}
-
-
-
-	/*!***********************************************************************************
-	 \brief     Handles mouse-related events by adding them to the event log.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] e       Event of type PE::MouseEvents containing the details of the mouse event.
-	 \return void       Does not return a value.
-	*************************************************************************************/
-	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
-	{
-#ifndef GAMERELEASE
-		Editor::GetInstance().AddEventLog(r_event.ToString());		
-#endif
-		//commented so it stops flooding the console
-		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
-		//event_logger.FlushLog();
-	}
-
-
-
-	/*!***********************************************************************************
-	 \brief     Handles keyboard-related events and delegates actions to respective game systems.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] r_event Event object of type PE::KeyEvents that encapsulates the details of the keyboard event.
-	 \return void       Does not return a value.
-	*************************************************************************************/
-	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
-	{
-#ifndef GAMERELEASE
-		Editor::GetInstance().AddEventLog(r_event.ToString());
-#endif
-		//commented so it stops flooding the console
-		//event_logger.AddLog(false, r_event.ToString(), __FUNCTION__);
-		//event_logger.FlushLog();
-
-		//dynamic cast
-		if (r_event.GetType() == KeyEvents::KeyTriggered)
-		{
-			KeyTriggeredEvent ev;
-			ev = dynamic_cast<const KeyTriggeredEvent&>(r_event);
-			//do step by step here
-#ifndef GAMERELEASE
-			if (PhysicsManager::GetStepPhysics())
-			{
-
-				if (ev.keycode == GLFW_KEY_N)
-				{
-					PhysicsManager::GetAdvanceStep() = true;
-					Editor::GetInstance().AddEventLog("Advanced Step.\n");
-
-				}
-
-			}
-#endif
-#ifdef GAMERELEASE
-			static bool fs{};
-			//only on game release be able to change fullscreen
-			if (ev.keycode == GLFW_KEY_F11)
-			{
-				const GLFWvidmode* mode = glfwGetVideoMode(p_monitor);
-
-				if (!fs) 
-				{
-					glfwSetWindowMonitor(p_currWindow, NULL, 30, 30, 1920, 1080, 0);
-					HWND windowHandle = GetActiveWindow();
-					long Style = GetWindowLong(windowHandle, GWL_STYLE);
-					Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
-					SetWindowLong(windowHandle, GWL_STYLE, Style);
-					glfwSetWindowAttrib(p_currWindow, GLFW_RESIZABLE, false);
-					fs = !fs;
-				}
-				else
-				{
-
-					glfwSetWindowMonitor(p_currWindow, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
-					fs = !fs;
-				}
-			}
-#endif
-		}
-#ifdef GAMERELEASE
-		else if (r_event.GetType() == KeyEvents::KeyRelease)
-		{
-			KeyReleaseEvent ev;
-			ev = dynamic_cast<const KeyReleaseEvent&>(r_event);
-			if (ev.keycode == GLFW_KEY_LEFT_ALT)
-			{
-				msepress = true;
-			}
-		}
-		if (InputSystem::IsKeyTriggered(GLFW_KEY_LEFT_ALT))
-			msepress = true;
-#endif
-	}
-
 	void WindowManager::TestFunction(EntityID)
 	{
 		std::cout << "hi im a test function" << std::endl;
 	}
 
 
-
-	/*!***********************************************************************************
-	 \brief     Updates the title of the given GLFW window to display the current FPS.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] window  Pointer to the GLFW window whose title is to be updated.
-	 \param[in] fps     Current frames per second to be displayed in the window title.
-	 \return void       Does not return a value.
-	*************************************************************************************/
 	void WindowManager::UpdateTitle(GLFWwindow* window, double fps)
 	{
 		std::ostringstream titleStream;
@@ -269,29 +117,16 @@ namespace PE
 
 
 
-	/*!***********************************************************************************
-	 \brief     Terminates the GLFW library, releasing any resources allocated by GLFW.
 
-	 \tparam T          This function does not use a template.
-	 \param[in]         This function does not use any input parameters.
-	 \return void       Does not return a value.
-	*************************************************************************************/
 	void WindowManager::Cleanup()
 	{
 		glfwTerminate();
 	}
 
 
+	/*                                                                                          Window Callback Functions
+	--------------------------------------------------------------------------------------------------------------------- */
 
-	/*!***********************************************************************************
-	 \brief     GLFW callback function that triggers when the window is resized.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] window  Pointer to the GLFW window that is being resized.
-	 \param[in] width   New width of the window.
-	 \param[in] height  New height of the window.
-	 \return void       Does not return a value.
-	*************************************************************************************/
 	void WindowManager::window_resize_callback(GLFWwindow* p_window, int width, int height)
 	{
 		p_window;
@@ -303,14 +138,6 @@ namespace PE
 	}
 
 
-
-	/*!***********************************************************************************
-	 \brief     GLFW callback function that triggers when the window is closed.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] window  Pointer to the GLFW window that is being closed.
-	 \return void       Does not return a value.
-	*************************************************************************************/
 	void WindowManager::window_close_callback(GLFWwindow* p_window)
 	{
 		p_window;
@@ -319,15 +146,6 @@ namespace PE
 	}
 
 
-
-	/*!***********************************************************************************
-	 \brief     GLFW callback function that triggers when the window gains or loses focus.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] window  Pointer to the GLFW window whose focus state has changed.
-	 \param[in] focus   An integer representing the focus state: 1 if gained focus, 0 if lost focus.
-	 \return void       Does not return a value.
-	*************************************************************************************/
 	void WindowManager::window_focus_callback(GLFWwindow* p_window, int focus)
 	{
 		p_window;
@@ -343,16 +161,6 @@ namespace PE
 	}
 
 
-
-	/*!***********************************************************************************
-	 \brief     GLFW callback function that triggers when the window's position changes.
-
-	 \tparam T          This function does not use a template.
-	 \param[in] window  Pointer to the GLFW window whose position has changed.
-	 \param[in] xpos    The new x-coordinate of the top-left corner of the window.
-	 \param[in] ypos    The new y-coordinate of the top-left corner of the window.
-	 \return void       Does not return a value.
-	*************************************************************************************/
 	void WindowManager::window_pos_callback(GLFWwindow* p_window, int xpos, int ypos)
 	{
 		p_window;
@@ -379,5 +187,100 @@ namespace PE
 			msepress = false;
 #endif
 		}
+	}
+
+
+	/*                                                                                          Event Handling Functions
+	--------------------------------------------------------------------------------------------------------------------- */
+
+	void WindowManager::OnWindowEvent(const PE::Event<PE::WindowEvents>& r_event)
+	{
+#ifndef GAMERELEASE
+			Editor::GetInstance().AddEventLog(r_event.ToString());
+#else
+			if (r_event.GetType() == WindowEvents::WindowLostFocus)
+			{
+					GameStateManager::GetInstance().SetPauseState();
+					if (msepress)
+							glfwIconifyWindow(p_currWindow);
+
+					msepress = true;
+			}
+#endif
+	}
+
+
+	void WindowManager::OnMouseEvent(const PE::Event<PE::MouseEvents>& r_event)
+	{
+#ifndef GAMERELEASE
+			Editor::GetInstance().AddEventLog(r_event.ToString());
+#endif
+	}
+
+
+	void WindowManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
+	{
+#ifndef GAMERELEASE
+			Editor::GetInstance().AddEventLog(r_event.ToString());
+#endif
+
+			//dynamic cast
+			if (r_event.GetType() == KeyEvents::KeyTriggered)
+			{
+					KeyTriggeredEvent ev;
+					ev = dynamic_cast<const KeyTriggeredEvent&>(r_event);
+					//do step by step here
+#ifndef GAMERELEASE
+					if (PhysicsManager::GetStepPhysics())
+					{
+
+							if (ev.keycode == GLFW_KEY_N)
+							{
+									PhysicsManager::GetAdvanceStep() = true;
+									Editor::GetInstance().AddEventLog("Advanced Step.\n");
+
+							}
+
+					}
+#endif
+#ifdef GAMERELEASE
+					static bool fs{};
+					//only on game release be able to change fullscreen
+					if (ev.keycode == GLFW_KEY_F11)
+					{
+							const GLFWvidmode* mode = glfwGetVideoMode(p_monitor);
+
+							if (!fs)
+							{
+									glfwSetWindowMonitor(p_currWindow, NULL, 30, 30, 1920, 1080, 0);
+									HWND windowHandle = GetActiveWindow();
+									long Style = GetWindowLong(windowHandle, GWL_STYLE);
+									Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
+									SetWindowLong(windowHandle, GWL_STYLE, Style);
+									glfwSetWindowAttrib(p_currWindow, GLFW_RESIZABLE, false);
+									fs = !fs;
+							}
+							else
+							{
+
+									glfwSetWindowMonitor(p_currWindow, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+									fs = !fs;
+							}
+					}
+#endif
+			}
+#ifdef GAMERELEASE
+			else if (r_event.GetType() == KeyEvents::KeyRelease)
+			{
+					KeyReleaseEvent ev;
+					ev = dynamic_cast<const KeyReleaseEvent&>(r_event);
+					if (ev.keycode == GLFW_KEY_LEFT_ALT)
+					{
+							msepress = true;
+					}
+			}
+			if (InputSystem::IsKeyTriggered(GLFW_KEY_LEFT_ALT))
+					msepress = true;
+#endif
 	}
 }

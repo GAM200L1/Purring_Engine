@@ -184,7 +184,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Returns the position of the cursor in the world.
 
-		 \return int - Returns the current energy the player has left.
+		 \return vec2 - Returns the position of the cursor in the world.
 		*************************************************************************************/
 		static vec2 GetCursorPositionInWorld();
 
