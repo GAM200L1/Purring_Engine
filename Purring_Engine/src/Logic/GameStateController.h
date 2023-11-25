@@ -172,6 +172,17 @@ namespace PE
 		void ToggleSplashscreen(EntityID id, bool enable);
 
 		/*!***********************************************************************************
+		 \brief Toggle the entity passed in.
+
+		 \param[in] id - ID of the entity to toggle.
+		 \param[in] enable - Set to true to enable the entity, false otherwise.
+
+		 \return Returns true if the entity was toggled successfully, false if the entity's 
+						descriptor component could not be found.
+		*************************************************************************************/
+		bool ToggleEntity(EntityID id, bool enable);
+
+		/*!***********************************************************************************
 		 \brief Adjust the alpha of the HUD that appears during the planning phase.
 
 		 \param[in] id - ID of the entity that the script instance is attached to.
@@ -194,6 +205,39 @@ namespace PE
 		 \param[in] alpha - Alpha to set splashscreen to.
 		*************************************************************************************/
 		void FadeSplashscreen(EntityID id, float alpha);
+
+		/*!***********************************************************************************
+		 \brief Updates the text of the text component on the entity passed in.
+
+		 \param[in] id - ID of the entity to with a text component to update.
+		 \param[in] text - Text to update the component with.
+
+		 \return Returns true if the text was set successfully, false if the text component 
+						could not be found.
+		*************************************************************************************/
+		bool SetText(EntityID const id, std::string const& text);
+
+		/*!***********************************************************************************
+		 \brief Updates the alpha of the text component on the entity passed in.
+
+		 \param[in] id - ID of the entity to with a text component to update.
+		 \param[in] alpha - Alpha to set text to.
+
+		 \return Returns true if the text alpha was set successfully, false if the text component 
+						could not be found.
+		*************************************************************************************/
+		bool SetTextAlpha(EntityID const id, float const alpha);
+
+		/*!***********************************************************************************
+		 \brief Updates the alpha of the GUI renderer component on the entity passed in.
+
+		 \param[in] id - ID of the entity to with a text component to update.
+		 \param[in] alpha - Alpha to set text to.
+
+		 \return Returns true if the alpha was set successfully, false if the GUI renderer 
+						component could not be found.
+		*************************************************************************************/
+		bool SetGUIRendererAlpha(EntityID const id, float const alpha);
 
 
 		// ----- Event Callbacks ----- //

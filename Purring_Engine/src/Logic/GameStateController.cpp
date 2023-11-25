@@ -144,132 +144,151 @@ namespace PE
 
 	void GameStateController::EndPhaseButton(EntityID id, bool endMovement)
 	{
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].endMovementText).isActive = endMovement;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].endTurnText).isActive = !endMovement;
+			ToggleEntity(m_ScriptData[id].endMovementText, endMovement);
+			ToggleEntity(m_ScriptData[id].endTurnText, !endMovement);
 	}
 
 	void GameStateController::UpdateExecuteHUD(EntityID id, float const deltaTime)
 	{
+			// Fade the color in and out over time
 			static float timePassed{};
 			timePassed += deltaTime;
-
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].executingStatement, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-			{
-					// Fade the color in and out over time
-					TextComponent& r_text{ EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].executingStatement) };
-					r_text.SetAlpha(std::sin(timePassed * m_ScriptData[id].executingFadeSpeed) + 1.f * 0.5f);
-			}
+			SetTextAlpha(m_ScriptData[id].executingStatement, std::sin(timePassed * m_ScriptData[id].executingFadeSpeed) + 1.f * 0.5f);
 	}
 
 	void GameStateController::UpdateTurnHUD(EntityID id, int const turnCount, bool isMovement)
 	{
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].turnNumberText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].turnNumberText).SetText(std::string{"Turn " + std::to_string(turnCount)});
+			SetText(m_ScriptData[id].turnNumberText, std::string{ "Turn " + std::to_string(turnCount) });
 
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].planMovementText).isActive = isMovement;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].planAttackText).isActive = !isMovement;
+			ToggleEntity(m_ScriptData[id].planMovementText, isMovement);
+			ToggleEntity(m_ScriptData[id].planAttackText, !isMovement);
 	}
 
 	void GameStateController::UpdateEnergyHUD(EntityID id, int const currentEnergy, int const maximumEnergy)
 	{
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].currentEnergyText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].currentEnergyText).SetText(std::to_string(currentEnergy));
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].maxEnergyText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].maxEnergyText).SetText(std::to_string(maximumEnergy));
+			SetText(m_ScriptData[id].currentEnergyText, std::to_string(currentEnergy));
+			SetText(m_ScriptData[id].maxEnergyText, std::to_string(maximumEnergy));
 	}
 
 	void GameStateController::TogglePlanningHUD(EntityID id, bool enable)
 	{
 			// Toggle the overlay
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].mapOverlay).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].pawOverlay).isActive = enable;
+			ToggleEntity(m_ScriptData[id].mapOverlay, enable);
+			ToggleEntity(m_ScriptData[id].pawOverlay, enable);
 
 			// Toggle the energy HUD
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].energyHeader).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].currentEnergyText).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].slashText).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].maxEnergyText).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].energyBackground).isActive = enable;
+			ToggleEntity(m_ScriptData[id].energyHeader, enable);
+			ToggleEntity(m_ScriptData[id].currentEnergyText, enable);
+			ToggleEntity(m_ScriptData[id].slashText, enable);
+			ToggleEntity(m_ScriptData[id].maxEnergyText, enable);
+			ToggleEntity(m_ScriptData[id].energyBackground, enable);
 
 			// Toggle the turn HUD
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].turnNumberText).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].planAttackText).isActive = false; // Ensure only movement text is active if planning hud is toggled
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].planMovementText).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].turnBackground).isActive = enable;
+			ToggleEntity(m_ScriptData[id].turnNumberText, enable);
+			ToggleEntity(m_ScriptData[id].planAttackText, false); // Ensure only movement text is active if planning hud is toggled
+			ToggleEntity(m_ScriptData[id].planMovementText, enable);
+			ToggleEntity(m_ScriptData[id].turnBackground, enable);
 
 			// Toggle the end phase buttons
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].endTurnButton).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].endMovementText).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].endTurnText).isActive = false; // Ensure only movement text is active if planning hud is toggled
+			ToggleEntity(m_ScriptData[id].endTurnButton, enable);
+			ToggleEntity(m_ScriptData[id].endMovementText, enable);
+			ToggleEntity(m_ScriptData[id].endTurnText, false); // Ensure only movement text is active if planning hud is toggled
 	}
 
 	void GameStateController::ToggleExecutionHUD(EntityID id, bool enable)
 	{
 			// Toggle the overlay
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].executingStatement).isActive = enable;
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].foliageOverlay).isActive = enable;
+			ToggleEntity(m_ScriptData[id].executingStatement, enable);
+			ToggleEntity(m_ScriptData[id].foliageOverlay, enable);
 	}
 	
 	void GameStateController::ToggleSplashscreen(EntityID id, bool enable)
 	{
 			// Toggle the splashscreen
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].SplashScreen).isActive = enable;
+			ToggleEntity(m_ScriptData[id].SplashScreen, enable);
 	}
 
-	void GameStateController::FadePlanningHUD(EntityID id, float alpha)
+	bool GameStateController::ToggleEntity(EntityID id, bool enable)
 	{
-			// Toggle the overlay			
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].mapOverlay, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-			{ EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].mapOverlay).SetAlpha(alpha); }
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].pawOverlay, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-			{ EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].pawOverlay).SetAlpha(alpha); }
+			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<EntityDescriptor>()))
+			{
+					EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = enable;
+					return true;
+			}
 
-			// Toggle the energy HUD
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].energyHeader, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].energyHeader).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].currentEnergyText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].currentEnergyText).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].slashText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].slashText).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].maxEnergyText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].maxEnergyText).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].energyBackground, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].energyBackground).SetAlpha(alpha);
-
-			// Toggle the turn HUD
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].turnNumberText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].turnNumberText).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].planAttackText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].planAttackText).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].planMovementText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].planMovementText).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].turnBackground, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].turnBackground).SetAlpha(alpha);
-
-			// Toggle the end phase buttons
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].endTurnButton).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].endMovementText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].endMovementText).SetAlpha(alpha);
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnText, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-				EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].endTurnText).SetAlpha(alpha);
+			return false;
 	}
 
-	void GameStateController::FadeExecutionHUD(EntityID id, float alpha)
+	void GameStateController::FadePlanningHUD(EntityID const id, float alpha)
+	{
+			// Adjust the alpha of the overlay
+			SetGUIRendererAlpha(m_ScriptData[id].mapOverlay, alpha);
+			SetGUIRendererAlpha(m_ScriptData[id].pawOverlay, alpha);
+
+			// Adjust the alpha of the energy HUD
+			SetTextAlpha(m_ScriptData[id].energyHeader, alpha);
+			SetTextAlpha(m_ScriptData[id].currentEnergyText, alpha);
+			SetTextAlpha(m_ScriptData[id].slashText, alpha);
+			SetTextAlpha(m_ScriptData[id].maxEnergyText, alpha);
+			SetGUIRendererAlpha(m_ScriptData[id].energyBackground, alpha);
+
+			// Adjust the alpha of the turn HUD
+			SetTextAlpha(m_ScriptData[id].turnNumberText, alpha);
+			SetTextAlpha(m_ScriptData[id].planAttackText, alpha);
+			SetTextAlpha(m_ScriptData[id].planMovementText, alpha);
+			SetGUIRendererAlpha(m_ScriptData[id].turnBackground, alpha);
+
+			// Adjust the alpha of the end phase buttons
+			SetGUIRendererAlpha(m_ScriptData[id].endTurnButton, alpha);
+			SetTextAlpha(m_ScriptData[id].endMovementText, alpha);
+			SetTextAlpha(m_ScriptData[id].endTurnText, alpha);
+	}
+
+	void GameStateController::FadeExecutionHUD(EntityID const id, float const alpha)
 	{
 			// Adjust the alpha of the execution HUD
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].executingStatement, EntityManager::GetInstance().GetComponentID<TextComponent>()))
-			{ EntityManager::GetInstance().Get<TextComponent>(m_ScriptData[id].executingStatement).SetAlpha(alpha); }
-
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].foliageOverlay, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-			{ EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].foliageOverlay).SetAlpha(alpha); }
+			SetTextAlpha(m_ScriptData[id].executingStatement, alpha);
+			SetGUIRendererAlpha(m_ScriptData[id].foliageOverlay, alpha);
 	}
 
-	void GameStateController::FadeSplashscreen(EntityID id, float alpha)
+	void GameStateController::FadeSplashscreen(EntityID const id, float const alpha)
 	{
 			// Adjust the alpha of the execution HUD
 			if (EntityManager::GetInstance().Has(m_ScriptData[id].SplashScreen, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
 			{ EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].SplashScreen).SetAlpha(alpha); }
+	}
+
+	bool GameStateController::SetText(EntityID const id, std::string const& text)
+	{
+			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+			{
+					EntityManager::GetInstance().Get<TextComponent>(id).SetText(text);
+					return true;
+			}
+
+			return false;
+	}
+
+	bool GameStateController::SetTextAlpha(EntityID const id, float const alpha)
+	{
+			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<TextComponent>()))
+			{
+					EntityManager::GetInstance().Get<TextComponent>(id).SetAlpha(alpha);
+					return true;
+			}
+
+			return false;
+	}
+
+	bool GameStateController::SetGUIRendererAlpha(EntityID const id, float const alpha)
+	{
+			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+			{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetAlpha(alpha);
+					return true;
+			}
+
+			return false;
 	}
 
 
