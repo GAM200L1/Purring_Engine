@@ -18,6 +18,7 @@
 #include "StateManager.h"
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
+#include "Events/EventHandler.h"
 
 namespace PE
 {
@@ -33,6 +34,7 @@ namespace PE
 
 		// movement variables
 		float movementSpeed{ 0.f };
+		float distanceFromPlayer{ 0.f };
 
 		// attack entities and variables
 		EntityID arrowTelegraphID{ 0 };
@@ -132,6 +134,11 @@ namespace PE
 		*************************************************************************************/
 		static vec2 GetEntityScale(EntityID const transformId);
 
+
+		std::map<EntityID, RatScriptData>& GetScriptData() { return m_scriptData; }
+
+		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
+
 	private:
 		// ----- Private Functions ----- //
 		void CreateAttackTelegraphs(EntityID id);
@@ -158,9 +165,6 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		RatScriptData* p_data;
-
-		// ----- Private Functions ----- //
-		float GetDistanceFromPlayer(EntityID id);
 	};
 
 
@@ -179,12 +183,15 @@ namespace PE
 
 		virtual void StateExit(EntityID id) override;
 
+		void RatHitCat(const Event<CollisionEvents>& r_TE);
+
 		// ----- Getter ----- //
 		virtual std::string_view GetName() { return "MovementEXECUTE"; }
 
 	private:
 		// ----- Private Variables ----- //
 		RatScriptData* p_data;
+		int m_collisionEventListener{};
 	};
 
 

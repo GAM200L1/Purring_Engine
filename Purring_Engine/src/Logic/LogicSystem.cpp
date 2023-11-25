@@ -35,6 +35,7 @@
 #include "CameraManagerScript.h"
 #include "CatScript.h"
 #include "GameStateController.h"
+#include "RatScript.h"
 
 
 #ifndef GAMERELEASE
@@ -60,6 +61,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(FollowScript);
 	REGISTER_SCRIPT(CameraManagerScript);
 	REGISTER_SCRIPT(CatScript);
+	REGISTER_SCRIPT(RatScript);
 	REGISTER_SCRIPT(GameStateController);
 }
 

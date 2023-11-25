@@ -15,7 +15,7 @@
                     "radius": 55.0,
                     "scaleOffset": 1.100000023841858
                 },
-                "isTrigger": false,
+                "isTrigger": true,
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {

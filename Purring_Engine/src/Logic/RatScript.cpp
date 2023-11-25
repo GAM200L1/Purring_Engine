@@ -19,13 +19,20 @@
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
 #include "Data/SerializationManager.h"
+#include "Logic/LogicSystem.h"
 
 namespace PE
 {
+
+	// ===== Rat Script Definition ===== //
+	
 	// ----- Destructor ----- //
 	RatScript::~RatScript()
 	{
-
+		for (auto& [key, value] : m_scriptData)
+		{
+			delete value.p_stateManager;
+		}
 	}
 
 	// ----- Public Functions ----- //
@@ -52,6 +59,7 @@ namespace PE
 
 		if (m_scriptData[id].health <= 0)
 		{
+			ToggleEntity(id, false);
 			// idk if need these
 
 			// TODO ------------------------------------------------------------ //
@@ -259,13 +267,107 @@ namespace PE
 		data.attackTelegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/RatAttackTelegraph_Prefab.json");
 		ScaleEntity(data.attackTelegraphID, ratScale.x, ratScale.y);
 		ToggleEntity(data.attackTelegraphID, false); // set to inactive, it will only show during planning phase if the cat is in the area
-		EntityManager::GetInstance().Get<EntityDescriptor>(data.attackTelegraphID).parent = id;
 
 		// create the detection radius
 		data.detectionTelegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/RatDetectionTelegraph_Prefab.json");
 		ToggleEntity(data.attackTelegraphID, false); // set to inactive it will only show during planning phase
 		ScaleEntity(data.detectionTelegraphID, ratScale.x * 2.f * data.detectionRadius, ratScale.y * 2.f * data.detectionRadius);
-		EntityManager::GetInstance().Get<EntityDescriptor>(data.detectionTelegraphID).parent = id;
+		EntityManager::GetInstance().Get<EntityDescriptor>(data.detectionTelegraphID).parent = id; // detection UI will always show
 	}
 
+
+	// ===== RatIDLE definition ===== //
+
+	// ----- Public Functions ----- //
+	void RatIDLE::StateEnter(EntityID id)
+	{
+		p_data = GETSCRIPTDATA(RatScript, id);
+
+		RatScript::PositionEntity(p_data->psudoRatID, EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID).position);
+		RatScript::ToggleEntity(p_data->detectionTelegraphID, true); // show the detection telegraph
+		p_data->distanceFromPlayer = RatScript::GetEntityPosition(id).Distance(RatScript::GetEntityPosition(p_data->mainCatID));
+
+		// if the cat is within the detection radius
+		if (abs(p_data->distanceFromPlayer) <= (RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f))
+		{
+			Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+			Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
+			float dx = targetObject.position.x - currentObject.position.x;
+			float dy = targetObject.position.y - currentObject.position.y;
+
+			// settings for the arrow
+			EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).relPosition.x = (dx * 0.5f) + (RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f);
+			EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).width = dx;
+			// find rotation to rotate the psuedorat entity so the arrow will be rotated accordingly
+			float rotation = atan2(dy, dx);
+			PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->psudoRatID).orientation = rotation;
+			RatScript::ToggleEntity(p_data->arrowTelegraphID, true); // show the arrow of movement
+
+			// settings for the attack cross
+			RatScript::PositionEntity(p_data->attackTelegraphID, targetObject.position);
+			RatScript::ToggleEntity(p_data->attackTelegraphID, true); // show the arrow of movement
+		}
+	}
+	
+	void RatIDLE::StateUpdate(EntityID id, float deltaTime)
+	{
+		
+	}
+	
+	void RatIDLE::StateCleanUp()
+	{
+		
+	}
+	
+	void RatIDLE::StateExit(EntityID id)
+	{
+		// disables all the UI from showing up
+		RatScript::ToggleEntity(p_data->arrowTelegraphID, false);
+		RatScript::ToggleEntity(p_data->detectionTelegraphID, false);
+		EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphID).SetEnabled(false);
+	}
+
+	// ----- Public Functions ----- //
+	 void RatMovementEXECUTE::StateEnter(EntityID id)
+	 {
+		 p_data = GETSCRIPTDATA(RatScript, id);
+		 m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovementEXECUTE::RatHitCat, this);
+	 }
+
+	 void RatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)
+	 {
+		 Transform& ratTransform = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+		 Transform& catTransform = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
+		 vec2 directionToTarget{(catTransform.position, ratTransform.position).GetNormalized()};
+
+		 if (p_data->distanceFromPlayer > 0.f)
+		 {
+			 RatScript::PositionEntity(id, ratTransform.position + (directionToTarget * p_data->movementSpeed * deltaTime));
+
+			 // Ensure the cat is facing the direction of their movement
+			 vec2 newScale{ RatScript::GetEntityScale(id) };
+			 newScale.x = std::abs(newScale.x) * ((directionToTarget.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
+			 RatScript::ScaleEntity(id, newScale.x, newScale.y);
+		 }
+		 else
+		 {
+			 GETSCRIPTINSTANCEPOINTER(RatScript)->TriggerStateChange(id, 0.5f);
+		 }
+	 }
+
+	 void RatMovementEXECUTE::StateCleanUp()
+	 {
+
+	 }
+
+	 void RatMovementEXECUTE::StateExit(EntityID id){}
+
+	 void RatMovementEXECUTE::RatHitCat(const Event<CollisionEvents>& r_TE)
+	 {
+		 if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
+		 {
+			 OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
+
+		 }
+	 }
 }
