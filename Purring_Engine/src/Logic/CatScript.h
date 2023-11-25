@@ -53,7 +53,7 @@ namespace PE
 		EntityID projectileID{ 0 };
 
 		// cat stats
-		int catHealth{ 0 };		
+		int catHealth{ 1 };		
 		int catMaxEnergy{ 21 };
 
 		// attack variables

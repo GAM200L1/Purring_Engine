@@ -159,7 +159,7 @@
                                 },
                                 "NumberOfAttacher": 2,
                                 "NumberOfFollower": 1,
-                                "Size": 64,
+                                "Size": 65,
                                 "SoundID": 0,
                                 "Speed": 100.0,
                                 "ToAttach": [
@@ -487,19 +487,25 @@
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
-                            "center": {
-                                "x": -239.0,
-                                "y": -177.0
+                            "max": {
+                                "x": -207.0,
+                                "y": -145.0
+                            },
+                            "min": {
+                                "x": -271.0,
+                                "y": -209.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
                         },
                         "isTrigger": false,
-                        "type": "CircleCollider"
+                        "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
                         "Prefab Type": "",
@@ -566,7 +572,23 @@
                         "GameStateController": {
                             "data": {
                                 "GameStateManagerActive": true,
-                                "SplashScreen": 10
+                                "SplashScreen": 10,
+                                "currentEnergyText": 0,
+                                "endMovementText": 0,
+                                "endTurnButton": 0,
+                                "endTurnText": 0,
+                                "energyBackground": 0,
+                                "energyHeader": 0,
+                                "executingStatement": 0,
+                                "foliageOverlay": 0,
+                                "mapOverlay": 0,
+                                "maxEnergyText": 0,
+                                "pawOverlay": 0,
+                                "planAttackText": 0,
+                                "planMovementText": 0,
+                                "slashText": 0,
+                                "turnBackground": 0,
+                                "turnNumberText": 0
                             },
                             "state": 0
                         }
@@ -613,8 +635,8 @@
                         "height": 250.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 18.0,
-                            "y": 1.0
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relativeposition": {
                             "x": 0.0,
