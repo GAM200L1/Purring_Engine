@@ -1,0 +1,144 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     CatAttackScript.h
+ \date     21-11-2023
+
+ \author:              Krystal YAMIN
+ \par      email:      krystal.y@digipen.edu
+
+ \brief
+	This file contains declarations for functions used for a grey cat's movement states.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
+#pragma once
+#include "CatScript.h"
+
+namespace PE
+{
+	// ----- CAT MOVEMENT PLAN STATE ----- //
+	class CatMovementPLAN : public State
+	{
+	public:
+		// ----- Destructor ----- //
+		virtual ~CatMovementPLAN() override { p_data = nullptr; }
+
+		// ----- Public Functions ----- //
+		virtual void StateEnter(EntityID id) override;
+
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+
+		virtual void StateCleanUp();
+
+		virtual void StateExit(EntityID id) override;
+
+		/*!***********************************************************************************
+		 \brief Checks if the position is far away enough from the previous node to add a new 
+						node. If the proposed position is too far away, points are added in a straight 
+						line until the proposed position is reached or the cat runs out of energy.
+
+		 \param[in] r_position Proposed position to create the node at.
+		 \return vec2 Position that the node was created at. If no node was created, the 
+						position of the last node in the container is returned.
+		*************************************************************************************/
+		vec2 AttemptToDrawPath(vec2 const& r_position);
+
+		/*!***********************************************************************************
+		 \brief Adds a node to the container of path nodes and positions one of the path quads
+						where the path node should be.
+
+		 \param[in] r_nodePosition Position to create the path node at.
+		*************************************************************************************/
+		bool AddPathNode(vec2 const& r_nodePosition);
+
+
+		/*!***********************************************************************************
+		 \brief Sets the status of path drawing to false and move the cat to the last node 
+						in the path node list.
+
+		 \param[in] id ID of the cat entity.
+		*************************************************************************************/
+		void EndPathDrawing(EntityID const id);
+
+
+		// ----- Events ----- // 
+
+		/*!***********************************************************************************
+		 \brief Callback function for the mouse click event.
+
+		 \param[in] r_mouseEvent Details of the mouse click event.
+		*************************************************************************************/
+		void OnMouseClick(const Event<MouseEvents>& r_mouseEvent);
+
+
+		/*!***********************************************************************************
+		 \brief Callback function for the mouse release event.
+
+		 \param[in] r_mouseEvent Details of the mouse click event.
+		*************************************************************************************/
+		void OnMouseRelease(const Event<MouseEvents>& r_mouseEvent);
+
+		void OnCollisionWithRat(const Event<CollisionEvents>& r_TE);
+
+		void ResetDrawnPath();
+
+		// ----- Getter ----- //
+		virtual std::string_view GetName() override { return "MovementPLAN"; }
+
+	private:
+		// ----- Private Variables ----- //
+		CatScriptData* p_data;
+		int m_clickEventListener{}, m_releaseEventListener{}, m_collisionEventListener{}; // Stores the handler for the mouse click and release events
+		bool m_pathBeingDrawn{ false }; // Set to true when the player path is being drawn
+		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
+		bool m_mouseClickPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
+		bool m_invalidPath{ false };
+	};
+
+
+	// ----- CAT MOVEMENT EXECUTE STATE ----- //
+	class CatMovementEXECUTE : public State
+	{
+	public:
+		// ----- Destructor ----- //
+		virtual ~CatMovementEXECUTE() override { p_data = nullptr; }
+
+		// ----- Public Functions ----- //
+		virtual void StateEnter(EntityID id) override;
+
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
+
+		virtual void StateCleanUp();
+
+		virtual void StateExit(EntityID id) override;
+
+
+		/*!***********************************************************************************
+		 \brief Stop moving towards the end of the path.
+		*************************************************************************************/
+		void StopMoving(EntityID id);
+
+		// ----- Public Getters ----- //
+		virtual std::string_view GetName() override { return "MovementEXECUTE"; }
+
+
+		// ----- Events ----- // 
+
+		/*!***********************************************************************************
+		 \brief Callback function for the collision enter event. Checks if the player has 
+						collided with the rat.
+
+		 \param[in] r_mouseEvent Details of the collision event.
+		*************************************************************************************/
+		void OnCollisionEnter(const Event<CollisionEvents>& r_collisionEvent);
+
+	private:
+		// ----- Private Variables ----- //
+		CatScriptData* p_data;
+		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
+		bool m_collidedWithRat{ false }; // Set to true when the cat has collided with a rat
+		bool m_doneMoving{ false }; // Set to true when the cat has reached the end of their path
+	};
+}

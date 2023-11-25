@@ -28,7 +28,8 @@ namespace PE
 
 	void GameStateManager::SetGameState(GameStates gameState)
 	{
-		m_prevGameState = m_currentGameState;
+		if (m_currentGameState != gameState)
+			m_prevGameState = m_currentGameState;
 		m_currentGameState = gameState;
 	}
 
@@ -105,6 +106,12 @@ namespace PE
 		if (m_currentGameState != GameStates::LOSE)
 		m_prevGameState = m_currentGameState;
 		m_currentGameState = GameStates::LOSE;
+	}
+
+	void GameStateManager::ResetDefaultState()
+	{
+		m_currentGameState = GameStates::INACTIVE;
+		m_prevGameState = GameStates::PAUSE;
 	}
 
 	GameStates GameStateManager::GetGameState()
@@ -184,6 +191,20 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayButtonID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = false;
+
+		if (htp)
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = false;
+		}
+
+		if (ays)
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = false;
+			EntityManager::GetInstance().Get<EntityDescriptor>(sadCatID).isActive = false;
+		}
 	}
 
 	void GameStateManager::DeleteMenu()

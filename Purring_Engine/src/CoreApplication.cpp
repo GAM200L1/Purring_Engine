@@ -120,7 +120,8 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
-        .property("Active", &PE::EntityDescriptor::isActive);
+        .property("Active", &PE::EntityDescriptor::isActive)
+        .property("Prefab Type", &PE::EntityDescriptor::prefabType);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
@@ -209,6 +210,8 @@ RTTR_REGISTRATION
         .property("NextPosition", &PE::FollowScriptData::NextPosition)
         .property("ToAttach", &PE::FollowScriptData::ToAttach)
         .property("NumberOfAttacher", &PE::FollowScriptData::NumberOfAttachers)
+        .property("SoundID", &PE::FollowScriptData::SoundID)
+        .property("LookTowardsMovement", &PE::FollowScriptData::LookTowardsMovement)
         .property("IsAttaching", &PE::FollowScriptData::IsAttaching);
 
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
@@ -483,10 +486,10 @@ void PE::CoreApplication::InitializeAudio()
     {
         engine_logger.AddLog(false, "AudioManager initialized!", __FUNCTION__);
     }
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound1", "../Assets/Audio/audioSFX_sound1.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound2", "../Assets/Audio/audioSFX_sound2.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound3", "../Assets/Audio/audioSFX_sound3.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_backgroundMusic", "../Assets/Audio/audioSFX_backgroundMusic.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("vo_Cat_Selected4.wav", "../Assets/Audio/vo_Cat_Selected4.wav");
+    //ResourceManager::GetInstance().LoadAudioFromFile("audio_sound2", "../Assets/Audio/audioSFX_sound2.mp3");
+    //ResourceManager::GetInstance().LoadAudioFromFile("audio_sound3", "../Assets/Audio/audioSFX_sound3.mp3");
+    //ResourceManager::GetInstance().LoadAudioFromFile("audio_backgroundMusic", "../Assets/Audio/audioSFX_backgroundMusic.mp3");
 }
 
 

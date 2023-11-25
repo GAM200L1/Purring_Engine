@@ -334,13 +334,14 @@ namespace PE
 		{
 			([&]
 				{
-					p_entityManager->Assign<CT>(ret);
+					*(p_entityManager->Assign<CT>(ret)) = CT();
 				}
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(ret);
 		return ret;
 	}
+
 
 	template<typename... CT>
 	EntityID EntityFactory::CreateEntity(CT ... args)
@@ -380,4 +381,3 @@ namespace PE
 	}
 
 }
-

@@ -59,11 +59,18 @@ namespace PE {
 		 \brief			Set gamestate to Lose and save previous state
 		*************************************************************************************/
 		void SetLoseState();
+		
+		/*!***********************************************************************************
+		 \brief			Set current gamestate to pause and previous gamestate to movement
+		*************************************************************************************/
+		void ResetDefaultState();
+
 		/*!***********************************************************************************
 		 \brief			Get the current game state
 		 \return		The current game state
 		*************************************************************************************/
 		GameStates GetGameState();
+		
 
 		// ----- Public Functions ----- // 
 	public:

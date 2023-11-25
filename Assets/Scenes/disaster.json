@@ -4,7 +4,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Prefab Type": "",
                         "children": [],
                         "isActive": true,
                         "name": "Background",
@@ -48,7 +47,6 @@
                         "viewportWidth": 1920.0
                     },
                     "EntityDescriptor": {
-                        "Prefab Type": "",
                         "children": [],
                         "isActive": true,
                         "name": "CameraObject",
@@ -76,63 +74,40 @@
         {
             "Entity": {
                 "components": {
-                    "Collider": {
-                        "data": {
-                            "max": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "min": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
                     "EntityDescriptor": {
-                        "Prefab Type": "a",
                         "children": [],
                         "isActive": true,
-                        "name": "AABB_tst2345",
+                        "name": "GUIButton",
                         "parent": null,
                         "sceneID": 3
                     },
-                    "Renderer": {
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "ResumeState",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/bg.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
                     },
                     "Transform": {
-                        "height": 50.0,
+                        "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 228.0,
-                            "y": 0.0
+                            "x": -4.0,
+                            "y": -41.0
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 50.0
+                        "width": 250.0
                     }
                 },
                 "name": ""
@@ -141,128 +116,82 @@
         {
             "Entity": {
                 "components": {
-                    "Collider": {
-                        "data": {
-                            "max": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "min": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
                     "EntityDescriptor": {
-                        "Prefab Type": "a",
                         "children": [],
                         "isActive": true,
-                        "name": "AABB_tst2345",
-                        "parent": null,
-                        "sceneID": 4
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "Transform": {
-                        "height": 50.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 112.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 50.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "data": {
-                            "max": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "min": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
-                    "EntityDescriptor": {
-                        "Prefab Type": "a",
-                        "children": [],
-                        "isActive": true,
-                        "name": "AABB_tst2345",
+                        "name": "GUIButton",
                         "parent": null,
                         "sceneID": 5
                     },
-                    "Renderer": {
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "SetPauseState",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
                     },
                     "Transform": {
-                        "height": 50.0,
+                        "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": 170.0,
+                            "y": 135.0
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 50.0
+                        "width": 250.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "children": [],
+                        "isActive": true,
+                        "name": "GUIButton",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "GUI": {
+                        "m_UIType": 0,
+                        "m_onClicked": "SetWinState",
+                        "m_onHovered": ""
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -159.0,
+                            "y": 137.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 250.0
                     }
                 },
                 "name": ""

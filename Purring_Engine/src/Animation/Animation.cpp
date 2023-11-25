@@ -31,7 +31,6 @@
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
 
-
 extern Logger engine_logger;
 
 namespace PE
@@ -192,7 +191,8 @@ namespace PE
 
 	AnimationComponent& AnimationComponent::Deserialize(const nlohmann::json& r_j)
 	{
-		m_currentAnimationID = r_j["CurrentAnimationID"].get<std::string>();
+		if (r_j.contains("CurrentAnimationID"))
+			m_currentAnimationID = r_j["CurrentAnimationID"].get<std::string>();
 		return *this;
 	}
 
@@ -225,6 +225,24 @@ namespace PE
 		// j["emptyFrame"] = m_emptyFrame.ToJson();
 
 		return j;
+	}
+
+	bool Animation::LoadAnimation(std::string const& r_filePath)
+	{
+		std::filesystem::path filePath{ r_filePath.c_str() };
+
+		SerializationManager serializationManager;  // Create an instance
+		nlohmann::json loadedAnimationData = serializationManager.LoadAnimationFromFile(filePath);
+
+		// if able to load animation
+		if (!loadedAnimationData.is_null())
+		{
+			Deserialize(loadedAnimationData);
+
+			return true;
+		}
+
+		return false;
 	}
 
 	Animation& Animation::Deserialize(const nlohmann::json& r_j)

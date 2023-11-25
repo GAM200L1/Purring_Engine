@@ -21,13 +21,15 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "AudioManager/AudioComponent.h"
+#include "LogicSystem.h"
+#include "CatScript.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE
 {
-	void FollowScript::Init(EntityID)
+	void FollowScript::Init(EntityID id)
 	{
-
 	}
 
 	void FollowScript::Update(EntityID id, float)
@@ -37,7 +39,7 @@ namespace PE
 			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index])) 
+				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index]) && GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE) 
 				{
 					Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].ToAttach[index]);
 					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)
@@ -48,6 +50,17 @@ namespace PE
 						m_ScriptData[id].ToAttach.erase(m_ScriptData[id].ToAttach.begin() + index);
 						++m_ScriptData[id].NumberOfFollower;
 						--m_ScriptData[id].NumberOfAttachers;
+
+						if (EntityManager::GetInstance().Has<AudioComponent>(m_ScriptData[id].SoundID))
+							EntityManager::GetInstance().Get<AudioComponent>(m_ScriptData[id].SoundID).PlayAudioSound();
+
+						if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+						{
+							std::cout<<"CatScript found"<<std::endl;
+							CatScript::SetMaximumEnergyLevel(CatScript::GetCurrentEnergyLevel() + 2);
+							CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
+							cd->catHealth++;
+						}
 					}
 				}
 			}
@@ -84,7 +97,7 @@ namespace PE
 			//checking rotation to set
 			float rotationOffset = newRotation - m_ScriptData[id].Rotation;
 
-			if (rotationOffset != 0)
+			if (rotationOffset != 0 && m_ScriptData[id].LookTowardsMovement)
 				EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
 
 			//EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
@@ -116,7 +129,10 @@ namespace PE
 					{
 						vec2 directionalvector3 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
 						float newRot = atan2(directionalvector3.y, directionalvector3.x);
+						if(m_ScriptData[id].LookTowardsMovement)
 						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = newRot;
+						else
+						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
 					}
 				}
 
