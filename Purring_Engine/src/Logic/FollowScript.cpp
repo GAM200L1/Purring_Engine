@@ -39,8 +39,13 @@ namespace PE
 			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index]) && GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE) 
+				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index])) 
 				{
+						if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+						{
+							if (GameStateManager::GetInstance().GetGameState() != GameStates::EXECUTE)
+								return;
+						}
 					Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].ToAttach[index]);
 					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)
 						&& (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
