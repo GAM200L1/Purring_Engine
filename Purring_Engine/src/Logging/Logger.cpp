@@ -29,6 +29,8 @@ bool LOG = true;
 Logger::Logger(const char inst_name[]) :
 	instanceName{ inst_name }
 {
+#ifndef GAMERELEASE
+
 	SetTime();
 	std::string filepath = "../Logs/";
 	if (CreateDirectoryA(filepath.c_str(), NULL) || ERROR_ALREADY_EXISTS == GetLastError())
@@ -46,6 +48,7 @@ Logger::Logger(const char inst_name[]) :
 	{
 		throw;
 	}
+#endif // !GAMERELEASE
 }
 
 void Logger::SetFlag(const LoggerFlag& r_flag, const bool& r_set)
