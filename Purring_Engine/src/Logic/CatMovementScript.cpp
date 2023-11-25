@@ -48,10 +48,7 @@ namespace PE
 			{
 				ResetDrawnPath();
 				m_invalidPath = false;
-				for (auto nodeID : p_data->pathQuads)
-				{
-					EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(1.f, 1.f, 1.f, 1.f);
-				}
+				SetPathColor();
 			}
 
 			// Check if the mouse has just been clicked
@@ -193,6 +190,16 @@ namespace PE
 				CatScript::PositionEntity(id, p_data->pathPositions.back());
 		}
 
+
+		void CatMovementPLAN::SetPathColor(float const r, float const g, float const b, float const a)
+		{
+				for (auto nodeID : p_data->pathQuads)
+				{
+						EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(r, g, b, a);
+				}
+		}
+
+
 		void CatMovementPLAN::ResetDrawnPath()
 		{
 			// reset to max energy
@@ -250,10 +257,7 @@ namespace PE
 				if ((OCEE.Entity1 == p_data->catID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity2).name.find("Rat") != std::string::npos)
 					|| (OCEE.Entity2 == p_data->catID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity1).name.find("Rat") != std::string::npos))
 				{
-					for (auto nodeID : p_data->pathQuads)
-					{
-						EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(1.f, 0.f, 0.f, 1.f);
-					}
+					SetPathColor(1.f, 0.f, 0.f, 1.f);
 					m_invalidPath = true;
 				}
 			}

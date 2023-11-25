@@ -45,6 +45,7 @@ namespace PE
 		*************************************************************************************/
 		vec2 AttemptToDrawPath(vec2 const& r_position);
 
+
 		/*!***********************************************************************************
 		 \brief Adds a node to the container of path nodes and positions one of the path quads
 						where the path node should be.
@@ -61,6 +62,17 @@ namespace PE
 		 \param[in] id ID of the cat entity.
 		*************************************************************************************/
 		void EndPathDrawing(EntityID const id);
+
+
+		/*!***********************************************************************************
+		 \brief Sets the color of all the nodes in the path.
+
+     \param[in] r Red component of the color to set the path to (from [0, 1]).
+     \param[in] g Green component of the color to set the path to (from [0, 1]).
+     \param[in] b Blue component of the color to set the path to (from [0, 1]).
+     \param[in] a Alpha component of the color to set the path to (from [0, 1]).
+		*************************************************************************************/
+		void SetPathColor(float const r = 1.f, float const g = 1.f, float const b = 1.f, float const a = 1.f);
 
 
 		// ----- Events ----- // 
