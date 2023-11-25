@@ -627,6 +627,15 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                             }
                             prop.set_value(inst, val);
                         }
+                        else if (prop.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
+                        {
+                            std::map<std::string, std::string> val;
+                            if (data.contains(prop.get_name().to_string().c_str()))
+                            {
+                                val = data[prop.get_name().to_string().c_str()].get<std::map<std::string, std::string>>();
+                            }
+                            prop.set_value(inst, val);
+                        }
                     }
                 }
             }
