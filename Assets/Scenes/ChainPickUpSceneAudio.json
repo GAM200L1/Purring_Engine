@@ -114,7 +114,7 @@
                                     18446744073709551615
                                 ],
                                 "IsAttaching": true,
-								"LookTowardsMovement" : true,
+                                "LookTowardsMovement": true,
                                 "NextPosition": {
                                     "0": {
                                         "x": 0.0,
@@ -347,6 +347,25 @@
                         "name": "Audio Object",
                         "parent": null,
                         "sceneID": 8
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AudioComponent": {
+                        "audioKey": "vo_Cat_Attack1.wav",
+                        "loop": false
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "catat1",
+                        "parent": null,
+                        "sceneID": 9
                     }
                 },
                 "name": ""
