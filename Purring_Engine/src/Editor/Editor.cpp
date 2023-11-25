@@ -56,6 +56,7 @@
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
 #include "Graphics/Text.h"
+#include "GameStateManager.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
 #include "Layers/CollisionLayer.h"
@@ -2292,10 +2293,55 @@ namespace PE {
 									if (ImGui::CollapsingHeader("GameStateController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
 										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act",&it->second.GameStateManagerActive);
-										int id = static_cast<int> (it->second.SplashScreen);
-										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##sscreen", &id);
-										if (id != m_currentSelectedObject)
-											it->second.SplashScreen = id;
+										int splashScreenId = static_cast<int> (it->second.SplashScreen);
+										int executingStatementId = static_cast<int> (it->second.executingStatement);
+										int mapOverlayId = static_cast<int> (it->second.mapOverlay);
+										int pawOverlayId = static_cast<int> (it->second.pawOverlay);
+										int foliageOverlayId = static_cast<int> (it->second.foliageOverlay);
+										int energyHeaderId = static_cast<int> (it->second.energyHeader);
+										int currentEnergyTextId = static_cast<int> (it->second.currentEnergyText);
+										int maxEnergyTextId = static_cast<int> (it->second.maxEnergyText);
+										int energyBackgroundId = static_cast<int> (it->second.energyBackground);
+										int turnNumberTextId = static_cast<int> (it->second.turnNumberText);
+										int planAttackTextId = static_cast<int> (it->second.planAttackText);
+										int planMovementTextId = static_cast<int> (it->second.planMovementText);
+										int turnBackgroundId = static_cast<int> (it->second.turnBackground);
+										int endTurnButtonId = static_cast<int> (it->second.endTurnButton);
+										int endMovementTextId = static_cast<int> (it->second.endMovementText);
+										int endTurnTextId = static_cast<int> (it->second.endTurnText);
+										// Entity IDs
+										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##sscreen", &splashScreenId);
+										if (splashScreenId != m_currentSelectedObject) { it->second.SplashScreen = splashScreenId; }
+										ImGui::Text("Executing Statement ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##executing", &executingStatementId);
+										if (executingStatementId != m_currentSelectedObject) { it->second.executingStatement = executingStatementId; }
+										ImGui::Text("Map Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##mapoverlay", &mapOverlayId);
+										if (mapOverlayId != m_currentSelectedObject) { it->second.mapOverlay = mapOverlayId; }
+										ImGui::Text("Paw Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##pawoverlay", &pawOverlayId);
+										if (pawOverlayId != m_currentSelectedObject) { it->second.pawOverlay = pawOverlayId; }
+										ImGui::Text("Foliage Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##foliageoverlay", &foliageOverlayId);
+										if (foliageOverlayId != m_currentSelectedObject) { it->second.foliageOverlay = foliageOverlayId; }
+										ImGui::Text("Energy Header Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##energyHeader", &energyHeaderId);
+										if (energyHeaderId != m_currentSelectedObject) { it->second.energyHeader = energyHeaderId; }
+										ImGui::Text("Current Energy Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##currentenergy", &currentEnergyTextId);
+										if (currentEnergyTextId != m_currentSelectedObject) { it->second.currentEnergyText = currentEnergyTextId; }
+										ImGui::Text("Maximum Energy Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##maxenergy", &maxEnergyTextId);
+										if (maxEnergyTextId != m_currentSelectedObject) { it->second.maxEnergyText = maxEnergyTextId; }
+										ImGui::Text("Energy Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##energybackground", &energyBackgroundId);
+										if (energyBackgroundId != m_currentSelectedObject) { it->second.energyBackground = energyBackgroundId; }
+										ImGui::Text("Turn Number Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##turnnumber", &turnNumberTextId);
+										if (turnNumberTextId != m_currentSelectedObject) { it->second.turnNumberText = turnNumberTextId; }
+										ImGui::Text("Plan Attack Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##planattack", &planAttackTextId);
+										if (planAttackTextId != m_currentSelectedObject) { it->second.planAttackText = planAttackTextId; }
+										ImGui::Text("Plan Movement Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##planmovement", &planMovementTextId);
+										if (planMovementTextId != m_currentSelectedObject) { it->second.planMovementText = planMovementTextId; }
+										ImGui::Text("Turn Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##turnbg", &turnBackgroundId);
+										if (turnBackgroundId != m_currentSelectedObject) { it->second.turnBackground = turnBackgroundId; }
+										ImGui::Text("End Turn Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endturnbutton", &endTurnButtonId);
+										if (endTurnButtonId != m_currentSelectedObject) { it->second.endTurnButton = endTurnButtonId; }
+										ImGui::Text("End Movement Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endmovementtext", &endMovementTextId);
+										if (endMovementTextId != m_currentSelectedObject) { it->second.endMovementText = endMovementTextId; }
+										ImGui::Text("End Turn Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endturntext", &endTurnTextId);
+										if (endTurnTextId != m_currentSelectedObject) { it->second.endTurnText = endTurnTextId; }
 									}
 							}
 

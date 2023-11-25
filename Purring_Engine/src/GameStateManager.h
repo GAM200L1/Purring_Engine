@@ -58,19 +58,26 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief			Set gamestate to Lose and save previous state
 		*************************************************************************************/
-		void SetLoseState();
-		
+		void SetLoseState();		
 		/*!***********************************************************************************
 		 \brief			Set current gamestate to pause and previous gamestate to movement
 		*************************************************************************************/
 		void ResetDefaultState();
-
+		/*!***********************************************************************************
+		 \brief			Sets the current turn number
+		 \param [in]	int Number to set the turn number to
+		*************************************************************************************/
+		void SetTurnNumber(int number);
 		/*!***********************************************************************************
 		 \brief			Get the current game state
 		 \return		The current game state
 		*************************************************************************************/
-		GameStates GetGameState();
-		
+		GameStates GetGameState();		
+		/*!***********************************************************************************
+		 \brief			Get the current turn number
+		 \return		The current turn number
+		*************************************************************************************/
+		int GetTurnNumber();
 
 		// ----- Public Functions ----- // 
 	public:
@@ -151,9 +158,9 @@ namespace PE {
 		
 		// ----- Private Variables ----- // 
 	private:
-		//start with pause i guess?, might want to change if youre testing stuff
+		// State that is currently active
 		GameStates m_currentGameState {GameStates::INACTIVE};
-		//for resume state to set back to
+		// for resume state to set back to
 		GameStates m_prevGameState {GameStates::MOVEMENT};
 
 		SerializationManager serializationManager;
@@ -164,7 +171,9 @@ namespace PE {
 
 		EntityID areYouSureID, yesButtonID, noButtonID, sadCatID;
 
-		bool htp{ false }, pausedOnce{ false }, ays{ false };
+		bool howToPlay{ false }, pausedOnce{ false }, areYouSure{ false };
+
+		int m_turnNumber{}; // Number of turns that the player has gone through since the beginning of the game
 	};
 
 }

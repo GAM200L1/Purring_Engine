@@ -40,7 +40,7 @@ namespace PE
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::PAUSE;
 
-			//create pause menuy here
+			//create pause menu here
 
 			if (pausedOnce) {
 				pausedOnce = false;
@@ -108,15 +108,26 @@ namespace PE
 		m_currentGameState = GameStates::LOSE;
 	}
 
+	void GameStateManager::SetTurnNumber(int number)
+	{
+			m_turnNumber = number;
+	}
+
 	void GameStateManager::ResetDefaultState()
 	{
-		m_currentGameState = GameStates::INACTIVE;
-		m_prevGameState = GameStates::PAUSE;
+			SetTurnNumber(0);
+			m_currentGameState = GameStates::INACTIVE;
+			m_prevGameState = GameStates::PAUSE;
 	}
 
 	GameStates GameStateManager::GetGameState()
 	{
 		return m_currentGameState;
+	}
+
+	int GameStateManager::GetTurnNumber()
+	{
+			return m_turnNumber;
 	}
 
 	void GameStateManager::IncrementGameState(EntityID)
@@ -133,6 +144,7 @@ namespace PE
 		}
 		else if (m_currentGameState == GameStates::EXECUTE)
 		{
+			SetTurnNumber(m_turnNumber + 1);
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::MOVEMENT;
 		}
@@ -142,6 +154,7 @@ namespace PE
 	{
 		if (m_currentGameState == GameStates::MOVEMENT)
 		{
+			SetTurnNumber(m_turnNumber - 1);
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::EXECUTE;
 		}
@@ -192,13 +205,13 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(quitButtonID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(pawsedID).isActive = false;
 
-		if (htp)
+		if (howToPlay)
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = false;
 			EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = false;
 		}
 
-		if (ays)
+		if (areYouSure)
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(areYouSureID).isActive = false;
 			EntityManager::GetInstance().Get<EntityDescriptor>(yesButtonID).isActive = false;
@@ -216,22 +229,22 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(resumeButtonID);
 		EntityManager::GetInstance().RemoveEntity(pawsedID);
 
-		if (htp)
+		if (howToPlay)
 		{
 			EntityManager::GetInstance().RemoveEntity(howToPlayID);
 			EntityManager::GetInstance().RemoveEntity(returnButtonID);
 
-			htp = false;
+			howToPlay = false;
 		}
 
-		if (ays)
+		if (areYouSure)
 		{
 			EntityManager::GetInstance().RemoveEntity(areYouSureID);
 			EntityManager::GetInstance().RemoveEntity(yesButtonID);
 			EntityManager::GetInstance().RemoveEntity(noButtonID);
 			EntityManager::GetInstance().RemoveEntity(sadCatID);
 
-			ays = false;
+			areYouSure = false;
 		}
 	}
 
@@ -252,7 +265,7 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = true;
 		EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = true;
 
-		htp = true;
+		howToPlay = true;
 	}
 
 	void GameStateManager::ReturnToPauseMenuFromHowToPlay(EntityID)
@@ -286,7 +299,7 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(noButtonID).isActive = true;
 		EntityManager::GetInstance().Get<EntityDescriptor>(sadCatID).isActive = true;
 
-		ays = true;
+		areYouSure = true;
 	}
 
 
@@ -303,10 +316,5 @@ namespace PE
 		REGISTER_UI_FUNCTION(ReturnToPauseMenuFromHowToPlay, PE::GameStateManager);
 		REGISTER_UI_FUNCTION(ReturnToPauseMenuFromExit, PE::GameStateManager);
 	}
-
-
-
-
-
 
 }

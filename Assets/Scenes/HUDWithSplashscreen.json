@@ -1,0 +1,879 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Background",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/MapBackground_1920x1080_filled.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": true,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": -100.0,
+                            "y": -100.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "MapOverlay",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/MapOverlay_1920x1080px.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "TurnCounter",
+                        "parent": null,
+                        "sceneID": 4
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/LongNote_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 181.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 695.0,
+                            "y": 461.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 708.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "EnergyCounter",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/LongNote_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 181.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -505.0,
+                            "y": -400.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 600.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "PawOverlay",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Overlay_Paws_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": -62.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "EndMovementText",
+                        "parent": null,
+                        "sceneID": 7
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "End Movement"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 455.0,
+                            "y": -415.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 252.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "EndTurnButton",
+                        "parent": null,
+                        "sceneID": 8
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Highlighted_512x128.png",
+                        "m_onClicked": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 150.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 441.0,
+                            "y": -411.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 430.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "EnergyBackslashText",
+                        "parent": null,
+                        "sceneID": 9
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "/"
+                    },
+                    "Transform": {
+                        "height": 23.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -307.0,
+                            "y": -408.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 22.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Execute Text",
+                        "parent": null,
+                        "sceneID": 10
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "Execute"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 455.0,
+                            "y": -415.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 147.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Executing Text",
+                        "parent": null,
+                        "sceneID": 11
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 1.2999999523162842,
+                        "Text": "Executing..."
+                    },
+                    "Transform": {
+                        "height": 29.899999618530273,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 34.0,
+                            "y": 446.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 343.1999816894531
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "MaxEnergyText",
+                        "parent": null,
+                        "sceneID": 12
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "20"
+                    },
+                    "Transform": {
+                        "height": 23.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -272.0,
+                            "y": -406.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 44.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "MinEnergyText",
+                        "parent": null,
+                        "sceneID": 13
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "18"
+                    },
+                    "Transform": {
+                        "height": 23.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -342.0,
+                            "y": -406.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 44.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "MovementEnergyText",
+                        "parent": null,
+                        "sceneID": 14
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 0.949999988079071,
+                        "Text": "Movement Energy:"
+                    },
+                    "Transform": {
+                        "height": 21.850000381469727,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -546.0,
+                            "y": -401.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 334.3999938964844
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Plan Attack Text",
+                        "parent": null,
+                        "sceneID": 15
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 0.8999999761581421,
+                        "Text": "PLAN ATTACK"
+                    },
+                    "Transform": {
+                        "height": 20.69999885559082,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 746.0,
+                            "y": 454.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 217.79998779296875
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Plan Movement Text",
+                        "parent": null,
+                        "sceneID": 16
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 0.8999999761581421,
+                        "Text": "PLAN MOVEMENT"
+                    },
+                    "Transform": {
+                        "height": 20.69999885559082,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 746.0,
+                            "y": 454.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 257.3999938964844
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Turn Execute Text",
+                        "parent": null,
+                        "sceneID": 17
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 0.8999999761581421,
+                        "Text": "EXECUTING"
+                    },
+                    "Transform": {
+                        "height": 20.69999885559082,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 746.0,
+                            "y": 454.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 178.1999969482422
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "TurnNumber",
+                        "parent": null,
+                        "sceneID": 18
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "Size": 1.2999999523162842,
+                        "Text": "Turn No"
+                    },
+                    "Transform": {
+                        "height": 29.899999618530273,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 482.0,
+                            "y": 455.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 200.1999969482422
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SplashScreen",
+                        "parent": null,
+                        "sceneID": 19
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/SplashScreen_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GameStateController",
+                        "parent": null,
+                        "sceneID": 20
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "ScriptComponent": {
+                        "GameStateController": {
+                            "data": {
+                                "GameStateManagerActive": true,
+                                "SplashScreen": 19,
+                                "currentEnergyText": 13,
+                                "endMovementText": 7,
+                                "endTurnButton": 8,
+                                "endTurnText": 10,
+                                "energyBackground": 5,
+                                "energyHeader": 14,
+                                "executingStatement": 11,
+                                "foliageOverlay": 21,
+                                "mapOverlay": 3,
+                                "maxEnergyText": 12,
+                                "pawOverlay": 6,
+                                "planAttackText": 15,
+                                "planMovementText": 16,
+                                "turnBackground": 4,
+                                "turnNumberText": 18
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "FoliageOverlay",
+                        "parent": null,
+                        "sceneID": 21
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Overlay_Foliage_V2_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}
