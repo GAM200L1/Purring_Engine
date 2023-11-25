@@ -212,7 +212,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": -62.0
+                            "y": 0.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -663,7 +663,7 @@
                     "EntityDescriptor": {
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Turn Execute Text",
                         "parent": null,
                         "sceneID": 17
@@ -732,144 +732,6 @@
                         },
                         "relorientation": 0.0,
                         "width": 200.1999969482422
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": false,
-                        "name": "FoliageOverlay",
-                        "parent": null,
-                        "sceneID": 19
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Overlay_Foliage_V2_1920x1080.png"
-                    },
-                    "Transform": {
-                        "height": 1080.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 1920.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "SplashScreen",
-                        "parent": null,
-                        "sceneID": 20
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/SplashScreen_1920x1080.png"
-                    },
-                    "Transform": {
-                        "height": 1080.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 1920.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "GameStateController",
-                        "parent": null,
-                        "sceneID": 21
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "ScriptComponent": {
-                        "GameStateController": {
-                            "data": {
-                                "GameStateManagerActive": true,
-                                "SplashScreen": 20,
-                                "currentEnergyText": 13,
-                                "endMovementText": 7,
-                                "endTurnButton": 8,
-                                "endTurnText": 10,
-                                "energyBackground": 5,
-                                "energyHeader": 14,
-                                "executingStatement": 11,
-                                "foliageOverlay": 19,
-                                "mapOverlay": 3,
-                                "maxEnergyText": 12,
-                                "pawOverlay": 6,
-                                "planAttackText": 15,
-                                "planMovementText": 16,
-                                "turnBackground": 4,
-                                "turnNumberText": 18
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
                     }
                 },
                 "name": ""

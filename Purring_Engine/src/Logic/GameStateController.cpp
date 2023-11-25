@@ -42,6 +42,9 @@ namespace PE
 		if (m_ScriptData[id].GameStateManagerActive)
 		{
 				GameStateManager::GetInstance().SetGameState(GameStates::SPLASHSCREEN);
+				TogglePlanningHUD(id, true);
+				ToggleExecutionHUD(id, false);
+				ToggleSplashscreen(id, true);
 		}
 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
@@ -52,10 +55,11 @@ namespace PE
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN)
 		{
 			m_ScriptData[id].SplashTimer -= deltaTime;
+			FadeSplashscreen(id, std::clamp(m_ScriptData[id].SplashTimer, 0.f, 1.f));
 
 			if (m_ScriptData[id].SplashTimer <= 0)
 			{
-				EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].SplashScreen).isActive = false;
+				ToggleSplashscreen(id, false);
 				GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);		
 			}
 		} 
@@ -68,7 +72,7 @@ namespace PE
 			{
 					TogglePlanningHUD(id, true); 
 					ToggleExecutionHUD(id, false);
-					EndPhaseButton(id, "End Movement");
+					EndPhaseButton(id, true);
 
 					// Update the energy level
 					break;
@@ -77,7 +81,7 @@ namespace PE
 			{
 					TogglePlanningHUD(id, true);
 					ToggleExecutionHUD(id, false);
-					EndPhaseButton(id, "End Turn");
+					EndPhaseButton(id, false);
 					break;
 			}
 			case GameStates::EXECUTE:
@@ -87,7 +91,7 @@ namespace PE
 					UpdateExecuteHUD(id, deltaTime);
 					break;
 			}
-			default: {break; }
+			default: { break; }
 			}
 		}
 	}
@@ -176,6 +180,12 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].executingStatement).isActive = enable;
 			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].foliageOverlay).isActive = enable;
 	}
+	
+	void GameStateController::ToggleSplashscreen(EntityID id, bool enable)
+	{
+			// Toggle the splashscreen
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].SplashScreen).isActive = enable;
+	}
 
 	void GameStateController::FadePlanningHUD(EntityID id, float alpha)
 	{
@@ -224,6 +234,13 @@ namespace PE
 
 			if (EntityManager::GetInstance().Has(m_ScriptData[id].foliageOverlay, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
 			{ EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].foliageOverlay).SetAlpha(alpha); }
+	}
+
+	void GameStateController::FadeSplashscreen(EntityID id, float alpha)
+	{
+			// Adjust the alpha of the execution HUD
+			if (EntityManager::GetInstance().Has(m_ScriptData[id].SplashScreen, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+			{ EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[id].SplashScreen).SetAlpha(alpha); }
 	}
 
 

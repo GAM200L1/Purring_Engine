@@ -137,34 +137,50 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Toggle the HUD that appears during the planning phase.
 
-		 \param[in] id - ID of the entity that the script instance.
+		 \param[in] id - ID of the entity that the script instance is attached to.
 		 \param[in] enable - Enable the planning phase HUD.
 		*************************************************************************************/
 		void TogglePlanningHUD(EntityID id, bool enable);
 
 		/*!***********************************************************************************
-		 \brief toggle the HUD that appears during the execution phase.
+		 \brief Toggle the HUD that appears during the execution phase.
 
-		 \param[in] id - ID of the entity that the script instance.
+		 \param[in] id - ID of the entity that the script instance is attached to.
 		 \param[in] enable - Enable the execution phase HUD.
 		*************************************************************************************/
 		void ToggleExecutionHUD(EntityID id, bool enable);
 
 		/*!***********************************************************************************
-		 \brief Toggle the HUD that appears during the planning phase.
+		 \brief Toggle the splashscreen entity.
 
-		 \param[in] id - ID of the entity that the script instance.
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] enable - Enable the execution phase HUD.
+		*************************************************************************************/
+		void ToggleSplashscreen(EntityID id, bool enable);
+
+		/*!***********************************************************************************
+		 \brief Adjust the alpha of the HUD that appears during the planning phase.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
 		 \param[in] alpha - Alpha to set all the planning HUD elements to.
 		*************************************************************************************/
 		void FadePlanningHUD(EntityID id, float alpha);
 
 		/*!***********************************************************************************
-		 \brief toggle the HUD that appears during the execution phase.
+		 \brief Adjust the alpha of the HUD that appears during the execution phase.
 
-		 \param[in] id - ID of the entity that the script instance.
+		 \param[in] id - ID of the entity that the script instance is attached to.
 		 \param[in] alpha - Alpha to set all the execution HUD elements to.
 		*************************************************************************************/
 		void FadeExecutionHUD(EntityID id, float alpha);
+
+		/*!***********************************************************************************
+		 \brief Adjust the alpha of the splashscreen UI.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] alpha - Alpha to set splashscreen to.
+		*************************************************************************************/
+		void FadeSplashscreen(EntityID id, float alpha);
 
 
 		// ----- Event Callbacks ----- //
