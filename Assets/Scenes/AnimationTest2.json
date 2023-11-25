@@ -138,7 +138,7 @@
                                 "bulletForce": 1000.0,
                                 "bulletLifeTime": 0.10000000149011612,
                                 "bulletRange": 3.0,
-                                "catHealth": 15,
+                                "catHealth": 26,
                                 "catID": 0,
                                 "catMaxEnergy": 21,
                                 "projectileID": 0,
@@ -230,6 +230,172 @@
                         },
                         "relorientation": 0.0,
                         "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GUIButton",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_onClicked": "IncrementGameState",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "Increment"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 264.0,
+                            "y": 279.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 250.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GUIButton",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_onClicked": "DecrementGameState",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "Decrement"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 263.0,
+                            "y": 155.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 250.0
                     }
                 },
                 "name": ""

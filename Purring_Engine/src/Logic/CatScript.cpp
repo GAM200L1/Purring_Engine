@@ -77,6 +77,7 @@ namespace PE
 
 	void CatScript::Update(EntityID id, float deltaTime)
 	{
+		
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
 
 		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; } // do something when they win
