@@ -57,6 +57,13 @@ namespace PE
 
 		m_ScriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
+
+		SerializationManager serializationManager;
+		bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
+		EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
+
+		if(EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+			EntityManager::GetInstance().Get<EntityDescriptor>(bgm).toSave = false;
 	}
 	void GameStateController::Update(EntityID id, float deltaTime)
 	{
@@ -70,6 +77,8 @@ namespace PE
 				ToggleSplashscreen(id, false);
 				GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);	
 				m_ScriptData[id].prevState = GameStates::SPLASHSCREEN;
+				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 			}
 		} 
 		else

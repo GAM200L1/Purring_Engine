@@ -40,6 +40,11 @@ namespace PE
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::PAUSE;
 
+			EntityID bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
+				EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
+			EntityManager::GetInstance().RemoveEntity(bgm);
+
 			//create pause menu here
 
 			if (pausedOnce) {
@@ -98,11 +103,17 @@ namespace PE
 
 	void GameStateManager::SetWinState()
 	{
+		EntityID bgm;
 		switch (m_currentGameState)
 		{
 			case GameStates::MOVEMENT:
 			case GameStates::ATTACK:
 			case GameStates::EXECUTE:
+
+				bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
+				if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
+					EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
+				EntityManager::GetInstance().RemoveEntity(bgm);
 
 				//win menu
 				endGameBGID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/pausebg_Prefab.json");
@@ -149,11 +160,17 @@ namespace PE
 
 	void GameStateManager::SetLoseState()
 	{
+		EntityID bgm;
 		switch (m_currentGameState)
 		{
 		case GameStates::MOVEMENT:
 		case GameStates::ATTACK:
 		case GameStates::EXECUTE:
+
+			bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
+				EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
+			EntityManager::GetInstance().RemoveEntity(bgm);
 
 			//win menu
 			endGameBGID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/pausebg_Prefab.json");
@@ -204,6 +221,11 @@ namespace PE
 	void GameStateManager::ResetDefaultState()
 	{
 			SetTurnNumber(0);
+			EntityID bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
+				EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
+			EntityManager::GetInstance().RemoveEntity(bgm);
+
 			m_currentGameState = GameStates::INACTIVE;
 			m_prevGameState = GameStates::PAUSE;
 	}
@@ -265,11 +287,17 @@ namespace PE
 			m_currentGameState = m_prevGameState;
 			m_prevGameState = GameStates::PAUSE;
 			
+
 			EntityID buttonpress = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Button Click SFX_Prefab.json");
 
 			if(EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 			EntityManager::GetInstance().RemoveEntity(buttonpress);
+
+			EntityID bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
+				EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
+			EntityManager::GetInstance().RemoveEntity(bgm);
 
 			pausedOnce = true;
 

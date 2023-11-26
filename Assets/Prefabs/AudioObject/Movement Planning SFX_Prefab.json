@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "./Assets/Audio/sfx_CatMovement_LineDrawing.wav",
+                "audioKey": "../Assets/Audio/sfx_CatMovement_LineDrawing.wav",
                 "loop": false
             },
             "EntityDescriptor": {

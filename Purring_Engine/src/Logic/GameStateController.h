@@ -272,6 +272,7 @@ namespace PE
 		std::map<EntityID, GameStateControllerData> m_ScriptData;
 		SerializationManager serializationManager;
 		bool m_finishExecution{ false };
+		EntityID bgm;
 	};
 
 

@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "./Assets/Audio/mus_BGM_Layer1_Loop.wav",
+                "audioKey": "../Assets/Audio/mus_BGM_Layer1_Loop.wav",
                 "loop": true
             },
             "EntityDescriptor": {

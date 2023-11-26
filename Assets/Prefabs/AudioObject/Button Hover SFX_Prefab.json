@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "./Assets/Audio/sfx_UI_ButtonHover.wav",
+                "audioKey": "../Assets/Audio/sfx_UI_ButtonHover.wav",
                 "loop": false
             },
             "EntityDescriptor": {
