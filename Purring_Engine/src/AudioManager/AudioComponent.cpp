@@ -39,40 +39,27 @@ namespace PE
         MessageBoxA(NULL, r_message.c_str(), r_title.c_str(), MB_ICONERROR | MB_OK);
     }
 
-    void AudioComponent::PlayAudioSound(const std::string& r_id)
+    void AudioComponent::PlayAudioSound()
     {
-        std::cout << "[PlayAudioSound] Attempting to play sound with id: " << r_id << std::endl;
-
         // Check the file extension
-        std::string fileExtension = r_id.substr(r_id.find_last_of('.') + 1);
-        if (fileExtension != "mp3")
+        std::string fileExtension = m_audioKey.substr(m_audioKey.find_last_of('.') + 1);
+        if (fileExtension != "wav")
         {
-            AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.mp3', but got '." + fileExtension + "' for id: " + r_id, "File Type Error");
+            AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '." + fileExtension + "' for id: " + m_audioKey, "File Type Error");
             return;
         }
 
-        auto it = ResourceManager::GetInstance().Sounds.find(r_id);
-        if (it != ResourceManager::GetInstance().Sounds.end())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio)
         {
-            FMOD::Channel* channel = it->second->GetChannel();
-            if (channel)
-            {
-                bool isPlaying = false;
-                channel->isPlaying(&isPlaying);
-                if (isPlaying)
-                {
-                    std::cout << "Sound with id: " << r_id << " is already playing." << std::endl;
-                    return;
-                }
-            }
-
             FMOD::System* system = AudioManager::GetInstance().GetFMODSystem();
-            FMOD_RESULT result = system->playSound(it->second->GetSound(), nullptr, false, &channel);
+            FMOD::Channel* channel = nullptr;
+            FMOD_RESULT result = system->playSound(audio->GetSound(), nullptr, false, &channel);
 
             if (result == FMOD_OK)
             {
-                it->second->SetChannel(channel);
-                std::cout << "Sound played successfully with id: " << r_id << std::endl;
+                audio->SetChannel(channel);
+                std::cout << "Sound played successfully with id: " << m_audioKey << std::endl;
 
                 // Set the loop mode based on the m_loop flag
                 FMOD_MODE loopMode = m_loop ? FMOD_LOOP_NORMAL : FMOD_LOOP_OFF;
@@ -82,61 +69,65 @@ namespace PE
                 if (m_loop)
                 {
                     channel->setLoopCount(-1);
-                    std::cout << "Looping enabled for sound with id: " << r_id << std::endl;
+                    std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
                 }
+
+                // You may want to add additional logic here to manage multiple channels
             }
             else
             {
                 std::string errorStr = FMOD_ErrorString(result);
-                ShowErrorMessage("Failed to play sound with id: " + r_id + ". Error: " + errorStr, "Playback Error");
+                ShowErrorMessage("Failed to play sound with id: " + m_audioKey + ". Error: " + errorStr, "Playback Error");
             }
         }
         else
         {
-            ShowErrorMessage("Sound not found in ResourceManager for id: " + r_id, "Resource Error");
+            ShowErrorMessage("Sound not found in ResourceManager for id: " + m_audioKey, "Resource Error");
         }
     }
 
-    void AudioComponent::SetVolume(const std::string& r_id, float volume)
+    void AudioComponent::SetVolume(float volume)
     {
-        std::cout << "Setting volume for sound with id: " << r_id << " to " << volume << std::endl;
+        std::cout << "Setting volume for sound with id: " << m_audioKey << " to " << volume << std::endl;
 
-        auto it = ResourceManager::GetInstance().Sounds.find(r_id);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio && audio->GetChannel())
         {
-            it->second->GetChannel()->setVolume(volume);
-            std::cout << "Volume set successfully for sound with id: " << r_id << std::endl;
+            audio->GetChannel()->setVolume(volume);
+            std::cout << "Volume set successfully for sound with id: " << m_audioKey << std::endl;
         }
         else
         {
-            std::cout << "Failed to set volume for sound with id: " << r_id << " (sound or channel not found)" << std::endl;
+            std::cout << "Failed to set volume for sound with id: " << m_audioKey << " (sound or channel not found)" << std::endl;
         }
     }
 
-    void AudioComponent::PauseSound(const std::string& r_id)
+    void AudioComponent::PauseSound()
     {
-        auto it = ResourceManager::GetInstance().Sounds.find(r_id);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio && audio->GetChannel())
         {
-            it->second->GetChannel()->setPaused(true);
+            audio->GetChannel()->setPaused(true);
         }
+        isPaused = true;
     }
 
-    void AudioComponent::ResumeSound(const std::string& r_id)
+    void AudioComponent::ResumeSound()
     {
-        auto it = ResourceManager::GetInstance().Sounds.find(r_id);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio && audio->GetChannel())
         {
-            it->second->GetChannel()->setPaused(false);
+            audio->GetChannel()->setPaused(false);
         }
+        isPaused = false;
     }
 
-    void AudioComponent::StopSound(const std::string& r_id)
+    void AudioComponent::StopSound()
     {
-        auto it = ResourceManager::GetInstance().Sounds.find(r_id);
-        if (it != ResourceManager::GetInstance().Sounds.end() && it->second->GetChannel())
+        std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
+        if (audio && audio->GetChannel())
         {
-            it->second->GetChannel()->stop();
+            audio->GetChannel()->stop();
         }
     }
 

@@ -2,14 +2,14 @@
 
  \project  Purring Engine
  \module   CSD2401-A
- \file     testScript.h
- \date     03-11-2023
+ \file     GameStateController.h
+ \date     23-11-2023
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan\@digipen.edu
 
 
- \brief  This file contains the declarations of testScript
+ \brief  This file contains the script that interfaces with the GameStateManager.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -17,6 +17,7 @@
 #pragma once
 #include "Script.h"
 #include "Data/SerializationManager.h"
+#include "GameStateManager.h"
 
 namespace PE
 {
@@ -24,8 +25,34 @@ namespace PE
 	{
 		bool GameStateManagerActive;
 		EntityID SplashScreen;
-		float SplashTimer{2};
-		float resetToMovementTimer{ 1.f };
+		float SplashTimer{ 2.f }; // Time in seconds that the splashscreen is displayed for
+		float maxFadeTime{ 0.5f }; // Time in seconds that it takes the HUD to fade in and out
+		float executingFadeSpeed{ 3.f }; // Time in seconds that it takes the executing text to fade in and out
+		float timeSinceEnteredState; //Time in seconds since the state has first been entered
+		float timeSinceExitedState; //Time in seconds since the state has first been exited
+		GameStates prevState; //Previous game state
+
+		// Turn counter
+		int turnCounter{};
+
+		// Statement that fades in and out during the execution phase
+		EntityID executingStatement;
+
+		// Overlays
+		EntityID mapOverlay, pawOverlay, foliageOverlay;
+
+		// Energy levels
+		EntityID energyHeader, currentEnergyText, slashText, maxEnergyText;
+		EntityID energyBackground;
+
+		// Turn statements
+		EntityID turnNumberText, planAttackText, planMovementText;
+		EntityID turnBackground;
+
+		// Buttons
+		EntityID endTurnButton, endMovementText, endTurnText;
+
+		int keyEventHandlerId, outOfFocusEventHandlerId;
 	};
 
 	class GameStateController : public Script
@@ -86,6 +113,140 @@ namespace PE
 		 \return rttr::instance - The script data instance for the specified entity
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
+
+
+		// ----- Update HUD UI ----- // 
+
+		/*!***********************************************************************************
+		 \brief En/disables the button to end the movement / attack phase and updates the 
+						text displayed on the button.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] endMovement - Set to true to display "End Movement" on the button instead of "End Turn"
+		*************************************************************************************/
+		void EndPhaseButton(EntityID id, bool endMovement);
+		
+		/*!***********************************************************************************
+		 \brief Fades the "Executing..." text in and out over time.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] deltaTime - Time in seconds since the last frame. Used to determine how 
+						much to adjust the alpha by.
+		*************************************************************************************/
+		void UpdateExecuteHUD(EntityID id, float const deltaTime);
+		
+		/*!***********************************************************************************
+		 \brief Updates the turn count.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] turnCount - The turn number to set the turn count text to.
+		 \param[in] isMovement - Whether the current state is the movement state.
+		*************************************************************************************/
+		void UpdateTurnHUD(EntityID id, int const turnCount, bool isMovement);
+		
+		/*!***********************************************************************************
+		 \brief Updates the energy level UI.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] currentEnergy - Amount of energy the player has left.
+		 \param[in] maximumEnergy - Maximum amount of energy the player has.
+		*************************************************************************************/
+		void UpdateEnergyHUD(EntityID id, int const currentEnergy, int const maximumEnergy);
+
+		/*!***********************************************************************************
+		 \brief Toggle the HUD that appears during the planning phase.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] enable - Enable the planning phase HUD.
+		*************************************************************************************/
+		void TogglePlanningHUD(EntityID id, bool enable);
+
+		/*!***********************************************************************************
+		 \brief Toggle the HUD that appears during the execution phase.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] enable - Enable the execution phase HUD.
+		*************************************************************************************/
+		void ToggleExecutionHUD(EntityID id, bool enable);
+
+		/*!***********************************************************************************
+		 \brief Toggle the splashscreen entity.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] enable - Enable the execution phase HUD.
+		*************************************************************************************/
+		void ToggleSplashscreen(EntityID id, bool enable);
+
+		/*!***********************************************************************************
+		 \brief Toggle the entity passed in.
+
+		 \param[in] id - ID of the entity to toggle.
+		 \param[in] enable - Set to true to enable the entity, false otherwise.
+
+		 \return Returns true if the entity was toggled successfully, false if the entity's 
+						descriptor component could not be found.
+		*************************************************************************************/
+		bool ToggleEntity(EntityID id, bool enable);
+
+		/*!***********************************************************************************
+		 \brief Adjust the alpha of the HUD that appears during the planning phase.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] alpha - Alpha to set all the planning HUD elements to.
+		*************************************************************************************/
+		void FadePlanningHUD(EntityID id, float alpha);
+
+		/*!***********************************************************************************
+		 \brief Adjust the alpha of the HUD that appears during the execution phase.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] alpha - Alpha to set all the execution HUD elements to.
+		*************************************************************************************/
+		void FadeExecutionHUD(EntityID id, float alpha);
+
+		/*!***********************************************************************************
+		 \brief Adjust the alpha of the splashscreen UI.
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] alpha - Alpha to set splashscreen to.
+		*************************************************************************************/
+		void FadeSplashscreen(EntityID id, float alpha);
+
+		/*!***********************************************************************************
+		 \brief Updates the text of the text component on the entity passed in.
+
+		 \param[in] id - ID of the entity to with a text component to update.
+		 \param[in] text - Text to update the component with.
+
+		 \return Returns true if the text was set successfully, false if the text component 
+						could not be found.
+		*************************************************************************************/
+		bool SetText(EntityID const id, std::string const& text);
+
+		/*!***********************************************************************************
+		 \brief Updates the alpha of the text component on the entity passed in.
+
+		 \param[in] id - ID of the entity to with a text component to update.
+		 \param[in] alpha - Alpha to set text to.
+
+		 \return Returns true if the text alpha was set successfully, false if the text component 
+						could not be found.
+		*************************************************************************************/
+		bool SetTextAlpha(EntityID const id, float const alpha);
+
+		/*!***********************************************************************************
+		 \brief Updates the alpha of the GUI renderer component on the entity passed in.
+
+		 \param[in] id - ID of the entity to with a text component to update.
+		 \param[in] alpha - Alpha to set text to.
+
+		 \return Returns true if the alpha was set successfully, false if the GUI renderer 
+						component could not be found.
+		*************************************************************************************/
+		bool SetGUIRendererAlpha(EntityID const id, float const alpha);
+
+
+		// ----- Event Callbacks ----- //
 
 		/*!***********************************************************************************
 		 \brief     Handle window out of focus event.

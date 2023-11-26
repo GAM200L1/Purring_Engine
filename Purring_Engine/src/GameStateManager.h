@@ -58,19 +58,26 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief			Set gamestate to Lose and save previous state
 		*************************************************************************************/
-		void SetLoseState();
-		
+		void SetLoseState();		
 		/*!***********************************************************************************
 		 \brief			Set current gamestate to pause and previous gamestate to movement
 		*************************************************************************************/
 		void ResetDefaultState();
-
+		/*!***********************************************************************************
+		 \brief			Sets the current turn number
+		 \param [in]	int Number to set the turn number to
+		*************************************************************************************/
+		void SetTurnNumber(int number);
 		/*!***********************************************************************************
 		 \brief			Get the current game state
 		 \return		The current game state
 		*************************************************************************************/
-		GameStates GetGameState();
-		
+		GameStates GetGameState();		
+		/*!***********************************************************************************
+		 \brief			Get the current turn number
+		 \return		The current turn number
+		*************************************************************************************/
+		int GetTurnNumber();
 
 		// ----- Public Functions ----- // 
 	public:
@@ -112,17 +119,28 @@ namespace PE {
 		*************************************************************************************/
 		void ReturnToPauseMenuFromExit(EntityID = -1);
 
+		void RestartGame(EntityID);
+
+		void ReturnToWinLoseScreenFromExit(EntityID);
+
 		/*!***********************************************************************************
 		 \brief			enter confirmation prompt to exit
 		 \param [In]	EntityID needed to save as a button function
 		*************************************************************************************/
 		void AreYouSureExit(EntityID = -1);
 
+
+		void WLAreYouSureExit(EntityID = -1);
+
 		/*!***********************************************************************************
 		 \brief			exit the game
 		 \param [In]	EntityID needed to save as a button function
 		*************************************************************************************/
 		void ExitGame(EntityID = -1);
+
+		void ToggleWin(bool);
+
+		void ToggleLose(bool);
 
 		/*!***********************************************************************************
 		 \brief			Set the entire pause menu to inactive
@@ -148,23 +166,38 @@ namespace PE {
 	public:
 		Graphics::CameraManager* p_cameraManager;
 		GLFWwindow* p_window;
-		
+		bool godMode{}; // boolean for cheatcode
+
 		// ----- Private Variables ----- // 
 	private:
-		//start with pause i guess?, might want to change if youre testing stuff
+		// State that is currently active
 		GameStates m_currentGameState {GameStates::INACTIVE};
-		//for resume state to set back to
+		// for resume state to set back to
 		GameStates m_prevGameState {GameStates::MOVEMENT};
 
 		SerializationManager serializationManager;
 		
+		//pause menu
 		EntityID pauseBGID,pawsedID,resumeButtonID,howToPlayButtonID,quitButtonID;
 
+		//how to play page
 		EntityID howToPlayID,returnButtonID;
 
+		//are you sure page
 		EntityID areYouSureID, yesButtonID, noButtonID, sadCatID;
 
-		bool htp{ false }, pausedOnce{ false }, ays{ false };
+		//lose page
+		EntityID loseTextID, loseCatID;
+
+		//win page
+		EntityID winTextID, winCatID;
+
+		//Reused
+		EntityID endGameRestartButtonID, endGameExitButtonID, endGameBGID;
+
+		bool howToPlay{ false }, pausedOnce{ false }, areYouSure{ false }, Won{ false }, Lost{ false };
+
+		int m_turnNumber{}; // Number of turns that the player has gone through since the beginning of the game
 	};
 
 }

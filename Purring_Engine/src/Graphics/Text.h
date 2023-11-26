@@ -136,6 +136,13 @@ namespace PE
 		 \param[in] color 
 		*************************************************************************************/
 		void SetColor(float const r = 0.f, float const g = 0.f, float const b = 0.f, float const a = 1.f);
+		
+		/*!***********************************************************************************
+		 \brief Set the transparency of the text color on a scale of 0 to 1
+		 
+		 \param[in] alpha - a float from 0 to 1
+		*************************************************************************************/
+		void SetAlpha(float const alpha);
 
 		/*!***********************************************************************************
 		 \brief Serializes the specified entity's TextComponent into a json file, returns a

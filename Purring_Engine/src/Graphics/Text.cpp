@@ -135,4 +135,9 @@ namespace PE
     {
         m_color = glm::vec4{ glm::clamp(r, 0.f, 1.f), glm::clamp(g, 0.f, 1.f), glm::clamp(b, 0.f, 1.f), glm::clamp(a, 0.f, 1.f) };
     }
+
+    void TextComponent::SetAlpha(float const alpha)
+    {
+        m_color.a = alpha;
+    }
 }

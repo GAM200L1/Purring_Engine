@@ -56,6 +56,7 @@
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
 #include "Graphics/Text.h"
+#include "GameStateManager.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
 #include "Layers/CollisionLayer.h"
@@ -140,8 +141,6 @@ namespace PE {
 		m_mouseInScene = false;
 		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
-		//REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
-		//REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
@@ -237,22 +236,6 @@ namespace PE {
 	void Editor::test()
 	{
 		m_showTestWindows = true;
-	}
-
-	void Editor::PlayAudio1(EntityID id)
-	{
-		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-		{
-			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetColor(255,0,0,255);
-		}
-		AudioComponent audioComponent;
-		audioComponent.PlayAudioSound("audio_sound1");
-	}
-
-	void Editor::PlayAudio2(EntityID)
-	{
-		AudioComponent audioComponent;
-		audioComponent.PlayAudioSound("audio_sound2");
 	}
 
 	void Editor::ClearObjectList()
@@ -829,11 +812,6 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
-					if (ImGui::MenuItem("Create Audio Object"))
-					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Audio_Prefab.json");
-						m_undoStack.AddChange(new CreateObjectUndo(s_id));
-					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
@@ -855,9 +833,11 @@ namespace PE {
 					}
 					ImGui::EndMenu();
 				}
-					//EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
-					//m_undoStack.AddChange(new CreateObjectUndo(s_id));
-				//}
+				if (ImGui::Selectable("Create Audio  Object"))
+				{
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Audio_Prefab.json");
+					m_undoStack.AddChange(new CreateObjectUndo(s_id));
+				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
 					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
@@ -2082,10 +2062,8 @@ namespace PE {
 						{
 							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
-								AudioComponent audioComponent;
-								static bool isSoundPaused = false;
-								static bool isLooping = false;
-
+								AudioComponent& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(entityID);
+							
 								// Vector of filepaths for audio files
 								std::vector<std::filesystem::path> audioFilePaths;
 								int index = -1;							// Initialize with -1 to indicate no selection
@@ -2113,13 +2091,12 @@ namespace PE {
 								if (index >= 0 && index < loadedAudioKeys.size())
 								{
 									comboBoxLabel = loadedAudioKeys[index];
-									currentSoundID = audioFilePaths[index].string();
 								}
 
 								if (!loadedAudioKeys.empty())
 								{
 									ImGui::Text("Audio: "); ImGui::SameLine();
-									ImGui::SetNextItemWidth(320.0f);
+									ImGui::SetNextItemWidth(200.0f);
 									if (ImGui::BeginCombo("##Audio", comboBoxLabel.c_str()))
 									{
 										for (int n = 0; n < loadedAudioKeys.size(); ++n)
@@ -2127,9 +2104,10 @@ namespace PE {
 											bool isSelected = (comboBoxLabel == loadedAudioKeys[n]);
 											if (ImGui::Selectable(loadedAudioKeys[n].c_str(), isSelected))
 											{
-												EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(audioFilePaths[n].string());
-												currentSoundID = audioFilePaths[n].string();
+												audioComponent.StopSound();
+												audioComponent.SetAudioKey(audioFilePaths[n].string());
 												comboBoxLabel = loadedAudioKeys[n];
+
 												if (isSelected)
 												{
 													ImGui::SetItemDefaultFocus();
@@ -2146,63 +2124,41 @@ namespace PE {
 									}
 								}
 								// Audio playback controls
-								if (ImGui::Checkbox("Loop", &isLooping))
-								{
-									audioComponent.SetLoop(isLooping);
-								}
-
+								bool isLooping = audioComponent.IsLooping();
+								ImGui::Checkbox("Loop", &isLooping);
+								audioComponent.SetLoop(isLooping);
 
 								if (ImGui::Button("Play"))
 								{
-									std::cout << "[Editor] Play button pressed. Current Sound ID: " << currentSoundID << std::endl;
-									if (!currentSoundID.empty())
-									{
-										audioComponent.SetLoop(isLooping);
-										audioComponent.PlayAudioSound(currentSoundID);
-										isSoundPaused = false;
-									}
+									audioComponent.PlayAudioSound();
 								}
 
 								ImGui::SameLine();
-								if (isSoundPaused)
+								if (audioComponent.IsPaused())
 								{
 									if (ImGui::Button("Resume"))
 									{
-										if (!currentSoundID.empty())
-										{
-											audioComponent.ResumeSound(currentSoundID);
-											isSoundPaused = false;
-										}
+										audioComponent.ResumeSound();
 									}
 								}
-								else
+								else 
 								{
 									if (ImGui::Button("Pause"))
 									{
-										if (!currentSoundID.empty())
-										{
-											audioComponent.PauseSound(currentSoundID);
-											isSoundPaused = true;
-										}
+										audioComponent.PauseSound();
 									}
 								}
 								ImGui::SameLine();
 								if (ImGui::Button("Stop"))
 								{
-									if (!currentSoundID.empty())
-									{
-										audioComponent.StopSound(currentSoundID);
-									}
+										audioComponent.StopSound();
 								}
 
 								// Volume control for selected sound
 								static float volume = 1.0f;
 								if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
 								{
-									if (!currentSoundID.empty())
-									{
-										audioComponent.SetVolume(currentSoundID, volume);
-									}
+										audioComponent.SetVolume(volume);
 								}
 
 								// Global volume control (affecting all sounds)
@@ -2337,10 +2293,63 @@ namespace PE {
 									if (ImGui::CollapsingHeader("GameStateController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
 										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act",&it->second.GameStateManagerActive);
-										int id = static_cast<int> (it->second.SplashScreen);
-										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##sscreen", &id);
-										if (id != m_currentSelectedObject)
-											it->second.SplashScreen = id;
+										int splashScreenId = static_cast<int> (it->second.SplashScreen);
+										int executingStatementId = static_cast<int> (it->second.executingStatement);
+										int mapOverlayId = static_cast<int> (it->second.mapOverlay);
+										int pawOverlayId = static_cast<int> (it->second.pawOverlay);
+										int foliageOverlayId = static_cast<int> (it->second.foliageOverlay);
+										int energyHeaderId = static_cast<int> (it->second.energyHeader);
+										int currentEnergyTextId = static_cast<int> (it->second.currentEnergyText);
+										int slashTextId = static_cast<int> (it->second.slashText);
+										int maxEnergyTextId = static_cast<int> (it->second.maxEnergyText);
+										int energyBackgroundId = static_cast<int> (it->second.energyBackground);
+										int turnNumberTextId = static_cast<int> (it->second.turnNumberText);
+										int planAttackTextId = static_cast<int> (it->second.planAttackText);
+										int planMovementTextId = static_cast<int> (it->second.planMovementText);
+										int turnBackgroundId = static_cast<int> (it->second.turnBackground);
+										int endTurnButtonId = static_cast<int> (it->second.endTurnButton);
+										int endMovementTextId = static_cast<int> (it->second.endMovementText);
+										int endTurnTextId = static_cast<int> (it->second.endTurnText);
+										// Entity IDs
+										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##sscreen", &splashScreenId);
+										if (splashScreenId != m_currentSelectedObject) { it->second.SplashScreen = splashScreenId; }
+										ImGui::Text("Execution HUD: ");
+										ImGui::Text("Executing Statement ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##executing", &executingStatementId);
+										if (executingStatementId != m_currentSelectedObject) { it->second.executingStatement = executingStatementId; }
+										ImGui::Text("Foliage Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##foliageoverlay", &foliageOverlayId);
+										if (foliageOverlayId != m_currentSelectedObject) { it->second.foliageOverlay = foliageOverlayId; }
+										ImGui::Text("Planning HUD: ");
+										ImGui::Text("Map Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##mapoverlay", &mapOverlayId);
+										if (mapOverlayId != m_currentSelectedObject) { it->second.mapOverlay = mapOverlayId; }
+										ImGui::Text("Paw Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##pawoverlay", &pawOverlayId);
+										if (pawOverlayId != m_currentSelectedObject) { it->second.pawOverlay = pawOverlayId; }
+										ImGui::Text("Energy: ");
+										ImGui::Text("Energy Header Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##energyHeader", &energyHeaderId);
+										if (energyHeaderId != m_currentSelectedObject) { it->second.energyHeader = energyHeaderId; }
+										ImGui::Text("Current Energy Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##currentenergy", &currentEnergyTextId);
+										if (currentEnergyTextId != m_currentSelectedObject) { it->second.currentEnergyText = currentEnergyTextId; }
+										ImGui::Text("Backslash Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##slashText", &slashTextId);
+										if (slashTextId != m_currentSelectedObject) { it->second.slashText = slashTextId; }
+										ImGui::Text("Maximum Energy Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##maxenergy", &maxEnergyTextId);
+										if (maxEnergyTextId != m_currentSelectedObject) { it->second.maxEnergyText = maxEnergyTextId; }
+										ImGui::Text("Energy Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##energybackground", &energyBackgroundId);
+										if (energyBackgroundId != m_currentSelectedObject) { it->second.energyBackground = energyBackgroundId; }
+										ImGui::Text("Turn count: ");
+										ImGui::Text("Turn Number Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##turnnumber", &turnNumberTextId);
+										if (turnNumberTextId != m_currentSelectedObject) { it->second.turnNumberText = turnNumberTextId; }
+										ImGui::Text("Plan Attack Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##planattack", &planAttackTextId);
+										if (planAttackTextId != m_currentSelectedObject) { it->second.planAttackText = planAttackTextId; }
+										ImGui::Text("Plan Movement Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##planmovement", &planMovementTextId);
+										if (planMovementTextId != m_currentSelectedObject) { it->second.planMovementText = planMovementTextId; }
+										ImGui::Text("Phase Button: ");
+										ImGui::Text("Turn Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##turnbg", &turnBackgroundId);
+										if (turnBackgroundId != m_currentSelectedObject) { it->second.turnBackground = turnBackgroundId; }
+										ImGui::Text("End Turn Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endturnbutton", &endTurnButtonId);
+										if (endTurnButtonId != m_currentSelectedObject) { it->second.endTurnButton = endTurnButtonId; }
+										ImGui::Text("End Movement Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endmovementtext", &endMovementTextId);
+										if (endMovementTextId != m_currentSelectedObject) { it->second.endMovementText = endMovementTextId; }
+										ImGui::Text("End Turn Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endturntext", &endTurnTextId);
+										if (endTurnTextId != m_currentSelectedObject) { it->second.endTurnText = endTurnTextId; }
 									}
 							}
 
@@ -2397,7 +2406,7 @@ namespace PE {
 									{
 										ImGui::SetNextItemWidth(100.0f);
 										ImGui::InputInt("Distance Offset", &it->second.Size,0,0);
-
+										ImGui::Checkbox("Look Towards", &it->second.LookTowardsMovement);
 										int j = it->second.NumberOfFollower;
 										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
 										if (j <= 5 && j >= 0)
@@ -2446,6 +2455,11 @@ namespace PE {
 														it->second.ToAttach[i] = id;
 												}
 											}
+
+											int id = static_cast<int> (it->second.SoundID);
+											ImGui::Text("Sound ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##soundid", &id);
+											if (id != m_currentSelectedObject)
+												it->second.SoundID = id;
 										}
 									}
 								}
@@ -2930,11 +2944,11 @@ namespace PE {
 							{
 								std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
 								std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
-								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;								if (!newAudioKey.empty())
+								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;								
+								if (!newAudioKey.empty())
 								{
 									EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
-									this->currentSoundID = newAudioKey;  // Update currentSoundID
-									std::cout << "currentSoundID updated to: " << currentSoundID << std::endl;
+									std::cout << "currentSoundID updated to: " << EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).GetAudioKey() << std::endl;
 								}
 							}
 

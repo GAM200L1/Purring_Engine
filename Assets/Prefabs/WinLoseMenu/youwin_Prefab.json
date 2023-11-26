@@ -2,10 +2,10 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
-				"Prefab Type": "Pawsed Text Object",
+                "Prefab Type": "youwin",
                 "children": [],
                 "isActive": true,
-                "name": "Pawsed Text Object",
+                "name": "youwintextobj",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
@@ -16,7 +16,7 @@
                     "g": 1.0,
                     "r": 1.0
                 },
-                "TextureKey": "../Assets/Textures/GamePawsed_Text_1024x256.png"
+                "TextureKey": "../Assets/Textures/YouWin_Text_1024x256.png"
             },
             "Transform": {
                 "height": 217.0,

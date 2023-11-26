@@ -277,9 +277,8 @@ namespace PE
 
 		SerializationManager serializationManager;
 
-		data.psudoRatID = EntityFactory::GetInstance().CreateEntity<Transform,Collider>();
+		data.psudoRatID = EntityFactory::GetInstance().CreateEntity<Transform>();
 		EntityManager::GetInstance().Get<Transform>(data.psudoRatID).position = GetEntityScale(id);
-		EntityManager::GetInstance().Get<Collider>(data.psudoRatID).isTrigger = true;
 
 		// create the arrow telegraph
 		data.arrowTelegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/EnemyArrowTelegraph_Prefab.json");

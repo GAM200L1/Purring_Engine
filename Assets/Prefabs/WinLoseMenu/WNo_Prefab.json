@@ -2,10 +2,10 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
-				"Prefab Type": "QuitGameButton",
+				"Prefab Type": "wnobutton",
                 "children": [],
                 "isActive": true,
-                "name": "QuitGameButton",
+                "name": "wnobutton",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
@@ -18,7 +18,7 @@
                     1.0,
                     1.0
                 ],
-                "m_defaultTexture": "../Assets/Textures/Button_QuitGame_512x128.png",
+                "m_defaultTexture": "../Assets/Textures/Button_No_512x128.png",
                 "m_disabledColor": [
                     0.5,
                     0.5,
@@ -32,8 +32,8 @@
                     1.0,
                     1.0
                 ],
-                "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
-                "m_onClicked": "AreYouSureExit",
+                "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
+                "m_onClicked": "ReturnToWinLoseScreenFromExit",
                 "m_onHovered": "",
                 "m_pressedColor": [
                     1.0,
@@ -41,7 +41,7 @@
                     1.0,
                     1.0
                 ],
-                "m_pressedTexture": "../Assets/Textures/Button_QuitGame_Dark_512x128.png"
+                "m_pressedTexture": "../Assets/Textures/Button_No_Dark_512x128.png"
             },
             "GUIRenderer": {
                 "Color": {
@@ -50,14 +50,14 @@
                     "g": 1.0,
                     "r": 1.0
                 },
-                "TextureKey": "../Assets/Textures/Button_QuitGame_512x128.png"
+                "TextureKey": "../Assets/Textures/Button_No_512x128.png"
             },
             "Transform": {
                 "height": 184.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 0.0,
-                    "y": -254.0
+                    "x": -500.0,
+                    "y": -310.0
                 },
                 "relativeposition": {
                     "x": 0.0,

@@ -293,6 +293,7 @@ namespace PE
 				p_data->finishedExecution = true;
 				m_bulletCollided = false;
 				projectileFired = false;
+				CatScript::ToggleEntity(p_data->projectileID, false);
 			}
 		}
 	}

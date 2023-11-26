@@ -193,7 +193,23 @@ RTTR_REGISTRATION
   
     rttr::registration::class_<PE::GameStateController>("GameStateController")
         .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
-        .property("SplashScreen", &PE::GameStateControllerData::SplashScreen);
+        .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
+        .property("executingStatement", &PE::GameStateControllerData::executingStatement)
+        .property("mapOverlay", &PE::GameStateControllerData::mapOverlay)
+        .property("pawOverlay", &PE::GameStateControllerData::pawOverlay)
+        .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
+        .property("energyHeader", &PE::GameStateControllerData::energyHeader)
+        .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
+        .property("slashText", &PE::GameStateControllerData::slashText)
+        .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
+        .property("energyBackground", &PE::GameStateControllerData::energyBackground)
+        .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
+        .property("planAttackText", &PE::GameStateControllerData::planAttackText)
+        .property("planMovementText", &PE::GameStateControllerData::planMovementText)
+        .property("turnBackground", &PE::GameStateControllerData::turnBackground)
+        .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
+        .property("endMovementText", &PE::GameStateControllerData::endMovementText)
+        .property("endTurnText", &PE::GameStateControllerData::endTurnText);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
@@ -212,6 +228,8 @@ RTTR_REGISTRATION
         .property("NextPosition", &PE::FollowScriptData::NextPosition)
         .property("ToAttach", &PE::FollowScriptData::ToAttach)
         .property("NumberOfAttacher", &PE::FollowScriptData::NumberOfAttachers)
+        .property("SoundID", &PE::FollowScriptData::SoundID)
+        .property("LookTowardsMovement", &PE::FollowScriptData::LookTowardsMovement)
         .property("IsAttaching", &PE::FollowScriptData::IsAttaching);
 
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
@@ -499,10 +517,10 @@ void PE::CoreApplication::InitializeAudio()
     {
         engine_logger.AddLog(false, "AudioManager initialized!", __FUNCTION__);
     }
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound1", "../Assets/Audio/audioSFX_sound1.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound2", "../Assets/Audio/audioSFX_sound2.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound3", "../Assets/Audio/audioSFX_sound3.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_backgroundMusic", "../Assets/Audio/audioSFX_backgroundMusic.mp3");
+    ResourceManager::GetInstance().LoadAudioFromFile("vo_Cat_Selected4.wav", "../Assets/Audio/vo_Cat_Selected4.wav");
+    //ResourceManager::GetInstance().LoadAudioFromFile("audio_sound2", "../Assets/Audio/audioSFX_sound2.mp3");
+    //ResourceManager::GetInstance().LoadAudioFromFile("audio_sound3", "../Assets/Audio/audioSFX_sound3.mp3");
+    //ResourceManager::GetInstance().LoadAudioFromFile("audio_backgroundMusic", "../Assets/Audio/audioSFX_backgroundMusic.mp3");
 }
 
 

@@ -347,6 +347,43 @@ size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
     }
 }
 
+void SerializationManager::DeleteAllObjectAndLoadAllEntitiesFromFile(const std::filesystem::path& filepath)
+{
+    //delete all objects
+    for (int n = static_cast<int>(PE::EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
+    {
+        if (PE::EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != PE::Graphics::CameraManager::GetUiCameraId())
+        {
+            PE::LogicSystem::DeleteScriptData(n);
+            PE::EntityManager::GetInstance().RemoveEntity(PE::EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+        }
+
+    }
+
+
+    if (!std::filesystem::exists(filepath))
+    {
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return;
+    }
+
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        nlohmann::json allEntitiesJson;
+        inFile >> allEntitiesJson;
+        DeserializeAllEntities(allEntitiesJson);
+        inFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+    }
+}
+
+
+
+
 nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem::path& filepath)
 {
     nlohmann::json loadedData;
@@ -580,6 +617,8 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                 {
                     for (auto& prop : rttr::type::get_by_name(str).get_properties())
                     {
+                        if (!data.contains(prop.get_name().to_string().c_str()))
+                            continue;
                         if (prop.get_type().get_name() == "float")
                         {
                             float val = data[prop.get_name().to_string().c_str()].get<float>();

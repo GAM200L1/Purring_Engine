@@ -119,7 +119,7 @@
                         "CatScript": {
                             "data": {
                                 "animationStates": {},
-                                "attackDamage": 0,
+                                "attackDamage": 1,
                                 "bulletDelay": 0.699999988079071,
                                 "bulletForce": 1000.0,
                                 "bulletLifeTime": 0.10000000149011612,
@@ -478,7 +478,7 @@
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
-                        "mass": 10.0,
+                        "mass": 35.0,
                         "type": 1
                     },
                     "ScriptComponent": {
@@ -528,7 +528,23 @@
                         "GameStateController": {
                             "data": {
                                 "GameStateManagerActive": true,
-                                "SplashScreen": 10
+                                "SplashScreen": 10,
+                                "currentEnergyText": 0,
+                                "endMovementText": 0,
+                                "endTurnButton": 0,
+                                "endTurnText": 0,
+                                "energyBackground": 0,
+                                "energyHeader": 0,
+                                "executingStatement": 0,
+                                "foliageOverlay": 0,
+                                "mapOverlay": 0,
+                                "maxEnergyText": 0,
+                                "pawOverlay": 0,
+                                "planAttackText": 0,
+                                "planMovementText": 0,
+                                "slashText": 0,
+                                "turnBackground": 0,
+                                "turnNumberText": 0
                             },
                             "state": 0
                         }

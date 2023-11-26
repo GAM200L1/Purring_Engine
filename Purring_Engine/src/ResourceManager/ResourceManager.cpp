@@ -103,16 +103,17 @@ namespace PE
             Icons.erase(r_name);
             return false;
         }
-        return false;
+        return true;
     }
 
-    void ResourceManager::LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath)
+    bool ResourceManager::LoadAudioFromFile(std::string const& r_key, std::string const& r_filePath)
     {
         Sounds[r_key] = std::make_shared<AudioManager::Audio>();
 
         if (AudioManager::GetInstance().GetFMODSystem() == nullptr)
         {
             std::cout << "NO SYSTEM";
+            return false;
         }
 
         if (!Sounds[r_key]->LoadSound(r_filePath, AudioManager::GetInstance().GetFMODSystem()))
@@ -120,7 +121,9 @@ namespace PE
             std::cout << "Fail to load sound" << r_filePath << std::endl;
             // fail to load sound, delete key
             Sounds.erase(r_key);
+            return false;
         }
+        return true;
     }
 
     std::string ResourceManager::LoadDraggedAudio(std::string const& r_filePath)
@@ -310,6 +313,30 @@ namespace PE
         }
 
         return Fonts[r_name];
+    }
+
+    std::shared_ptr<AudioManager::Audio> ResourceManager::GetAudio(std::string const& r_name)
+    {
+        // if audio is not found, load it
+        if (Sounds.find(r_name) == Sounds.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Audio " + r_name + " not loaded, loading audio.", __FUNCTION__);
+
+            // load audio
+            if (LoadAudioFromFile(r_name, r_name))
+            {
+                return Sounds[r_name];
+            }
+            else
+            {
+                // return default audio
+                return nullptr;
+            }
+        }
+
+        return Sounds[r_name];
     }
 
     void ResourceManager::UnloadResources()
