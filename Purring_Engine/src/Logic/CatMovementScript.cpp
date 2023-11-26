@@ -211,6 +211,7 @@ namespace PE
 				m_pathBeingDrawn = false;
 
 				// Position the cat at the end of the path
+				if (!p_data->pathPositions.empty())
 				CatScript::PositionEntity(id, p_data->pathPositions.back());
 		}
 

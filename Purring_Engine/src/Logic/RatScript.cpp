@@ -111,66 +111,16 @@ namespace PE
 			}
 		}
 
-		m_scriptData[id].p_stateManager->Update(id, deltaTime);
+		if (m_scriptData[id].p_stateManager)
+		{
+			m_scriptData[id].p_stateManager->Update(id, deltaTime);
 
-		if (m_scriptData[id].p_stateManager->GetStateName() == "IDLE")
-		{
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get rat to be in IDLE animation when player is planning Attack and movement
-			// ----------------------------------------------------------------- //
-			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			if (m_scriptData[id].p_stateManager->GetStateName() == "IDLE")
 			{
-				try
-				{
-					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
-						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
-				}
-				catch (...)
-				{
-					// error
-				}
-			}
-			// If current gamestate is set to attack planning, change state to CatAttackPLAN
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
-			{
-				TriggerStateChange(id); // immediate state change
-				if (CheckShouldStateChange(id, deltaTime))
-				{
-					m_scriptData[id].p_stateManager->ChangeState(new RatMovementEXECUTE{}, id);
-					m_scriptData[id].finishedExecution = false;
-				}
-			}
-		}
-		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
-		{
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get rat to be in MOVEMENT animation when executing movement
-			// ----------------------------------------------------------------- //
-			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
-			{
-				try
-				{
-					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Walk"));
-				}
-				catch (...)
-				{
-					// error
-				}
-			}
-			if (CheckShouldStateChange(id, deltaTime))
-			{
-				// trigger state change called in MovementEXECUTE state update
-				m_scriptData[id].p_stateManager->ChangeState(new RatAttackEXECUTE{}, id);
-			}
-		}
-		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
-		{
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get player to be in ATTACK animation when planning movement
-			// ----------------------------------------------------------------- //
-			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
-			{
-				if (m_scriptData[id].finishedExecution)
+				// TODO ------------------------------------------------------------ //
+				// Add function here to get rat to be in IDLE animation when player is planning Attack and movement
+				// ----------------------------------------------------------------- //
+				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 				{
 					try
 					{
@@ -182,27 +132,80 @@ namespace PE
 						// error
 					}
 				}
-				else
+				// If current gamestate is set to attack planning, change state to CatAttackPLAN
+				if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+				{
+					TriggerStateChange(id); // immediate state change
+					if (CheckShouldStateChange(id, deltaTime))
+					{
+						m_scriptData[id].p_stateManager->ChangeState(new RatMovementEXECUTE{}, id);
+						m_scriptData[id].finishedExecution = false;
+					}
+				}
+			}
+			else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
+			{
+				// TODO ------------------------------------------------------------ //
+				// Add function here to get rat to be in MOVEMENT animation when executing movement
+				// ----------------------------------------------------------------- //
+				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 				{
 					try
 					{
-						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Walk"));
 					}
 					catch (...)
 					{
 						// error
 					}
 				}
-
-
-			}
-			// Check if the state should be changed
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
-			{
-				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime))
 				{
-					m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
+					// trigger state change called in MovementEXECUTE state update
+					m_scriptData[id].p_stateManager->ChangeState(new RatAttackEXECUTE{}, id);
+				}
+			}
+			else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
+			{
+				// TODO ------------------------------------------------------------ //
+				// Add function here to get player to be in ATTACK animation when planning movement
+				// ----------------------------------------------------------------- //
+				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+				{
+					if (m_scriptData[id].finishedExecution)
+					{
+						try
+						{
+							if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+								EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+						}
+						catch (...)
+						{
+							// error
+						}
+					}
+					else
+					{
+						try
+						{
+							EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+						}
+						catch (...)
+						{
+							// error
+						}
+					}
+
+
+				}
+				// Check if the state should be changed
+				if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
+				{
+					TriggerStateChange(id); // immediate state change
+					if (CheckShouldStateChange(id, deltaTime))
+					{
+						m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
+					}
 				}
 			}
 		}
