@@ -2501,7 +2501,6 @@ namespace PE {
 							if (key == "CatScript")
 							{
 								CatScript* p_script = dynamic_cast<CatScript*>(val);
-								RatScript* p_scriptRat = dynamic_cast<RatScript*>(val);
 								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
 								if (it != p_script->GetScriptData().end())
 								{
@@ -2612,7 +2611,6 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader(key.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-
 										ImGui::Text("Rat Settings");
 										int input = static_cast<int>(it->second.mainCatID);
 										ImGui::Text("Main Cat ID: "); ImGui::SameLine(); ImGui::InputInt("##targetCat", &input);
