@@ -91,7 +91,7 @@ namespace PE
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; } // do something when they lose */
 
 
-		if (m_scriptData[id].catHealth <= 0) // && if main cat
+		if (m_scriptData[id].catHealth <= 0 && m_scriptData[id].isMainCat)
 		{
 			for (auto quad : m_scriptData[id].pathQuads)
 			{
