@@ -1708,7 +1708,7 @@
                         "isActive": true,
                         "name": "Player Cat",
                         "parent": null,
-                        "sceneID": 34
+                        "sceneID": 50
                     },
                     "Renderer": {
                         "Color": {

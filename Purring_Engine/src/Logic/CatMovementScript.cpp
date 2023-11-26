@@ -257,13 +257,14 @@ namespace PE
 				EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(); // Reset to white
 			}
 
-			// Teleport the player to the start of the path
+			// Add the player's starting position as a node
 			try
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(p_data->catID) };
 				p_data->pathPositions.emplace_back(r_transform.position);
 
-
+				// Reduce the player's energy
+				CatScript::SetCurrentEnergyLevel(CatScript::GetMaximumEnergyLevel() - 1);
 			}
 			catch (...)
 			{
