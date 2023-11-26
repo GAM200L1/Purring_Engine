@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "sfx_Info_PhaseDrums.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Phase Transition SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Phase Transition SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

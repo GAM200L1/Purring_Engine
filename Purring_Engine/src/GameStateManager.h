@@ -195,6 +195,9 @@ namespace PE {
 		//Reused
 		EntityID endGameRestartButtonID, endGameExitButtonID, endGameBGID;
 
+		//Audio Objects
+		EntityID ButtonClick, Menu Transition
+
 		bool howToPlay{ false }, pausedOnce{ false }, areYouSure{ false }, Won{ false }, Lost{ false };
 
 		int m_turnNumber{}; // Number of turns that the player has gone through since the beginning of the game

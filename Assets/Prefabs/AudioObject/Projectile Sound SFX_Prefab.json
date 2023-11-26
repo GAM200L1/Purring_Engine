@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "sfx_Projectile_HitPaper.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Projectile Sound SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Projectile Sound SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

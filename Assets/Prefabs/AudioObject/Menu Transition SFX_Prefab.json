@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "sfx_UI_PageFlip1.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Menu Transition SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Menu Transition SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

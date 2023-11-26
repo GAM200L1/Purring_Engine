@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "sfx_CatMovement_LineDrawing.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Movement Planning SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Movement Planning SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

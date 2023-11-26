@@ -4137,6 +4137,7 @@ namespace PE {
 
 					if (m_currentSelectedObject != -1)
 					{
+						if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
 						startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
 					}
 				}
@@ -4154,21 +4155,25 @@ namespace PE {
 			{
 				if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
 				{
-					rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation;
-					clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-					rotating = true;
+					if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+					{
+						rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation;
+						clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+						rotating = true;
+					}
 				}
 
 				if (InputSystem::IsKeyTriggered(GLFW_KEY_S) && scaling == false)
 				{
-					height = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height;
-					width = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width;
+					if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+					{
+						height = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height;
+						width = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width;
+						clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+						clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 
-					clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-					clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
-
-					scaling = true;
-
+						scaling = true;
+					}
 				}
 			}
 			float currentRotation;
@@ -4199,8 +4204,11 @@ namespace PE {
 					if (InputSystem::IsKeyHeld(GLFW_KEY_R) && scaling == false)
 					{
 						currentRotation = rotation - offset.y;
-						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation = currentRotation;
-						rotating = true;
+						if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+						{
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation = currentRotation;
+							rotating = true;
+						}
 					}
 
 					if (InputSystem::IsKeyHeld(GLFW_KEY_S) && rotating == false)
@@ -4208,21 +4216,21 @@ namespace PE {
 						if (InputSystem::IsKeyHeld(GLFW_KEY_X))
 						{
 							currentWidth = width + offset.x;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = height;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = height;
 						}
 						else if (InputSystem::IsKeyHeld(GLFW_KEY_Y))
 						{
 							currentHeight = height + offset.y;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = width;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = width;
 						}
 						else
 						{
 							currentHeight = height + offset.y;
 							currentWidth = width + offset.x;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
 						}
 						scaling = true;
 					}
@@ -4240,7 +4248,9 @@ namespace PE {
 								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x , startPosition.y + offset.y);
 							}
 							else
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+							{
+									EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+							}
 						}
 
 

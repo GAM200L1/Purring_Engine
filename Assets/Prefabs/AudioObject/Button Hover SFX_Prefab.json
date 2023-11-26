@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "sfx_UI_ButtonHover.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Button Hover SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Button Hover SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}
