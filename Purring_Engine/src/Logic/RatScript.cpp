@@ -459,6 +459,7 @@ namespace PE
 		 EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		 m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovementEXECUTE::RatHitCat, this);
 		 m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovementEXECUTE::RatHitCat, this);
+		 p_data->attacking = (p_data->distanceFromPlayer > 0.f) ? true : false;
 	 }
 
 	 void RatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -657,15 +658,19 @@ namespace PE
 	 void RatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	 {
 		 // allows attack to last for attackDuration timing before going back to movement state
-		 if (m_delay > 0.f)
+		 if (m_delay > 0.f && p_data->attacking)
 		 {
 			 m_delay -= deltaTime;
 		 }
-		 else
+		 else if (p_data->attacking)
 		 {
 			 RatScript::ToggleEntity(p_data->attackTelegraphID, true);
 			 if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 				p_data->finishedExecution = true;
+		 }
+		 else
+		 {
+			 p_data->finishedExecution = true;
 		 }
 
 	 }

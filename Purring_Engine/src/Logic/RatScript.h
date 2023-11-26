@@ -47,6 +47,7 @@ namespace PE
 		int attackDamage{ 1 }; // damage when properly attacked by the rat needs manual setting
 		float attackDelay{ 0.f }; // delay before attacking cat, needs manual setting
 		vec2 directionToTarget{ 0.f, 0.f };
+		bool attacking{ false };
 
 		// state management
 		StateMachine* p_stateManager;
