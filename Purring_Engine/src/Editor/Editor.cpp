@@ -3827,6 +3827,7 @@ namespace PE {
 
 	void Editor::ShowPhysicsWindow(bool* p_active)
 	{
+		if (IsEditorActive())
 		if (!ImGui::Begin("Physics Config Window", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close

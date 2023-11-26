@@ -773,8 +773,10 @@
             "Entity": {
                 "components": {
                     "AnimationComponent": {
-                        "AnimationIDs": [],
-                        "CurrentAnimationID": ""
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationRat_Death_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Death_Anim.json"
                     },
                     "Collider": {
                         "collisionLayerIndex": 2,
@@ -803,7 +805,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "EmptyObject",
+                        "name": "ratty",
                         "parent": null,
                         "sceneID": 9
                     },

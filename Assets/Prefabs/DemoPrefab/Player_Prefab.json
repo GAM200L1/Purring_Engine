@@ -13,25 +13,19 @@
             "Collider": {
                 "collisionLayerIndex": 0,
                 "data": {
-                    "max": {
-                        "x": 98.5,
-                        "y": 32.0
-                    },
-                    "min": {
-                        "x": -98.5,
-                        "y": -32.0
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0
                     },
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "scaleOffset": {
-                        "x": 1.0,
-                        "y": 1.0
-                    }
+                    "radius": 32.0,
+                    "scaleOffset": 1.0
                 },
                 "isTrigger": false,
-                "type": "AABBCollider"
+                "type": "CircleCollider"
             },
             "EntityDescriptor": {
                 "Prefab Type": "PlayerPrefab",
@@ -44,9 +38,9 @@
             "Renderer": {
                 "Color": {
                     "a": 1.0,
-                    "b": 0.17560553550720215,
-                    "g": 0.9950980544090271,
-                    "r": 0.6576600670814514
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
                 },
                 "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
             },
@@ -55,14 +49,7 @@
                 "mass": 10.0,
                 "type": 1
             },
-            "ScriptComponent": {
-                "testScript": {
-                    "data": {
-                        "m_rotationSpeed": 10.0
-                    },
-                    "state": 0
-                }
-            },
+            "ScriptComponent": null,
             "Transform": {
                 "height": 64.0,
                 "orientation": 0.0,
@@ -75,7 +62,7 @@
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 197.0
+                "width": 64.0
             }
         },
         "name": ""
