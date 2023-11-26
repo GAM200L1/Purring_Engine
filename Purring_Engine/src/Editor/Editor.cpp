@@ -2611,6 +2611,7 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader(key.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+										// Misc script data
 										ImGui::Text("Rat Settings");
 										int input = static_cast<int>(it->second.mainCatID);
 										ImGui::Text("Main Cat ID: "); ImGui::SameLine(); ImGui::InputInt("##targetCat", &input);
@@ -2628,7 +2629,7 @@ namespace PE {
 										ImGui::Text("Attack Delay: "); ImGui::SameLine(); ImGui::InputFloat("##ratattdel", &it->second.attackDelay);
 
 
-
+										// Animation state
 										ImGui::Separator();
 										int num{};
 										ImGui::Text("Add Animation state"); ImGui::SameLine();
