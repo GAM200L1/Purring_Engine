@@ -186,6 +186,7 @@ namespace PE
 		id;
 		nlohmann::json j;
 		j["CurrentAnimationID"] = m_currentAnimationID;
+		j["AnimationIDs"] = m_animationsID;
 		return j;
 	}
 
@@ -193,6 +194,10 @@ namespace PE
 	{
 		if (r_j.contains("CurrentAnimationID"))
 			m_currentAnimationID = r_j["CurrentAnimationID"].get<std::string>();
+		if (r_j.contains("AnimationIDs"))
+		{
+			m_animationsID = r_j["AnimationIDs"].get<std::set<std::string>>();
+		}
 		return *this;
 	}
 

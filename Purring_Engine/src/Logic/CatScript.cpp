@@ -74,6 +74,7 @@ namespace PE
 
 	void CatScript::Update(EntityID id, float deltaTime)
 	{
+		
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
 
 		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; } // do something when they win
@@ -91,8 +92,20 @@ namespace PE
 
 			// Set game state to lose when player HP is 0
 			// probably some DT stuff to let the animation run
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{ 
+					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
+			
 			// GameStateManager::GetInstance().SetGameState(GameStates::LOSE);
-			// return;
+			return;
 		}
 
 		if (!m_scriptData[id].p_stateManager) 
@@ -111,7 +124,18 @@ namespace PE
 			// TODO ------------------------------------------------------------ //
 			// Add function here to get player to be in IDLE animation when planning movement
 			// ----------------------------------------------------------------- //
-			
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			// If current gamestate is set to attack planning, change state to CatAttackPLAN
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
 			{
@@ -127,7 +151,18 @@ namespace PE
 			// TODO ------------------------------------------------------------ //
 			// Add function here to get player to be in IDLE animation when planning movement
 			// ----------------------------------------------------------------- //
-
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			// Check if the state should be changed
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 			{
@@ -149,7 +184,17 @@ namespace PE
 			//{
 			//	//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
 			//}
-
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{ 
+					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Walk"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			// Check if the state should be changed
 			if (CheckShouldStateChange(id, deltaTime))
 			{
@@ -166,7 +211,17 @@ namespace PE
 			//{
 			//	EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
 			//}
-
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			// Check if the state should be changed
 			if (CheckShouldStateChange(id, deltaTime))
 			{

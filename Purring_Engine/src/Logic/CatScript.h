@@ -79,11 +79,13 @@ namespace PE
 		std::vector<EntityID> pathQuads{};
 
 		// state manager
-		StateMachine* p_stateManager;
+		StateMachine* p_stateManager{ nullptr };
 		bool shouldChangeState{};
 		bool delaySet{ false };
 		float timeBeforeChangingState{0.f};
 		bool finishedExecution{ false };
+
+		std::map<std::string, std::string> animationStates;
 	};
 
 
