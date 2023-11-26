@@ -84,7 +84,6 @@ namespace PE
 
 		if (m_scriptData[id].catHealth <= 0) // && if main cat
 		{
-			ToggleEntity(id, false);
 			for (auto quad : m_scriptData[id].pathQuads)
 			{
 				CatScript::ToggleEntity(quad, false);
@@ -112,7 +111,8 @@ namespace PE
 				}
 			}
 
-			GameStateManager::GetInstance().SetGameState(GameStates::LOSE);
+			GameStateManager::GetInstance().SetLoseState();
+			ToggleEntity(id, false);
 			return;
 		}
 		if (!m_scriptData[id].p_stateManager) 
