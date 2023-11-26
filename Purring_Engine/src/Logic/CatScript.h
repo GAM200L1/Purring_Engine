@@ -48,6 +48,9 @@ namespace PE
 	//! struct with variables needed by cat scripts
 	struct CatScriptData
 	{
+		// Set to true if the entity this script is attached to should be treated as the main cat
+		bool isMainCat{ false };
+
 		// reference entities
 		EntityID catID{ 0 };
 		EntityID projectileID{ 0 };

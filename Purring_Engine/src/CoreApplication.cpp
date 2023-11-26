@@ -85,6 +85,7 @@
 #include "Logic/testScript2.h"
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
+#include "Logic/CatScript.h"
 #include "Logic/GameStateController.h"
 #include "GameStateManager.h"
 // Testing
@@ -233,6 +234,17 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
         .property("NumberOfCamera", &PE::CameraManagerScriptData::NumberOfCamera)
         .property("CameraIDs", &PE::CameraManagerScriptData::CameraIDs);
+
+    rttr::registration::class_<PE::CatScriptData>("CatScript")
+        .property("isMainCat", &PE::CatScriptData::isMainCat)
+        .property("catHealth", &PE::CatScriptData::catHealth)
+        .property("catMaxEnergy", &PE::CatScriptData::catMaxEnergy)
+        .property("movementSpeed", &PE::CatScriptData::movementSpeed)
+        .property("attackDamage", &PE::CatScriptData::attackDamage)
+        .property("requiredAttackPoints", &PE::CatScriptData::requiredAttackPoints)
+        .property("bulletDelay", &PE::CatScriptData::bulletDelay)
+        .property("bulletRange", &PE::CatScriptData::bulletRange)
+        .property("bulletLifeTime", &PE::CatScriptData::bulletLifeTime);
 
 
     rttr::registration::class_<PE::TextComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>().to_string().c_str())

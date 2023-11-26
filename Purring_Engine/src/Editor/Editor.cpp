@@ -2505,6 +2505,9 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("CatScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+											
+										ImGui::Text("Is Main Cat: "); ImGui::SameLine(); ImGui::Checkbox("##maincat", &it->second.isMainCat);
+
 										// cat stats
 										ImGui::Text("Cat Stats");
 										ImGui::Text("Cat Health: "); ImGui::SameLine(); ImGui::DragInt("##cathealth", &it->second.catHealth);
