@@ -263,7 +263,7 @@
                         "GameStateController": {
                             "data": {
                                 "GameStateManagerActive": true,
-                                "SplashScreen": 10,
+                                "SplashScreen": 6,
                                 "currentEnergyText": 0,
                                 "endMovementText": 0,
                                 "endTurnButton": 0,
@@ -408,6 +408,8 @@
                                 "catHealth": 20,
                                 "catID": 0,
                                 "catMaxEnergy": 21,
+                                "isMainCat": true,
+                                "movementSpeed": 300.0,
                                 "projectileID": 0,
                                 "requiredAttackPoints": 0
                             },
@@ -427,7 +429,7 @@
                                     18446744073709551615,
                                     18446744073709551615
                                 ],
-                                "IsAttaching": false,
+                                "IsAttaching": true,
                                 "LookTowardsMovement": false,
                                 "NextPosition": {
                                     "0": {
@@ -451,14 +453,14 @@
                                         "y": 0.0
                                     }
                                 },
-                                "NumberOfAttacher": 0,
-                                "NumberOfFollower": 0,
+                                "NumberOfAttacher": 2,
+                                "NumberOfFollower": 1,
                                 "Size": 65,
                                 "SoundID": 0,
                                 "Speed": 100.0,
                                 "ToAttach": [
                                     18446744073709551615,
-                                    5,
+                                    9,
                                     18446744073709551615,
                                     18446744073709551615,
                                     18446744073709551615,
@@ -640,7 +642,7 @@
                                     "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json",
                                     "Walk": "../Assets/Animation/AnimationOrange_walk_Anim.json"
                                 },
-                                "attackDamage": 0,
+                                "attackDamage": 1,
                                 "bulletDelay": 0.699999988079071,
                                 "bulletForce": 1000.0,
                                 "bulletLifeTime": 0.10000000149011612,
@@ -648,8 +650,10 @@
                                 "catHealth": 20,
                                 "catID": 0,
                                 "catMaxEnergy": 21,
+                                "isMainCat": false,
+                                "movementSpeed": 300.0,
                                 "projectileID": 0,
-                                "requiredAttackPoints": 0
+                                "requiredAttackPoints": 1
                             },
                             "state": 0
                         },
