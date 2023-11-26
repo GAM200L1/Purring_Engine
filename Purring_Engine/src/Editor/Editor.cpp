@@ -81,21 +81,45 @@ namespace PE {
 		if (configJson.contains("Editor"))
 		{
 			//m_firstLaunch needs to be serialized 
-			m_firstLaunch = configJson["Editor"]["firstLaunch"].get<bool>();
+			if (configJson["Editor"].contains("firstLaunch"))
+				m_firstLaunch = configJson["Editor"]["firstLaunch"].get<bool>();
+
 			//serialize based on what was deserialized
-			m_showConsole = configJson["Editor"]["showConsole"].get<bool>();
-			m_showLogs = configJson["Editor"]["showLogs"].get<bool>();
-			m_showObjectList = configJson["Editor"]["showObjectList"].get<bool>();
-			m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
-			m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
-			m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
-			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
-			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
-			m_showAnimationWindow = configJson["Editor"]["showAnimationWindow"].get<bool>();
-			m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
-			//show the entire gui 
+			if (configJson["Editor"].contains("showConsole"))
+				m_showConsole = configJson["Editor"]["showConsole"].get<bool>();
+
+			if (configJson["Editor"].contains("showLogs"))
+				m_showLogs = configJson["Editor"]["showLogs"].get<bool>();
+
+			if (configJson["Editor"].contains("showObjectList"))
+				m_showObjectList = configJson["Editor"]["showObjectList"].get<bool>();
+
+			if (configJson["Editor"].contains("showSceneView"))
+				m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
+
+			if (configJson["Editor"].contains("showTestWindows"))
+				m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
+
+			if (configJson["Editor"].contains("showComponentWindow"))
+				m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showResourceWindow"))
+				m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showPerformanceWindow"))
+				m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showAnimationWindow"))
+				m_showAnimationWindow = configJson["Editor"]["showAnimationWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showPhysicsWindow"))
+				m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
+				//show the entire gui 
+
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
-			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
+
+			if (configJson["Editor"].contains("renderDebug"))
+				m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
 
 			// also an e.g of how to make it safe
 			m_isPrefabMode = false;

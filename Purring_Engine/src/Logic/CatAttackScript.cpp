@@ -353,9 +353,9 @@ namespace PE
 			
 			m_projectileFired = true;
 		}
-		if (m_attackDuration > 0.f && !m_bulletCollided)
+		if (p_data->attackDuration > 0.f && !m_bulletCollided)
 		{
-			m_attackDuration -= deltaTime;
+			p_data->attackDuration -= deltaTime;
 		}
 		else
 		{

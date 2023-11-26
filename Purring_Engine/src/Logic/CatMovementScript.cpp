@@ -411,6 +411,14 @@ namespace PE
 
 				StopMoving(id);
 				p_data->pathPositions.clear();
+
+
+				//// Disable all the path nodes
+				//for (EntityID& nodeId : p_data->pathQuads)
+				//{
+				//	CatScript::ToggleEntity(nodeId, false);
+				//	EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(); // Reset to white
+				//}
 		}
 
 

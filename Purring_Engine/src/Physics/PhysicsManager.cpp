@@ -19,6 +19,7 @@
 #include "Math/Transform.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
+#include "GameStateManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -122,6 +123,9 @@ namespace PE
 
 	void PhysicsManager::UpdateDynamics(float deltaTime)
 	{
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+			return;
+
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
 			// if the entity is not active, do not check for collision

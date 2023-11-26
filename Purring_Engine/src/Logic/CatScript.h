@@ -69,7 +69,7 @@ namespace PE
 		// bullet variables
 		float bulletDelay{ 0.7f };
 		float bulletRange{ 3.f };
-		float bulletLifeTime{ 0.1f };
+		float bulletLifeTime{ 1.f };
 		float bulletForce{ 1000.f };
 
 		// movement variables
@@ -77,6 +77,7 @@ namespace PE
 		float nodeSize{ 10.f }; // Size (in pixels) of each node
 		float movementSpeed{ 300.f }; // Speed to move the cat along the path
 		float forgivenessOffset{ 1.f }; // Amount that the cat can be offset from the path node before attempting to move to the next one
+		float attackDuration{ 0.f };
 		unsigned currentPositionIndex{}; // Index of the position in the pathPositions container that the cat should move towards
 		
 		std::vector<vec2> pathPositions{}; // Positions of the nodes of the player drawn path
