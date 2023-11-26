@@ -196,7 +196,7 @@ namespace PE {
 		EntityID endGameRestartButtonID, endGameExitButtonID, endGameBGID;
 
 		//Audio Objects
-		EntityID ButtonClick, Menu Transition
+		EntityID ButtonClick, MenuTransition, ButtonHover;
 
 		bool howToPlay{ false }, pausedOnce{ false }, areYouSure{ false }, Won{ false }, Lost{ false };
 
