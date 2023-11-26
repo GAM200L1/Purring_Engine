@@ -178,10 +178,12 @@ namespace PE
         *************************************************************************************/
         std::shared_ptr<Font> GetFont(std::string const& r_name);
     private:
-        // constructor
-        ResourceManager()
-        {
+        // private constructor
+        ResourceManager();
 
-        }
+        std::shared_ptr<Graphics::Texture> m_defaultTexture;
+        std::shared_ptr<AudioManager::Audio > m_defaultAudio;
+        std::shared_ptr<Font> m_defaultFont;
+        std::shared_ptr<Animation> m_defaultAnimation;
     };
 }
