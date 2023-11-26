@@ -58,7 +58,7 @@ namespace PE {
 					m_showPhysicsWindow = !m_showPhysicsWindow;
 
 				if (KTE.keycode == GLFW_KEY_F9)
-					m_showTestWindows = !m_showTestWindows;
+					m_showAnimationWindow = !m_showAnimationWindow;
 
 				if (KTE.keycode == GLFW_KEY_F10)
 						ToggleDebugRender();				

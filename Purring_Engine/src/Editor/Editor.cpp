@@ -97,9 +97,6 @@ namespace PE {
 			if (configJson["Editor"].contains("showSceneView"))
 				m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
 
-			if (configJson["Editor"].contains("showTestWindows"))
-				m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
-
 			if (configJson["Editor"].contains("showComponentWindow"))
 				m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
 
@@ -133,7 +130,6 @@ namespace PE {
 			m_showLogs = true;
 			m_showObjectList = true;
 			m_showSceneView = true;
-			m_showTestWindows = false;
 			m_showComponentWindow = true;
 			m_showResourceWindow = true;
 			m_showPerformanceWindow = false;
@@ -183,7 +179,6 @@ namespace PE {
 		configJson["Editor"]["showLogs"] = m_showLogs;
 		configJson["Editor"]["showObjectList"] = m_showObjectList;
 		configJson["Editor"]["showSceneView"] = m_showSceneView;
-		configJson["Editor"]["showTestWindows"] = m_showTestWindows;
 		configJson["Editor"]["showComponentWindow"] = m_showComponentWindow;
 		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
@@ -260,7 +255,7 @@ namespace PE {
 
 	void Editor::test()
 	{
-		m_showTestWindows = true;
+		m_showSceneView = true;
 	}
 
 	void Editor::ClearObjectList()
@@ -362,9 +357,6 @@ namespace PE {
 
 			//draw scene view
 			if (m_showSceneView) ShowSceneView(r_frameBuffer, &m_showSceneView);
-
-			//draw the stuff for ellie to test
-			if (m_showTestWindows) ShowDemoWindow(&m_showTestWindows);
 
 			//resource window for drag n drop
 			if (m_showResourceWindow) ShowResourceWindow(&m_showResourceWindow);
@@ -869,108 +861,6 @@ namespace PE {
 				ImGui::EndPopup();
 			}
 
-			ImGui::End();
-		}
-	}
-
-	//temporary hardcoded stuff for testing for milestone 2
-	void Editor::ShowDemoWindow(bool* p_active)
-	{
-		if (IsEditorActive())
-		if (!ImGui::Begin("Rubric Test Window", p_active, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			ImGui::End();
-		}
-		else
-		{
-			{
-				//audio
-				ImGui::SeparatorText("Audio Test");
-				if (ImGui::Button("Play SFX 1"))
-				{
-					//AudioManager::GetInstance().PlayAudioSound("audio_sound1");
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Play SFX 2"))
-				{
-					//AudioManager::GetInstance().PlayAudioSound("audio_sound2");
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Play SFX 3"))
-				{
-					//AudioManager::GetInstance().PlayAudioSound("audio_sound3");
-				}
-				if (ImGui::Button("Play Background Music"))
-				{
-					//AudioManager::GetInstance().PlayAudioSound("audio_backgroundMusic");
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Stop All Audio"))
-				{
-					//AudioManager::GetInstance().StopAllSounds();
-				}
-				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
-				{
-					LoadSceneFromGivenPath("../Assets/RubricTestScenes/AudioButtonScene.json");
-				}
-				ImGui::Dummy(ImVec2(0.0f, 2.0f));
-			}
-			ImGui::SeparatorText("Scenes To Test");
-			if (ImGui::Button("Reset Default Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Text Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
-			}
-			if (ImGui::Button("Camera Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/CameraTestScene.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Physics Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/PhysicsTestScene.json");
-			}
-			if (ImGui::Button("Draw 2500 objects Instancing Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
-				for (size_t i{}; i < 2500; ++i)
-				{
-
-					EntityID id2 = EntityFactory::GetInstance().Clone(id);
-					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
-					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
-					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
-					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
-					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor();
-				}
-			}
-			ImGui::Dummy(ImVec2(0.0f, 2.0f));
-			ImGui::SeparatorText("Logic Test");			
-			if (ImGui::Button("Logic Test Scene 1"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene1.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Logic Test Scene 2"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene2.json");
-			}
-			if (ImGui::Button("Enemy AI Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/EnemyArenaScene.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Advance AI Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/AdvanceLogicScene.json");
-			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
 		}
 	}
@@ -3783,10 +3673,6 @@ namespace PE {
 							if (ImGui::MenuItem("Close Editor (Game Wont Start Either)", "", m_showEditor, true))
 							{
 								m_showEditor = !m_showEditor;
-							}
-							if (ImGui::MenuItem("Rubrics Test", "", m_showTestWindows, !m_showTestWindows))
-							{
-								m_showTestWindows = !m_showTestWindows;
 							}
 							ImGui::Separator();
 							if (ImGui::MenuItem("Reset Default", "", false, true))
