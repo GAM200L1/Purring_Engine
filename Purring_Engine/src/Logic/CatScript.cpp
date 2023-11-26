@@ -56,12 +56,14 @@ namespace PE
 		// Make a statemanager and set the starting state
 		MakeStateManager(id);
 
-		//! Creates entities for the telegraph boxes
+		// Creates entities for the telegraph boxes
 		CreateAttackTelegraphs(id, true, false); // east box
 		CreateAttackTelegraphs(id, true, true); // west box
 		CreateAttackTelegraphs(id, false, false); // north box
 		CreateAttackTelegraphs(id, false, true); // south box
 
+		// Create a projectile
+		CreateProjectile(id);
 		
 		// Create as many entities to visualise the player path nodes  
 		// such that there is one node per energy level
