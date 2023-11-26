@@ -166,5 +166,4 @@ namespace PE {
 
 		bool htp{ false }, pausedOnce{ false }, ays{ false };
 	};
-
 }

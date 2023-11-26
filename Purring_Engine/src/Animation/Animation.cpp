@@ -164,6 +164,11 @@ namespace PE
 		return duration;
 	}
 
+	float Animation::GetAnimationFrameTime()
+	{
+		return (m_animationFrames.empty())? 0.f : m_animationFrames.front().m_duration;
+	}
+
 	// AnimationComponent
 	void AnimationComponent::AddAnimationToComponent(std::string animationID)
 	{
@@ -179,6 +184,26 @@ namespace PE
 	void AnimationComponent::SetCurrentAnimationID(std::string animationIndex)
 	{
 		m_currentAnimationID = animationIndex;
+	}
+
+	unsigned AnimationComponent::GetAnimationTotalFrames()
+	{
+		return ResourceManager::GetInstance().GetAnimation(m_currentAnimationID)->GetFrameCount();
+	}
+
+	unsigned AnimationComponent::GetAnimationMaxIndex()
+	{
+		return GetAnimationTotalFrames() - 1;
+	}
+
+	unsigned AnimationComponent::GetAnimationFrameRate()
+	{
+		return ResourceManager::GetInstance().GetAnimation(m_currentAnimationID)->GetFrameRate();
+	}
+
+	double AnimationComponent::GetAnimationFrameTime()
+	{
+		return ResourceManager::GetInstance().GetAnimation(m_currentAnimationID)->GetAnimationFrameTime();
 	}
 
 	nlohmann::json AnimationComponent::ToJson(size_t id) const
@@ -395,4 +420,6 @@ namespace PE
 	{
 		ResourceManager::GetInstance().GetAnimation(animationID)->SetSpriteSheetKey(spriteSheetKey);
 	}
+
+
 }
