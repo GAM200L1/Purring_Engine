@@ -57,7 +57,7 @@ namespace PE
 		int catMaxEnergy{ 21 };
 
 		// attack variables
-		int attackDamage{ 0 };
+		int attackDamage{ 1 };
 		int requiredAttackPoints{ 0 };
 		EnumCatAttackDirection attackDirection{ EnumCatAttackDirection::NONE };
 		std::map<EnumCatAttackDirection, EntityID> telegraphIDs;
@@ -76,13 +76,17 @@ namespace PE
 		unsigned currentPositionIndex{}; // Index of the position in the pathPositions container that the cat should move towards
 		
 		std::vector<vec2> pathPositions{};
+		std::vector<vec2> followCatPositions{};
 		std::vector<EntityID> pathQuads{};
 
 		// state manager
-		StateMachine* p_stateManager;
+		StateMachine* p_stateManager{ nullptr };
 		bool shouldChangeState{};
 		bool delaySet{ false };
 		float timeBeforeChangingState{0.f};
+		bool finishedExecution{ false };
+
+		std::map<std::string, std::string> animationStates;
 	};
 
 
@@ -240,6 +244,7 @@ namespace PE
 		*************************************************************************************/
 		static void SetMaximumEnergyLevel(int const energyLevel) { catMaxEnergy = energyLevel; }
 
+		void LoseHP(EntityID id, int damageTaken);
 
 		std::map<EntityID, CatScriptData>& GetScriptData(){ return m_scriptData; }
 

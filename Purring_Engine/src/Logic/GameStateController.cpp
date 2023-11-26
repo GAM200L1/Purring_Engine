@@ -29,10 +29,12 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "LogicSystem.h"
 #include "GameStateManager.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Text.h"
 #include "CatScript.h"
+#include "RatScript.h"
 
 # define M_PI           3.14159265358979323846 
 
@@ -166,7 +168,6 @@ namespace PE
 			default: { break; }
 			}
 		}
-
 		m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
 	}
 	void GameStateController::Destroy(EntityID id)

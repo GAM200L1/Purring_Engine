@@ -88,7 +88,8 @@ namespace PE
 			{
 				for (int i = cd->catHealth; i < m_ScriptData[id].NumberOfFollower; ++i)
 				{
-					EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingObject[i]).isActive = false;
+					if(EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingObject[i]))
+						EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingObject[i]).isActive = false;
 					m_ScriptData[id].NumberOfFollower--;
 					CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() - 2);
 				}
@@ -161,7 +162,7 @@ namespace PE
 
 			}
 
-
+			//m_ScriptData[id].UpdateNow = false;
 		}
 
 		if (InputSystem::IsKeyTriggered(GLFW_KEY_Q))

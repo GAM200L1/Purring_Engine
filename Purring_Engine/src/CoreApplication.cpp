@@ -87,6 +87,9 @@
 #include "Logic/CameraManagerScript.h"
 #include "Logic/GameStateController.h"
 #include "GameStateManager.h"
+#include "Logic/CatScript.h"
+#include "Logic/RatScript.h"
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -244,6 +247,31 @@ RTTR_REGISTRATION
         .method("Text", &PE::TextComponent::SetText)
         .method("Size", &PE::TextComponent::SetSize)
         .method("Font", &PE::TextComponent::SetFont);
+
+    rttr::registration::class_<PE::CatScriptData>("CatScript")
+        .property("catID", &PE::CatScriptData::catID)
+        .property("projectileID", &PE::CatScriptData::projectileID)
+        .property("catHealth", &PE::CatScriptData::catHealth)
+        .property("catMaxEnergy", &PE::CatScriptData::catMaxEnergy)
+        .property("attackDamage", &PE::CatScriptData::attackDamage)
+        .property("requiredAttackPoints", &PE::CatScriptData::requiredAttackPoints)
+        .property("bulletDelay", &PE::CatScriptData::bulletDelay)
+        .property("bulletRange", &PE::CatScriptData::bulletRange)
+        .property("bulletLifeTime", &PE::CatScriptData::bulletLifeTime)
+        .property("bulletForce", &PE::CatScriptData::bulletForce)
+        .property("animationStates", &PE::CatScriptData::animationStates);
+
+    rttr::registration::class_<PE::RatScriptData>("RatScript")
+        .property("mainCatID", &PE::RatScriptData::mainCatID)
+        .property("health", &PE::RatScriptData::health)
+        .property("movementSpeed", &PE::RatScriptData::movementSpeed)
+        .property("detectionRadius", &PE::RatScriptData::detectionRadius)
+        .property("attackDiameter", &PE::RatScriptData::attackDiameter)
+        .property("attackDuration", &PE::RatScriptData::attackDuration)
+        .property("collisionDamage", &PE::RatScriptData::collisionDamage)
+        .property("attackDamage", &PE::RatScriptData::attackDamage)
+        .property("attackDelay", &PE::RatScriptData::attackDelay)
+        .property("animationStates", &PE::RatScriptData::animationStates);
 }
 
 PE::CoreApplication::CoreApplication()

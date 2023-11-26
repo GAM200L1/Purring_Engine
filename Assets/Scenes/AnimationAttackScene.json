@@ -80,84 +80,6 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -241.0,
-                                "y": -16.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": true,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Cat0",
-                        "parent": null,
-                        "sceneID": 3
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "CatScript": {
-                            "data": {
-                                "animationStates": {},
-                                "attackDamage": 1,
-                                "bulletDelay": 0.699999988079071,
-                                "bulletForce": 1000.0,
-                                "bulletLifeTime": 0.10000000149011612,
-                                "bulletRange": 3.0,
-                                "catHealth": 1,
-                                "catID": 0,
-                                "catMaxEnergy": 21,
-                                "projectileID": 0,
-                                "requiredAttackPoints": 0
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -241.0,
-                            "y": -16.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
                                 "x": -71.0,
                                 "y": -16.0
                             },
@@ -168,7 +90,7 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": true,
+                        "isTrigger": false,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
@@ -229,7 +151,7 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": true,
+                        "isTrigger": false,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
@@ -478,14 +400,10 @@
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
-                        "mass": 35.0,
+                        "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": {
-                        "RatScript": {
-                            "state": 0
-                        }
-                    },
+                    "ScriptComponent": null,
                     "Transform": {
                         "height": 64.0,
                         "orientation": 0.0,
@@ -528,23 +446,7 @@
                         "GameStateController": {
                             "data": {
                                 "GameStateManagerActive": true,
-                                "SplashScreen": 10,
-                                "currentEnergyText": 0,
-                                "endMovementText": 0,
-                                "endTurnButton": 0,
-                                "endTurnText": 0,
-                                "energyBackground": 0,
-                                "energyHeader": 0,
-                                "executingStatement": 0,
-                                "foliageOverlay": 0,
-                                "mapOverlay": 0,
-                                "maxEnergyText": 0,
-                                "pawOverlay": 0,
-                                "planAttackText": 0,
-                                "planMovementText": 0,
-                                "slashText": 0,
-                                "turnBackground": 0,
-                                "turnNumberText": 0
+                                "SplashScreen": 10
                             },
                             "state": 0
                         }
@@ -591,8 +493,8 @@
                         "height": 250.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": -29.0,
+                            "y": 325.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -600,6 +502,98 @@
                         },
                         "relorientation": 0.0,
                         "width": 250.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": -290.0,
+                                "y": -7.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "PlayerPrefab",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Player",
+                        "parent": null,
+                        "sceneID": 11
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                                },
+                                "attackDamage": 0,
+                                "bulletDelay": 0.699999988079071,
+                                "bulletForce": 1000.0,
+                                "bulletLifeTime": 0.10000000149011612,
+                                "bulletRange": 3.0,
+                                "catHealth": 20,
+                                "catID": 0,
+                                "catMaxEnergy": 21,
+                                "projectileID": 0,
+                                "requiredAttackPoints": 0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -290.0,
+                            "y": -7.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""

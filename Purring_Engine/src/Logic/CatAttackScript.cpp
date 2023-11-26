@@ -18,6 +18,7 @@
 #include "Physics/CollisionManager.h"
 #include "CatAttackScript.h"
 #include "CatMovementScript.h"
+#include "RatScript.h"
 
 namespace PE
 {
@@ -287,9 +288,10 @@ namespace PE
 			}
 			else
 			{
-				GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id);
+				p_data->finishedExecution = true;
 				m_bulletCollided = false;
 				projectileFired = false;
+				CatScript::ToggleEntity(p_data->projectileID, false);
 			}
 		}
 	}
@@ -329,6 +331,10 @@ namespace PE
 			{
 				if (CatScript::IsEnemy(collidedEntities.second))
 				{
+					try
+					{
+						GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(collidedEntities.second, p_data->attackDamage);
+					}catch(...){}
 					EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
 					m_bulletCollided = true;
 					return;

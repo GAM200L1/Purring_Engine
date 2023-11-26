@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     CatAttackScript.h
+ \file     CatAttackScript.cpp
  \date     15-11-2023
 
  \author               Liew Yeni
@@ -22,8 +22,6 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
 *************************************************************************************/
-#pragma once
-
 #include "prpch.h"
 #include "CatScript.h"
 #include "CatAttackScript.h"
@@ -61,7 +59,6 @@ namespace PE
 
 		//! Creates an entity for the projectile
 		SerializationManager serializationManager;
-		ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/Cat_Hairball_512px.png", "../Assets/Textures/Cat_Hairball_512px.png");
 		m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
 		/*EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;*/
 		EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
@@ -77,13 +74,47 @@ namespace PE
 
 	void CatScript::Update(EntityID id, float deltaTime)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; }
+		
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
 
-		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; }
+		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; } // do something when they win
 
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; }*/
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; } // do something when they lose */
 
 
+		if (m_scriptData[id].catHealth <= 0) // && if main cat
+		{
+			ToggleEntity(id, false);
+			for (auto quad : m_scriptData[id].pathQuads)
+			{
+				CatScript::ToggleEntity(quad, false);
+			}
+
+			// Set game state to lose when player HP is 0
+			// probably some DT stuff to let the animation run
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Death"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+				}
+				catch (...)
+				{
+					// error
+				}
+
+				// death animation example
+				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
+				{
+					EntityManager::GetInstance().Get<PE::Transform>(id).height = 0;
+					EntityManager::GetInstance().Get<PE::Transform>(id).width = 0;
+				}
+			}
+
+			GameStateManager::GetInstance().SetGameState(GameStates::LOSE);
+			return;
+		}
 		if (!m_scriptData[id].p_stateManager) 
 		{
 			m_scriptData[id].catID = id;
@@ -96,9 +127,20 @@ namespace PE
 
 
 		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
-		{
-			// if player is planning movement, set animation to idle(?)
-			// Check if the state should be changed
+		{ 
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
+			// If current gamestate is set to attack planning, change state to CatAttackPLAN
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
 			{
 				TriggerStateChange(id); // immediate state change
@@ -110,55 +152,87 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 		{
-			// if player is planning attack, set animation to idle
-
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			// Check if the state should be changed
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 			{
 				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime)) 
 				{
+					m_scriptData[id].finishedExecution = false;
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovementEXECUTE{}, id);
 				}
 			}
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 		{
-			//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-			//{
-			//	//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
-			//}
-
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{ 
+					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Walk"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			// Check if the state should be changed
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				//m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id); // --------------- @TODO KRYSTAL uncomment this
-				//GameStateManager::GetInstance().IncrementGameState();
-
 				// trigger state change called in MovementEXECUTE state update
 				m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
 			}
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 		{
-				//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
-				//{
-				//	EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
-				//}
-
-				// Check if the state should be changed
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				if (m_scriptData[id].finishedExecution)
+				{
+					try
+					{
+						if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+							EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+					}
+					catch (...)
+					{
+						// error
+					}
+				}
+				else
+				{
+					try
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+					}
+					catch (...)
+					{
+						// error
+					}
+				}
+			}
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
+			{
+				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime))
 				{
-					//m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id); --------------- @TODO KRYSTAL uncomment this
-						
-					// trigger state change called in AttackEXECUTE state update
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
-					GameStateManager::GetInstance().IncrementGameState();
 				}
+			}
 		}
 	
-		if(m_scriptData[id].catHealth <= 0)
-			GameStateManager::GetInstance().SetLoseState();
 	}
 
 	void CatScript::OnAttach(EntityID id)
@@ -205,6 +279,12 @@ namespace PE
 		}
 	}		
 		
+	void CatScript::LoseHP(EntityID id, int damageTaken)
+	{
+		// if (!GameStateManager::GetInstance().godMode) // @TODO uncomment when merged
+		m_scriptData[id].catHealth -= damageTaken;
+		std::cout << "Cat HP: " << m_scriptData[id].catHealth << '\n';
+	}
 		
 	void CatScript::MakeStateManager(EntityID id)
 	{
@@ -330,8 +410,10 @@ namespace PE
 	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);
+		
+		SerializationManager serializationManager;
 
-		EntityID telegraphID = EntityFactory::GetInstance().CreateEntity<Transform, Collider, Graphics::Renderer>();
+		EntityID telegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/PlayerAttackTelegraph_Prefab.json");
 		Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
@@ -361,12 +443,6 @@ namespace PE
 
 		EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = telegraphCollider;
 		EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
-
-		// Load and Set the texture for the telegraphs
-		std::string telegraphTextureName = "../Assets/Textures/Telegraphs/Telegraph_Long_512x128.png";
-		ResourceManager::GetInstance().LoadTextureFromFile(telegraphTextureName, telegraphTextureName);
-		EntityManager::GetInstance().Get<Graphics::Renderer>(telegraphID).SetTextureKey(telegraphTextureName);
-
 
 		m_scriptData[id].telegraphIDs.emplace(dir, telegraphID);
 	}

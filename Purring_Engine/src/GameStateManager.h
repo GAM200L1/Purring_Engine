@@ -199,5 +199,4 @@ namespace PE {
 
 		int m_turnNumber{}; // Number of turns that the player has gone through since the beginning of the game
 	};
-
 }

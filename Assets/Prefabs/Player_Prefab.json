@@ -2,9 +2,16 @@
     "Entity": {
         "components": {
             "AnimationComponent": {
-                "CurrentAnimationID": "../Assets/Animations/catWalk_Anim.json"
+                "AnimationIDs": [
+                    "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                ],
+                "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json"
             },
             "Collider": {
+                "collisionLayerIndex": 0,
                 "data": {
                     "center": {
                         "x": 0.0,
@@ -14,7 +21,7 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "radius": 0.0,
+                    "radius": 32.0,
                     "scaleOffset": 1.0
                 },
                 "isTrigger": false,
@@ -43,24 +50,86 @@
                 "type": 1
             },
             "ScriptComponent": {
-                "PlayerControllerScript": {
+                "CatScript": {
                     "data": {
-                        "HP": 100,
-                        "PlayerState": 0,
-                        "speed": 124.0
+                        "animationStates": {
+                            "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
+                            "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                        },
+                        "attackDamage": 0,
+                        "bulletDelay": 0.699999988079071,
+                        "bulletForce": 1000.0,
+                        "bulletLifeTime": 0.10000000149011612,
+                        "bulletRange": 3.0,
+                        "catHealth": 20,
+                        "catID": 0,
+                        "catMaxEnergy": 21,
+                        "projectileID": 0,
+                        "requiredAttackPoints": 0
                     },
                     "state": 0
                 },
-                "testScript": {
+                "FollowScript": {
                     "data": {
-                        "m_rotationSpeed": 11.0
+                        "CurrentPosition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "FollowingObject": [
+                            18446744073709551615,
+                            18446744073709551615,
+                            18446744073709551615,
+                            18446744073709551615,
+                            18446744073709551615,
+                            18446744073709551615
+                        ],
+                        "IsAttaching": true,
+                        "LookTowardsMovement": false,
+                        "NextPosition": {
+                            "0": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "1": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "2": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "3": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "4": {
+                                "x": 0.0,
+                                "y": 0.0
+                            }
+                        },
+                        "NumberOfAttacher": 2,
+                        "NumberOfFollower": 1,
+                        "Size": 65,
+                        "SoundID": 0,
+                        "Speed": 100.0,
+                        "ToAttach": [
+                            18446744073709551615,
+                            5,
+                            18446744073709551615,
+                            18446744073709551615,
+                            18446744073709551615,
+                            18446744073709551615
+                        ],
+                        "rotation": 0.0
                     },
                     "state": 0
                 }
             },
             "Transform": {
-                "height": 100.0,
-                "orientation": 8.0,
+                "height": 64.0,
+                "orientation": 0.0,
                 "position": {
                     "x": 0.0,
                     "y": 0.0
@@ -70,7 +139,7 @@
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 100.0
+                "width": 64.0
             }
         },
         "name": ""

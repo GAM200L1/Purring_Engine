@@ -18,7 +18,7 @@
 #include "CatMovementScript.h"
 #include "CatAttackScript.h"
 #include "Physics/CollisionManager.h"
-
+#include "FollowScript.h"
 namespace PE
 {
 		// ----- Movement Plan Functions ----- //
@@ -26,11 +26,13 @@ namespace PE
 		{
 			std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 			p_data = GETSCRIPTDATA(CatScript, id);
-			EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
 			m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatMovementPLAN::OnMouseClick, this);
 			m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovementPLAN::OnMouseRelease, this);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovementPLAN::OnPathCollision, this);
 
+			FollowScriptData* follow_data = GETSCRIPTDATA(FollowScript, p_data->catID);
+
+			p_data->followCatPositions = follow_data->NextPosition;
 			ResetDrawnPath();
 		}
 
@@ -104,7 +106,6 @@ namespace PE
 		void CatMovementPLAN::StateExit(EntityID id)
 		{
 			std::cout << "CatMovementPLAN::StateExit( " << id << " )\n";
-			EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
 			EndPathDrawing(id);
 		}
 
@@ -215,12 +216,26 @@ namespace PE
 		{
 			// reset to max energy
 			CatScript::SetCurrentEnergyLevel(CatScript::GetMaximumEnergyLevel());
+			FollowScriptData* follow_data = GETSCRIPTDATA(FollowScript, p_data->catID);
 
 			// Clear all the path data
 			if (!p_data->pathPositions.empty())
+			{
 				CatScript::PositionEntity(p_data->catID, p_data->pathPositions.front());
-
+				follow_data->CurrentPosition = p_data->pathPositions.front();
+			}
 			p_data->pathPositions.clear();
+
+
+
+			//set it to current so that it doesnt update followers
+			//i only update followers if current position does not match the transform position
+			follow_data->NextPosition = p_data->followCatPositions;
+			for (int i = 1; i < follow_data->NumberOfFollower; i++)
+			{
+
+				EntityManager::GetInstance().Get<Transform>(follow_data->FollowingObject[i]).position = p_data->followCatPositions[i];
+			}
 
 			// Disable all the path nodes
 			for (EntityID& nodeId : p_data->pathQuads)
@@ -234,6 +249,8 @@ namespace PE
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(p_data->catID) };
 				p_data->pathPositions.emplace_back(r_transform.position);
+
+
 			}
 			catch (...)
 			{
@@ -249,7 +266,9 @@ namespace PE
 			{
 				MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
 				if (MBPE.button == 1 && !p_data->pathPositions.empty())
+				{
 					ResetDrawnPath();
+				}
 				else
 					m_mouseClick = true;
 			}

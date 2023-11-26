@@ -97,6 +97,34 @@ namespace PE
 		*************************************************************************************/
 		void SetCurrentAnimationID(std::string animationID);
 
+		/*!***********************************************************************************
+		 \brief Get the Total Frames in the animation
+		 
+		 \return unsigned 
+		*************************************************************************************/
+		unsigned GetAnimationTotalFrames();
+
+		/*!***********************************************************************************
+		 \brief Get the maximum index for the animation
+
+		 \return unsigned
+		*************************************************************************************/
+		unsigned GetAnimationMaxIndex();
+
+		/*!***********************************************************************************
+		 \brief Get the Animation Frame Rate
+		 
+		 \return unsigned 
+		*************************************************************************************/
+		unsigned GetAnimationFrameRate();
+
+		/*!****v*******************************************************************************
+		 \brief Get the Animation Frame Time
+		 
+		 \return double 
+		*************************************************************************************/
+		double GetAnimationFrameTime();
+
 		///*!***********************************************************************************
 		// \brief Sets the RGBA color of the object. If the object has a texture on it,
 		//        this tints the color of the texture.
@@ -208,6 +236,13 @@ namespace PE
 
 		float GetAnimationDuration();
 
+		/*!***********************************************************************************
+		 \brief Get the Animations' duration per frame
+		 
+		 \return float 
+		*************************************************************************************/
+		float GetAnimationFrameTime();
+
 		bool LoadAnimation(std::string const& r_filePath);
 
 		nlohmann::json Animation::ToJson() const;
@@ -299,6 +334,8 @@ namespace PE
 		\param[in] spriteSheetKey to set to
 		*************************************************************************************/
 		void SetAnimationSpriteSheetKey(std::string animationID, std::string spriteSheetKey);
+
+
 
 		// ----- Private Variables ----- //
 	private:
