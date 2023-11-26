@@ -18,6 +18,7 @@
 #include "Physics/CollisionManager.h"
 #include "CatAttackScript.h"
 #include "CatMovementScript.h"
+#include "RatScript.h"
 
 namespace PE
 {
@@ -331,6 +332,10 @@ namespace PE
 			{
 				if (EntityManager::GetInstance().Get<EntityDescriptor>(collidedEntities.second).name.find("Rat") != std::string::npos)
 				{
+					try
+					{
+						GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(collidedEntities.second, p_data->attackDamage);
+					}catch(...){}
 					EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
 					m_bulletCollided = true;
 					return;

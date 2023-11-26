@@ -26,7 +26,6 @@ namespace PE
 		{
 			std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 			p_data = GETSCRIPTDATA(CatScript, id);
-			EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
 			m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatMovementPLAN::OnMouseClick, this);
 			m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovementPLAN::OnMouseRelease, this);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovementPLAN::OnCollisionWithRat, this);
@@ -111,7 +110,6 @@ namespace PE
 		void CatMovementPLAN::StateExit(EntityID id)
 		{
 			std::cout << "CatMovementPLAN::StateExit( " << id << " )\n";
-			EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
 			EndPathDrawing(id);
 		}
 

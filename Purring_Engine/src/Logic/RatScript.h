@@ -27,7 +27,7 @@ namespace PE
 		// reference entities
 		EntityID ratID{ 0 };
 		EntityID psudoRatID{ 0 };
-		EntityID mainCatID{ 8 }; // needs manual setting
+		EntityID mainCatID{ 3 }; // needs manual setting
 		
 		// rat stats
 		int health{ 5 };
@@ -46,6 +46,7 @@ namespace PE
 		float attackDuration{ 0.5f }; // how long the attack is active needs manual setting
 		int collisionDamage{ 1 }; // damage when touching the rat needs manual setting
 		int attackDamage{ 1 }; // damage when properly attacked by the rat needs manual setting
+		float attackDelay{ 0.f }; // delay before attacking cat, needs manual setting
 
 		// state management
 		StateMachine* p_stateManager;
@@ -77,6 +78,8 @@ namespace PE
 		virtual void OnAttach(EntityID id);
 
 		virtual void OnDetach(EntityID id);
+
+		void LoseHP(EntityID id, int damageTaken);
 
 		/*!***********************************************************************************
 		 \brief Sets the flag for the state to be changed after the delay passed in.
@@ -197,7 +200,10 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		RatScriptData* p_data;
+		vec2 m_directionToTarget;
 		int m_collisionEventListener{};
+		int m_collisionStayEventListener{};
+		std::set<EntityID> m_checkedCats;
 	};
 
 
@@ -226,6 +232,9 @@ namespace PE
 		// ----- Private Variables ----- //
 		RatScriptData* p_data;
 		int m_collisionEventListener{};
+		int m_collisionStayEventListener{};
+		std::set<EntityID> m_checkedCats;
+		float m_delay{};
 	};
 
 }

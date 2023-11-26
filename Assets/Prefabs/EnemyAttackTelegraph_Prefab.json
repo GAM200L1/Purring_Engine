@@ -19,10 +19,10 @@
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {
-                "Prefab Type": "RatAttackTelegraph",
+                "Prefab Type": "RatUI",
                 "children": [],
                 "isActive": true,
-                "name": "RatAttackTelegraph",
+                "name": "EnemyAttackTelegraph",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },

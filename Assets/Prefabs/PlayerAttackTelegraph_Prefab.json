@@ -25,10 +25,10 @@
                 "type": "AABBCollider"
             },
             "EntityDescriptor": {
-                "Prefab Type": "CatAttackTelegraph",
+                "Prefab Type": "CatUI",
                 "children": [],
                 "isActive": true,
-                "name": "CatAttackTelegraph",
+                "name": "PlayerAttackTelegraph",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },

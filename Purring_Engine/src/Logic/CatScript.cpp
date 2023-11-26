@@ -82,9 +82,13 @@ namespace PE
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; } // do something when they lose */
 
 
-		if (m_scriptData[id].catHealth <= 0)
+		if (m_scriptData[id].catHealth <= 0) // && if main cat
 		{
-			// idk if need these
+			ToggleEntity(id, false);
+			for (auto quad : m_scriptData[id].pathQuads)
+			{
+				CatScript::ToggleEntity(quad, false);
+			}
 
 			// TODO ------------------------------------------------------------ //
 			// Add function here to get player to be in DEATH animation when HP reaches 0
@@ -280,6 +284,7 @@ namespace PE
 	{
 		// if (!GameStateManager::GetInstance().godMode) // @TODO uncomment when merged
 		m_scriptData[id].catHealth -= damageTaken;
+		std::cout << "Cat HP: " << m_scriptData[id].catHealth << '\n';
 	}
 		
 	void CatScript::MakeStateManager(EntityID id)
@@ -384,7 +389,7 @@ namespace PE
 		
 		SerializationManager serializationManager;
 
-		EntityID telegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/CatAttackTelegraph_Prefab.json");
+		EntityID telegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/PlayerAttackTelegraph_Prefab.json");
 		Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
