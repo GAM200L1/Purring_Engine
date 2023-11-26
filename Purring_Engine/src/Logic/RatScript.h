@@ -46,6 +46,7 @@ namespace PE
 		int collisionDamage{ 1 }; // damage when touching the rat needs manual setting
 		int attackDamage{ 1 }; // damage when properly attacked by the rat needs manual setting
 		float attackDelay{ 0.f }; // delay before attacking cat, needs manual setting
+		vec2 directionToTarget{ 0.f, 0.f };
 
 		// state management
 		StateMachine* p_stateManager;
@@ -201,10 +202,9 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		RatScriptData* p_data;
-		vec2 m_directionToTarget;
 		int m_collisionEventListener{};
 		int m_collisionStayEventListener{};
-		std::set<EntityID> m_checkedCats;
+		bool m_hitCat;
 	};
 
 
@@ -234,7 +234,7 @@ namespace PE
 		RatScriptData* p_data;
 		int m_collisionEventListener{};
 		int m_collisionStayEventListener{};
-		std::set<EntityID> m_checkedCats;
+		bool m_hitCat;
 		float m_delay{};
 	};
 

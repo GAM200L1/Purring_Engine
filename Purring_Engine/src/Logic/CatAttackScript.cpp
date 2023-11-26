@@ -28,6 +28,7 @@ namespace PE
 	{
 		std::cout << "CatAttackPLAN::StateEnter(" << id << ")\n";
 		p_data = GETSCRIPTDATA(CatScript, id);
+		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		m_checkedIgnored = false;
 		m_ignoresTelegraphs.clear();
 
@@ -266,6 +267,7 @@ namespace PE
 	{
 		std::cout << "CatAttackEXECUTE::StateEnter(" << id << ")\n";
 		p_data = GETSCRIPTDATA(CatScript, id);
+		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackEXECUTE::ProjectileHitRat, this);
 		m_bulletImpulse = vec2{ 0.f, 0.f };
 		if (p_data->attackDirection != EnumCatAttackDirection::NONE)
@@ -305,28 +307,29 @@ namespace PE
 	void CatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
-		static bool projectileFired{ false };
-		if (m_bulletDelay > 0.f)
+		if (p_data->attackDirection != EnumCatAttackDirection::NONE && !m_projectileFired)
 		{
-			m_bulletDelay -= deltaTime;
+			// Ensure the rat is facing the direction of their attack
+			vec2 newScale{ RatScript::GetEntityScale(id) };
+			newScale.x = std::abs(newScale.x) * (((CatScript::GetEntityPosition(p_data->telegraphIDs[p_data->attackDirection]) - CatScript::GetEntityPosition(id)).Dot(vec2{1.f, 0.f}) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
+			RatScript::ScaleEntity(id, newScale.x, newScale.y);
+
+			// show the projectile
+			CatScript::ToggleEntity(p_data->projectileID, true);
+			EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
+			m_projectileFired = true;
+		}
+		if (m_attackDuration > 0.f && !m_bulletCollided)
+		{
+			m_attackDuration -= deltaTime;
 		}
 		else
 		{
-			if (p_data->attackDirection != EnumCatAttackDirection::NONE && !projectileFired)
-			{
-				CatScript::ToggleEntity(p_data->projectileID, true);
-				EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
-				projectileFired = true;
-			}
-			if (m_attackDuration > 0.f && !m_bulletCollided)
-			{
-				m_attackDuration -= deltaTime;
-			}
-			else
+			if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 			{
 				p_data->finishedExecution = true;
 				m_bulletCollided = false;
-				projectileFired = false;
+				m_projectileFired = false;
 				CatScript::ToggleEntity(p_data->projectileID, false);
 			}
 		}

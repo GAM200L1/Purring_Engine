@@ -245,6 +245,8 @@ namespace PE
 		*************************************************************************************/
 		bool SetGUIRendererAlpha(EntityID const id, float const alpha);
 
+		void ExecutionToMovement();
+
 
 		// ----- Event Callbacks ----- //
 
@@ -269,6 +271,7 @@ namespace PE
 	private:
 		std::map<EntityID, GameStateControllerData> m_ScriptData;
 		SerializationManager serializationManager;
+		bool m_finishExecution{ false };
 	};
 
 

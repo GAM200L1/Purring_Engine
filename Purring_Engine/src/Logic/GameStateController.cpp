@@ -112,7 +112,7 @@ namespace PE
 
 					// Update the energy level
 					UpdateEnergyHUD(id, CatScript::GetCurrentEnergyLevel(), CatScript::GetMaximumEnergyLevel() - 1);
-
+					
 					break;
 			}
 			case GameStates::ATTACK:
@@ -155,6 +155,8 @@ namespace PE
 					}
 
 					UpdateExecuteHUD(id, deltaTime);
+
+					ExecutionToMovement();
 
 					break;
 			}
@@ -408,6 +410,47 @@ namespace PE
 				GameStateManager::GetInstance().godMode = !GameStateManager::GetInstance().godMode;
 			}
 
+		}
+	}
+
+	void GameStateController::ExecutionToMovement()
+	{
+		if (!m_finishExecution)
+		{
+			for (EntityID scriptID : SceneView<ScriptComponent>())
+			{
+				if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+				{
+					RatScriptData* p_ratScript = GETSCRIPTDATA(RatScript, scriptID);
+					if (!p_ratScript->finishedExecution)
+					{
+						m_finishExecution = false;
+						break;
+					}
+					else
+					{
+						m_finishExecution = true;
+					}
+				}
+				else if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+				{
+					CatScriptData* p_catScript = GETSCRIPTDATA(CatScript, scriptID);
+					if (!p_catScript->finishedExecution)
+					{
+						m_finishExecution = false;
+						break;
+					}
+					else
+					{
+						m_finishExecution = true;
+					}
+				}
+			}
+		}
+		else
+		{
+			GameStateManager::GetInstance().IncrementGameState();
+			m_finishExecution = false;
 		}
 	}
 }

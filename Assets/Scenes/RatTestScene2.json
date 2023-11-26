@@ -536,7 +536,7 @@
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
-                        "mass": 10.0,
+                        "mass": 30.0,
                         "type": 1
                     },
                     "ScriptComponent": {

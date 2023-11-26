@@ -86,6 +86,7 @@ namespace PE
 		CatScriptData* p_data;
 		float m_attackDuration;
 		bool m_bulletCollided{ false };
+		bool m_projectileFired;
 		float m_bulletDelay{ 0.f };
 		vec2 m_bulletImpulse;
 		int m_collisionEnterEventListener; // Stores the handler for the collision enter event

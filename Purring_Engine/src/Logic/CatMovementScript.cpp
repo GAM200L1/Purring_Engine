@@ -26,6 +26,7 @@ namespace PE
 		{
 			std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 			p_data = GETSCRIPTDATA(CatScript, id);
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 
 			// Return if this cat is not the main cat
 			if (!p_data->isMainCat) { return; }
@@ -317,7 +318,8 @@ namespace PE
 		void CatMovementEXECUTE::StateEnter(EntityID id)  
 		{
 			std::cout << "CatMovementEXECUTE::StateEnter(" << id << ")\n";
-		  p_data = GETSCRIPTDATA(CatScript, id);
+			p_data = GETSCRIPTDATA(CatScript, id);
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovementEXECUTE::OnCollisionEnter, this);
 
 			// Return if this cat is not the main cat

@@ -87,7 +87,7 @@ namespace PE
 		if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 		{
 			CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
-			//std::cout << "Health: " << cd->catHealth << std::endl;
+			//std::cout << cd->catHealth << std::endl;
 			if(cd->catHealth >= 1)
 			if (cd->catHealth < m_ScriptData[id].NumberOfFollower)
 			{

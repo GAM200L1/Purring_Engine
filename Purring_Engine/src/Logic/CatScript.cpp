@@ -85,7 +85,7 @@ namespace PE
 	{
 		
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
-
+		// std::cout << "GS: " << static_cast<int>(GameStateManager::GetInstance().GetGameState()) << " | Cat state: " << m_scriptData[id].p_stateManager->GetStateName() << std::endl;
 		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; } // do something when they win
 
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; } // do something when they lose */
@@ -115,8 +115,7 @@ namespace PE
 				// death animation example
 				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 				{
-					EntityManager::GetInstance().Get<PE::Transform>(id).height = 0;
-					EntityManager::GetInstance().Get<PE::Transform>(id).width = 0;
+					ToggleEntity(id, false);
 				}
 			}
 
@@ -155,6 +154,7 @@ namespace PE
 				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime))
 				{
+					m_scriptData[id].finishedExecution = false;
 					m_scriptData[id].p_stateManager->ChangeState(new CatAttackPLAN{}, id);
 				}
 			}
@@ -207,6 +207,7 @@ namespace PE
 			if (id == CatScript::GetMainCat() && CheckShouldStateChange(id, deltaTime))
 			{
 				// trigger state change called in MovementEXECUTE state update
+				m_scriptData[id].finishedExecution = false;
 				m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
 			}
 		}
@@ -247,7 +248,6 @@ namespace PE
 				}
 			}
 		}
-	
 	}
 
 	void CatScript::OnAttach(EntityID id)
