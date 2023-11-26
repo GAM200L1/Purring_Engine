@@ -212,9 +212,7 @@ namespace PE
 			// Add function here to get player to be in ATTACK animation when planning movement
 			// ----------------------------------------------------------------- //
 			//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
-			//{
-			//	EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerAttack");
-			//}
+			
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
 				try
@@ -226,12 +224,14 @@ namespace PE
 					// error
 				}
 			}
-			// Check if the state should be changed
-			if (CheckShouldStateChange(id, deltaTime))
+
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
 			{
-				// trigger state change called in AttackEXECUTE state update
-				m_scriptData[id].finishedExecution = true;
-				m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
+				TriggerStateChange(id); // immediate state change
+				if (CheckShouldStateChange(id, deltaTime))
+				{
+					m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
+				}
 			}
 		}
 	}

@@ -22,8 +22,11 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "LogicSystem.h"
 #include "GameStateManager.h"
 #include "Graphics/Renderer.h"
+#include "CatScript.h"
+#include "RatScript.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -51,9 +54,40 @@ namespace PE
 				GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);		
 			}
 		}
-		/*else if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+		else if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 		{
-			if ()
+			static bool goToMovementScene{ false };
+			if (!goToMovementScene)
+			{
+				for (EntityID scriptID : SceneView<ScriptComponent>())
+				{
+					if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+					{
+						if (!GETSCRIPTDATA(RatScript, scriptID).finishedExecution)
+						{
+							goToMovementScene = false;
+							break;
+						}
+						else
+						{
+							goToMovementScene = true;
+						}
+					}
+					else if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+					{
+						if (!GETSCRIPTDATA(CatScript, scriptID).finishedExecution)
+						{
+							goToMovementScene = false;
+							break;
+						}
+						else
+						{
+							goToMovementScene = true;
+						}
+					}
+				}
+			}
+			else
 			{
 				static float timer{ m_ScriptData[id].resetToMovementTimer };
 
@@ -62,9 +96,10 @@ namespace PE
 				{
 					GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);
 					timer = m_ScriptData[id].resetToMovementTimer;
+					goToMovementScene = false;
 				}
 			}
-		}*/
+		}
 	}
 	void GameStateController::Destroy(EntityID)
 	{

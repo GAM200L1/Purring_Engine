@@ -30,8 +30,7 @@ namespace PE
 		EntityID mainCatID{ 3 }; // needs manual setting
 		
 		// rat stats
-		int health{ 5 };
-		int maxHealth{ 10 }; // needs manual setting
+		int health{ 5 }; // needs manual setting
 
 		// movement variables
 		float movementSpeed{ 200.f }; // speed of rat needs manual setting

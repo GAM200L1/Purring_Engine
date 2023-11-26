@@ -57,7 +57,7 @@ namespace PE
 		int catMaxEnergy{ 21 };
 
 		// attack variables
-		int attackDamage{ 0 };
+		int attackDamage{ 1 };
 		int requiredAttackPoints{ 0 };
 		EnumCatAttackDirection attackDirection{ EnumCatAttackDirection::NONE };
 		std::map<EnumCatAttackDirection, EntityID> telegraphIDs;

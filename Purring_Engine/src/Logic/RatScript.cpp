@@ -41,7 +41,6 @@ namespace PE
 	void RatScript::Init(EntityID id)
 	{
 		m_scriptData[id].ratID = id;
-		m_scriptData[id].health = m_scriptData[id].maxHealth;
 
 		// create state manager for the entity
 		if (m_scriptData[id].p_stateManager) { return; }
@@ -130,12 +129,13 @@ namespace PE
 			// ----------------------------------------------------------------- //
 
 			// Check if the state should be changed
-			if (CheckShouldStateChange(id, deltaTime))
+			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
 			{
-				// trigger state change called in AttackEXECUTE state update
-				m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
-				GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);
-				m_scriptData[id].finishedExecution = true;
+				TriggerStateChange(id); // immediate state change
+				if (CheckShouldStateChange(id, deltaTime))
+				{
+					m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
+				}
 			}
 		}
 	}
@@ -318,7 +318,7 @@ namespace PE
 		p_data->distanceFromPlayer = RatScript::GetEntityPosition(id).Distance(catObject.position) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f);
 
 		// if the cat is within the detection radius
-		if (p_data->distanceFromPlayer <= (RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f))
+		if (p_data->distanceFromPlayer <= (RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
 		{
 			float dx = catObject.position.x - ratObject.position.x;
 			float dy = catObject.position.y - ratObject.position.y;
@@ -389,12 +389,9 @@ namespace PE
 
 	 void RatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	 {
-		 Transform& ratTransform = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-		 Transform& catTransform = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
-
 		 if (p_data->distanceFromPlayer > 0.f)
 		 {
-			 RatScript::PositionEntity(id, ratTransform.position + (m_directionToTarget * p_data->movementSpeed * deltaTime));
+			 RatScript::PositionEntity(id, RatScript::GetEntityPosition(id) + (m_directionToTarget * p_data->movementSpeed * deltaTime));
 			 
 			 p_data->distanceFromPlayer -= p_data->movementSpeed * deltaTime;
 		 }
@@ -407,6 +404,7 @@ namespace PE
 	 void RatMovementEXECUTE::StateCleanUp()
 	 {
 		 REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+		 REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
 	 }
 
 	 void RatMovementEXECUTE::StateExit(EntityID id)
@@ -591,7 +589,7 @@ namespace PE
 		 else
 		 {
 			 RatScript::ToggleEntity(p_data->attackTelegraphID, true);
-			 GETSCRIPTINSTANCEPOINTER(RatScript)->TriggerStateChange(id, p_data->attackDuration);
+			 p_data->finishedExecution = true;
 		 }
 
 	 }

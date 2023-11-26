@@ -290,7 +290,7 @@ namespace PE
 			}
 			else
 			{
-				GETSCRIPTINSTANCEPOINTER(CatScript)->TriggerStateChange(id);
+				p_data->finishedExecution = true;
 				m_bulletCollided = false;
 				projectileFired = false;
 			}
