@@ -2691,6 +2691,10 @@ namespace PE {
 								else
 									iconDragged = "../Assets/Icons/Other_Icon.png";
 							}
+							else if (ImGui::IsMouseClicked(1))
+							{
+								ImGui::OpenPopup("AssetDeletePopup");
+							}
 						}
 						else
 						{
@@ -2701,7 +2705,7 @@ namespace PE {
 								GetFileNamesInParentPath(m_parentPath, m_files);
 							}
 						}
-
+						
 					}
 
 					if (ImGui::IsItemClicked(1))
@@ -2712,6 +2716,19 @@ namespace PE {
 						{
 							ImGui::OpenPopup("EditPrefab");
 						}
+						else
+						{
+							ImGui::OpenPopup("AssetDeletePopup");
+						}
+					}
+					if (n == rmbIndex && ImGui::BeginPopup("AssetDeletePopup"))
+					{
+						if (ImGui::Selectable("Delete Asset"))
+						{
+							std::filesystem::remove(m_files[n]);
+							GetFileNamesInParentPath(m_parentPath, m_files);
+						}
+						ImGui::EndPopup();
 					}
 					if (n == rmbIndex && ImGui::BeginPopup("EditPrefab"))
 					{
@@ -2762,6 +2779,11 @@ namespace PE {
 							ClearObjectList();
 							engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
 							serializationManager.LoadFromFile(prefabFP);
+						}
+						if (ImGui::Selectable("Delete Asset"))
+						{
+							std::filesystem::remove(m_files[n]);
+							GetFileNamesInParentPath(m_parentPath, m_files);
 						}
 						ImGui::EndPopup();
 					}
