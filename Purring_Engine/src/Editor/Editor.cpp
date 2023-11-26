@@ -2725,8 +2725,17 @@ namespace PE {
 					{
 						if (ImGui::Selectable("Delete Asset"))
 						{
-							std::filesystem::remove(m_files[n]);
-							GetFileNamesInParentPath(m_parentPath, m_files);
+							try
+							{
+								std::filesystem::remove(m_files[n]);
+								GetFileNamesInParentPath(m_parentPath, m_files);
+							}
+							catch (std::filesystem::filesystem_error& e)
+							{
+								engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+								engine_logger.SetTime();
+								engine_logger.AddLog(false, e.what(), __FUNCTION__);
+							}
 						}
 						ImGui::EndPopup();
 					}
