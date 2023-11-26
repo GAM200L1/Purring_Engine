@@ -90,6 +90,8 @@ namespace PE
 		float m_bulletDelay{ 0.f };
 		vec2 m_bulletImpulse;
 		int m_collisionEnterEventListener; // Stores the handler for the collision enter event
+		bool playShootOnce{false};
+
 		// ----- Private Functions ----- //
 		void ProjectileHitRat(const Event<CollisionEvents>& r_CE);
 

@@ -466,7 +466,7 @@ namespace PE
 		ResetDefaultState();
 		Won = false;
 		Lost = false;
-		serializationManager.DeleteAllObjectAndLoadAllEntitiesFromFile("../Assets/Scenes/HUDWithSplashscreen.json");
+		serializationManager.DeleteAllObjectAndLoadAllEntitiesFromFile("../Assets/Scenes/GameSceneFINAL.json");
 	}
 
 	void GameStateManager::ReturnToWinLoseScreenFromExit(EntityID)
