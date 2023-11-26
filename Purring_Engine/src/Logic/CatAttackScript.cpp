@@ -6,6 +6,15 @@
 
  \author               Liew Yeni
  \par      email:      yeni.l@digipen.edu
+ \par      code %:     99%
+ \par      changes:    Defined all the functions.
+
+ \co-author            Krystal YAMIN
+ \par      email:      krystal.y@digipen.edu
+ \par      code %:     1%
+ \par      changes:    26-11-2023
+											 Fixed some bugs where multiple cats' telegraphs would be 
+											 shown at once.
 
  \brief
 	This file contains definitions for functions used for a grey cat's attack state.
@@ -26,8 +35,9 @@ namespace PE
 
 	void CatAttackPLAN::StateEnter(EntityID id)
 	{
-		std::cout << "CatAttackPLAN::StateEnter(" << id << ")\n";
 		p_data = GETSCRIPTDATA(CatScript, id);
+
+		// Reset values
 		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		m_checkedIgnored = false;
 		m_ignoresTelegraphs.clear();
@@ -35,12 +45,14 @@ namespace PE
 		// Don't bother if not the main cat and not following the main cat
 		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
 
+		// Check if colliding with cats
 		for (auto const& [attackDirection, boxID] : p_data->telegraphIDs)
 		{
 			CatScript::ToggleEntity(boxID, true);
 			EntityManager::GetInstance().Get<Graphics::Renderer>(boxID).SetColor(m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, 0.f);
 		}
 		
+		// Subscribe to events
 		m_triggerEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, CatAttackPLAN::CatInTelegraph, this);
 		m_triggerStayEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatAttackPLAN::CatInTelegraph, this);
 		m_mouseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatAttackPLAN::OnMouseClick, this);
@@ -92,7 +104,6 @@ namespace PE
 						EntityManager::GetInstance().Get<Graphics::Renderer>(telegraph.second).SetColor(m_hoverColor.x, m_hoverColor.y, m_hoverColor.z, 1.f);
 						if (m_mouseClick)
 						{
-							std::cout << "CatAttackPLAN::StateUpdate() Clicked on telegraph " << telegraph.first << " on cat " << id << "\n";
 							// if player selects either of the boxes, the attack direction is determined
 							p_data->attackDirection = telegraph.first;
 							// the other boxes should not show
@@ -136,14 +147,11 @@ namespace PE
 				// The telegraphs have not been enabled and the cat was clicked
 				if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
 				{
-					std::cout << "CatAttackPLAN::StateUpdate() Clicked on cat " << id << "\n";
-
 					SerializationManager serializationManager;
 					EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Selection SFX_Prefab.json");
 					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 					EntityManager::GetInstance().RemoveEntity(sound);
-
 
 					// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
 					m_showBoxes = true;
@@ -156,7 +164,6 @@ namespace PE
 						// Don't disable the telegraphs on this cat or cat that have selected directions
 						if (scriptData.first == id || scriptData.second.attackDirection != EnumCatAttackDirection::NONE) { continue; }
 
-						std::cout << "CatAttackPLAN::StateUpdate() Disabling telegraphs for " << scriptData.first << "\n";
 						for (auto const& telegraph : scriptData.second.telegraphIDs)
 						{
 								CatScript::ToggleEntity(telegraph.second, false);
@@ -180,7 +187,6 @@ namespace PE
 					AABBCollider const& telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(p_data->telegraphIDs[p_data->attackDirection]).colliderVariant);
 					if (PointCollision(telegraphCollider, cursorPosition) && m_mouseClick)
 					{
-						std::cout << "CatAttackPLAN::StateUpdate() Clicked on telegraph for cat " << id << " in direction " << p_data->attackDirection << "\n";
 						m_showBoxes = true;
 						p_data->attackDirection = EnumCatAttackDirection::NONE;
 						for (auto const& telegraph : p_data->telegraphIDs)
@@ -200,8 +206,6 @@ namespace PE
 	
 	void CatAttackPLAN::StateCleanUp()
 	{
-		std::cout << "CatAttackPLAN::StateCleanUp()\n";
-
 	  // Don't bother if not the main cat and not following the main cat
 		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
 		
@@ -212,7 +216,7 @@ namespace PE
 
 	void CatAttackPLAN::StateExit(EntityID id)
 	{
-		std::cout << "CatAttackPLAN::StateExit(" << id << ")\n";
+		// disable all telegraphs
 		for (auto const& telegraph : p_data->telegraphIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
@@ -271,7 +275,7 @@ namespace PE
 				}
 			}
 		}
-		//m_checkedIgnored = true;
+
 	}
 
 
@@ -281,14 +285,17 @@ namespace PE
 
 	void CatAttackEXECUTE::StateEnter(EntityID id) 
 	{
-		std::cout << "CatAttackEXECUTE::StateEnter(" << id << ")\n";
 		p_data = GETSCRIPTDATA(CatScript, id);
 		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
+		
+		// Subscribe to event
 		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackEXECUTE::ProjectileHitRat, this);
+		
+		// Set the start values of the attack projectile
 		m_bulletImpulse = vec2{ 0.f, 0.f };
 		if (p_data->attackDirection != EnumCatAttackDirection::NONE)
 		{
-			p_data->attackDuration = p_data->bulletLifeTime;
+			m_attackDuration = p_data->bulletLifeTime;
 			vec2 direction{ 0.f, 0.f };
 			switch (p_data->attackDirection)
 			{
@@ -333,7 +340,7 @@ namespace PE
 			// show the projectile
 			CatScript::ToggleEntity(p_data->projectileID, true);
 			EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
-
+			
 			if (!playShootOnce)
 			{
 				SerializationManager serializationManager;
@@ -343,6 +350,7 @@ namespace PE
 				EntityManager::GetInstance().RemoveEntity(sound);
 				playShootOnce = true;
 			}
+			
 			m_projectileFired = true;
 		}
 		if (p_data->attackDuration > 0.f && !m_bulletCollided)
@@ -351,6 +359,7 @@ namespace PE
 		}
 		else
 		{
+			// Disable the projectile
 			if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 			{
 				p_data->finishedExecution = true;
@@ -363,13 +372,11 @@ namespace PE
 
 	void CatAttackEXECUTE::StateCleanUp()
 	{
-		std::cout << "CatAttackEXECUTE::StateCleanUp()\n";
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
 	}
 
 	void CatAttackEXECUTE::StateExit(EntityID id)
 	{
-		std::cout << "CatAttackEXECUTE::StateExit(" << id << ")\n";
 		// resets attack direction selection
 		p_data->attackDirection = EnumCatAttackDirection::NONE;
 		CatScript::ToggleEntity(p_data->projectileID, false);
@@ -377,6 +384,7 @@ namespace PE
 
 	void CatAttackEXECUTE::ProjectileHitRat(const Event<CollisionEvents>& r_CE)
 	{
+		// Check for collision between projectiles and the rats
 		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
 		{
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);

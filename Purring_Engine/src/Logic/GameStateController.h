@@ -7,9 +7,18 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan\@digipen.edu
+ \par      code %:     50%
+ \par      changes:    Added functions to control the states + fade the splashscreen in.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     50%
+ \par      changes:    24-11-2023
+											 Added functions and logic to update gameplay HUD.
 
 
- \brief  This file contains the script that interfaces with the GameStateManager.
+ \brief  This file contains the script that interfaces with the GameStateManager
+					and updates the in game HUD.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -118,6 +127,30 @@ namespace PE
 		// ----- Update HUD UI ----- // 
 
 		/*!***********************************************************************************
+		 \brief Updates the movement planning HUD.
+
+		 \param[in] id - ID of the entity this script is associated with.
+		 \param[in] deltaTime - Time in seconds since the last frame
+		*************************************************************************************/
+		void MovementStateHUD(EntityID const id, float deltaTime);
+
+		/*!***********************************************************************************
+		 \brief Updates the movement planning HUD.
+
+		 \param[in] id - ID of the entity this script is associated with.
+		 \param[in] deltaTime - Time in seconds since the last frame
+		*************************************************************************************/
+		void AttackStateHUD(EntityID const id);
+
+		/*!***********************************************************************************
+		 \brief Updates the movement planning HUD.
+
+		 \param[in] id - ID of the entity this script is associated with.
+		 \param[in] deltaTime - Time in seconds since the last frame
+		*************************************************************************************/
+		void ExecutionStateHUD(EntityID const id, float deltaTime);
+
+		/*!***********************************************************************************
 		 \brief En/disables the button to end the movement / attack phase and updates the 
 						text displayed on the button.
 
@@ -176,6 +209,14 @@ namespace PE
 		 \param[in] enable - Enable the execution phase HUD.
 		*************************************************************************************/
 		void ToggleSplashscreen(EntityID id, bool enable);
+
+		/*!***********************************************************************************
+		 \brief Toggle all text objects in the HUD. 
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] enable - Set to true to enable all text in the HUD, false otherwise.
+		*************************************************************************************/
+		void ToggleAllText(EntityID id, bool enable);
 
 		/*!***********************************************************************************
 		 \brief Toggle the entity passed in.
@@ -237,7 +278,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Updates the alpha of the GUI renderer component on the entity passed in.
 
-		 \param[in] id - ID of the entity to with a text component to update.
+		 \param[in] id - ID of the entity with a text component to update.
 		 \param[in] alpha - Alpha to set text to.
 
 		 \return Returns true if the alpha was set successfully, false if the GUI renderer 
@@ -245,6 +286,9 @@ namespace PE
 		*************************************************************************************/
 		bool SetGUIRendererAlpha(EntityID const id, float const alpha);
 
+		/*!***********************************************************************************
+		 \brief Switches the gamestate from movement and attack execution back to movement planning.
+		*************************************************************************************/
 		void ExecutionToMovement();
 
 
@@ -269,9 +313,9 @@ namespace PE
 		*************************************************************************************/
 		~GameStateController();
 	private:
-		std::map<EntityID, GameStateControllerData> m_ScriptData;
-		bool m_finishExecution{ false };
-		EntityID bgm;
+		std::map<EntityID, GameStateControllerData> m_ScriptData; // Data associated with each instance of the script
+		bool m_finishExecution{ false }; // used to keep track of whether the execution phase is complete. Set to true when the cats and rats are done executing their attacks.
+		EntityID bgm; // ID of the entity holding the background music
 	};
 
 

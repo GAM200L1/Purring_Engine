@@ -21,10 +21,12 @@ namespace PE
 {
 	GameStateManager::GameStateManager()
 	{
+			// Does nothing
 	}
 
 	GameStateManager::~GameStateManager()
 	{
+			// Does nothing
 	}
 
 	void GameStateManager::SetGameState(GameStates gameState)
@@ -131,11 +133,9 @@ namespace PE
 				EntityManager::GetInstance().Get<EntityDescriptor>(endGameBGID).toSave = false;
 				EntityManager::GetInstance().Get<EntityDescriptor>(winTextID).toSave = false;
 				EntityManager::GetInstance().Get<EntityDescriptor>(endGameRestartButtonID).toSave = false;
-				//EntityManager::GetInstance().Get<EntityDescriptor>(endGameExitButtonID).toSave = false;
-
+				
 
 				//are you sure
-
 				areYouSureID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/areyousure_Prefab.json");
 				yesButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/Yes_Prefab.json");
 				noButtonID = serializationManager.LoadFromFile("../Assets/Prefabs/WinLoseMenu/WNo_Prefab.json");
@@ -235,6 +235,11 @@ namespace PE
 			m_currentGameState = GameStates::INACTIVE;
 			m_prevGameState = GameStates::PAUSE;
 	}
+
+	GameStates GameStateManager::GetPreviousGameState()
+	{
+		return m_prevGameState;
+	}	
 
 	GameStates GameStateManager::GetGameState()
 	{
@@ -447,6 +452,7 @@ namespace PE
 		//set inactive how to play menu here
 		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = false;
+		howToPlay = false;
 	}
 
 	void GameStateManager::ReturnToPauseMenuFromExit(EntityID)
@@ -481,7 +487,6 @@ namespace PE
 		else if (Lost)
 		{
 			ToggleLose(true);
-
 		}
 
 		//delete yes no and are you sure object

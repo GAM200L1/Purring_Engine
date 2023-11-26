@@ -69,6 +69,11 @@ namespace PE {
 		*************************************************************************************/
 		void SetTurnNumber(int number);
 		/*!***********************************************************************************
+		 \brief			Get the previous game state
+		 \return		The previous game state
+		*************************************************************************************/
+		GameStates GetPreviousGameState();
+		/*!***********************************************************************************
 		 \brief			Get the current game state
 		 \return		The current game state
 		*************************************************************************************/
@@ -78,6 +83,11 @@ namespace PE {
 		 \return		The current turn number
 		*************************************************************************************/
 		int GetTurnNumber();
+		/*!***********************************************************************************
+		 \brief			True if the how to play menu is active, false otherwise
+		 \return		True if the how to play menu is active, false otherwise
+		*************************************************************************************/
+		inline bool GetHowToPlayActive() { return howToPlay; }
 
 		// ----- Public Functions ----- // 
 	public:
@@ -119,8 +129,17 @@ namespace PE {
 		*************************************************************************************/
 		void ReturnToPauseMenuFromExit(EntityID = -1);
 
+		/*!***********************************************************************************
+		 \brief			Reloads the game scene and resets the values of the game state manager
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void RestartGame(EntityID);
 
+		/*!***********************************************************************************
+		 \brief			Helper function to return to the win/lose screen from the quit 
+								confirmation menu.
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void ReturnToWinLoseScreenFromExit(EntityID);
 
 		/*!***********************************************************************************
@@ -129,7 +148,10 @@ namespace PE {
 		*************************************************************************************/
 		void AreYouSureExit(EntityID = -1);
 
-
+		/*!***********************************************************************************
+		 \brief			enter confirmation prompt to exit from the win/lose screen
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void WLAreYouSureExit(EntityID = -1);
 
 		/*!***********************************************************************************
@@ -138,14 +160,31 @@ namespace PE {
 		*************************************************************************************/
 		void ExitGame(EntityID = -1);
 
+		/*!***********************************************************************************
+		 \brief			Toggle the win screen
+		 \param [In]	True to enable the screen, false to disable.
+		*************************************************************************************/
 		void ToggleWin(bool);
 
+		/*!***********************************************************************************
+		 \brief			Toggle the lose screen
+		 \param [In]	True to enable the screen, false to disable.
+		*************************************************************************************/
 		void ToggleLose(bool);
 
+		/*!***********************************************************************************
+		 \brief			Plays the sound effect for button presses
+		*************************************************************************************/
 		void ButtonPressSound();
 
+		/*!***********************************************************************************
+		 \brief			Plays the sound effect for phase transitions
+		*************************************************************************************/
 		void PhaseTransitionSound();
 
+		/*!***********************************************************************************
+		 \brief			Plays the sound effect for menu transitions
+		*************************************************************************************/
 		void MenuTransitionSound();
 
 		/*!***********************************************************************************

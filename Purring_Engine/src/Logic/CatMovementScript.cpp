@@ -8,7 +8,7 @@
  \par      email:      krystal.y@digipen.edu
 
  \brief
-	This file contains definitions for functions used for a grey cat's movement state.
+	This file contains definitions for functions used for a cats' movement state.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -31,6 +31,7 @@ namespace PE
 			// Return if this cat is not the main cat
 			if (!p_data->isMainCat) { return; }
 
+			// Subscribe to events
 			m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatMovementPLAN::OnMouseClick, this);
 			m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovementPLAN::OnMouseRelease, this);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovementPLAN::OnPathCollision, this);
@@ -114,8 +115,6 @@ namespace PE
 
 		void CatMovementPLAN::StateExit(EntityID id)
 		{
-			std::cout << "CatMovementPLAN::StateExit( " << id << " )\n";
-
 			// Return if this cat is not the main cat
 			if (!p_data->isMainCat) { return; }
 
@@ -125,8 +124,6 @@ namespace PE
 
 		vec2 CatMovementPLAN::AttemptToDrawPath(vec2 const& r_position)
 		{
-				std::cout << "Attempt to draw path\n";
-
 				// Check if there's more than one node in the list
 				if (p_data->pathPositions.size() > 1) 
 				{
@@ -167,9 +164,6 @@ namespace PE
 
 		bool CatMovementPLAN::AddPathNode(vec2 const& r_nodePosition)
 		{
-				std::cout << "AddPathNode at " << r_nodePosition.x << ", " << r_nodePosition.y 
-						<< ", energy: " << CatScript::GetCurrentEnergyLevel() << "\n";
-
 				// Check if the player has sufficient energy left
 				if (p_data->pathPositions.size() == p_data->pathQuads.size()) {
 						CatScript::SetCurrentEnergyLevel(0);
@@ -184,6 +178,7 @@ namespace PE
 						coordinatesInWindow = r_mainCamera.value().get().GetPositionWithinViewport(r_nodePosition.x, r_nodePosition.y);
 				}
 
+				// Invalidate the path if the position is out of bounds of the window
 				if (!coordinatesInWindow) {
 						m_invalidPath = true;
 						SetPathColor(1.f, 0.f, 0.f, 1.f);
@@ -219,6 +214,7 @@ namespace PE
 
 		void CatMovementPLAN::SetPathColor(float const r, float const g, float const b, float const a)
 		{
+				// Set the color of all the nodes
 				for (EntityID& nodeID : p_data->pathQuads)
 				{
 						EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(r, g, b, a);
@@ -279,13 +275,14 @@ namespace PE
 		{
 			if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
 			{
+				// Reset the path on pressing right click
 				MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
 				if (MBPE.button == 1 && !p_data->pathPositions.empty())
 				{
 					ResetDrawnPath();
 				}
 				else
-					m_mouseClick = true;
+					m_mouseClick = true; // Flag that the mouse has been clicked
 			}
 		}
 
@@ -317,7 +314,6 @@ namespace PE
 		// ----- Movement Execution Functions ----- //
 		void CatMovementEXECUTE::StateEnter(EntityID id)  
 		{
-			std::cout << "CatMovementEXECUTE::StateEnter(" << id << ")\n";
 			p_data = GETSCRIPTDATA(CatScript, id);
 			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovementEXECUTE::OnCollisionEnter, this);
@@ -335,12 +331,13 @@ namespace PE
 			// Return if this cat is not the main cat
 			if (!p_data->isMainCat) { return; }
 
-			// Check if pause state -------------------------------------------------------------------@TODO KRYSTAL uncomment this
+			// Check if pause state 
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
 			{
 				return;
 			}
-
+			 
+			// Check if the player is still moving
 			if (!m_doneMoving)
 			{
 					if(p_data->currentPositionIndex >= p_data->pathPositions.size())
@@ -419,8 +416,6 @@ namespace PE
 
 		void CatMovementEXECUTE::StateExit(EntityID id)  
 		{
-				std::cout << "CatMovementEXECUTE::StateExit(" << id << ")\n";
-
 				// Return if this cat is not the main cat
 				//if (!p_data->isMainCat) { return; }
 
