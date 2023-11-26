@@ -29,7 +29,7 @@ namespace PE
 			EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
 			m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatMovementPLAN::OnMouseClick, this);
 			m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovementPLAN::OnMouseRelease, this);
-			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovementPLAN::OnCollisionWithRat, this);
+			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovementPLAN::OnPathCollision, this);
 
 			ResetDrawnPath();
 		}
@@ -44,23 +44,18 @@ namespace PE
 					return;
 			}
 
+			// If the player has released their mouse and the path is invalid
 			if (m_invalidPath && !m_mouseClick && m_mouseClickPrevious)
 			{
 				ResetDrawnPath();
 				m_invalidPath = false;
-				for (auto nodeID : p_data->pathQuads)
-				{
-					EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(1.f, 1.f, 1.f, 1.f);
-				}
 			}
 
 			// Check if the mouse has just been clicked
 			if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && CatScript::GetCurrentEnergyLevel())
 			{
 					// Get the position of the cat
-					float mouseX{}, mouseY{};
-					InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
-					vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
+					vec2 cursorPosition{ CatScript::GetCursorPositionInWorld() };
 
 					// Check if the cat has been clicked
 					CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
@@ -75,12 +70,10 @@ namespace PE
 			// If the mouse is being pressed
 			if (m_mouseClick && m_pathBeingDrawn)
 			{
-				if(CatScript::GetCurrentEnergyLevel()) // Check if the player has sufficient energy
+				if(CatScript::GetCurrentEnergyLevel() && !m_invalidPath) // Check if the player has sufficient energy
 				{
 					// Get the mouse position
-					float mouseX{}, mouseY{};
-					InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
-					vec2 cursorPosition{ GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY) };
+					vec2 cursorPosition{ CatScript::GetCursorPositionInWorld() };
 
 					// Attempt to create a node at the position of the cursor
 					// and position the cat where the node is
@@ -169,6 +162,21 @@ namespace PE
 						return false;
 				}
 
+				// Check if the position is within the bounds of the window
+				bool coordinatesInWindow{ true };
+				std::optional<std::reference_wrapper<PE::Graphics::Camera>> r_mainCamera{ GameStateManager::GetInstance().p_cameraManager->GetMainCamera() };
+				if (r_mainCamera.has_value())
+				{
+						coordinatesInWindow = r_mainCamera.value().get().GetPositionWithinViewport(r_nodePosition.x, r_nodePosition.y);
+				}
+
+				if (!coordinatesInWindow) {
+						m_invalidPath = true;
+						SetPathColor(1.f, 0.f, 0.f, 1.f);
+
+						return false;
+				}
+
 				// Change the position of the node
 				EntityID nodeId{ p_data->pathQuads[p_data->pathPositions.size()] };
 				CatScript::PositionEntity(nodeId, r_nodePosition);
@@ -193,6 +201,16 @@ namespace PE
 				CatScript::PositionEntity(id, p_data->pathPositions.back());
 		}
 
+
+		void CatMovementPLAN::SetPathColor(float const r, float const g, float const b, float const a)
+		{
+				for (EntityID& nodeID : p_data->pathQuads)
+				{
+						EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(r, g, b, a);
+				}
+		}
+
+
 		void CatMovementPLAN::ResetDrawnPath()
 		{
 			// reset to max energy
@@ -205,9 +223,10 @@ namespace PE
 			p_data->pathPositions.clear();
 
 			// Disable all the path nodes
-			for (EntityID const& nodeId : p_data->pathQuads)
+			for (EntityID& nodeId : p_data->pathQuads)
 			{
 				CatScript::ToggleEntity(nodeId, false);
+				EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(); // Reset to white
 			}
 
 			// Teleport the player to the start of the path
@@ -222,6 +241,7 @@ namespace PE
 				return;
 			}
 		}
+
 
 		void CatMovementPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 		{
@@ -242,18 +262,18 @@ namespace PE
 				m_mouseClick = false;
 		}
 
-		void CatMovementPLAN::OnCollisionWithRat(const Event<CollisionEvents>& r_CE)
+
+		void CatMovementPLAN::OnPathCollision(const Event<CollisionEvents>& r_CE)
 		{
 			if (r_CE.GetType() == CollisionEvents::OnTriggerStay)
 			{
 				OnTriggerStayEvent OCEE = dynamic_cast<const OnTriggerStayEvent&>(r_CE);
-				if ((OCEE.Entity1 == p_data->catID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity2).name.find("Rat") != std::string::npos)
-					|| (OCEE.Entity2 == p_data->catID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity1).name.find("Rat") != std::string::npos))
+				// Check if the cat is colliding with an obstacle
+				if ((OCEE.Entity1 == p_data->catID && CatScript::IsObstacle(OCEE.Entity2))
+						|| (OCEE.Entity2 == p_data->catID && CatScript::IsObstacle(OCEE.Entity1)))
 				{
-					for (auto nodeID : p_data->pathQuads)
-					{
-						EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(1.f, 0.f, 0.f, 1.f);
-					}
+					// The entity is colliding with is an obstacle
+					SetPathColor(1.f, 0.f, 0.f, 1.f); // Set the color of the path nodes to red
 					m_invalidPath = true;
 				}
 			}
@@ -368,8 +388,8 @@ namespace PE
 				OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEvent)};
 
 				// Check if the rat is colliding with the cat
-				if ((EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity1).name.find("Rat") != std::string::npos && OCEE.Entity2 == p_data->catID)
-						|| (EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity2).name.find("Rat") != std::string::npos && OCEE.Entity1 == p_data->catID))
+				if ((CatScript::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
+						|| (CatScript::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
 				{
 						m_collidedWithRat = true;
 				}

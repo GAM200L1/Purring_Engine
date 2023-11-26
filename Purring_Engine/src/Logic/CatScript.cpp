@@ -302,6 +302,31 @@ namespace PE
 	}
 
 
+	vec2 CatScript::GetCursorPositionInWorld()
+	{
+			float mouseX{}, mouseY{};
+			InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
+			return GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY);
+	}
+
+
+	bool CatScript::IsCat(EntityID const id)
+	{
+			return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos);
+	}
+
+
+	bool CatScript::IsEnemy(EntityID const id)
+	{
+			return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Rat") != std::string::npos);
+	}	
+
+
+	bool CatScript::IsObstacle(EntityID const id)
+	{
+			return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
+	}
+
 	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);

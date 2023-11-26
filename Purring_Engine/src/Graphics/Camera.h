@@ -192,6 +192,21 @@ namespace PE
             *************************************************************************************/
             vec2 GetViewportToWorldPosition(float const x, float const y) const;
 
+            /*!***********************************************************************************
+            \brief  Returns true if the coordinate is within the camera viewport, within any 
+                    additional padding.
+                            
+            \param[in] x x-coordinate of the position in world coordinates to test against the 
+                    camera viewport.
+            \param[in] y y-coordinate of the position in world coordinates to test against the 
+                    camera viewport.
+            \param[in] padding Additional padding within the camera viewport.
+
+            \return bool - True if the position is within the viewport, within any padding passed 
+                    in, false otherwise.
+            *************************************************************************************/
+            bool GetPositionWithinViewport(float x, float y, float const padding = 0.f) const;
+
 
             // ----- Public setters ----- // 
         public:
