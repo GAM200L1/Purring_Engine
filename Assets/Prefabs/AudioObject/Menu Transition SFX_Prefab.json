@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "sfx_UI_PageFlip1.wav",
+                "audioKey": "./Assets/Audio/sfx_UI_PageFlip1.wav",
                 "loop": false
             },
             "EntityDescriptor": {

@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "sfx_Projectile_HitPaper.wav",
+                "audioKey": "./Assets/Audio/sfx_Projectile_HitPaper.wav",
                 "loop": false
             },
             "EntityDescriptor": {

@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "sfx_CatMovement_GrassShuffle1.wav",
+                "audioKey": "./Assets/Audio/sfx_CatMovement_GrassShuffle1.wav",
                 "loop": false
             },
             "EntityDescriptor": {
