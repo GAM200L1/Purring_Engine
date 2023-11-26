@@ -74,10 +74,15 @@ namespace PE
 		{
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 
+			// Check if the telegraphs have already been enabled
 			if (m_showBoxes)
 			{
+				// The telegraphs have been enabled 
+				// Check if any of the telegraphs were clicked or are hovered over
 				for (auto const& telegraph : p_data->telegraphIDs)
 				{
+					if (m_ignoresTelegraphs.count(telegraph.second)) { continue; }
+
 					AABBCollider const& telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(telegraph.second).colliderVariant);
 					// checks if the mouse hovers over any of the select boxes. if it does, the boxes should become red
 					if (PointCollision(telegraphCollider, cursorPosition))
@@ -86,6 +91,7 @@ namespace PE
 						EntityManager::GetInstance().Get<Graphics::Renderer>(telegraph.second).SetColor(m_hoverColor.x, m_hoverColor.y, m_hoverColor.z, 1.f);
 						if (m_mouseClick)
 						{
+							std::cout << "CatAttackPLAN::StateUpdate() Clicked on telegraph " << telegraph.first << " on cat " << id << "\n";
 							// if player selects either of the boxes, the attack direction is determined
 							p_data->attackDirection = telegraph.first;
 							// the other boxes should not show
@@ -112,6 +118,8 @@ namespace PE
 						EntityManager::GetInstance().Get<Graphics::Renderer>(telegraph.second).SetColor(m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, 1.f); // sets the color of the box to be green if not hovering
 					}
 				}
+
+				// if the mouse was clicked and no directions have been selected, disable everything
 				if (m_mouseClick && p_data->attackDirection == EnumCatAttackDirection::NONE)
 				{
 					m_showBoxes = false;
@@ -120,11 +128,14 @@ namespace PE
 						CatScript::ToggleEntity(telegraphID, false);
 					}
 				}
+
 			}
-			else
+			else // Telegraphs have not been enabled
 			{
+				// The telegraphs have not been enabled and the cat was clicked
 				if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
 				{
+					std::cout << "CatAttackPLAN::StateUpdate() Clicked on cat " << id << "\n";
 					// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
 					m_showBoxes = true;
 					p_data->attackDirection = EnumCatAttackDirection::NONE;
@@ -133,22 +144,17 @@ namespace PE
 					auto catScriptDataMap{ GETSCRIPTINSTANCEPOINTER(CatScript)->m_scriptData };
 					for (auto& scriptData : catScriptDataMap)
 					{
-						if (scriptData.second.attackDirection != EnumCatAttackDirection::NONE) { continue; }
+						// Don't disable the telegraphs on this cat or cat that have selected directions
+						if (scriptData.first == id || scriptData.second.attackDirection != EnumCatAttackDirection::NONE) { continue; }
 
-						if (scriptData.first != id) 
+						std::cout << "CatAttackPLAN::StateUpdate() Disabling telegraphs for " << scriptData.first << "\n";
+						for (auto const& telegraph : scriptData.second.telegraphIDs)
 						{
-							//scriptData.second.m_showBoxes = false;
-							scriptData.second.attackDirection = EnumCatAttackDirection::NONE;
-
-							for (auto const& telegraph : scriptData.second.telegraphIDs)
-							{
 								CatScript::ToggleEntity(telegraph.second, false);
-							}
-									
 						}
 					}
 
-					// Activates telegraphs
+					// Activate telegraphs on this cat
 					for (auto const& telegraph : p_data->telegraphIDs)
 					{
 						if (!m_ignoresTelegraphs.count(telegraph.second))
@@ -157,11 +163,15 @@ namespace PE
 							CatScript::ToggleEntity(telegraph.second, false);
 					}
 				}
+
+				// If an attack directions has been selected
 				if (p_data->attackDirection != EnumCatAttackDirection::NONE)
 				{
+					// Check if the player has clicked on the selected attack direction
 					AABBCollider const& telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(p_data->telegraphIDs[p_data->attackDirection]).colliderVariant);
 					if (PointCollision(telegraphCollider, cursorPosition) && m_mouseClick)
 					{
+						std::cout << "CatAttackPLAN::StateUpdate() Clicked on telegraph for cat " << id << " in direction " << p_data->attackDirection << "\n";
 						m_showBoxes = true;
 						p_data->attackDirection = EnumCatAttackDirection::NONE;
 						for (auto const& telegraph : p_data->telegraphIDs)
@@ -171,10 +181,11 @@ namespace PE
 							else
 								CatScript::ToggleEntity(telegraph.second, false);
 						}
-					}
+					} // end of  if (PointCollision(telegraphCollider, cursorPosition) && m_mouseClick)
 				}
-			}			
+			}	// end of 	if (m_showBoxes)
 		}
+
 		m_mouseClick = false;
 	}
 	
@@ -204,6 +215,7 @@ namespace PE
 
 	void CatAttackPLAN::ResetSelection()
 	{
+		m_showBoxes = false;
 		p_data->attackDirection = EnumCatAttackDirection::NONE;
 		for (auto const& [atkDir, telegraphID] : p_data->telegraphIDs)
 		{
@@ -224,16 +236,15 @@ namespace PE
 		// only needs to check this once, and once it has been checked don't check again
 		if (m_checkedIgnored) { return; }
 
+		// Add any telegraphs overlapping with any cats to the m_ignoresTelegraphs map
+
 		if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
 			OnTriggerEnterEvent OCEE = dynamic_cast<const OnTriggerEnterEvent&>(r_TE);
 			for (auto const& [attackDir, telegraphID] : p_data->telegraphIDs)
 			{
-				if (OCEE.Entity1 == telegraphID && CatScript::IsCat(OCEE.Entity2))
-				{
-					m_ignoresTelegraphs.emplace(telegraphID);
-				}
-				else if (OCEE.Entity2 == telegraphID && CatScript::IsCat(OCEE.Entity1))
+				if ((OCEE.Entity1 == telegraphID && CatScript::IsCat(OCEE.Entity2))
+					|| (OCEE.Entity2 == telegraphID && CatScript::IsCat(OCEE.Entity1)))
 				{
 					m_ignoresTelegraphs.emplace(telegraphID);
 				}
@@ -244,11 +255,8 @@ namespace PE
 			OnTriggerStayEvent OCSE = dynamic_cast<const OnTriggerStayEvent&>(r_TE);
 			for (auto const& [attackDir, telegraphID] : p_data->telegraphIDs)
 			{
-				if (OCSE.Entity1 == telegraphID && CatScript::IsCat(OCSE.Entity2))
-				{
-					m_ignoresTelegraphs.emplace(telegraphID);
-				}
-				else if (OCSE.Entity2 == telegraphID && CatScript::IsCat(OCSE.Entity1))
+				if ((OCSE.Entity1 == telegraphID && CatScript::IsCat(OCSE.Entity2))
+						|| (OCSE.Entity2 == telegraphID && CatScript::IsCat(OCSE.Entity1)))
 				{
 					m_ignoresTelegraphs.emplace(telegraphID);
 				}
