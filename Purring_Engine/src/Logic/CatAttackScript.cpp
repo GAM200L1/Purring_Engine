@@ -288,7 +288,7 @@ namespace PE
 		m_bulletImpulse = vec2{ 0.f, 0.f };
 		if (p_data->attackDirection != EnumCatAttackDirection::NONE)
 		{
-			m_attackDuration = p_data->bulletLifeTime;
+			p_data->attackDuration = p_data->bulletLifeTime;
 			vec2 direction{ 0.f, 0.f };
 			switch (p_data->attackDirection)
 			{
@@ -345,9 +345,9 @@ namespace PE
 			}
 			m_projectileFired = true;
 		}
-		if (m_attackDuration > 0.f && !m_bulletCollided)
+		if (p_data->attackDuration > 0.f && !m_bulletCollided)
 		{
-			m_attackDuration -= deltaTime;
+			p_data->attackDuration -= deltaTime;
 		}
 		else
 		{
