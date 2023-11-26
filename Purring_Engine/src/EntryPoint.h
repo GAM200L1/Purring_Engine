@@ -25,9 +25,13 @@
 
 extern PE::CoreApplication* PE::CreateApplication();
 
+#ifndef GAMERELEASE
 int main(int argc, char** argv)
+#else
+int WinMain(int argc, char** argv)
+#endif
 {
-  argc; argv;
+	argc; argv;
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	auto app = PE::CreateApplication();
@@ -39,3 +43,4 @@ int main(int argc, char** argv)
 	// detect memory leaks
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
 }
+

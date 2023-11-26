@@ -24,7 +24,7 @@
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
-#endif
+#endif // !GAMERELEASE
 extern Logger engine_logger;
 
 namespace PE

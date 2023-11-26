@@ -12,9 +12,7 @@
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-#pragma once
+#pragma once                                                                                               
 
-/*                                                                                                          includes
---------------------------------------------------------------------------------------------------------------------- */
 #include "EntryPoint.h"
 #include "CoreApplication.h"

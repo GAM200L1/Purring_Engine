@@ -18,7 +18,7 @@
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
-#endif
+#endif // !GAMERELEASE
 
 namespace PE
 {

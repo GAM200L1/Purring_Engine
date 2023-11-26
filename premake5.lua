@@ -171,6 +171,12 @@ project "Purring_Engine"
         "vendor/glm/glm/**.inl"
     }
 
+    removefiles
+    {
+        -- remove WinMain entrypoint
+        "%{prj.name}/src/EntryPointGame.h"
+    }
+
     includedirs
     {
         "%{prj.name}/src",
@@ -257,9 +263,15 @@ project "Purring_Engine"
                 "ImGui"
             }
 
-            -- removes editor files
-            removefiles
+            -- removes editor files and change entrypoint to WinMain
+            files
             {
+                --"%{prj.name}/src/EntryPointGame.cpp"
+            }
+            
+            removefiles
+            {                
+                --"%{prj.name}/src/EntryPoint.cpp",
                 "%{prj.name}/src/Editor/*.h",
                 "%{prj.name}/src/Editor/*.cpp"
             }
@@ -370,6 +382,13 @@ project "Application"
 			runtime "Release"
             staticruntime "on"
 			optimize "on"
+
+            kind "WindowedApp"
+
+            defines 
+            { 
+                "GAMERELEASE"
+            }
             
             targetname "MarchOfTheMeows"
             targetdir("bin/" .. gameoutputdir .. "/MarchOfTheMeows")

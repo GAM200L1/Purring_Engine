@@ -40,7 +40,7 @@
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
-#endif
+#endif // !GAMERELEASE
 
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
 
