@@ -134,6 +134,7 @@ namespace PE
 				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime)) 
 				{
+					m_scriptData[id].finishedExecution = false;
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovementEXECUTE{}, id);
 				}
 			}
@@ -170,6 +171,7 @@ namespace PE
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				// trigger state change called in AttackEXECUTE state update
+				m_scriptData[id].finishedExecution = true;
 				m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
 			}
 		}
@@ -219,6 +221,11 @@ namespace PE
 		}
 	}		
 		
+	void CatScript::LoseHP(EntityID id, int damageTaken)
+	{
+		// if (!GameStateManager::GetInstance().godMode) // @TODO uncomment when merged
+		m_scriptData[id].catHealth -= damageTaken;
+	}
 		
 	void CatScript::MakeStateManager(EntityID id)
 	{

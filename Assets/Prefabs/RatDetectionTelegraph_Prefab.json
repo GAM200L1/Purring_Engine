@@ -1,23 +1,6 @@
 {
     "Entity": {
         "components": {
-            "Collider": {
-                "collisionLayerIndex": 0,
-                "data": {
-                    "center": {
-                        "x": -144.09999084472656,
-                        "y": 218.89999389648438
-                    },
-                    "positionOffset": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "radius": 64.0,
-                    "scaleOffset": 1.0
-                },
-                "isTrigger": true,
-                "type": "CircleCollider"
-            },
             "EntityDescriptor": {
                 "Prefab Type": "RatDetectionTelegraph",
                 "children": [],

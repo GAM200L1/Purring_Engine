@@ -83,6 +83,7 @@ namespace PE
 		bool shouldChangeState{};
 		bool delaySet{ false };
 		float timeBeforeChangingState{0.f};
+		bool finishedExecution{ false };
 	};
 
 
@@ -209,6 +210,7 @@ namespace PE
 		*************************************************************************************/
 		static void SetMaximumEnergyLevel(int const energyLevel) { catMaxEnergy = energyLevel; }
 
+		void LoseHP(EntityID id, int damageTaken);
 
 		std::map<EntityID, CatScriptData>& GetScriptData(){ return m_scriptData; }
 

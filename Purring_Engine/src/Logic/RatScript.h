@@ -27,26 +27,32 @@ namespace PE
 		// reference entities
 		EntityID ratID{ 0 };
 		EntityID psudoRatID{ 0 };
-		EntityID mainCatID{ 0 };
+		EntityID mainCatID{ 8 }; // needs manual setting
 		
 		// rat stats
-		int health{ 0 };
+		int health{ 5 };
+		int maxHealth{ 10 }; // needs manual setting
 
 		// movement variables
-		float movementSpeed{ 0.f };
+		float movementSpeed{ 200.f }; // speed of rat needs manual setting
 		float distanceFromPlayer{ 0.f };
 
 		// attack entities and variables
 		EntityID arrowTelegraphID{ 0 };
 		EntityID attackTelegraphID{ 0 };
 		EntityID detectionTelegraphID{ 0 };
-		float detectionRadius{ 0.f };
+		float detectionRadius{ 4.f }; // radius of the detection UI needs manual setting
+		float attackDiameter{ 64.f }; // radius of the attack
+		float attackDuration{ 0.5f }; // how long the attack is active needs manual setting
+		int collisionDamage{ 1 }; // damage when touching the rat needs manual setting
+		int attackDamage{ 1 }; // damage when properly attacked by the rat needs manual setting
 
 		// state management
 		StateMachine* p_stateManager;
 		bool shouldChangeState{};
 		bool delaySet{ false };
 		float timeBeforeChangingState{ 0.f };
+		bool finishedExecution{ false }; // bool to check if rat has finished its movemen and attack executions
 	};
 
 	class RatScript : public Script
@@ -211,12 +217,15 @@ namespace PE
 
 		virtual void StateExit(EntityID id) override;
 
+		void RatHitCat(const Event<CollisionEvents>& r_TE);
+
 		// ----- Getter ----- //
 		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
 		// ----- Private Variables ----- //
 		RatScriptData* p_data;
+		int m_collisionEventListener{};
 	};
 
 }
