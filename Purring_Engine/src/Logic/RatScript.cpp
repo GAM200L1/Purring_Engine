@@ -372,7 +372,7 @@ namespace PE
 			float dx = catObject.position.x - ratObject.position.x;
 			float dy = catObject.position.y - ratObject.position.y;
 			
-			if (p_data->distanceFromPlayer <= (absRatScale.x * 0.5) + (absCatScale.x * 0.5f))
+			if (p_data->distanceFromPlayer <= (absCatScale.x * 0.5f))
 			{
 				p_data->distanceFromPlayer = 0.f; // cat and rat are directly next to each other so there is no distance to really cover
 			}
