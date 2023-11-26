@@ -2971,14 +2971,9 @@ namespace PE {
 									if (!id) // skip editor camera
 										continue;
 									EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-									for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
-									{
-										if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-										{
-											desc.sceneID = i;
-											continue;
-										}
-									}
+									
+									desc.sceneID = id;
+										
 									if (desc.parent)
 									{
 										EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
@@ -3675,14 +3670,7 @@ namespace PE {
 										if (!id) // skip editor camera
 											continue;
 										EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-										for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
-										{
-											if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-											{
-												desc.sceneID = i;
-												continue;
-											}
-										}
+										desc.sceneID = id;
 										if (desc.parent)
 										{
 											EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
@@ -3939,14 +3927,7 @@ namespace PE {
 						if (!id) // skip editor camera
 							continue;
 						EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-						for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
-						{
-							if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-							{
-								desc.sceneID = i;
-								continue;
-							}
-						}
+						desc.sceneID = id;
 						if (desc.parent)
 						{
 							EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
