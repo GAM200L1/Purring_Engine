@@ -515,7 +515,10 @@ namespace PE
 		 {
 			 RatScript::ToggleEntity(p_data->attackTelegraphID, true);
 			 if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
-				p_data->finishedExecution = true;
+			 {
+				 RatScript::ToggleEntity(p_data->attackTelegraphID, false);
+				 p_data->finishedExecution = true;
+			 }
 		 }
 		 else
 		 {

@@ -231,7 +231,10 @@ namespace PE
 				{
 					try
 					{
-						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+						if(m_scriptData[id].attackDirection != EnumCatAttackDirection::NONE)
+							EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+						else
+							EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
 					}
 					catch (...)
 					{
