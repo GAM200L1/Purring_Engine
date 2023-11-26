@@ -385,16 +385,19 @@ namespace PE {
 					ImGui::Separator();
 					if (ImGui::Selectable("Yes"))
 					{
-						auto save = serializationManager.SerializeEntityPrefab(1);
-						prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
-						prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
-						m_applyPrefab = true;
-
-						std::ofstream outFile(prefabFP);
-						if (outFile)
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							outFile << save.dump(4);
-							outFile.close();
+							auto save = serializationManager.SerializeEntityPrefab(1);
+							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
+							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
+							m_applyPrefab = true;
+
+							std::ofstream outFile(prefabFP);
+							if (outFile)
+							{
+								outFile << save.dump(4);
+								outFile.close();
+							}
 						}
 						m_isPrefabMode = false;
 						ClearObjectList();
@@ -973,7 +976,7 @@ namespace PE {
 	void Editor::ShowComponentWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
+		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs) || (m_isPrefabMode && !EntityManager::GetInstance().Has<EntityDescriptor>(1)))
 		{
 			ImGui::End();
 		}
@@ -2774,8 +2777,9 @@ namespace PE {
 								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								
 							}
-							else
+							else if(EntityManager::GetInstance().Has<EntityDescriptor>(1))
 							{
+
 								auto save = serializationManager.SerializeEntityPrefab(1);
 								std::ofstream outFile(prefabFP);
 								if (outFile)
@@ -3443,16 +3447,19 @@ namespace PE {
 								{
 									engine_logger.AddLog(false, "Attempting to save prefab entities to file...", __FUNCTION__);
 									
-									auto save = serializationManager.SerializeEntityPrefab(1);
-
-									std::ofstream outFile(prefabFP);
-									if (outFile)
+									if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 									{
-										outFile << save.dump(4);
-										outFile.close();
-									}
+										auto save = serializationManager.SerializeEntityPrefab(1);
 
-									engine_logger.AddLog(false, "Prefab saved successfully to file.", __FUNCTION__);
+										std::ofstream outFile(prefabFP);
+										if (outFile)
+										{
+											outFile << save.dump(4);
+											outFile.close();
+										}
+
+										engine_logger.AddLog(false, "Prefab saved successfully to file.", __FUNCTION__);
+									}
 								}
 							}
 							else
@@ -3797,13 +3804,16 @@ namespace PE {
 				ImGui::SameLine();
 				if (ImGui::Button(" Save "))
 				{
-					auto save = serializationManager.SerializeEntityPrefab(1);
-
-					std::ofstream outFile(prefabFP);
-					if (outFile)
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 					{
-						outFile << save.dump(4);
-						outFile.close();
+						auto save = serializationManager.SerializeEntityPrefab(1);
+
+						std::ofstream outFile(prefabFP);
+						if (outFile)
+						{
+							outFile << save.dump(4);
+							outFile.close();
+						}
 					}
 				}
 				if (ImGui::BeginPopup/*Modal*/("ReqSave?"))
@@ -3815,14 +3825,17 @@ namespace PE {
 
 					if (ImGui::Selectable("Yes"))
 					{
-						auto save = serializationManager.SerializeEntityPrefab(1);
-						prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
-						prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
-						std::ofstream outFile(prefabFP);
-						if (outFile)
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							outFile << save.dump(4);
-							outFile.close();
+							auto save = serializationManager.SerializeEntityPrefab(1);
+							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
+							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
+							std::ofstream outFile(prefabFP);
+							if (outFile)
+							{
+								outFile << save.dump(4);
+								outFile.close();
+							}
 						}
 						m_isPrefabMode = false;
 						ClearObjectList();
