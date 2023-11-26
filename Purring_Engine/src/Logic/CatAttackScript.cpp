@@ -129,6 +129,26 @@ namespace PE
 					m_showBoxes = true;
 					p_data->attackDirection = EnumCatAttackDirection::NONE;
 
+					// Disable telegraphs on all other cats
+					auto catScriptDataMap{ GETSCRIPTINSTANCEPOINTER(CatScript)->m_scriptData };
+					for (auto& scriptData : catScriptDataMap)
+					{
+						if (scriptData.second.attackDirection != EnumCatAttackDirection::NONE) { continue; }
+
+						if (scriptData.first != id) 
+						{
+							//scriptData.second.m_showBoxes = false;
+							scriptData.second.attackDirection = EnumCatAttackDirection::NONE;
+
+							for (auto const& telegraph : scriptData.second.telegraphIDs)
+							{
+								CatScript::ToggleEntity(telegraph.second, false);
+							}
+									
+						}
+					}
+
+					// Activates telegraphs
 					for (auto const& telegraph : p_data->telegraphIDs)
 					{
 						if (!m_ignoresTelegraphs.count(telegraph.second))
