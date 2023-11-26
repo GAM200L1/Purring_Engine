@@ -307,6 +307,23 @@ namespace PE
 	}
 
 
+	bool CatScript::IsCat(EntityID const id)
+	{
+			return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos);
+	}
+
+
+	bool CatScript::IsEnemy(EntityID const id)
+	{
+			return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Rat") != std::string::npos);
+	}	
+
+
+	bool CatScript::IsObstacle(EntityID const id)
+	{
+			return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
+	}
+
 	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);

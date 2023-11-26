@@ -201,7 +201,31 @@ namespace PE
 		 \return int - Returns the maximum energy that the cat can have.
 		*************************************************************************************/
 		static inline int GetMaximumEnergyLevel() { return catMaxEnergy; }
-		
+
+		/*!***********************************************************************************
+		 \brief Identifies if the entity passed in is a cat. Assumes that cats have
+						the keyword "Cat" somewhere in their name in entityDescriptor.
+
+		 \param[in] id - ID of the entity to check.
+		*************************************************************************************/
+		static bool IsCat(EntityID const id);
+
+		/*!***********************************************************************************
+		 \brief Identifies if the entity passed in is an enemy. Assumes that enemies have
+						the keyword "Rat" somewhere in their name in entityDescriptor.
+
+		 \param[in] id - ID of the entity to check.
+		*************************************************************************************/
+		static bool IsEnemy(EntityID const id);
+
+		/*!***********************************************************************************
+		 \brief Identifies if the entity passed in is an obstacle. Assumes that obstacles
+						have the keyword "Obstacle" somewhere in their name in entityDescriptor.
+
+		 \param[in] id - ID of the entity to check.
+		*************************************************************************************/
+		static bool IsObstacle(EntityID const id);
+
 		/*!***********************************************************************************
 		 \brief Sets the energy the player has left.
 

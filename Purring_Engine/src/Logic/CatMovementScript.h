@@ -74,15 +74,6 @@ namespace PE
 		*************************************************************************************/
 		void SetPathColor(float const r = 1.f, float const g = 1.f, float const b = 1.f, float const a = 1.f);
 
-		/*!***********************************************************************************
-		 \brief Identifies if the entity passed in is an obstacle or an enemy. Assumes that 
-						enemies have the keyword "Rat" and that obstacles have the keyword "Obstacle"
-						somewhere in their name in entityDescriptor.
-
-     \param[in] id - ID of the entity to check.
-		*************************************************************************************/
-		bool IsObstacleOrEnemy(EntityID const id);
-
 
 		// ----- Events ----- // 
 

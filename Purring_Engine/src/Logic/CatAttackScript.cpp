@@ -193,11 +193,11 @@ namespace PE
 			OnTriggerEnterEvent OCEE = dynamic_cast<const OnTriggerEnterEvent&>(r_TE);
 			for (auto const& [attackDir, telegraphID] : p_data->telegraphIDs)
 			{
-				if (OCEE.Entity1 == telegraphID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity2).name.find("Cat") != std::string::npos)
+				if (OCEE.Entity1 == telegraphID && CatScript::IsCat(OCEE.Entity2))
 				{
 					m_ignoresTelegraphs.emplace(telegraphID);
 				}
-				else if (OCEE.Entity2 == telegraphID && EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity1).name.find("Cat") != std::string::npos)
+				else if (OCEE.Entity2 == telegraphID && CatScript::IsCat(OCEE.Entity1))
 				{
 					m_ignoresTelegraphs.emplace(telegraphID);
 				}
@@ -208,11 +208,11 @@ namespace PE
 			OnTriggerStayEvent OCSE = dynamic_cast<const OnTriggerStayEvent&>(r_TE);
 			for (auto const& [attackDir, telegraphID] : p_data->telegraphIDs)
 			{
-				if (OCSE.Entity1 == telegraphID && EntityManager::GetInstance().Get<EntityDescriptor>(OCSE.Entity2).name.find("Cat") != std::string::npos)
+				if (OCSE.Entity1 == telegraphID && CatScript::IsCat(OCSE.Entity2))
 				{
 					m_ignoresTelegraphs.emplace(telegraphID);
 				}
-				else if (OCSE.Entity2 == telegraphID && EntityManager::GetInstance().Get<EntityDescriptor>(OCSE.Entity1).name.find("Cat") != std::string::npos)
+				else if (OCSE.Entity2 == telegraphID && CatScript::IsCat(OCSE.Entity1))
 				{
 					m_ignoresTelegraphs.emplace(telegraphID);
 				}
@@ -327,7 +327,7 @@ namespace PE
 
 			if (EntityManager::GetInstance().Has<ScriptComponent>(collidedEntities.second))
 			{
-				if (EntityManager::GetInstance().Get<EntityDescriptor>(collidedEntities.second).name.find("Rat") != std::string::npos)
+				if (CatScript::IsEnemy(collidedEntities.second))
 				{
 					EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
 					m_bulletCollided = true;

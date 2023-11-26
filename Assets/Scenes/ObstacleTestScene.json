@@ -80,20 +80,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 10.5,
-                                "y": 524.0
+                                "x": -1.0,
+                                "y": 562.0
                             },
                             "min": {
-                                "x": -522.5,
-                                "y": 424.0
+                                "x": -511.0,
+                                "y": 412.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 5.329999923706055,
-                                "y": 1.0
+                                "x": 5.099999904632568,
+                                "y": 1.5
                             }
                         },
                         "isTrigger": false,
@@ -121,7 +121,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -256.0,
-                            "y": 474.0
+                            "y": 487.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -141,20 +141,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 115.0,
-                                "y": 597.5
+                                "x": 385.0,
+                                "y": 534.5
                             },
                             "min": {
-                                "x": 15.0,
-                                "y": 297.5
+                                "x": 5.0,
+                                "y": 284.5
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
-                                "y": 3.0
+                                "x": 3.799999952316284,
+                                "y": 2.5
                             }
                         },
                         "isTrigger": false,
@@ -181,8 +181,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 65.0,
-                            "y": 447.5
+                            "x": 195.0,
+                            "y": 409.5
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -202,20 +202,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -530.0,
-                                "y": 592.5
+                                "x": -518.0,
+                                "y": 539.5
                             },
                             "min": {
-                                "x": -630.0,
-                                "y": 292.5
+                                "x": -768.0,
+                                "y": 289.5
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
-                                "y": 3.0
+                                "x": 2.5,
+                                "y": 2.5
                             }
                         },
                         "isTrigger": false,
@@ -242,8 +242,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -580.0,
-                            "y": 442.5
+                            "x": -643.0,
+                            "y": 414.5
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -263,20 +263,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -636.0,
-                                "y": 396.5
+                                "x": -773.5,
+                                "y": 547.5
                             },
                             "min": {
-                                "x": -1136.0,
-                                "y": 296.5
+                                "x": -973.5,
+                                "y": -552.5
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 5.0,
-                                "y": 1.0
+                                "x": 2.0,
+                                "y": 11.0
                             }
                         },
                         "isTrigger": false,
@@ -303,8 +303,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -886.0,
-                            "y": 346.5
+                            "x": -873.5,
+                            "y": -2.5
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -324,20 +324,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -782.5,
-                                "y": 290.0
+                                "x": -515.0,
+                                "y": -226.5
                             },
                             "min": {
-                                "x": -882.5,
-                                "y": -310.0
+                                "x": -765.0,
+                                "y": -346.5
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
-                                "y": 6.0
+                                "x": 2.5,
+                                "y": 1.2000000476837158
                             }
                         },
                         "isTrigger": false,
@@ -364,8 +364,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -832.5,
-                            "y": -10.0
+                            "x": -640.0,
+                            "y": -286.5
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -385,20 +385,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -521.0,
-                                "y": -238.5
+                                "x": 385.0,
+                                "y": -356.0
                             },
                             "min": {
-                                "x": -771.0,
-                                "y": -358.5
+                                "x": -765.0,
+                                "y": -556.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 2.5,
-                                "y": 1.2000000476837158
+                                "x": 11.5,
+                                "y": 2.0
                             }
                         },
                         "isTrigger": false,
@@ -425,8 +425,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -646.0,
-                            "y": -298.5
+                            "x": -190.0,
+                            "y": -456.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -446,20 +446,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 120.5,
-                                "y": -363.5
+                                "x": 383.5,
+                                "y": -226.5
                             },
                             "min": {
-                                "x": -512.5,
-                                "y": -463.5
+                                "x": 133.5,
+                                "y": -346.5
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 6.329999923706055,
-                                "y": 1.0
+                                "x": 2.5,
+                                "y": 1.2000000476837158
                             }
                         },
                         "isTrigger": false,
@@ -486,8 +486,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -196.0,
-                            "y": -413.5
+                            "x": 258.5,
+                            "y": -286.5
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -507,20 +507,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 411.5,
-                                "y": -238.5
+                                "x": 994.5,
+                                "y": 550.0
                             },
                             "min": {
-                                "x": 121.5,
-                                "y": -358.5
+                                "x": 394.5,
+                                "y": -550.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 2.9000000953674316,
-                                "y": 1.2000000476837158
+                                "x": 6.0,
+                                "y": 11.0
                             }
                         },
                         "isTrigger": false,
@@ -547,8 +547,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 266.5,
-                            "y": -298.5
+                            "x": 694.5,
+                            "y": 0.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -568,20 +568,20 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 497.5,
-                                "y": 67.5
+                                "x": 381.0,
+                                "y": 278.0
                             },
                             "min": {
-                                "x": 397.5,
-                                "y": -232.5
+                                "x": 261.0,
+                                "y": 28.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
-                                "y": 3.0
+                                "x": 1.2000000476837158,
+                                "y": 2.5
                             }
                         },
                         "isTrigger": false,
@@ -608,8 +608,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 447.5,
-                            "y": -82.5
+                            "x": 321.0,
+                            "y": 153.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -629,12 +629,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 390.0,
-                                "y": 340.0
+                                "x": 251.0,
+                                "y": 277.5
                             },
                             "min": {
-                                "x": 270.0,
-                                "y": 40.0
+                                "x": 131.0,
+                                "y": 157.5
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -642,7 +642,7 @@
                             },
                             "scaleOffset": {
                                 "x": 1.2000000476837158,
-                                "y": 3.0
+                                "y": 1.2000000476837158
                             }
                         },
                         "isTrigger": false,
@@ -669,8 +669,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 330.0,
-                            "y": 190.0
+                            "x": 191.0,
+                            "y": 217.5
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -690,73 +690,12 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": 265.0,
-                                "y": 457.5
-                            },
-                            "min": {
-                                "x": 125.0,
-                                "y": 157.5
-                            },
-                            "positionOffset": {
                                 "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.399999976158142,
-                                "y": 3.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
-                    "EntityDescriptor": {
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Obstacle",
-                        "parent": null,
-                        "sceneID": 13
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 195.0,
-                            "y": 307.5
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "max": {
-                                "x": 50.0,
-                                "y": 50.0
+                                "y": 110.0
                             },
                             "min": {
-                                "x": -50.0,
-                                "y": -50.0
+                                "x": -100.0,
+                                "y": 10.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -776,7 +715,7 @@
                         "isActive": true,
                         "name": "Rat",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 13
                     },
                     "Renderer": {
                         "Color": {
@@ -796,8 +735,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": -50.0,
+                            "y": 60.0
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -817,8 +756,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -676.5,
-                                "y": 205.0
+                                "x": -461.5,
+                                "y": 62.5
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -836,7 +775,7 @@
                         "isActive": true,
                         "name": "Cat",
                         "parent": null,
-                        "sceneID": 15
+                        "sceneID": 14
                     },
                     "Renderer": {
                         "Color": {
@@ -861,8 +800,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -676.5,
-                            "y": 205.0
+                            "x": -461.5,
+                            "y": 62.5
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -882,85 +821,13 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GUIButton",
-                        "parent": null,
-                        "sceneID": 16
-                    },
-                    "GUI": {
-                        "disabled": false,
-                        "m_UIType": 0,
-                        "m_defaultColor": [
-                            1.0,
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
-                        "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
-                            1.0
-                        ],
-                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
-                        "m_hoveredColor": [
-                            0.800000011920929,
-                            0.800000011920929,
-                            0.800000011920929,
-                            1.0
-                        ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
-                        "m_onClicked": "IncrementGameState",
-                        "m_onHovered": "",
-                        "m_pressedColor": [
-                            0.6000000238418579,
-                            0.6000000238418579,
-                            0.6000000238418579,
-                            1.0
-                        ],
-                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png"
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -147.0,
-                            "y": -205.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 250.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
                         "name": "EmptyObject",
                         "parent": null,
-                        "sceneID": 17
+                        "sceneID": 15
                     },
                     "Renderer": {
                         "Color": {
-                            "a": 1.0,
+                            "a": 0.0,
                             "b": 1.0,
                             "g": 1.0,
                             "r": 1.0
@@ -996,8 +863,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": 832.5,
+                            "y": 470.0
                         },
                         "relativeposition": {
                             "x": 0.0,

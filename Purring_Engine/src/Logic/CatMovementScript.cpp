@@ -243,15 +243,6 @@ namespace PE
 		}
 
 
-		bool CatMovementPLAN::IsObstacleOrEnemy(EntityID const id)
-		{
-				// Retrieve entity descriptor
-				EntityDescriptor const& r_entityDescriptor{ EntityManager::GetInstance().Get<EntityDescriptor>(id)};				
-				return (r_entityDescriptor.name.find("Rat") != std::string::npos 
-						|| r_entityDescriptor.name.find("Obstacle") != std::string::npos);
-		}
-
-
 		void CatMovementPLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 		{
 			if (r_ME.GetType() == MouseEvents::MouseButtonPressed)
@@ -278,9 +269,9 @@ namespace PE
 			{
 				OnTriggerStayEvent OCEE = dynamic_cast<const OnTriggerStayEvent&>(r_CE);
 				bool isCollidingWithObstacle{ false };
-				// Check if the cat is colliding with anything
-				if ((OCEE.Entity1 == p_data->catID && IsObstacleOrEnemy(OCEE.Entity2))
-						|| (OCEE.Entity2 == p_data->catID && IsObstacleOrEnemy(OCEE.Entity1)))
+				// Check if the cat is colliding with an obstacle
+				if ((OCEE.Entity1 == p_data->catID && CatScript::IsObstacle(OCEE.Entity2))
+						|| (OCEE.Entity2 == p_data->catID && CatScript::IsObstacle(OCEE.Entity1)))
 				{
 					// The entity is colliding with is an obstacle
 					SetPathColor(1.f, 0.f, 0.f, 1.f); // Set the color of the path nodes to red
@@ -398,8 +389,8 @@ namespace PE
 				OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEvent)};
 
 				// Check if the rat is colliding with the cat
-				if ((EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity1).name.find("Rat") != std::string::npos && OCEE.Entity2 == p_data->catID)
-						|| (EntityManager::GetInstance().Get<EntityDescriptor>(OCEE.Entity2).name.find("Rat") != std::string::npos && OCEE.Entity1 == p_data->catID))
+				if ((CatScript::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
+						|| (CatScript::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
 				{
 						m_collidedWithRat = true;
 				}
