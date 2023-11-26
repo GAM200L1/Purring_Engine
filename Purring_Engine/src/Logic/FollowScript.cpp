@@ -162,7 +162,7 @@ namespace PE
 
 			}
 
-
+			//m_ScriptData[id].UpdateNow = false;
 		}
 
 		if (InputSystem::IsKeyTriggered(GLFW_KEY_Q))

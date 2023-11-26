@@ -76,6 +76,7 @@ namespace PE
 		unsigned currentPositionIndex{}; // Index of the position in the pathPositions container that the cat should move towards
 		
 		std::vector<vec2> pathPositions{};
+		std::vector<vec2> followCatPositions{};
 		std::vector<EntityID> pathQuads{};
 
 		// state manager
