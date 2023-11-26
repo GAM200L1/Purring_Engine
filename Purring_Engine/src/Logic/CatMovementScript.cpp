@@ -27,6 +27,10 @@ namespace PE
 			std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 			p_data = GETSCRIPTDATA(CatScript, id);
 			EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
+
+			// Return if this cat is not the main cat
+			if (!p_data->isMainCat) { return; }
+
 			m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatMovementPLAN::OnMouseClick, this);
 			m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovementPLAN::OnMouseRelease, this);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovementPLAN::OnPathCollision, this);
@@ -36,8 +40,10 @@ namespace PE
 
 		void CatMovementPLAN::StateUpdate(EntityID id, float deltaTime)
 		{
-				//std::cout << "CatMovementPLAN::StateUpdate( " << id << " )\n";
-			// Check if pause state -------------------------------------------------------------------@TODO KRYSTAL uncomment this
+			// Return if this cat is not the main cat
+			if (!p_data->isMainCat) { return; }
+
+			// Check if pause state
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) 
 			{
 					EndPathDrawing(id);
@@ -96,6 +102,8 @@ namespace PE
 
 		void CatMovementPLAN::StateCleanUp()
 		{
+			// Return if this cat is not the main cat
+			if (!p_data->isMainCat) { return; }
 			REMOVE_MOUSE_EVENT_LISTENER(m_clickEventListener);
 			REMOVE_MOUSE_EVENT_LISTENER(m_releaseEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
@@ -105,6 +113,10 @@ namespace PE
 		{
 			std::cout << "CatMovementPLAN::StateExit( " << id << " )\n";
 			EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
+
+			// Return if this cat is not the main cat
+			if (!p_data->isMainCat) { return; }
+
 			EndPathDrawing(id);
 		}
 
@@ -286,13 +298,20 @@ namespace PE
 			std::cout << "CatMovementEXECUTE::StateEnter(" << id << ")\n";
 		  p_data = GETSCRIPTDATA(CatScript, id);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovementEXECUTE::OnCollisionEnter, this);
+
+			// Return if this cat is not the main cat
+			if (!p_data->isMainCat) { return; }
+
 			CatScript::PositionEntity(id, p_data->pathPositions.front());
 			p_data->currentPositionIndex = 0;
 			m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 		}
 
 		void CatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)  
-		{ 
+		{
+			// Return if this cat is not the main cat
+			if (!p_data->isMainCat) { return; }
+
 			// Check if pause state -------------------------------------------------------------------@TODO KRYSTAL uncomment this
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
 			{
@@ -368,7 +387,10 @@ namespace PE
 		void CatMovementEXECUTE::StateExit(EntityID id)  
 		{
 				std::cout << "CatMovementEXECUTE::StateExit(" << id << ")\n";
-				
+
+				// Return if this cat is not the main cat
+				if (!p_data->isMainCat) { return; }
+
 				StopMoving(id);
 				p_data->pathPositions.clear();
 		}

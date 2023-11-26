@@ -50,6 +50,7 @@ namespace PE
 	{
 		// Set to true if the entity this script is attached to should be treated as the main cat
 		bool isMainCat{ false };
+		bool isFollowing{ false }; // Set to true if the 
 
 		// reference entities
 		EntityID catID{ 0 };
@@ -196,14 +197,21 @@ namespace PE
 
 		 \return int - Returns the current energy the player has left.
 		*************************************************************************************/
-		static inline int GetCurrentEnergyLevel() { return catEnergy; }
+		static inline int GetCurrentEnergyLevel() { return m_catEnergy; }
 		
 		/*!***********************************************************************************
 		 \brief Returns the maximum energy that the cat can have.
 
 		 \return int - Returns the maximum energy that the cat can have.
 		*************************************************************************************/
-		static inline int GetMaximumEnergyLevel() { return catMaxEnergy; }
+		static inline int GetMaximumEnergyLevel() { return m_catMaxEnergy; }
+
+		/*!***********************************************************************************
+		 \brief Get the ID of the main cat
+
+		 \return EntityID - ID of the main cat
+		*************************************************************************************/
+		static EntityID GetMainCat() { return m_mainCatId; }
 
 		/*!***********************************************************************************
 		 \brief Identifies if the entity passed in is a cat. Assumes that cats have
@@ -230,18 +238,33 @@ namespace PE
 		static bool IsObstacle(EntityID const id);
 
 		/*!***********************************************************************************
+		 \brief Identifies if the cat state passed in matches the game state passed in.
+
+		 \param[in] catStateName - Name of the cat's state.
+		 \param[in] gameState - Name of the game state to compare with the cat's state.
+		*************************************************************************************/
+		static bool DoesGameStateMatchCatState(std::string const& catStateName, GameStates gameState);
+
+		/*!***********************************************************************************
 		 \brief Sets the energy the player has left.
 
 		 \param[in] int - Energy level to set.
 		*************************************************************************************/
-		static void SetCurrentEnergyLevel(int const energyLevel) { catEnergy = energyLevel; }
+		static void SetCurrentEnergyLevel(int const energyLevel) { m_catEnergy = energyLevel; }
 		
 		/*!***********************************************************************************
 		 \brief Sets the maximum energy the player can have.
 
 		 \param[in] int - Energy level to set.
 		*************************************************************************************/
-		static void SetMaximumEnergyLevel(int const energyLevel) { catMaxEnergy = energyLevel; }
+		static void SetMaximumEnergyLevel(int const energyLevel) { m_catMaxEnergy = energyLevel; }
+				
+		/*!***********************************************************************************
+		 \brief Stores the ID of the main cat
+
+		 \param[in] mainCatId - ID of cat to be used as the main cat
+		*************************************************************************************/
+		static void SetMainCat(EntityID mainCatId) { m_mainCatId = mainCatId; }
 
 
 		std::map<EntityID, CatScriptData>& GetScriptData(){ return m_scriptData; }
@@ -252,8 +275,9 @@ namespace PE
 	private:
 
 	  // ----- Private Variables ----- //
-		static int catEnergy; // Current energy level of the cat
-		static int catMaxEnergy; // Maximum energy of the cat
+		static int m_catEnergy; // Current energy level of the cat
+		static int m_catMaxEnergy; // Maximum energy of the cat
+		static EntityID m_mainCatId; // ID of the main cat
 
 
 	private:
