@@ -265,6 +265,12 @@ namespace PE
 			m_currentGameState = m_prevGameState;
 			m_prevGameState = GameStates::PAUSE;
 			
+			EntityID buttonpress = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Button Click SFX_Prefab.json");
+
+			if(EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(buttonpress);
+
 			pausedOnce = true;
 
 			InactiveMenu();

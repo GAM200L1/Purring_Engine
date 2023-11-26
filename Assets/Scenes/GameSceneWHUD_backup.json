@@ -909,7 +909,7 @@
                                 "collisionDamage": 1,
                                 "detectionRadius": 4.0,
                                 "health": 2,
-                                "mainCatID": 33,
+                                "mainCatID": 50,
                                 "movementSpeed": 200.0
                             },
                             "state": 0
@@ -1463,8 +1463,8 @@
                         "height": 20.69999885559082,
                         "orientation": 0.0,
                         "position": {
-                            "x": 1201.0,
-                            "y": 39.0
+                            "x": 746.0,
+                            "y": 454.0
                         },
                         "relativeposition": {
                             "x": 746.0,
@@ -1523,7 +1523,7 @@
                     "EntityDescriptor": {
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Turn Execute Text",
                         "parent": null,
                         "sceneID": 30
@@ -1641,7 +1641,7 @@
                     "EntityDescriptor": {
                         "Prefab Type": "FoliageOverlay",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "FoliageOverlay",
                         "parent": null,
                         "sceneID": 33
@@ -1699,7 +1699,7 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
