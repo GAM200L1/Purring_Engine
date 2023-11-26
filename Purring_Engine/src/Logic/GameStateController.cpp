@@ -515,6 +515,10 @@ namespace PE
 				GameStateManager::GetInstance().godMode = !GameStateManager::GetInstance().godMode;
 			}
 
+			if (KTE.keycode == GLFW_KEY_F10)
+			{
+				GameStateManager::GetInstance().RestartGame(-1);
+			}
 		}
 	}
 
