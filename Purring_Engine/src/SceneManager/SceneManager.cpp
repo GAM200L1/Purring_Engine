@@ -43,6 +43,6 @@ namespace PE
     void SceneManager::LoadCurrentScene()
     {
 		SerializationManager serializationManager;
-		serializationManager.LoadAllEntitiesFromFile(m_sceneDirectory + m_currentScene);
+		serializationManager.DeleteAllObjectAndLoadAllEntitiesFromFile(m_sceneDirectory + m_currentScene);
 	}
 }

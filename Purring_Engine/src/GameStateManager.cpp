@@ -15,6 +15,7 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "GameStateManager.h"
+#include "SceneManager/SceneManager.h"
 
 namespace PE 
 {
@@ -466,7 +467,8 @@ namespace PE
 		ResetDefaultState();
 		Won = false;
 		Lost = false;
-		serializationManager.DeleteAllObjectAndLoadAllEntitiesFromFile("../Assets/Scenes/GameSceneFINAL.json");
+
+		SceneManager::GetInstance().LoadCurrentScene();
 	}
 
 	void GameStateManager::ReturnToWinLoseScreenFromExit(EntityID)
