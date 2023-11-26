@@ -205,6 +205,7 @@ namespace PE
 					if (CheckShouldStateChange(id, deltaTime))
 					{
 						m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
+						m_scriptData[id].finishedExecution = false;
 					}
 				}
 			}
