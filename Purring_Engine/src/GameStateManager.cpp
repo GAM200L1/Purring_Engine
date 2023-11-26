@@ -136,7 +136,6 @@ namespace PE
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::MOVEMENT;
 		}
-		std::cout << (int)m_currentGameState;
 	}
 
 	void GameStateManager::DecrementGameState(EntityID)
