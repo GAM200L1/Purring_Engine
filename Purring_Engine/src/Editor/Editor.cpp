@@ -806,14 +806,10 @@ namespace PE {
 			}
 			if (ImGui::BeginPopup("Object"))
 			{
-				if (ImGui::BeginMenu("Create Empty Object"))
+				if (ImGui::Selectable("Create Empty Object"))
 				{
-					if (ImGui::MenuItem("Create Empty Object"))
-					{
 						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
-					}
-					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
@@ -834,7 +830,7 @@ namespace PE {
 					}
 					ImGui::EndMenu();
 				}
-				if (ImGui::Selectable("Create Audio  Object"))
+				if (ImGui::Selectable("Create Audio Object"))
 				{
 					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Audio_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
