@@ -88,6 +88,7 @@ namespace PE
 				// death animation example
 				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 				{
+					GameStateManager().GetInstance().SetWinState();
 					ToggleEntity(id, false);
 				}
 			}
