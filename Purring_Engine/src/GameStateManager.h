@@ -69,6 +69,11 @@ namespace PE {
 		*************************************************************************************/
 		void SetTurnNumber(int number);
 		/*!***********************************************************************************
+		 \brief			Get the previous game state
+		 \return		The previous game state
+		*************************************************************************************/
+		GameStates GetPreviousGameState();
+		/*!***********************************************************************************
 		 \brief			Get the current game state
 		 \return		The current game state
 		*************************************************************************************/
@@ -78,6 +83,11 @@ namespace PE {
 		 \return		The current turn number
 		*************************************************************************************/
 		int GetTurnNumber();
+		/*!***********************************************************************************
+		 \brief			True if the how to play menu is active, false otherwise
+		 \return		True if the how to play menu is active, false otherwise
+		*************************************************************************************/
+		inline bool GetHowToPlayActive() { return howToPlay; }
 
 		// ----- Public Functions ----- // 
 	public:

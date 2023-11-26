@@ -127,6 +127,30 @@ namespace PE
 		// ----- Update HUD UI ----- // 
 
 		/*!***********************************************************************************
+		 \brief Updates the movement planning HUD.
+
+		 \param[in] id - ID of the entity this script is associated with.
+		 \param[in] deltaTime - Time in seconds since the last frame
+		*************************************************************************************/
+		void MovementStateHUD(EntityID const id, float deltaTime);
+
+		/*!***********************************************************************************
+		 \brief Updates the movement planning HUD.
+
+		 \param[in] id - ID of the entity this script is associated with.
+		 \param[in] deltaTime - Time in seconds since the last frame
+		*************************************************************************************/
+		void AttackStateHUD(EntityID const id);
+
+		/*!***********************************************************************************
+		 \brief Updates the movement planning HUD.
+
+		 \param[in] id - ID of the entity this script is associated with.
+		 \param[in] deltaTime - Time in seconds since the last frame
+		*************************************************************************************/
+		void ExecutionStateHUD(EntityID const id, float deltaTime);
+
+		/*!***********************************************************************************
 		 \brief En/disables the button to end the movement / attack phase and updates the 
 						text displayed on the button.
 
@@ -185,6 +209,14 @@ namespace PE
 		 \param[in] enable - Enable the execution phase HUD.
 		*************************************************************************************/
 		void ToggleSplashscreen(EntityID id, bool enable);
+
+		/*!***********************************************************************************
+		 \brief Toggle all text objects in the HUD. 
+
+		 \param[in] id - ID of the entity that the script instance is attached to.
+		 \param[in] enable - Set to true to enable all text in the HUD, false otherwise.
+		*************************************************************************************/
+		void ToggleAllText(EntityID id, bool enable);
 
 		/*!***********************************************************************************
 		 \brief Toggle the entity passed in.
@@ -246,7 +278,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Updates the alpha of the GUI renderer component on the entity passed in.
 
-		 \param[in] id - ID of the entity to with a text component to update.
+		 \param[in] id - ID of the entity with a text component to update.
 		 \param[in] alpha - Alpha to set text to.
 
 		 \return Returns true if the alpha was set successfully, false if the GUI renderer 

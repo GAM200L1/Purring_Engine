@@ -236,6 +236,11 @@ namespace PE
 			m_prevGameState = GameStates::PAUSE;
 	}
 
+	GameStates GameStateManager::GetPreviousGameState()
+	{
+		return m_prevGameState;
+	}	
+
 	GameStates GameStateManager::GetGameState()
 	{
 		return m_currentGameState;
@@ -447,6 +452,7 @@ namespace PE
 		//set inactive how to play menu here
 		EntityManager::GetInstance().Get<EntityDescriptor>(howToPlayID).isActive = false;
 		EntityManager::GetInstance().Get<EntityDescriptor>(returnButtonID).isActive = false;
+		howToPlay = false;
 	}
 
 	void GameStateManager::ReturnToPauseMenuFromExit(EntityID)

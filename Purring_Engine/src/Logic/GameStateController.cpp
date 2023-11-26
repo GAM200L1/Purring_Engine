@@ -48,6 +48,7 @@ namespace PE
 		{
 				GameStateManager::GetInstance().SetGameState(GameStates::SPLASHSCREEN);
 
+				// Enable the planning HUD and splashscreen UI by default
 				TogglePlanningHUD(id, true);
 				ToggleExecutionHUD(id, false);
 				ToggleSplashscreen(id, true);
@@ -59,6 +60,7 @@ namespace PE
 		m_ScriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController::OnKeyEvent, this)
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController::OnWindowOutOfFocus, this)
 
+		// Play BGM
 		SerializationManager serializationManager;
 		bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm)) 
@@ -76,6 +78,7 @@ namespace PE
 			m_ScriptData[id].SplashTimer -= deltaTime;
 			FadeSplashscreen(id, std::clamp(m_ScriptData[id].SplashTimer, 0.f, 1.f));
 
+			// Fade the splashscreen in
 			if (m_ScriptData[id].SplashTimer <= 0)
 			{
 				ToggleSplashscreen(id, false);
@@ -98,95 +101,66 @@ namespace PE
 			{
 			case GameStates::MOVEMENT:
 			{
-					if (m_ScriptData[id].prevState == GameStates::EXECUTE)
-					{
-						m_ScriptData[id].timeSinceEnteredState = 0;
-						m_ScriptData[id].timeSinceExitedState = m_ScriptData[id].maxFadeTime;
-						TogglePlanningHUD(id, true);
-						EndPhaseButton(id, true);
-						UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
-					}
-
-					m_ScriptData[id].timeSinceExitedState -= deltaTime;
-					m_ScriptData[id].timeSinceEnteredState += deltaTime;
-
-					float fadeOutSpeed = std::clamp(m_ScriptData[id].timeSinceExitedState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
-					float fadeInSpeed = std::clamp(m_ScriptData[id].timeSinceEnteredState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
-
-					FadeExecutionHUD(id, fadeOutSpeed);
-					FadePlanningHUD(id, fadeInSpeed);
-
-					if (fadeInSpeed >= 1)
-					{
-						ToggleExecutionHUD(id, false);
-
-						if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
-						{
-							EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = false;
-						}
-					}
-
-					// Update the energy level
-					UpdateEnergyHUD(id, CatScript::GetCurrentEnergyLevel(), CatScript::GetMaximumEnergyLevel() - 1);
-
+					MovementStateHUD(id, deltaTime);
 					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
 					break;
 			}
 			case GameStates::ATTACK:
 			{
-					TogglePlanningHUD(id, true);
-					ToggleExecutionHUD(id, false);
-					EndPhaseButton(id, false);
-					UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), false);
-
+					AttackStateHUD(id);
 					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
 					break;
 			}
 			case GameStates::EXECUTE:
 			{
-					if (m_ScriptData[id].prevState == GameStates::ATTACK) 
-					{
-						m_ScriptData[id].timeSinceEnteredState = 0;
-						m_ScriptData[id].timeSinceExitedState = m_ScriptData[id].maxFadeTime;
-						ToggleExecutionHUD(id, true);
-					}
-					
-					m_ScriptData[id].timeSinceExitedState -= deltaTime;
-					m_ScriptData[id].timeSinceEnteredState += deltaTime;
-
-					float fadeOutSpeed = std::clamp(m_ScriptData[id].timeSinceExitedState/m_ScriptData[id].maxFadeTime, 0.f, 1.f);
-					float fadeInSpeed = std::clamp(m_ScriptData[id].timeSinceEnteredState/m_ScriptData[id].maxFadeTime, 0.f, 1.f);
-
-					FadePlanningHUD(id, fadeOutSpeed);
-
-					if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
-					{
-						EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = true;
-					}
-					
-					FadeExecutionHUD(id, fadeInSpeed);
-
-					if (fadeInSpeed >= 1)
-					{
-						TogglePlanningHUD(id, false);
-					}
-
-					UpdateExecuteHUD(id, deltaTime);
-
+					ExecutionStateHUD(id, deltaTime);
 					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
-
+					// Update animations and player actions
 					ExecutionToMovement();
-
 					break;
 			}
 			case GameStates::WIN:
 			case GameStates::LOSE:
-				TogglePlanningHUD(id, false);
-				ToggleExecutionHUD(id, false);
-				EndPhaseButton(id, false);
-				ToggleEntity(m_ScriptData[id].endTurnText, false);
-				m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
-				break;
+			{
+					TogglePlanningHUD(id, false);
+					ToggleExecutionHUD(id, false);
+					EndPhaseButton(id, false);
+					ToggleEntity(m_ScriptData[id].endTurnText, false);
+					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+					break;
+			}				
+			case GameStates::PAUSE:
+			{
+					if (GameStateManager::GetInstance().GetHowToPlayActive())
+					{
+							ToggleAllText(id, false);
+					}
+					else
+					{
+							switch (GameStateManager::GetInstance().GetPreviousGameState()) 
+							{
+							case GameStates::MOVEMENT:
+							{
+									MovementStateHUD(id, 0.f);
+									break;
+							}
+							case GameStates::ATTACK:
+							{
+									AttackStateHUD(id);
+									break;
+							}
+							case GameStates::EXECUTE:
+							{
+									ExecutionStateHUD(id, 0.f);
+									ToggleEntity(m_ScriptData[id].executingStatement, false);
+									break;
+							}
+							default: { break; }
+							}
+					}
+					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+					break;
+			}
 			default: 
 			{
 					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState(); 
@@ -237,6 +211,92 @@ namespace PE
 	rttr::instance GameStateController::GetScriptData(EntityID id)
 	{
 		return rttr::instance(m_ScriptData.at(id));
+	}
+
+
+	void GameStateController::MovementStateHUD(EntityID const id, float deltaTime)
+	{
+			// Enable all HUD elements and begin fading in/out
+			if (m_ScriptData[id].prevState == GameStates::EXECUTE)
+			{
+					m_ScriptData[id].timeSinceEnteredState = 0;
+					m_ScriptData[id].timeSinceExitedState = m_ScriptData[id].maxFadeTime;
+			}
+
+			TogglePlanningHUD(id, true);
+			EndPhaseButton(id, true);
+			UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
+
+			// Fade the HUD elements in
+			m_ScriptData[id].timeSinceExitedState -= deltaTime;
+			m_ScriptData[id].timeSinceEnteredState += deltaTime;
+
+			float fadeOutSpeed = std::clamp(m_ScriptData[id].timeSinceExitedState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
+			float fadeInSpeed = std::clamp(m_ScriptData[id].timeSinceEnteredState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
+
+			FadeExecutionHUD(id, fadeOutSpeed);
+			FadePlanningHUD(id, fadeInSpeed);
+
+			// Disable the execution HUD
+			if (fadeInSpeed >= 1)
+			{
+					ToggleExecutionHUD(id, false);
+
+					if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
+					{
+							EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = false;
+					}
+			}
+
+			// Update the energy level
+			UpdateEnergyHUD(id, CatScript::GetCurrentEnergyLevel(), CatScript::GetMaximumEnergyLevel() - 1);
+	}
+
+
+	void GameStateController::AttackStateHUD(EntityID const id)
+	{
+			// Enable planning HUD, disable execution HUD
+			TogglePlanningHUD(id, true);
+			ToggleExecutionHUD(id, false);
+			EndPhaseButton(id, false);
+			UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), false);
+	}
+
+
+	void GameStateController::ExecutionStateHUD(EntityID const id, float deltaTime)
+	{
+			// Start fading HUD elements in/out if changing from planning phase
+			if (m_ScriptData[id].prevState == GameStates::ATTACK)
+			{
+					m_ScriptData[id].timeSinceEnteredState = 0;
+					m_ScriptData[id].timeSinceExitedState = m_ScriptData[id].maxFadeTime;
+			}
+
+			ToggleExecutionHUD(id, true);
+
+			// Fade in/out
+			m_ScriptData[id].timeSinceExitedState -= deltaTime;
+			m_ScriptData[id].timeSinceEnteredState += deltaTime;
+
+			float fadeOutSpeed = std::clamp(m_ScriptData[id].timeSinceExitedState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
+			float fadeInSpeed = std::clamp(m_ScriptData[id].timeSinceEnteredState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
+
+			FadePlanningHUD(id, fadeOutSpeed);
+
+			// Disable button while fading
+			if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
+			{
+					EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = true;
+			}
+
+			FadeExecutionHUD(id, fadeInSpeed);
+
+			// Disable planning HUD when planning HUD is invisible
+			if (fadeInSpeed >= 1)
+			{
+					TogglePlanningHUD(id, false);
+					UpdateExecuteHUD(id, deltaTime);
+			}
 	}
 
 	void GameStateController::EndPhaseButton(EntityID id, bool endMovement)
@@ -303,6 +363,27 @@ namespace PE
 	{
 			// Toggle the splashscreen
 			ToggleEntity(m_ScriptData[id].SplashScreen, enable);
+	}	
+	
+	void GameStateController::ToggleAllText(EntityID id, bool enable)
+	{
+			// Toggle the energy HUD
+			ToggleEntity(m_ScriptData[id].energyHeader, enable);
+			ToggleEntity(m_ScriptData[id].currentEnergyText, enable);
+			ToggleEntity(m_ScriptData[id].slashText, enable);
+			ToggleEntity(m_ScriptData[id].maxEnergyText, enable);
+
+			// Toggle the turn HUD
+			ToggleEntity(m_ScriptData[id].turnNumberText, enable);
+			ToggleEntity(m_ScriptData[id].planAttackText, enable); 
+			ToggleEntity(m_ScriptData[id].planMovementText, enable);
+
+			// Toggle the end phase buttons
+			ToggleEntity(m_ScriptData[id].endMovementText, enable);
+			ToggleEntity(m_ScriptData[id].endTurnText, enable); 
+
+			// Toggle the overlay
+			ToggleEntity(m_ScriptData[id].executingStatement, enable);
 	}
 
 	bool GameStateController::ToggleEntity(EntityID id, bool enable)
