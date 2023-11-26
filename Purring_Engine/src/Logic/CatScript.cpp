@@ -31,8 +31,9 @@
 
 namespace PE
 {
-	int CatScript::catEnergy{};  // Current energy level of the cat
-	int CatScript::catMaxEnergy{ 21 }; // Maximum energy of the cat
+	int CatScript::m_catEnergy{};  // Current energy level of the cat
+	int CatScript::m_catMaxEnergy{ 21 }; // Maximum energy of the cat
+	EntityID CatScript::m_mainCatId{ 0 }; // ID of the main cat
 
 
 	// ----- Destructor ----- //
@@ -48,6 +49,10 @@ namespace PE
 	void CatScript::Init(EntityID id)
 	{
 		m_scriptData[id].catID = id;
+		if (m_scriptData[id].isMainCat) { // Set this as the main cat. Note that only one cat can be the main cat at a time
+				CatScript::SetMainCat(id);
+		}
+
 		// Make a statemanager and set the starting state
 		MakeStateManager(id);
 
@@ -62,13 +67,17 @@ namespace PE
 		m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
 		/*EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;*/
 		EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
+		
 		// Create as many entities to visualise the player path nodes  
 		// such that there is one node per energy level
-		m_scriptData[id].pathPositions.reserve(CatScript::GetMaximumEnergyLevel());
-		m_scriptData[id].pathQuads.reserve(CatScript::GetMaximumEnergyLevel());
-		for (std::size_t i{}; i < CatScript::GetMaximumEnergyLevel(); ++i)
+		if (m_scriptData[id].isMainCat)
 		{
-			CreatePathNode(id);
+			m_scriptData[id].pathPositions.reserve(CatScript::GetMaximumEnergyLevel());
+			m_scriptData[id].pathQuads.reserve(CatScript::GetMaximumEnergyLevel());
+			for (std::size_t i{}; i < CatScript::GetMaximumEnergyLevel(); ++i)
+			{
+				CreatePathNode(id);
+			}
 		}
 	}
 
@@ -187,9 +196,15 @@ namespace PE
 				{
 					// error
 				}
+			}			
+
+			// If this is not the main cat, check if the state should be changed
+			if(id != CatScript::GetMainCat() && m_scriptData[CatScript::GetMainCat()].p_stateManager->GetStateName() != "MovementEXECUTE")
+			{
+					m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
 			}
-			// Check if the state should be changed
-			if (CheckShouldStateChange(id, deltaTime))
+
+			if (id == CatScript::GetMainCat() && CheckShouldStateChange(id, deltaTime))
 			{
 				// trigger state change called in MovementEXECUTE state update
 				m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
@@ -267,7 +282,7 @@ namespace PE
 		m_scriptData[id].timeBeforeChangingState = 0.f;
 
 		// Set the cat max energy to the value set in the editor
-		catMaxEnergy = m_scriptData[id].catMaxEnergy;
+		m_catMaxEnergy = m_scriptData[id].catMaxEnergy;
 	}
 
 	void CatScript::OnDetach(EntityID id)
@@ -406,6 +421,31 @@ namespace PE
 	{
 			return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
 	}
+
+
+	bool CatScript::DoesGameStateMatchCatState(std::string const& catStateName, GameStates gameState)
+	{ 
+			// Cat states: "MovementPLAN" "AttackPLAN" "MovementEXECUTE" "AttackEXECUTE"
+			switch (gameState) {
+			case GameStates::MOVEMENT: 
+			{
+					return catStateName == "MovementPLAN";
+			}
+			case GameStates::ATTACK:
+			{
+					return catStateName == "AttackPLAN";
+			}
+			case GameStates::EXECUTE:
+			{
+					return catStateName == "MovementEXECUTE" || catStateName == "AttackEXECUTE";
+			}
+			default: // PAUSE, WIN, LOSE, INACTIVE or SPLASHSCREEN states
+			{ 
+					return false;
+			}
+			}
+	}
+
 
 	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{

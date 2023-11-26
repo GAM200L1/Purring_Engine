@@ -26,9 +26,14 @@ namespace PE
 
 	void CatAttackPLAN::StateEnter(EntityID id)
 	{
+		std::cout << "CatAttackPLAN::StateEnter(" << id << ")\n";
 		p_data = GETSCRIPTDATA(CatScript, id);
 		m_checkedIgnored = false;
 		m_ignoresTelegraphs.clear();
+
+		// Don't bother if not the main cat and not following the main cat
+		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
+
 		for (auto const& [attackDirection, boxID] : p_data->telegraphIDs)
 		{
 			CatScript::ToggleEntity(boxID, true);
@@ -43,7 +48,11 @@ namespace PE
 	
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
 	{
+		// Skip this if it's the pause state
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
+		
+	  // Don't bother if not the main cat and not following the main cat
+		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
 		
 		// get the mouse cursor position
 		vec2 cursorPosition{ CatScript::GetCursorPositionInWorld() };
@@ -151,6 +160,11 @@ namespace PE
 	
 	void CatAttackPLAN::StateCleanUp()
 	{
+		std::cout << "CatAttackPLAN::StateCleanUp()\n";
+
+	  // Don't bother if not the main cat and not following the main cat
+		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
+		
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
 		REMOVE_MOUSE_EVENT_LISTENER(m_mouseEventListener);
@@ -158,6 +172,7 @@ namespace PE
 
 	void CatAttackPLAN::StateExit(EntityID id)
 	{
+		std::cout << "CatAttackPLAN::StateExit(" << id << ")\n";
 		for (auto const& telegraph : p_data->telegraphIDs)
 		{
 			// set the entity with p_attack direction to not active, the green box should disappear
@@ -229,6 +244,7 @@ namespace PE
 
 	void CatAttackEXECUTE::StateEnter(EntityID id) 
 	{
+		std::cout << "CatAttackEXECUTE::StateEnter(" << id << ")\n";
 		p_data = GETSCRIPTDATA(CatScript, id);
 		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackEXECUTE::ProjectileHitRat, this);
 		m_bulletImpulse = vec2{ 0.f, 0.f };
@@ -298,11 +314,13 @@ namespace PE
 
 	void CatAttackEXECUTE::StateCleanUp()
 	{
+		std::cout << "CatAttackEXECUTE::StateCleanUp()\n";
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEnterEventListener);
 	}
 
 	void CatAttackEXECUTE::StateExit(EntityID id)
 	{
+		std::cout << "CatAttackEXECUTE::StateExit(" << id << ")\n";
 		// resets attack direction selection
 		p_data->attackDirection = EnumCatAttackDirection::NONE;
 		CatScript::ToggleEntity(p_data->projectileID, false);

@@ -53,11 +53,16 @@ namespace PE
 					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)
 						&& (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
 					{
-						//can make into a loop to attach more objects
-						m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = m_ScriptData[id].ToAttach[index];
+						// Have the cat follow behind
+							EntityID followIndex{ m_ScriptData[id].ToAttach[index] };
+						m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = followIndex;
 						m_ScriptData[id].ToAttach.erase(m_ScriptData[id].ToAttach.begin() + index);
 						++m_ScriptData[id].NumberOfFollower;
 						--m_ScriptData[id].NumberOfAttachers;
+
+						// Flag the cat if so it knows it has been attached 
+						CatScriptData* catData{ GETSCRIPTDATA(CatScript, followIndex) };
+						catData->isFollowing = true;
 					}
 
 					if (EntityManager::GetInstance().Has<AudioComponent>(m_ScriptData[id].SoundID))
@@ -82,7 +87,7 @@ namespace PE
 		if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 		{
 			CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
-			//std::cout << cd->catHealth << std::endl;
+			//std::cout << "Health: " << cd->catHealth << std::endl;
 			if(cd->catHealth >= 1)
 			if (cd->catHealth < m_ScriptData[id].NumberOfFollower)
 			{

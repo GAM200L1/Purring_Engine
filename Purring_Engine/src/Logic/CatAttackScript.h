@@ -47,7 +47,7 @@ namespace PE
 		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
 		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
 		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
-		std::set<EntityID> m_ignoresTelegraphs;
+		std::set<EntityID> m_ignoresTelegraphs; // Telegraphs that have been disabled bc they're overlapping with another cat
 		bool m_checkedIgnored{ false };
 
 		bool m_mouseClicked{ false }; // Set to true when the mouse is pressed, false otherwise
