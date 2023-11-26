@@ -123,7 +123,6 @@ namespace PE
 
 	void PhysicsManager::UpdateDynamics(float deltaTime)
 	{
-		// <3 elie
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
 			return;
 

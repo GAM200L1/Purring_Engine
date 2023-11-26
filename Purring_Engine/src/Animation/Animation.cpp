@@ -57,7 +57,6 @@ namespace PE
 
 	void Animation::UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex)
 	{
-		// <3 elie
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
 			return;
 
