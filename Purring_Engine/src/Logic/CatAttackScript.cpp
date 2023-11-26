@@ -27,6 +27,7 @@ namespace PE
 	void CatAttackPLAN::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(CatScript, id);
+		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		m_checkedIgnored = false;
 		m_ignoresTelegraphs.clear();
 		for (auto const& [attackDirection, boxID] : p_data->telegraphIDs)
@@ -232,6 +233,7 @@ namespace PE
 	void CatAttackEXECUTE::StateEnter(EntityID id) 
 	{
 		p_data = GETSCRIPTDATA(CatScript, id);
+		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, CatAttackEXECUTE::ProjectileHitRat, this);
 		m_bulletImpulse = vec2{ 0.f, 0.f };
 		if (p_data->attackDirection != EnumCatAttackDirection::NONE)
@@ -271,30 +273,22 @@ namespace PE
 	void CatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
-		static bool projectileFired{ false };
-		if (m_bulletDelay > 0.f)
+		if (p_data->attackDirection != EnumCatAttackDirection::NONE && !m_projectileFired)
 		{
-			m_bulletDelay -= deltaTime;
+			CatScript::ToggleEntity(p_data->projectileID, true);
+			EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
+			m_projectileFired = true;
+		}
+		if (m_attackDuration > 0.f && !m_bulletCollided)
+		{
+			m_attackDuration -= deltaTime;
 		}
 		else
 		{
-			if (p_data->attackDirection != EnumCatAttackDirection::NONE && !projectileFired)
-			{
-				CatScript::ToggleEntity(p_data->projectileID, true);
-				EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
-				projectileFired = true;
-			}
-			if (m_attackDuration > 0.f && !m_bulletCollided)
-			{
-				m_attackDuration -= deltaTime;
-			}
-			else
-			{
-				p_data->finishedExecution = true;
-				m_bulletCollided = false;
-				projectileFired = false;
-				CatScript::ToggleEntity(p_data->projectileID, false);
-			}
+			p_data->finishedExecution = true;
+			m_bulletCollided = false;
+			m_projectileFired = false;
+			CatScript::ToggleEntity(p_data->projectileID, false);
 		}
 	}
 

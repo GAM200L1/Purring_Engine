@@ -26,6 +26,7 @@ namespace PE
 		{
 			std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 			p_data = GETSCRIPTDATA(CatScript, id);
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 			m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatMovementPLAN::OnMouseClick, this);
 			m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovementPLAN::OnMouseRelease, this);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovementPLAN::OnCollisionWithRat, this);
@@ -283,7 +284,8 @@ namespace PE
 		void CatMovementEXECUTE::StateEnter(EntityID id)  
 		{
 			std::cout << "CatMovementEXECUTE::StateEnter(" << id << ")\n";
-		  p_data = GETSCRIPTDATA(CatScript, id);
+			p_data = GETSCRIPTDATA(CatScript, id);
+			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovementEXECUTE::OnCollisionEnter, this);
 			CatScript::PositionEntity(id, p_data->pathPositions.front());
 			p_data->currentPositionIndex = 0;

@@ -374,7 +374,7 @@ namespace PE
 	void RatIDLE::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(RatScript, id);
-
+		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		RatScript::PositionEntity(p_data->psudoRatID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
 		RatScript::ToggleEntity(p_data->detectionTelegraphID, true); // show the detection telegraph
 		Transform const& ratObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
@@ -382,13 +382,13 @@ namespace PE
 		vec2 absRatScale = vec2{ abs(ratObject.width),abs(ratObject.height) };
 		vec2 absCatScale = vec2{ abs(catObject.width),abs(catObject.height) };
 		p_data->distanceFromPlayer = RatScript::GetEntityPosition(id).Distance(catObject.position) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f);
+		p_data->directionToTarget = RatScript::GetEntityPosition(p_data->mainCatID) - RatScript::GetEntityPosition(id);
+		p_data->directionToTarget.Normalize();
+
 
 		// if the cat is within the detection radius
 		if (p_data->distanceFromPlayer <= ((RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f)) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
-		{
-			float dx = catObject.position.x - ratObject.position.x;
-			float dy = catObject.position.y - ratObject.position.y;
-			
+		{			
 			if (p_data->distanceFromPlayer <= (absCatScale.x * 0.5f))
 			{
 				p_data->distanceFromPlayer = 0.f; // cat and rat are directly next to each other so there is no distance to really cover
@@ -399,7 +399,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).relPosition.x = catObject.position.Distance(ratObject.position) * 0.5f;
 				EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).width = p_data->distanceFromPlayer;
 				// find rotation to rotate the psuedorat entity so the arrow will be rotated accordingly
-				float rotation = atan2(dy, dx);
+				float rotation = atan2(p_data->directionToTarget.y, p_data->directionToTarget.x);
 				PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->psudoRatID).orientation = rotation;
 				RatScript::ToggleEntity(p_data->arrowTelegraphID, true); // show the arrow of movement
 			}
@@ -451,17 +451,16 @@ namespace PE
 	 void RatMovementEXECUTE::StateEnter(EntityID id)
 	 {
 		 p_data = GETSCRIPTDATA(RatScript, id);
+		 EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		 m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovementEXECUTE::RatHitCat, this);
 		 m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovementEXECUTE::RatHitCat, this);
-		 m_directionToTarget = RatScript::GetEntityPosition(p_data->mainCatID) - RatScript::GetEntityPosition(id);
-		 m_directionToTarget.Normalize();
 	 }
 
 	 void RatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	 {
 		 if (p_data->distanceFromPlayer > 0.f)
 		 {
-			 RatScript::PositionEntity(id, RatScript::GetEntityPosition(id) + (m_directionToTarget * p_data->movementSpeed * deltaTime));
+			 RatScript::PositionEntity(id, RatScript::GetEntityPosition(id) + (p_data->directionToTarget * p_data->movementSpeed * deltaTime));
 			 
 			 p_data->distanceFromPlayer -= p_data->movementSpeed * deltaTime;
 		 }
@@ -480,7 +479,7 @@ namespace PE
 	 void RatMovementEXECUTE::StateExit(EntityID id)
 	 {
 		 p_data->distanceFromPlayer = 0.f;
-		 m_checkedCats.clear();
+		 m_hitCat = false;
 	 }
 
 	 void RatMovementEXECUTE::RatHitCat(const Event<CollisionEvents>& r_TE)
@@ -491,10 +490,10 @@ namespace PE
 			 if ((OTEE.Entity1 == p_data->ratID || OTEE.Entity1 == p_data->attackTelegraphID) && EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
 			 {
 				 // if cat has been checked before check the next event
-				 if (m_checkedCats.count(OTEE.Entity2)) { return; }
+				 if (m_hitCat) { return; }
 
 				 // save the id of the cat that has been checked so that it wont be checked again
-				 m_checkedCats.emplace(OTEE.Entity2);
+				 m_hitCat = true;
 				 try
 				 {
 					 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, p_data->mainCatID);
@@ -527,10 +526,10 @@ namespace PE
 			 else if ((OTEE.Entity2 == p_data->ratID || OTEE.Entity2 == p_data->attackTelegraphID) && EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
 			 {
 				 // if cat has been checked before check the next event
-				 if (m_checkedCats.count(OTEE.Entity1)) { return; }
+				 if (m_hitCat) { return; }
 
 				 // save the id of the cat that has been checked so that it wont be checked again
-				 m_checkedCats.emplace(OTEE.Entity1);
+				 m_hitCat = true;
 				 try
 				 {
 					 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, p_data->mainCatID);
@@ -567,10 +566,10 @@ namespace PE
 			 if ((OTSE.Entity1 == p_data->ratID || OTSE.Entity1 == p_data->attackTelegraphID) && EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
 			 {
 				 // if cat has been checked before check the next event
-				 if (m_checkedCats.count(OTSE.Entity2)) { return; }
+				 if (m_hitCat) { return; }
 
 				 // save the id of the cat that has been checked so that it wont be checked again
-				 m_checkedCats.emplace(OTSE.Entity2);
+				 m_hitCat = true;
 				 try
 				 {
 					 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, p_data->mainCatID);
@@ -603,10 +602,10 @@ namespace PE
 			 else if ((OTSE.Entity2 == p_data->ratID || OTSE.Entity2 == p_data->attackTelegraphID) && EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
 			 {
 				 // if cat has been checked before check the next event
-				 if (m_checkedCats.count(OTSE.Entity1)) { return; }
+				 if (m_hitCat) { return; }
 
 				 // save the id of the cat that has been checked so that it wont be checked again
-				 m_checkedCats.emplace(OTSE.Entity1);
+				 m_hitCat = true;
 				 try
 				 {
 					 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, p_data->mainCatID);
@@ -644,6 +643,7 @@ namespace PE
 	 void RatAttackEXECUTE::StateEnter(EntityID id)
 	 {
 		 p_data = GETSCRIPTDATA(RatScript, id);
+		 EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		 m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttackEXECUTE::RatHitCat, this);
 		 m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttackEXECUTE::RatHitCat, this);
 		 m_delay = p_data->attackDelay;
@@ -674,7 +674,7 @@ namespace PE
 	 {
 		 RatScript::ToggleEntity(p_data->attackTelegraphID, false);
 		 EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphID).SetEnabled(true);
-		 m_checkedCats.clear();
+		 m_hitCat = false;
 	 }
 
 	 void RatAttackEXECUTE::RatHitCat(const Event<CollisionEvents>& r_TE)
@@ -685,10 +685,10 @@ namespace PE
 			 if ((OTEE.Entity1 == p_data->ratID || OTEE.Entity1 == p_data->attackTelegraphID) && EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
 			 {
 				 // if cat has been checked before check the next event
-				 if (m_checkedCats.count(OTEE.Entity2)) { return; }
+				 if (m_hitCat) { return; }
 
 				 // save the id of the cat that has been checked so that it wont be checked again
-				 m_checkedCats.emplace(OTEE.Entity2);
+				 m_hitCat = true;
 				 try
 				 {
 					 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, p_data->mainCatID);
@@ -720,10 +720,10 @@ namespace PE
 			 else if ((OTEE.Entity2 == p_data->ratID || OTEE.Entity2 == p_data->attackTelegraphID) && EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
 			 {
 				 // if cat has been checked before check the next event
-				 if (m_checkedCats.count(OTEE.Entity1)) { return; }
+				 if (m_hitCat) { return; }
 
 				 // save the id of the cat that has been checked so that it wont be checked again
-				 m_checkedCats.emplace(OTEE.Entity1);
+				 m_hitCat = true;
 				 try
 				 {
 					 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, p_data->mainCatID);
@@ -761,10 +761,10 @@ namespace PE
 			 if ((OTSE.Entity1 == p_data->ratID || OTSE.Entity1 == p_data->attackTelegraphID) && EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
 			 {
 				 // if cat has been checked before check the next event
-				 if (m_checkedCats.count(OTSE.Entity2)) { return; }
+				 if (m_hitCat) { return; }
 				 
 				 // save the id of the cat that has been checked so that it wont be checked again
-				 m_checkedCats.emplace(OTSE.Entity2);
+				 m_hitCat = true;
 				 try
 				 {
 					 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, p_data->mainCatID);
@@ -797,10 +797,10 @@ namespace PE
 			 else if ((OTSE.Entity2 == p_data->ratID || OTSE.Entity2 == p_data->attackTelegraphID) && EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
 			 {
 				 // if cat has been checked before check the next event
-				 if (m_checkedCats.count(OTSE.Entity1)) { return; }
+				 if (m_hitCat) { return; }
 
 				 // save the id of the cat that has been checked so that it wont be checked again
-				 m_checkedCats.emplace(OTSE.Entity1);
+				 m_hitCat = true;
 				 try
 				 {
 					 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, p_data->mainCatID);
