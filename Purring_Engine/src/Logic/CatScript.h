@@ -92,6 +92,7 @@ namespace PE
 		bool finishedExecution{ false };
 
 		std::map<std::string, std::string> animationStates;
+
 	};
 
 

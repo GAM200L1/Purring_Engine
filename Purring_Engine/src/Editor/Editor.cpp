@@ -268,14 +268,16 @@ namespace PE {
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
+
+		std::vector<EntityID> temp = EntityManager::GetInstance().GetEntitiesInPool(ALL);
+
+		for (auto n :temp)
 		{
-			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			if (n != Graphics::CameraManager::GetUiCameraId())
 			{
 				LogicSystem::DeleteScriptData(n);
-				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+				EntityManager::GetInstance().RemoveEntity(n);
 			}
-
 		}
 	}
 

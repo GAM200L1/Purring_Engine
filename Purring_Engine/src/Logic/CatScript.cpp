@@ -290,6 +290,7 @@ namespace PE
 
 	void CatScript::OnDetach(EntityID id)
 	{
+
 		if (m_scriptData.find(id) != m_scriptData.end())
 		{
 			delete m_scriptData[id].p_stateManager;
@@ -306,7 +307,9 @@ namespace PE
 		
 	void CatScript::MakeStateManager(EntityID id)
 	{
-		if (m_scriptData[id].p_stateManager) { return; }
+		if (m_scriptData.count(id)) { 
+			if(m_scriptData.at(id).p_stateManager)
+			return; }
 
 		m_scriptData[id].p_stateManager = new StateMachine{};
 		m_scriptData[id].p_stateManager->ChangeState(new CatMovementPLAN{}, id);
@@ -461,6 +464,8 @@ namespace PE
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false; // telegraph to not show until attack planning
+		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false; // telegraph to not show until attack planning
+
 
 		// set size of telegraph
 		telegraphTransform.height = catTransform.height * 0.75f;
@@ -501,6 +506,7 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(nodeId).height = m_scriptData[id].nodeSize;
 				
 		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).toSave = false;
 
 		m_scriptData[id].pathQuads.emplace_back(nodeId);
 
