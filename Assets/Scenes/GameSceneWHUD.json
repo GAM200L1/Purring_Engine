@@ -909,7 +909,7 @@
                                 "collisionDamage": 1,
                                 "detectionRadius": 4.0,
                                 "health": 2,
-                                "mainCatID": 50,
+                                "mainCatID": 100,
                                 "movementSpeed": 200.0
                             },
                             "state": 0
@@ -1708,7 +1708,7 @@
                         "isActive": true,
                         "name": "Player Cat",
                         "parent": null,
-                        "sceneID": 50
+                        "sceneID": 100
                     },
                     "Renderer": {
                         "Color": {
@@ -1789,7 +1789,7 @@
                                 "NumberOfAttacher": 2,
                                 "NumberOfFollower": 1,
                                 "Size": 65,
-                                "SoundID": 0,
+                                "SoundID": 34,
                                 "Speed": 100.0,
                                 "ToAttach": [
                                     18446744073709551615,
@@ -1817,6 +1817,25 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AudioComponent": {
+                        "audioKey": "vo_Cat_Rescued1.wav",
+                        "loop": false
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "Audio Object",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CatPickUp",
+                        "parent": null,
+                        "sceneID": 34
                     }
                 },
                 "name": ""

@@ -24,7 +24,7 @@
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
-#endif
+#endif // !GAMERELEASE
 extern Logger engine_logger;
 
 namespace PE
@@ -113,13 +113,13 @@ namespace PE
 			if (m_grid.GridExists())
 				m_grid.ClearGrid();
 		}
+#endif
 
 		if (m_grid.GetGridSize() != gridSize)
 		{
 			// sets up the grid if it did not exist during runtime
 			m_grid.SetupGrid(gridSize.x, gridSize.y);
 		}
-#endif
 		
 		// updates the grid during runtime
 #ifndef GAMERELEASE

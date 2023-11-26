@@ -147,6 +147,12 @@ namespace PE
 				// The telegraphs have not been enabled and the cat was clicked
 				if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
 				{
+					SerializationManager serializationManager;
+					EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Selection SFX_Prefab.json");
+					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().RemoveEntity(sound);
+
 					// if player selects cat with EntityID 'id', the cat will reset its attack choice and show its selectable attack boxes and become active
 					m_showBoxes = true;
 					p_data->attackDirection = EnumCatAttackDirection::NONE;
@@ -334,6 +340,17 @@ namespace PE
 			// show the projectile
 			CatScript::ToggleEntity(p_data->projectileID, true);
 			EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
+			
+			if (!playShootOnce)
+			{
+				SerializationManager serializationManager;
+				EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Attack SFX_Prefab.json");
+				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+				EntityManager::GetInstance().RemoveEntity(sound);
+				playShootOnce = true;
+			}
+			
 			m_projectileFired = true;
 		}
 		if (m_attackDuration > 0.f && !m_bulletCollided)

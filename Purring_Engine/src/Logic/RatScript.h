@@ -239,6 +239,8 @@ namespace PE
 		int m_collisionEventListener{};
 		int m_collisionStayEventListener{};
 		float m_delay{};
+
+		bool attacksoundonce{};
 	};
 
 }

@@ -132,6 +132,7 @@ namespace PE
 		float m_bulletDelay{ 0.f }; // Time in seconds before the projectile should be launched
 		vec2 m_bulletImpulse; // Direction and intensity of the projectile
 		int m_collisionEnterEventListener; // Stores the handler for the collision enter event
+		bool playShootOnce{false};
 		
 		// ----- Private Functions ----- //
 		/*!***********************************************************************************

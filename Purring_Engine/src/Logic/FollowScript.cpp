@@ -60,20 +60,24 @@ namespace PE
 						++m_ScriptData[id].NumberOfFollower;
 						--m_ScriptData[id].NumberOfAttachers;
 
-						// Flag the cat if so it knows it has been attached 
-						CatScriptData* catData{ GETSCRIPTDATA(CatScript, followIndex) };
-						catData->isFollowing = true;
-					}
+						if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+						{
+							//std::cout << "CatScript found" << std::endl;
+							CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
+							CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
 
-					if (EntityManager::GetInstance().Has<AudioComponent>(m_ScriptData[id].SoundID))
-						EntityManager::GetInstance().Get<AudioComponent>(m_ScriptData[id].SoundID).PlayAudioSound();
+							SerializationManager serializationManager;
+							EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Rescue SFX_Prefab.json");
+							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+							EntityManager::GetInstance().RemoveEntity(sound);
+							cd->catHealth = m_ScriptData[id].NumberOfFollower;
 
-					if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
-					{
-						//std::cout << "CatScript found" << std::endl;
-						CatScript::SetMaximumEnergyLevel(CatScript::GetBaseMaximumEnergyLevel() + (m_ScriptData[id].NumberOfFollower - 1) * 2);
-						CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
-						cd->catHealth = m_ScriptData[id].NumberOfFollower;
+
+							// Flag the cat if so it knows it has been attached 
+							CatScriptData* catData{ GETSCRIPTDATA(CatScript, followIndex) };
+							catData->isFollowing = true;
+						}
 					}
 				}
 			}

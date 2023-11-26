@@ -5,7 +5,7 @@
         "renderDebug": true,
         "showAnimationWindow": false,
         "showComponentWindow": true,
-        "showConsole": false,
+        "showConsole": true,
         "showEditor": true,
         "showLogs": true,
         "showObjectList": true,

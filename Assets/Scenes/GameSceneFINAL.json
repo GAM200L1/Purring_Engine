@@ -889,7 +889,7 @@
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
-                        "mass": 10.0,
+                        "mass": 100.0,
                         "type": 1
                     },
                     "ScriptComponent": {
@@ -1152,7 +1152,7 @@
                             0.5,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_512x128.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,

@@ -89,6 +89,11 @@ namespace PE
 				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 				{
 					GameStateManager().GetInstance().SetWinState();
+					SerializationManager serializationManager;
+					EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Rat Death SFX_Prefab.json");
+					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().RemoveEntity(sound);
 					ToggleEntity(id, false);
 				}
 			}
@@ -518,6 +523,17 @@ namespace PE
 			 {
 				 RatScript::ToggleEntity(p_data->attackTelegraphID, false);
 				 p_data->finishedExecution = true;
+			 }
+
+			 if (!attacksoundonce) 
+			 {
+				 SerializationManager serializationManager;
+				 EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Rat Attack SFX_Prefab.json");
+				 if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+					 EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+				 EntityManager::GetInstance().RemoveEntity(sound);
+
+				 attacksoundonce = true;
 			 }
 		 }
 		 else
