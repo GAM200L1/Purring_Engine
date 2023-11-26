@@ -71,7 +71,7 @@ namespace PE
 					if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 					{
 						//std::cout << "CatScript found" << std::endl;
-						CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
+						CatScript::SetMaximumEnergyLevel(CatScript::GetBaseMaximumEnergyLevel() + (m_ScriptData[id].NumberOfFollower - 1) * 2);
 						CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
 						cd->catHealth = m_ScriptData[id].NumberOfFollower;
 					}
@@ -96,7 +96,7 @@ namespace PE
 					if(EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingObject[i]))
 						EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingObject[i]).isActive = false;
 					m_ScriptData[id].NumberOfFollower--;
-					CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() - 2);
+					CatScript::SetMaximumEnergyLevel(CatScript::GetBaseMaximumEnergyLevel() + (m_ScriptData[id].NumberOfFollower - 1) * 2);
 				}
 			}
 		}

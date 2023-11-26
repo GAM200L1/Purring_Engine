@@ -209,6 +209,13 @@ namespace PE
 		 \return int - Returns the maximum energy that the cat can have.
 		*************************************************************************************/
 		static inline int GetMaximumEnergyLevel() { return m_catMaxEnergy; }
+		
+		/*!***********************************************************************************
+		 \brief Returns the starting maximum energy that the cat can have.
+
+		 \return int - Returns the starting maximum energy that the cat can have.
+		*************************************************************************************/
+		static inline int GetBaseMaximumEnergyLevel() { return m_catBaseMaxEnergy; }
 
 		/*!***********************************************************************************
 		 \brief Get the ID of the main cat
@@ -282,6 +289,7 @@ namespace PE
 	  // ----- Private Variables ----- //
 		static int m_catEnergy; // Current energy level of the cat
 		static int m_catMaxEnergy; // Maximum energy of the cat
+		static int m_catBaseMaxEnergy; // Starting maximum energy of the cat
 		static EntityID m_mainCatId; // ID of the main cat
 
 

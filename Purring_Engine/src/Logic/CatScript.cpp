@@ -32,7 +32,7 @@
 namespace PE
 {
 	int CatScript::m_catEnergy{};  // Current energy level of the cat
-	int CatScript::m_catMaxEnergy{ 21 }; // Maximum energy of the cat
+	int CatScript::m_catMaxEnergy{ 21 }, CatScript::m_catBaseMaxEnergy{ 21 }; // Maximum energy of the cat
 	EntityID CatScript::m_mainCatId{ 0 }; // ID of the main cat
 
 
@@ -285,7 +285,7 @@ namespace PE
 		m_scriptData[id].timeBeforeChangingState = 0.f;
 
 		// Set the cat max energy to the value set in the editor
-		m_catMaxEnergy = m_scriptData[id].catMaxEnergy;
+		m_catBaseMaxEnergy = m_catMaxEnergy = m_scriptData[id].catMaxEnergy;
 	}
 
 	void CatScript::OnDetach(EntityID id)
