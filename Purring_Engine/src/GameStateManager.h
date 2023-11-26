@@ -119,8 +119,17 @@ namespace PE {
 		*************************************************************************************/
 		void ReturnToPauseMenuFromExit(EntityID = -1);
 
+		/*!***********************************************************************************
+		 \brief			Reloads the game scene and resets the values of the game state manager
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void RestartGame(EntityID);
 
+		/*!***********************************************************************************
+		 \brief			Helper function to return to the win/lose screen from the quit 
+								confirmation menu.
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void ReturnToWinLoseScreenFromExit(EntityID);
 
 		/*!***********************************************************************************
@@ -129,7 +138,10 @@ namespace PE {
 		*************************************************************************************/
 		void AreYouSureExit(EntityID = -1);
 
-
+		/*!***********************************************************************************
+		 \brief			enter confirmation prompt to exit from the win/lose screen
+		 \param [In]	EntityID needed to save as a button function
+		*************************************************************************************/
 		void WLAreYouSureExit(EntityID = -1);
 
 		/*!***********************************************************************************
@@ -138,8 +150,16 @@ namespace PE {
 		*************************************************************************************/
 		void ExitGame(EntityID = -1);
 
+		/*!***********************************************************************************
+		 \brief			Toggle the win screen
+		 \param [In]	True to enable the screen, false to disable.
+		*************************************************************************************/
 		void ToggleWin(bool);
 
+		/*!***********************************************************************************
+		 \brief			Toggle the lose screen
+		 \param [In]	True to enable the screen, false to disable.
+		*************************************************************************************/
 		void ToggleLose(bool);
 
 		/*!***********************************************************************************
