@@ -79,7 +79,6 @@ namespace PE
 			{
 			case GameStates::MOVEMENT:
 			{
-				m_finishExecution = false;
 				float fadeOutSpeed = std::clamp(m_ScriptData[id].timeSinceExitedState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
 				float fadeInSpeed = std::clamp(m_ScriptData[id].timeSinceEnteredState / m_ScriptData[id].maxFadeTime, 0.f, 1.f);
 					if (m_ScriptData[id].prevState == GameStates::EXECUTE)
@@ -451,6 +450,7 @@ namespace PE
 		else
 		{
 			GameStateManager::GetInstance().IncrementGameState();
+			m_finishExecution = false;
 		}
 	}
 }
