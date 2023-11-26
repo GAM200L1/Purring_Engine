@@ -60,10 +60,11 @@ namespace PE
 
 		SerializationManager serializationManager;
 		bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
-		EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
-
-		if(EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm)) 
+		{
+			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 			EntityManager::GetInstance().Get<EntityDescriptor>(bgm).toSave = false;
+		}
 
 		m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
 	}

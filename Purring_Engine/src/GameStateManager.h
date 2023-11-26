@@ -142,6 +142,12 @@ namespace PE {
 
 		void ToggleLose(bool);
 
+		void ButtonPressSound();
+
+		void PhaseTransitionSound();
+
+		void MenuTransitionSound();
+
 		/*!***********************************************************************************
 		 \brief			Set the entire pause menu to inactive
 		*************************************************************************************/
@@ -194,9 +200,6 @@ namespace PE {
 
 		//Reused
 		EntityID endGameRestartButtonID, endGameExitButtonID, endGameBGID;
-
-		//Audio Objects
-		EntityID ButtonClick, MenuTransition, ButtonHover;
 
 		bool howToPlay{ false }, pausedOnce{ false }, areYouSure{ false }, Won{ false }, Lost{ false };
 

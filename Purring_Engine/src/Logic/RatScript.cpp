@@ -79,6 +79,12 @@ namespace PE
 				{
 					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Death"))
 						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+
+					SerializationManager serializationManager;
+					EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Rat Death SFX_Prefab.json");
+					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+					EntityManager::GetInstance().RemoveEntity(sound);
 				}
 				catch (...)
 				{

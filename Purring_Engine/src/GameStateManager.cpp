@@ -40,6 +40,8 @@ namespace PE
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::PAUSE;
 
+			MenuTransitionSound();
+
 			EntityID bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
 			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
@@ -115,6 +117,8 @@ namespace PE
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 				EntityManager::GetInstance().RemoveEntity(bgm);
 
+				MenuTransitionSound();
+
 				//win menu
 				endGameBGID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/pausebg_Prefab.json");
 				winCatID = serializationManager.LoadFromFile("../Assets/Prefabs/WinLoseMenu/HappyCat_Prefab.json");
@@ -153,7 +157,6 @@ namespace PE
 				Won = true;
 				break;
 			default:
-				return;
 				break;
 		}
 	}
@@ -171,6 +174,8 @@ namespace PE
 			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
+
+			MenuTransitionSound();
 
 			//win menu
 			endGameBGID = serializationManager.LoadFromFile("../Assets/Prefabs/PauseMenu/pausebg_Prefab.json");
@@ -207,8 +212,8 @@ namespace PE
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::LOSE;
 			Lost = true;
+			break;
 		default:
-			return;
 			break;
 		}
 	}
@@ -244,16 +249,22 @@ namespace PE
 	{
 		if (m_currentGameState == GameStates::MOVEMENT)
 		{
+			ButtonPressSound();
+			PhaseTransitionSound();
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::ATTACK;
 		}
 		else if (m_currentGameState == GameStates::ATTACK)
 		{
+			ButtonPressSound();
+			PhaseTransitionSound();
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::EXECUTE;
 		}
 		else if (m_currentGameState == GameStates::EXECUTE)
 		{
+			ButtonPressSound();
+			PhaseTransitionSound();
 			SetTurnNumber(m_turnNumber + 1);
 			m_prevGameState = m_currentGameState;
 			m_currentGameState = GameStates::MOVEMENT;
@@ -287,12 +298,7 @@ namespace PE
 			m_currentGameState = m_prevGameState;
 			m_prevGameState = GameStates::PAUSE;
 			
-
-			EntityID buttonpress = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Button Click SFX_Prefab.json");
-
-			if(EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
-				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(buttonpress);
+			ButtonPressSound();
 
 			EntityID bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
 			if (EntityManager::GetInstance().Has<AudioComponent>(bgm))
@@ -307,6 +313,7 @@ namespace PE
 
 	void GameStateManager::ExitGame(EntityID)
 	{
+		ButtonPressSound();
 		glfwSetWindowShouldClose(p_window, GL_TRUE);
 	}
 
@@ -324,6 +331,30 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(loseTextID).isActive = b;
 		EntityManager::GetInstance().Get<EntityDescriptor>(endGameRestartButtonID).isActive = b;
 		EntityManager::GetInstance().Get<EntityDescriptor>(endGameExitButtonID).isActive = b;
+	}
+
+	void GameStateManager::ButtonPressSound()
+	{
+		EntityID buttonpress = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Button Click SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(buttonpress);
+	}
+
+	void GameStateManager::PhaseTransitionSound()
+	{
+		EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Phase Transition SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
+	void GameStateManager::MenuTransitionSound()
+	{
+		EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Menu Transition SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
 	}
 
 	void GameStateManager::InactiveMenuButtons()
@@ -397,6 +428,7 @@ namespace PE
 
 	void GameStateManager::HowToPlay(EntityID)
 	{
+		ButtonPressSound();
 		//set all the 4 buttons inactive
 		InactiveMenuButtons();
 		//create howtoplay menu here
@@ -408,6 +440,7 @@ namespace PE
 
 	void GameStateManager::ReturnToPauseMenuFromHowToPlay(EntityID)
 	{
+		ButtonPressSound();
 		//set all the 4 buttons active
 		ActiveMenuButtons();
 		//set inactive how to play menu here
@@ -417,6 +450,7 @@ namespace PE
 
 	void GameStateManager::ReturnToPauseMenuFromExit(EntityID)
 	{
+		ButtonPressSound();
 		//set all 4 button active and pawsed
 		ActiveMenuButtons();
 		//delete yes no and are you sure object
@@ -428,6 +462,7 @@ namespace PE
 
 	void GameStateManager::RestartGame(EntityID)
 	{
+		ButtonPressSound();
 		ResetDefaultState();
 		Won = false;
 		Lost = false;
@@ -436,6 +471,7 @@ namespace PE
 
 	void GameStateManager::ReturnToWinLoseScreenFromExit(EntityID)
 	{
+		ButtonPressSound();
 		if (Won)
 		{
 			ToggleWin(true);
@@ -455,6 +491,7 @@ namespace PE
 
 	void GameStateManager::AreYouSureExit(EntityID)
 	{
+		ButtonPressSound();
 		//set pawsed and 4 buttons inactive
 		InactiveMenuButtons();
 		//create yes no button
@@ -469,6 +506,7 @@ namespace PE
 
 	void GameStateManager::WLAreYouSureExit(EntityID)
 	{
+		ButtonPressSound();
 		if (Won)
 		{
 			ToggleWin(false);
