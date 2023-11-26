@@ -275,6 +275,11 @@ namespace PE
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
 		if (p_data->attackDirection != EnumCatAttackDirection::NONE && !m_projectileFired)
 		{
+			// Ensure the rat is facing the direction of their movement
+			vec2 newScale{ RatScript::GetEntityScale(id) };
+			newScale.x = std::abs(newScale.x) * (((CatScript::GetEntityPosition(p_data->telegraphIDs[p_data->attackDirection]) - CatScript::GetEntityPosition(id)).Dot(vec2{1.f, 0.f}) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
+			RatScript::ScaleEntity(id, newScale.x, newScale.y);
+
 			CatScript::ToggleEntity(p_data->projectileID, true);
 			EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ApplyLinearImpulse(m_bulletImpulse);
 			m_projectileFired = true;
