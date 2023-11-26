@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     CatAttackScript.cpp
+ \file     CatScript.cpp
  \date     15-11-2023
 
  \author               Liew Yeni
@@ -62,11 +62,6 @@ namespace PE
 		CreateAttackTelegraphs(id, false, false); // north box
 		CreateAttackTelegraphs(id, false, true); // south box
 
-		//! Creates an entity for the projectile
-		SerializationManager serializationManager;
-		m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
-		/*EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).parent = id;*/
-		EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
 		
 		// Create as many entities to visualise the player path nodes  
 		// such that there is one node per energy level
@@ -85,12 +80,8 @@ namespace PE
 	{
 		
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
-		// std::cout << "GS: " << static_cast<int>(GameStateManager::GetInstance().GetGameState()) << " | Cat state: " << m_scriptData[id].p_stateManager->GetStateName() << std::endl;
-		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; } // do something when they win
 
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; } // do something when they lose */
-
-
+		// Check if the player has died
 		if (m_scriptData[id].catHealth <= 0 && m_scriptData[id].isMainCat)
 		{
 			for (auto quad : m_scriptData[id].pathQuads)
@@ -123,6 +114,8 @@ namespace PE
 			ToggleEntity(id, false);
 			return;
 		}
+
+		// Ensure that the state manager exists
 		if (!m_scriptData[id].p_stateManager) 
 		{
 			m_scriptData[id].catID = id;
@@ -133,6 +126,8 @@ namespace PE
 
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
 
+
+		// --- ANIMATE THE CAT BASED ON ITS STATE --- // 
 
 		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
 		{ 
@@ -213,6 +208,7 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 		{
+			// cycle the cat animations
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
 				if (m_scriptData[id].finishedExecution)
@@ -281,6 +277,7 @@ namespace PE
 			m_scriptData[id] = CatScriptData{};
 		}
 
+		// Reset values
 		m_scriptData[id].shouldChangeState = false;
 		m_scriptData[id].timeBeforeChangingState = 0.f;
 
@@ -315,8 +312,9 @@ namespace PE
 
 	void CatScript::TriggerStateChange(EntityID id, float const stateChangeDelay)
 	{
-		if (m_scriptData[id].delaySet) { return; }
-
+		if (m_scriptData[id].delaySet) { return; } // Prevent the state from constantly resetting the delay
+		
+		// Flags that the state should change in [timeBeforeChangingState] seconds
 		m_scriptData[id].shouldChangeState = true;
 		m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
 		m_scriptData[id].delaySet = true;
@@ -325,6 +323,7 @@ namespace PE
 
 	bool CatScript::CheckShouldStateChange(EntityID id, float const deltaTime)
 	{
+		// Waits for [timeBeforeChangingState] to pass before changing the state
 		if (m_scriptData[id].shouldChangeState)
 		{
 			if (m_scriptData[id].timeBeforeChangingState > 0.f)
@@ -334,6 +333,7 @@ namespace PE
 			}
 			else
 			{
+				// Change the state immediately
 				m_scriptData[id].shouldChangeState = false;
 				m_scriptData[id].timeBeforeChangingState = 0.f;
 				m_scriptData[id].delaySet = false;
@@ -468,6 +468,7 @@ namespace PE
 		EnumCatAttackDirection dir;
 		AABBCollider telegraphCollider;
 
+		// Set the dimensions of the telegraph based on the axis it's on
 		if (isXAxis)
 		{
 			telegraphTransform.relPosition.x = ((isNegative) ? -1.f : 1.f) * ((telegraphTransform.width * 0.5f) + (catTransform.width * 0.5f) + 10.f);
@@ -484,27 +485,36 @@ namespace PE
 			dir = (isNegative) ? EnumCatAttackDirection::SOUTH : EnumCatAttackDirection::NORTH;
 		}
 
+		// Configure the collider
 		EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = telegraphCollider;
 		EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
 
 		m_scriptData[id].telegraphIDs.emplace(dir, telegraphID);
 	}
 
+
+	void CatScript::CreateProjectile(EntityID id)
+	{
+			// Creates an entity for the projectile
+			SerializationManager serializationManager;
+			m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
+	}
+
+
 	void CatScript::CreatePathNode(EntityID id)
 	{
-		// create the east direction entity
+		// create the entity
 		EntityID nodeId{ EntityFactory::GetInstance().CreateEntity<Transform, Graphics::Renderer>() };
 
-		EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(1.f, 1.f, 1.f, 1.f); // sets the color of the got to white
+		EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(1.f, 1.f, 1.f, 1.f); // sets the color of the node to white
 
 		EntityManager::GetInstance().Get<Transform>(nodeId).width = m_scriptData[id].nodeSize;
 		EntityManager::GetInstance().Get<Transform>(nodeId).height = m_scriptData[id].nodeSize;
 				
-		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).isActive = false;
+		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).isActive = false; // deactivate by default
 
 		m_scriptData[id].pathQuads.emplace_back(nodeId);
-
-		std::cout << "CreatePathNode(" << id << ") created " << nodeId << "\n";
 	}
 
 }

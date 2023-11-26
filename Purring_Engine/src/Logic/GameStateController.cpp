@@ -8,15 +8,16 @@
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
  \par      code %:     50%
- \par      changes:    Added functions to 
+ \par      changes:    Added functions to control the states + fade the splashscreen in.
 
  \co-author            Krystal Yamin
  \par      email:      krystal.y\@digipen.edu
  \par      code %:     50%
  \par      changes:    24-11-2023
-											 Added functions to update gameplay HUD.
+											 Added functions and logic to update gameplay HUD.
 
- \brief  This file contains the script that interfaces with the GameStateManager.
+ \brief  This file contains the script that interfaces with the GameStateManager
+					and updates the in game HUD.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
 
@@ -96,10 +97,6 @@ namespace PE
 			{
 			case GameStates::MOVEMENT:
 			{
-					//std::cout << "current gamestate: " << (int)GameStateManager::GetInstance().GetGameState() << "\n";
-					if (m_ScriptData[id].prevState != GameStates::MOVEMENT)
-							std::cout << "prev gamestate: " << (int)(m_ScriptData[id].prevState) << ", current gamestate: " << (int)GameStateManager::GetInstance().GetGameState() << "\n";
-
 					if (m_ScriptData[id].prevState == GameStates::EXECUTE)
 					{
 						m_ScriptData[id].timeSinceEnteredState = 0;
@@ -146,7 +143,6 @@ namespace PE
 			}
 			case GameStates::EXECUTE:
 			{
-
 					if (m_ScriptData[id].prevState == GameStates::ATTACK) 
 					{
 						m_ScriptData[id].timeSinceEnteredState = 0;
@@ -216,6 +212,7 @@ namespace PE
 	{
 		m_ScriptData[id] = GameStateControllerData();
 
+		// Enable the splashscreen and planning HUD, disable the execution phase HUD
 		TogglePlanningHUD(id, true);
 		ToggleExecutionHUD(id, false);
 		ToggleSplashscreen(id, true);

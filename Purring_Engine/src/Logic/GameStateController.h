@@ -7,9 +7,18 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan\@digipen.edu
+ \par      code %:     50%
+ \par      changes:    Added functions to control the states + fade the splashscreen in.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     50%
+ \par      changes:    24-11-2023
+											 Added functions and logic to update gameplay HUD.
 
 
- \brief  This file contains the script that interfaces with the GameStateManager.
+ \brief  This file contains the script that interfaces with the GameStateManager
+					and updates the in game HUD.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -245,6 +254,9 @@ namespace PE
 		*************************************************************************************/
 		bool SetGUIRendererAlpha(EntityID const id, float const alpha);
 
+		/*!***********************************************************************************
+		 \brief Switches the gamestate from movement and attack execution back to movement planning.
+		*************************************************************************************/
 		void ExecutionToMovement();
 
 
@@ -269,9 +281,9 @@ namespace PE
 		*************************************************************************************/
 		~GameStateController();
 	private:
-		std::map<EntityID, GameStateControllerData> m_ScriptData;
-		bool m_finishExecution{ false };
-		EntityID bgm;
+		std::map<EntityID, GameStateControllerData> m_ScriptData; // Data associated with each instance of the script
+		bool m_finishExecution{ false }; // used to keep track of whether the execution phase is complete. Set to true when the cats and rats are done executing their attacks.
+		EntityID bgm; // ID of the entity holding the background music
 	};
 
 
