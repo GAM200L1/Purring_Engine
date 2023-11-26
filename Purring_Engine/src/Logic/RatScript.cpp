@@ -317,7 +317,7 @@ namespace PE
 		p_data->distanceFromPlayer = RatScript::GetEntityPosition(id).Distance(catObject.position) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f);
 
 		// if the cat is within the detection radius
-		if (p_data->distanceFromPlayer <= (RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
+		if (p_data->distanceFromPlayer <= ((RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f)) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
 		{
 			float dx = catObject.position.x - ratObject.position.x;
 			float dy = catObject.position.y - ratObject.position.y;
@@ -345,6 +345,10 @@ namespace PE
 			// settings for the attack cross
 			RatScript::PositionEntity(p_data->attackTelegraphID, catObject.position);
 			RatScript::ToggleEntity(p_data->attackTelegraphID, true); // show the arrow of movement
+		}
+		else
+		{
+			p_data->distanceFromPlayer = 0.f;
 		}
 	}
 	
