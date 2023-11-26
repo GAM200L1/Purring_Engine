@@ -375,7 +375,7 @@
                         "isActive": true,
                         "name": "Player",
                         "parent": null,
-                        "sceneID": 8
+                        "sceneID": 7
                     },
                     "Renderer": {
                         "Color": {
@@ -523,7 +523,7 @@
                         "isActive": true,
                         "name": "Rat",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 8
                     },
                     "Renderer": {
                         "Color": {
@@ -556,7 +556,7 @@
                                 "collisionDamage": 1,
                                 "detectionRadius": 4.0,
                                 "health": 1,
-                                "mainCatID": 3,
+                                "mainCatID": 8,
                                 "movementSpeed": 200.0
                             },
                             "state": 0

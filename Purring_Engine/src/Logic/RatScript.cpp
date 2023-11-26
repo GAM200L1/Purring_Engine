@@ -64,7 +64,6 @@ namespace PE
 
 		if (m_scriptData[id].health <= 0)
 		{
-			ToggleEntity(id, false);
 			// idk if need these
 
 			// TODO ------------------------------------------------------------ //
@@ -74,6 +73,26 @@ namespace PE
 			// Set game state to win when player HP is 0 (we only have one anyway)
 			// probably some DT stuff to let the animation run
 			// GameStateManager::GetInstance().SetGameState(GameStates::WIN);
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Death"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+				}
+				catch (...)
+				{
+					// error
+				}
+
+				// death animation example
+				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
+				{
+					ToggleEntity(id, false);
+				}
+			}
+
+
 			return;
 		}
 
@@ -98,7 +117,18 @@ namespace PE
 			// TODO ------------------------------------------------------------ //
 			// Add function here to get rat to be in IDLE animation when player is planning Attack and movement
 			// ----------------------------------------------------------------- //
-
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			// If current gamestate is set to attack planning, change state to CatAttackPLAN
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
 			{
@@ -115,7 +145,17 @@ namespace PE
 			// TODO ------------------------------------------------------------ //
 			// Add function here to get rat to be in MOVEMENT animation when executing movement
 			// ----------------------------------------------------------------- //
-
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Walk"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				// trigger state change called in MovementEXECUTE state update
@@ -127,7 +167,17 @@ namespace PE
 			// TODO ------------------------------------------------------------ //
 			// Add function here to get player to be in ATTACK animation when planning movement
 			// ----------------------------------------------------------------- //
-
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+				}
+				catch (...)
+				{
+					// error
+				}
+			}
 			// Check if the state should be changed
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
 			{
