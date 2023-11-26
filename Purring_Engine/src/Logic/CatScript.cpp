@@ -99,19 +99,26 @@ namespace PE
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
 				try
-				{ 
-					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Death"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
 				}
 				catch (...)
 				{
 					// error
 				}
+
+				// death animation example
+				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
+				{
+					EntityManager::GetInstance().Get<PE::Transform>(id).height = 0;
+					EntityManager::GetInstance().Get<PE::Transform>(id).width = 0;
+				}
 			}
-			
+
 			// GameStateManager::GetInstance().SetGameState(GameStates::LOSE);
 			return;
 		}
-
 		if (!m_scriptData[id].p_stateManager) 
 		{
 			m_scriptData[id].catID = id;
@@ -124,7 +131,7 @@ namespace PE
 
 
 		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
-		{
+		{ 
 			// TODO ------------------------------------------------------------ //
 			// Add function here to get player to be in IDLE animation when planning movement
 			// ----------------------------------------------------------------- //
