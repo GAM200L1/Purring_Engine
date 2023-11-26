@@ -736,16 +736,18 @@ namespace PE
 							 try
 							 {
 								 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(p_data->mainCatID, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+								 return;
 							 } catch(...){}
 						 }
 					 }
 					 // else checks if the cat hit was the main cat
-					 else if (OTEE.Entity1 == p_data->mainCatID)
+					 if (OTEE.Entity1 == p_data->mainCatID)
 					 {
 						 int const& damage = (OTEE.Entity2 == p_data->ratID) ? p_data->collisionDamage : p_data->attackDamage;
 						 try
 						 {
 							 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(p_data->mainCatID, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+							 return;
 						 }
 						 catch (...) {}
 					 }

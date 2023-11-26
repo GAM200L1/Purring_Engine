@@ -112,7 +112,7 @@ namespace PE
 				}
 			}
 
-			// GameStateManager::GetInstance().SetGameState(GameStates::LOSE);
+			GameStateManager::GetInstance().SetGameState(GameStates::LOSE);
 			return;
 		}
 		if (!m_scriptData[id].p_stateManager) 
@@ -233,8 +233,6 @@ namespace PE
 			}
 		}
 	
-		if(m_scriptData[id].catHealth <= 0)
-			GameStateManager::GetInstance().SetLoseState();
 	}
 
 	void CatScript::OnAttach(EntityID id)
