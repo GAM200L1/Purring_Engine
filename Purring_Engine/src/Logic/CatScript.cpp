@@ -90,10 +90,6 @@ namespace PE
 				CatScript::ToggleEntity(quad, false);
 			}
 
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get player to be in DEATH animation when HP reaches 0
-			// ----------------------------------------------------------------- //
-
 			// Set game state to lose when player HP is 0
 			// probably some DT stuff to let the animation run
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
@@ -132,9 +128,6 @@ namespace PE
 
 		if (m_scriptData[id].p_stateManager->GetStateName() == "MovementPLAN")
 		{ 
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get player to be in IDLE animation when planning movement
-			// ----------------------------------------------------------------- //
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
 				try
@@ -159,9 +152,6 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackPLAN")
 		{
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get player to be in IDLE animation when planning movement
-			// ----------------------------------------------------------------- //
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
 				try
@@ -187,14 +177,6 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 		{
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get player to be in MOVEMENT animation when planning movement
-			// ----------------------------------------------------------------- //
-			// this was the original code idk how its done now
-			//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-			//{
-			//	//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationIndex("playerWalk");
-			//}
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
 				try
@@ -215,23 +197,32 @@ namespace PE
 		}
 		else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 		{
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get player to be in ATTACK animation when planning movement
-			// ----------------------------------------------------------------- //
-			//if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()) && m_scriptData[id].attackDirection != 0)
-			
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
-				try
+				if (m_scriptData[id].finishedExecution)
 				{
-					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+					try
+					{
+						if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+							EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+					}
+					catch (...)
+					{
+						// error
+					}
 				}
-				catch (...)
+				else
 				{
-					// error
+					try
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+					}
+					catch (...)
+					{
+						// error
+					}
 				}
 			}
-
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
 			{
 				TriggerStateChange(id); // immediate state change

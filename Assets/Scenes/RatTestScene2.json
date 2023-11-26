@@ -373,7 +373,7 @@
                         "Prefab Type": "PlayerPrefab",
                         "children": [],
                         "isActive": true,
-                        "name": "Player",
+                        "name": "Cat",
                         "parent": null,
                         "sceneID": 7
                     },
@@ -556,7 +556,7 @@
                                 "collisionDamage": 1,
                                 "detectionRadius": 4.0,
                                 "health": 1,
-                                "mainCatID": 8,
+                                "mainCatID": 7,
                                 "movementSpeed": 200.0
                             },
                             "state": 0

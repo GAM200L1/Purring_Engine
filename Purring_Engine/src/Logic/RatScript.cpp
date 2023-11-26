@@ -169,14 +169,31 @@ namespace PE
 			// ----------------------------------------------------------------- //
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
-				try
+				if (m_scriptData[id].finishedExecution)
 				{
-					EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+					try
+					{
+						if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Idle"))
+							EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Idle"));
+					}
+					catch (...)
+					{
+						// error
+					}
 				}
-				catch (...)
+				else
 				{
-					// error
+					try
+					{
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+					}
+					catch (...)
+					{
+						// error
+					}
 				}
+
+
 			}
 			// Check if the state should be changed
 			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
