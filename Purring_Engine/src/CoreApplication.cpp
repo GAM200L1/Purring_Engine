@@ -86,6 +86,10 @@
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
 #include "GameStateManager.h"
+
+// Scene Manager
+#include "SceneManager/SceneManager.h"
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -337,8 +341,15 @@ void PE::CoreApplication::Run()
 
     SerializationManager serializationManager;
 
-    // Loads Default Scene
-    serializationManager.LoadAllEntitiesFromFile("../Assets/Scenes/DefaultScene.json");
+    // Set start scene
+#ifndef GAMERELEASE
+    SceneManager::GetInstance().SetStartScene("DefaultScene.json");
+#else
+    SceneManager::GetInstance().SetStartScene("DefaultScene.json"); // set game scene here <-
+#endif // !GAMERELEASE
+
+    // Load scene
+    SceneManager::GetInstance().LoadCurrentScene();
 
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
