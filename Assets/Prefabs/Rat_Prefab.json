@@ -1,12 +1,22 @@
 {
     "Entity": {
         "components": {
+            "AnimationComponent": {
+                "AnimationIDs": [
+                    "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                    "../Assets/Animation/AnimationRat_Death_Anim.json",
+                    "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                    "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                    "../Assets/Animation/AnimationRat_walk_Anim.json"
+                ],
+                "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle_Anim.json"
+            },
             "Collider": {
                 "collisionLayerIndex": 0,
                 "data": {
                     "center": {
-                        "x": -195.0,
-                        "y": -13.0
+                        "x": 0.0,
+                        "y": 0.0
                     },
                     "positionOffset": {
                         "x": 0.0,
@@ -42,6 +52,24 @@
             },
             "ScriptComponent": {
                 "RatScript": {
+                    "data": {
+                        "animationStates": {
+                            "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                            "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
+                            "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                            "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                            "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
+                        },
+                        "attackDamage": 1,
+                        "attackDelay": 0.0,
+                        "attackDiameter": 64.0,
+                        "attackDuration": 0.5,
+                        "collisionDamage": 1,
+                        "detectionRadius": 4.0,
+                        "health": 1,
+                        "mainCatID": 3,
+                        "movementSpeed": 200.0
+                    },
                     "state": 0
                 }
             },
@@ -49,8 +77,8 @@
                 "height": 64.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": -195.0,
-                    "y": -13.0
+                    "x": 0.0,
+                    "y": 0.0
                 },
                 "relativeposition": {
                     "x": 0.0,

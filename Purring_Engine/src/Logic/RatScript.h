@@ -53,6 +53,8 @@ namespace PE
 		bool delaySet{ false };
 		float timeBeforeChangingState{ 0.f };
 		bool finishedExecution{ false }; // bool to check if rat has finished its movemen and attack executions
+
+		std::map<std::string, std::string> animationStates;
 	};
 
 	class RatScript : public Script

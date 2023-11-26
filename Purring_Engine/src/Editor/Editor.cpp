@@ -61,6 +61,7 @@
 #include "Input/InputSystem.h"
 #include "Layers/CollisionLayer.h"
 #include "Logic/CatScript.h"
+#include "Logic/RatScript.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -2500,11 +2501,13 @@ namespace PE {
 							if (key == "CatScript")
 							{
 								CatScript* p_script = dynamic_cast<CatScript*>(val);
+								RatScript* p_scriptRat = dynamic_cast<RatScript*>(val);
 								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
 								if (it != p_script->GetScriptData().end())
 								{
-									if (ImGui::CollapsingHeader("CatScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									if (ImGui::CollapsingHeader(key.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+
 										// cat stats
 										ImGui::Text("Cat Stats");
 										ImGui::Text("Cat Health: "); ImGui::SameLine(); ImGui::DragInt("##cathealth", &it->second.catHealth);
@@ -2515,13 +2518,14 @@ namespace PE {
 										ImGui::Text("Attack Stats");
 										ImGui::Text("Attack Damage: "); ImGui::SameLine(); ImGui::DragInt("##attackdamage", &it->second.attackDamage);
 										ImGui::Text("Required Attack Points: "); ImGui::SameLine(); ImGui::DragInt("##attackpoints", &it->second.requiredAttackPoints);
-										
+
 										// Projectile variabls
 										ImGui::Text("Projectile Stats");
 										ImGui::Text("Bullet Fire Delay: "); ImGui::SameLine(); ImGui::DragFloat("##bulletdelay", &it->second.bulletDelay);
 										ImGui::Text("Range: "); ImGui::SameLine(); ImGui::DragFloat("##projectilerange", &it->second.bulletRange);
 										ImGui::Text("Lifetime: "); ImGui::SameLine(); ImGui::DragFloat("##projectilelifetime", &it->second.bulletLifeTime);
-										ImGui::Text("Force: "); ImGui::SameLine(); ImGui::DragFloat("##projectileforce", &it->second.bulletForce);
+										ImGui::Text("Force: "); ImGui::SameLine(); ImGui::DragFloat("##projectileforce", &it->second.bulletForce);									
+										
 
 										ImGui::Separator();
 										int num{};
@@ -2599,6 +2603,113 @@ namespace PE {
 									}
 								}
 							}
+
+							if (key == "RatScript")
+							{
+								RatScript* p_script = dynamic_cast<RatScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader(key.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+
+										ImGui::Text("Rat Settings");
+										int input = static_cast<int>(it->second.mainCatID);
+										ImGui::Text("Main Cat ID: "); ImGui::SameLine(); ImGui::InputInt("##targetCat", &input);
+										it->second.mainCatID = static_cast<EntityID>(input);
+										ImGui::Text("Health: "); ImGui::SameLine(); ImGui::InputInt("##rathealth", &it->second.health);
+										ImGui::Text("Movement Speed: "); ImGui::SameLine(); ImGui::InputFloat("##ratmovespeed", &it->second.movementSpeed);
+
+										ImGui::Text("Detection Radius: "); ImGui::SameLine(); ImGui::InputFloat("##ratdecrad", &it->second.detectionRadius);
+										ImGui::Text("Attack Diameter: "); ImGui::SameLine(); ImGui::InputFloat("##ratattdia", &it->second.attackDiameter);
+										ImGui::Text("Attack Duration: "); ImGui::SameLine(); ImGui::InputFloat("##ratattdur", &it->second.attackDuration);
+
+										ImGui::Text("Touch Damage: "); ImGui::SameLine(); ImGui::InputInt("##rattdmg", &it->second.collisionDamage);
+										ImGui::Text("Attack Damage: "); ImGui::SameLine(); ImGui::InputInt("##ratattdmg", &it->second.attackDamage);
+
+										ImGui::Text("Attack Delay: "); ImGui::SameLine(); ImGui::InputFloat("##ratattdel", &it->second.attackDelay);
+
+
+
+										ImGui::Separator();
+										int num{};
+										ImGui::Text("Add Animation state"); ImGui::SameLine();
+										bool worked{ false };
+										if (ImGui::Button("+"))
+										{
+											std::string str = "NewState";
+											while (!worked)
+											{
+												if (it->second.animationStates.count(str))
+												{
+													str += 1;
+												}
+												else
+												{
+													it->second.animationStates.emplace(str, "");
+													worked = true;
+												}
+											}
+										}
+										static std::pair<std::string, std::string> whoToRemove;
+										static bool rmFlag{ false };
+										for (auto& [k, v] : it->second.animationStates)
+										{
+											ImGui::Text("State: "); ImGui::SameLine();
+											std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
+											bool changed = ImGui::InputText(std::string("##" + k + std::to_string(++num)).c_str(), &curr);
+											if (!changed)
+											{
+												if (whoToRemove.first == k)
+												{
+													if (!ImGui::IsItemActivated())
+													{
+														rmFlag = true;
+													}
+												}
+											}
+											else
+											{
+												if (k != curr)
+												{
+													whoToRemove.first = k;
+													whoToRemove.second = curr;
+													rmFlag = false;
+												}
+
+											}
+
+
+											ImGui::Text("Animation: "); ImGui::SameLine();
+											bool bl = ImGui::BeginCombo(std::string("##Animation" + k + std::to_string(num)).c_str(), v.c_str());
+											if (bl)
+											{
+												if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+												{
+													for (const auto& name : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+													{
+														if (ImGui::Selectable(name.c_str()))
+															v = name;
+													}
+												}
+												ImGui::EndCombo();
+											}
+											ImGui::Separator();
+										}
+										if (rmFlag)
+										{
+											it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
+											it->second.animationStates.erase(whoToRemove.first);
+											whoToRemove.first = "";
+											whoToRemove.second = "";
+											rmFlag = false;
+										}
+									}
+								}
+							}
+
+
+
 						}
 					}
 
