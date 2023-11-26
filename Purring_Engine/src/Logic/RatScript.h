@@ -48,6 +48,7 @@ namespace PE
 		float attackDelay{ 0.f }; // delay before attacking cat, needs manual setting
 		vec2 directionToTarget{ 0.f, 0.f };
 		bool attacking{ false };
+		bool hitCat{ false };
 
 		// state management
 		StateMachine* p_stateManager;
@@ -146,6 +147,9 @@ namespace PE
 		*************************************************************************************/
 		static vec2 GetEntityScale(EntityID const transformId);
 
+		void RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE);
+
+		void CheckFollowOrMain(EntityID mainCat, EntityID collidedCat, EntityID damagingID, EntityID rat);
 
 		std::map<EntityID, RatScriptData>& GetScriptData() { return m_scriptData; }
 
@@ -205,7 +209,6 @@ namespace PE
 		RatScriptData* p_data;
 		int m_collisionEventListener{};
 		int m_collisionStayEventListener{};
-		bool m_hitCat;
 	};
 
 
@@ -235,7 +238,6 @@ namespace PE
 		RatScriptData* p_data;
 		int m_collisionEventListener{};
 		int m_collisionStayEventListener{};
-		bool m_hitCat;
 		float m_delay{};
 	};
 
