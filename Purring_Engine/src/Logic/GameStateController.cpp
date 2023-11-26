@@ -445,6 +445,7 @@ namespace PE
 		{
 			for (EntityID scriptID : SceneView<ScriptComponent>())
 			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(scriptID).isActive) { continue; }
 				if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
 				{
 					RatScriptData* p_ratScript = GETSCRIPTDATA(RatScript, scriptID);
