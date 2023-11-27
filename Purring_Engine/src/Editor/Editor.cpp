@@ -806,14 +806,9 @@ namespace PE {
 						if (m_currentSelectedObject != -1)
 						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
-						//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-						//LogicSystem::DeleteScriptData(m_currentSelectedObject);
-						//if not first index
-						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
 						//if object selected
 						m_objectIsSelected = false;
-						//m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
 						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 
