@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/sfx_UI_ButtonClick.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Button Click SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Button Click SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

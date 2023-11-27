@@ -1,0 +1,40 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+				"Prefab Type": "Turn Execute Text",
+                "children": [],
+                "isActive": true,
+                "name": "Turn Execute Text",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "TextComponent": {
+                "Color": {
+                    "w": 1.0,
+                    "x": 0.29019609093666077,
+                    "y": 0.25882354378700256,
+                    "z": 0.22745098173618317
+                },
+                "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                "Size": 0.8999999761581421,
+                "Text": "EXECUTING"
+            },
+            "Transform": {
+                "height": 20.69999885559082,
+                "orientation": 0.0,
+                "position": {
+                    "x": 746.0,
+                    "y": 454.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 178.1999969482422
+            }
+        },
+        "name": ""
+    }
+}

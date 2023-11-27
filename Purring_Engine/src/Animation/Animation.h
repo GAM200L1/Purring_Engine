@@ -98,6 +98,34 @@ namespace PE
 		void SetCurrentAnimationID(std::string animationID);
 
 		/*!***********************************************************************************
+		 \brief Get the Total Frames in the animation
+		 
+		 \return unsigned 
+		*************************************************************************************/
+		unsigned GetAnimationTotalFrames();
+
+		/*!***********************************************************************************
+		 \brief Get the maximum index for the animation
+
+		 \return unsigned
+		*************************************************************************************/
+		unsigned GetAnimationMaxIndex();
+
+		/*!***********************************************************************************
+		 \brief Get the Animation Frame Rate
+		 
+		 \return unsigned 
+		*************************************************************************************/
+		unsigned GetAnimationFrameRate();
+
+		/*!****v*******************************************************************************
+		 \brief Get the Animation Frame Time
+		 
+		 \return double 
+		*************************************************************************************/
+		double GetAnimationFrameTime();
+
+		/*!***********************************************************************************
 		 \brief Serializes the data attached to this component.
 
 		 \param[in] id The id of the entity that owns this component.
@@ -274,6 +302,13 @@ namespace PE
 		float GetAnimationDuration();
 
 		/*!***********************************************************************************
+		 \brief Get the Animations' duration per frame
+		 
+		 \return float 
+		*************************************************************************************/
+		float GetAnimationFrameTime();
+
+		/*!***********************************************************************************
 		 \brief Load animation from file.
 
 		 \param[in] r_filePath File path of animation.
@@ -381,6 +416,8 @@ namespace PE
 		\param[in] spriteSheetKey to set to
 		*************************************************************************************/
 		void SetAnimationSpriteSheetKey(std::string animationID, std::string spriteSheetKey);
+
+
 
 		// ----- Private Variables ----- //
 	private:

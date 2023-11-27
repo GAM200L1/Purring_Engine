@@ -394,26 +394,28 @@ namespace PE
 				}
 				for (const auto& vec : m_poolsEntity)
 				{
+					if (vec.first == ALL)
+						continue;
 					const size_t cnt = vec.first.count();
 					size_t cnt2{};
 					for (const std::pair<const ComponentID, ComponentPool*>pool : m_componentPools)
 					{
-						if ((vec.first & pool.first).any() && pool.second->HasEntity(id)) 
-						if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
-						{
-							++cnt2;
-						}
+						if ((vec.first & pool.first).any() && pool.second->HasEntity(id))
+							if (std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
+							{
+								++cnt2;
+							}
 					}
-					if (cnt2 == cnt)
+					if (cnt2 == cnt && std::find(m_poolsEntity[vec.first].begin(), m_poolsEntity[vec.first].end(), id) == m_poolsEntity[vec.first].end())
 						m_poolsEntity[vec.first].emplace_back(id);
 				}
 			}
 			else
 			{
-				if (!m_entities.count(id) &&
-					(std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) != m_poolsEntity[ALL].end()))
+				if (!m_entities.count(id))
 				{
-					m_poolsEntity[ALL].erase(std::remove(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id), m_poolsEntity[ALL].end());
+					while (std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id) != m_poolsEntity[ALL].end())
+						m_poolsEntity[ALL].erase(std::find(m_poolsEntity[ALL].begin(), m_poolsEntity[ALL].end(), id));
 				}
 				for (auto& pool : m_poolsEntity)
 				{
@@ -421,7 +423,7 @@ namespace PE
 					{
 						if (pool.first != ALL && (std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id) != m_poolsEntity[pool.first].end()))
 						{
-							m_poolsEntity[pool.first].erase(std::remove(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id), m_poolsEntity[pool.first].end());
+							m_poolsEntity[pool.first].erase(std::find(m_poolsEntity[pool.first].begin(), m_poolsEntity[pool.first].end(), id));
 						}
 					}
 				}
@@ -446,31 +448,33 @@ namespace PE
 	template<typename T>
 	T* EntityManager::Assign(EntityID id)
 	{
-		static ComponentID componentID = GetComponentID<T>();
-
+		ComponentID componentID = GetComponentID<T>();
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
+			//engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
+			//engine_logger.FlushLog();
 			throw;
 		}
+
 		if (m_componentPools[componentID]->HasEntity(id))
 		{
-			return;
+			return reinterpret_cast<T*>(m_componentPools[componentID]->Get(id));
 		}
-
 		// add to component pool's map keeping track of index
 		m_componentPools[componentID]->idxMap.emplace(id, m_componentPools[componentID]->idxMap.size());
-		
+
 		// initialize that region of memory
 		if (m_componentPools[componentID]->size >= m_componentPools[componentID]->capacity - 1)
 		{
-			m_componentPools[componentID]->Resize(m_componentPools[componentID]->m_capacity * 2);
+			m_componentPools[componentID]->Resize(m_componentPools[componentID]->capacity * 2);
 		}
+
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
-		// it will call the constructor at this position instead of allocating more memory
-		m_componentPools[componentID]->Get(id) =  T();
+		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[componentID]->size);
-		return p_component;
+
+		return reinterpret_cast<T*>(m_componentPools[componentID]->Get(id));
 	}
 
 	//-------------------- Templated function implementations --------------------//

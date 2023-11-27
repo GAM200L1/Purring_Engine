@@ -162,7 +162,7 @@ namespace PE
             m_renderFrameBuffer.Bind();
 
             // If the window size has changed
-            if ((windowWidth > std::numeric_limits<float>::epsilon() && windowHeight > std::numeric_limits<float>::epsilon()) &&
+            if ((!CompareFloats(windowWidth, 0.f) && !CompareFloats(windowHeight, 0.f)) &&
                 (m_cachedWindowWidth != windowWidth || m_cachedWindowHeight != windowHeight))
             {
                 m_cachedWindowWidth = windowWidth, m_cachedWindowHeight = windowHeight;
@@ -176,19 +176,41 @@ namespace PE
 #ifndef GAMERELEASE
                 // Update the editor camera viewport size
                 r_cameraManager.GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
-
-                if (Editor::GetInstance().IsEditorActive())
-                {
-                    // Update the ui camera viewport size
-                    r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
-                }
 #endif // !GAMERELEASE
             }
 
 #ifndef GAMERELEASE
-            if (!Editor::GetInstance().IsEditorActive())
+            if (Editor::GetInstance().IsEditorActive())
             {
-                // Update the ui camera viewport size
+                // Update the ui camera viewport size to the size of the editor window
+                r_cameraManager.GetUiCamera().SetViewDimensions(windowWidth, windowHeight);
+            }
+            else
+            {
+                // Update the ui camera viewport size to the size of the main camera if it exists,
+                // or the cached start window size
+                std::optional<std::reference_wrapper<Camera>> optional_mainCamera{r_cameraManager.GetMainCamera()};
+
+                if (optional_mainCamera.has_value()) 
+                {
+                    r_cameraManager.GetUiCamera().SetViewDimensions(optional_mainCamera.value().get().GetViewportWidth(), optional_mainCamera.value().get().GetViewportHeight());
+                }
+                else 
+                {
+                    r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
+                }
+            }
+#else
+            // Update the ui camera viewport size to the size of the main camera if it exists,
+            // or the cached start window size
+            std::optional<std::reference_wrapper<Camera>> optional_mainCamera{ r_cameraManager.GetMainCamera() };
+
+            if (optional_mainCamera.has_value())
+            {
+                r_cameraManager.GetUiCamera().SetViewDimensions(optional_mainCamera.value().get().GetViewportWidth(), optional_mainCamera.value().get().GetViewportHeight());
+            }
+            else
+            {
                 r_cameraManager.GetUiCamera().SetViewDimensions(static_cast<float>(m_windowStartWidth), static_cast<float>(m_windowStartHeight));
             }
 #endif // !GAMERELEASE
@@ -903,6 +925,9 @@ namespace PE
 
             for (const EntityID& id : SceneView<TextComponent, Transform>())
             {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+
                 TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
                 vec2 position{ EntityManager::GetInstance().Get<Transform>(id).position };
 

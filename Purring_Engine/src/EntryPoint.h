@@ -42,5 +42,6 @@ int WinMain(int argc, char** argv)
 
 	// detect memory leaks
 	_CrtSetReportMode(_CRT_WARN, _CRTDBG_MODE_DEBUG);
+	return 0;
 }
 

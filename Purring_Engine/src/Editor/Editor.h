@@ -265,10 +265,7 @@ namespace PE {
 		 \brief toggle rendering of debug lines
 		*************************************************************************************/
 		void ToggleDebugRender();
-		/*!***********************************************************************************
-		 \brief Set custom ImGUI style
-		*************************************************************************************/
-		void SetImGUIStyle();
+
 		/*!***********************************************************************************
 		 \brief	Load Scene based on given file path
 
@@ -285,17 +282,6 @@ namespace PE {
 		 \brief command line test that opens the test window
 		*************************************************************************************/
 		void test();
-
-		/*!***********************************************************************************
-		 \brief Plays a sound effect. Used by the buttons.		 
-		*************************************************************************************/
-		void PlayAudio1(EntityID);
-
-		/*!***********************************************************************************
-		 \brief Plays a different sound effect. Used by the buttons.		 
-		*************************************************************************************/
-		void PlayAudio2(EntityID);
-
 
 		// ----- Private Functions ----- // 
 		/*!***********************************************************************************
@@ -361,9 +347,6 @@ namespace PE {
 		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
 		int m_currentSelectedObject;
-
-		// Audio varaiables
-		std::string currentSoundID;
 
 		UndoStack m_undoStack;
 

@@ -85,7 +85,16 @@
 #include "Logic/testScript2.h"
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
+#include "Logic/CatScript.h"
+#include "Logic/GameStateController.h"
 #include "GameStateManager.h"
+#include "Logic/CatScript.h"
+#include "Logic/RatScript.h"
+
+
+// Scene Manager
+#include "SceneManager/SceneManager.h"
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -187,6 +196,26 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
+  
+    rttr::registration::class_<PE::GameStateController>("GameStateController")
+        .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
+        .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
+        .property("executingStatement", &PE::GameStateControllerData::executingStatement)
+        .property("mapOverlay", &PE::GameStateControllerData::mapOverlay)
+        .property("pawOverlay", &PE::GameStateControllerData::pawOverlay)
+        .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
+        .property("energyHeader", &PE::GameStateControllerData::energyHeader)
+        .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
+        .property("slashText", &PE::GameStateControllerData::slashText)
+        .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
+        .property("energyBackground", &PE::GameStateControllerData::energyBackground)
+        .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
+        .property("planAttackText", &PE::GameStateControllerData::planAttackText)
+        .property("planMovementText", &PE::GameStateControllerData::planMovementText)
+        .property("turnBackground", &PE::GameStateControllerData::turnBackground)
+        .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
+        .property("endMovementText", &PE::GameStateControllerData::endMovementText)
+        .property("endTurnText", &PE::GameStateControllerData::endTurnText);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
@@ -205,11 +234,24 @@ RTTR_REGISTRATION
         .property("NextPosition", &PE::FollowScriptData::NextPosition)
         .property("ToAttach", &PE::FollowScriptData::ToAttach)
         .property("NumberOfAttacher", &PE::FollowScriptData::NumberOfAttachers)
+        .property("SoundID", &PE::FollowScriptData::SoundID)
+        .property("LookTowardsMovement", &PE::FollowScriptData::LookTowardsMovement)
         .property("IsAttaching", &PE::FollowScriptData::IsAttaching);
 
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
         .property("NumberOfCamera", &PE::CameraManagerScriptData::NumberOfCamera)
         .property("CameraIDs", &PE::CameraManagerScriptData::CameraIDs);
+
+    rttr::registration::class_<PE::CatScriptData>("CatScript")
+        .property("isMainCat", &PE::CatScriptData::isMainCat)
+        .property("catHealth", &PE::CatScriptData::catHealth)
+        .property("catMaxEnergy", &PE::CatScriptData::catMaxEnergy)
+        .property("movementSpeed", &PE::CatScriptData::movementSpeed)
+        .property("attackDamage", &PE::CatScriptData::attackDamage)
+        .property("requiredAttackPoints", &PE::CatScriptData::requiredAttackPoints)
+        .property("bulletDelay", &PE::CatScriptData::bulletDelay)
+        .property("bulletRange", &PE::CatScriptData::bulletRange)
+        .property("bulletLifeTime", &PE::CatScriptData::bulletLifeTime);
 
 
     rttr::registration::class_<PE::TextComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>().to_string().c_str())
@@ -221,6 +263,31 @@ RTTR_REGISTRATION
         .method("Text", &PE::TextComponent::SetText)
         .method("Size", &PE::TextComponent::SetSize)
         .method("Font", &PE::TextComponent::SetFont);
+
+    rttr::registration::class_<PE::CatScriptData>("CatScript")
+        .property("catID", &PE::CatScriptData::catID)
+        .property("projectileID", &PE::CatScriptData::projectileID)
+        .property("catHealth", &PE::CatScriptData::catHealth)
+        .property("catMaxEnergy", &PE::CatScriptData::catMaxEnergy)
+        .property("attackDamage", &PE::CatScriptData::attackDamage)
+        .property("requiredAttackPoints", &PE::CatScriptData::requiredAttackPoints)
+        .property("bulletDelay", &PE::CatScriptData::bulletDelay)
+        .property("bulletRange", &PE::CatScriptData::bulletRange)
+        .property("bulletLifeTime", &PE::CatScriptData::bulletLifeTime)
+        .property("bulletForce", &PE::CatScriptData::bulletForce)
+        .property("animationStates", &PE::CatScriptData::animationStates);
+
+    rttr::registration::class_<PE::RatScriptData>("RatScript")
+        .property("mainCatID", &PE::RatScriptData::mainCatID)
+        .property("health", &PE::RatScriptData::health)
+        .property("movementSpeed", &PE::RatScriptData::movementSpeed)
+        .property("detectionRadius", &PE::RatScriptData::detectionRadius)
+        .property("attackDiameter", &PE::RatScriptData::attackDiameter)
+        .property("attackDuration", &PE::RatScriptData::attackDuration)
+        .property("collisionDamage", &PE::RatScriptData::collisionDamage)
+        .property("attackDamage", &PE::RatScriptData::attackDamage)
+        .property("attackDelay", &PE::RatScriptData::attackDelay)
+        .property("animationStates", &PE::RatScriptData::animationStates);
 }
 
 PE::CoreApplication::CoreApplication()
@@ -255,9 +322,9 @@ PE::CoreApplication::CoreApplication()
     ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
 
     // Load Fonts
-    //std::string fontHeader{ "../Assets/Fonts/Kalam/Kalam-Regular.ttf" }, fontBody{ "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf" };
-    //ResourceManager::GetInstance().LoadFontFromFile(fontHeader, "../Assets/fonts/Kalam/Kalam-Regular.ttf");
-    //ResourceManager::GetInstance().LoadFontFromFile(fontBody, "../Assets/Fonts/Caveat/static/Caveat-Regular.ttf");    
+    std::string fontHeader{ "../Assets/Fonts/Kalam/Kalam-Bold.ttf" }, fontBody{ "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf" };
+    ResourceManager::GetInstance().LoadFontFromFile(fontHeader, "../Assets/fonts/Kalam/Kalam-Bold.ttf");
+    ResourceManager::GetInstance().LoadFontFromFile(fontBody, "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf");    
 
     // Animation textures
     std::string catWalkSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png" };
@@ -280,7 +347,7 @@ PE::CoreApplication::CoreApplication()
     SerializationManager serializationManager;
     //create background from file
 
-    EntityID uiCameraId{ serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json") };
+    EntityID uiCameraId{ serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Camera_Prefab.json") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
 
@@ -337,8 +404,14 @@ void PE::CoreApplication::Run()
 
     SerializationManager serializationManager;
 
-    // Loads Default Scene
-    serializationManager.LoadAllEntitiesFromFile("../Assets/Scenes/DefaultScene.json");
+    // Set start scene
+#ifndef GAMERELEASE
+    SceneManager::GetInstance().SetStartScene("DefaultScene.json");
+#else
+    SceneManager::GetInstance().SetStartScene("GameSceneFINAL.json"); // set game scene here <-
+#endif // !GAMERELEASE
+    // Load scene
+    SceneManager::GetInstance().LoadCurrentScene();
 
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
@@ -479,10 +552,6 @@ void PE::CoreApplication::InitializeAudio()
     {
         engine_logger.AddLog(false, "AudioManager initialized!", __FUNCTION__);
     }
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound1", "../Assets/Audio/audioSFX_sound1.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound2", "../Assets/Audio/audioSFX_sound2.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_sound3", "../Assets/Audio/audioSFX_sound3.mp3");
-    ResourceManager::GetInstance().LoadAudioFromFile("audio_backgroundMusic", "../Assets/Audio/audioSFX_backgroundMusic.mp3");
 }
 
 

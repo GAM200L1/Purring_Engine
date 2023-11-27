@@ -66,8 +66,10 @@ namespace PE
 
 				if (gui.disabled)
 				{
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
+					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
+					}
 					continue;
 				}
 
@@ -87,8 +89,10 @@ namespace PE
 					}					
 					else if(gui.m_clickedTimer <= 0)
 					{
-						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
-						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
+						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
+						}
 					}
 
 				}
@@ -132,10 +136,16 @@ namespace PE
 				if (gui.m_UIType == UIType::Button)
 				{
 					Button btn = UI_CAST(Button, gui);
-					btn.OnClick(objectID);
-					gui.m_clickedTimer = .3f;
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
-					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
+					if (gui.m_clickedTimer <= 0)
+					{
+						btn.OnClick(objectID);
+						gui.m_clickedTimer = .3f;
+						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
+						}
+						return;
+					}
 				}
 			}
 	}

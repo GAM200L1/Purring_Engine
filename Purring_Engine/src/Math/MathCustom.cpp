@@ -844,4 +844,9 @@ namespace PE
 			std::swap(min, max);
 		r_varToWrap = (r_varToWrap >= 0.f ? min : max) + fmodf(r_varToWrap, max - min);
 	}
+
+	bool CompareFloats(float const lhs, float const rhs) 
+	{
+			return (std::abs(lhs - rhs) <= std::numeric_limits<float>::epsilon());
+	}
 }

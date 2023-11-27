@@ -58,33 +58,21 @@ namespace PE {
 					m_showPhysicsWindow = !m_showPhysicsWindow;
 
 				if (KTE.keycode == GLFW_KEY_F9)
-					m_showTestWindows = !m_showTestWindows;
+					m_showAnimationWindow = !m_showAnimationWindow;
 
-				if (KTE.keycode == GLFW_KEY_ESCAPE)
-				{
-						m_showEditor = true;
 
-						if (m_isRunTime)
-						{
-								ClearObjectList();
-								serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-								engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-						}
-
-						if (m_showEditor)
-								m_isRunTime = false;
-
-						m_showGameView = false;
-						// This will load all entities from the file
-
-				}
-
-				if (KTE.keycode == GLFW_KEY_F10)
-						ToggleDebugRender();				
-				
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
 					m_undoStack.UndoChange();
+				}
+
+				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_SHIFT) && KTE.keycode == GLFW_KEY_F10)
+				{
+					m_showTestWindows = !m_showTestWindows;
+				}
+				else if (KTE.keycode == GLFW_KEY_F10)
+				{
+					ToggleDebugRender();
 				}
 
 				if (KTE.keycode == GLFW_KEY_DELETE)
@@ -100,15 +88,10 @@ namespace PE {
 					//create undo here
 					if(m_currentSelectedObject != -1)
 					m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
-
-					//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-					//LogicSystem::DeleteScriptData(m_currentSelectedObject);
 					//if not first index
-					//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 					m_currentSelectedObject = -1; // just reset it
 					//if object selected
 					m_objectIsSelected = false;
-					//m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
 					if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 				}

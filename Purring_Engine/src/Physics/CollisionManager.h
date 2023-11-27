@@ -103,6 +103,7 @@ namespace PE
 
 		Grid m_grid;
 		std::vector<Manifold> m_manifolds;
+		std::set <std::pair<size_t, size_t>> m_collisionPairs;
 		std::string m_systemName{ "CollisionManager" };
 	};
 
@@ -162,4 +163,24 @@ namespace PE
 	*************************************************************************************/
 	int CircleAABBEdgeIntersection(CircleCollider const& r_circle, LineSegment const& r_lineSeg); //, float& r_interTime, Contact& r_contactPt
 	
+	
+	/*!***********************************************************************************
+	 \brief Helper function for Circle-Point Collision.
+
+	 \param[in,out] r_circle - collider of object with circle collider
+	 \param[in,out] r_point - point to check for collision with
+	 \return true - Point in circle
+	 \return false - Point not in circle
+	*************************************************************************************/
+	bool PointCollision(CircleCollider const& r_circle, vec2 const& r_point);
+	
+	/*!***********************************************************************************
+	 \brief Helper function for AABB-Point Collision
+
+	 \param[in,out] r_AABB - collider of object with AABB collider
+	 \param[in,out] r_point - point to check for collision with
+	 \return true - Point in AABB
+	 \return false - Point not in AABB
+	*************************************************************************************/
+	bool PointCollision(AABBCollider const& r_AABB, vec2 const& r_point);
 }

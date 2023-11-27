@@ -31,6 +31,11 @@ namespace PE
             m_color.a = glm::clamp(a, 0.f, 1.f);
         }
 
+        void Renderer::SetAlpha(float const alpha)
+        {
+            m_color.a = glm::clamp(alpha, 0.f, 1.f);
+        }
+
 
         void Renderer::SetEnabled(bool const newEnabled)
         {

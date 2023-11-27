@@ -33,6 +33,10 @@
 #include "PlayerControllerScript.h"
 #include "FollowScript.h"
 #include "CameraManagerScript.h"
+#include "CatScript.h"
+#include "GameStateController.h"
+#include "RatScript.h"
+
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -56,6 +60,9 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(EnemyTestScript);
 	REGISTER_SCRIPT(FollowScript);
 	REGISTER_SCRIPT(CameraManagerScript);
+	REGISTER_SCRIPT(CatScript);
+	REGISTER_SCRIPT(RatScript);
+	REGISTER_SCRIPT(GameStateController);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
@@ -87,6 +94,7 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 					break;
 				case ScriptState::EXIT:
 					m_scriptContainer.find(key)->second->Destroy(objectID);
+					state = ScriptState::DEAD;
 					break;
 				}
 			}
@@ -113,9 +121,23 @@ void PE::LogicSystem::DeleteScriptData(EntityID id)
 	{
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
+		{ 
 #endif
-		m_scriptContainer.find(key)->second->Destroy(id);
-
+			//for (EntityID objectID : SceneView<ScriptComponent>())
+			//{
+			//	ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
+			//	for (auto& [key, state] : sc.m_scriptKeys)
+			//	{
+			//		if (state == ScriptState::UPDATE)
+			//		{
+						m_scriptContainer.find(key)->second->Destroy(id);
+			//			state = ScriptState::DEAD;
+			//		}
+			//	}
+			//}
+#ifndef GAMERELEASE
+		}
+#endif
 		val->OnDetach(id);
 	}
 

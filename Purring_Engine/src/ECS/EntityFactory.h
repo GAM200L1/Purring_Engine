@@ -334,7 +334,7 @@ namespace PE
 		{
 			([&]
 				{
-					p_entityManager->Assign<CT>(ret);
+					*(p_entityManager->Assign<CT>(ret)) = CT();
 				}
 			(), ...);
 		}

@@ -103,6 +103,8 @@ namespace PE
 
 	void CollisionManager::UpdateSystem(float)
 	{
+		// Update the Collider's specs
+		UpdateColliders();
 
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
@@ -110,24 +112,28 @@ namespace PE
 			// clears the grid if it exists when the editor is open
 			if (m_grid.GridExists())
 				m_grid.ClearGrid();
-			return;
 		}
-
+#endif
 
 		if (m_grid.GetGridSize() != gridSize)
 		{
 			// sets up the grid if it did not exist during runtime
 			m_grid.SetupGrid(gridSize.x, gridSize.y);
 		}
+		
+		// updates the grid during runtime
+#ifndef GAMERELEASE
+		if (Editor::GetInstance().IsRunTime())
+		{
 #endif
-		if(gridActive)
-			m_grid.UpdateGrid();
-
-		// Update the Collider's specs
-		UpdateColliders();
+			if (gridActive)
+				m_grid.UpdateGrid();
+#ifndef GAMERELEASE
+		}
+#endif
 
 #ifndef GAMERELEASE
-		if (!Editor::GetInstance().IsEditorActive())
+		if (Editor::GetInstance().IsRunTime())
 		{
 #endif
 			// Test for Collisions in the scene
@@ -156,7 +162,9 @@ namespace PE
 			Collider& collider = EntityManager::GetInstance().Get<Collider>(ColliderID);
 			
 			// remove objects that were checked for collision from previous frame
-			collider.objectsCollided.clear();
+			collider.collisionChecked.clear();
+
+			// update each collider
 			std::visit([&](auto& col)
 			{
 				Update(col, transform.position, vec2(transform.width, transform.height));
@@ -193,7 +201,7 @@ namespace PE
 							// if its the same don't check
 							if (ColliderID_1 == ColliderID_2) { continue; }
 							// if they have been checked before don't check again
-							if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
+							if (collider1.collisionChecked.count(ColliderID_2)) { continue; }
 							// if the layers are not colliding, don't check
 							if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
 
@@ -202,19 +210,33 @@ namespace PE
 									std::visit([&](auto& col2)
 										{
 											Contact contactPt;
-											if (CollisionIntersection(col1, col2, contactPt))
+											if (CollisionIntersection(col1, col2, contactPt)) // responsive collision
 											{
 												// adds collided objects so that it won't be checked again
-												collider1.objectsCollided.emplace(ColliderID_2);
-												collider2.objectsCollided.emplace(ColliderID_1);
+												collider1.collisionChecked.emplace(ColliderID_2);
+												collider2.collisionChecked.emplace(ColliderID_1);
 												if (!collider1.isTrigger && !collider2.isTrigger)
 												{
 													if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
 													{
-														OnCollisionEnterEvent OCEE;
-														OCEE.Entity1 = ColliderID_1;
-														OCEE.Entity2 = ColliderID_2;
-														SEND_COLLISION_EVENT(OCEE);
+														if (m_collisionPairs.count(std::pair{ ColliderID_1, ColliderID_2 }) || m_collisionPairs.count(std::pair{ColliderID_2, ColliderID_1}))
+														{
+															// if the current pair being checked was already collided in previous frame send stay collision event
+															OnCollisionStayEvent OCSE;
+															OCSE.Entity1 = ColliderID_1;
+															OCSE.Entity2= ColliderID_2;
+															SEND_COLLISION_EVENT(OCSE);
+														}
+														else
+														{
+															// else add it to the set
+															OnCollisionEnterEvent OCEE;
+															OCEE.Entity1 = ColliderID_1;
+															OCEE.Entity2 = ColliderID_2;
+															SEND_COLLISION_EVENT(OCEE);
+															m_collisionPairs.emplace(std::pair{ ColliderID_1, ColliderID_2 });
+														}
+														
 														if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
 														{
 															m_manifolds.emplace_back
@@ -241,17 +263,55 @@ namespace PE
 														engine_logger.AddLog(false, ss.str(), "");
 													}
 												}
-												else
+												else // trigger collision
 												{
 													// else send message to trigger event associated with this entity
-													engine_logger.AddLog(false, "Collided with Trigger!\n", "");
-													//sending collision enter event
-													OnTriggerEnterEvent OTEE;
-													OTEE.Entity1 = ColliderID_1;
-													OTEE.Entity2 = ColliderID_2;
-													SEND_COLLISION_EVENT(OTEE);
+													//engine_logger.AddLog(false, "Collided with Trigger!\n", "");
+													
+													//sending trigger enter event
+													if (m_collisionPairs.count(std::pair{ ColliderID_1, ColliderID_2 }) || m_collisionPairs.count(std::pair{ ColliderID_2, ColliderID_1 }))
+													{
+														// if the current pair being checked was already collided in previous frame send stay collision event
+														OnTriggerStayEvent OTSE;
+														OTSE.Entity1 = ColliderID_1;
+														OTSE.Entity2 = ColliderID_2;
+														SEND_COLLISION_EVENT(OTSE);
+													}
+													else
+													{
+														// else add it to the set
+														OnTriggerEnterEvent OTEE;
+														OTEE.Entity1 = ColliderID_1;
+														OTEE.Entity2 = ColliderID_2;
+														SEND_COLLISION_EVENT(OTEE);
+														m_collisionPairs.emplace(std::pair{ ColliderID_1, ColliderID_2 });
+													}
 												}
-
+											}
+											else // no collision
+											{
+												if (m_collisionPairs.count(std::pair{ ColliderID_1, ColliderID_2 }) || m_collisionPairs.count(std::pair{ ColliderID_2, ColliderID_1 }))
+												{
+													if (!collider1.isTrigger && !collider2.isTrigger)
+													{
+														// if the current pair being checked was already collided in previous frame and is not colliding anymore, send collision exit event
+														OnCollisionExitEvent OCExitE;
+														OCExitE.Entity1 = ColliderID_1;
+														OCExitE.Entity2 = ColliderID_2;
+														SEND_COLLISION_EVENT(OCExitE);
+													}
+													else
+													{
+														// if the current pair being checked was already triggered in previous frame and is not triggered anymore, send trigger exit event
+														OnTriggerExitEvent OTExitE;
+														OTExitE.Entity1 = ColliderID_1;
+														OTExitE.Entity2 = ColliderID_2;
+														SEND_COLLISION_EVENT(OTExitE);
+													}
+													
+													// if 1,2 arent the pair in the set try erasing 2,1 combo
+													!m_collisionPairs.erase(std::pair{ ColliderID_1, ColliderID_2 }) || m_collisionPairs.erase(std::pair{ ColliderID_2, ColliderID_1 });
+												}
 											}
 
 										}, collider2.colliderVariant);
@@ -281,7 +341,7 @@ namespace PE
 					// if its the same don't check
 					if (ColliderID_1 == ColliderID_2) { continue; }
 					// if they have been checked before don't check again
-					if (collider1.objectsCollided.count(ColliderID_2)) { continue; }
+					if (collider1.collisionChecked.count(ColliderID_2)) { continue; }
 					// if the layers are not colliding, don't check
 					if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
 
@@ -293,8 +353,8 @@ namespace PE
 									if (CollisionIntersection(col1, col2, contactPt))
 									{
 										// adds collided objects so that it won't be checked again
-										collider1.objectsCollided.emplace(ColliderID_2);
-										collider2.objectsCollided.emplace(ColliderID_1);
+										collider1.collisionChecked.emplace(ColliderID_2);
+										collider2.collisionChecked.emplace(ColliderID_1);
 										if (!collider1.isTrigger && !collider2.isTrigger)
 										{
 											if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
@@ -566,5 +626,16 @@ namespace PE
 		return 0;
 	}
 
+	// ----- Point in Collider Helper Functions ----- //
+	bool PointCollision(CircleCollider const& r_circle, vec2 const& r_point)
+	{
+		return ((r_circle.center - r_point).LengthSquared() < r_circle.radius * r_circle.radius) ? true : false;
+	}
 
+	bool PointCollision(AABBCollider const& r_AABB, vec2 const& r_point)
+	{
+		if (r_point.x < r_AABB.min.x || r_point.x > r_AABB.max.x) { return false; }
+		if (r_point.y < r_AABB.min.y || r_point.y > r_AABB.max.y) { return false; }
+		return true;
+	}
 }

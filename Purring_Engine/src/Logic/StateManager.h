@@ -49,6 +49,8 @@ namespace PE
 		 \param [In] EntityID	The ID of the object currently running the script
 		*************************************************************************************/
 		virtual void StateExit(EntityID id) = 0;
+
+		virtual void StateCleanUp() {};
 		/*!***********************************************************************************
 		 \brief					To get the name of the state if we need it
 		 \return				The name of the current state
@@ -68,7 +70,9 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief					Destructor for the State Machine
 		*************************************************************************************/
-		~StateMachine() { delete p_state; }
+		~StateMachine() { 
+			p_state->StateCleanUp();
+			delete p_state; }
 		/*!***********************************************************************************
 		 \brief					The function to change state and call exit and enter state
 		 \param [In] State*		The state to change to
@@ -80,6 +84,7 @@ namespace PE
 			if (p_state)
 			{
 				//Exit previous state
+				p_state->StateCleanUp();
 				DoStateExit(id);
 				delete p_state;
 			}

@@ -347,6 +347,43 @@ size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
     }
 }
 
+void SerializationManager::DeleteAllObjectAndLoadAllEntitiesFromFile(const std::filesystem::path& filepath)
+{
+    std::vector<EntityID> temp = PE::EntityManager::GetInstance().GetEntitiesInPool(ALL);
+
+    for (auto n : temp)
+    {
+        if (n != PE::Graphics::CameraManager::GetUiCameraId())
+        {
+            PE::LogicSystem::DeleteScriptData(n);
+            PE::EntityManager::GetInstance().RemoveEntity(n);
+        }
+    }
+
+
+    if (!std::filesystem::exists(filepath))
+    {
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return;
+    }
+
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        nlohmann::json allEntitiesJson;
+        inFile >> allEntitiesJson;
+        DeserializeAllEntities(allEntitiesJson);
+        inFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+    }
+}
+
+
+
+
 nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem::path& filepath)
 {
     nlohmann::json loadedData;
@@ -471,50 +508,57 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
 
 bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r_json)
 {
-    if (!r_json["Entity"]["components"].contains("GUI"))
-    {
-        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), nullptr);
-    }
     PE::GUI gui;
-    gui.m_onClicked = r_json["Entity"]["components"]["GUI"]["m_onClicked"].get<std::string>();
-    gui.m_onHovered = r_json["Entity"]["components"]["GUI"]["m_onHovered"].get<std::string>();
-    gui.m_UIType = static_cast<PE::UIType>(r_json["Entity"]["components"]["GUI"]["m_UIType"].get<int>());
-    if (r_json["Entity"]["components"]["GUI"].contains("disabled"))
-        gui.disabled = r_json["Entity"]["components"]["GUI"]["disabled"].get<bool>();
 
-    gui.m_defaultTexture = r_json["Entity"]["components"]["GUI"]["m_defaultTexture"].get<std::string>();
-    gui.m_hoveredTexture = r_json["Entity"]["components"]["GUI"]["m_hoveredTexture"].get<std::string>();
-    gui.m_pressedTexture = r_json["Entity"]["components"]["GUI"]["m_pressedTexture"].get<std::string>();
-    gui.m_disabledTexture = r_json["Entity"]["components"]["GUI"]["m_disabledTexture"].get<std::string>();
+    if (r_json["Entity"]["components"].contains("GUI"))
+    {    
+        if (r_json["Entity"]["components"]["GUI"].contains("m_onClicked"))
+            gui.m_onClicked = r_json["Entity"]["components"]["GUI"]["m_onClicked"].get<std::string>();
+        if (r_json["Entity"]["components"]["GUI"].contains("m_onHovered"))
+            gui.m_onHovered = r_json["Entity"]["components"]["GUI"]["m_onHovered"].get<std::string>();
+        if (r_json["Entity"]["components"]["GUI"].contains("m_UIType"))
+            gui.m_UIType = static_cast<PE::UIType>(r_json["Entity"]["components"]["GUI"]["m_UIType"].get<int>());
+        if (r_json["Entity"]["components"]["GUI"].contains("disabled"))
+            gui.disabled = r_json["Entity"]["components"]["GUI"]["disabled"].get<bool>();
+        if (r_json["Entity"]["components"]["GUI"].contains("m_defaultTexture"))
+            gui.m_defaultTexture = r_json["Entity"]["components"]["GUI"]["m_defaultTexture"].get<std::string>();
+        if (r_json["Entity"]["components"]["GUI"].contains("m_hoveredTexture"))
+            gui.m_hoveredTexture = r_json["Entity"]["components"]["GUI"]["m_hoveredTexture"].get<std::string>();
+        if (r_json["Entity"]["components"]["GUI"].contains("m_pressedTexture"))
+            gui.m_pressedTexture = r_json["Entity"]["components"]["GUI"]["m_pressedTexture"].get<std::string>();
+        if (r_json["Entity"]["components"]["GUI"].contains("m_disabledTexture"))
+            gui.m_disabledTexture = r_json["Entity"]["components"]["GUI"]["m_disabledTexture"].get<std::string>();
 
-    gui.m_defaultColor = PE::vec4(
-        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][0].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][1].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][2].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_defaultColor"][3].get<float>()
-    );
+        if (r_json["Entity"]["components"]["GUI"].contains("m_defaultColor"))
+            gui.m_defaultColor = PE::vec4(
+            r_json["Entity"]["components"]["GUI"]["m_defaultColor"][0].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_defaultColor"][1].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_defaultColor"][2].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_defaultColor"][3].get<float>()
+        );
 
-    gui.m_hoveredColor = PE::vec4(
-        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][0].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][1].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][2].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][3].get<float>()
-    );
-
-    gui.m_pressedColor = PE::vec4(
-        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][0].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][1].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][2].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_pressedColor"][3].get<float>()
-    );
-
-    gui.m_disabledColor = PE::vec4(
-        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][0].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][1].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][2].get<float>(),
-        r_json["Entity"]["components"]["GUI"]["m_disabledColor"][3].get<float>()
-    );
-
+        if (r_json["Entity"]["components"]["GUI"].contains("m_hoveredColor"))
+            gui.m_hoveredColor = PE::vec4(
+            r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][0].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][1].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][2].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_hoveredColor"][3].get<float>()
+        );
+        if (r_json["Entity"]["components"]["GUI"].contains("m_pressedColor"))
+            gui.m_pressedColor = PE::vec4(
+            r_json["Entity"]["components"]["GUI"]["m_pressedColor"][0].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_pressedColor"][1].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_pressedColor"][2].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_pressedColor"][3].get<float>()
+        );
+        if (r_json["Entity"]["components"]["GUI"].contains("m_disabledColor"))
+            gui.m_disabledColor = PE::vec4(
+            r_json["Entity"]["components"]["GUI"]["m_disabledColor"][0].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_disabledColor"][1].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_disabledColor"][2].get<float>(),
+            r_json["Entity"]["components"]["GUI"]["m_disabledColor"][3].get<float>()
+        );
+    }
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), static_cast<void*>(&gui));
     return true;
 }
@@ -573,6 +617,8 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                 {
                     for (auto& prop : rttr::type::get_by_name(str).get_properties())
                     {
+                        if (!data.contains(prop.get_name().to_string().c_str()))
+                            continue;
                         if (prop.get_type().get_name() == "float")
                         {
                             float val = data[prop.get_name().to_string().c_str()].get<float>();
@@ -617,6 +663,15 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                             for (size_t cnt{}; data[prop.get_name().to_string().c_str()].contains(std::to_string(cnt)); ++cnt)
                             {
                                 val.emplace_back(PE::vec2{ data[prop.get_name().to_string().c_str()][std::to_string(cnt)]["x"].get<float>() , data[prop.get_name().to_string().c_str()][std::to_string(cnt)]["y"].get<float>() });
+                            }
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
+                        {
+                            std::map<std::string, std::string> val;
+                            if (data.contains(prop.get_name().to_string().c_str()))
+                            {
+                                val = data[prop.get_name().to_string().c_str()].get<std::map<std::string, std::string>>();
                             }
                             prop.set_value(inst, val);
                         }

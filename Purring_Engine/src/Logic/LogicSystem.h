@@ -29,6 +29,7 @@
 
 #define REGISTER_SCRIPT(name) 	PE::LogicSystem::m_scriptContainer[#name] = new name()
 #define GETSCRIPTDATA(script,id) &reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData()[id]
+#define GETSCRIPTINSTANCEPOINTER(script) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])
 
 namespace PE {
 	class LogicSystem : public System
@@ -128,6 +129,7 @@ namespace PE {
 				for (auto& prop : scriptDataType.get_properties())
 				{
 					rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(k.c_str())->GetScriptData(id);
+					
 					if (!inst.is_valid()) // if no data for this script type, just break out of this loop
 						break;
 					rttr::variant var = prop.get_value(inst);
@@ -178,7 +180,14 @@ namespace PE {
 							++cnt;
 						}
 					}
-					
+					else if (var.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
+					{
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = var.get_value<std::map<std::string, std::string>>();
+					}
+					else
+					{
+						std::cout << var.get_type().get_name() << std::endl;
+					}
 				}
 			}
 		

@@ -1087,6 +1087,20 @@ namespace PE
 	 \param[in,out] max - maximum value variable becomes when it becomes smaller than min
 	*************************************************************************************/
 	void Wrap(float& r_varToWrap, float min, float max);
+
+
+	// ----- Helper functions ----- //
+
+	/*!***********************************************************************************
+	 \brief Compares two floats and returns true if they are within an epsilon of 
+						difference from one another, false otherwise.
+
+	 \param[in] lhs - Float to compare with rhs
+	 \param[in] rhs - Float to compare with lhs
+	 \return true - True if the lhs is within an epsilon of rhs
+	 \return false - False if the lhs is not within an epsilon of rhs
+	*************************************************************************************/
+	bool CompareFloats(float const lhs, float const rhs);
 }
 
 

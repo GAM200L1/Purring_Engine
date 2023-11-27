@@ -60,6 +60,15 @@ namespace PE
         void UpdateTitle(GLFWwindow* p_window, double fps);
 
         /*!***********************************************************************************
+         \brief     Check if the coordinate passed in is within the bounds of the window.
+         \param     window Pointer to the GLFW window.
+         \param     x x-coordinate in world space.
+         \param     y y-coordinate in world space.
+         \return    True if the coordinates are within the bounds of the window, false otherwise.
+        *************************************************************************************/
+        static bool GetWithinWindowBounds(GLFWwindow* window, int const x, int const y);
+
+        /*!***********************************************************************************
          \brief     Cleanup resources and terminate GLFW library.
         *************************************************************************************/
         void Cleanup();
@@ -133,5 +142,6 @@ namespace PE
         GLFWwindow* p_currWindow;
         GLFWmonitor* p_monitor;
         static bool msepress;
+        bool m_showFps;
     };
 }

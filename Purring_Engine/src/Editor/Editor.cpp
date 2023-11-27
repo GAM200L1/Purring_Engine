@@ -49,15 +49,19 @@
 #include "Logic/EnemyTestScript.h"
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
+#include "Logic/GameStateController.h"
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
 #include "Graphics/Text.h"
+#include "GameStateManager.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
 #include "Layers/CollisionLayer.h"
+#include "Logic/CatScript.h"
+#include "Logic/RatScript.h"
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -77,21 +81,45 @@ namespace PE {
 		if (configJson.contains("Editor"))
 		{
 			//m_firstLaunch needs to be serialized 
-			m_firstLaunch = configJson["Editor"]["firstLaunch"].get<bool>();
+			if (configJson["Editor"].contains("firstLaunch"))
+				m_firstLaunch = configJson["Editor"]["firstLaunch"].get<bool>();
+
 			//serialize based on what was deserialized
-			m_showConsole = configJson["Editor"]["showConsole"].get<bool>();
-			m_showLogs = configJson["Editor"]["showLogs"].get<bool>();
-			m_showObjectList = configJson["Editor"]["showObjectList"].get<bool>();
-			m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
-			m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
-			m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
-			m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
-			m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
-			m_showAnimationWindow = configJson["Editor"]["showAnimationWindow"].get<bool>();
-			m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
-			//show the entire gui 
+			if (configJson["Editor"].contains("showConsole"))
+				m_showConsole = configJson["Editor"]["showConsole"].get<bool>();
+
+			if (configJson["Editor"].contains("showLogs"))
+				m_showLogs = configJson["Editor"]["showLogs"].get<bool>();
+
+			if (configJson["Editor"].contains("showObjectList"))
+				m_showObjectList = configJson["Editor"]["showObjectList"].get<bool>();
+
+			if (configJson["Editor"].contains("showSceneView"))
+				m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
+
+			if (configJson["Editor"].contains("showTestWindows"))
+				m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
+
+			if (configJson["Editor"].contains("showComponentWindow"))
+				m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showResourceWindow"))
+				m_showResourceWindow = configJson["Editor"]["showResourceWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showPerformanceWindow"))
+				m_showPerformanceWindow = configJson["Editor"]["showPerformanceWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showAnimationWindow"))
+				m_showAnimationWindow = configJson["Editor"]["showAnimationWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showPhysicsWindow"))
+				m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
+				//show the entire gui 
+
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
-			m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
+
+			if (configJson["Editor"].contains("renderDebug"))
+				m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
 
 			// also an e.g of how to make it safe
 			m_isPrefabMode = false;
@@ -138,8 +166,6 @@ namespace PE {
 		m_mouseInScene = false;
 		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
-		//REGISTER_UI_FUNCTION(PlayAudio1,PE::Editor);
-		//REGISTER_UI_FUNCTION(PlayAudio2,PE::Editor);
 	}
 
 	Editor::~Editor()
@@ -237,35 +263,21 @@ namespace PE {
 		m_showTestWindows = true;
 	}
 
-	void Editor::PlayAudio1(EntityID id)
-	{
-		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-		{
-			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetColor(255,0,0,255);
-		}
-		AudioComponent audioComponent;
-		audioComponent.PlayAudioSound("audio_sound1");
-	}
-
-	void Editor::PlayAudio2(EntityID)
-	{
-		AudioComponent audioComponent;
-		audioComponent.PlayAudioSound("audio_sound2");
-	}
-
 	void Editor::ClearObjectList()
 	{
 		//make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
-		for (int n = static_cast<int>(EntityManager::GetInstance().GetEntitiesInPool(ALL).size()) - 1; n >= 0; --n)
+
+		std::vector<EntityID> temp = EntityManager::GetInstance().GetEntitiesInPool(ALL);
+
+		for (auto n :temp)
 		{
-			if (EntityManager::GetInstance().GetEntitiesInPool(ALL)[n] != Graphics::CameraManager::GetUiCameraId())
+			if (n != Graphics::CameraManager::GetUiCameraId())
 			{
 				LogicSystem::DeleteScriptData(n);
-				EntityManager::GetInstance().RemoveEntity(EntityManager::GetInstance().GetEntitiesInPool(ALL)[n]);
+				EntityManager::GetInstance().RemoveEntity(n);
 			}
-
 		}
 	}
 
@@ -794,14 +806,9 @@ namespace PE {
 						if (m_currentSelectedObject != -1)
 						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
-						//EntityManager::GetInstance().RemoveEntity(m_currentSelectedObject);
-						//LogicSystem::DeleteScriptData(m_currentSelectedObject);
-						//if not first index
-						//m_currentSelectedObject != 1 ? m_currentSelectedObject -= 1 : m_currentSelectedObject = 0;
 						m_currentSelectedObject = -1; // just reset it
 						//if object selected
 						m_objectIsSelected = false;
-						//m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 
 						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 
@@ -823,45 +830,38 @@ namespace PE {
 			}
 			if (ImGui::BeginPopup("Object"))
 			{
-				if (ImGui::BeginMenu("Create Empty Object"))
+				if (ImGui::Selectable("Create Empty Object"))
 				{
-					if (ImGui::MenuItem("Create Empty Object"))
-					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Empty_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
-					}
-					if (ImGui::MenuItem("Create Audio Object"))
-					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Audio_Prefab.json");
-						m_undoStack.AddChange(new CreateObjectUndo(s_id));
-					}
-					ImGui::EndMenu();
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/UIObject_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Button_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Text_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					ImGui::EndMenu();
 				}
-					//EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
-					//m_undoStack.AddChange(new CreateObjectUndo(s_id));
-				//}
+				if (ImGui::Selectable("Create Audio Object"))
+				{
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Audio_Prefab.json");
+					m_undoStack.AddChange(new CreateObjectUndo(s_id));
+				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Camera_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				ImGui::EndPopup();
@@ -880,93 +880,34 @@ namespace PE {
 			ImGui::End();
 		}
 		else
-		{
-			{
-				//audio
-				ImGui::SeparatorText("Audio Test");
-				if (ImGui::Button("Play SFX 1"))
-				{
-					//AudioManager::GetInstance().PlayAudioSound("audio_sound1");
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Play SFX 2"))
-				{
-					//AudioManager::GetInstance().PlayAudioSound("audio_sound2");
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Play SFX 3"))
-				{
-					//AudioManager::GetInstance().PlayAudioSound("audio_sound3");
-				}
-				if (ImGui::Button("Play Background Music"))
-				{
-					//AudioManager::GetInstance().PlayAudioSound("audio_backgroundMusic");
-				}
-				ImGui::SameLine();
-				if (ImGui::Button("Stop All Audio"))
-				{
-					//AudioManager::GetInstance().StopAllSounds();
-				}
-				if (ImGui::Button("Load \"In Game Audio Button\" Scene"))
-				{
-					LoadSceneFromGivenPath("../Assets/RubricTestScenes/AudioButtonScene.json");
-				}
-				ImGui::Dummy(ImVec2(0.0f, 2.0f));
-			}
+		{			
 			ImGui::SeparatorText("Scenes To Test");
 			if (ImGui::Button("Reset Default Scene"))
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Text Test Scene"))
+			if (ImGui::Button("Undo/Sceen Picking"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/UndoTest.json");
 			}
-			if (ImGui::Button("Camera Test Scene"))
+			if (ImGui::Button("Prefab Editor Test Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/CameraTestScene.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/Demo_Scene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Physics Test Scene"))
+			if (ImGui::Button("Layer Test Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/PhysicsTestScene.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LayerTest.json");
 			}
-			if (ImGui::Button("Draw 2500 objects Instancing Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
-				EntityID id = serializationManager.LoadFromFile("../Assets/Prefabs/Render_Prefab.json");
-				for (size_t i{}; i < 2500; ++i)
-				{
-
-					EntityID id2 = EntityFactory::GetInstance().Clone(id);
-					EntityManager::GetInstance().Get<Transform>(id2).position.x = 15.f * (i % 50) - 320.f;
-					EntityManager::GetInstance().Get<Transform>(id2).position.y = 15.f * (i / 50) - 320.f;
-					EntityManager::GetInstance().Get<Transform>(id2).width = 10.f;
-					EntityManager::GetInstance().Get<Transform>(id2).height = 10.f;
-					EntityManager::GetInstance().Get<Transform>(id2).orientation = 0.f;
-					EntityManager::GetInstance().Get<Graphics::Renderer>(id2).SetColor();
-				}
-			}
-			ImGui::Dummy(ImVec2(0.0f, 2.0f));
-			ImGui::SeparatorText("Logic Test");			
-			if (ImGui::Button("Logic Test Scene 1"))
+			if (ImGui::Button("Script Test Scene 1"))
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene1.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Logic Test Scene 2"))
+			if (ImGui::Button("Script Test Scene 2"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene2.json");
-			}
-			if (ImGui::Button("Enemy AI Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/EnemyArenaScene.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Advance AI Test Scene"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/AdvanceLogicScene.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/ChainPickUpScene.json");
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
@@ -1232,8 +1173,6 @@ namespace PE {
 													m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).orientation));
 											}
 											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
-
-
 										}
 									}
 								}
@@ -2085,13 +2024,11 @@ namespace PE {
 						{
 							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
-								AudioComponent audioComponent;
-								static bool isSoundPaused = false;
-								static bool isLooping = false;
+								AudioComponent& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(entityID);
 
 								// Vector of filepaths for audio files
 								std::vector<std::filesystem::path> audioFilePaths;
-								int index = -1;							// Initialize with -1 to indicate no selection
+								int index = -1; // Initialize with -1 to indicate no selection
 								int i = 0;
 
 								for (auto it = ResourceManager::GetInstance().Sounds.begin(); it != ResourceManager::GetInstance().Sounds.end(); ++it, ++i)
@@ -2116,96 +2053,78 @@ namespace PE {
 								if (index >= 0 && index < loadedAudioKeys.size())
 								{
 									comboBoxLabel = loadedAudioKeys[index];
-									currentSoundID = audioFilePaths[index].string();
 								}
 
-								if (!loadedAudioKeys.empty())
+								// Always show the dropdown box
+								ImGui::Text("Audio: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+
+								// Create combo box even if loadedAudioKeys is empty
+								if (ImGui::BeginCombo("##Audio", comboBoxLabel.c_str()))
 								{
-									ImGui::Text("Audio: "); ImGui::SameLine();
-									ImGui::SetNextItemWidth(320.0f);
-									if (ImGui::BeginCombo("##Audio", comboBoxLabel.c_str()))
+									if (!loadedAudioKeys.empty())
 									{
 										for (int n = 0; n < loadedAudioKeys.size(); ++n)
 										{
 											bool isSelected = (comboBoxLabel == loadedAudioKeys[n]);
 											if (ImGui::Selectable(loadedAudioKeys[n].c_str(), isSelected))
 											{
-												EntityManager::GetInstance().Get<AudioComponent>(entityID).SetAudioKey(audioFilePaths[n].string());
-												currentSoundID = audioFilePaths[n].string();
+												audioComponent.StopSound();
+												audioComponent.SetAudioKey(audioFilePaths[n].string());
 												comboBoxLabel = loadedAudioKeys[n];
+
 												if (isSelected)
 												{
 													ImGui::SetItemDefaultFocus();
 												}
 											}
 										}
-										ImGui::EndCombo();
 									}
-
-									// Check if mouse is hovering over the texture preview for drag and drop
-									if (ImGui::IsItemHovered())
-									{
-										m_entityToModify = std::make_pair<std::string, int>("Audio", static_cast<int>(entityID));
-									}
+									ImGui::EndCombo();
 								}
-								// Audio playback controls
-								if (ImGui::Checkbox("Loop", &isLooping))
+
+								// Check if mouse is hovering over the dropdown box for drag and drop
+								if (ImGui::IsItemHovered())
 								{
-									audioComponent.SetLoop(isLooping);
+									m_entityToModify = std::make_pair<std::string, int>("Audio", static_cast<int>(entityID));
 								}
 
+								// Audio playback controls
+								bool isLooping = audioComponent.IsLooping();
+								ImGui::Checkbox("Loop", &isLooping);
+								audioComponent.SetLoop(isLooping);
 
 								if (ImGui::Button("Play"))
 								{
-									std::cout << "[Editor] Play button pressed. Current Sound ID: " << currentSoundID << std::endl;
-									if (!currentSoundID.empty())
-									{
-										audioComponent.SetLoop(isLooping);
-										audioComponent.PlayAudioSound(currentSoundID);
-										isSoundPaused = false;
-									}
+									audioComponent.PlayAudioSound();
 								}
 
 								ImGui::SameLine();
-								if (isSoundPaused)
+								if (audioComponent.IsPaused())
 								{
 									if (ImGui::Button("Resume"))
 									{
-										if (!currentSoundID.empty())
-										{
-											audioComponent.ResumeSound(currentSoundID);
-											isSoundPaused = false;
-										}
+										audioComponent.ResumeSound();
 									}
 								}
 								else
 								{
 									if (ImGui::Button("Pause"))
 									{
-										if (!currentSoundID.empty())
-										{
-											audioComponent.PauseSound(currentSoundID);
-											isSoundPaused = true;
-										}
+										audioComponent.PauseSound();
 									}
 								}
 								ImGui::SameLine();
 								if (ImGui::Button("Stop"))
 								{
-									if (!currentSoundID.empty())
-									{
-										audioComponent.StopSound(currentSoundID);
-									}
+									audioComponent.StopSound();
 								}
 
 								// Volume control for selected sound
 								static float volume = 1.0f;
 								if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
 								{
-									if (!currentSoundID.empty())
-									{
-										audioComponent.SetVolume(currentSoundID, volume);
-									}
+									audioComponent.SetVolume(volume);
 								}
 
 								// Global volume control (affecting all sounds)
@@ -2352,6 +2271,74 @@ namespace PE {
 						m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
+							if (key == "GameStateController")
+							{
+								GameStateController* p_Script = dynamic_cast<GameStateController*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+									if (ImGui::CollapsingHeader("GameStateController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act",&it->second.GameStateManagerActive);
+										int splashScreenId = static_cast<int> (it->second.SplashScreen);
+										int executingStatementId = static_cast<int> (it->second.executingStatement);
+										int mapOverlayId = static_cast<int> (it->second.mapOverlay);
+										int pawOverlayId = static_cast<int> (it->second.pawOverlay);
+										int foliageOverlayId = static_cast<int> (it->second.foliageOverlay);
+										int energyHeaderId = static_cast<int> (it->second.energyHeader);
+										int currentEnergyTextId = static_cast<int> (it->second.currentEnergyText);
+										int slashTextId = static_cast<int> (it->second.slashText);
+										int maxEnergyTextId = static_cast<int> (it->second.maxEnergyText);
+										int energyBackgroundId = static_cast<int> (it->second.energyBackground);
+										int turnNumberTextId = static_cast<int> (it->second.turnNumberText);
+										int planAttackTextId = static_cast<int> (it->second.planAttackText);
+										int planMovementTextId = static_cast<int> (it->second.planMovementText);
+										int turnBackgroundId = static_cast<int> (it->second.turnBackground);
+										int endTurnButtonId = static_cast<int> (it->second.endTurnButton);
+										int endMovementTextId = static_cast<int> (it->second.endMovementText);
+										int endTurnTextId = static_cast<int> (it->second.endTurnText);
+										// Entity IDs
+										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##sscreen", &splashScreenId);
+										if (splashScreenId != m_currentSelectedObject) { it->second.SplashScreen = splashScreenId; }
+										ImGui::Text("Execution HUD: ");
+										ImGui::Text("Executing Statement ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##executing", &executingStatementId);
+										if (executingStatementId != m_currentSelectedObject) { it->second.executingStatement = executingStatementId; }
+										ImGui::Text("Foliage Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##foliageoverlay", &foliageOverlayId);
+										if (foliageOverlayId != m_currentSelectedObject) { it->second.foliageOverlay = foliageOverlayId; }
+										ImGui::Text("Planning HUD: ");
+										ImGui::Text("Map Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##mapoverlay", &mapOverlayId);
+										if (mapOverlayId != m_currentSelectedObject) { it->second.mapOverlay = mapOverlayId; }
+										ImGui::Text("Paw Overlay ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##pawoverlay", &pawOverlayId);
+										if (pawOverlayId != m_currentSelectedObject) { it->second.pawOverlay = pawOverlayId; }
+										ImGui::Text("Energy: ");
+										ImGui::Text("Energy Header Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##energyHeader", &energyHeaderId);
+										if (energyHeaderId != m_currentSelectedObject) { it->second.energyHeader = energyHeaderId; }
+										ImGui::Text("Current Energy Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##currentenergy", &currentEnergyTextId);
+										if (currentEnergyTextId != m_currentSelectedObject) { it->second.currentEnergyText = currentEnergyTextId; }
+										ImGui::Text("Backslash Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##slashText", &slashTextId);
+										if (slashTextId != m_currentSelectedObject) { it->second.slashText = slashTextId; }
+										ImGui::Text("Maximum Energy Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##maxenergy", &maxEnergyTextId);
+										if (maxEnergyTextId != m_currentSelectedObject) { it->second.maxEnergyText = maxEnergyTextId; }
+										ImGui::Text("Energy Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##energybackground", &energyBackgroundId);
+										if (energyBackgroundId != m_currentSelectedObject) { it->second.energyBackground = energyBackgroundId; }
+										ImGui::Text("Turn count: ");
+										ImGui::Text("Turn Number Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##turnnumber", &turnNumberTextId);
+										if (turnNumberTextId != m_currentSelectedObject) { it->second.turnNumberText = turnNumberTextId; }
+										ImGui::Text("Plan Attack Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##planattack", &planAttackTextId);
+										if (planAttackTextId != m_currentSelectedObject) { it->second.planAttackText = planAttackTextId; }
+										ImGui::Text("Plan Movement Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##planmovement", &planMovementTextId);
+										if (planMovementTextId != m_currentSelectedObject) { it->second.planMovementText = planMovementTextId; }
+										ImGui::Text("Phase Button: ");
+										ImGui::Text("Turn Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##turnbg", &turnBackgroundId);
+										if (turnBackgroundId != m_currentSelectedObject) { it->second.turnBackground = turnBackgroundId; }
+										ImGui::Text("End Turn Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endturnbutton", &endTurnButtonId);
+										if (endTurnButtonId != m_currentSelectedObject) { it->second.endTurnButton = endTurnButtonId; }
+										ImGui::Text("End Movement Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endmovementtext", &endMovementTextId);
+										if (endMovementTextId != m_currentSelectedObject) { it->second.endMovementText = endMovementTextId; }
+										ImGui::Text("End Turn Text ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##endturntext", &endTurnTextId);
+										if (endTurnTextId != m_currentSelectedObject) { it->second.endTurnText = endTurnTextId; }
+									}
+							}
+
 							if (key == "testScript")
 							{
 								testScript* p_Script = dynamic_cast<testScript*>(val);
@@ -2405,7 +2392,7 @@ namespace PE {
 									{
 										ImGui::SetNextItemWidth(100.0f);
 										ImGui::InputInt("Distance Offset", &it->second.Size,0,0);
-
+										ImGui::Checkbox("Look Towards", &it->second.LookTowardsMovement);
 										int j = it->second.NumberOfFollower;
 										ImGui::Text("Number of Follower + 1: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ff",&j);
 										if (j <= 5 && j >= 0)
@@ -2414,7 +2401,7 @@ namespace PE {
 										}
 										else
 										{
-											it->second.NumberOfFollower = 6;
+											it->second.NumberOfFollower = 5;
 										}
 
 										for (int i = 0; i < it->second.NumberOfFollower; i++)
@@ -2454,6 +2441,11 @@ namespace PE {
 														it->second.ToAttach[i] = id;
 												}
 											}
+
+											int id = static_cast<int> (it->second.SoundID);
+											ImGui::Text("Sound ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##soundid", &id);
+											if (id != m_currentSelectedObject)
+												it->second.SoundID = id;
 										}
 									}
 								}
@@ -2490,6 +2482,220 @@ namespace PE {
 								}
 
 							}
+
+							if (key == "CatScript")
+							{
+								CatScript* p_script = dynamic_cast<CatScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader(key.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+											
+										ImGui::Text("Is Main Cat: "); ImGui::SameLine(); ImGui::Checkbox("##maincat", &it->second.isMainCat);
+
+										// cat stats
+										ImGui::Text("Cat Stats");
+										ImGui::Text("Cat Health: "); ImGui::SameLine(); ImGui::DragInt("##cathealth", &it->second.catHealth);
+										ImGui::Text("Cat Max Energy "); ImGui::SameLine(); ImGui::DragInt("##catmaxenergy", &it->second.catMaxEnergy);
+										ImGui::Text("Cat Speed "); ImGui::SameLine(); ImGui::DragFloat("##catspeed", &it->second.movementSpeed);
+
+										// attack variables
+										ImGui::Text("Attack Stats");
+										ImGui::Text("Attack Damage: "); ImGui::SameLine(); ImGui::DragInt("##attackdamage", &it->second.attackDamage);
+										ImGui::Text("Required Attack Points: "); ImGui::SameLine(); ImGui::DragInt("##attackpoints", &it->second.requiredAttackPoints);
+
+										// Projectile variabls
+										ImGui::Text("Projectile Stats");
+										ImGui::Text("Bullet Fire Delay: "); ImGui::SameLine(); ImGui::DragFloat("##bulletdelay", &it->second.bulletDelay);
+										ImGui::Text("Range: "); ImGui::SameLine(); ImGui::DragFloat("##projectilerange", &it->second.bulletRange);
+										ImGui::Text("Lifetime: "); ImGui::SameLine(); ImGui::DragFloat("##projectilelifetime", &it->second.bulletLifeTime);
+										ImGui::Text("Force: "); ImGui::SameLine(); ImGui::DragFloat("##projectileforce", &it->second.bulletForce);									
+										
+
+										ImGui::Separator();
+										int num{};
+										ImGui::Text("Add Animation state"); ImGui::SameLine();
+										bool worked{ false };
+										if (ImGui::Button("+"))
+										{
+											std::string str = "NewState";
+											while (!worked)
+											{
+												if (it->second.animationStates.count(str))
+												{
+													str += 1;
+												}
+												else
+												{
+													it->second.animationStates.emplace(str, "");
+													worked = true;
+												}
+											}
+										}
+										static std::pair<std::string, std::string> whoToRemove;
+										static bool rmFlag{ false };
+										for (auto& [k, v] : it->second.animationStates)
+										{
+											ImGui::Text("State: "); ImGui::SameLine(); 
+											std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
+											bool changed = ImGui::InputText(std::string("##" + k + std::to_string(++num)).c_str(), &curr);
+											if (!changed)
+											{
+												if (whoToRemove.first == k)
+												{
+													if (!ImGui::IsItemActivated())
+													{
+														rmFlag = true;
+													}
+												}
+											}
+											else
+											{
+												if (k != curr)
+												{
+													whoToRemove.first = k;
+													whoToRemove.second = curr;
+													rmFlag = false;
+												}
+												
+											}
+											
+										
+											ImGui::Text("Animation: "); ImGui::SameLine();
+											bool bl = ImGui::BeginCombo(std::string("##Animation" + k + std::to_string(num)).c_str(), v.c_str());
+											if (bl)
+											{
+												if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+												{
+													for (const auto& name : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+													{
+														if (ImGui::Selectable(name.c_str()))
+															v = name;
+													}
+												}
+												ImGui::EndCombo();
+											}
+											ImGui::Separator();
+										}
+										if (rmFlag)
+										{
+											it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
+											it->second.animationStates.erase(whoToRemove.first);
+											whoToRemove.first = "";
+											whoToRemove.second = "";
+											rmFlag = false;
+										}
+									}
+								}
+							}
+
+							if (key == "RatScript")
+							{
+								RatScript* p_script = dynamic_cast<RatScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader(key.c_str(), ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										// Misc script data
+										ImGui::Text("Rat Settings");
+										int input = static_cast<int>(it->second.mainCatID);
+										ImGui::Text("Main Cat ID: "); ImGui::SameLine(); ImGui::InputInt("##targetCat", &input);
+										it->second.mainCatID = static_cast<EntityID>(input);
+										ImGui::Text("Health: "); ImGui::SameLine(); ImGui::InputInt("##rathealth", &it->second.health);
+										ImGui::Text("Movement Speed: "); ImGui::SameLine(); ImGui::InputFloat("##ratmovespeed", &it->second.movementSpeed);
+
+										ImGui::Text("Detection Radius: "); ImGui::SameLine(); ImGui::InputFloat("##ratdecrad", &it->second.detectionRadius);
+										ImGui::Text("Attack Diameter: "); ImGui::SameLine(); ImGui::InputFloat("##ratattdia", &it->second.attackDiameter);
+										ImGui::Text("Attack Duration: "); ImGui::SameLine(); ImGui::InputFloat("##ratattdur", &it->second.attackDuration);
+
+										ImGui::Text("Touch Damage: "); ImGui::SameLine(); ImGui::InputInt("##rattdmg", &it->second.collisionDamage);
+										ImGui::Text("Attack Damage: "); ImGui::SameLine(); ImGui::InputInt("##ratattdmg", &it->second.attackDamage);
+
+										ImGui::Text("Attack Delay: "); ImGui::SameLine(); ImGui::InputFloat("##ratattdel", &it->second.attackDelay);
+
+
+										// Animation state
+										ImGui::Separator();
+										int num{};
+										ImGui::Text("Add Animation state"); ImGui::SameLine();
+										bool worked{ false };
+										if (ImGui::Button("+"))
+										{
+											std::string str = "NewState";
+											while (!worked)
+											{
+												if (it->second.animationStates.count(str))
+												{
+													str += 1;
+												}
+												else
+												{
+													it->second.animationStates.emplace(str, "");
+													worked = true;
+												}
+											}
+										}
+										static std::pair<std::string, std::string> whoToRemove;
+										static bool rmFlag{ false };
+										for (auto& [k, v] : it->second.animationStates)
+										{
+											ImGui::Text("State: "); ImGui::SameLine();
+											std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
+											bool changed = ImGui::InputText(std::string("##" + k + std::to_string(++num)).c_str(), &curr);
+											if (!changed)
+											{
+												if (whoToRemove.first == k)
+												{
+													if (!ImGui::IsItemActivated())
+													{
+														rmFlag = true;
+													}
+												}
+											}
+											else
+											{
+												if (k != curr)
+												{
+													whoToRemove.first = k;
+													whoToRemove.second = curr;
+													rmFlag = false;
+												}
+
+											}
+
+
+											ImGui::Text("Animation: "); ImGui::SameLine();
+											bool bl = ImGui::BeginCombo(std::string("##Animation" + k + std::to_string(num)).c_str(), v.c_str());
+											if (bl)
+											{
+												if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+												{
+													for (const auto& name : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+													{
+														if (ImGui::Selectable(name.c_str()))
+															v = name;
+													}
+												}
+												ImGui::EndCombo();
+											}
+											ImGui::Separator();
+										}
+										if (rmFlag)
+										{
+											it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
+											it->second.animationStates.erase(whoToRemove.first);
+											whoToRemove.first = "";
+											whoToRemove.second = "";
+											rmFlag = false;
+										}
+									}
+								}
+							}
+
+
+
 						}
 					}
 
@@ -2513,7 +2719,8 @@ namespace PE {
 					if (ImGui::BeginPopup("Components"))
 					{
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>())
-								&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+								&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>())
+							&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
 						{
 							if (ImGui::Selectable("Add Collision"))
 							{
@@ -2557,15 +2764,9 @@ namespace PE {
 								else
 									AddErrorLog("ALREADY HAS ANIMATION");
 							}
-							if (ImGui::Selectable("Add Audio"))
-							{
-								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
-									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AudioComponent>() });
-								else
-									AddErrorLog("ALREADY HAS AUDIO");
-							}
 						}
-						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 
+						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
+							&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
 						{
 							if (ImGui::Selectable("Add Text"))
 							{
@@ -2673,7 +2874,7 @@ namespace PE {
 						std::string const extension{ m_files[n].filename().extension().string() };
 						if (extension == "")
 							icon = "../Assets/Icons/Directory_Icon.png";
-						else if (extension == ".mp3" || extension == ".wav")
+						else if (extension == ".mp3" || extension == ".wav" || extension == ".ogg")
 							icon = "../Assets/Icons/Audio_Icon.png";
 						else if (extension == ".ttf")
 							icon = "../Assets/Icons/Font_Icon.png";
@@ -2703,8 +2904,14 @@ namespace PE {
 								std::string iconDraggedExtension = m_files[n].extension().string();
 								if (iconDraggedExtension == "")
 									iconDragged = "../Assets/Icons/Directory_Icon.png";
-								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav")
+								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav" ||
+									iconDraggedExtension == ".ogg" || iconDraggedExtension == ".flac" ||
+									iconDraggedExtension == ".aiff" || iconDraggedExtension == ".mod" ||
+									iconDraggedExtension == ".s3m" || iconDraggedExtension == ".xm" ||
+									iconDraggedExtension == ".midi" || iconDraggedExtension == ".mid")
+								{
 									iconDragged = "../Assets/Icons/Audio_Icon.png";
+								}
 								else if (iconDraggedExtension == ".ttf")
 									iconDragged = "../Assets/Icons/Font_Icon.png";
 								else if (iconDraggedExtension == ".json")
@@ -2780,14 +2987,9 @@ namespace PE {
 									if (!id) // skip editor camera
 										continue;
 									EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-									for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
-									{
-										if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-										{
-											desc.sceneID = i;
-											continue;
-										}
-									}
+									
+									desc.sceneID = id;
+										
 									if (desc.parent)
 									{
 										EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
@@ -2848,7 +3050,7 @@ namespace PE {
 						{
 							// alters the texture assigned to renderer component in entity
 							std::string const extension = m_files[draggedItemIndex].extension().string();
-							if (extension == ".png")
+							if (extension == ".png" && !EntityManager::GetInstance().Has<AudioComponent>(m_currentSelectedObject))
 							{
 								if (m_entityToModify.first == "Renderer")
 								{
@@ -2863,19 +3065,24 @@ namespace PE {
 									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
 								}
 							}
-							if (extension == ".mp3" || extension == ".wav")
+							else if (EntityManager::GetInstance().Has<AudioComponent>(m_currentSelectedObject))
 							{
-								std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
-								std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
-								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;								if (!newAudioKey.empty())
+								if (extension == ".wav")
 								{
-									EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
-									this->currentSoundID = newAudioKey;  // Update currentSoundID
-									std::cout << "currentSoundID updated to: " << currentSoundID << std::endl;
+									std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
+									std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
+									std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;
+									if (!newAudioKey.empty())
+									{
+										EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
+										std::cout << "currentSoundID updated to: " << EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).GetAudioKey() << std::endl;
+									}
+								}
+								else
+								{
+									AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '" + extension + "'.", "File Type Error");
 								}
 							}
-
-							// add remaining editable assets audio etc
 						}
 
 						if (m_mouseInScene || m_mouseInObjectWindow)
@@ -3493,14 +3700,7 @@ namespace PE {
 										if (!id) // skip editor camera
 											continue;
 										EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-										for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
-										{
-											if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-											{
-												desc.sceneID = i;
-												continue;
-											}
-										}
+										desc.sceneID = id;
 										if (desc.parent)
 										{
 											EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
@@ -3531,17 +3731,6 @@ namespace PE {
 									}
 								}
 							}
-							ImGui::EndMenu();
-						}
-						//does not work only for show
-						if (ImGui::BeginMenu("Edit"))
-						{
-							if (ImGui::MenuItem("Undo", "")) {}
-							if (ImGui::MenuItem("Redo", "", false, false)) {}
-							ImGui::Separator();
-							if (ImGui::MenuItem("Cut", "")) {}
-							if (ImGui::MenuItem("Copy", "")) {}
-							if (ImGui::MenuItem("Paste", "")) {}
 							ImGui::EndMenu();
 						}
 						//all the different windows
@@ -3631,6 +3820,7 @@ namespace PE {
 
 	void Editor::ShowPhysicsWindow(bool* p_active)
 	{
+		if (IsEditorActive())
 		if (!ImGui::Begin("Physics Config Window", p_active, ImGuiWindowFlags_AlwaysAutoResize)) // draw resource list
 		{
 			ImGui::End(); //imgui close
@@ -3757,14 +3947,7 @@ namespace PE {
 						if (!id) // skip editor camera
 							continue;
 						EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-						for (size_t i{}; i < EntityManager::GetInstance().GetEntitiesInPool(ALL).size(); ++i)
-						{
-							if (id == EntityManager::GetInstance().GetEntitiesInPool(ALL).at(i))
-							{
-								desc.sceneID = i;
-								continue;
-							}
-						}
+						desc.sceneID = id;
 						if (desc.parent)
 						{
 							EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
@@ -3895,6 +4078,7 @@ namespace PE {
 			static ImVec2 screenPosition; // coordinates from the top left corner
 			static ImVec2 currentPosition;
 			static vec2 startPosition;
+			if (m_mouseInScene)
 			if (ImGui::IsMouseClicked(0))
 			{
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
@@ -3907,7 +4091,7 @@ namespace PE {
 				if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
 					|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight)
 				{
-					std::cout << "is outside viewport";
+					
 				}
 				else
 				{
@@ -3960,6 +4144,7 @@ namespace PE {
 
 					if (m_currentSelectedObject != -1)
 					{
+						if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
 						startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
 					}
 				}
@@ -3977,21 +4162,25 @@ namespace PE {
 			{
 				if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
 				{
-					rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation;
-					clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-					rotating = true;
+					if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+					{
+						rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation;
+						clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+						rotating = true;
+					}
 				}
 
 				if (InputSystem::IsKeyTriggered(GLFW_KEY_S) && scaling == false)
 				{
-					height = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height;
-					width = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width;
+					if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+					{
+						height = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height;
+						width = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width;
+						clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+						clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 
-					clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-					clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
-
-					scaling = true;
-
+						scaling = true;
+					}
 				}
 			}
 			float currentRotation;
@@ -4022,8 +4211,11 @@ namespace PE {
 					if (InputSystem::IsKeyHeld(GLFW_KEY_R) && scaling == false)
 					{
 						currentRotation = rotation - offset.y;
-						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation = currentRotation;
-						rotating = true;
+						if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+						{
+							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation = currentRotation;
+							rotating = true;
+						}
 					}
 
 					if (InputSystem::IsKeyHeld(GLFW_KEY_S) && rotating == false)
@@ -4031,21 +4223,21 @@ namespace PE {
 						if (InputSystem::IsKeyHeld(GLFW_KEY_X))
 						{
 							currentWidth = width + offset.x;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = height;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = height;
 						}
 						else if (InputSystem::IsKeyHeld(GLFW_KEY_Y))
 						{
 							currentHeight = height + offset.y;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = width;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = width;
 						}
 						else
 						{
 							currentHeight = height + offset.y;
 							currentWidth = width + offset.x;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
 						}
 						scaling = true;
 					}
@@ -4063,7 +4255,9 @@ namespace PE {
 								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x , startPosition.y + offset.y);
 							}
 							else
-							EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+							{
+									EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+							}
 						}
 
 
@@ -4157,9 +4351,9 @@ namespace PE {
 		}
 		ImGui::EndDisabled();
 		ImGui::SameLine();
-		if (
-			ImGui::Button("Stop")
-			) {
+		if (ImGui::Button("Stop")) 
+		{
+			GameStateManager::GetInstance().ResetDefaultState();
 			m_showEditor = true;
 			toDisable = true;
 			if (m_isRunTime)

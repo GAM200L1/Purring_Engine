@@ -51,32 +51,32 @@ namespace PE
         \brief     Plays an audio sound associated with the given identifier.
         \param     r_id The identifier of the audio sound.
         *************************************************************************************/
-        void PlayAudioSound(const std::string& r_id);
+        void PlayAudioSound();
 
         /*!***********************************************************************************
         \brief     Sets the volume for the audio sound with the specified identifier.
         \param     r_id The identifier of the audio sound.
         \param     volume The volume level to set.
         *************************************************************************************/
-        void SetVolume(const std::string& r_id, float volume);
+        void SetVolume(float volume);
 
         /*!***********************************************************************************
         \brief     Pauses the audio sound with the given identifier.
         \param     r_id The identifier of the audio sound.
         *************************************************************************************/
-        void PauseSound(const std::string& r_id);
+        void PauseSound();
 
         /*!***********************************************************************************
         \brief     Resumes the paused audio sound with the specified identifier.
         \param     r_id The identifier of the audio sound.
         *************************************************************************************/
-        void ResumeSound(const std::string& r_id);
+        void ResumeSound();
 
         /*!***********************************************************************************
         \brief     Stops the audio sound associated with the given identifier.
         \param     r_id The identifier of the audio sound.
         *************************************************************************************/
-        void StopSound(const std::string& r_id);
+        void StopSound();
 
         /*!***********************************************************************************
         \brief     Gets the current audio file key.
@@ -88,7 +88,7 @@ namespace PE
         \brief     Sets a new audio file key.
         \param     r_newKey The new audio file key to set.
         *************************************************************************************/
-        void SetAudioKey(std::string const& r_newKey);
+        void SetAudioKey(const std::string& audiokey);
 
         /*!***********************************************************************************
         \brief     Sets the audio to loop or not.
@@ -101,6 +101,19 @@ namespace PE
         \return    True if the audio is looping, false otherwise.
         *************************************************************************************/
         bool IsLooping() const { return m_loop; }
+
+         /*!***********************************************************************************
+        \brief     Sets the audio to loop or not.
+        \param     loop True if the audio should loop, false otherwise.
+        *************************************************************************************/
+        void SetPause(bool p) { isPaused = p; }
+
+        /*!***********************************************************************************
+        \brief     Gets whether the audio is looping or not.
+        \return    True if the audio is looping, false otherwise.
+        *************************************************************************************/
+        bool IsPaused() const { return isPaused; }
+
 
         /*!***********************************************************************************
         \brief     Converts the AudioComponent state to JSON format.
@@ -118,5 +131,6 @@ namespace PE
     private:
         std::string m_audioKey;         // The audio file key
         bool m_loop = false;            // Whether the audio should loop or not
+        bool isPaused = false;          // Whether the audio is paused or not
     };
 }

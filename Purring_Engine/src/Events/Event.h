@@ -18,6 +18,7 @@
 #include <map>
 #include <functional>
 #include <vector>
+#include <algorithm>
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
@@ -98,11 +99,11 @@ namespace PE {
 		 \param[in] const Func& func - The callback function to be invoked when the event is dispatched.
 		 \return	returns an int as a handle to the event to be use to remove event later on
 		*************************************************************************************/
-		int AddListener(T type, const Func& func) 
-		{ 
-			m_Listerners[type].push_back(func); 
+		int AddListener(T type, const Func& func)
+		{
+			m_Listerners[type].push_back(func);
 			int handle = m_NextListenerID++;
-			m_ListenerHandles[handle] = { type, std::prev(m_Listerners[type].end()) };
+			m_ListenerHandles[handle] = { type, *(long*)(char*)&(func) };
 			return handle;
 		}
 
@@ -117,7 +118,17 @@ namespace PE {
 			{
 				const auto& listenerInfo = it->second;
 				auto& listeners = m_Listerners[listenerInfo.first];
-				listeners.erase(listenerInfo.second);
+				//trying to erase a specific element in a vector by iterator
+				listeners.erase(std::remove_if(listeners.begin(), listeners.end(), [=](auto& fc)
+					{
+						if ((*(long*)(char*)&fc == listenerInfo.second)) 
+						{
+							//std::cout<< "found" << std::endl;
+						}
+
+						return (*(long*)(char*)&fc == listenerInfo.second);
+					}
+				), listeners.end());
 				m_ListenerHandles.erase(it);
 			}
 		}
@@ -137,6 +148,7 @@ namespace PE {
 			//loop through all listerners if the event is not handled we process it.
 			for (auto&& listener : m_Listerners.at(event.GetType()))
 			{
+				if(listener)
 				if (!event.Handled()) listener(event);
 			}
 		}
@@ -144,7 +156,7 @@ namespace PE {
 	private:
 		std::map<T, std::vector<Func>> m_Listerners; // subscribed events
 		int m_NextListenerID = 0;
-		std::map<int, std::pair<T, typename std::vector<Func>::iterator>> m_ListenerHandles;
+		std::map<int, std::pair<T, long int>> m_ListenerHandles;
 	};
 
 	/*!***********************************************************************************

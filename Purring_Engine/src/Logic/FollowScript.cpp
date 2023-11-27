@@ -21,6 +21,10 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "AudioManager/AudioComponent.h"
+#include "LogicSystem.h"
+#include "CatScript.h"
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 namespace PE
@@ -37,27 +41,69 @@ namespace PE
 			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index])) 
+				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index]))
 				{
+					if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+					{
+						if (GameStateManager::GetInstance().GetGameState() != GameStates::EXECUTE)
+							return;
+					}
+
 					Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].ToAttach[index]);
 					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)
 						&& (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
 					{
-						//can make into a loop to attach more objects
-						m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = m_ScriptData[id].ToAttach[index];
+						// Have the cat follow behind
+							EntityID followIndex{ m_ScriptData[id].ToAttach[index] };
+						m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = followIndex;
 						m_ScriptData[id].ToAttach.erase(m_ScriptData[id].ToAttach.begin() + index);
 						++m_ScriptData[id].NumberOfFollower;
 						--m_ScriptData[id].NumberOfAttachers;
+
+						if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+						{
+							//std::cout << "CatScript found" << std::endl;
+							CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
+							CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
+
+							SerializationManager serializationManager;
+							EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Rescue SFX_Prefab.json");
+							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+							EntityManager::GetInstance().RemoveEntity(sound);
+							cd->catHealth = m_ScriptData[id].NumberOfFollower;
+
+
+							// Flag the cat if so it knows it has been attached 
+							CatScriptData* catData{ GETSCRIPTDATA(CatScript, followIndex) };
+							catData->isFollowing = true;
+						}
 					}
 				}
 			}
+
 			if (m_ScriptData[id].NumberOfAttachers == 1)
 			{
 				m_ScriptData[id].IsAttaching = false;
 
 			}
 		}
-
+		if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+		{
+			CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
+			//std::cout << cd->catHealth << std::endl;
+			if(cd->catHealth >= 1)
+			if (cd->catHealth < m_ScriptData[id].NumberOfFollower)
+			{
+				for (int i = cd->catHealth; i < m_ScriptData[id].NumberOfFollower; ++i)
+				{
+					if(EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingObject[i]))
+						EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingObject[i]).isActive = false;
+					m_ScriptData[id].NumberOfFollower--;
+					CatScript::SetMaximumEnergyLevel(CatScript::GetBaseMaximumEnergyLevel() + (m_ScriptData[id].NumberOfFollower - 1) * 2);
+				}
+			}
+		}
 		for (int i = m_ScriptData[id].NumberOfFollower; i < 5; ++i)
 		{
 			m_ScriptData[id].FollowingObject[i] = static_cast<EntityID>(-1);
@@ -84,7 +130,7 @@ namespace PE
 			//checking rotation to set
 			float rotationOffset = newRotation - m_ScriptData[id].Rotation;
 
-			if (rotationOffset != 0)
+			if (rotationOffset != 0 && m_ScriptData[id].LookTowardsMovement)
 				EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
 
 			//EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
@@ -116,15 +162,26 @@ namespace PE
 					{
 						vec2 directionalvector3 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
 						float newRot = atan2(directionalvector3.y, directionalvector3.x);
-						EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = newRot;
+						if (m_ScriptData[id].LookTowardsMovement)
+							EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = newRot;
+						else
+							EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).width = EntityManager::GetInstance().Get<Transform>(id).width;
 					}
 				}
 
 			}
 
-
+			//m_ScriptData[id].UpdateNow = false;
 		}
 
+		if (InputSystem::IsKeyTriggered(GLFW_KEY_Q))
+		{
+			if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+			{
+				CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
+				cd->catHealth--;
+			}
+		}
 	}
 
 	void FollowScript::Destroy(EntityID)

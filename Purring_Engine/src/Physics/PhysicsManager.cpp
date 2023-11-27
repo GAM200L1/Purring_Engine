@@ -19,6 +19,7 @@
 #include "Math/Transform.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
+#include "GameStateManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -72,34 +73,8 @@ namespace PE
 
 	void PhysicsManager::UpdateSystem(float deltaTime)
 	{
-		static bool sceneRunning{ false };
-
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
-		{
-#endif
-			if (sceneRunning)
-			{	
-				for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
-				{
-					// if the entity is not active, do not update physics
-					if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
-
-					RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
-					rb.ZeroForce();
-					rb.velocity.Zero();
-					rb.rotationVelocity = 0.f;
-				}
-				sceneRunning = false;
-			}
-			return;
-#ifndef GAMERELEASE
-		}
-#endif
-
-		sceneRunning = true;
-#ifndef GAMERELEASE
-		if (!Editor::GetInstance().IsEditorActive())
 		{
 #endif
 			// In normal physics simulation mode
@@ -120,6 +95,22 @@ namespace PE
 
 		}
 #endif
+
+#ifndef GAMERELEASE
+		if (!Editor::GetInstance().IsRunTime())
+		{
+			for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
+			{
+				// if the entity is not active, do not update physics
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
+
+				RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
+				rb.ZeroForce();
+				rb.velocity.Zero();
+				rb.rotationVelocity = 0.f;
+			}
+		}
+#endif
 	}
 
 	void PhysicsManager::DestroySystem()
@@ -132,6 +123,9 @@ namespace PE
 
 	void PhysicsManager::UpdateDynamics(float deltaTime)
 	{
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+			return;
+
 		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
 		{
 			// if the entity is not active, do not check for collision

@@ -1,0 +1,38 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "Prefab Type": "PauseBG",
+                "children": [],
+                "isActive": true,
+                "name": "PauseBG",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "GUIRenderer": {
+                "Color": {
+                    "a": 0.47058823704719543,
+                    "b": 0.0,
+                    "g": 0.0,
+                    "r": 0.0
+                },
+                "TextureKey": ""
+            },
+            "Transform": {
+                "height": 1080.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 1920.0
+            }
+        },
+        "name": ""
+    }
+}

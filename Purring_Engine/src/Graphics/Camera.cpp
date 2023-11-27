@@ -109,6 +109,18 @@ namespace PE
         }
 
 
+        bool Camera::GetPositionWithinViewport(float const x, float const y, float const padding) const
+        {
+            // Transform the coordinates into viewport space 
+            float viewX{ x * m_cachedWorldToViewMatrix[0][0] + y * m_cachedWorldToViewMatrix[1][0] + m_cachedWorldToViewMatrix[3][0] };
+            float viewY{ x * m_cachedWorldToViewMatrix[0][1] + y * m_cachedWorldToViewMatrix[1][1] + m_cachedWorldToViewMatrix[3][1] };
+
+            // Check if the coordinates are within the viewport
+            float halfWidth{ (m_viewportWidth - padding) * 0.5f }, halfHeight{ (m_viewportHeight - padding) * 0.5f };
+            return (viewX >= -halfWidth && viewX <= halfWidth) && (viewY >= -halfHeight && viewY <= halfHeight);
+        }
+
+
         void Camera::SetMainCamera(bool const value)
         {
             m_isMainCamera = value;

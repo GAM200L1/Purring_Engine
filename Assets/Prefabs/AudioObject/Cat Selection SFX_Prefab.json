@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/vo_Cat_Selected4.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Cat Selection SFX",
+                "children": [],
+                "isActive": true,
+                "name": "Cat Selection SFX",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

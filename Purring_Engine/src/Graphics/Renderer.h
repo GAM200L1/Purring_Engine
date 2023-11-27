@@ -108,6 +108,14 @@ namespace PE
              \param[in] a Alpha component of the color to set the object to (from [0, 1]).
             *************************************************************************************/
             void Renderer::SetColor(float const r = 1.f, float const g = 1.f, float const b = 1.f, float const a = 1.f);
+            
+            /*!***********************************************************************************
+             \brief Sets the alpha of the color of the object. If the object has a texture on it, 
+                    this sets the opacity of the texture.
+
+             \param[in] alpha Alpha component of the color to set the object to (from [0, 1]).
+            *************************************************************************************/
+            void Renderer::SetAlpha(float const alpha);
 
             /*!***********************************************************************************
              \brief Sets whether the renderer is enabled. If set to true, this object will be 
