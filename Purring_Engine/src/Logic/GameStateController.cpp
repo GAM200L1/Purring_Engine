@@ -489,6 +489,11 @@ namespace PE
 
 			if (KTE.keycode == GLFW_KEY_ESCAPE)
 			{
+				if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN || GameStateManager::GetInstance().GetGameState() == GameStates::LOSE)
+				{
+					return;
+				}
+
 				if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
 				{
 					GameStateManager::GetInstance().ResumeState();
@@ -531,7 +536,7 @@ namespace PE
 
 			if (KTE.keycode == GLFW_KEY_F10)
 			{
-				GameStateManager::GetInstance().RestartGame(-1);
+				GameStateManager::GetInstance().RestartGame(static_cast<EntityID>(-1));
 			}
 		}
 	}

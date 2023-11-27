@@ -60,12 +60,19 @@ namespace PE {
 				if (KTE.keycode == GLFW_KEY_F9)
 					m_showAnimationWindow = !m_showAnimationWindow;
 
-				if (KTE.keycode == GLFW_KEY_F10)
-						ToggleDebugRender();				
-				
+
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
 					m_undoStack.UndoChange();
+				}
+
+				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_SHIFT) && KTE.keycode == GLFW_KEY_F10)
+				{
+					m_showTestWindows = !m_showTestWindows;
+				}
+				else if (KTE.keycode == GLFW_KEY_F10)
+				{
+					ToggleDebugRender();
 				}
 
 				if (KTE.keycode == GLFW_KEY_DELETE)

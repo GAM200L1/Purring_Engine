@@ -891,7 +891,7 @@ namespace PE {
 			ImGui::SameLine();
 			if (ImGui::Button("Undo/Sceen Picking"))
 			{
-				//LoadSceneFromGivenPath("../Assets/RubricTestScenes/");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/UndoTest.json");
 			}
 			if (ImGui::Button("Prefab Editor Test Scene"))
 			{
