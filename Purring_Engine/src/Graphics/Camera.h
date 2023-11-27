@@ -1,5 +1,3 @@
-#pragma once
-
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
@@ -16,11 +14,10 @@
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
+#pragma once
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> // ortho()
-
-
 
 #include "Math/Transform.h"
 #include <Data/json.hpp>
