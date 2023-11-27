@@ -65,6 +65,8 @@ namespace PE
 
 		if (m_scriptData[id].health <= 0)
 		{
+			GameStateManager::GetInstance().noPause = true;
+
 			// idk if need these
 
 			// TODO ------------------------------------------------------------ //

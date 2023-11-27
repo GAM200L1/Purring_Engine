@@ -98,6 +98,8 @@ namespace PE
 		// Check if the player has died
 		if (m_scriptData[id].catHealth <= 0 && m_scriptData[id].isMainCat)
 		{
+			GameStateManager::GetInstance().noPause = true;
+
 			for (auto quad : m_scriptData[id].pathQuads)
 			{
 				CatScript::ToggleEntity(quad, false);

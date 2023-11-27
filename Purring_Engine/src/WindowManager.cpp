@@ -39,6 +39,11 @@ namespace PE
 
 	WindowManager::WindowManager()
 	{
+#ifndef GAMERELEASE
+		m_showFps = true;
+#else
+		m_showFps = false;
+#endif // !GAMERELEASE
 		// Attempt to initialize GLFW
 		if (!glfwInit())
 		{
@@ -111,7 +116,16 @@ namespace PE
 	void WindowManager::UpdateTitle(GLFWwindow* window, double fps)
 	{
 		std::ostringstream titleStream;
+#ifndef GAMERELEASE
 		titleStream << "Purring Engine | FPS: " << static_cast<int>(fps);
+#else
+		titleStream << "March Of The Meows";
+		
+		if (m_showFps)
+		{
+			titleStream << " | FPS: " << static_cast<int>(fps);
+		}
+#endif
 		glfwSetWindowTitle(window, titleStream.str().c_str());
 	}
 
@@ -266,6 +280,11 @@ namespace PE
 									glfwSetWindowMonitor(p_currWindow, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 									fs = !fs;
 							}
+					}
+
+					if (ev.keycode == GLFW_KEY_F4)
+					{
+						m_showFps = !m_showFps;
 					}
 #endif
 			}

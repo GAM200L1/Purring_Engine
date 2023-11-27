@@ -38,6 +38,7 @@ namespace PE
 
 	void GameStateManager::SetPauseState(EntityID)
 	{
+		if(!noPause)
 		if (m_currentGameState != GameStates::INACTIVE && m_currentGameState != GameStates::PAUSE && m_currentGameState != GameStates::SPLASHSCREEN)
 		{
 			m_prevGameState = m_currentGameState;
@@ -236,6 +237,7 @@ namespace PE
 			m_prevGameState = GameStates::PAUSE;
 
 			godMode = false;
+			noPause = false;
 	}
 
 	GameStates GameStateManager::GetPreviousGameState()

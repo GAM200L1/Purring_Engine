@@ -142,5 +142,6 @@ namespace PE
         GLFWwindow* p_currWindow;
         GLFWmonitor* p_monitor;
         static bool msepress;
+        bool m_showFps;
     };
 }
