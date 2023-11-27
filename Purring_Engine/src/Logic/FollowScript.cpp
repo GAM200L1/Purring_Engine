@@ -67,7 +67,7 @@ namespace PE
 							CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
 
 							SerializationManager serializationManager;
-							EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Rescue SFX_Prefab.json");
+							EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX_Prefab.json");
 							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 							EntityManager::GetInstance().RemoveEntity(sound);

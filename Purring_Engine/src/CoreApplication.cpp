@@ -310,86 +310,12 @@ PE::CoreApplication::CoreApplication()
     InitializeSystems();
     InitializeAudio();
 
-
-    // Load Textures and Animations
-    std::string catTextureName{ "../Assets/Textures/Cat_Grey_128px.png" }, cat2TextureName{ "../Assets/Textures/Cat_Grey_Blink_128px.png" }, buttonTextureName{ "../Assets/Textures/Button_White_128px.png" };
-    std::string ratTextureName{ "../Assets/Textures/Rat_Brawler_128px.png" };
-    ResourceManager::GetInstance().LoadTextureFromFile(catTextureName, "../Assets/Textures/Cat_Grey_128px.png");
-    ResourceManager::GetInstance().LoadTextureFromFile(cat2TextureName, "../Assets/Textures/Cat_Grey_Blink_128px.png");
-    ResourceManager::GetInstance().LoadTextureFromFile(ratTextureName, "../Assets/Textures/Rat_Gutter_128px.png");
-    ResourceManager::GetInstance().LoadTextureFromFile("../Assets/Textures/bg.png", "../Assets/Textures/bg.png");
-
-    ResourceManager::GetInstance().LoadTextureFromFile(buttonTextureName, "../Assets/Textures/Button_White_128px.png");
-
-    // Load Fonts
-    std::string fontHeader{ "../Assets/Fonts/Kalam/Kalam-Bold.ttf" }, fontBody{ "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf" };
-    ResourceManager::GetInstance().LoadFontFromFile(fontHeader, "../Assets/fonts/Kalam/Kalam-Bold.ttf");
-    ResourceManager::GetInstance().LoadFontFromFile(fontBody, "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf");    
-
-    // Animation textures
-    std::string catWalkSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png" };
-    std::string catAttackSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png" };
-    std::string ratAttackSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Attack.png" };
-    std::string ratDeathSpriteSheet{ "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png" };
-
-    // Spritesheet 1
-    ResourceManager::GetInstance().LoadTextureFromFile(catWalkSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png");
-
-    // Spritesheet 2
-    ResourceManager::GetInstance().LoadTextureFromFile(catAttackSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png");
-
-    // Spritesheet 3
-    ResourceManager::GetInstance().LoadTextureFromFile(ratAttackSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Attack.png");
-
-    // Spritesheet 4
-    ResourceManager::GetInstance().LoadTextureFromFile(ratDeathSpriteSheet, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png");
-
     SerializationManager serializationManager;
     //create background from file
 
-    EntityID uiCameraId{ serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Camera_Prefab.json") };
+    EntityID uiCameraId{ serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
-
-    // EntityID bgId{ serializationManager.LoadFromFile("../Assets/Prefabs/Background_Prefab.json") };
-    // EntityManager::GetInstance().Get<EntityDescriptor>(bgId).name = "Background";
-    // EntityManager::GetInstance().Get<Transform>(bgId).width = 1920.f;
-    // EntityManager::GetInstance().Get<Transform>(bgId).height = 1080.f;
-    
-    
-
-    // Create button objects
-    //for (int i{}; i < 2; ++i) 
-    //{
-    //    EntityID buttonId = EntityFactory::GetInstance().CreateFromPrefab("ButtonObject");
-    //    EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetTextureKey(buttonTextureName);
-    //    EntityManager::GetInstance().Get<Graphics::GUIRenderer>(buttonId).SetColor();
-    //    EntityManager::GetInstance().Get<Transform>(buttonId).position.x = -125.f + 250.f * i;
-    //    EntityManager::GetInstance().Get<Transform>(buttonId).position.y = 200.f;
-    //    EntityManager::GetInstance().Get<Transform>(buttonId).width = 250.f;
-    //    EntityManager::GetInstance().Get<Transform>(buttonId).height = 100.f;
-    //}
-
-    // Make a runtime camera that follows the player
-    //EntityID cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-    //EntityManager::GetInstance().Get<Graphics::Camera>(cameraId).SetViewDimensions(windowWidth, windowHeight);
-
-    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.x = -100.f;
-    //EntityManager::GetInstance().Get<Transform>(cameraId).relPosition.y = -100.f;
-    //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject";
-    //EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).parent = id;
-
-
-    // Make a second runtime camera to test switching
-   // cameraId = EntityFactory::GetInstance().CreateFromPrefab("CameraObject");
-
-
-    //EntityManager::GetInstance().Get<Transform>(cameraId).position.x = 100.f;
-   // EntityManager::GetInstance().Get<Transform>(cameraId).position.y = 100.f;
-   // EntityManager::GetInstance().Get<EntityDescriptor>(cameraId).name = "CameraObject2";
-    //EntityID child = EntityFactory::GetInstance().CreateFromPrefab("GameObject");
-    //EntityManager::GetInstance().Get<EntityDescriptor>(child).name = "Child";
-    //EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = id;
 }
 
 PE::CoreApplication::~CoreApplication()

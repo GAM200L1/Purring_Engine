@@ -328,13 +328,6 @@ namespace PE {
 		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
 		ImGui_ImplOpenGL3_Init("#version 450");
-
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Directory_Icon.png", "../Assets/Icons/Directory_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Audio_Icon.png"	, "../Assets/Icons/Audio_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Font_Icon.png", "../Assets/Icons/Font_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Prefabs_Icon.png", "../Assets/Icons/Prefabs_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Other_Icon.png", "../Assets/Icons/Other_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Texture_Icon.png", "../Assets/Icons/Texture_Icon.png");
 	}
 
 	void Editor::Render(Graphics::FrameBuffer& r_frameBuffer)
@@ -832,36 +825,36 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Empty_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/UIObject_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Button_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Text_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::Selectable("Create Audio Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Audio_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Camera_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				ImGui::EndPopup();
@@ -887,7 +880,7 @@ namespace PE {
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Undo/Sceen Picking"))
+			if (ImGui::Button("Undo/Screen Picking"))
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/UndoTest.json");
 			}
@@ -1999,22 +1992,6 @@ namespace PE {
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Separator();
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
-									////setting colors
-
-									////get and set color variable of the renderer component
-									//ImVec4 color;
-									//color.x = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().r;
-									//color.y = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().g;
-									//color.z = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().b;
-									//color.w = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().a;
-
-									//ImGui::Text("Change Color: "); ImGui::SameLine();
-									//ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
-
-									//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
-
-									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								}
 							}
 						}
@@ -3013,7 +2990,7 @@ namespace PE {
 							}
 							ClearObjectList();
 							engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-							serializationManager.LoadFromFile(prefabFP);
+							serializationManager.LoadFromFile(prefabFP, true);
 						}
 						if (ImGui::Selectable("Delete Asset"))
 						{
@@ -3089,7 +3066,7 @@ namespace PE {
 						{
 							if (m_files[draggedItemIndex].extension() == ".json")
 							{
-								EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+								EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string(), true);
 								m_undoStack.AddChange(new CreateObjectUndo(s_id));
 								// change position of loaded prefab based on mouse cursor here
 							}
@@ -3250,6 +3227,7 @@ namespace PE {
 			{
 				if (currentEntityID.has_value())
 				{
+					if(EntityManager::GetInstance().Has<EntityDescriptor>(currentEntityID.value()))
 					if (str == EntityManager::GetInstance().Get<EntityDescriptor>(currentEntityID.value()).name)
 					break;
 				}
@@ -4469,7 +4447,7 @@ namespace PE {
 			if (ImGui::Button("Apply"))
 			{
 				// exectue the changes!!
-				EntityID pfid = serializationManager.LoadFromFile(prefabFP);
+				EntityID pfid = serializationManager.LoadFromFile(prefabFP, true);
 				for (auto id : modify)
 				{
 					for (size_t i{}; i < prefabCID.size(); ++i)

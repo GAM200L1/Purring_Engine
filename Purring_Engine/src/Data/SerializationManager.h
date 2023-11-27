@@ -129,7 +129,7 @@ public:
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
     *************************************************************************************/
-    size_t LoadFromFile(const std::filesystem::path& filepath);
+    size_t LoadFromFile(std::string const& filename, bool fp = false);
 
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.

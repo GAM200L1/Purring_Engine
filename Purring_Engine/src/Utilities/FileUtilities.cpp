@@ -22,9 +22,23 @@ namespace PE
 	{
 		r_fileNames.clear();
 
-		for (std::filesystem::directory_entry const& r_dirEntry : std::filesystem::directory_iterator{ r_parentPath })
+		std::filesystem::path parentPath;
+
+		// file path does not exist
+		if (!std::filesystem::exists(r_parentPath))
 		{
-			r_fileNames.emplace_back(r_parentPath.string() + "/" + r_dirEntry.path().filename().string());
+			parentPath = r_parentPath.parent_path();
+		}
+		else
+		{
+			parentPath = r_parentPath;
+		}
+
+		
+
+		for (std::filesystem::directory_entry const& r_dirEntry : std::filesystem::directory_iterator{ parentPath })
+		{
+			r_fileNames.emplace_back(parentPath.string() + "/" + r_dirEntry.path().filename().string());
 		}
 	}
 }

@@ -148,7 +148,7 @@ namespace PE
 				if (PointCollision(catCollider, cursorPosition) && m_mouseClick)
 				{
 					SerializationManager serializationManager;
-					EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Selection SFX_Prefab.json");
+					EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Selection SFX_Prefab.json");
 					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 					EntityManager::GetInstance().RemoveEntity(sound);
@@ -344,7 +344,7 @@ namespace PE
 			if (!playShootOnce)
 			{
 				SerializationManager serializationManager;
-				EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Attack SFX_Prefab.json");
+				EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Attack SFX_Prefab.json");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 				EntityManager::GetInstance().RemoveEntity(sound);

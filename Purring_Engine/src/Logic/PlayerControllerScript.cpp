@@ -50,19 +50,11 @@ namespace PE
 		switch (m_ScriptData[id].currentPlayerState)
 		{
 		case PlayerState::IDLE:
-
-			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("../Assets/Animations/catAttack_Anim.json");
-			}			
+			
 			MovePlayer(id,deltaTime);
 			break;
 		case PlayerState::MOVING:
 
-			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("../Assets/Animations/catWalk_Anim.json");
-			}
 			MovePlayer(id,deltaTime);
 			break;
 		case PlayerState::DEAD:

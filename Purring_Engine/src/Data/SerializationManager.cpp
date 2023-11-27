@@ -324,8 +324,19 @@ void SerializationManager::SaveAnimationToFile(const std::filesystem::path& file
     }
 }
 
-size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
+size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
 {
+    std::filesystem::path filepath;
+    
+    // if using filepath
+    if (fp)
+    {
+        filepath = filename;
+    }
+    else
+    {
+        filepath = std::string{ "../Assets/Prefabs/" } + filename;
+    }
     if (!std::filesystem::exists(filepath))
     {
         std::cerr << "File does not exist: " << filepath << std::endl;
