@@ -136,6 +136,10 @@ namespace PE
         *************************************************************************************/
         void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
+        /*!***********************************************************************************
+         \brief     To test the functionality of the buttons.
+         \param     EntityID The entity ID of the entity passed in.
+        *************************************************************************************/
         void TestFunction(EntityID);
 
     private:

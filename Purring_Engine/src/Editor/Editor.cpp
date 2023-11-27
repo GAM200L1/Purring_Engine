@@ -3353,6 +3353,26 @@ namespace PE {
 					currentAnimation->SetSpriteSheetKey(filepaths[textureIndex].string());
 			}
 
+			// Load texture through file explorer
+			if (ImGui::Button("Load Spritesheet"))
+			{
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+				// Check if filePath is not empty
+				if (!filePath.empty())
+				{
+					std::replace(filePath.begin(), filePath.end(), '\\', '/');
+					filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".png";
+
+					ResourceManager::GetInstance().LoadTextureFromFile(filePath, filePath);
+				}
+				else
+				{
+					std::cerr << "No file path was selected for loading." << std::endl;
+				}
+			}
+
+
 			if (ImGui::Button("Play"))
 			{
 				playAnimation = true;
