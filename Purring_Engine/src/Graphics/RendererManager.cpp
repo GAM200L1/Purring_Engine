@@ -308,34 +308,6 @@ namespace PE
             Draw(EnumMeshType::QUAD, glm::vec4{ 1.f, 1.f, 1.f, 1.f }, 
                 m_renderFrameBuffer.GetTextureId(), *(shaderProgramIterator->second),
                 GL_TRIANGLES, windowToNdc* glmObjectTransform);
-
-            //// Bind the shader program
-            //shaderProgramIterator->second->Use();
-
-            //// Bind the mesh VBO
-            //unsigned int meshIndex{ static_cast<unsigned int>(EnumMeshType::QUAD) };
-            //m_meshes[meshIndex].Bind();
-
-            //// Bind the framebuffer texture
-            //GLint textureUnit{ 0 };
-            //glActiveTexture(GL_TEXTURE0 + textureUnit);
-            //glBindTexture(GL_TEXTURE_2D, m_renderFrameBuffer.GetTextureId());
-            //shaderProgramIterator->second->SetUniform("uTextureSampler2d", textureUnit);
-            //shaderProgramIterator->second->SetUniform("uIsTextured", true);
-
-            //// Pass the model to NDC transform matrix as a uniform variable
-            //shaderProgramIterator->second->SetUniform("uModelToNdc", r_modelToNdc);
-
-            //// Pass the color of the quad as a uniform variable
-            //shaderProgramIterator->second->SetUniform("uColor", glm::vec4{1.f,1.f,1.f,1.f});
-
-            //glDrawElements(GL_TRIANGLES, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-            //    GL_UNSIGNED_SHORT, NULL);
-
-            //// Unbind everything
-            //m_meshes[static_cast<unsigned int>(EnumMeshType::QUAD)].Unbind();
-            //shaderProgramIterator->second->UnUse();
-            //glBindTexture(GL_TEXTURE_2D, 0);
         }
 
         template<typename T>
