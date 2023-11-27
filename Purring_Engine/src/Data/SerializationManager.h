@@ -29,8 +29,6 @@
 --------------------------------------------------------------------------------------------------------------------- */
 
 #include "json.hpp"
-//#include "ECS/Components.h"
-//#include "ECS/Entity.h"
 #include "Math/Transform.h"
 #include "Math/MathCustom.h"
 #include "Physics/RigidBody.h"
@@ -48,9 +46,6 @@ struct StructPlayerStats
     int m_level;
     float m_experience;
     std::string m_playerName;
-
-    //void FromJson(const nlohmann::json& j, int& r_entityId, class SerializationManager& r_sm);
-    //nlohmann::json ToJson(int r_entityId, class SerializationManager& r_sm) const;
 };
 
 struct StructEntity
@@ -251,21 +246,6 @@ private:
  \param jsonKey Key for the serialized component in the JSON object.
  \param json JSON object to store the serialized component.
 *******************************************************************************/
-//template<typename ComponentType>
-//void SerializationManager::SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json)
-//{
-//    PE::EntityManager& entityManager = PE::EntityManager::GetInstance();
-//    if (entityManager.Has(static_cast<EntityID>(entityId), entityManager.GetComponentID<ComponentType>()))
-//    {
-//       /* ComponentType* component = static_cast<ComponentType*>(
-//            entityManager.GetComponentPoolPointer(entityManager.GetComponentID<ComponentType>())->Get(static_cast<EntityID>(entityId))
-//            );*/
-//        ComponentType& component = entityManager.Get<ComponentType>(entityId);
-//
-//        json["Entity"]["components"][jsonKey] = component.ToJson(static_cast<EntityID>(entityId));
-//        
-//    }
-//}
 template<typename ComponentType>
 void SerializationManager::SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json)
 {
