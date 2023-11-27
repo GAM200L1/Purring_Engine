@@ -889,11 +889,10 @@ namespace PE {
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Undo/Sceen Picking/Scale Rotate Test Scene"))
+			if (ImGui::Button("Undo/Sceen Picking"))
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
 			}
-			ImGui::SameLine();
 			if (ImGui::Button("Prefab Editor Test Scene"))
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
@@ -908,7 +907,6 @@ namespace PE {
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
 			}
-			ImGui::SameLine();
 			if (ImGui::Button("Logic Test Scene 1"))
 			{
 				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
@@ -3681,17 +3679,6 @@ namespace PE {
 									}
 								}
 							}
-							ImGui::EndMenu();
-						}
-						//does not work only for show
-						if (ImGui::BeginMenu("Edit"))
-						{
-							if (ImGui::MenuItem("Undo", "")) {}
-							if (ImGui::MenuItem("Redo", "", false, false)) {}
-							ImGui::Separator();
-							if (ImGui::MenuItem("Cut", "")) {}
-							if (ImGui::MenuItem("Copy", "")) {}
-							if (ImGui::MenuItem("Paste", "")) {}
 							ImGui::EndMenu();
 						}
 						//all the different windows
