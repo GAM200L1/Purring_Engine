@@ -43,7 +43,6 @@ namespace PE
 {
 	void GameStateController::Init(EntityID id)
 	{
-		//m_ScriptData[id].SplashScreen = PE::EntityManager::GetInstance().NewEntity();
 		if (m_ScriptData[id].GameStateManagerActive)
 		{
 				GameStateManager::GetInstance().SetGameState(GameStates::SPLASHSCREEN);

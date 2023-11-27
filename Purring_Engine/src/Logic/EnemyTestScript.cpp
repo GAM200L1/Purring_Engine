@@ -122,7 +122,6 @@ namespace PE {
 	void EnemyTestIDLE::StateUpdate(EntityID id, float deltaTime)
 	{			
 		p_data->idleTimer -= deltaTime;
-		//PE::EntityManager::GetInstance().Get<PE::Transform>(id).orientation += static_cast<float>(180 * (M_PI / 180) * deltaTime * 10);
 
 		if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
 		{

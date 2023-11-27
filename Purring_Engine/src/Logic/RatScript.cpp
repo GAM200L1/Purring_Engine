@@ -67,15 +67,6 @@ namespace PE
 		{
 			GameStateManager::GetInstance().noPause = true;
 
-			// idk if need these
-
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get rat to be in DEATH animation when HP reaches 0
-			// ----------------------------------------------------------------- //
-
-			// Set game state to win when player HP is 0 (we only have one anyway)
-			// probably some DT stuff to let the animation run
-			// GameStateManager::GetInstance().SetGameState(GameStates::WIN);
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
 				try
@@ -125,9 +116,6 @@ namespace PE
 
 			if (m_scriptData[id].p_stateManager->GetStateName() == "IDLE")
 			{
-				// TODO ------------------------------------------------------------ //
-				// Add function here to get rat to be in IDLE animation when player is planning Attack and movement
-				// ----------------------------------------------------------------- //
 				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 				{
 					try
@@ -153,9 +141,6 @@ namespace PE
 			}
 			else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 			{
-				// TODO ------------------------------------------------------------ //
-				// Add function here to get rat to be in MOVEMENT animation when executing movement
-				// ----------------------------------------------------------------- //
 				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 				{
 					try
@@ -175,9 +160,6 @@ namespace PE
 			}
 			else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 			{
-				// TODO ------------------------------------------------------------ //
-				// Add function here to get player to be in ATTACK animation when planning movement
-				// ----------------------------------------------------------------- //
 				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 				{
 					if (m_scriptData[id].finishedExecution)
