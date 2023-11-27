@@ -54,7 +54,6 @@ Logger::Logger(const char inst_name[]) :
 void Logger::SetFlag(const LoggerFlag& r_flag, const bool& r_set)
 {
 	// multiple flags being set off should work aka:
-	// SetFlag(RELEASE | WRITE_TO_FILE, True)
 	m_flags = (r_set) ? (m_flags | r_flag) : (m_flags & (~r_flag));
 }
 
