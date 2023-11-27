@@ -41,14 +41,6 @@ namespace PE
 
     void AudioComponent::PlayAudioSound()
     {
-        // Check the file extension
-        std::string fileExtension = m_audioKey.substr(m_audioKey.find_last_of('.') + 1);
-        if (fileExtension != "wav")
-        {
-            AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '." + fileExtension + "' for id: " + m_audioKey, "File Type Error");
-            return;
-        }
-
         std::shared_ptr<AudioManager::Audio> audio = ResourceManager::GetInstance().GetAudio(m_audioKey);
         if (audio)
         {
@@ -71,8 +63,6 @@ namespace PE
                     channel->setLoopCount(-1);
                     std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
                 }
-
-                // You may want to add additional logic here to manage multiple channels
             }
             else
             {
