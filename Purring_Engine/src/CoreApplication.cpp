@@ -306,9 +306,9 @@ PE::CoreApplication::CoreApplication()
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
     
     InitializeLogger();
-    InitializeAudio();
     InitializeMemoryManager();
     InitializeSystems();
+    InitializeAudio();
 
 
     // Load Textures and Animations

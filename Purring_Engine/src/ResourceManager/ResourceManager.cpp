@@ -46,6 +46,18 @@ extern Logger engine_logger;
 
 namespace PE
 {
+    ResourceManager::ResourceManager()
+                    : m_defaultTexture{ std::make_shared<Graphics::Texture>() },
+                      m_defaultAudio{ std::make_shared<AudioManager::Audio>() },
+                      m_defaultFont{ std::make_shared<Font>() },
+                      m_defaultAnimation{ std::make_shared<Animation>() }
+        {
+            // initialize default assets
+            m_defaultTexture->CreateTexture("../Assets/Defaults/Default_Texture_512px.png");
+            m_defaultAudio->LoadSound("../Assets/Defaults/Default_Audio.wav", AudioManager::GetInstance().GetFMODSystem());
+            m_defaultFont->Initialize("../Assets/Defaults/Default_Font.ttf");
+            m_defaultAnimation->LoadAnimation("../Assets/Defaults/Default_Animation_Anim.json");
+        }
     void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderPath,
                              std::string const& r_fragmentShaderPath)
     {
@@ -235,8 +247,7 @@ namespace PE
             }
             else
             {
-                // this will crash the program if unable to load
-                return nullptr;
+                return m_defaultTexture;
             }
         }
 
@@ -259,8 +270,7 @@ namespace PE
             }
             else
             {
-                // this will crash the program if unable to load
-                return nullptr;
+                return m_defaultTexture;
             }
         }
 
@@ -284,7 +294,7 @@ namespace PE
             else
             {
                 // return default animation
-                return nullptr;
+                return m_defaultAnimation;
             }
 		}
 
@@ -308,7 +318,7 @@ namespace PE
             else
             {
                 // return default font
-                return nullptr;
+                return m_defaultFont;
             }
         }
 

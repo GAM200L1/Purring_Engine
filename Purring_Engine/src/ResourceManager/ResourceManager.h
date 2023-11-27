@@ -71,7 +71,9 @@ namespace PE
         std::map<std::string, std::shared_ptr<Graphics::Texture>> Icons;
         std::map<std::string, std::shared_ptr<Animation>> Animations;
 
-        // Unloads all resources that were previously loaded
+        /*!***********************************************************************************
+         \brief Unloads all resources held by the resource manager.
+        *************************************************************************************/
         void UnloadResources();
 
     public:
@@ -89,16 +91,13 @@ namespace PE
         void LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderString,
             std::string const& r_fragmentShaderString);
 
-        // wip
-        //static PE::Graphics::ShaderProgram* GetShaderProgram(std::string const& r_key,
-        //    std::string const& r_vertexShaderString,
-        //    std::string const& r_fragmentShaderString);
-
         /*!***********************************************************************************
             \brief Loads texture from file and inserts into Textures map container.
 
             \param[in] r_name Name of texture.
             \param[in] r_filePath File path of texture.
+
+            \return True if texture is loaded successfully, false otherwise.
         *************************************************************************************/
         bool LoadTextureFromFile(std::string const& r_name, std::string const& r_filePath);
 
@@ -107,6 +106,8 @@ namespace PE
 
             \param[in] r_name Name of icon.
             \param[in] r_filePath File path of icon.
+
+            \return True if icon is loaded successfully, false otherwise.
         *************************************************************************************/
         bool LoadIconFromFile(std::string const& r_name, std::string const& r_filePath);
 
@@ -123,6 +124,8 @@ namespace PE
 
             \param[in] r_key Name of audio file.
             \param[in] r_filePath File path of audio.
+
+            \return File path of audio.
         *************************************************************************************/
         std::string ResourceManager::LoadDraggedAudio(std::string const& r_filePath);
 
@@ -131,6 +134,8 @@ namespace PE
 
             \param[in] r_key Name of font file.
             \param[in] r_filePath File path of font.
+
+            \return True if font is loaded successfully, false otherwise.
         *************************************************************************************/
         bool LoadFontFromFile(std::string const& r_key, std::string const& r_filePath);
 
@@ -139,6 +144,8 @@ namespace PE
 
             \param[in] r_key Name of animation file.
             \param[in] r_filePath File path of animation.
+
+            \return True if animation is loaded successfully, false otherwise.
         *************************************************************************************/
         bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
@@ -187,10 +194,15 @@ namespace PE
         *************************************************************************************/
         std::shared_ptr<AudioManager::Audio> GetAudio(std::string const& r_name);
     private:
-        // constructor
-        ResourceManager()
-        {
 
-        }
+        /*!***********************************************************************************
+         \brief Constructor for the resource manager. Loads all the default assets for use.
+        *************************************************************************************/
+        ResourceManager();
+
+        std::shared_ptr<Graphics::Texture> m_defaultTexture;
+        std::shared_ptr<AudioManager::Audio > m_defaultAudio;
+        std::shared_ptr<Font> m_defaultFont;
+        std::shared_ptr<Animation> m_defaultAnimation;
     };
 }

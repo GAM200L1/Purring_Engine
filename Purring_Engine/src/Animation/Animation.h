@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     Animation.h
- \date     01-11-2023
+ \date     27-11-2023
 
  \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
@@ -30,7 +30,7 @@ namespace PE
 		/*!***********************************************************************************
 		\brief Get the current playing animation index for this component.
 
-		\return Current animation index for this animation component.
+		\return Current animation ID for this animation component.
 		*************************************************************************************/
 		inline std::string GetAnimationID() const { return m_currentAnimationID; }
 
@@ -125,31 +125,26 @@ namespace PE
 		*************************************************************************************/
 		double GetAnimationFrameTime();
 
-		///*!***********************************************************************************
-		// \brief Sets the RGBA color of the object. If the object has a texture on it,
-		//        this tints the color of the texture.
+		/*!***********************************************************************************
+		 \brief Serializes the data attached to this component.
 
-		// \param[in] newColor RGBA color to set the object to (the values should be on
-		//                        a range of [0, 1]).
-		//*************************************************************************************/
-		//void Renderer::SetColor(glm::vec4 const& newColor);
-
-		///*!***********************************************************************************
-		// \brief Serializes the data attached to this renderer.
-		//*************************************************************************************/
+		 \param[in] id The id of the entity that owns this component.
+		 \return A JSON object with the data of this component.
+		*************************************************************************************/
 		nlohmann::json ToJson(size_t id) const;
 
-		///*!***********************************************************************************
-		// \brief Deserializes data from a JSON file and loads it as values to set this
-		//        component to.
+		/*!***********************************************************************************
+		 \brief Deserializes data from a JSON file and loads it as values to set this
+		        component to.
 
-		// \param[in] j JSON object containing the values to load into the renderer component.
-		//*************************************************************************************/
+		 \param[in] j JSON object containing the values to load into the renderer component.
+		 \return The animation component with the loaded values;
+		*************************************************************************************/
 		AnimationComponent& Deserialize(const nlohmann::json& r_j);
 
 		std::set<std::string> m_animationsID; // Stores all animations for the component // not in use now
 		std::string m_currentAnimationID{}; // current playing animation
-		std::string m_startingAnimationID{}; // starting playing animation // not sure if needed
+		std::string m_startingAnimationID{}; // starting playing animation
 		float m_currentFrameTime{}; // current frame time of the animation
 		unsigned m_currentFrameIndex{}; // current frame index of the animation
 	};
@@ -159,15 +154,18 @@ namespace PE
 	*************************************************************************************/
 	struct AnimationFrame
 	{
-		// SERIALIZE THIS
 		// un-comment if not using spritesheet
 		//std::string textureKey;
 		vec2 m_minUV{ 0, 0 };
 		vec2 m_maxUV{ 1, 1 };
 		float m_duration{ 0.f };
 
-		nlohmann::json AnimationFrame::ToJson() const;
+		/*!***********************************************************************************
+		 \brief Serializes the data attached to this frame.
 
+		 \return A JSON object with the data of this component.
+		*************************************************************************************/
+		nlohmann::json AnimationFrame::ToJson() const;
 	};
 
 	/*!***********************************************************************************
@@ -189,6 +187,11 @@ namespace PE
 		*************************************************************************************/
 		Animation(std::string spriteSheetKey);
 
+		/*!***********************************************************************************
+		 \brief Create an animation class with a spritesheet and an animation ID.
+
+		 \param[in] spriteSheetKey ID for spritesheet to be used for this animation
+		*************************************************************************************/
 		void SetSpriteSheetKey(std::string spriteSheetKey);
 
 		/*!***********************************************************************************
@@ -204,36 +207,98 @@ namespace PE
 		 \brief Update the animation based on elapsed time.
 
 		 \param[in] deltaTime Time since last update.
+		 \param[in] r_currentFrameTime Current frame time of the animation.
+		 \param[in] r_currentFrameIndex Current frame index of the animation.
 		*************************************************************************************/
 		void UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex);
 
 		/*!***********************************************************************************
 			\brief Get the current frame of the animation.
 				 
+			\param[in] currentFrameIndex Index of the current frame.
 			\return Current frame of the animation.
 		*************************************************************************************/
 		AnimationFrame const& GetCurrentAnimationFrame(unsigned currentFrameIndex);
 
+		/*!***********************************************************************************
+		 \brief Create the animation frames based on the total number of sprites.
+
+		 \param[in] deltaTime Time since last update.
+		*************************************************************************************/
 		void CreateAnimationFrames(unsigned totalSprites);
 
+		/*!***********************************************************************************
+		 \brief Set the frame duration of the current frame.
+
+		 \param[in] currentFrameIndex Index of the current frame.
+		 \param[in] duration Duration this frame will be displayed in seconds.
+		*************************************************************************************/
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, float duration);
 
+		/*!***********************************************************************************
+		 \brief Set the frames to hold of the current frame.
+
+		 \param[in] currentFrameIndex Index of the current frame.
+		 \param[in] framesToHold Number of frames to hold.
+		*************************************************************************************/
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, unsigned framesToHold);
 
+		/*!***********************************************************************************
+		 \brief Set the UV coords of the spritesheet for the current frame.
+
+		 \param[in] currentFrameIndex Index of the current frame.
+		 \param[in] r_minUV minUV coords for the texture to display in this frame.
+		 \param[in] r_maxUV maxUV coords for the texture to display in this frame.
+		*************************************************************************************/
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& r_minUV, vec2 const& r_maxUV);
 
+		/*!***********************************************************************************
+		 \brief Set the frame rate of the animation
+
+		 \param[in] frameRate Frame rate of the animation
+		*************************************************************************************/
 		void SetCurrentAnimationFrameRate(unsigned frameRate);
 
+		/*!***********************************************************************************
+		 \brief Set the animation ID of the animation
+
+		 \param[in] animationID ID of the animation
+		*************************************************************************************/
 		void SetAnimationID(std::string animationID);
 
+		/*!***********************************************************************************
+		 \brief Get the animation ID of the animation.
+
+		 \return Animation ID of the animation.
+		*************************************************************************************/
 		inline std::string GetAnimationID() const { return m_animationID; }
 
+		/*!***********************************************************************************
+		 \brief Get the spritesheet key of the animation.
+
+		 \return Spritesheet key of the animation.
+		*************************************************************************************/
 		inline std::string GetSpriteSheetKey() const { return m_spriteSheetKey; }
 
+		/*!***********************************************************************************
+		 \brief Get the total number of frames in the animation.
+
+		 \return Total number of frames in the animation.
+		*************************************************************************************/
 		inline unsigned GetFrameCount() { return static_cast<unsigned>(m_animationFrames.size()); }
 		
+		/*!***********************************************************************************
+		 \brief Get the frame rate of the animation.
+
+		 \return Frame rate of the animation.
+		*************************************************************************************/
 		inline unsigned GetFrameRate() { return m_frameRate; }
 
+		/*!***********************************************************************************
+		 \brief Get the duration of the animation.
+
+		 \return Duration of the animation.
+		*************************************************************************************/
 		float GetAnimationDuration();
 
 		/*!***********************************************************************************
@@ -243,16 +308,33 @@ namespace PE
 		*************************************************************************************/
 		float GetAnimationFrameTime();
 
+		/*!***********************************************************************************
+		 \brief Load animation from file.
+
+		 \param[in] r_filePath File path of animation.
+		 \return True if animation is loaded successfully, false otherwise.
+		*************************************************************************************/
 		bool LoadAnimation(std::string const& r_filePath);
 
+		/*!***********************************************************************************
+		 \brief Serializes the data attached to this animation.
+
+		 \return A JSON object with the data of this animation.
+		*************************************************************************************/
 		nlohmann::json Animation::ToJson() const;
+
+		/*!***********************************************************************************
+		 \brief Deserializes data from a JSON file and loads it as values to set this
+				animation to.
+
+		 \param[in] r_j JSON object containing the values to load into the animation.
+		 \return The animation with the loaded values;
+		*************************************************************************************/
 		Animation& Deserialize(const nlohmann::json& r_j);
 
 
 		// ----- Private Variables ----- //
 	private:
-
-		// SERIALIZE THESE
 		std::string m_animationID;
 		std::vector<AnimationFrame> m_animationFrames;
 		std::string m_spriteSheetKey;

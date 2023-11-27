@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     Animation.cpp
- \date     01-11-2023
+ \date     27-11-2023
 
  \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
@@ -307,50 +307,6 @@ namespace PE
 		engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
 		engine_logger.SetTime();
 		engine_logger.AddLog(false, "AnimationManager initialized!", __FUNCTION__);
-
-		//// Create animations here for now
-		//std::string playerWalkAnimation, playerAttackAnimation, ratAttackAnimation, ratDeathAnimation;
-		//playerWalkAnimation   = CreateAnimation("playerWalk");
-		//playerAttackAnimation = CreateAnimation("playerAttack");
-		//ratAttackAnimation	  = CreateAnimation("ratAttack");
-		//ratDeathAnimation	  = CreateAnimation("ratDeath");
-
-		//SetAnimationSpriteSheetKey(playerWalkAnimation, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png");
-		//SetAnimationSpriteSheetKey(playerAttackAnimation, "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png");
-		//SetAnimationSpriteSheetKey(ratDeathAnimation, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Attack.png");
-		//SetAnimationSpriteSheetKey(ratDeathAnimation, "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png");
-
-		//// animation 1
-		//AddFrameToAnimation(playerWalkAnimation, vec2{ 0.f, 0.f }, vec2{ 1.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerWalkAnimation, vec2{ 1.f / 6.f, 0.f }, vec2{ 2.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerWalkAnimation, vec2{ 2.f / 6.f, 0.f }, vec2{ 3.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerWalkAnimation, vec2{ 3.f / 6.f, 0.f }, vec2{ 4.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerWalkAnimation, vec2{ 4.f / 6.f, 0.f }, vec2{ 5.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerWalkAnimation, vec2{ 5.f / 6.f, 0.f }, vec2{ 1.f, 1.f }, 1.f / 6.f);
-
-		//// animation 2
-		//AddFrameToAnimation(playerAttackAnimation, vec2{ 0.f, 0.f }, vec2{ 1.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerAttackAnimation, vec2{ 1.f / 6.f, 0.f }, vec2{ 2.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerAttackAnimation, vec2{ 2.f / 6.f, 0.f }, vec2{ 3.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerAttackAnimation, vec2{ 3.f / 6.f, 0.f }, vec2{ 4.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerAttackAnimation, vec2{ 4.f / 6.f, 0.f }, vec2{ 5.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(playerAttackAnimation, vec2{ 5.f / 6.f, 0.f }, vec2{ 1.f, 1.f }, 1.f / 6.f);
-
-		//// animation 3
-		//AddFrameToAnimation(ratAttackAnimation, vec2{ 0.f, 0.f }, vec2{ 1.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(ratAttackAnimation, vec2{ 1.f / 6.f, 0.f }, vec2{ 2.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(ratAttackAnimation, vec2{ 2.f / 6.f, 0.f }, vec2{ 3.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(ratAttackAnimation, vec2{ 3.f / 6.f, 0.f }, vec2{ 4.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(ratAttackAnimation, vec2{ 4.f / 6.f, 0.f }, vec2{ 5.f / 6.f, 1.f }, 1.f / 6.f);
-		//AddFrameToAnimation(ratAttackAnimation, vec2{ 5.f / 6.f, 0.f }, vec2{ 1.f, 1.f }, 1.f / 6.f);
-
-		//// animation 4
-		//AnimationManager::AddFrameToAnimation(ratDeathAnimation, vec2{ 0.f, 0.f }, vec2{ 1.f / 6.f, 1.f }, 1.f / 6.f);
-		//AnimationManager::AddFrameToAnimation(ratDeathAnimation, vec2{ 1.f / 6.f, 0.f }, vec2{ 2.f / 6.f, 1.f }, 1.f / 6.f);
-		//AnimationManager::AddFrameToAnimation(ratDeathAnimation, vec2{ 2.f / 6.f, 0.f }, vec2{ 3.f / 6.f, 1.f }, 1.f / 6.f);
-		//AnimationManager::AddFrameToAnimation(ratDeathAnimation, vec2{ 3.f / 6.f, 0.f }, vec2{ 4.f / 6.f, 1.f }, 1.f / 6.f);
-		//AnimationManager::AddFrameToAnimation(ratDeathAnimation, vec2{ 4.f / 6.f, 0.f }, vec2{ 5.f / 6.f, 1.f }, 1.f / 6.f);
-		//AnimationManager::AddFrameToAnimation(ratDeathAnimation, vec2{ 5.f / 6.f, 0.f }, vec2{ 1.f, 1.f }, 1.f / 6.f);
 	}
 
 	void AnimationManager::UpdateSystem(float deltaTime)
@@ -363,18 +319,22 @@ namespace PE
 #endif
 			for (EntityID const& id : SceneView<AnimationComponent>())
 			{
-					// update animation and get current frame
-					p_currentFrame = UpdateAnimation(id, deltaTime);
+				// update animation and get current frame
+				p_currentFrame = UpdateAnimation(id, deltaTime);
 
-					// update entity based on frame data
-					// in the future probably check for bools in animation component, then update data accordingly
-
+				// update entity based on frame data
+				// in the future probably check for bools in animation component, then update data accordingly
+				// check if theres animation
+				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+				{
 					if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
 					{
+
 						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()));
 						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
 						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
 					}
+				}
 			}
 #ifndef GAMERELEASE
 		}
