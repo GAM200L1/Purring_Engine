@@ -2090,6 +2090,12 @@ namespace PE {
 									ImGui::EndCombo();
 								}
 
+								// Check if mouse is hovering over the dropdown box for drag and drop
+								if (ImGui::IsItemHovered())
+								{
+									m_entityToModify = std::make_pair<std::string, int>("Audio", static_cast<int>(entityID));
+								}
+
 								// Audio playback controls
 								bool isLooping = audioComponent.IsLooping();
 								ImGui::Checkbox("Loop", &isLooping);
