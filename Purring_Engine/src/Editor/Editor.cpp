@@ -2864,7 +2864,7 @@ namespace PE {
 						std::string const extension{ m_files[n].filename().extension().string() };
 						if (extension == "")
 							icon = "../Assets/Icons/Directory_Icon.png";
-						else if (extension == ".mp3" || extension == ".wav")
+						else if (extension == ".mp3" || extension == ".wav" || extension == ".ogg")
 							icon = "../Assets/Icons/Audio_Icon.png";
 						else if (extension == ".ttf")
 							icon = "../Assets/Icons/Font_Icon.png";
@@ -2894,8 +2894,14 @@ namespace PE {
 								std::string iconDraggedExtension = m_files[n].extension().string();
 								if (iconDraggedExtension == "")
 									iconDragged = "../Assets/Icons/Directory_Icon.png";
-								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav")
+								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav" ||
+									iconDraggedExtension == ".ogg" || iconDraggedExtension == ".flac" ||
+									iconDraggedExtension == ".aiff" || iconDraggedExtension == ".mod" ||
+									iconDraggedExtension == ".s3m" || iconDraggedExtension == ".xm" ||
+									iconDraggedExtension == ".midi" || iconDraggedExtension == ".mid")
+								{
 									iconDragged = "../Assets/Icons/Audio_Icon.png";
+								}
 								else if (iconDraggedExtension == ".ttf")
 									iconDragged = "../Assets/Icons/Font_Icon.png";
 								else if (iconDraggedExtension == ".json")
