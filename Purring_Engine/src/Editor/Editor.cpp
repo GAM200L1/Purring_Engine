@@ -2034,10 +2034,10 @@ namespace PE {
 							if (ImGui::CollapsingHeader("Audio", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								AudioComponent& audioComponent = EntityManager::GetInstance().Get<AudioComponent>(entityID);
-							
+
 								// Vector of filepaths for audio files
 								std::vector<std::filesystem::path> audioFilePaths;
-								int index = -1;							// Initialize with -1 to indicate no selection
+								int index = -1; // Initialize with -1 to indicate no selection
 								int i = 0;
 
 								for (auto it = ResourceManager::GetInstance().Sounds.begin(); it != ResourceManager::GetInstance().Sounds.end(); ++it, ++i)
@@ -2064,11 +2064,14 @@ namespace PE {
 									comboBoxLabel = loadedAudioKeys[index];
 								}
 
-								if (!loadedAudioKeys.empty())
+								// Always show the dropdown box
+								ImGui::Text("Audio: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+
+								// Create combo box even if loadedAudioKeys is empty
+								if (ImGui::BeginCombo("##Audio", comboBoxLabel.c_str()))
 								{
-									ImGui::Text("Audio: "); ImGui::SameLine();
-									ImGui::SetNextItemWidth(200.0f);
-									if (ImGui::BeginCombo("##Audio", comboBoxLabel.c_str()))
+									if (!loadedAudioKeys.empty())
 									{
 										for (int n = 0; n < loadedAudioKeys.size(); ++n)
 										{
@@ -2085,15 +2088,10 @@ namespace PE {
 												}
 											}
 										}
-										ImGui::EndCombo();
 									}
-
-									// Check if mouse is hovering over the texture preview for drag and drop
-									if (ImGui::IsItemHovered())
-									{
-										m_entityToModify = std::make_pair<std::string, int>("Audio", static_cast<int>(entityID));
-									}
+									ImGui::EndCombo();
 								}
+
 								// Audio playback controls
 								bool isLooping = audioComponent.IsLooping();
 								ImGui::Checkbox("Loop", &isLooping);
@@ -2112,7 +2110,7 @@ namespace PE {
 										audioComponent.ResumeSound();
 									}
 								}
-								else 
+								else
 								{
 									if (ImGui::Button("Pause"))
 									{
@@ -2122,14 +2120,14 @@ namespace PE {
 								ImGui::SameLine();
 								if (ImGui::Button("Stop"))
 								{
-										audioComponent.StopSound();
+									audioComponent.StopSound();
 								}
 
 								// Volume control for selected sound
 								static float volume = 1.0f;
 								if (ImGui::SliderFloat("Volume", &volume, 0.0f, 1.0f))
 								{
-										audioComponent.SetVolume(volume);
+									audioComponent.SetVolume(volume);
 								}
 
 								// Global volume control (affecting all sounds)
