@@ -41,10 +41,19 @@ namespace PE
 	{
 	public:
 		// Default constructor and virtual destructor
+		/*!***********************************************************************************
+		 \brief Constructs CoreApplication object
+		*************************************************************************************/
 		CoreApplication();
+
+		/*!***********************************************************************************
+		 \brief Destroys CoreApplication object
+		*************************************************************************************/
 		virtual ~CoreApplication();
 
-		// Main application loop
+		/*!***********************************************************************************
+		 \brief Loop for the main application
+		*************************************************************************************/
 		void Run();
 
 		/*!***********************************************************************************
@@ -76,10 +85,6 @@ namespace PE
 		// Add an overlay layer to the application
 		void AddOverlay(Layer* overlay);
 
-		// Uncomment below if singletons are required
-		//inline static Application& Get() { return *s_Instance; }
-		//inline Window& GetWindow() { return *m_Window; }
-
 	private:
 
 		void InitializeVariables();
@@ -106,10 +111,6 @@ namespace PE
 		WindowManager m_windowManager;						// Manages the application window
 		GLFWwindow* m_window;								// Pointer to the GLFW window object
 		float m_time;										// Placeholder for time value
-
-	private:
-
-	public:
 	};
 
 	// Function to create an instance of CoreApplication, defined by the client
