@@ -255,7 +255,17 @@ namespace PE
             *************************************************************************************/
             void UpdateCamera(Transform const& r_transform, bool const isMainCamera);
 
+            /*!***********************************************************************************
+             \brief Serializes the data attached to this Camera.
+            *************************************************************************************/
             nlohmann::json ToJson(size_t id) const;
+
+            /*!***********************************************************************************
+             \brief Deserializes data from a JSON file and loads it as values to set this
+                    component to.
+
+             \param[in] j JSON object containing the values to load into the camera component.
+            *************************************************************************************/
             static Camera Deserialize(const nlohmann::json& j);
 
 
