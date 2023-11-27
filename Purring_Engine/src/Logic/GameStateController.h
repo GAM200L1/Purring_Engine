@@ -316,6 +316,7 @@ namespace PE
 		std::map<EntityID, GameStateControllerData> m_ScriptData; // Data associated with each instance of the script
 		bool m_finishExecution{ false }; // used to keep track of whether the execution phase is complete. Set to true when the cats and rats are done executing their attacks.
 		EntityID bgm; // ID of the entity holding the background music
+		EntityID godModeText; // god mode text
 	};
 
 

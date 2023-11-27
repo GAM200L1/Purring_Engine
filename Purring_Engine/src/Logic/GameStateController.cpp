@@ -513,6 +513,20 @@ namespace PE
 			if (KTE.keycode == GLFW_KEY_F3)
 			{
 				GameStateManager::GetInstance().godMode = !GameStateManager::GetInstance().godMode;
+				SerializationManager serializationManager;
+
+				if (GameStateManager::GetInstance().godMode)
+				{
+					godModeText = serializationManager.LoadFromFile("../Assets/Prefabs/HUD/God Mode_Prefab.json");
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(godModeText))
+						EntityManager::GetInstance().Get<EntityDescriptor>(godModeText).toSave = false;
+				}
+				else
+				{
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(godModeText))
+						EntityManager::GetInstance().RemoveEntity(godModeText);
+				}
+
 			}
 
 			if (KTE.keycode == GLFW_KEY_F10)
