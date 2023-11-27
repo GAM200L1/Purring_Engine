@@ -309,6 +309,15 @@ namespace PE
 		*************************************************************************************/
 		bool InitializeTextComponent(const EntityID& r_id, void* p_data);
 
+		/*!***********************************************************************************
+		 \brief Initializes/copy the component of the specified entity
+
+		 \param[in] id 	 The ID of the entity to initialize/copy the data to
+		 \param[in] data The component casted to a void pointer (universal way of passing the
+						 data)
+		 \return true 	 Successfully copied/initialized
+		 \return false 	 Failed to copy/initialize
+		*************************************************************************************/
 		bool InitializeAudioComponent(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
