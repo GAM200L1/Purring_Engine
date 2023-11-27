@@ -81,6 +81,19 @@ namespace PE
 	void CatScript::Update(EntityID id, float deltaTime)
 	{
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN || GameStateManager::GetInstance().GetGameState() == GameStates::LOSE)
+		{
+			for (auto [direction, telegraph] : m_scriptData[id].telegraphIDs)
+			{
+				ToggleEntity(telegraph, false);
+			}
+			for (auto quad : m_scriptData[id].pathQuads)
+			{
+				ToggleEntity(quad, false);
+			}
+			ToggleEntity(m_scriptData[id].projectileID, false);
+			return;
+		}
 
 		// Check if the player has died
 		if (m_scriptData[id].catHealth <= 0 && m_scriptData[id].isMainCat)

@@ -57,10 +57,11 @@ namespace PE
 	void RatScript::Update(EntityID id, float deltaTime)
 	{
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
-
-		/*if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN) { return; } // do something when they win
-
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::LOSE) { return; } // do something when they lose */
+		if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN || GameStateManager::GetInstance().GetGameState() == GameStates::LOSE)
+		{
+			ToggleEntity(m_scriptData[id].attackTelegraphID, false);
+			return;
+		}
 
 		if (m_scriptData[id].health <= 0)
 		{
