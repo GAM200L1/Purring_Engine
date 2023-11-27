@@ -2719,7 +2719,8 @@ namespace PE {
 					if (ImGui::BeginPopup("Components"))
 					{
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>())
-								&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+								&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>())
+							&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
 						{
 							if (ImGui::Selectable("Add Collision"))
 							{
@@ -2763,15 +2764,9 @@ namespace PE {
 								else
 									AddErrorLog("ALREADY HAS ANIMATION");
 							}
-							if (ImGui::Selectable("Add Audio"))
-							{
-								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
-									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<AudioComponent>() });
-								else
-									AddErrorLog("ALREADY HAS AUDIO");
-							}
 						}
-						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())) 
+						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
+							&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
 						{
 							if (ImGui::Selectable("Add Text"))
 							{
@@ -3055,7 +3050,7 @@ namespace PE {
 						{
 							// alters the texture assigned to renderer component in entity
 							std::string const extension = m_files[draggedItemIndex].extension().string();
-							if (extension == ".png")
+							if (extension == ".png" && !EntityManager::GetInstance().Has<AudioComponent>(m_currentSelectedObject))
 							{
 								if (m_entityToModify.first == "Renderer")
 								{
@@ -3070,20 +3065,23 @@ namespace PE {
 									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
 								}
 							}
-							if (extension == ".wav")
+							else if (EntityManager::GetInstance().Has<AudioComponent>(m_currentSelectedObject))
 							{
-								std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
-								std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
-								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;
-								if (!newAudioKey.empty())
+								if (extension == ".wav")
 								{
-									EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
-									std::cout << "currentSoundID updated to: " << EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).GetAudioKey() << std::endl;
+									std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
+									std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
+									std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;
+									if (!newAudioKey.empty())
+									{
+										EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
+										std::cout << "currentSoundID updated to: " << EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).GetAudioKey() << std::endl;
+									}
 								}
-							}
-							else
-							{
-								AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '" + extension + "'.", "File Type Error");
+								else
+								{
+									AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '" + extension + "'.", "File Type Error");
+								}
 							}
 						}
 

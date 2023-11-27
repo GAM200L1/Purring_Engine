@@ -140,6 +140,8 @@ namespace PE
 
     std::string ResourceManager::LoadDraggedAudio(std::string const& r_filePath)
     {
+
+        
         // Extract the file name with the extension
         std::filesystem::path filePath(r_filePath);
         std::cout << "[LoadDraggedAudio] Loading audio from path: " << r_filePath << std::endl;
