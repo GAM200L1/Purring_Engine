@@ -2296,6 +2296,26 @@ namespace PE {
 											ImGui::EndCombo();
 										}
 									}
+
+									// Load font through file explorer
+									ImGui::SameLine();
+									if (ImGui::Button("Load"))
+									{
+										std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+										// Check if filePath is not empty
+										if (!filePath.empty())
+										{
+											std::replace(filePath.begin(), filePath.end(), '\\', '/');
+											filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".ttf";
+
+											ResourceManager::GetInstance().LoadFontFromFile(filePath, filePath);
+										}
+										else
+										{
+											std::cerr << "No file path was selected for loading." << std::endl;
+										}
+									}
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Separator();
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
