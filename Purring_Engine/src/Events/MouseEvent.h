@@ -75,9 +75,6 @@ namespace PE
 			std::stringstream ss;
 			ss << "Button Pressed: " << button;
 			return ss.str();
-			//if (repeat < 0)
-			//	ss << " (Button Being Held)";
-
 		}
 
 		int button = -1; //lmb 1, rmb 2, mmb 3
@@ -106,9 +103,6 @@ namespace PE
 			std::stringstream ss;
 			ss << "Button Held: " << button;
 			return ss.str();
-			//if (repeat < 0)
-			//	ss << " (Button Being Held)";
-
 		}
 
 		int button = -1; //lmb 1, rmb 2, mmb 3
