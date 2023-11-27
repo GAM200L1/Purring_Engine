@@ -243,7 +243,7 @@ namespace PE
 		 
 		 \return vec2 - number of columns and rows in x and y of vec2 respectively
 		*************************************************************************************/
-		vec2 GetColumnsRows() const { return vec2{ m_columns, m_rows }; }
+		vec2 GetColumnsRows() const { return vec2{ static_cast<float>(m_columns), static_cast<float>(m_rows) }; }
 
 	private:
 	// ----- Private Variables ----- //
