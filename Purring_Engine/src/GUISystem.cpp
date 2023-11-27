@@ -60,9 +60,7 @@ namespace PE
 			for (EntityID objectID : SceneView<GUI>())
 			{
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
-				//gui.m_onClicked = "TestFunction";
 				gui.Update();
-				//gui.m_onClicked = m_uiFunc.at("ButtonFunctionOne").target<void()>();
 
 				if (gui.disabled)
 				{
@@ -219,7 +217,7 @@ namespace PE
 		j["m_onClicked"] = m_onClicked;
 		j["m_onHovered"] = m_onHovered;
 		j["m_UIType"] = static_cast<int>(m_UIType);
-		j["disabled"] = disabled;							// @Jarran when you add, uncomment this
+		j["disabled"] = disabled;
 
 		// Serialize textures and colors
 		j["m_defaultTexture"] = m_defaultTexture;
@@ -243,7 +241,7 @@ namespace PE
 		gui.m_onClicked = r_j["m_onClicked"];
 		gui.m_onHovered = r_j["m_onHovered"];
 		gui.m_UIType = static_cast<UIType>(r_j["m_UIType"].get<int>());
-		gui.disabled = r_j["disabled"].get<bool>();			// @Jarran when you add, uncomment this
+		gui.disabled = r_j["disabled"].get<bool>();
 
 		// Deserialize textures
 		gui.m_defaultTexture = r_j["m_defaultTexture"];

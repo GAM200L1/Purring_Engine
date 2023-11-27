@@ -14,35 +14,6 @@
 *************************************************************************************/
 #pragma once
 
-
-
-
-/*!******************************************************************************************************************
-*   NOTES (For jw, dw bout it):
-*   
-*   Header only vs normal(.cpp file)
-* 
-*   Header only needs to be compiled as many times as it get included,
-*   instancing could get weird?(highly likely we would need multiple instances)
-* 
-*   Most disadvantages (of header only) point towards compile times, everytime
-*   the header file's modified, all dependencies are recompiled and re-linked.
-* 
-*   srcs: 
-*   https://softwareengineering.stackexchange.com/questions/305618/are-header-only-libraries-more-efficient
-*   https://stackoverflow.com/questions/12671383/benefits-of-header-only-libraries
-* 
-* 
-*   Tentative format:
-*   "[hh:mm::ss]<INSTANCE><TYPE(FATAL_ERROR/ERROR/MESSAGE)><FROM><MESSAGE>"
-*   e.g.
-*   Message example: "[19:03:05]<ENGINE><MESSAGE><UpdateTargetFPSBasedOnKey()><KEY_6 was pressed, FPS target changed to 180>"
-*   Error example:   "[19:03:06]<ENGINE><ERROR><UpdateTargetFPSBasedOnKey()><KEY_G was pressed, FPS target reset to 60>"
-*   Convention for the message format
-* 
-*********************************************************************************************************************/
-
-
 class Logger
 {
 /* ----- Public variables ----- */

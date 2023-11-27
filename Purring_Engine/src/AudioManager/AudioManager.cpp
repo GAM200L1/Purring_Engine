@@ -25,10 +25,7 @@ namespace PE
 {
     AudioManager::AudioManager()
         : m_system(nullptr)  // Initialize FMOD system to nullptr
-    {
-        // Constructor.
-        // Additional code for future..
-    }
+    {}
 
     AudioManager::~AudioManager()
     {

@@ -38,7 +38,7 @@
 #include "Graphics/Text.h"
 #include "Math/MathCustom.h"
 
-// RTTR stuff
+// RTTR
 #include <rttr/variant.h>
 #include <rttr/type.h>
 
@@ -220,9 +220,6 @@ void SerializationManager::LoadAllEntitiesFromFile(std::string const& filename, 
 
 nlohmann::json SerializationManager::SerializeEntity(int entityId)
 {
-    //PE::EntityManager* entityManager = &PE::EntityManager::GetInstance();
-    //EntityID eID = static_cast<EntityID>(entityId);
-
     nlohmann::json j;
     StructEntity& entity = m_entities[entityId];
 
@@ -637,11 +634,10 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
 {
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>(),
         static_cast<void*>(&(PE::ScriptComponent().Deserialize(r_json["Entity"]["components"]["ScriptComponent"]))));
-    //auto& scriptsRef = PE::EntityManager::GetInstance().Get<PE::ScriptComponent>(r_id).m_scriptKeys;
+
     for (const auto& k : r_json["Entity"]["components"]["ScriptComponent"].items())
     {
         auto str = k.key().c_str();
-        //PE::LogicSystem::m_scriptContainer[str]->OnAttach(r_id);
         if (PE::LogicSystem::m_scriptContainer.count(str))
         {
             rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(str)->GetScriptData(r_id);
