@@ -71,8 +71,6 @@ namespace PE
                     channel->setLoopCount(-1);
                     std::cout << "Looping enabled for sound with id: " << m_audioKey << std::endl;
                 }
-
-                // You may want to add additional logic here to manage multiple channels
             }
             else
             {

@@ -3017,19 +3017,21 @@ namespace PE {
 									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_entityToModify.second).SetColor(1.f, 1.f, 1.f, 1.f);
 								}
 							}
-							if (extension == ".mp3" || extension == ".wav")
+							if (extension == ".wav")
 							{
 								std::string newAudioKey = ResourceManager::GetInstance().LoadDraggedAudio(m_files[draggedItemIndex].string());
 								std::cout << "[ShowResourceWindow] Dragged audio file: " << m_files[draggedItemIndex].string() << std::endl;
-								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;								
+								std::cout << "[ShowResourceWindow] New audio key: " << newAudioKey << std::endl;
 								if (!newAudioKey.empty())
 								{
 									EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).SetAudioKey(newAudioKey);
 									std::cout << "currentSoundID updated to: " << EntityManager::GetInstance().Get<AudioComponent>(m_entityToModify.second).GetAudioKey() << std::endl;
 								}
 							}
-
-							// add remaining editable assets audio etc
+							else
+							{
+								AudioComponent::ShowErrorMessage("Error: Invalid file type. Expected '.wav', but got '" + extension + "'.", "File Type Error");
+							}
 						}
 
 						if (m_mouseInScene || m_mouseInObjectWindow)
