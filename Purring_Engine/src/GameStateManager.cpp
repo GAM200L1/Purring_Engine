@@ -234,6 +234,8 @@ namespace PE
 
 			m_currentGameState = GameStates::INACTIVE;
 			m_prevGameState = GameStates::PAUSE;
+
+			godMode = false;
 	}
 
 	GameStates GameStateManager::GetPreviousGameState()

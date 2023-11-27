@@ -7,7 +7,7 @@
         "showComponentWindow": true,
         "showConsole": true,
         "showEditor": true,
-        "showLogs": true,
+        "showLogs": false,
         "showObjectList": true,
         "showPerformanceWindow": false,
         "showPhysicsWindow": false,

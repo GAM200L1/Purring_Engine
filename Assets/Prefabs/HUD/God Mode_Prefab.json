@@ -1,0 +1,38 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "Prefab Type": "God Mode",
+                "children": [],
+                "isActive": true,
+                "name": "God Mode",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "GUIRenderer": {
+                "Color": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "TextureKey": "../Assets/Textures/Godmode_Text_512x256.png"
+            },
+            "Transform": {
+                "height": 250.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": -796.0,
+                    "y": 450.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 446.0
+            }
+        },
+        "name": ""
+    }
+}
