@@ -13,7 +13,7 @@
         "showPhysicsWindow": false,
         "showResourceWindow": true,
         "showSceneView": true,
-        "showTestWindows": false
+        "showTestWindows": true
     },
     "window": {
         "height": 1080,
