@@ -32,12 +32,18 @@ namespace PE
 			return instance;
 		}
 
-		// Disable copy and assignment
+		//! Disable copy and assignment
 		Singleton(const Singleton&) = delete;
 		Singleton & operator= (const Singleton&) = delete;
 
 	protected:
+		/*!***********************************************************************************
+		 \brief Constructor for the Singleton
+		*************************************************************************************/
 		Singleton() = default;
+		/*!***********************************************************************************
+		 \brief Destructor for the Singleton
+		*************************************************************************************/
 		~Singleton() = default;
 	};
 }
