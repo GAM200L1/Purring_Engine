@@ -142,9 +142,6 @@ namespace PE
 		template<typename ... T>
 		void Copy(EntityID id, T ... component);
 
-		// Hans
-		void AssignComponent(EntityID id, const std::string& r_name, int componentData);
-
 		/*!***********************************************************************************
 		 \brief Create an enity from Prefab object
 		 
@@ -313,7 +310,6 @@ namespace PE
 		bool InitializeTextComponent(const EntityID& r_id, void* p_data);
 
 		bool InitializeAudioComponent(const EntityID& r_id, void* p_data);
-
 
 		/*!***********************************************************************************
 		 \brief Loads all the component initializers into m_componentMap

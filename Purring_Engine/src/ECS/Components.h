@@ -161,7 +161,6 @@ namespace PE
             // allocation failed!!
             if (!p_tmp)
             {
-                // @TODO add log message, error, not enough memory
                 return false;
             }
             for (size_t i{}; i < capacity; ++i)

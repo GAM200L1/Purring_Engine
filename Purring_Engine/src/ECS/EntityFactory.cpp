@@ -56,18 +56,6 @@ namespace PE
 			throw;
 		}
 	}
-
-	
-
-	// Hans
-	void EntityFactory::AssignComponent(EntityID id, const std::string& r_name, int componentData)
-	{
-		id; r_name; componentData;
-		// Here you will assign and initialize the component to the entity
-		// For now, I'll leave this as a placeholder.
-		// This might call something like:
-		// entityManager->AssignComponent(id, name, componentData);
-	}
 	
 	void EntityFactory::LoadComponents()
 	{
