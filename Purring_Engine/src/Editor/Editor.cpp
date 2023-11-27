@@ -385,16 +385,19 @@ namespace PE {
 					ImGui::Separator();
 					if (ImGui::Selectable("Yes"))
 					{
-						auto save = serializationManager.SerializeEntityPrefab(1);
-						prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
-						prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
-						m_applyPrefab = true;
-
-						std::ofstream outFile(prefabFP);
-						if (outFile)
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							outFile << save.dump(4);
-							outFile.close();
+							auto save = serializationManager.SerializeEntityPrefab(1);
+							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
+							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
+							m_applyPrefab = true;
+
+							std::ofstream outFile(prefabFP);
+							if (outFile)
+							{
+								outFile << save.dump(4);
+								outFile.close();
+							}
 						}
 						m_isPrefabMode = false;
 						ClearObjectList();
@@ -973,7 +976,7 @@ namespace PE {
 	void Editor::ShowComponentWindow(bool* p_active)
 	{
 		if (IsEditorActive())
-		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs))
+		if (!ImGui::Begin("Property Editor Window", p_active, IsEditorActive() ? 0 : ImGuiWindowFlags_NoInputs) || (m_isPrefabMode && !EntityManager::GetInstance().Has<EntityDescriptor>(1)))
 		{
 			ImGui::End();
 		}
@@ -2293,6 +2296,26 @@ namespace PE {
 											ImGui::EndCombo();
 										}
 									}
+
+									// Load font through file explorer
+									ImGui::SameLine();
+									if (ImGui::Button("Load"))
+									{
+										std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+										// Check if filePath is not empty
+										if (!filePath.empty())
+										{
+											std::replace(filePath.begin(), filePath.end(), '\\', '/');
+											filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".ttf";
+
+											ResourceManager::GetInstance().LoadFontFromFile(filePath, filePath);
+										}
+										else
+										{
+											std::cerr << "No file path was selected for loading." << std::endl;
+										}
+									}
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Separator();
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
@@ -2691,6 +2714,10 @@ namespace PE {
 								else
 									iconDragged = "../Assets/Icons/Other_Icon.png";
 							}
+							else if (ImGui::IsMouseClicked(1))
+							{
+								ImGui::OpenPopup("AssetDeletePopup");
+							}
 						}
 						else
 						{
@@ -2701,7 +2728,7 @@ namespace PE {
 								GetFileNamesInParentPath(m_parentPath, m_files);
 							}
 						}
-
+						
 					}
 
 					if (ImGui::IsItemClicked(1))
@@ -2712,6 +2739,28 @@ namespace PE {
 						{
 							ImGui::OpenPopup("EditPrefab");
 						}
+						else
+						{
+							ImGui::OpenPopup("AssetDeletePopup");
+						}
+					}
+					if (n == rmbIndex && ImGui::BeginPopup("AssetDeletePopup"))
+					{
+						if (ImGui::Selectable("Delete Asset"))
+						{
+							try
+							{
+								std::filesystem::remove(m_files[n]);
+								GetFileNamesInParentPath(m_parentPath, m_files);
+							}
+							catch (std::filesystem::filesystem_error& e)
+							{
+								engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+								engine_logger.SetTime();
+								engine_logger.AddLog(false, e.what(), __FUNCTION__);
+							}
+						}
+						ImGui::EndPopup();
 					}
 					if (n == rmbIndex && ImGui::BeginPopup("EditPrefab"))
 					{
@@ -2748,8 +2797,9 @@ namespace PE {
 								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								
 							}
-							else
+							else if(EntityManager::GetInstance().Has<EntityDescriptor>(1))
 							{
+
 								auto save = serializationManager.SerializeEntityPrefab(1);
 								std::ofstream outFile(prefabFP);
 								if (outFile)
@@ -2762,6 +2812,11 @@ namespace PE {
 							ClearObjectList();
 							engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
 							serializationManager.LoadFromFile(prefabFP);
+						}
+						if (ImGui::Selectable("Delete Asset"))
+						{
+							std::filesystem::remove(m_files[n]);
+							GetFileNamesInParentPath(m_parentPath, m_files);
 						}
 						ImGui::EndPopup();
 					}
@@ -3412,16 +3467,19 @@ namespace PE {
 								{
 									engine_logger.AddLog(false, "Attempting to save prefab entities to file...", __FUNCTION__);
 									
-									auto save = serializationManager.SerializeEntityPrefab(1);
-
-									std::ofstream outFile(prefabFP);
-									if (outFile)
+									if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 									{
-										outFile << save.dump(4);
-										outFile.close();
-									}
+										auto save = serializationManager.SerializeEntityPrefab(1);
 
-									engine_logger.AddLog(false, "Prefab saved successfully to file.", __FUNCTION__);
+										std::ofstream outFile(prefabFP);
+										if (outFile)
+										{
+											outFile << save.dump(4);
+											outFile.close();
+										}
+
+										engine_logger.AddLog(false, "Prefab saved successfully to file.", __FUNCTION__);
+									}
 								}
 							}
 							else
@@ -3766,13 +3824,16 @@ namespace PE {
 				ImGui::SameLine();
 				if (ImGui::Button(" Save "))
 				{
-					auto save = serializationManager.SerializeEntityPrefab(1);
-
-					std::ofstream outFile(prefabFP);
-					if (outFile)
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 					{
-						outFile << save.dump(4);
-						outFile.close();
+						auto save = serializationManager.SerializeEntityPrefab(1);
+
+						std::ofstream outFile(prefabFP);
+						if (outFile)
+						{
+							outFile << save.dump(4);
+							outFile.close();
+						}
 					}
 				}
 				if (ImGui::BeginPopup/*Modal*/("ReqSave?"))
@@ -3784,14 +3845,17 @@ namespace PE {
 
 					if (ImGui::Selectable("Yes"))
 					{
-						auto save = serializationManager.SerializeEntityPrefab(1);
-						prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
-						prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
-						std::ofstream outFile(prefabFP);
-						if (outFile)
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							outFile << save.dump(4);
-							outFile.close();
+							auto save = serializationManager.SerializeEntityPrefab(1);
+							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
+							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
+							std::ofstream outFile(prefabFP);
+							if (outFile)
+							{
+								outFile << save.dump(4);
+								outFile.close();
+							}
 						}
 						m_isPrefabMode = false;
 						ClearObjectList();

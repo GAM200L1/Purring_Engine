@@ -330,18 +330,22 @@ namespace PE
 #endif
 			for (EntityID const& id : SceneView<AnimationComponent>())
 			{
-					// update animation and get current frame
-					p_currentFrame = UpdateAnimation(id, deltaTime);
+				// update animation and get current frame
+				p_currentFrame = UpdateAnimation(id, deltaTime);
 
-					// update entity based on frame data
-					// in the future probably check for bools in animation component, then update data accordingly
-
+				// update entity based on frame data
+				// in the future probably check for bools in animation component, then update data accordingly
+				// check if theres animation
+				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+				{
 					if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
 					{
+
 						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()));
 						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
 						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
 					}
+				}
 			}
 #ifndef GAMERELEASE
 		}

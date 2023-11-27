@@ -23,7 +23,10 @@ namespace PE
 {
     bool Font::Initialize(const std::string& r_fontPath, unsigned int fontSize)
     {
-        Load(r_fontPath, fontSize);
+        if (!Load(r_fontPath, fontSize))
+        {
+            return false;;
+        }
 
         glGenVertexArrays(1, &m_vertexArrayObject);
         glGenBuffers(1, &m_vertexBufferObject);
