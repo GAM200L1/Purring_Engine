@@ -1,0 +1,845 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Background",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/MapBackground_1920x1080_filled.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -1.300002098083496,
+                            "y": 10.39999771118164
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": true,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": -100.0,
+                            "y": -100.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 68.0999755859375,
+                                "y": -26.599990844726563
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "Player Cat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Player Cat",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                                },
+                                "attackDamage": 1,
+                                "bulletDelay": 0.699999988079071,
+                                "bulletForce": 1000.0,
+                                "bulletLifeTime": 0.10000000149011612,
+                                "bulletRange": 3.0,
+                                "catHealth": 1,
+                                "catID": 0,
+                                "catMaxEnergy": 1000,
+                                "isMainCat": true,
+                                "movementSpeed": 300.0,
+                                "projectileID": 0,
+                                "requiredAttackPoints": 0
+                            },
+                            "state": 0
+                        },
+                        "FollowScript": {
+                            "data": {
+                                "CurrentPosition": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "FollowingObject": [
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "IsAttaching": true,
+                                "LookTowardsMovement": false,
+                                "NextPosition": {
+                                    "0": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "1": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "2": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "3": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "4": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    }
+                                },
+                                "NumberOfAttacher": 2,
+                                "NumberOfFollower": 1,
+                                "Size": 65,
+                                "SoundID": 34,
+                                "Speed": 100.0,
+                                "ToAttach": [
+                                    18446744073709551615,
+                                    14,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "rotation": 0.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 68.0999755859375,
+                            "y": -26.599990844726563
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Text",
+                        "parent": null,
+                        "sceneID": 8
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "Layer 4"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -130.0,
+                            "y": -27.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 147.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Text",
+                        "parent": null,
+                        "sceneID": 10
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "Layer 0"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 137.0,
+                            "y": 29.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 147.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Text",
+                        "parent": null,
+                        "sceneID": 11
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "Layer 1"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -308.0,
+                            "y": 185.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 147.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Text",
+                        "parent": null,
+                        "sceneID": 12
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "Layer 3"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -311.0,
+                            "y": -30.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 147.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Text",
+                        "parent": null,
+                        "sceneID": 13
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Caveat/static/Caveat-Bold.ttf",
+                        "Size": 1.0,
+                        "Text": "Layer 2"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -113.0,
+                            "y": 185.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 147.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationOrange_Attack_Anim.json",
+                            "../Assets/Animation/AnimationOrange_Death_Anim.json",
+                            "../Assets/Animation/AnimationOrange_Idle_Anim.json",
+                            "../Assets/Animation/AnimationOrange_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 139.3000030517578,
+                                "y": -24.89999771118164
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "OrangeCatPrefab",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Orange Cat",
+                        "parent": null,
+                        "sceneID": 4
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationOrange_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationOrange_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationOrange_walk_Anim.json"
+                                },
+                                "attackDamage": 0,
+                                "bulletDelay": 0.699999988079071,
+                                "bulletForce": 1000.0,
+                                "bulletLifeTime": 0.10000000149011612,
+                                "bulletRange": 3.0,
+                                "catHealth": 20,
+                                "catID": 0,
+                                "catMaxEnergy": 21,
+                                "isMainCat": false,
+                                "movementSpeed": 300.0,
+                                "projectileID": 0,
+                                "requiredAttackPoints": 0
+                            },
+                            "state": 0
+                        },
+                        "FollowScript": {
+                            "data": {
+                                "CurrentPosition": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "FollowingObject": [
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "IsAttaching": true,
+                                "LookTowardsMovement": false,
+                                "NextPosition": {
+                                    "0": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "1": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "2": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "3": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "4": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    }
+                                },
+                                "NumberOfAttacher": 2,
+                                "NumberOfFollower": 1,
+                                "Size": 65,
+                                "SoundID": 0,
+                                "Speed": 100.0,
+                                "ToAttach": [
+                                    18446744073709551615,
+                                    7,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "rotation": 0.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 139.3000030517578,
+                            "y": -24.89999771118164
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 1,
+                        "data": {
+                            "max": {
+                                "x": -273.0,
+                                "y": 160.0
+                            },
+                            "min": {
+                                "x": -373.0,
+                                "y": 60.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_Blink_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -323.0,
+                            "y": 110.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 4,
+                        "data": {
+                            "max": {
+                                "x": -95.0,
+                                "y": -57.0
+                            },
+                            "min": {
+                                "x": -195.0,
+                                "y": -157.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_Blink_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -145.0,
+                            "y": -107.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 3,
+                        "data": {
+                            "max": {
+                                "x": -279.0,
+                                "y": -59.0
+                            },
+                            "min": {
+                                "x": -379.0,
+                                "y": -159.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "EmptyObject",
+                        "parent": null,
+                        "sceneID": 7
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_Blink_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -329.0,
+                            "y": -109.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationRat_Death_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Death_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 2,
+                        "data": {
+                            "max": {
+                                "x": -83.0,
+                                "y": 160.0
+                            },
+                            "min": {
+                                "x": -183.0,
+                                "y": 60.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "ratty",
+                        "parent": null,
+                        "sceneID": 9
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Rat_Brawler_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -133.0,
+                            "y": 110.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}

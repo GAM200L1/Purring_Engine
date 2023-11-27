@@ -834,36 +834,36 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Empty_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Empty_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/UIObject_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/UIObject_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Button_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Button_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Text_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Text_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::Selectable("Create Audio Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Audio_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Audio_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/Camera_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Camera_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				ImGui::EndPopup();
@@ -891,30 +891,25 @@ namespace PE {
 			ImGui::SameLine();
 			if (ImGui::Button("Undo/Sceen Picking"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+				//LoadSceneFromGivenPath("../Assets/RubricTestScenes/");
 			}
 			if (ImGui::Button("Prefab Editor Test Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/Demo_Scene.json");
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Layer Test Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LayerTest.json");
+			}
+			if (ImGui::Button("Script Test Scene 1"))
+			{
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene1.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Animation Test Scene"))
+			if (ImGui::Button("Script Test Scene 2"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
-			}
-			if (ImGui::Button("Logic Test Scene 1"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Logic Test Scene 2"))
-			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/TextTestScene.json");
+				LoadSceneFromGivenPath("../Assets/RubricTestScenes/ChainPickUpScene.json");
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
