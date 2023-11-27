@@ -320,7 +320,7 @@ namespace PE
 				break;
 			}
 			}
-			EntityManager::GetInstance().Get<Transform>(p_data->projectileID).position = EntityManager::GetInstance().Get<Transform>(id).position + (direction * ((0.5f * EntityManager::GetInstance().Get<Transform>(id).width) + 0.5f * EntityManager::GetInstance().Get<Transform>(p_data->projectileID).width));
+			EntityManager::GetInstance().Get<Transform>(p_data->projectileID).position = CatScript::GetEntityPosition(id);
 			EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).velocity.Zero();
 			m_bulletImpulse = direction * p_data->bulletForce;
 			m_bulletDelay = p_data->bulletDelay;
@@ -408,7 +408,8 @@ namespace PE
 				{
 					try
 					{
-						GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(collidedEntities.second, p_data->attackDamage);
+						int damage = (GameStateManager::GetInstance().godMode) ? (p_data->attackDamage * 2) : p_data->attackDamage;
+						GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(collidedEntities.second, damage);
 					}catch(...){}
 					EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;
 					m_bulletCollided = true;

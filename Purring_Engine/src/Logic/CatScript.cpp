@@ -80,7 +80,6 @@ namespace PE
 
 	void CatScript::Update(EntityID id, float deltaTime)
 	{
-		
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
 
 		// Check if the player has died
@@ -299,8 +298,8 @@ namespace PE
 		
 	void CatScript::LoseHP(EntityID id, int damageTaken)
 	{
-		// if (!GameStateManager::GetInstance().godMode) // @TODO uncomment when merged
-		m_scriptData[id].catHealth -= damageTaken;
+		if (!GameStateManager::GetInstance().godMode)
+			m_scriptData[id].catHealth -= damageTaken;
 		std::cout << "Cat HP: " << m_scriptData[id].catHealth << '\n';
 	}
 		
