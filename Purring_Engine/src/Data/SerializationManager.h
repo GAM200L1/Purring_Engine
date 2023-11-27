@@ -97,12 +97,12 @@ public:
     /*!***********************************************************************************
      \brief Save the serialized JSON of all entities to a file with the given filename.
     *************************************************************************************/
-    void SaveAllEntitiesToFile(const std::filesystem::path& filepath);
+    void SaveAllEntitiesToFile(std::string const& fileName, bool fp = false);
 
     /*!***********************************************************************************
      \brief Load all entities from a file with the given filename and deserialize them into the scene.
     *************************************************************************************/
-    void LoadAllEntitiesFromFile(const std::filesystem::path& filepath);
+    void LoadAllEntitiesFromFile(std::string const& filename, bool fp = false);
 
     /*!***********************************************************************************
      \brief Serialize the entity with the given ID to a JSON object.

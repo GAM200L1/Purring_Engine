@@ -156,9 +156,21 @@ void SerializationManager::DeserializeAllEntities(const nlohmann::json& r_j)
     }
 }
 
-void SerializationManager::SaveAllEntitiesToFile(const std::filesystem::path& filepath)
+void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bool fp)
 {
     nlohmann::json allEntitiesJson = SerializeAllEntities();
+
+    std::filesystem::path filepath;
+
+    // if using filepath
+    if (fp)
+    {
+        filepath = filename;
+    }
+    else
+    {
+        filepath = std::string{ "../Assets/Scenes/" } + filename;
+    }
 
     std::ofstream outFile(filepath);
     if (outFile)
@@ -172,8 +184,20 @@ void SerializationManager::SaveAllEntitiesToFile(const std::filesystem::path& fi
     }
 }
 
-void SerializationManager::LoadAllEntitiesFromFile(const std::filesystem::path& filepath)
+void SerializationManager::LoadAllEntitiesFromFile(std::string const& filename, bool fp)
 {
+    std::filesystem::path filepath;
+
+    // if using filepath
+    if (fp)
+    {
+        filepath = filename;
+    }
+    else
+    {
+        filepath = std::string{ "../Assets/Scenes/" } + filename;
+    }
+
     if (!std::filesystem::exists(filepath))
     {
         std::cerr << "File does not exist: " << filepath << std::endl;
