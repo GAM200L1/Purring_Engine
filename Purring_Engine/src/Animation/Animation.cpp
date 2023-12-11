@@ -176,7 +176,6 @@ namespace PE
 	void AnimationComponent::AddAnimationToComponent(std::string animationID)
 	{
 		m_animationsID.insert(animationID);
-		//m_currentAnimationID = animationID;
 	}
 
 	void AnimationComponent::RemoveAnimationFromComponent(std::string animationID)
@@ -233,7 +232,6 @@ namespace PE
 	nlohmann::json AnimationFrame::ToJson() const
 	{
 		nlohmann::json j;
-		// j["textureKey"] = textureKey; @Brandon do I need this?
 		j["minUV"] = { m_minUV.x, m_minUV.y };
 		j["maxUV"] = { m_maxUV.x, m_maxUV.y };
 		j["duration"] = m_duration;
@@ -254,8 +252,6 @@ namespace PE
 		{
 			j["animationFrames"].push_back(frame.ToJson());
 		}
-		// Serialize the empty frame @Brandon if need to, just uncomment it - Hans
-		// j["emptyFrame"] = m_emptyFrame.ToJson();
 
 		return j;
 	}

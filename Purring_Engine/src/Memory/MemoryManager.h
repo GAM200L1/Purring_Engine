@@ -31,6 +31,12 @@ namespace PE {
 		std::string name;
 		int size; // total size;
 		int bufferSize; //the amount of buffer added to ensure safety
+		/*!***********************************************************************************
+		 \brief							Constructor
+		 \param[in]		Std::string		name of the object borrowing memory
+		 \param[in]		int size		the amount of memory borrowed
+		 \param[in]		int buffersize	the amount of buffer added to ensure safety
+		*************************************************************************************/
 		MemoryData(std::string name, int size, int buffersize) : name(name), size(size) ,bufferSize(buffersize){}
 
 		std::string ToString() const;

@@ -17,7 +17,6 @@
 
 // INCLUDES
 #include "Entity.h"
-
 #include "GUISystem.h"
 
 namespace PE
@@ -54,6 +53,6 @@ namespace PE
 
 			prefabs.emplace("ButtonObject", std::initializer_list<ComponentID>{ EntityManager::GetInstance().GetComponentID<Transform>(), EntityManager::GetInstance().GetComponentID<GUI>(),
 																							EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>() });
-    }
+		}
 	};
 }

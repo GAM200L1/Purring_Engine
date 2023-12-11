@@ -19,7 +19,7 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "Graphics/GLHeaders.h"
-
+#include <vector>
 namespace PE
 {
     /*!***********************************************************************************
@@ -48,16 +48,32 @@ namespace PE
         
         /*!***********************************************************************************
          \brief     Gets the current frames per second.
-         \return    double Current FPS.
+         \return    float Current FPS.
         *************************************************************************************/
         inline float GetFps() const { return m_currentFps; }
 
+        /*!***********************************************************************************
+         \brief     Gets the max frames per second.
+         \return    float Max FPS.
+        *************************************************************************************/
         inline float GetMaxFps() const { return m_maxFps; }
 
+        /*!***********************************************************************************
+         \brief     Gets the min frames per second.
+         \return    float Min FPS.
+        *************************************************************************************/
         inline float GetMinFps() const { return m_minFps; }
 
+        /*!***********************************************************************************
+         \brief     Gets the average frames per second.
+         \return    float Average FPS.
+        *************************************************************************************/
         inline float GetAverageFps() const { return m_averageFps; }
 
+        /*!***********************************************************************************
+         \brief     Gets the list of fps values stored.
+         \return    std::vector<float> const& The list of fps values.
+        *************************************************************************************/
         inline std::vector<float> const& GetFpsValues() const { return m_fpsValues; }
 
         /*!***********************************************************************************

@@ -27,8 +27,6 @@
 
 #include "System.h"
 
-#include "Layers/LayerStack.h"
-
 //tmp
 #include "WindowManager.h"
 #include "Time/FrameRateTargetControl.h"
@@ -41,10 +39,19 @@ namespace PE
 	{
 	public:
 		// Default constructor and virtual destructor
+		/*!***********************************************************************************
+		 \brief Constructs CoreApplication object
+		*************************************************************************************/
 		CoreApplication();
+
+		/*!***********************************************************************************
+		 \brief Destroys CoreApplication object
+		*************************************************************************************/
 		virtual ~CoreApplication();
 
-		// Main application loop
+		/*!***********************************************************************************
+		 \brief Loop for the main application
+		*************************************************************************************/
 		void Run();
 
 		/*!***********************************************************************************
@@ -70,22 +77,31 @@ namespace PE
 		// Add a system to the application
 		void AddSystem(System* system);
 
-		// Add a rendering layer to the application
-		void AddLayer(Layer* layer);
-
-		// Add an overlay layer to the application
-		void AddOverlay(Layer* overlay);
-
-		// Uncomment below if singletons are required
-		//inline static Application& Get() { return *s_Instance; }
-		//inline Window& GetWindow() { return *m_Window; }
-
 	private:
 
+		/*!***********************************************************************************
+		 \brief Initializes variables for the CoreApplication class.
+		*************************************************************************************/
 		void InitializeVariables();
+
+		/*!***********************************************************************************
+		 \brief Initializes logger.
+		*************************************************************************************/
 		void InitializeLogger();
+
+		/*!***********************************************************************************
+		 \brief Initializes variables for the CoreApplication class.
+		*************************************************************************************/
 		void InitializeAudio();
+
+		/*!***********************************************************************************
+		 \brief Initializes memory manager.
+		*************************************************************************************/
 		void InitializeMemoryManager();
+
+		/*!***********************************************************************************
+		 \brief Initializes systems.
+		*************************************************************************************/
 		void InitializeSystems();
 
 		// Uncomment if window is managed as a unique_ptr
@@ -99,17 +115,10 @@ namespace PE
 		// Container for all the systems in the engine
 		std::vector<System*> m_systemList;
 
-		// Layer stack to manage rendering layers
-		LayerStack m_LayerStack;
-
 		// Temporary (or additional) components
 		WindowManager m_windowManager;						// Manages the application window
 		GLFWwindow* m_window;								// Pointer to the GLFW window object
 		float m_time;										// Placeholder for time value
-
-	private:
-
-	public:
 	};
 
 	// Function to create an instance of CoreApplication, defined by the client

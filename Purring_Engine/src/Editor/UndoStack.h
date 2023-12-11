@@ -254,9 +254,7 @@ namespace PE
 		 \brief			overriden Redo Function
 		*************************************************************************************/
 		virtual void Redo() override
-		{
-			//TBD
-		}
+		{}
 		// ----- Private Variables ----- // 
 	private:
 		EntityID ObjectCreated;

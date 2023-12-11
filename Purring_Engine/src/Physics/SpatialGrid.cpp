@@ -95,7 +95,6 @@ namespace PE
 
 	void Grid::SetupGrid(float gridWidth, float gridHeight)
 	{
-		//m_gridHasSetup = true;
 		m_gridSize = vec2{ gridWidth, gridHeight };
 		auto checkForComponents = SceneView<Collider>();
 		if (checkForComponents.begin() != checkForComponents.end())
@@ -191,7 +190,6 @@ namespace PE
 
 	void Grid::ClearGrid()
 	{
-		//m_gridHasSetup = false;
 		// clear each column of the row no. of cells it has
 		for (auto& r_column : m_cells)
 		{
@@ -220,7 +218,7 @@ namespace PE
 	{
 		vec2 colliderMax{ r_collider.center.x + r_collider.radius, r_collider.center.y + r_collider.radius };
 		vec2 colliderMin{ r_collider.center.x - r_collider.radius, r_collider.center.y - r_collider.radius };
-		//std::cout << colliderMax.x << '\n';
+
 		if (colliderMax.x >= m_max.x || colliderMin.x <= m_min.x) { return false; }
 		if (colliderMax.y >= m_max.y || colliderMin.y <= m_min.y) { return false; }
 		// else

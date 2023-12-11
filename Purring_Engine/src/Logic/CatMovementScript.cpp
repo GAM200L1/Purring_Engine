@@ -401,34 +401,13 @@ namespace PE
 
 		void CatMovementEXECUTE::StateCleanUp()
 		{
-			//StopMoving(p_data->catID);
-			//p_data->pathPositions.clear();
-
-			// Disable all the path nodes
-			//for (EntityID& nodeId : p_data->pathQuads)
-			//{
-			//	CatScript::ToggleEntity(nodeId, false);
-			//	EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(); // Reset to white
-			//}
-
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 		}
 
 		void CatMovementEXECUTE::StateExit(EntityID id)  
 		{
-				// Return if this cat is not the main cat
-				//if (!p_data->isMainCat) { return; }
-
 				StopMoving(id);
 				p_data->pathPositions.clear();
-
-
-				//// Disable all the path nodes
-				//for (EntityID& nodeId : p_data->pathQuads)
-				//{
-				//	CatScript::ToggleEntity(nodeId, false);
-				//	EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(); // Reset to white
-				//}
 		}
 
 

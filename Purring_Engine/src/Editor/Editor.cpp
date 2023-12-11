@@ -328,13 +328,6 @@ namespace PE {
 		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
 
 		ImGui_ImplOpenGL3_Init("#version 450");
-
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Directory_Icon.png", "../Assets/Icons/Directory_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Audio_Icon.png"	, "../Assets/Icons/Audio_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Font_Icon.png", "../Assets/Icons/Font_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Prefabs_Icon.png", "../Assets/Icons/Prefabs_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Other_Icon.png", "../Assets/Icons/Other_Icon.png");
-		ResourceManager::GetInstance().LoadIconFromFile("../Assets/Icons/Texture_Icon.png", "../Assets/Icons/Texture_Icon.png");
 	}
 
 	void Editor::Render(Graphics::FrameBuffer& r_frameBuffer)
@@ -413,7 +406,7 @@ namespace PE {
 						}
 						m_isPrefabMode = false;
 						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
 					}
@@ -423,7 +416,7 @@ namespace PE {
 					{
 						m_isPrefabMode = false;
 						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
 					}
@@ -832,36 +825,36 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Empty_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/UIObject_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Button_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Text_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::Selectable("Create Audio Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Audio_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("../Assets/Prefabs/EditorDefaults/Camera_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json");
 					m_undoStack.AddChange(new CreateObjectUndo(s_id));
 				}
 				ImGui::EndPopup();
@@ -884,30 +877,30 @@ namespace PE {
 			ImGui::SeparatorText("Scenes To Test");
 			if (ImGui::Button("Reset Default Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/DefaultScene.json");
+				LoadSceneFromGivenPath("RubricTestScenes/DefaultScene.json");
 			}
 			ImGui::SameLine();
-			if (ImGui::Button("Undo/Sceen Picking"))
+			if (ImGui::Button("Undo/Screen Picking"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/UndoTest.json");
+				LoadSceneFromGivenPath("RubricTestScenes/UndoTest.json");
 			}
 			if (ImGui::Button("Prefab Editor Test Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/Demo_Scene.json");
+				LoadSceneFromGivenPath("RubricTestScenes/Demo_Scene.json");
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Layer Test Scene"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LayerTest.json");
+				LoadSceneFromGivenPath("RubricTestScenes/LayerTest.json");
 			}
 			if (ImGui::Button("Script Test Scene 1"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/LogicScene1.json");
+				LoadSceneFromGivenPath("RubricTestScenes/LogicScene1.json");
 			}
 			ImGui::SameLine();
 			if (ImGui::Button("Script Test Scene 2"))
 			{
-				LoadSceneFromGivenPath("../Assets/RubricTestScenes/ChainPickUpScene.json");
+				LoadSceneFromGivenPath("RubricTestScenes/ChainPickUpScene.json");
 			}
 			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
@@ -1999,22 +1992,6 @@ namespace PE {
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Separator();
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
-									////setting colors
-
-									////get and set color variable of the renderer component
-									//ImVec4 color;
-									//color.x = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().r;
-									//color.y = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().g;
-									//color.z = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().b;
-									//color.w = EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetColor().a;
-
-									//ImGui::Text("Change Color: "); ImGui::SameLine();
-									//ImGui::ColorEdit4("##Change Color", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
-
-									//EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).SetColor(color.x, color.y, color.z, color.w);
-
-									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								}
 							}
 						}
@@ -2995,7 +2972,7 @@ namespace PE {
 										EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
 									}
 								}
-								serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+								serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
 								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								
 							}
@@ -3013,7 +2990,7 @@ namespace PE {
 							}
 							ClearObjectList();
 							engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-							serializationManager.LoadFromFile(prefabFP);
+							serializationManager.LoadFromFile(prefabFP, true);
 						}
 						if (ImGui::Selectable("Delete Asset"))
 						{
@@ -3089,7 +3066,7 @@ namespace PE {
 						{
 							if (m_files[draggedItemIndex].extension() == ".json")
 							{
-								EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string());
+								EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string(), true);
 								m_undoStack.AddChange(new CreateObjectUndo(s_id));
 								// change position of loaded prefab based on mouse cursor here
 							}
@@ -3250,6 +3227,7 @@ namespace PE {
 			{
 				if (currentEntityID.has_value())
 				{
+					if(EntityManager::GetInstance().Has<EntityDescriptor>(currentEntityID.value()))
 					if (str == EntityManager::GetInstance().Get<EntityDescriptor>(currentEntityID.value()).name)
 					break;
 				}
@@ -3374,6 +3352,26 @@ namespace PE {
 				if(currentAnimation)
 					currentAnimation->SetSpriteSheetKey(filepaths[textureIndex].string());
 			}
+
+			// Load texture through file explorer
+			if (ImGui::Button("Load Spritesheet"))
+			{
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+				// Check if filePath is not empty
+				if (!filePath.empty())
+				{
+					std::replace(filePath.begin(), filePath.end(), '\\', '/');
+					filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".png";
+
+					ResourceManager::GetInstance().LoadTextureFromFile(filePath, filePath);
+				}
+				else
+				{
+					std::cerr << "No file path was selected for loading." << std::endl;
+				}
+			}
+
 
 			if (ImGui::Button("Play"))
 			{
@@ -3706,7 +3704,7 @@ namespace PE {
 											EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
 										}
 									}
-									serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath());
+									serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath(), true);
 									engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								}
 								if (ImGui::MenuItem("Load"))
@@ -3722,7 +3720,7 @@ namespace PE {
 										// This will load all entities from the file
                                         m_undoStack.ClearStack();
 										ClearObjectList();
-										serializationManager.LoadAllEntitiesFromFile(filePath);
+										serializationManager.LoadAllEntitiesFromFile(filePath, true);
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 									}
 									else
@@ -3773,10 +3771,6 @@ namespace PE {
 								m_showPhysicsWindow = !m_showPhysicsWindow;
 							}
 							ImGui::Separator();
-							if (ImGui::MenuItem("Close Editor (Game Wont Start Either)", "", m_showEditor, true))
-							{
-								m_showEditor = !m_showEditor;
-							}
 							if (ImGui::MenuItem("Rubrics Test", "", m_showTestWindows, !m_showTestWindows))
 							{
 								m_showTestWindows = !m_showTestWindows;
@@ -3953,7 +3947,7 @@ namespace PE {
 							EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
 						}
 					}
-					serializationManager.SaveAllEntitiesToFile("../Assets/Prefabs/savestate.json");
+					serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
                     m_undoStack.ClearStack();
 					engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 				}
@@ -3965,7 +3959,7 @@ namespace PE {
 					if (m_isRunTime)
 					{
 						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					}
 
@@ -3987,19 +3981,6 @@ namespace PE {
 
 				if (ImGui::Button("Return"))
 				{
-
-					//auto save = serializationManager.SerializeEntityPrefab(1);
-
-					//std::ofstream outFile(prefabFP);
-					//if (outFile)
-					//{
-					//	outFile << save.dump(4);
-					//	outFile.close();
-					//}
-					//m_isPrefabMode = false;
-					//ClearObjectList();
-					//serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
-					//engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					ImGui::OpenPopup("ReqSave?");
 					m_applyPrefab = false;
 				}
@@ -4042,7 +4023,7 @@ namespace PE {
 						}
 						m_isPrefabMode = false;
 						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						m_applyPrefab = true;
 					}
@@ -4052,7 +4033,7 @@ namespace PE {
 					{
 						m_isPrefabMode = false;
 						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					}
 					ImGui::EndPopup();
@@ -4359,7 +4340,7 @@ namespace PE {
 			if (m_isRunTime)
 			{
 				ClearObjectList();
-				serializationManager.LoadAllEntitiesFromFile("../Assets/Prefabs/savestate.json");
+				serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
 				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}
 
@@ -4469,7 +4450,7 @@ namespace PE {
 			if (ImGui::Button("Apply"))
 			{
 				// exectue the changes!!
-				EntityID pfid = serializationManager.LoadFromFile(prefabFP);
+				EntityID pfid = serializationManager.LoadFromFile(prefabFP, true);
 				for (auto id : modify)
 				{
 					for (size_t i{}; i < prefabCID.size(); ++i)
@@ -4683,8 +4664,9 @@ namespace PE {
 		//		[ImGuiCol_TabTextActive] = Active text color for tabs.
 	}
 
-	void Editor::LoadSceneFromGivenPath(std::string_view path)
+	void Editor::LoadSceneFromGivenPath(std::string const& path)
 	{
+
 		m_undoStack.ClearStack();
 		ClearObjectList();
 		serializationManager.LoadAllEntitiesFromFile(path);

@@ -78,7 +78,6 @@ namespace PE {
 	struct ScriptComponent
 	{
 		ScriptComponent() {}
-		//std::vector<std::string> m_scriptKeys;
 		std::map<std::string, ScriptState> m_scriptKeys;
 
 		/*!***********************************************************************************
@@ -124,7 +123,6 @@ namespace PE {
 			for (auto [k, v] : m_scriptKeys)
 			{
 				ret[k.c_str()]["state"] = v;
-				//ret[k.c_str()]["data"] = 69;
 				rttr::type scriptDataType = rttr::type::get_by_name(k.c_str());
 				for (auto& prop : scriptDataType.get_properties())
 				{

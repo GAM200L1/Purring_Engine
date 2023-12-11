@@ -75,10 +75,6 @@ namespace PE
         *************************************************************************************/
         void SetCollisionLayerName(std::string collisionLayerName);
 
-        // serialize layer
-
-        // deserialize layer
-
         unsigned m_collisionLayerIndex;
         std::string m_collisionLayerName;
         std::bitset <TOTAL_COLLISION_LAYERS> m_collisionLayerSignature;
@@ -104,10 +100,6 @@ namespace PE
          \return a reference to the Collision layers container.
         *************************************************************************************/
         std::vector<std::shared_ptr<CollisionLayer>>& GetCollisionLayers() { return m_collisionLayers; }
-
-        // serialize for each scene
-
-        // deserialize for each scene
         
     private:
         // private constructor for singleton
