@@ -62,12 +62,11 @@ namespace PE
 
 						if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 						{
-							//std::cout << "CatScript found" << std::endl;
 							CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
 							CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
 
 							SerializationManager serializationManager;
-							EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Cat Rescue SFX_Prefab.json");
+							EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX_Prefab.json");
 							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 							EntityManager::GetInstance().RemoveEntity(sound);
@@ -91,7 +90,6 @@ namespace PE
 		if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 		{
 			CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
-			//std::cout << cd->catHealth << std::endl;
 			if(cd->catHealth >= 1)
 			if (cd->catHealth < m_ScriptData[id].NumberOfFollower)
 			{
@@ -122,8 +120,8 @@ namespace PE
 			vec2 savedLocation = m_ScriptData[id].NextPosition[0];
 
 			//setting current new position for the next object
-			m_ScriptData[id].NextPosition[0] = EntityManager::GetInstance().Get<Transform>(id).position; //NewPosition + vec2(m_ScriptData[id].Distance * cosf(newRotation - M_PI), m_ScriptData[id].Distance * sinf(newRotation - M_PI));
-			//EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).position = m_ScriptData[id].NextPosition[0];
+			m_ScriptData[id].NextPosition[0] = EntityManager::GetInstance().Get<Transform>(id).position;
+			
 
 
 
@@ -133,7 +131,7 @@ namespace PE
 			if (rotationOffset != 0 && m_ScriptData[id].LookTowardsMovement)
 				EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
 
-			//EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[0]).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
+			
 
 			m_ScriptData[id].Rotation = newRotation;
 			m_ScriptData[id].CurrentPosition = EntityManager::GetInstance().Get<Transform>(id).position;
@@ -171,7 +169,7 @@ namespace PE
 
 			}
 
-			//m_ScriptData[id].UpdateNow = false;
+			
 		}
 
 		if (InputSystem::IsKeyTriggered(GLFW_KEY_Q))

@@ -222,28 +222,28 @@ namespace PE
 		 
 		 \return vec2 const& - m_min
 		*************************************************************************************/
-		vec2 const& GetGridMin() const;
+		vec2 const& GetGridMin() const { return m_min; }
 
 		/*!***********************************************************************************
 		 \brief Get the Grid Max object which is the coordinate of the max bound of the grid
 		 
 		 \return vec2 const& - m_max
 		*************************************************************************************/
-		vec2 const& GetGridMax() const;
+		vec2 const& GetGridMax() const { return m_max; }
 
 		/*!***********************************************************************************
 		 \brief Get the individual cell width
 		 
 		 \return float - m_cellWidth
 		*************************************************************************************/
-		float GetCellWitdh() const;
+		float GetCellWitdh() const { return m_cellWidth; }
 
 		/*!***********************************************************************************
 		 \brief Get a vec2 with the number of columns and rows the grid has
 		 
-		 \return vec2 - number of columns and rows
+		 \return vec2 - number of columns and rows in x and y of vec2 respectively
 		*************************************************************************************/
-		vec2 GetColumnsRows() const;
+		vec2 GetColumnsRows() const { return vec2{ static_cast<float>(m_columns), static_cast<float>(m_rows) }; }
 
 	private:
 	// ----- Private Variables ----- //

@@ -7,7 +7,9 @@
  \author               Liew Yeni
  \par      email:      yeni.l/@digipen.edu
 
- \brief 
+ \brief    Contains declaration of struct transform which retains objects position,
+           orientation and scale. Contains definitino of functions for serialization
+           and getting a 3x3 matrix following transform parameters.
  
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.

@@ -269,9 +269,9 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief	Load Scene based on given file path
 
-		 \param[in] string_view path name
+		 \param[in] string path name
 		*************************************************************************************/
-		void LoadSceneFromGivenPath(std::string_view path);
+		void LoadSceneFromGivenPath(std::string const& path);
 		// ----- ImGui Command Functions ----- // 
 	private:
 		/*!***********************************************************************************

@@ -20,5 +20,11 @@
 
 namespace PE
 {
+	/*!***********************************************************************************
+	 \brief Gets the names of the files in a specified path, usually a directory
+
+	 \param[in] r_parentPath	path to retrieve names of its files from
+	 \param[in] r_fileNames		vector to save retrieved names to
+	*************************************************************************************/
 	void GetFileNamesInParentPath(std::filesystem::path const& r_parentPath, std::vector<std::filesystem::path>& r_fileNames);
 }

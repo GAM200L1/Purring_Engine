@@ -17,5 +17,5 @@
 
 namespace PE
 {
-
+	// empty by design
 }

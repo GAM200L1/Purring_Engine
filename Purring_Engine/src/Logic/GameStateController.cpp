@@ -43,7 +43,6 @@ namespace PE
 {
 	void GameStateController::Init(EntityID id)
 	{
-		//m_ScriptData[id].SplashScreen = PE::EntityManager::GetInstance().NewEntity();
 		if (m_ScriptData[id].GameStateManagerActive)
 		{
 				GameStateManager::GetInstance().SetGameState(GameStates::SPLASHSCREEN);
@@ -62,7 +61,7 @@ namespace PE
 
 		// Play BGM
 		SerializationManager serializationManager;
-		bgm = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Background Music_Prefab.json");
+		bgm = serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm)) 
 		{
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
@@ -522,7 +521,7 @@ namespace PE
 
 				if (GameStateManager::GetInstance().godMode)
 				{
-					godModeText = serializationManager.LoadFromFile("../Assets/Prefabs/HUD/God Mode_Prefab.json");
+					godModeText = serializationManager.LoadFromFile("HUD/God Mode_Prefab.json");
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(godModeText))
 						EntityManager::GetInstance().Get<EntityDescriptor>(godModeText).toSave = false;
 				}

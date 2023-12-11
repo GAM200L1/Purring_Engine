@@ -123,18 +123,8 @@ void PE::LogicSystem::DeleteScriptData(EntityID id)
 		if (Editor::GetInstance().IsRunTime())
 		{ 
 #endif
-			//for (EntityID objectID : SceneView<ScriptComponent>())
-			//{
-			//	ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
-			//	for (auto& [key, state] : sc.m_scriptKeys)
-			//	{
-			//		if (state == ScriptState::UPDATE)
-			//		{
-						m_scriptContainer.find(key)->second->Destroy(id);
-			//			state = ScriptState::DEAD;
-			//		}
-			//	}
-			//}
+			m_scriptContainer.find(key)->second->Destroy(id);
+			
 #ifndef GAMERELEASE
 		}
 #endif

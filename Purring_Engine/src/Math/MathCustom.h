@@ -445,7 +445,6 @@ namespace PE
 		 \return float 		The distance squared between this and r_rhs
 		*************************************************************************************/
 		float DistanceSquared(vec3 const& r_rhs) const;
-		// Distance between two vectors
 
 		/*!***********************************************************************************
 		 \brief Calculates the distance between the two vec3 points, and returns the result.
@@ -522,9 +521,6 @@ namespace PE
 		 \param[in] r_cpy vec4 to copy into new vec4
 		*************************************************************************************/
 		vec4(vec4 const& r_cpy) : x{ r_cpy.x }, y{ r_cpy.y }, z{ r_cpy.z }, w{ r_cpy.w } {}
-		
-		// copy assignment
-		//vec4& operator=(vec4 const& r_cpy);
 	
 		/*!***********************************************************************************
 		 \brief Read-only access operator
@@ -539,27 +535,7 @@ namespace PE
 		 \param[in] index	number 0-3, indicated variables x,y,z,w
 		*************************************************************************************/
 		float& operator[](unsigned int index);
-	
-		//// addition
-		//vec4 operator+(vec4 const& r_rhs);
-		//vec4& operator+=(vec4 const& r_rhs);
-	
-		//// subtraction
-		//vec4 operator-(vec4 const& r_rhs);
-		//vec4& operator-=(vec4 const& r_rhs);
-	
-		//// scale
-		//vec4 operator*(float scale);
-		//vec4 operator/(float scale);
-		//vec4& operator*=(float scale);
-		//vec4& operator/=(float scale);
-	
-		//// zero the vector
-		//void Zero();
-		//// cross product
-		//vec4 Cross(vec4 const& r_rhs);
-		//// dot product
-		//float Dot(vec4 const& r_rhs);
+
 	};
 
 	//! Matrix 3 column 3 row struct
@@ -717,7 +693,6 @@ namespace PE
 		mat3x3& operator/=(float scale);
 
 		// ----- Matrix Multiplication ----- //
-		// vec2 operator*(vec2 const& r_rhs) const;
 		/*!***********************************************************************************
 		 \brief Perform matrix multiplication with a vec3, multiplying row of mat3x3 with vec3 column
 		 
@@ -877,9 +852,6 @@ namespace PE
 		*************************************************************************************/
 		mat4x4(mat4x4 const& r_cpy);
 
-		// potentially unneeded
-		//mat4x4(vec4 const& r_col0, vec4 const& r_col1, vec4 const& r_col2, vec4 const& r_col3);
-
 		// ----- Public Methods ----- //
 		public:
 
@@ -1038,10 +1010,6 @@ namespace PE
 	 \return vec3 		The cross product
 	*************************************************************************************/
 	vec3 Cross(vec3 const& r_lhs, vec3 const& r_rhs);
-
-	//// vec4 functions
-	//float Dot(vec4 const& r_lhs, vec4 const& r_rhs);
-	//vec4 Cross(vec4 const& r_lhs, vec4 const& r_rhs);
 
 	// ----- Mat3x3 functions ----- //
 	/*!***********************************************************************************

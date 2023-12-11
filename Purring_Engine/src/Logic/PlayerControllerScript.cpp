@@ -50,19 +50,11 @@ namespace PE
 		switch (m_ScriptData[id].currentPlayerState)
 		{
 		case PlayerState::IDLE:
-
-			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("../Assets/Animations/catAttack_Anim.json");
-			}			
+			
 			MovePlayer(id,deltaTime);
 			break;
 		case PlayerState::MOVING:
 
-			if (EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
-			{
-				EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID("../Assets/Animations/catWalk_Anim.json");
-			}
 			MovePlayer(id,deltaTime);
 			break;
 		case PlayerState::DEAD:
@@ -99,7 +91,6 @@ namespace PE
 		if (InputSystem::IsKeyHeld(GLFW_KEY_W))
 		{
 			hasMoved = true;
-			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			m_mouseClicked = false;
@@ -107,7 +98,6 @@ namespace PE
 		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
 		{
 			hasMoved = true;
-			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			m_mouseClicked = false;
@@ -115,7 +105,6 @@ namespace PE
 		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 		{
 			hasMoved = true;
-			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			m_mouseClicked = false;
@@ -123,7 +112,6 @@ namespace PE
 		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
 		{
 			hasMoved = true;
-			//EntityManager::GetInstance().Get<RigidBody>(id).ApplyForce(vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime);
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			m_mouseClicked = false;
@@ -191,7 +179,6 @@ namespace PE
 	void PlayerControllerScript::MoveTowardsClicked(EntityID id, float deltaTime)
 	{
 		Transform& currentObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-		//Transform& targetObject = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].entityToFollow);
 
 		vec2 Direction = vec2(m_currentMousePos.x - currentObject.position.x, m_currentMousePos.y - currentObject.position.y);
 

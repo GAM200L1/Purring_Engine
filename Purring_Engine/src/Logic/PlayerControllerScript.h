@@ -125,7 +125,19 @@ namespace PE
 		*************************************************************************************/
 		~PlayerControllerScript();
 	private:
+		/*!***********************************************************************************
+		 \brief Callback function to subscribe to mouse events
+		 
+		 \param[in] r_ME const reference to the mous eevent receoived
+		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
+		/*!***********************************************************************************
+		 \brief Helper function to move specified Entity of EntityID 'id' to click point
+
+		 \param[in] id the EntityID of the object to move
+		 \param[in] deltaTime the difference between the current and last frame
+		*************************************************************************************/
 		void MoveTowardsClicked(EntityID id, float deltaTime);
 	private:
 		std::map<EntityID, PlayerControllerScriptData> m_ScriptData;

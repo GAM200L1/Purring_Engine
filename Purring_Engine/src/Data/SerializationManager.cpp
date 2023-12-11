@@ -38,7 +38,7 @@
 #include "Graphics/Text.h"
 #include "Math/MathCustom.h"
 
-// RTTR stuff
+// RTTR
 #include <rttr/variant.h>
 #include <rttr/type.h>
 
@@ -156,9 +156,21 @@ void SerializationManager::DeserializeAllEntities(const nlohmann::json& r_j)
     }
 }
 
-void SerializationManager::SaveAllEntitiesToFile(const std::filesystem::path& filepath)
+void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bool fp)
 {
     nlohmann::json allEntitiesJson = SerializeAllEntities();
+
+    std::filesystem::path filepath;
+
+    // if using filepath
+    if (fp)
+    {
+        filepath = filename;
+    }
+    else
+    {
+        filepath = std::string{ "../Assets/Scenes/" } + filename;
+    }
 
     std::ofstream outFile(filepath);
     if (outFile)
@@ -172,8 +184,20 @@ void SerializationManager::SaveAllEntitiesToFile(const std::filesystem::path& fi
     }
 }
 
-void SerializationManager::LoadAllEntitiesFromFile(const std::filesystem::path& filepath)
+void SerializationManager::LoadAllEntitiesFromFile(std::string const& filename, bool fp)
 {
+    std::filesystem::path filepath;
+
+    // if using filepath
+    if (fp)
+    {
+        filepath = filename;
+    }
+    else
+    {
+        filepath = std::string{ "../Assets/Scenes/" } + filename;
+    }
+
     if (!std::filesystem::exists(filepath))
     {
         std::cerr << "File does not exist: " << filepath << std::endl;
@@ -196,9 +220,6 @@ void SerializationManager::LoadAllEntitiesFromFile(const std::filesystem::path& 
 
 nlohmann::json SerializationManager::SerializeEntity(int entityId)
 {
-    //PE::EntityManager* entityManager = &PE::EntityManager::GetInstance();
-    //EntityID eID = static_cast<EntityID>(entityId);
-
     nlohmann::json j;
     StructEntity& entity = m_entities[entityId];
 
@@ -324,8 +345,19 @@ void SerializationManager::SaveAnimationToFile(const std::filesystem::path& file
     }
 }
 
-size_t SerializationManager::LoadFromFile(const std::filesystem::path& filepath)
+size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
 {
+    std::filesystem::path filepath;
+    
+    // if using filepath
+    if (fp)
+    {
+        filepath = filename;
+    }
+    else
+    {
+        filepath = std::string{ "../Assets/Prefabs/" } + filename;
+    }
     if (!std::filesystem::exists(filepath))
     {
         std::cerr << "File does not exist: " << filepath << std::endl;
@@ -602,11 +634,10 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
 {
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::ScriptComponent>(),
         static_cast<void*>(&(PE::ScriptComponent().Deserialize(r_json["Entity"]["components"]["ScriptComponent"]))));
-    //auto& scriptsRef = PE::EntityManager::GetInstance().Get<PE::ScriptComponent>(r_id).m_scriptKeys;
+
     for (const auto& k : r_json["Entity"]["components"]["ScriptComponent"].items())
     {
         auto str = k.key().c_str();
-        //PE::LogicSystem::m_scriptContainer[str]->OnAttach(r_id);
         if (PE::LogicSystem::m_scriptContainer.count(str))
         {
             rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(str)->GetScriptData(r_id);

@@ -29,8 +29,6 @@
 --------------------------------------------------------------------------------------------------------------------- */
 
 #include "json.hpp"
-//#include "ECS/Components.h"
-//#include "ECS/Entity.h"
 #include "Math/Transform.h"
 #include "Math/MathCustom.h"
 #include "Physics/RigidBody.h"
@@ -48,9 +46,6 @@ struct StructPlayerStats
     int m_level;
     float m_experience;
     std::string m_playerName;
-
-    //void FromJson(const nlohmann::json& j, int& r_entityId, class SerializationManager& r_sm);
-    //nlohmann::json ToJson(int r_entityId, class SerializationManager& r_sm) const;
 };
 
 struct StructEntity
@@ -97,12 +92,12 @@ public:
     /*!***********************************************************************************
      \brief Save the serialized JSON of all entities to a file with the given filename.
     *************************************************************************************/
-    void SaveAllEntitiesToFile(const std::filesystem::path& filepath);
+    void SaveAllEntitiesToFile(std::string const& fileName, bool fp = false);
 
     /*!***********************************************************************************
      \brief Load all entities from a file with the given filename and deserialize them into the scene.
     *************************************************************************************/
-    void LoadAllEntitiesFromFile(const std::filesystem::path& filepath);
+    void LoadAllEntitiesFromFile(std::string const& filename, bool fp = false);
 
     /*!***********************************************************************************
      \brief Serialize the entity with the given ID to a JSON object.
@@ -129,7 +124,7 @@ public:
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
     *************************************************************************************/
-    size_t LoadFromFile(const std::filesystem::path& filepath);
+    size_t LoadFromFile(std::string const& filename, bool fp = false);
 
     /*!***********************************************************************************
      \brief Load an entity from a serialized file, returning its ID.
@@ -251,21 +246,6 @@ private:
  \param jsonKey Key for the serialized component in the JSON object.
  \param json JSON object to store the serialized component.
 *******************************************************************************/
-//template<typename ComponentType>
-//void SerializationManager::SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json)
-//{
-//    PE::EntityManager& entityManager = PE::EntityManager::GetInstance();
-//    if (entityManager.Has(static_cast<EntityID>(entityId), entityManager.GetComponentID<ComponentType>()))
-//    {
-//       /* ComponentType* component = static_cast<ComponentType*>(
-//            entityManager.GetComponentPoolPointer(entityManager.GetComponentID<ComponentType>())->Get(static_cast<EntityID>(entityId))
-//            );*/
-//        ComponentType& component = entityManager.Get<ComponentType>(entityId);
-//
-//        json["Entity"]["components"][jsonKey] = component.ToJson(static_cast<EntityID>(entityId));
-//        
-//    }
-//}
 template<typename ComponentType>
 void SerializationManager::SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json)
 {

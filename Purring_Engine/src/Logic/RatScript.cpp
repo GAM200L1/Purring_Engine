@@ -67,15 +67,6 @@ namespace PE
 		{
 			GameStateManager::GetInstance().noPause = true;
 
-			// idk if need these
-
-			// TODO ------------------------------------------------------------ //
-			// Add function here to get rat to be in DEATH animation when HP reaches 0
-			// ----------------------------------------------------------------- //
-
-			// Set game state to win when player HP is 0 (we only have one anyway)
-			// probably some DT stuff to let the animation run
-			// GameStateManager::GetInstance().SetGameState(GameStates::WIN);
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
 				try
@@ -93,7 +84,7 @@ namespace PE
 				{
 					GameStateManager().GetInstance().SetWinState();
 					SerializationManager serializationManager;
-					EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Rat Death SFX_Prefab.json");
+					EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Death SFX_Prefab.json");
 					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 					EntityManager::GetInstance().RemoveEntity(sound);
@@ -125,9 +116,6 @@ namespace PE
 
 			if (m_scriptData[id].p_stateManager->GetStateName() == "IDLE")
 			{
-				// TODO ------------------------------------------------------------ //
-				// Add function here to get rat to be in IDLE animation when player is planning Attack and movement
-				// ----------------------------------------------------------------- //
 				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 				{
 					try
@@ -153,9 +141,6 @@ namespace PE
 			}
 			else if (m_scriptData[id].p_stateManager->GetStateName() == "MovementEXECUTE")
 			{
-				// TODO ------------------------------------------------------------ //
-				// Add function here to get rat to be in MOVEMENT animation when executing movement
-				// ----------------------------------------------------------------- //
 				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 				{
 					try
@@ -175,9 +160,6 @@ namespace PE
 			}
 			else if (m_scriptData[id].p_stateManager->GetStateName() == "AttackEXECUTE")
 			{
-				// TODO ------------------------------------------------------------ //
-				// Add function here to get player to be in ATTACK animation when planning movement
-				// ----------------------------------------------------------------- //
 				if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 				{
 					if (m_scriptData[id].finishedExecution)
@@ -361,19 +343,19 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(data.psudoRatID).position = GetEntityScale(id);
 
 		// create the arrow telegraph
-		data.arrowTelegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/EnemyArrowTelegraph_Prefab.json");
+		data.arrowTelegraphID = serializationManager.LoadFromFile("EnemyArrowTelegraph_Prefab.json");
 		ToggleEntity(data.arrowTelegraphID, false); // set to inactive, it will only show during planning phase
 		ScaleEntity(data.arrowTelegraphID, ratScale.x, ratScale.y);
 		EntityManager::GetInstance().Get<EntityDescriptor>(data.arrowTelegraphID).parent = data.psudoRatID;
 		EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.x = ratScale.x * data.detectionRadius * 0.5f;
 		
 		// create cross attack telegraph
-		data.attackTelegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/EnemyAttackTelegraph_Prefab.json");
+		data.attackTelegraphID = serializationManager.LoadFromFile("EnemyAttackTelegraph_Prefab.json");
 		ToggleEntity(data.attackTelegraphID, false); // set to inactive, it will only show during planning phase if the cat is in the area
 		ScaleEntity(data.attackTelegraphID, data.attackDiameter, data.attackDiameter);
 
 		// create the detection radius
-		data.detectionTelegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/EnemyDetectionTelegraph_Prefab.json");
+		data.detectionTelegraphID = serializationManager.LoadFromFile("EnemyDetectionTelegraph_Prefab.json");
 		ToggleEntity(data.detectionTelegraphID, false); // set to inactive it will only show during planning phase
 		ScaleEntity(data.detectionTelegraphID, ratScale.x * 2.f * data.detectionRadius, ratScale.y * 2.f * data.detectionRadius);
 		EntityManager::GetInstance().Get<EntityDescriptor>(data.detectionTelegraphID).parent = id; // detection UI will always show
@@ -531,7 +513,7 @@ namespace PE
 			 if (!attacksoundonce) 
 			 {
 				 SerializationManager serializationManager;
-				 EntityID sound = serializationManager.LoadFromFile("../Assets/Prefabs/AudioObject/Rat Attack SFX_Prefab.json");
+				 EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Attack SFX_Prefab.json");
 				 if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 					 EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 				 EntityManager::GetInstance().RemoveEntity(sound);

@@ -452,8 +452,6 @@ namespace PE
 		// if component is not found
 		if (m_componentPools.find(componentID) == m_componentPools.end())
 		{
-			//engine_logger.AddLog(true, "Component was not registered!!", __FUNCTION__);
-			//engine_logger.FlushLog();
 			throw;
 		}
 
@@ -580,24 +578,6 @@ namespace PE
 		UpdateVectors(id, false, componentID);
 	}
 
-	//void EntityManager::Remove(EntityID id, const ComponentID& r_cID)
-	//{
-	//	if (!Has(id, r_cID))
-	//		return; // log in the future
-	//	size_t lastEntID = (*std::prev(m_componentPools[r_cID]->idxMap.end())).first;
-	//	size_t poolID = m_componentPools[r_cID]->idxMap[id];
-	//	if (m_componentPools[r_cID]->idxMap.size() > 1)
-	//	{
-	//		std::swap(Get(id), Get<T>(lastEntID));
-	//	}
-	//	// remove the current component, and the last component from the map
-	//	m_componentPools[r_cID]->Remove(id);
-	//	m_componentPools[r_cID]->Remove(lastEntID);
-	//	// re-empalce the "last" entity inplace to the existing id's position
-	//	m_componentPools[r_cID]->idxMap.emplace(lastEntID, poolID);
-	//	--(m_componentPools[r_cID]->size);
-	//	UpdateVectors(id, false);
-	//}
 	/*!***********************************************************************************
 	 \brief Entity descriptor struct, used for idenifying/holding various useful data
 

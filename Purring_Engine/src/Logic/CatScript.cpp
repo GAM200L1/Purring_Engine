@@ -475,7 +475,7 @@ namespace PE
 		
 		SerializationManager serializationManager;
 
-		EntityID telegraphID = serializationManager.LoadFromFile("../Assets/Prefabs/PlayerAttackTelegraph_Prefab.json");
+		EntityID telegraphID = serializationManager.LoadFromFile("PlayerAttackTelegraph_Prefab.json");
 		Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
@@ -518,7 +518,7 @@ namespace PE
 	{
 			// Creates an entity for the projectile
 			SerializationManager serializationManager;
-			m_scriptData[id].projectileID = serializationManager.LoadFromFile("../Assets/Prefabs/Projectile_Prefab.json");
+			m_scriptData[id].projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
 			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].projectileID).isActive = false;
 	}
 

@@ -6,8 +6,6 @@
 
  \author               Jarran Tan Yan Zhi
  \par      email:      jarranyanzhi.tan@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
 
  \brief    Header file containing the declaration and definition of the Collision Events
 

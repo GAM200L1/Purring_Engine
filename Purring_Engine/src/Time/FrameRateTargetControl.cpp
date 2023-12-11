@@ -6,14 +6,12 @@
 
  \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
+ \par      code %:     50%
 
  \co-author            Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
- \par      code %:     <remove if sole author>
- \par      changes:    <remove if sole author>
-
+ \par      code %:     50%
+ 
  \brief	   This file encompasses the implementation of the FrameRateTargetControl class that
            facilitates consistent frame-rate management across the application.
            Functionalities:
@@ -119,15 +117,6 @@ namespace PE
             // update system usage
             TimeManager::GetInstance().UpdateSystemFrameUsage();
         }
-
-        //// FPS control
-        //std::chrono::duration<float> duration;
-        //do 
-        //{
-        //    duration = std::chrono::high_resolution_clock::now() - TimeManager::GetInstance().GetStartTime();
-        //    //std::cout << " Actual: " << glfwGetTime() << '\n';
-        //}
-        //while (duration.count() < m_targetFrameTime);
     }
 
     /*!***********************************************************************************

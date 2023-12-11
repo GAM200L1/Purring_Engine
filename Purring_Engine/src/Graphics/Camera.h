@@ -1,5 +1,3 @@
-#pragma once
-
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
@@ -16,11 +14,10 @@
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
+#pragma once
 
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp> // ortho()
-
-
 
 #include "Math/Transform.h"
 #include <Data/json.hpp>
@@ -255,7 +252,17 @@ namespace PE
             *************************************************************************************/
             void UpdateCamera(Transform const& r_transform, bool const isMainCamera);
 
+            /*!***********************************************************************************
+             \brief Serializes the data attached to this Camera.
+            *************************************************************************************/
             nlohmann::json ToJson(size_t id) const;
+
+            /*!***********************************************************************************
+             \brief Deserializes data from a JSON file and loads it as values to set this
+                    component to.
+
+             \param[in] j JSON object containing the values to load into the camera component.
+            *************************************************************************************/
             static Camera Deserialize(const nlohmann::json& j);
 
 

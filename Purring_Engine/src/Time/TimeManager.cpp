@@ -54,11 +54,6 @@ namespace PE
 		for (SystemID systemID{}; systemID < SYSTEMCOUNT; ++systemID)
 		{
 			m_systemFrameUsage[systemID] = m_systemFrameTime[systemID] / m_frameTime;
-
-			//if ((m_systemPreviousFrameTime[systemID] / m_frameTime) > 1.f)
-			//{
-			//	m_systemPreviousFrameTime[systemID] = m_frameTime;
-			//}
 			m_systemFrameTime[systemID] = 0.f;
 		}
 		m_frameTime = 0.f;
