@@ -24,14 +24,17 @@
 #include "Events/WindowEvent.h"
 #include "Events/KeyEvent.h"
 #include "System.h"
+#include "Singleton.h"
 typedef unsigned long long EntityID;
 namespace PE
 {
     /*!***********************************************************************************
      \brief     WindowManager class for handling GLFW window management and events.
     *************************************************************************************/
-    class WindowManager
+    class WindowManager : public Singleton<WindowManager>
     {
+        // ----- Singleton ----- // 
+        friend class Singleton<WindowManager>;
     public:
         /*!***********************************************************************************
          \brief     Constructor for initializing GLFW library.
@@ -57,16 +60,7 @@ namespace PE
          \param     window Pointer to the GLFW window.
          \param     fps Current frames per second.
         *************************************************************************************/
-        void UpdateTitle(GLFWwindow* p_window, double fps);
-
-        /*!***********************************************************************************
-         \brief     Check if the coordinate passed in is within the bounds of the window.
-         \param     window Pointer to the GLFW window.
-         \param     x x-coordinate in world space.
-         \param     y y-coordinate in world space.
-         \return    True if the coordinates are within the bounds of the window, false otherwise.
-        *************************************************************************************/
-        static bool GetWithinWindowBounds(GLFWwindow* window, int const x, int const y);
+        void UpdateTitle(double fps);
 
         /*!***********************************************************************************
          \brief     Cleanup resources and terminate GLFW library.

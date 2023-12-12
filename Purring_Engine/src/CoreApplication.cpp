@@ -370,7 +370,7 @@ void PE::CoreApplication::Run()
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
-            m_windowManager.UpdateTitle(m_window, TimeManager::GetInstance().m_frameRateController.GetFps());
+            m_windowManager.UpdateTitle(TimeManager::GetInstance().m_frameRateController.GetFps());
             m_lastFrameTime = currentTime;
         }
 

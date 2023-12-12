@@ -113,7 +113,7 @@ namespace PE
 	}
 
 
-	void WindowManager::UpdateTitle(GLFWwindow* window, double fps)
+	void WindowManager::UpdateTitle(double fps)
 	{
 		std::ostringstream titleStream;
 #ifndef GAMERELEASE
@@ -126,7 +126,7 @@ namespace PE
 			titleStream << " | FPS: " << static_cast<int>(fps);
 		}
 #endif
-		glfwSetWindowTitle(window, titleStream.str().c_str());
+		glfwSetWindowTitle(p_currWindow, titleStream.str().c_str());
 	}
 
 
