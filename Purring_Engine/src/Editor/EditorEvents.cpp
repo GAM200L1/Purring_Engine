@@ -66,6 +66,11 @@ namespace PE {
 					m_undoStack.UndoChange();
 				}
 
+				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Y)
+				{
+					m_undoStack.RedoChange();
+				}
+
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_SHIFT) && KTE.keycode == GLFW_KEY_F10)
 				{
 					m_showTestWindows = !m_showTestWindows;

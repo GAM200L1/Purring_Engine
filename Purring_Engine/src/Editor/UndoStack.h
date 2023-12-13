@@ -34,9 +34,13 @@ namespace PE
 		*************************************************************************************/
 		virtual void Redo() = 0;
 		/*!***********************************************************************************
-		 \brief     When a change leaves the stack
+		 \brief     When a change leaves the undo stack
 		*************************************************************************************/
-		virtual void OnStackLeave() {}
+		virtual void OnUndoStackLeave() {}
+		/*!***********************************************************************************
+		 \brief     When a change leaves the redo stack
+		*************************************************************************************/
+		virtual void OnRedoStackLeave() {}
 		/*!***********************************************************************************
 		 \brief     virtual destructor to ensure proper destruction of derived classes
 		*************************************************************************************/
@@ -78,7 +82,7 @@ namespace PE
 	private:
 		std::deque<EditorChanges*> m_undoStack;
 		std::deque<EditorChanges*> m_redoStack; // might not do this yet ill see
-		int m_currentcount;
+		int m_undoCount;
 	};
 
 	template <typename T>
@@ -213,12 +217,12 @@ namespace PE
 		*************************************************************************************/
 		virtual void Redo() override
 		{
-			//TBD
+			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).HandicapEntity();
 		}
 		/*!***********************************************************************************
-		 \brief     When a change leaves the stack
+		 \brief     When a change leaves the undo stack
 		*************************************************************************************/
-		virtual void OnStackLeave() override 
+		virtual void OnUndoStackLeave() override 
 		{
 			EntityManager::GetInstance().RemoveEntity(ObjectDeleted);
 		}
@@ -248,13 +252,22 @@ namespace PE
 		*************************************************************************************/
 		virtual void Undo() override
 		{
-			EntityManager::GetInstance().RemoveEntity(ObjectCreated);
+			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectCreated).HandicapEntity();
 		}
 		/*!***********************************************************************************
 		 \brief			overriden Redo Function
 		*************************************************************************************/
 		virtual void Redo() override
-		{}
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectCreated).UnHandicapEntity();
+		}
+		/*!***********************************************************************************
+		 \brief     When a change leaves the redo stack
+		*************************************************************************************/
+		virtual void OnRedoStackLeave() override
+		{
+			EntityManager::GetInstance().RemoveEntity(ObjectCreated);
+		}
 		// ----- Private Variables ----- // 
 	private:
 		EntityID ObjectCreated;
