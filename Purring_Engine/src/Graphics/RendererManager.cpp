@@ -96,7 +96,7 @@ namespace PE
             // Create the framebuffer to render to a texture object
             int width, height;
             glfwGetWindowSize(p_glfwWindow, &width, &height);
-            m_renderFrameBuffer.CreateFrameBuffer(width, height);
+            m_renderFrameBuffer.CreateFrameBuffer(width, height, true, false);
             m_cachedWindowWidth = static_cast<float>(width), 
                 m_cachedWindowHeight = static_cast<float>(height);
 
