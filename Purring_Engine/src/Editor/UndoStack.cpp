@@ -32,6 +32,7 @@ namespace PE
 		for (auto i : m_redoStack)
 		{
 			i->OnRedoStackLeave();
+			delete i;
 		}
 		m_redoStack.clear();
 
@@ -75,6 +76,14 @@ namespace PE
 
 	void UndoStack::ClearStack()
 	{
+		//clear redo stack here
+		for (auto i : m_redoStack)
+		{
+			i->OnRedoStackLeave();
+			delete i;
+		}
+		m_redoStack.clear();
+
 		for(auto& a:m_undoStack)
 		{
 			a->OnUndoStackLeave();
