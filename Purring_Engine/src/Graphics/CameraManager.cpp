@@ -363,6 +363,10 @@ namespace PE
 
         void CameraManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
         {
+            //if not in scene view dont edit camera
+            if (!Editor::GetInstance().IsSceneViewFocused())
+                return;
+
             if (r_event.GetType() == KeyEvents::KeyTriggered)
             {
                 KeyTriggeredEvent event;
