@@ -103,6 +103,11 @@ namespace PE {
 		 \return bool return whether the mouse is hovering in the scene window
 		*************************************************************************************/
 		bool IsMouseInScene();
+		/*!***********************************************************************************
+		 \brief get the boolean to know if scene view was last clicked
+		 \return bool return whether the focus is on scene view
+		*************************************************************************************/
+		bool IsSceneViewFocused();
 
 		// ----- Public Logging Functions ----- // 
 	public:
@@ -336,6 +341,7 @@ namespace PE {
 		bool m_renderDebug;
 		bool m_isRunTime;
 
+		//boolean for prefabs
 		bool m_isPrefabMode;
 		bool m_applyPrefab;
 
@@ -351,6 +357,7 @@ namespace PE {
 		//variable for objects
 		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
+		bool m_sceneViewFocused;
 		int m_currentSelectedObject;
 
 		UndoStack m_undoStack;

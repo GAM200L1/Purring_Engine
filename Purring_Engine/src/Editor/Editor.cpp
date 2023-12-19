@@ -244,6 +244,11 @@ namespace PE {
 		return m_mouseInScene;
 	}
 
+	bool Editor::IsSceneViewFocused()
+	{
+		return m_sceneViewFocused;
+	}
+
 	void Editor::ToggleDebugRender()
 	{
 		if (m_renderDebug)
@@ -3912,7 +3917,6 @@ namespace PE {
 		if (IsEditorActive()) {
 			ImGui::Begin("Scene View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
-
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
 
@@ -4040,6 +4044,7 @@ namespace PE {
 					);
 				}
 				m_mouseInScene = ImGui::IsWindowHovered();
+				m_sceneViewFocused = ImGui::IsWindowFocused();
 			}
 			static ImVec2 clickedPosition;
 			static ImVec2 screenPosition; // coordinates from the top left corner
