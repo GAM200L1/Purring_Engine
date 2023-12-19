@@ -754,13 +754,13 @@ namespace PE {
 							else
 								Hierarchy::GetInstance().DetachChild(dragID.value());
 
-							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent && EntityManager::GetInstance().Has<Transform>(dragID.value()))
-							{
-								EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
-								EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
-							}
+							//if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent && EntityManager::GetInstance().Has<Transform>(dragID.value()))
+							//{
+							//	EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
+							//	EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
+							//}
 
-							if (hoveredObject)
+							/*if (hoveredObject)
 								for (const auto& id : SceneView())
 								{
 									if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == dragID.value())
@@ -775,7 +775,7 @@ namespace PE {
 											EntityManager::GetInstance().Get<Transform>(id).relOrientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
 										}
 									}
-								}
+								}*/
 						}
 						dragID.reset();
 					}
@@ -2972,19 +2972,7 @@ namespace PE {
 								m_isPrefabMode = true;
 								engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 								// This will save all entities to a file
-								//for (const auto& id : SceneView<EntityDescriptor>())
-								//{
-								//	if (!id) // skip editor camera
-								//		continue;
-								//	EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-								//	
-								//	desc.sceneID = id;
-								//		
-								//	if (desc.parent)
-								//	{
-								//		EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-								//	}
-								//}
+		
 								serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
 								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								
@@ -3706,17 +3694,7 @@ namespace PE {
 								{
 									engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 									// This will save all entities to a file
-									//for (const auto& id : SceneView<EntityDescriptor>())
-									//{
-									//	if (!id) // skip editor camera
-									//		continue;
-									//	EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-									//	desc.sceneID = id;
-									//	if (desc.parent)
-									//	{
-									//		EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-									//	}
-									//}
+
 									serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath(), true);
 									engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								}
@@ -3949,17 +3927,6 @@ namespace PE {
 					m_showGameView = true;
 					engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 					// This will save all entities to a file
-					//for (const auto& id : SceneView<EntityDescriptor>())
-					//{
-					//	if (!id) // skip editor camera
-					//		continue;
-					//	EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-					//	desc.sceneID = id;
-					//	if (desc.parent)
-					//	{
-					//		EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-					//	}
-					//}
 					serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
                     m_undoStack.ClearStack();
 					engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);

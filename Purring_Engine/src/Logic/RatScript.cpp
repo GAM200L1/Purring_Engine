@@ -22,6 +22,7 @@
 #include "Logic/LogicSystem.h"
 #include "CatScript.h"
 #include "FollowScript.h"
+#include "Hierarchy/HierarchyManager.h"
 
 namespace PE
 {
@@ -346,7 +347,9 @@ namespace PE
 		data.arrowTelegraphID = serializationManager.LoadFromFile("EnemyArrowTelegraph_Prefab.json");
 		ToggleEntity(data.arrowTelegraphID, false); // set to inactive, it will only show during planning phase
 		ScaleEntity(data.arrowTelegraphID, ratScale.x, ratScale.y);
-		EntityManager::GetInstance().Get<EntityDescriptor>(data.arrowTelegraphID).parent = data.psudoRatID;
+		//EntityManager::GetInstance().Get<EntityDescriptor>(data.arrowTelegraphID).parent = data.psudoRatID;
+		Hierarchy::GetInstance().AttachChild(data.psudoRatID, data.arrowTelegraphID);
+		EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.Zero();
 		EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.x = ratScale.x * data.detectionRadius * 0.5f;
 		
 		// create cross attack telegraph
@@ -358,7 +361,8 @@ namespace PE
 		data.detectionTelegraphID = serializationManager.LoadFromFile("EnemyDetectionTelegraph_Prefab.json");
 		ToggleEntity(data.detectionTelegraphID, false); // set to inactive it will only show during planning phase
 		ScaleEntity(data.detectionTelegraphID, ratScale.x * 2.f * data.detectionRadius, ratScale.y * 2.f * data.detectionRadius);
-		EntityManager::GetInstance().Get<EntityDescriptor>(data.detectionTelegraphID).parent = id; // detection UI will always show
+		//EntityManager::GetInstance().Get<EntityDescriptor>(data.detectionTelegraphID).parent = id; // detection UI will always show
+		Hierarchy::GetInstance().AttachChild(id, data.detectionTelegraphID);
 		EntityManager::GetInstance().Get<Transform>(data.detectionTelegraphID).relPosition = vec2{ 0.f,0.f }; // detection UI will always show
 	}
 

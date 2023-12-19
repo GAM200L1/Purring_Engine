@@ -39,6 +39,7 @@ namespace PE
 		}
 		EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.emplace(child);
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = parent;
+		EntityManager::GetInstance().Get<Transform>(child).relPosition = EntityManager::GetInstance().Get<Transform>(child).position - EntityManager::GetInstance().Get<Transform>(parent).position;
 	}
 
 	void Hierarchy::DetachChild(const EntityID& child)
@@ -48,6 +49,7 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()).children.erase(child);
 		}
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.reset();
+		EntityManager::GetInstance().Get<Transform>(child).relPosition.Zero();
 	}
 
 	// recursive function to help with parent child ordering
@@ -83,24 +85,11 @@ namespace PE
 			{
 				parentOrder.emplace_back(id);
 			}
-			// otherwise it has no children, can ignore
 		}
 	}
+
 	void Hierarchy::UpdateTransform()
 	{
-		/*for (const auto& id : SceneView<Transform>())
-		{
-			Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
-			{
-				const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-				vec3 tmp{ trans.relPosition, 1.f };
-				tmp = parent.GetTransformMatrix3x3() * tmp;
-				trans.position.x = tmp.x;
-				trans.position.y = tmp.y;
-				trans.orientation = parent.orientation + trans.relOrientation;
-			}
-		}*/
 		for (const EntityID& parentID : parentOrder)
 		{
 			UpdateHelper(parentID);
