@@ -10,6 +10,8 @@
 
  \brief    Defines an interface for systems in the Purring Engine.
 		   Each system should implement initialization, update, and destruction logic.
+		   
+		   Defines an interface to request access to a system.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -74,6 +76,7 @@ namespace PE
 
 		/*!***********************************************************************************
 		 \brief     Get the system's name, useful for debugging and identification.
+
 		 \return    std::string The name of the system.
 		*************************************************************************************/
 		virtual std::string GetName() = 0;
@@ -84,11 +87,24 @@ namespace PE
 	public:
 		friend class Singleton<SystemManager>;
 
+		/*!***********************************************************************************
+		 \brief     Add system to the system list in the SystemManager.
+
+		 \param     system The system to be added to the system list.
+		*************************************************************************************/
 		void AddSystem(System* system)
 		{
 			m_systemList.push_back(system);
 		}
 
+		/*!***********************************************************************************
+		\brief     Get system from the system list in the SystemManager.
+
+		\tparam    T The type of system to be retrieved from the system list.
+		\tparam    systemID The ID of the system to be retrieved from the system list.
+
+		\return    T const* The system to be retrieved from the system list.
+		*************************************************************************************/
 		template<typename T, SystemID systemID>
 		T const* GetSystem()
 		{
@@ -102,6 +118,9 @@ namespace PE
 		*************************************************************************************/
 		SystemManager() {}
 
+		/*!***********************************************************************************
+		 \brief Destructor for the SystemManager class.
+		*************************************************************************************/
 		~SystemManager() { m_systemList.clear(); }
 
 		std::vector<System*> m_systemList;

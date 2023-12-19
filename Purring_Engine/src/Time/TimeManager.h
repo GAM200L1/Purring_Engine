@@ -51,6 +51,7 @@ namespace PE
 
 		/*!***********************************************************************************
 		 \brief Conclude the frame time for a particular subsystem.
+
 		 \param[in] system The subsystem to conclude frame time for.
 		*************************************************************************************/
 		void SystemEndFrame(SystemID system);
