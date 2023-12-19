@@ -28,6 +28,7 @@
 #include "CatMovementScript.h"
 #include "Data/SerializationManager.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Graphics/CameraManager.h"
 
 namespace PE
 {
@@ -423,7 +424,7 @@ namespace PE
 	{
 			float mouseX{}, mouseY{};
 			InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
-			return GameStateManager::GetInstance().p_cameraManager->GetWindowToWorldPosition(mouseX, mouseY);
+			return GETCAMERAMANAGER()->GetWindowToWorldPosition(mouseX, mouseY);
 	}
 
 

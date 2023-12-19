@@ -15,11 +15,39 @@
 *************************************************************************************/
 #pragma once
 #include <string>
+#include <vector>
+#include "Singleton.h"
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
+#define GETINPUTSYSTEM() PE::SystemManager::GetInstance().GetSystem<PE::InputSystem, PE::SystemID::INPUT>()
+#define GETGUISYSTEM() PE::SystemManager::GetInstance().GetSystem<PE::GUISystem, PE::SystemID::GUISYSTEM>()
+#define GETLOGICSYSTEM() PE::SystemManager::GetInstance().GetSystem<PE::LogicSystem, PE::SystemID::LOGIC>()
+#define GETPHYSICSMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::PhysicsManager, PE::SystemID::PHYSICS>()
+#define GETCOLLISIONMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::CollisionManager, PE::SystemID::COLLISION>()
+#define GETANIMATIONMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::AnimationManager, PE::SystemID::ANIMATION>()
+#define GETCAMERAMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::Graphics::CameraManager, PE::SystemID::CAMERA>()
+#define GETRENDERERMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::Graphics::RendererManager, PE::SystemID::GRAPHICS>()
+
 namespace PE
 {
+	constexpr auto TotalSystems = 8;
+	/*!***********************************************************************************
+	 \brief Enumeration for identifying different subsystems.
+	*************************************************************************************/
+	enum SystemID
+	{
+		INPUT = 0,
+		GUISYSTEM,
+		LOGIC,
+		PHYSICS,
+		COLLISION,
+		ANIMATION,
+		CAMERA,
+		GRAPHICS,
+		SYSTEMCOUNT
+	};
+
 	class System
 	{
 	public:
@@ -49,5 +77,33 @@ namespace PE
 		 \return    std::string The name of the system.
 		*************************************************************************************/
 		virtual std::string GetName() = 0;
+	};
+
+	class SystemManager : public Singleton<SystemManager>
+	{
+	public:
+		friend class Singleton<SystemManager>;
+
+		void AddSystem(System* system)
+		{
+			m_systemList.push_back(system);
+		}
+
+		template<typename T, SystemID systemID>
+		T const* GetSystem()
+		{
+			return dynamic_cast<T*>(m_systemList[systemID]);
+		}
+
+	private:
+
+		/*!***********************************************************************************
+		 \brief Constructor for the SystemManager class.
+		*************************************************************************************/
+		SystemManager() {}
+
+		~SystemManager() { m_systemList.clear(); }
+
+		std::vector<System*> m_systemList;
 	};
 }

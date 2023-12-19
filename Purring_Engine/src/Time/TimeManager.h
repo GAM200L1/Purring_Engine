@@ -23,23 +23,6 @@
 
 namespace PE
 {
-	constexpr auto TotalSystems = 8;
-	/*!***********************************************************************************
-	 \brief Enumeration for identifying different subsystems.
-	*************************************************************************************/
-	enum SystemID
-	{
-		INPUT = 0,
-		GUISYSTEM,
-		LOGIC,
-		PHYSICS,
-		COLLISION,
-		ANIMATION,
-		CAMERA,
-		GRAPHICS,
-		SYSTEMCOUNT
-	};
-
 	inline SystemID& operator++(SystemID& systemID) {
 		systemID = static_cast<SystemID>(systemID != SystemID::SYSTEMCOUNT ? static_cast<int>(systemID) + 1 : 0);
 		return systemID;
