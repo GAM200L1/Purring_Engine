@@ -1,4 +1,3 @@
-#include "HierarchyManager.h"
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
@@ -8,7 +7,9 @@
  \author               FOONG Jun Wei
  \par      email:      f.junwei@digipen.edu
 
- \brief	   huh
+ \brief	   This file contains the defenitions of the Hierarchy class (singleton), that 
+ 		   manages the Transform Hierarchy (any additional behaviour TBD) of the 
+		   entities in the scene.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -40,7 +41,10 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.emplace(child);
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = parent;
 		vec3 tmpc (EntityManager::GetInstance().Get<Transform>(child).position, 1.f);
+		// compute the relative position of the current object to the parent to get the proper relative position to set
 		tmpc = EntityManager::GetInstance().Get<Transform>(parent).GetTransformMatrix3x3().Inverse() * tmpc;
+
+		// set the relative positon to the computed values
 		EntityManager::GetInstance().Get<Transform>(child).relPosition = vec2(tmpc.x, tmpc.y);
 		EntityManager::GetInstance().Get<Transform>(child).relOrientation = EntityManager::GetInstance().Get<Transform>(child).orientation - EntityManager::GetInstance().Get<Transform>(parent).orientation;
 	}
@@ -58,13 +62,11 @@ namespace PE
 
 	inline const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& parent) const
 	{
-		// TODO: insert return statement here
 		return EntityManager::GetInstance().Get<EntityDescriptor>(parent).children;
 	}
 
 	inline const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& child) const
 	{
-		// TODO: insert return statement here
 		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent;
 	}
 
@@ -84,6 +86,7 @@ namespace PE
 				trans.position.y = tmp.y;
 				trans.orientation = parent.orientation + trans.relOrientation;
 			}
+			// if it has children recursively call this function, with the current ID as the input
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(childrenID).children.size())
 			{
 				UpdateHelper(childrenID);
