@@ -637,6 +637,23 @@ namespace PE {
 
 				if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
 					m_currentSelectedObject = static_cast<int>(childID);
+
+				//if (EntityManager::GetInstance().Get<EntityDescriptor>(childID).children.size() && ImGui::TreeNodeEx(("##" + name2).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen))
+				//{
+				//	ImGui::SameLine(); 
+				//	if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
+				//		m_currentSelectedObject = static_cast<int>(childID);
+				//}
+				//else
+				//{
+				//	if (EntityManager::GetInstance().Get<EntityDescriptor>(childID).children.size())
+				//		ImGui::SameLine();
+				//	if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
+				//		m_currentSelectedObject = static_cast<int>(childID);
+				//}
+
+
+
 				if (ImGui::IsItemHovered()) {
 					r_hoveringObject = true;
 					r_hoveredObject = childID;
@@ -656,10 +673,8 @@ namespace PE {
 						m_currentSelectedObject = static_cast<int>(r_hoveredObject.value());
 					ImGui::OpenPopup("popup");
 				}
-				if (EntityManager::GetInstance().Get<EntityDescriptor>(childID).children.size())
-				{
-					ObjectWindowHelper(childID, r_selected, r_hoveringObject, r_drag, r_hoveredObject, r_dragID, r_dragName);
-				}
+				ObjectWindowHelper(childID, r_selected, r_hoveringObject, r_drag, r_hoveredObject, r_dragID, r_dragName);
+
 			}
 
 			ImGui::Unindent();
@@ -699,8 +714,24 @@ namespace PE {
 
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 					{
+						//if (EntityManager::GetInstance().Get<EntityDescriptor>(id).children.size() && ImGui::TreeNodeEx(("##" + name).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen))
+						//{
+						//	ImGui::SameLine(); 
+						//	if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+						//		m_currentSelectedObject = static_cast<int>(id);
+						//	ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName);
+						//}
+						//else 
+						//{
+						//	if (EntityManager::GetInstance().Get<EntityDescriptor>(id).children.size())
+						//		ImGui::SameLine();
+						//	if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+						//		m_currentSelectedObject = static_cast<int>(id);
+						//}
+							
 						if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 							m_currentSelectedObject = static_cast<int>(id);
+
 
 						if (ImGui::IsItemHovered()) {
 							isHoveringObject = true;
@@ -713,6 +744,7 @@ namespace PE {
 								dragID = id;
 							}
 						}
+
 						if (ImGui::IsItemClicked(1))
 						{
 							//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
@@ -720,9 +752,11 @@ namespace PE {
 								m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 							ImGui::OpenPopup("popup");
 						}
-					}
+						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName);
 
-					ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName);
+					}
+					
+
 
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
@@ -744,38 +778,10 @@ namespace PE {
 						drag = false;
 						if(!hoveredObject || dragID.value() != hoveredObject.value())
 						{ 
-							/*if (hoveredObject && EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
-								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
-							else
-								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;*/
-
 							if (hoveredObject)
 								Hierarchy::GetInstance().AttachChild(hoveredObject.value(), dragID.value());
 							else
 								Hierarchy::GetInstance().DetachChild(dragID.value());
-
-							//if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent && EntityManager::GetInstance().Has<Transform>(dragID.value()))
-							//{
-							//	EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
-							//	EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
-							//}
-
-							/*if (hoveredObject)
-								for (const auto& id : SceneView())
-								{
-									if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == dragID.value())
-									{
-										if (EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
-											EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
-										else
-											EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = hoveredObject;
-										if (EntityManager::GetInstance().Has<Transform>(id))
-										{
-											EntityManager::GetInstance().Get<Transform>(id).relPosition = EntityManager::GetInstance().Get<Transform>(id).position;
-											EntityManager::GetInstance().Get<Transform>(id).relOrientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
-										}
-									}
-								}*/
 						}
 						dragID.reset();
 					}

@@ -39,7 +39,10 @@ namespace PE
 		}
 		EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.emplace(child);
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = parent;
-		EntityManager::GetInstance().Get<Transform>(child).relPosition = EntityManager::GetInstance().Get<Transform>(child).position - EntityManager::GetInstance().Get<Transform>(parent).position;
+		vec3 tmpc (EntityManager::GetInstance().Get<Transform>(child).position, 1.f);
+		tmpc = EntityManager::GetInstance().Get<Transform>(parent).GetTransformMatrix3x3().Inverse() * tmpc;
+		EntityManager::GetInstance().Get<Transform>(child).relPosition = vec2(tmpc.x, tmpc.y);
+		EntityManager::GetInstance().Get<Transform>(child).relOrientation = EntityManager::GetInstance().Get<Transform>(child).orientation - EntityManager::GetInstance().Get<Transform>(parent).orientation;
 	}
 
 	void Hierarchy::DetachChild(const EntityID& child)
@@ -50,6 +53,7 @@ namespace PE
 		}
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.reset();
 		EntityManager::GetInstance().Get<Transform>(child).relPosition.Zero();
+		EntityManager::GetInstance().Get<Transform>(child).relOrientation = 0;
 	}
 
 	inline const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& parent) const
