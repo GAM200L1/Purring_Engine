@@ -40,11 +40,14 @@ namespace PE
 	public:
 		void Update();
 		
-		const std::vector<EntityID>& GetRenderOrder() { return renderOrder; }
-		const std::vector<EntityID>& GetParentOrder() { return parentOrder; }
+		inline const std::vector<EntityID>& GetRenderOrder() const { return renderOrder; }
+		inline const std::vector<EntityID>& GetParentOrder() const { return parentOrder; }
 
 		void AttachChild(const EntityID& parent, const EntityID& child);
 		void DetachChild(const EntityID& child);
+
+		inline const std::set<EntityID>& GetChildren(const EntityID& parent) const;
+		inline const std::optional<EntityID>& GetParent(const EntityID& child) const;
 
 	// private methods
 	private: 

@@ -52,6 +52,18 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(child).relPosition.Zero();
 	}
 
+	inline const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& parent) const
+	{
+		// TODO: insert return statement here
+		return EntityManager::GetInstance().Get<EntityDescriptor>(parent).children;
+	}
+
+	inline const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& child) const
+	{
+		// TODO: insert return statement here
+		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent;
+	}
+
 	// recursive function to help with parent child ordering
 	void Hierarchy::UpdateHelper(const EntityID& r_parentID)
 	{
@@ -98,6 +110,7 @@ namespace PE
 
 	void Hierarchy::UpdateETC()
 	{
+		// empty for now
 	}
 
 	void Hierarchy::UpdateRenderOrder()
