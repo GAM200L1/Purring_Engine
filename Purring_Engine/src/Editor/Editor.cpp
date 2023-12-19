@@ -62,6 +62,10 @@
 #include "Layers/CollisionLayer.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
+
+//Hierarchy
+#include "Hierarchy/HierarchyManager.h"
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -624,6 +628,67 @@ namespace PE {
 		}
 	}
 
+	void Editor::ObjectWindowHelper(const EntityID& r_id, bool& r_selected, bool& r_hoveringObject, bool& r_drag, std::optional<EntityID>& r_hoveredObject, std::optional<EntityID>& r_dragID, std::string& r_dragName)
+	{
+		
+		if (EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children.size())// has children
+		{
+			ImGui::Indent();
+			for (const auto& childID : EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children)
+			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(childID).isAlive)
+					continue;
+				std::string name2 = std::to_string(childID);
+				name2 += ". ";
+				name2 += EntityManager::GetInstance().Get<EntityDescriptor>(childID).name;
+				r_selected = (m_currentSelectedObject == static_cast<int>(childID));
+
+				if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
+					m_currentSelectedObject = static_cast<int>(childID);
+
+				//if (EntityManager::GetInstance().Get<EntityDescriptor>(childID).children.size() && ImGui::TreeNodeEx(("##" + name2).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen))
+				//{
+				//	ImGui::SameLine(); 
+				//	if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
+				//		m_currentSelectedObject = static_cast<int>(childID);
+				//}
+				//else
+				//{
+				//	if (EntityManager::GetInstance().Get<EntityDescriptor>(childID).children.size())
+				//		ImGui::SameLine();
+				//	if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
+				//		m_currentSelectedObject = static_cast<int>(childID);
+				//}
+
+
+
+				if (ImGui::IsItemHovered()) {
+					r_hoveringObject = true;
+					r_hoveredObject = childID;
+					if (ImGui::IsMouseDragging(0) && r_drag == false)
+					{
+						m_currentSelectedObject = static_cast<int>(childID); //seteting current index to check for selection
+						r_dragName = name2;
+						r_drag = true;
+						r_dragID = childID;
+					}
+				}
+
+				if (ImGui::IsItemClicked(1))
+				{
+					//m_currentSelectedObject = static_cast<int>(r_hoveredObject.value());
+					if (r_hoveredObject)
+						m_currentSelectedObject = static_cast<int>(r_hoveredObject.value());
+					ImGui::OpenPopup("popup");
+				}
+				ObjectWindowHelper(childID, r_selected, r_hoveringObject, r_drag, r_hoveredObject, r_dragID, r_dragName);
+
+			}
+
+			ImGui::Unindent();
+		}
+	}
+
 	void Editor::ShowObjectWindow(bool* p_active)
 	{
 		if (IsEditorActive())
@@ -640,95 +705,77 @@ namespace PE {
 			std::optional<EntityID> hoveredObject{};
 			static std::optional<EntityID> dragID{};
 			std::map<EntityID, std::vector<EntityID>> dispMap{};
-			for (const auto& id : SceneView())
+
+			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
 			{
-				if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent)
-				{
-					dispMap.erase(id);
-					dispMap[EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value()].emplace_back(id);
-				}
-				else // it does not have a parent
-				{
-					dispMap[id];
-				}
-			}
-
-			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) {
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
-				for (auto & n : dispMap)
+				for (const EntityID& id : Hierarchy::GetInstance().GetParentOrder())
 				{
-					if (n.first == Graphics::CameraManager::GetUiCameraId())
+					// skip camera
+					if (id == Graphics::CameraManager::GetUiCameraId())
 						continue;
-					
-					std::string name = std::to_string(n.first);
+
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isAlive)
+						continue;
+
+					std::string name = std::to_string(id);
 					name += ". ";
-					name += EntityManager::GetInstance().Get<EntityDescriptor>(n.first).name;
-					bool is_selected = (m_currentSelectedObject == static_cast<int>(n.first));
+					name += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+					bool is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
-					if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						m_currentSelectedObject = static_cast<int>(n.first);
-					if (ImGui::IsItemHovered()) {
-						isHoveringObject = true;
-						hoveredObject = n.first;
-						if (ImGui::IsMouseDragging(0) && drag == false)
-						{
-							//seteting current index to check for selection
-							dragName = name;
-							drag = true;
-							dragID = n.first;
-						}
-					}
-					if (ImGui::IsItemClicked(1))
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 					{
-						//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-						if (hoveredObject)
-							m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-						ImGui::OpenPopup("popup");
-					}
-					// if there are children attatched
-					if (!n.second.empty())
-					{
-						ImGui::Indent();
-						for (const auto& id : n.second)
-						{
+						//if (EntityManager::GetInstance().Get<EntityDescriptor>(id).children.size() && ImGui::TreeNodeEx(("##" + name).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen))
+						//{
+						//	ImGui::SameLine(); 
+						//	if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+						//		m_currentSelectedObject = static_cast<int>(id);
+						//	ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName);
+						//}
+						//else 
+						//{
+						//	if (EntityManager::GetInstance().Get<EntityDescriptor>(id).children.size())
+						//		ImGui::SameLine();
+						//	if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+						//		m_currentSelectedObject = static_cast<int>(id);
+						//}
 							
-							std::string name2 = std::to_string(id);
-							name2 += ". ";
-							name2 += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
-							is_selected = (m_currentSelectedObject == static_cast<int>(id));
+						if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+							m_currentSelectedObject = static_cast<int>(id);
 
-							if (ImGui::Selectable(name2.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-								m_currentSelectedObject = static_cast<int>(id);
-							if (ImGui::IsItemHovered()) {
-								isHoveringObject = true;
-								hoveredObject = id;
-								if (ImGui::IsMouseDragging(0) && drag == false)
-								{
-									m_currentSelectedObject = static_cast<int>(id); //seteting current index to check for selection
-									dragName = name2;
-									drag = true;
-									dragID = id;
-								}
-							}
-							if (ImGui::IsItemClicked(1))
+
+						if (ImGui::IsItemHovered()) {
+							isHoveringObject = true;
+							hoveredObject = id;
+							if (ImGui::IsMouseDragging(0) && drag == false)
 							{
-								//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-								if (hoveredObject)
-									m_currentSelectedObject = static_cast<int>(hoveredObject.value());
-								ImGui::OpenPopup("popup");
+								//seteting current index to check for selection
+								dragName = name;
+								drag = true;
+								dragID = id;
 							}
 						}
 
-						ImGui::Unindent();
-					}					
+						if (ImGui::IsItemClicked(1))
+						{
+							//m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+							if (hoveredObject)
+								m_currentSelectedObject = static_cast<int>(hoveredObject.value());
+							ImGui::OpenPopup("popup");
+						}
+						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName);
 
+					}
 					
+
+
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
 					if (is_selected) // to show the highlight if selected
 						ImGui::SetItemDefaultFocus();
 
-					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;					
+					m_currentSelectedObject > -1 ? m_objectIsSelected = true : m_objectIsSelected = false;
 				}
+				
 
 				if (drag)
 				{
@@ -741,38 +788,16 @@ namespace PE {
 					{
 						drag = false;
 						if(!hoveredObject || dragID.value() != hoveredObject.value())
-						{
-							if (hoveredObject && EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
-								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
-							else
-								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent = hoveredObject;
-							if (EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).parent && EntityManager::GetInstance().Has<Transform>(dragID.value()))
-							{
-								EntityManager::GetInstance().Get<Transform>(dragID.value()).relPosition = EntityManager::GetInstance().Get<Transform>(dragID.value()).position;
-								EntityManager::GetInstance().Get<Transform>(dragID.value()).relOrientation = EntityManager::GetInstance().Get<Transform>(dragID.value()).orientation;
-							}
-
+						{ 
 							if (hoveredObject)
-								for (const auto& id : SceneView())
-								{
-									if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == dragID.value())
-									{
-										if (EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent)
-											EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).parent.value();
-										else
-											EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = hoveredObject;
-										if (EntityManager::GetInstance().Has<Transform>(id))
-										{
-											EntityManager::GetInstance().Get<Transform>(id).relPosition = EntityManager::GetInstance().Get<Transform>(id).position;
-											EntityManager::GetInstance().Get<Transform>(id).relOrientation = EntityManager::GetInstance().Get<Transform>(id).orientation;
-										}
-									}
-								}
+								Hierarchy::GetInstance().AttachChild(hoveredObject.value(), dragID.value());
+							else
+								Hierarchy::GetInstance().DetachChild(dragID.value());
 						}
 						dragID.reset();
 					}
 				}
-}
+			}
 			if (ImGui::BeginPopup("popup"))
 			{
 				if (ImGui::Selectable("Save As Prefab"))
@@ -792,23 +817,38 @@ namespace PE {
 				{
 						AddInfoLog("Object Deleted");
 
-						for (const auto& id : SceneView())
-						{
-							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
-								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
-						}
+						
 						if (m_currentSelectedObject != -1)
-						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+						{
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children.size())
+							{
+								std::vector<EntityID> tmp;
+								for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children)
+								{
+									tmp.emplace_back(cid);
+								}
+
+								for (const auto& cid : tmp)
+								{
+									if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value())
+										Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value(), cid);
+									else
+										Hierarchy::GetInstance().DetachChild(cid);
+								}
+							}
+
+							EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+						}
 
 						//create undo here
 						if (m_currentSelectedObject != -1)
-						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 						m_currentSelectedObject = -1; // just reset it
 						//if object selected
 						m_objectIsSelected = false;
 
-						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
+						//if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 
 				}
 				if (ImGui::Selectable("Clone Object"))
@@ -2964,19 +3004,7 @@ namespace PE {
 								m_isPrefabMode = true;
 								engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 								// This will save all entities to a file
-								for (const auto& id : SceneView<EntityDescriptor>())
-								{
-									if (!id) // skip editor camera
-										continue;
-									EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-									
-									desc.sceneID = id;
-										
-									if (desc.parent)
-									{
-										EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-									}
-								}
+		
 								serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
 								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								
@@ -3698,17 +3726,7 @@ namespace PE {
 								{
 									engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 									// This will save all entities to a file
-									for (const auto& id : SceneView<EntityDescriptor>())
-									{
-										if (!id) // skip editor camera
-											continue;
-										EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-										desc.sceneID = id;
-										if (desc.parent)
-										{
-											EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-										}
-									}
+
 									serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath(), true);
 									engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								}
@@ -3940,17 +3958,6 @@ namespace PE {
 					m_showGameView = true;
 					engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 					// This will save all entities to a file
-					for (const auto& id : SceneView<EntityDescriptor>())
-					{
-						if (!id) // skip editor camera
-							continue;
-						EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
-						desc.sceneID = id;
-						if (desc.parent)
-						{
-							EntityManager::GetInstance().Get<EntityDescriptor>(desc.parent.value()).children.emplace(id);
-						}
-					}
 					serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
                     m_undoStack.ClearStack();
 					engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
