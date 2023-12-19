@@ -630,11 +630,14 @@ namespace PE {
 
 	void Editor::ObjectWindowHelper(const EntityID& r_id, bool& r_selected, bool& r_hoveringObject, bool& r_drag, std::optional<EntityID>& r_hoveredObject, std::optional<EntityID>& r_dragID, std::string& r_dragName)
 	{
+		
 		if (EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children.size())// has children
 		{
 			ImGui::Indent();
 			for (const auto& childID : EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children)
 			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(childID).isAlive)
+					continue;
 				std::string name2 = std::to_string(childID);
 				name2 += ". ";
 				name2 += EntityManager::GetInstance().Get<EntityDescriptor>(childID).name;
@@ -710,6 +713,9 @@ namespace PE {
 				{
 					// skip camera
 					if (id == Graphics::CameraManager::GetUiCameraId())
+						continue;
+
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isAlive)
 						continue;
 
 					std::string name = std::to_string(id);
@@ -811,23 +817,38 @@ namespace PE {
 				{
 						AddInfoLog("Object Deleted");
 
-						for (const auto& id : SceneView())
-						{
-							if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
-								EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
-						}
+						
 						if (m_currentSelectedObject != -1)
-						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+						{
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children.size())
+							{
+								std::vector<EntityID> tmp;
+								for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children)
+								{
+									tmp.emplace_back(cid);
+								}
+
+								for (const auto& cid : tmp)
+								{
+									if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value())
+										Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value(), cid);
+									else
+										Hierarchy::GetInstance().DetachChild(cid);
+								}
+							}
+
+							EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+						}
 
 						//create undo here
 						if (m_currentSelectedObject != -1)
-						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 						m_currentSelectedObject = -1; // just reset it
 						//if object selected
 						m_objectIsSelected = false;
 
-						if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
+						//if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 
 				}
 				if (ImGui::Selectable("Clone Object"))
