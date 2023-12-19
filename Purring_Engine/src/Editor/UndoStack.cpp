@@ -97,7 +97,13 @@ namespace PE
 	{
 		for (auto p : m_undoStack)
 		{
+			p->OnUndoStackLeave();
 			delete p;
+		}
+		for (auto i : m_redoStack)
+		{
+			i->OnRedoStackLeave();
+			delete i;
 		}
 	}
 
