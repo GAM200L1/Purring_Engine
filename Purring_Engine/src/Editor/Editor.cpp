@@ -836,13 +836,9 @@ namespace PE {
 										Hierarchy::GetInstance().DetachChild(cid);
 								}
 							}
-
+							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 							EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 						}
-
-						//create undo here
-						if (m_currentSelectedObject != -1)
-							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 						m_currentSelectedObject = -1; // just reset it
 						//if object selected

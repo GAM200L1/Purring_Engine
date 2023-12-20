@@ -17,7 +17,8 @@
 *************************************************************************************/
 #pragma once
 #include <deque>
-#include "ECS/EntityFactory.h"
+#include <set>
+#include "Hierarchy/HierarchyManager.h"
 typedef unsigned long long EntityID;
 namespace PE
 {
@@ -202,7 +203,13 @@ namespace PE
 		 \brief										constructor taking in values
 		 \param [In]	EntityID id					id that is edited
 		*************************************************************************************/
-		DeleteObjectUndo(EntityID id) : ObjectDeleted(id) {}
+		DeleteObjectUndo(EntityID id) : ObjectDeleted(id) 
+		{
+			for (auto& c : Hierarchy::GetInstance().GetChildren(ObjectDeleted))
+			{
+				m_children.push_back(c);
+			}
+		}
 	public:
 		// ----- Public Functions ----- // 
 		/*!***********************************************************************************
@@ -211,6 +218,7 @@ namespace PE
 		virtual void Undo() override
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).UnHandicapEntity();
+			//std::copy(Hierarchy::GetInstance().GetChildren(ObjectDeleted).begin(), Hierarchy::GetInstance().GetChildren(ObjectDeleted).end(), std::inserter(m_children, m_children.begin()));	
 		}
 		/*!***********************************************************************************
 		 \brief			overriden Redo Function
@@ -218,6 +226,11 @@ namespace PE
 		virtual void Redo() override
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).HandicapEntity();
+			for (auto c : m_children)
+			{
+				if(EntityManager::GetInstance().Has<EntityDescriptor>(c))
+					EntityManager::GetInstance().Get<EntityDescriptor>(c).parent = ObjectDeleted;
+			}
 		}
 		/*!***********************************************************************************
 		 \brief     When a change leaves the undo stack
@@ -230,6 +243,7 @@ namespace PE
 		// ----- Private Variables ----- // 
 	private:
 		EntityID ObjectDeleted;
+		std::vector<EntityID> m_children;
 	};
 
 	class CreateObjectUndo : public EditorChanges
