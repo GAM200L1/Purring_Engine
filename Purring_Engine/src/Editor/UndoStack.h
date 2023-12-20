@@ -205,10 +205,6 @@ namespace PE
 		*************************************************************************************/
 		DeleteObjectUndo(EntityID id) : ObjectDeleted(id) 
 		{
-			for (auto& c : Hierarchy::GetInstance().GetChildren(ObjectDeleted))
-			{
-				m_children.push_back(c);
-			}
 		}
 	public:
 		// ----- Public Functions ----- // 
@@ -245,11 +241,6 @@ namespace PE
 				}
 			}
 			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).HandicapEntity();
-			for (auto c : m_children)
-			{
-				if(EntityManager::GetInstance().Has<EntityDescriptor>(c))
-					EntityManager::GetInstance().Get<EntityDescriptor>(c).parent = ObjectDeleted;
-			}
 		}
 		/*!***********************************************************************************
 		 \brief     When a change leaves the undo stack
@@ -262,7 +253,6 @@ namespace PE
 		// ----- Private Variables ----- // 
 	private:
 		EntityID ObjectDeleted;
-		std::vector<EntityID> m_children;
 	};
 
 	class CreateObjectUndo : public EditorChanges

@@ -822,13 +822,12 @@ namespace PE {
 						{
 							if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children.size())
 							{
-								std::vector<EntityID> tmp;
 								for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children)
 								{
-									tmp.emplace_back(cid);
+									EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).savedChildren.emplace_back(cid);
 								}
 
-								for (const auto& cid : tmp)
+								for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).savedChildren)
 								{
 									if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value())
 										Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value(), cid);
