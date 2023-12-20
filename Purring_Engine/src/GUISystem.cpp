@@ -95,15 +95,15 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
 		{
-			for (EntityID objectID : SceneView<GUISlider>())
-			{
-				if (Hierarchy::GetInstance().GetChildren(objectID).empty())
-				{
-					SerializationManager sm;
-					EntityID knob  = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
-					EntityManager::GetInstance().Get<EntityDescriptor>(knob).parent = objectID;
-				}
-			}
+			//for (EntityID objectID : SceneView<GUISlider>())
+			//{
+			//	if (Hierarchy::GetInstance().GetChildren(objectID).empty())
+			//	{
+			//		SerializationManager sm;
+			//		EntityID knob  = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+			//		EntityManager::GetInstance().Get<EntityDescriptor>(knob).parent = objectID;
+			//	}
+			//}
 		}
 #endif
 
