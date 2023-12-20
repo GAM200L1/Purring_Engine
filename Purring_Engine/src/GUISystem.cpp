@@ -64,9 +64,13 @@ namespace PE
 
 				if (gui.disabled)
 				{
-					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
-						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
-						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
+					if (gui.m_UIType == UIType::Button)
+					{				
+						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) 
+						{
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
+						}
 					}
 					continue;
 				}
@@ -92,7 +96,6 @@ namespace PE
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
 						}
 					}
-
 				}
 			}
 	}
@@ -123,16 +126,17 @@ namespace PE
 
 				if (gui.disabled)
 					continue;
+
 				float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
 				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
 				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
 				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
-				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
-					continue;
-
 				if (gui.m_UIType == UIType::Button)
 				{
+					if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+						continue;
+
 					Button btn = UI_CAST(Button, gui);
 					if (gui.m_clickedTimer <= 0)
 					{

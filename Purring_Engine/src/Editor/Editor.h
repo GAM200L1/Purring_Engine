@@ -23,8 +23,6 @@
 #include <backends/imgui_impl_opengl3.h>
 #include <misc/cpp/imgui_stdlib.h>
 
-#include "UndoStack.h"
-
 #include "Singleton.h"
 
 #include "Graphics/GLHeaders.h"
@@ -149,7 +147,12 @@ namespace PE {
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
 		void AddWarningLog(std::string_view text);
-
+		// -----Public Helper Functions ----- // 
+	public:
+		/*!***********************************************************************************
+		\brief Reset Selected Object to be used externally
+		*************************************************************************************/
+		void ResetSelectedObject();
 		// -----Event Callbacks ----- // 
 	public:
 		/*!***********************************************************************************
@@ -359,8 +362,6 @@ namespace PE {
 		bool m_objectIsSelected;
 		bool m_sceneViewFocused;
 		int m_currentSelectedObject;
-
-		UndoStack m_undoStack;
 
 		//variable for assets browser
 		float m_time;

@@ -62,6 +62,7 @@
 #include "Layers/CollisionLayer.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
+#include "UndoStack.h"
 
 //Hierarchy
 #include "Hierarchy/HierarchyManager.h"
@@ -72,7 +73,6 @@ SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
 namespace PE {
-
 	std::filesystem::path Editor::m_parentPath{ "../Assets" };
 	bool Editor::m_fileDragged{ false };
 
@@ -430,7 +430,7 @@ namespace PE {
 						ImGui::ClosePopupToLevel(0, true);
 					}
 					ImGui::EndPopup();
-					m_undoStack.ClearStack();
+					UndoStack::GetInstance().ClearStack();
 				}
 				ImGui::SameLine();
 				if (ImGui::Button("No"))
@@ -842,7 +842,7 @@ namespace PE {
 
 						//create undo here
 						if (m_currentSelectedObject != -1)
-							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+							UndoStack::GetInstance().AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 						m_currentSelectedObject = -1; // just reset it
 						//if object selected
@@ -871,36 +871,41 @@ namespace PE {
 				if (ImGui::Selectable("Create Empty Object"))
 				{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
-						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
-						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
-						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+					}
+					if (ImGui::MenuItem("Create UI Slider")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody_Prefab.json");
+						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
-						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					ImGui::EndMenu();
 				}
 				if (ImGui::Selectable("Create Audio Object"))
 				{
 					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio_Prefab.json");
-					m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
 					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json");
-					m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 				}
 				ImGui::EndPopup();
 			}
@@ -1175,7 +1180,7 @@ namespace PE {
 											if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp.x)
 											{
 												std::cout << "Edited" << std::endl;
-												m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp.x, &EntityManager::GetInstance().Get<Transform>(entityID).position.x));
+												UndoStack::GetInstance().AddChange(new ValueChange<float>(prevVal, tmp.x, &EntityManager::GetInstance().Get<Transform>(entityID).position.x));
 											}
 											ImGui::Text("y: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);
 											ImGui::DragFloat(("##y" + prop.get_name().to_string()).c_str(), &tmp.y, 1.0f);
@@ -1186,7 +1191,7 @@ namespace PE {
 											}
 											if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp.y)
 											{
-												m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp.y, &EntityManager::GetInstance().Get<Transform>(entityID).position.y));
+												UndoStack::GetInstance().AddChange(new ValueChange<float>(prevVal, tmp.y, &EntityManager::GetInstance().Get<Transform>(entityID).position.y));
 											}
 											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 										}
@@ -1204,11 +1209,11 @@ namespace PE {
 											if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp)
 											{
 												if (prop.get_name() == "Width")
-													m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).width));
+													UndoStack::GetInstance().AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).width));
 												if (prop.get_name() == "Height")
-													m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).height));
+													UndoStack::GetInstance().AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).height));
 												if (prop.get_name() == "Orientation")
-													m_undoStack.AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).orientation));
+													UndoStack::GetInstance().AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).orientation));
 											}
 											prop.set_value(EntityManager::GetInstance().Get<Transform>(entityID), tmp);
 										}
@@ -1884,7 +1889,7 @@ namespace PE {
 
 								//get the current collider type using the variant
 								int index = static_cast<int>(EntityManager::GetInstance().Get<GUI>(entityID).m_UIType);
-								const char* types[] = { "Button","TextBox" };
+								const char* types[] = { "Button","Slider" };
 								ImGui::Text("UI Type: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
 								//set combo box for the different collider types
@@ -3100,7 +3105,7 @@ namespace PE {
 							if (m_files[draggedItemIndex].extension() == ".json")
 							{
 								EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string(), true);
-								m_undoStack.AddChange(new CreateObjectUndo(s_id));
+								UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 								// change position of loaded prefab based on mouse cursor here
 							}
 						}
@@ -3741,7 +3746,7 @@ namespace PE {
 										engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
 
 										// This will load all entities from the file
-                                        m_undoStack.ClearStack();
+										UndoStack::GetInstance().ClearStack();
 										ClearObjectList();
 										serializationManager.LoadAllEntitiesFromFile(filePath, true);
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
@@ -3959,7 +3964,7 @@ namespace PE {
 					engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 					// This will save all entities to a file
 					serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
-                    m_undoStack.ClearStack();
+					UndoStack::GetInstance().ClearStack();
 					engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 				}
 				ImGui::SameLine();
@@ -4048,7 +4053,7 @@ namespace PE {
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					}
 					ImGui::EndPopup();
-					m_undoStack.ClearStack();
+					UndoStack::GetInstance().ClearStack();
 				}
 			}
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
@@ -4268,11 +4273,11 @@ namespace PE {
 
 				if (moved && EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position != vec2(clickedPosition.x, clickedPosition.y))
 				{
-					m_undoStack.AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
+					UndoStack::GetInstance().AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
 				}
 
 				if(rotating && rotation != EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation)
-					m_undoStack.AddChange(new ValueChange<float>(rotation, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation));
+					UndoStack::GetInstance().AddChange(new ValueChange<float>(rotation, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation));
 
 				if (scaling)
 				{
@@ -4282,7 +4287,7 @@ namespace PE {
 						m_undoStack.AddChange(new ValueChange<float>(height, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height));
 				*/	
 					if (vec2(width, height) != vec2(EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height))
-						m_undoStack.AddChange(new ValueChange2<float>(height, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height
+						UndoStack::GetInstance().AddChange(new ValueChange2<float>(height, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height
 						,width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width));
 				}
 				rotating = false;
@@ -4538,6 +4543,11 @@ namespace PE {
 		AddLog(ss);
 	}
 
+	void Editor::ResetSelectedObject()
+	{
+		m_currentSelectedObject = -1;
+	}
+
 	void Editor::ClearLog()
 	{
 		//not being used rn
@@ -4679,7 +4689,7 @@ namespace PE {
 	void Editor::LoadSceneFromGivenPath(std::string const& path)
 	{
 
-		m_undoStack.ClearStack();
+		UndoStack::GetInstance().ClearStack();
 		ClearObjectList();
 		serializationManager.LoadAllEntitiesFromFile(path);
 	}

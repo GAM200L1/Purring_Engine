@@ -117,7 +117,7 @@ namespace PE
 	};
 
 	//enum to tell type of UI to make
-	enum class UIType { Button = 0, TextBox };
+	enum class UIType { Button = 0, Slider };
 
 	struct GUI
 	{		
@@ -177,7 +177,6 @@ namespace PE
 
 
 	};
-
 
 	struct Button : public GUI
 	{

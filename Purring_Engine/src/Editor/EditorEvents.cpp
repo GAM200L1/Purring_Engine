@@ -18,7 +18,7 @@
 #include "Data/SerializationManager.h"
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
-
+#include "UndoStack.h"
 extern SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
@@ -63,12 +63,12 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
-					m_undoStack.UndoChange();
+					UndoStack::GetInstance().UndoChange();
 				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Y)
 				{
-					m_undoStack.RedoChange();
+					UndoStack::GetInstance().RedoChange();
 				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_SHIFT) && KTE.keycode == GLFW_KEY_F10)
@@ -92,7 +92,7 @@ namespace PE {
 
 					//create undo here
 					if(m_currentSelectedObject != -1)
-					m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+					UndoStack::GetInstance().AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 					//if not first index
 					m_currentSelectedObject = -1; // just reset it
 					//if object selected

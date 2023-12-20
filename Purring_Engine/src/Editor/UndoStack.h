@@ -17,6 +17,8 @@
 *************************************************************************************/
 #pragma once
 #include <deque>
+#include "Editor.h"
+#include "Singleton.h"
 #include "ECS/EntityFactory.h"
 typedef unsigned long long EntityID;
 namespace PE
@@ -47,8 +49,11 @@ namespace PE
 		virtual ~EditorChanges() {}
 	};
 
-	class UndoStack
+	class UndoStack : public Singleton<UndoStack>
 	{
+		// ----- Singleton ----- // 
+		friend class Singleton<UndoStack>;
+
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************
@@ -84,6 +89,7 @@ namespace PE
 		std::deque<EditorChanges*> m_redoStack; // might not do this yet ill see
 		int m_undoCount;
 	};
+
 
 	template <typename T>
 	class ValueChange : public EditorChanges
@@ -218,6 +224,7 @@ namespace PE
 		virtual void Redo() override
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).HandicapEntity();
+			Editor::GetInstance().ResetSelectedObject();
 		}
 		/*!***********************************************************************************
 		 \brief     When a change leaves the undo stack
@@ -253,6 +260,7 @@ namespace PE
 		virtual void Undo() override
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectCreated).HandicapEntity();
+			Editor::GetInstance().ResetSelectedObject();
 		}
 		/*!***********************************************************************************
 		 \brief			overriden Redo Function
