@@ -274,7 +274,7 @@ namespace PE
 		 \return true 	 Successfully copied/initialized
 		 \return false 	 Failed to copy/initialize
 		*************************************************************************************/
-		bool InitializeGUI(const EntityID& r_id, void* p_data);
+		bool InitializeGUIButton(const EntityID& r_id, void* p_data);
 
 		/*!***********************************************************************************
 		 \brief Initializes/copy the component of the specified entity

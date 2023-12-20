@@ -1147,7 +1147,7 @@ namespace PE {
 										// hide properties if entity has a certain component
 										if (prop.get_name() == "Orientation")
 										{
-											if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUI>()))
+											if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUIButton>()))
 												continue;
 											if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
 												continue;
@@ -1738,7 +1738,7 @@ namespace PE {
 						// ---------- GUI ---------- //
 
 
-						if (name == EntityManager::GetInstance().GetComponentID<GUI>() && EntityManager::GetInstance().Has<GUI>(entityID))
+						if (name == EntityManager::GetInstance().GetComponentID<GUIButton>() && EntityManager::GetInstance().Has<GUIButton>(entityID))
 						{
 							if (ImGui::CollapsingHeader("GUIComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
@@ -1752,7 +1752,7 @@ namespace PE {
 									if (ImGui::Selectable("Reset")) {}
 									if (ImGui::Selectable("Remove"))
 									{
-										EntityManager::GetInstance().Remove<GUI>(entityID);
+										EntityManager::GetInstance().Remove<GUIButton>(entityID);
 									}
 									ImGui::EndPopup();
 								}
@@ -1760,7 +1760,7 @@ namespace PE {
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-								ImGui::Checkbox("Disabled", &EntityManager::GetInstance().Get<GUI>(entityID).disabled);
+								ImGui::Checkbox("Disabled", &EntityManager::GetInstance().Get<GUIButton>(entityID).disabled);
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
 								std::vector<std::filesystem::path> filepaths;
@@ -1774,11 +1774,11 @@ namespace PE {
 									filepaths.emplace_back(it->first);
 									if (it->first == EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())
 										defaultText = i;
-									if (it->first == EntityManager::GetInstance().Get<GUI>(entityID).m_hoveredTexture)
+									if (it->first == EntityManager::GetInstance().Get<GUIButton>(entityID).m_hoveredTexture)
 										hoveredText = i;
-									if (it->first == EntityManager::GetInstance().Get<GUI>(entityID).m_pressedTexture)
+									if (it->first == EntityManager::GetInstance().Get<GUIButton>(entityID).m_pressedTexture)
 										pressedTexture = i;
-									if (it->first == EntityManager::GetInstance().Get<GUI>(entityID).m_disabledTexture)
+									if (it->first == EntityManager::GetInstance().Get<GUIButton>(entityID).m_disabledTexture)
 										disabledText = i;
 								}
 
@@ -1799,20 +1799,20 @@ namespace PE {
 										{
 											if (ImGui::Selectable(loadedTextureKeys[n].c_str())) {
 												EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).SetTextureKey(filepaths[n].string());
-												EntityManager::GetInstance().Get<GUI>(entityID).m_defaultTexture = filepaths[n].string();
+												EntityManager::GetInstance().Get<GUIButton>(entityID).m_defaultTexture = filepaths[n].string();
 											}
 										}
 										ImGui::EndCombo();
 									}
 
 									//get and set color variable of the renderer component
-									vec4 defaultColor = EntityManager::GetInstance().Get<GUI>(entityID).m_defaultColor;
+									vec4 defaultColor = EntityManager::GetInstance().Get<GUIButton>(entityID).m_defaultColor;
 									ImVec4 defaultcolor(defaultColor.x, defaultColor.y, defaultColor.z, defaultColor.w);
 
 									ImGui::Text("default Color: "); ImGui::SameLine();
 									ImGui::ColorEdit4("##Change Default Color", (float*)&defaultcolor, ImGuiColorEditFlags_AlphaPreview);
 
-									EntityManager::GetInstance().Get<GUI>(entityID).m_defaultColor = vec4(defaultcolor.x, defaultcolor.y, defaultcolor.z, defaultcolor.w);
+									EntityManager::GetInstance().Get<GUIButton>(entityID).m_defaultColor = vec4(defaultcolor.x, defaultcolor.y, defaultcolor.z, defaultcolor.w);
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Text("Hovered Texture:");
 									if (ImGui::BeginCombo("##hoveredtext", loadedTextureKeys[hoveredText].c_str())) // The second parameter is the label previewed before opening the combo.
@@ -1821,20 +1821,20 @@ namespace PE {
 										{
 											if (ImGui::Selectable(loadedTextureKeys[n].c_str())) 
 											{
-												EntityManager::GetInstance().Get<GUI>(entityID).m_hoveredTexture = filepaths[n].string();
+												EntityManager::GetInstance().Get<GUIButton>(entityID).m_hoveredTexture = filepaths[n].string();
 												//std::cout << filepaths[n].string() << std::endl;
 											}
 										}
 										ImGui::EndCombo();
 									}
 
-									vec4 hoverColor = EntityManager::GetInstance().Get<GUI>(entityID).m_hoveredColor;
+									vec4 hoverColor = EntityManager::GetInstance().Get<GUIButton>(entityID).m_hoveredColor;
 									ImVec4 hovercolor(hoverColor.x, hoverColor.y, hoverColor.z, hoverColor.w);
 
 									ImGui::Text("hover Color: "); ImGui::SameLine();
 									ImGui::ColorEdit4("##Change Hover Color", (float*)&hovercolor, ImGuiColorEditFlags_AlphaPreview);
 
-									EntityManager::GetInstance().Get<GUI>(entityID).m_hoveredColor = vec4(hovercolor.x, hovercolor.y, hovercolor.z, hovercolor.w);
+									EntityManager::GetInstance().Get<GUIButton>(entityID).m_hoveredColor = vec4(hovercolor.x, hovercolor.y, hovercolor.z, hovercolor.w);
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Text("Pressed Texture:");
 									if (ImGui::BeginCombo("##pressedtext", loadedTextureKeys[pressedTexture].c_str())) // The second parameter is the label previewed before opening the combo.
@@ -1843,20 +1843,20 @@ namespace PE {
 										{
 											if (ImGui::Selectable(loadedTextureKeys[n].c_str()))
 											{
-												EntityManager::GetInstance().Get<GUI>(entityID).m_pressedTexture = filepaths[n].string();
+												EntityManager::GetInstance().Get<GUIButton>(entityID).m_pressedTexture = filepaths[n].string();
 												//std::cout << filepaths[n].string() << std::endl;
 											}
 										}
 										ImGui::EndCombo();
 									}
 
-									vec4 pressColor = EntityManager::GetInstance().Get<GUI>(entityID).m_pressedColor;
+									vec4 pressColor = EntityManager::GetInstance().Get<GUIButton>(entityID).m_pressedColor;
 									ImVec4 presscolor(pressColor.x, pressColor.y, pressColor.z, pressColor.w);
 
 									ImGui::Text("Press Color: "); ImGui::SameLine();
 									ImGui::ColorEdit4("##Change Press Color", (float*)&presscolor, ImGuiColorEditFlags_AlphaPreview);
 
-									EntityManager::GetInstance().Get<GUI>(entityID).m_pressedColor = vec4(presscolor.x, presscolor.y, presscolor.z, presscolor.w);
+									EntityManager::GetInstance().Get<GUIButton>(entityID).m_pressedColor = vec4(presscolor.x, presscolor.y, presscolor.z, presscolor.w);
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									ImGui::Text("Disabled Texture:");
 									if (ImGui::BeginCombo("##disabledtext", loadedTextureKeys[disabledText].c_str())) // The second parameter is the label previewed before opening the combo.
@@ -1865,20 +1865,20 @@ namespace PE {
 										{
 											if (ImGui::Selectable(loadedTextureKeys[n].c_str()))
 											{
-												EntityManager::GetInstance().Get<GUI>(entityID).m_disabledTexture = filepaths[n].string();
+												EntityManager::GetInstance().Get<GUIButton>(entityID).m_disabledTexture = filepaths[n].string();
 												//std::cout << filepaths[n].string() << std::endl;
 											}
 										}
 										ImGui::EndCombo();
 									}
 
-									vec4 disableColor = EntityManager::GetInstance().Get<GUI>(entityID).m_disabledColor;
+									vec4 disableColor = EntityManager::GetInstance().Get<GUIButton>(entityID).m_disabledColor;
 									ImVec4 disablecolor(disableColor.x, disableColor.y, disableColor.z, disableColor.w);
 
 									ImGui::Text("Disable Color: "); ImGui::SameLine();
 									ImGui::ColorEdit4("##Change disable Color", (float*)&disablecolor, ImGuiColorEditFlags_AlphaPreview);
 
-									EntityManager::GetInstance().Get<GUI>(entityID).m_disabledColor = vec4(disablecolor.x, disablecolor.y, disablecolor.z, disablecolor.w);
+									EntityManager::GetInstance().Get<GUIButton>(entityID).m_disabledColor = vec4(disablecolor.x, disablecolor.y, disablecolor.z, disablecolor.w);
 
 
 								}
@@ -1888,14 +1888,14 @@ namespace PE {
 								ImGui::SeparatorText("Events");
 
 								//get the current collider type using the variant
-								int index = static_cast<int>(EntityManager::GetInstance().Get<GUI>(entityID).m_UIType);
+								int index = static_cast<int>(EntityManager::GetInstance().Get<GUIButton>(entityID).m_UIType);
 								const char* types[] = { "Button","Slider" };
 								ImGui::Text("UI Type: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
 								//set combo box for the different collider types
 								if (ImGui::Combo("##UI Types", &index, types, IM_ARRAYSIZE(types)))
 								{
-									EntityManager::GetInstance().Get<GUI>(entityID).m_UIType = static_cast<UIType>(index);
+									EntityManager::GetInstance().Get<GUIButton>(entityID).m_UIType = static_cast<UIType>(index);
 								}
 
 								//set combo box for functions
@@ -1910,7 +1910,7 @@ namespace PE {
 								int onclickfunc{};
 								for (std::string str : key)
 								{
-									if (str == EntityManager::GetInstance().Get<GUI>(entityID).m_onClicked)
+									if (str == EntityManager::GetInstance().Get<GUIButton>(entityID).m_onClicked)
 										break;
 									onclickfunc++;
 								}
@@ -1923,14 +1923,14 @@ namespace PE {
 									//set selected texture id
 									if (ImGui::Combo("##On Click Function", &onclickfunc, key.data(), static_cast<int>(key.size())))
 									{
-										EntityManager::GetInstance().Get<GUI>(entityID).m_onClicked = key[onclickfunc];
+										EntityManager::GetInstance().Get<GUIButton>(entityID).m_onClicked = key[onclickfunc];
 									}
 								}
 
 								int onhoverfunc{};
 								for (std::string str : key)
 								{
-									if (str == EntityManager::GetInstance().Get<GUI>(entityID).m_onHovered)
+									if (str == EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHovered)
 										break;
 									onhoverfunc++;
 								}
@@ -1943,7 +1943,7 @@ namespace PE {
 									//set selected texture id
 									if (ImGui::Combo("##On Hover Function", &onhoverfunc, key.data(), static_cast<int>(key.size())))
 									{
-											EntityManager::GetInstance().Get<GUI>(entityID).m_onHovered = key[onhoverfunc];
+											EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHovered = key[onhoverfunc];
 									}
 								}
 							}

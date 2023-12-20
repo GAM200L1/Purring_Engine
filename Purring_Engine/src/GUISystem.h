@@ -119,12 +119,12 @@ namespace PE
 	//enum to tell type of UI to make
 	enum class UIType { Button = 0, Slider };
 
-	struct GUI
+	struct GUIButton
 	{		
 		/*!***********************************************************************************
 		 \brief Constructor. Does nothing 
 		*************************************************************************************/
-		GUI(){}
+		GUIButton(){}
 		/*!***********************************************************************************
 		 \brief Initializes the UI element.		 
 		*************************************************************************************/
@@ -140,15 +140,23 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief On hovering over the UI element	 
 		*************************************************************************************/
-		virtual void OnHover(EntityID) {}
+		virtual void OnHover(EntityID id) 
+		{
+			if (m_onHovered != "")
+				GUISystem::m_uiFunc[m_onHovered](id);
+		}
 		/*!***********************************************************************************
 		 \brief On clicking the UI element	 
 		*************************************************************************************/
-		virtual void OnClick(EntityID) {}
+		virtual void OnClick(EntityID id) 
+		{
+			if (m_onClicked != "")
+				GUISystem::m_uiFunc[m_onClicked](id);
+		}
 		/*!***********************************************************************************
 		 \brief Destructor	 
 		*************************************************************************************/
-		virtual ~GUI() {};
+		virtual ~GUIButton() {};
 	public:
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
@@ -173,45 +181,8 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Deserializes the UI element data	 
 		*************************************************************************************/
-		static GUI Deserialize(const nlohmann::json& j);
+		static GUIButton Deserialize(const nlohmann::json& j);
 
-
-	};
-
-	struct Button : public GUI
-	{
-		/*!***********************************************************************************
-		 \brief Serializes the UI element data	 
-		*************************************************************************************/
-		virtual void Init() override {}
-		/*!***********************************************************************************
-		 \brief Update the button		 
-		*************************************************************************************/
-		virtual void Update() override {}
-		/*!***********************************************************************************
-		 \brief Destory the button		 
-		*************************************************************************************/
-		virtual void Destroy() override {}
-		/*!***********************************************************************************
-		 \brief Calls the onhover function 
-		*************************************************************************************/
-		inline virtual void OnHover(EntityID id) override
-		{
-			if (m_onHovered != "")
-				GUISystem::m_uiFunc[m_onHovered](id);
-		}
-		/*!***********************************************************************************
-		 \brief Calls the onClick function 
-		*************************************************************************************/
-		inline virtual void OnClick(EntityID id) override
-		{
-			if (m_onClicked != "")
-				GUISystem::m_uiFunc[m_onClicked](id);
-		}
-		/*!***********************************************************************************
-		 \brief Does nothing
-		*************************************************************************************/
-		virtual ~Button() {};
 
 	};
 }

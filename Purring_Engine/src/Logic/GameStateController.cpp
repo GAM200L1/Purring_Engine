@@ -241,9 +241,9 @@ namespace PE
 			{
 					ToggleExecutionHUD(id, false);
 
-					if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
+					if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUIButton>()))
 					{
-							EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = false;
+							EntityManager::GetInstance().Get<GUIButton>(m_ScriptData[id].endTurnButton).disabled = false;
 					}
 			}
 
@@ -283,9 +283,9 @@ namespace PE
 			FadePlanningHUD(id, fadeOutSpeed);
 
 			// Disable button while fading
-			if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUI>()))
+			if (EntityManager::GetInstance().Has(m_ScriptData[id].endTurnButton, EntityManager::GetInstance().GetComponentID<GUIButton>()))
 			{
-					EntityManager::GetInstance().Get<GUI>(m_ScriptData[id].endTurnButton).disabled = true;
+					EntityManager::GetInstance().Get<GUIButton>(m_ScriptData[id].endTurnButton).disabled = true;
 			}
 
 			FadeExecutionHUD(id, fadeInSpeed);

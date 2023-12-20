@@ -57,9 +57,9 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-			for (EntityID objectID : SceneView<GUI>())
+			for (EntityID objectID : SceneView<GUIButton>())
 			{
-				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
+				GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
 				gui.Update();
 
 				if (gui.disabled)
@@ -74,15 +74,10 @@ namespace PE
 					}
 					continue;
 				}
-
-
-				if (gui.m_UIType == UIType::Button)
-				{
-					Button btn = UI_CAST(Button, gui);
 					gui.m_clickedTimer -= deltaTime;
-					if (btn.m_Hovered)
+					if (gui.m_Hovered)
 					{
-						btn.OnHover(objectID);
+						gui.OnHover(objectID);
 						if (EntityManager::GetInstance().Has(objectID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) && gui.m_clickedTimer <= 0)
 						{
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_hoveredColor.x, gui.m_hoveredColor.y, gui.m_hoveredColor.z, gui.m_hoveredColor.w);
@@ -96,7 +91,6 @@ namespace PE
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
 						}
 					}
-				}
 			}
 	}
 
@@ -116,13 +110,13 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-			for (EntityID objectID : SceneView<Transform, GUI>())
+			for (EntityID objectID : SceneView<Transform, GUIButton>())
 			{
 				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
 					continue;
 				//get the components
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
-				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
+				GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
 
 				if (gui.disabled)
 					continue;
@@ -136,11 +130,9 @@ namespace PE
 				{
 					if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
 						continue;
-
-					Button btn = UI_CAST(Button, gui);
 					if (gui.m_clickedTimer <= 0)
 					{
-						btn.OnClick(objectID);
+						gui.OnClick(objectID);
 						gui.m_clickedTimer = .3f;
 						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
@@ -171,13 +163,13 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-		for (EntityID objectID : SceneView<Transform, GUI>())
+		for (EntityID objectID : SceneView<Transform, GUIButton>())
 		{
 			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
 				continue;
 			//get the components
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
-			GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
+			GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
 			if (gui.disabled)
 				continue;
 			float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
@@ -212,7 +204,7 @@ namespace PE
 
 
 	// Serialize GUI
-	nlohmann::json GUI::ToJson(size_t id) const
+	nlohmann::json GUIButton::ToJson(size_t id) const
 	{
 		UNREFERENCED_PARAMETER(id);
 
@@ -239,9 +231,9 @@ namespace PE
 	}
 
 	// Deserialize GUI
-	GUI GUI::Deserialize(const nlohmann::json& r_j)
+	GUIButton GUIButton::Deserialize(const nlohmann::json& r_j)
 	{
-		GUI gui;
+		GUIButton gui;
 		gui.m_onClicked = r_j["m_onClicked"];
 		gui.m_onHovered = r_j["m_onHovered"];
 		gui.m_UIType = static_cast<UIType>(r_j["m_UIType"].get<int>());

@@ -254,7 +254,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::RigidBody>(entityId, "RigidBody", j);
     SerializeComponent<PE::Collider>(entityId, "Collider", j);
     SerializeComponent<PE::Graphics::Camera>(entityId, "Camera", j);
-    SerializeComponent<PE::GUI>(entityId, "GUI", j);
+    SerializeComponent<PE::GUIButton>(entityId, "GUI", j);
     SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); 
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
     SerializeComponent<PE::ScriptComponent>(entityId, "ScriptComponent", j);
@@ -540,7 +540,7 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
 
 bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r_json)
 {
-    PE::GUI gui;
+    PE::GUIButton gui;
 
     if (r_json["Entity"]["components"].contains("GUI"))
     {    
@@ -591,7 +591,7 @@ bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r
             r_json["Entity"]["components"]["GUI"]["m_disabledColor"][3].get<float>()
         );
     }
-    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), static_cast<void*>(&gui));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUIButton>(), static_cast<void*>(&gui));
     return true;
 }
 
