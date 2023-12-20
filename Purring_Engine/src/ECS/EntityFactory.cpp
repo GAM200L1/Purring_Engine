@@ -20,6 +20,7 @@
 #include "Graphics/GUIRenderer.h"
 #include "Graphics/Text.h"
 #include "AudioManager/AudioComponent.h"
+#include "Hierarchy/HierarchyManager.h"
 extern Logger engine_logger;
 
 
@@ -48,6 +49,11 @@ namespace PE
 			{
 				LoadComponent(clone, r_componentCreator,
 					p_entityManager->GetComponentPoolPointer(r_componentCreator)->Get(id));
+			}
+			EntityManager::GetInstance().Get<EntityDescriptor>(clone).children.clear();
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(clone).parent.has_value())
+			{
+				Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(clone).parent.value(), clone);
 			}
 			return clone;
 		}
