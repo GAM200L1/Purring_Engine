@@ -842,9 +842,6 @@ namespace PE {
 						m_currentSelectedObject = -1; // just reset it
 						//if object selected
 						m_objectIsSelected = false;
-
-						//if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
-
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
