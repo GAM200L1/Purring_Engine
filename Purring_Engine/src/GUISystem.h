@@ -128,19 +128,19 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Initializes the UI element.		 
 		*************************************************************************************/
-		virtual void Init() {}
+		void Init() {}
 		/*!***********************************************************************************
 		 \brief Update the UI element.		 
 		*************************************************************************************/
-		virtual void Update() {}
+		void Update() {}
 		/*!***********************************************************************************
 		 \brief Destroy the UI element.		 
 		*************************************************************************************/
-		virtual void Destroy() {}
+		void Destroy() {}
 		/*!***********************************************************************************
 		 \brief On hovering over the UI element	 
 		*************************************************************************************/
-		virtual void OnHover(EntityID id) 
+		void OnHover(EntityID id) 
 		{
 			if (m_onHovered != "")
 				GUISystem::m_uiFunc[m_onHovered](id);
@@ -148,7 +148,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief On clicking the UI element	 
 		*************************************************************************************/
-		virtual void OnClick(EntityID id) 
+		void OnClick(EntityID id) 
 		{
 			if (m_onClicked != "")
 				GUISystem::m_uiFunc[m_onClicked](id);
@@ -183,6 +183,58 @@ namespace PE
 		*************************************************************************************/
 		static GUIButton Deserialize(const nlohmann::json& j);
 
+
+	};
+
+	struct GUISlider
+	{
+		/*!***********************************************************************************
+		 \brief Constructor. Does nothing
+		*************************************************************************************/
+		GUISlider() {}
+		/*!***********************************************************************************
+		 \brief Initializes the UI element.
+		*************************************************************************************/
+		void Init() {}
+		/*!***********************************************************************************
+		 \brief Update the UI element.
+		*************************************************************************************/
+		void Update() {}
+		/*!***********************************************************************************
+		 \brief Destroy the UI element.
+		*************************************************************************************/
+		void Destroy() {}
+		/*!***********************************************************************************
+		 \brief Destructor
+		*************************************************************************************/
+		~GUISlider() {};
+	public:
+		//if knob is hovered
+		bool m_Hovered{};
+
+		//texture for knob
+		vec4 m_defaultColor{ HEX(255),HEX(255) ,HEX(255),HEX(255) };
+		std::string m_defaultTexture{};
+		vec4 m_hoveredColor{ HEX(220.f),HEX(220.f) ,HEX(220.f),HEX(255) };
+		std::string m_hoveredTexture{ m_defaultTexture };
+		vec4 m_pressedColor{ HEX(200),HEX(200) ,HEX(200),HEX(255) };
+		std::string m_pressedTexture{ m_defaultTexture };
+		float m_clickedTimer{};
+
+		//start point will be
+		//transform of slider - slider width/2 + knob width/2
+
+		//end point will be
+		//transform of slider + slider width/2 - knob width/2
+
+		int StartPoint,EndPoint;
+		int MinValue, MaxValue;
+
+
+		//current value will be 
+		//current x transform / total transform * (max value - min value)
+
+		int CurrentValue;
 
 	};
 }

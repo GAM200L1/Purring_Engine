@@ -16,11 +16,13 @@
 *************************************************************************************/
 
 #include "prpch.h"
+#include <set>
 #include "GUISystem.h"
 #include "Graphics/CameraManager.h"
 #include "Events/EventHandler.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
+#include "Hierarchy/HierarchyManager.h"
 #include "Input/InputSystem.h"
 
 #ifndef GAMERELEASE
@@ -61,37 +63,51 @@ namespace PE
 			{
 				GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
 				gui.Update();
+				gui.m_clickedTimer -= deltaTime;
 
 				if (gui.disabled)
-				{
-					if (gui.m_UIType == UIType::Button)
-					{				
+				{			
 						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) 
 						{
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
 						}
-					}
 					continue;
 				}
-					gui.m_clickedTimer -= deltaTime;
-					if (gui.m_Hovered)
+				if (gui.m_Hovered)
+				{
+					gui.OnHover(objectID);
+					if (EntityManager::GetInstance().Has(objectID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) && gui.m_clickedTimer <= 0)
 					{
-						gui.OnHover(objectID);
-						if (EntityManager::GetInstance().Has(objectID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) && gui.m_clickedTimer <= 0)
-						{
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_hoveredColor.x, gui.m_hoveredColor.y, gui.m_hoveredColor.z, gui.m_hoveredColor.w);
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_hoveredTexture);
-						}
-					}					
-					else if(gui.m_clickedTimer <= 0)
-					{
-						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
-						}
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_hoveredColor.x, gui.m_hoveredColor.y, gui.m_hoveredColor.z, gui.m_hoveredColor.w);
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_hoveredTexture);
 					}
+				}					
+				else if(gui.m_clickedTimer <= 0)
+				{
+					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
+					}
+				}
 			}
+
+#ifndef GAMERELEASE
+		if (Editor::GetInstance().IsEditorActive())
+		{
+			for (EntityID objectID : SceneView<GUISlider>())
+			{
+				if (Hierarchy::GetInstance().GetChildren(objectID).empty())
+				{
+					SerializationManager sm;
+					EntityID knob  = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+					EntityManager::GetInstance().Get<EntityDescriptor>(knob).parent = objectID;
+				}
+			}
+		}
+#endif
+
+
 	}
 
 	void GUISystem::DestroySystem()

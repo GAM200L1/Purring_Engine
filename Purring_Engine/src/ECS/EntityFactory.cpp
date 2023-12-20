@@ -74,6 +74,7 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(),		&EntityFactory::InitializeScriptComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(),		&EntityFactory::InitializeCamera);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUIButton>(),					&EntityFactory::InitializeGUIButton);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUISlider>(),					&EntityFactory::InitializeGUISlider);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(),	&EntityFactory::InitializeAnimationComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(),			&EntityFactory::InitializeTextComponent);
@@ -264,6 +265,16 @@ namespace PE
 			GUIButton()
 			:
 			*reinterpret_cast<GUIButton*>(p_data);
+		return true;
+	}	
+	
+	bool EntityFactory::InitializeGUISlider(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<GUISlider>(r_id) =
+			(p_data == nullptr) ?
+			GUISlider()
+			:
+			*reinterpret_cast<GUISlider*>(p_data);
 		return true;
 	}
 

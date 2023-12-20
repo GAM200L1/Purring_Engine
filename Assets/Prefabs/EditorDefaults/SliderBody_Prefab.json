@@ -9,20 +9,6 @@
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
-            "GUI": {
-                "m_UIType": 1,
-                "m_onClicked": "",
-                "m_onHovered": "",
-		"disabled": false,
-                "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
-                "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
-                "m_pressedTexture": "../Assets/Textures/Button_White_128px.png",
-                "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
-                "m_defaultColor": [1.0, 1.0, 1.0, 1.0],
-                "m_hoveredColor": [0.8, 0.8, 0.8, 1.0],
-                "m_pressedColor": [0.6, 0.6, 0.6, 1.0],
-                "m_disabledColor": [0.5, 0.5, 0.5, 1.0]
-            },
             "GUIRenderer": {
                 "Color": {
                     "a": 1.0,

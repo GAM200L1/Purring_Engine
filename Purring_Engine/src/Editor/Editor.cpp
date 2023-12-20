@@ -1148,6 +1148,8 @@ namespace PE {
 										if (prop.get_name() == "Orientation")
 										{
 											if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUIButton>()))
+												continue;											
+											if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUISlider>()))
 												continue;
 											if (EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<TextComponent>()))
 												continue;
@@ -1740,7 +1742,7 @@ namespace PE {
 
 						if (name == EntityManager::GetInstance().GetComponentID<GUIButton>() && EntityManager::GetInstance().Has<GUIButton>(entityID))
 						{
-							if (ImGui::CollapsingHeader("GUIComponent", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							if (ImGui::CollapsingHeader("GUIButton", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 							{
 								//setting reset button to open a popup with selectable text
 								ImGui::SameLine();
@@ -1949,7 +1951,32 @@ namespace PE {
 							}
 						}
                         
+						if (name == EntityManager::GetInstance().GetComponentID<GUISlider>() && EntityManager::GetInstance().Has<GUISlider>(entityID))
+						{
+							if (ImGui::CollapsingHeader("GUISlider", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+									if (ImGui::Selectable("Reset")) {}
+									if (ImGui::Selectable("Remove"))
+									{
+										EntityManager::GetInstance().Remove<GUISlider>(entityID);
+									}
+									ImGui::EndPopup();
+								}
 
+								if (ImGui::Button(o.c_str()))
+									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								ImGui::Text("test");
+							}
+						}
 						
 						// ---------- CAMERA ---------- //
 
@@ -2801,6 +2828,14 @@ namespace PE {
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
 								else
 									AddErrorLog("ALREADY HAS TEXT");
+							}
+							//temp for testing
+							if (ImGui::Selectable("Add GUISlider"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUISlider>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUISlider>() });
+								else
+									AddErrorLog("ALREADY HAS slider");
 							}
 						}
 

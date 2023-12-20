@@ -255,6 +255,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::Collider>(entityId, "Collider", j);
     SerializeComponent<PE::Graphics::Camera>(entityId, "Camera", j);
     SerializeComponent<PE::GUIButton>(entityId, "GUI", j);
+    //SerializeComponent<PE::GUISlider>(entityId, "GUISlider", j);
     SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); 
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
     SerializeComponent<PE::ScriptComponent>(entityId, "ScriptComponent", j);
