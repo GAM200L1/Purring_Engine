@@ -64,6 +64,7 @@ namespace PE {
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
 					m_undoStack.UndoChange();
+					
 				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Y)
