@@ -822,13 +822,12 @@ namespace PE {
 						{
 							if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children.size())
 							{
-								std::vector<EntityID> tmp;
 								for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children)
 								{
-									tmp.emplace_back(cid);
+									EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).savedChildren.emplace_back(cid);
 								}
 
-								for (const auto& cid : tmp)
+								for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).savedChildren)
 								{
 									if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value())
 										Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value(), cid);
@@ -836,20 +835,13 @@ namespace PE {
 										Hierarchy::GetInstance().DetachChild(cid);
 								}
 							}
-
+							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 							EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 						}
-
-						//create undo here
-						if (m_currentSelectedObject != -1)
-							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 
 						m_currentSelectedObject = -1; // just reset it
 						//if object selected
 						m_objectIsSelected = false;
-
-						//if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
-
 				}
 				if (ImGui::Selectable("Clone Object"))
 				{
