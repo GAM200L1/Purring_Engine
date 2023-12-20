@@ -29,6 +29,7 @@
 #include "Data/SerializationManager.h"
 #include "ResourceManager/ResourceManager.h"
 #include "Graphics/CameraManager.h"
+#include "Hierarchy/HierarchyManager.h"
 
 namespace PE
 {
@@ -473,16 +474,18 @@ namespace PE
 	void CatScript::CreateAttackTelegraphs(EntityID id, bool isXAxis, bool isNegative)
 	{
 		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);
-		
+
 		SerializationManager serializationManager;
 
 		EntityID telegraphID = serializationManager.LoadFromFile("PlayerAttackTelegraph_Prefab.json");
 		Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
 
-		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
+		//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
+		Hierarchy::GetInstance().AttachChild(id, telegraphID); // new way of attatching parent child
+		telegraphTransform.relPosition.Zero();
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false; // telegraph to not show until attack planning
 		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false; // telegraph to not show until attack planning
-
+		
 
 		// set size of telegraph
 		telegraphTransform.height = catTransform.height * 0.75f;

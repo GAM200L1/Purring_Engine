@@ -295,6 +295,11 @@ namespace PE {
 		void ClearObjectList();
 
 		/*!***********************************************************************************
+		 \brief Helper function to help the displaying of obj hierarchy
+		*************************************************************************************/
+		void ObjectWindowHelper(const EntityID& id, bool& is_selected, bool& isHoveringObject, bool& drag, std::optional<EntityID>& hoveredObject, std::optional<EntityID>& dragID, std::string& dragName);
+
+		/*!***********************************************************************************
 		 \brief Allows files to be dragged into the assets browser and copied from that its
 				original file directory to the project's asset folder.
 				Information on the number of files and their original filepaths is printed in

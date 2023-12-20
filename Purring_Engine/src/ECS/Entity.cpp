@@ -20,6 +20,7 @@
 #include "Physics/Colliders.h"
 #include "Logging/Logger.h"
 #include "EntityFactory.h"
+#include "Hierarchy/HierarchyManager.h"
 
 extern Logger engine_logger;
 
@@ -152,12 +153,28 @@ namespace PE
 	{
 		if (m_entities.count(id))
 		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id).children.size())
+			{
+				std::vector<EntityID> tmp;
+				for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+				{
+					tmp.emplace_back(cid);
+				}
+
+				for (const auto& cid : tmp)
+				{
+					Hierarchy::GetInstance().DetachChild(cid);
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+						Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value(), cid);
+				}
+			}
 			for (const ComponentID& r_pool : GetComponentIDs(id))
 			{
 				m_componentPools[r_pool]->Remove(id);
 			}
 			m_entities.erase(id);
 			m_removed.emplace(id);
+			
 			UpdateVectors(id, false);
 		}
 	}
