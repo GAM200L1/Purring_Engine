@@ -22,13 +22,52 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
+/*!***********************************************************************************
+ \brief Retrieves Input system instance to use its functions
+ 
+*************************************************************************************/
 #define GETINPUTSYSTEM() PE::SystemManager::GetInstance().GetSystem<PE::InputSystem, PE::SystemID::INPUT>()
+
+/*!***********************************************************************************
+ \brief Retrieves GUI system instance to use its functions
+ 
+*************************************************************************************/
 #define GETGUISYSTEM() PE::SystemManager::GetInstance().GetSystem<PE::GUISystem, PE::SystemID::GUISYSTEM>()
+
+/*!***********************************************************************************
+ \brief Retrieves Logic system instance to use its functions
+ 
+*************************************************************************************/
 #define GETLOGICSYSTEM() PE::SystemManager::GetInstance().GetSystem<PE::LogicSystem, PE::SystemID::LOGIC>()
+
+/*!***********************************************************************************
+ \brief Retrieves Physics system instance to use its functions
+ 
+*************************************************************************************/
 #define GETPHYSICSMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::PhysicsManager, PE::SystemID::PHYSICS>()
+
+/*!***********************************************************************************
+ \brief Retrieves Collision system instance to use its functions
+ 
+*************************************************************************************/
 #define GETCOLLISIONMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::CollisionManager, PE::SystemID::COLLISION>()
+
+/*!***********************************************************************************
+ \brief Retrieves Animation system instance to use its functions
+ 
+*************************************************************************************/
 #define GETANIMATIONMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::AnimationManager, PE::SystemID::ANIMATION>()
+
+/*!***********************************************************************************
+ \brief Retrieves Camera system instance to use its functions
+ 
+*************************************************************************************/
 #define GETCAMERAMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::Graphics::CameraManager, PE::SystemID::CAMERA>()
+
+/*!***********************************************************************************
+ \brief Retrieves Renderer system instance to use its functions
+ 
+*************************************************************************************/
 #define GETRENDERERMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::Graphics::RendererManager, PE::SystemID::GRAPHICS>()
 
 namespace PE
