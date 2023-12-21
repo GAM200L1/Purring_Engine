@@ -23,7 +23,7 @@ IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
 IncludeDir["FMOD"]          = "vendor/FMOD/core/inc" -- CORE
 IncludeDir["RTTR"]          = "vendor/RTTR/include"
-IncludeDir["mono"]          = "vendor/mono/include"
+--IncludeDir["mono"]          = "vendor/mono/include"
 
 -- external libraries
 group "Library"
@@ -189,7 +189,7 @@ project "Purring_Engine"
         "%{IncludeDir.FMOD}",
         "vendor/freetype/include",
         "%{IncludeDir.RTTR}",
-        "%{IncludeDir.mono}"
+        --"%{IncludeDir.mono}"
     }
 
     libdirs
@@ -208,7 +208,7 @@ project "Purring_Engine"
         "ImGui",
         "opengl32",
         "fmod_vc",
-        "libmono-static-sgen",
+        --"libmono-static-sgen",
         "freetype"
     }
 
@@ -224,7 +224,7 @@ project "Purring_Engine"
 
             libdirs
             {
-                "vendor/mono/lib/Debug"
+                --"vendor/mono/lib/Debug"
             }
 
     filter "configurations:Release"
@@ -234,7 +234,7 @@ project "Purring_Engine"
             
             libdirs
             {
-                "vendor/mono/lib/Release"
+                --"vendor/mono/lib/Release"
             }
     
     -- Game Release builds in release folder of editor, shares files with editor
@@ -254,7 +254,7 @@ project "Purring_Engine"
 
             libdirs
             {
-                "vendor/mono/lib/Release"
+                --"vendor/mono/lib/Release"
             }
 
             -- removes imgui link

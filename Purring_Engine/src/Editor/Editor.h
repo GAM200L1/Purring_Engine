@@ -103,6 +103,11 @@ namespace PE {
 		 \return bool return whether the mouse is hovering in the scene window
 		*************************************************************************************/
 		bool IsMouseInScene();
+		/*!***********************************************************************************
+		 \brief get the boolean to know if scene view was last clicked
+		 \return bool return whether the focus is on scene view
+		*************************************************************************************/
+		bool IsSceneViewFocused();
 
 		// ----- Public Logging Functions ----- // 
 	public:
@@ -290,6 +295,11 @@ namespace PE {
 		void ClearObjectList();
 
 		/*!***********************************************************************************
+		 \brief Helper function to help the displaying of obj hierarchy
+		*************************************************************************************/
+		void ObjectWindowHelper(const EntityID& id, bool& is_selected, bool& isHoveringObject, bool& drag, std::optional<EntityID>& hoveredObject, std::optional<EntityID>& dragID, std::string& dragName);
+
+		/*!***********************************************************************************
 		 \brief Allows files to be dragged into the assets browser and copied from that its
 				original file directory to the project's asset folder.
 				Information on the number of files and their original filepaths is printed in
@@ -331,6 +341,7 @@ namespace PE {
 		bool m_renderDebug;
 		bool m_isRunTime;
 
+		//boolean for prefabs
 		bool m_isPrefabMode;
 		bool m_applyPrefab;
 
@@ -346,6 +357,7 @@ namespace PE {
 		//variable for objects
 		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
+		bool m_sceneViewFocused;
 		int m_currentSelectedObject;
 
 		UndoStack m_undoStack;

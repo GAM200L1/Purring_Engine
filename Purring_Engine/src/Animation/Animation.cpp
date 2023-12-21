@@ -18,10 +18,8 @@
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 #include "prpch.h"
-#include "Math/MathCustom.h"
 #include "Logging/Logger.h"
 #include "ECS/SceneView.h"
-#include "ECS/Entity.h"
 #include "Graphics/Renderer.h"
 #include "ResourceManager/ResourceManager.h"
 #include "Animation.h"

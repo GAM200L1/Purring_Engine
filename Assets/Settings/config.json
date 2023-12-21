@@ -2,7 +2,7 @@
     "Editor": {
         "firstLaunch": false,
         "isPrefabMode": false,
-        "renderDebug": true,
+        "renderDebug": false,
         "showAnimationWindow": false,
         "showComponentWindow": true,
         "showConsole": false,
@@ -13,7 +13,7 @@
         "showPhysicsWindow": false,
         "showResourceWindow": true,
         "showSceneView": true,
-        "showTestWindows": true
+        "showTestWindows": false
     },
     "window": {
         "height": 1080,

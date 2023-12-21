@@ -95,6 +95,8 @@
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
+#include "Hierarchy/HierarchyManager.h"
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -374,19 +376,20 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        for (const auto& id : SceneView<Transform>())
-        {
-            Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
-            if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
-            {
-                const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-                vec3 tmp { trans.relPosition, 1.f };
-                tmp = parent.GetTransformMatrix3x3() * tmp;
-                trans.position.x = tmp.x;
-                trans.position.y = tmp.y;
-                trans.orientation = parent.orientation + trans.relOrientation;
-            }
-        }
+        //for (const auto& id : SceneView<Transform>())
+        //{
+        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
+        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+        //    {
+        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
+        //        vec3 tmp { trans.relPosition, 1.f };
+        //        tmp = parent.GetTransformMatrix3x3() * tmp;
+        //        trans.position.x = tmp.x;
+        //        trans.position.y = tmp.y;
+        //        trans.orientation = parent.orientation + trans.relOrientation;
+        //    }
+        //}
+        Hierarchy::GetInstance().Update();
 
 
         // Update system with fixed time step
@@ -453,6 +456,7 @@ void PE::CoreApplication::AddSystem(System* system)
 {
     // Add a system to CoreApplication append the provided system pointer to the m_systemList vector
     m_systemList.push_back(system);
+    SystemManager::GetInstance().AddSystem(system);
 }
 
 
@@ -514,6 +518,5 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_rendererManager);
     //AddSystem(p_audioManager);
 
-    GameStateManager::GetInstance().p_cameraManager = p_cameraManager;
     GameStateManager::GetInstance().RegisterButtonFunctions();
 }

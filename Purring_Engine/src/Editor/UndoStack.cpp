@@ -21,16 +21,25 @@ namespace PE
 {
 	UndoStack::UndoStack()
 	{
-		m_currentcount = 0;
+		m_undoCount = 0;
 	}
 	void UndoStack::AddChange(EditorChanges* p_change)
 	{
 		m_undoStack.push_front(p_change);
-		++m_currentcount;
-		if (m_currentcount >= 21)
+		++m_undoCount;
+
+		//clear redo stack here
+		for (auto i : m_redoStack)
 		{
-			m_undoStack.back()->OnStackLeave();
-			--m_currentcount;
+			i->OnRedoStackLeave();
+			delete i;
+		}
+		m_redoStack.clear();
+
+		if (m_undoCount >= 21)
+		{
+			m_undoStack.back()->OnUndoStackLeave();
+			--m_undoCount;
 			delete m_undoStack.back();
 			m_undoStack.pop_back();
 		}
@@ -40,33 +49,61 @@ namespace PE
 	{
 		if (!m_undoStack.empty())
 		{
+			//undo the change
 			m_undoStack.front()->Undo();
-			delete m_undoStack.front();
+
+			//push it into the redo stack
+			m_redoStack.emplace_front(m_undoStack.front());
+			//remove the pointer from the undo stack
 			m_undoStack.pop_front();
-			--m_currentcount;
+			//reduce undo count
+			--m_undoCount;
 		}
 
 	}
 	void UndoStack::RedoChange()
 	{
+		if (!m_redoStack.empty())
+		{
+			m_redoStack.front()->Redo();
+			//send back to undo stack
+			m_undoStack.emplace_front(m_redoStack.front());
+			//remove the pointer from the redo stack
+			m_redoStack.pop_front();
+			++m_undoCount;
+		}
 	}
 
 	void UndoStack::ClearStack()
 	{
+		//clear redo stack here
+		for (auto i : m_redoStack)
+		{
+			i->OnRedoStackLeave();
+			delete i;
+		}
+		m_redoStack.clear();
+
 		for(auto& a:m_undoStack)
 		{
-			a->OnStackLeave();
+			a->OnUndoStackLeave();
 			delete a;			
 		}
 		m_undoStack.clear();
-		m_currentcount=0;
+		m_undoCount=0;
 	}
 
 	UndoStack::~UndoStack()
 	{
 		for (auto p : m_undoStack)
 		{
+			p->OnUndoStackLeave();
 			delete p;
+		}
+		for (auto i : m_redoStack)
+		{
+			i->OnRedoStackLeave();
+			delete i;
 		}
 	}
 
