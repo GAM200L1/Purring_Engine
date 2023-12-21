@@ -593,6 +593,9 @@ namespace PE
 		// the children of this entity
 		std::set<EntityID> children;
 
+		// used for undo stack :(
+		std::vector<EntityID> savedChildren;
+
 		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
 

@@ -20,6 +20,8 @@
 #include <glm/glm.hpp>
 #include "System.h"
 #include "Data/json.hpp"
+#include "Math/MathCustom.h"
+#include "ECS/Entity.h"
 
 namespace PE
 {

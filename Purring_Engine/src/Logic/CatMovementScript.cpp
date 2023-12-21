@@ -19,6 +19,7 @@
 #include "CatAttackScript.h"
 #include "Physics/CollisionManager.h"
 #include "FollowScript.h"
+#include "Graphics/CameraManager.h"
 namespace PE
 {
 		// ----- Movement Plan Functions ----- //
@@ -172,7 +173,7 @@ namespace PE
 
 				// Check if the position is within the bounds of the window
 				bool coordinatesInWindow{ true };
-				std::optional<std::reference_wrapper<PE::Graphics::Camera>> r_mainCamera{ GameStateManager::GetInstance().p_cameraManager->GetMainCamera() };
+				std::optional<std::reference_wrapper<PE::Graphics::Camera>> r_mainCamera{ GETCAMERAMANAGER()->GetMainCamera()};
 				if (r_mainCamera.has_value())
 				{
 						coordinatesInWindow = r_mainCamera.value().get().GetPositionWithinViewport(r_nodePosition.x, r_nodePosition.y);

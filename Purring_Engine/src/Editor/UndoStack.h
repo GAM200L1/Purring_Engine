@@ -20,6 +20,7 @@
 #include "Editor.h"
 #include "Singleton.h"
 #include "ECS/EntityFactory.h"
+#include "Hierarchy/HierarchyManager.h"
 typedef unsigned long long EntityID;
 namespace PE
 {
@@ -208,7 +209,9 @@ namespace PE
 		 \brief										constructor taking in values
 		 \param [In]	EntityID id					id that is edited
 		*************************************************************************************/
-		DeleteObjectUndo(EntityID id) : ObjectDeleted(id) {}
+		DeleteObjectUndo(EntityID id) : ObjectDeleted(id) 
+		{
+		}
 	public:
 		// ----- Public Functions ----- // 
 		/*!***********************************************************************************
@@ -217,12 +220,32 @@ namespace PE
 		virtual void Undo() override
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).UnHandicapEntity();
+			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren)
+			{
+				Hierarchy::GetInstance().AttachChild(ObjectDeleted, id);
+			}
+			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren.clear();
 		}
 		/*!***********************************************************************************
 		 \brief			overriden Redo Function
 		*************************************************************************************/
 		virtual void Redo() override
 		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).children.size())
+			{
+				for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).children)
+				{
+					EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren.emplace_back(cid);
+				}
+
+				for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren)
+				{
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.has_value())
+						Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.value(), cid);
+					else
+						Hierarchy::GetInstance().DetachChild(cid);
+				}
+			}
 			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).HandicapEntity();
 			Editor::GetInstance().ResetSelectedObject();
 		}
