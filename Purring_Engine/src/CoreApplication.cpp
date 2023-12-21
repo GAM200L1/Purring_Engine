@@ -456,6 +456,7 @@ void PE::CoreApplication::AddSystem(System* system)
 {
     // Add a system to CoreApplication append the provided system pointer to the m_systemList vector
     m_systemList.push_back(system);
+    SystemManager::GetInstance().AddSystem(system);
 }
 
 
@@ -517,6 +518,5 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_rendererManager);
     //AddSystem(p_audioManager);
 
-    GameStateManager::GetInstance().p_cameraManager = p_cameraManager;
     GameStateManager::GetInstance().RegisterButtonFunctions();
 }
