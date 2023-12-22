@@ -76,6 +76,13 @@ namespace PE
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
 		/*!***********************************************************************************
+		 \brief Checks if the mouse cursor is within the bounds of any GUI objects
+
+		 \param[in,out] r_ME mouse click event details
+		*************************************************************************************/
+		void OnMouseRelease(const Event<MouseEvents>& r_ME);
+
+		/*!***********************************************************************************
 		 \brief Checks if a point is within the square bounds of a transform
 		 
 		 \param[in,out] x - x coordinate in view space
@@ -218,32 +225,32 @@ namespace PE
 	public:
 		//if knob is hovered
 		bool m_Hovered{};
+		bool m_disabled{ false };
+
+		//if knob is clicked to be changed by events
+		bool m_clicked{ false };
+
 
 		//texture for knob
-		vec4 m_defaultColor{ HEX(255),HEX(255) ,HEX(255),HEX(255) };
+		vec4 m_defaultColor{ HEX(100),HEX(100) ,HEX(100),HEX(100) };
 		std::string m_defaultTexture{};
-		vec4 m_hoveredColor{ HEX(220.f),HEX(220.f) ,HEX(220.f),HEX(255) };
+		vec4 m_hoveredColor{ HEX(90),HEX(90) ,HEX(90),HEX(255) };
 		std::string m_hoveredTexture{ m_defaultTexture };
-		vec4 m_pressedColor{ HEX(200),HEX(200) ,HEX(200),HEX(255) };
+		vec4 m_pressedColor{ HEX(60),HEX(60) ,HEX(60),HEX(255) };
 		std::string m_pressedTexture{ m_defaultTexture };
+		vec4 m_disabledColor{ HEX(20),HEX(20) ,HEX(20),HEX(255) };
+		std::string m_disabledTexture{ m_defaultTexture };
 
 		//to be assigned on creation
 		std::optional<EntityID> m_knobID;
-
-		//start point will be
-		//transform of slider - slider width/2 + knob width/2
-
-		//end point will be
-		//transform of slider + slider width/2 - knob width/2
-
+		//calculated on update
 		float m_startPoint,m_endPoint;
+		float m_currentValue;
+
+		//set on editor
 		float m_minValue{ 0 }, m_maxValue{100};
 
 
-		//current value will be 
-		//current x transform / total transform * (max value - min value)
-
-		float m_currentValue;
 
 	};
 }

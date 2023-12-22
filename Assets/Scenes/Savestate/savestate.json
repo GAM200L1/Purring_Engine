@@ -77,46 +77,14 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Prefab Type": "",
-                        "children": [],
+                        "Prefab Type": "SliderBody",
+                        "children": [
+                            4
+                        ],
                         "isActive": true,
-                        "name": "GUIButton",
+                        "name": "SliderBody",
                         "parent": null,
                         "sceneID": 18446744073709551615
-                    },
-                    "GUI": {
-                        "disabled": false,
-                        "m_UIType": 0,
-                        "m_defaultColor": [
-                            1.0,
-                            1.0,
-                            1.0,
-                            1.0
-                        ],
-                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
-                        "m_disabledColor": [
-                            0.5,
-                            0.5,
-                            0.5,
-                            1.0
-                        ],
-                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
-                        "m_hoveredColor": [
-                            0.800000011920929,
-                            0.800000011920929,
-                            0.800000011920929,
-                            1.0
-                        ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
-                        "m_onClicked": "ExitGame",
-                        "m_onHovered": "",
-                        "m_pressedColor": [
-                            0.6000000238418579,
-                            0.6000000238418579,
-                            0.6000000238418579,
-                            1.0
-                        ],
-                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -125,10 +93,10 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
+                        "TextureKey": ""
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 75.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -139,7 +107,45 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 250.0
+                        "width": 500.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SliderKnob",
+                        "parent": 3,
+                        "sceneID": 18446744073709551615
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 75.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 75.0
                     }
                 },
                 "name": ""
