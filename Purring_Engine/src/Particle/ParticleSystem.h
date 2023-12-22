@@ -1,14 +1,14 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     RatScript.h
- \date     20-11-2023
+ \file     ParticleSystem.h
+ \date     15-12-2023
 
  \author               Liew Yeni
  \par      email:      yeni.l@digipen.edu
 
  \brief
-	This file contains declarations for functions used for a rats mechanics
+	
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -30,16 +30,13 @@ namespace PE
 	class ParticleSystem
 	{
 	public:
-		void Initialize();
+		ParticleSystem();
 		void Update();
-	
-	private:
 		
+
+	protected:
 		// max number of particles
 		unsigned maxParticles = 100;
-		
-		// vector of particles belonging to the entity with this system
-		std::vector<Particle> particles;
 
 		// turn particle system on and off
 		bool isActive;
@@ -70,6 +67,15 @@ namespace PE
 		float endRotation;
 		float endScale;
 		float endColor;
+
+	private:
+		// vector of particles belonging to the entity with this system
+		std::vector<Particle> particles;
+
+		// calculated variables
+		vec2 positionDifference;
+		float orientationDifference;
+		float widthDifference, heightDifference;
 	};
 
 	// this is a problem

@@ -22,7 +22,7 @@ namespace PE
 
 		EnumParticleType type = RANDOM;
 
-		void CreateParticle(EntityID particleId, EntityID spawnerId, EnumParticleType particleType, float particleWidth, float particleHeight, float startLifetime)
+		void CreateParticle(EntityID particleId, EntityID spawnerId, EnumParticleType particleType, float startParticleOrientation, float particleWidth, float particleHeight, float startLifetime)
 		{
 			particleID = particleId;
 			type = particleType;
@@ -47,7 +47,7 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(particleID).parent = spawnerId;
 			
 			// Sets the rotation of the particle
-			//EntityManager::GetInstance().Get<Transform>(particleID).relPosition = vec2{ 0.f,0.f }; idk how this will work;;
+			EntityManager::GetInstance().Get<Transform>(particleID).relOrientation = startParticleOrientation;
 			
 			// Sets the starting size of the particle
 			EntityManager::GetInstance().Get<Transform>(particleID).width = particleWidth;
