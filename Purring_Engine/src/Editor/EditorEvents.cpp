@@ -90,7 +90,7 @@ namespace PE {
 					if (m_currentSelectedObject != -1)
 					{
 						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
-						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+						UndoStack::GetInstance().AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 					}
 					//if not first index
 					m_currentSelectedObject = -1; // just reset it

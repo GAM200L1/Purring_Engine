@@ -63,6 +63,11 @@
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
 #include "UndoStack.h"
+#include "ImGuizmo.h"
+#include "System.h"
+#include <glm/gtc/type_ptr.hpp>
+#include <glm/glm.hpp>
+
 
 //Hierarchy
 #include "Hierarchy/HierarchyManager.h"
@@ -835,7 +840,7 @@ namespace PE {
 										Hierarchy::GetInstance().DetachChild(cid);
 								}
 							}
-							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+							UndoStack::GetInstance().AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 							EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 						}
 
@@ -4106,6 +4111,29 @@ namespace PE {
 				}
 				m_mouseInScene = ImGui::IsWindowHovered();
 				m_sceneViewFocused = ImGui::IsWindowFocused();
+
+				if (m_currentSelectedObject != -1)
+				{
+					//by default is false though
+					ImGuizmo::SetOrthographic(false);
+
+					//call before manipulate
+					ImGuizmo::SetDrawlist();
+
+					//basically setting the viewport if the position is off need to change or add/remove offset
+					ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, (float)ImGui::GetWindowWidth(), (float)ImGui::GetWindowHeight());
+
+					auto EditorCamera = GETCAMERAMANAGER()->GetEditorCamera();
+					glm::mat4 cameraProjection = EditorCamera.GetViewToNdcMatrix();
+					glm::mat4 cameraView = EditorCamera.GetWorldToViewMatrix();
+
+					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);
+
+					glm::mat4 transform{ Graphics::RendererManager::GenerateTransformMatrix(ct.width,ct.height,ct.orientation,ct.position.x,ct.position.y)};
+
+					//for rendering the gizmo
+					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),ImGuizmo::OPERATION::TRANSLATE,ImGuizmo::LOCAL,glm::value_ptr(transform));
+				}
 			}
 			static ImVec2 clickedPosition;
 			static ImVec2 screenPosition; // coordinates from the top left corner

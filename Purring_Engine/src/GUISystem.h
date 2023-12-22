@@ -22,8 +22,8 @@
 #include "Events/Event.h"
 #include "Math/Transform.h"
 #include "WindowManager.h"
+#define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this, std::placeholders::_1)) 
 #define HEX(hexcode)    hexcode/255.f // to convert colors
-#define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this, std::placeholders::_1))
 typedef unsigned long long EntityID;
 namespace PE 
 {
@@ -199,11 +199,11 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Update the UI element.
 		*************************************************************************************/
-		void Update() {}
+		void Update();
 		/*!***********************************************************************************
 		 \brief Destroy the UI element.
 		*************************************************************************************/
-		void Destroy() {}
+		void Destroy();
 		/*!***********************************************************************************
 		 \brief Destructor
 		*************************************************************************************/
@@ -219,7 +219,9 @@ namespace PE
 		std::string m_hoveredTexture{ m_defaultTexture };
 		vec4 m_pressedColor{ HEX(200),HEX(200) ,HEX(200),HEX(255) };
 		std::string m_pressedTexture{ m_defaultTexture };
-		float m_clickedTimer{};
+
+		//to be assigned on creation
+		EntityID m_knobID;
 
 		//start point will be
 		//transform of slider - slider width/2 + knob width/2

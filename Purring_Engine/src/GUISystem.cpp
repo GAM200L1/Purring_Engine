@@ -16,20 +16,16 @@
 *************************************************************************************/
 
 #include "prpch.h"
-#include <set>
 #include "GUISystem.h"
 #include "Graphics/CameraManager.h"
 #include "Events/EventHandler.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
-#include "Hierarchy/HierarchyManager.h"
 #include "Input/InputSystem.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
-
-#define UI_CAST(type, ui) reinterpret_cast<type&>(ui)
 
 std::map<std::string_view, std::function<void(::EntityID)>> PE::GUISystem::m_uiFunc;
 
@@ -95,15 +91,15 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
 		{
-			//for (EntityID objectID : SceneView<GUISlider>())
-			//{
-			//	if (Hierarchy::GetInstance().GetChildren(objectID).empty())
-			//	{
-			//		SerializationManager sm;
-			//		EntityID knob  = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
-			//		EntityManager::GetInstance().Get<EntityDescriptor>(knob).parent = objectID;
-			//	}
-			//}
+			for (EntityID objectID : SceneView<GUISlider>())
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
+				{
+					SerializationManager sm;
+					EntityID knob  = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+					EntityManager::GetInstance().Get<EntityDescriptor>(knob).parent = objectID;
+				}
+			}
 		}
 #endif
 
@@ -268,5 +264,15 @@ namespace PE
 		gui.m_disabledColor = vec4(r_j["m_disabledColor"][0], r_j["m_disabledColor"][1], r_j["m_disabledColor"][2], r_j["m_disabledColor"][3]);
 
 		return gui;
+	}
+
+	void GUISlider::Update()
+	{
+
+	}
+
+	void GUISlider::Destroy()
+	{
+
 	}
 }
