@@ -22,6 +22,7 @@
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
 #include "Input/InputSystem.h"
+#include "Hierarchy/HierarchyManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -91,13 +92,48 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsEditorActive())
 		{
+			//check through all sliders, make sure all slider has a knob during editor runtime
 			for (EntityID objectID : SceneView<GUISlider>())
 			{
-				if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
+				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
+				if (!slider.m_knobID.has_value())
 				{
 					SerializationManager sm;
-					EntityID knob  = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
-					EntityManager::GetInstance().Get<EntityDescriptor>(knob).parent = objectID;
+
+					slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+					std::cout<< slider.m_knobID.value() << std::endl;
+					Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
+				}
+				else
+				{
+					Transform& knobTransform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
+
+					//making sure always at the same height of the slider
+					knobTransform.relPosition.y = 0;
+
+					//start point will be
+					//transform of slider - slider width/2 + knob width/2
+					//however because we using knob we need to use relative coordinates, so start from 0
+					//basically ignore the transform of the slider
+					slider.m_startPoint = 0 - EntityManager::GetInstance().Get<Transform>(objectID).width / 2 + EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value()).width / 2;
+					
+					//end point will be
+					//transform of slider + slider width/2 - knob width/2
+					//however because we using knob we need to use relative coordinates, so start from 0
+					//basically ignore the transform of the slider
+					slider.m_endPoint = EntityManager::GetInstance().Get<Transform>(objectID).width / 2 - EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value()).width / 2;
+
+					//if the knob is ever out of area
+					if (knobTransform.relPosition.x < slider.m_startPoint)
+					{
+						knobTransform.relPosition.x = slider.m_startPoint;
+					}
+					else if (knobTransform.relPosition.x > slider.m_endPoint)
+					{
+						knobTransform.relPosition.x = slider.m_endPoint;
+					}
+
+					slider.CalculateValue(knobTransform.relPosition.x);
 				}
 			}
 		}
@@ -274,5 +310,13 @@ namespace PE
 	void GUISlider::Destroy()
 	{
 
+	}
+	float GUISlider::CalculateValue(float currentX)
+	{
+		//current value will be 
+		//current x transform / total transform * (max value - min value)
+		m_currentValue = ( (currentX+((m_endPoint - m_startPoint)/2) ) / (m_endPoint - m_startPoint) ) * (m_maxValue - m_minValue);
+		std::cout << "current value: " << m_currentValue << std::endl;
+		return m_currentValue;
 	}
 }

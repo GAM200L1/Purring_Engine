@@ -4115,7 +4115,7 @@ namespace PE {
 				if (m_currentSelectedObject != -1)
 				{
 					//by default is false though
-					ImGuizmo::SetOrthographic(false);
+					ImGuizmo::SetOrthographic(true);
 
 					//call before manipulate
 					ImGuizmo::SetDrawlist();
@@ -4128,7 +4128,6 @@ namespace PE {
 					glm::mat4 cameraView = EditorCamera.GetWorldToViewMatrix();
 
 					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);
-
 					glm::mat4 transform{ Graphics::RendererManager::GenerateTransformMatrix(ct.width,ct.height,ct.orientation,ct.position.x,ct.position.y)};
 
 					//for rendering the gizmo

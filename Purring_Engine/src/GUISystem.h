@@ -22,6 +22,7 @@
 #include "Events/Event.h"
 #include "Math/Transform.h"
 #include "WindowManager.h"
+#include <optional>
 #define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this, std::placeholders::_1)) 
 #define HEX(hexcode)    hexcode/255.f // to convert colors
 typedef unsigned long long EntityID;
@@ -204,6 +205,12 @@ namespace PE
 		 \brief Destroy the UI element.
 		*************************************************************************************/
 		void Destroy();
+
+		/*!***********************************************************************************
+		 \brief Calculate the current value of the slider based on given min and max values.
+		*************************************************************************************/
+		float CalculateValue(float currentX);
+
 		/*!***********************************************************************************
 		 \brief Destructor
 		*************************************************************************************/
@@ -221,7 +228,7 @@ namespace PE
 		std::string m_pressedTexture{ m_defaultTexture };
 
 		//to be assigned on creation
-		EntityID m_knobID;
+		std::optional<EntityID> m_knobID;
 
 		//start point will be
 		//transform of slider - slider width/2 + knob width/2
@@ -229,14 +236,14 @@ namespace PE
 		//end point will be
 		//transform of slider + slider width/2 - knob width/2
 
-		int StartPoint,EndPoint;
-		int MinValue, MaxValue;
+		float m_startPoint,m_endPoint;
+		float m_minValue{ 0 }, m_maxValue{100};
 
 
 		//current value will be 
 		//current x transform / total transform * (max value - min value)
 
-		int CurrentValue;
+		float m_currentValue;
 
 	};
 }
