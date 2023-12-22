@@ -323,6 +323,26 @@ namespace PE
 	{
 		return (index) ? ((index == 3) ? w : ((index == 2) ? z : y)) : x;
 	}
+	
+	// addition
+	vec4 vec4::operator+(vec4 const& r_rhs) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] + r_rhs[i];
+
+		return ret;
+	}
+
+	// subtraction
+	vec4 vec4::operator-(vec4 const& r_rhs) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] - r_rhs[i];
+
+		return ret;
+	}
 
 
 	/*                                                                               mat3x3 struct member implementations

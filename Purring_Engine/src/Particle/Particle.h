@@ -7,7 +7,6 @@ namespace PE
 {
 	enum EnumParticleType
 	{
-		RANDOM, // mixes both square and circle
 		SQUARE,
 		CIRCLE,
 		TEXTURED,
@@ -20,7 +19,7 @@ namespace PE
 		EntityID particleID;
 		float lifetime = 0.f;
 
-		EnumParticleType type = RANDOM;
+		EnumParticleType type;
 
 		void CreateParticle(EntityID particleId, EntityID spawnerId, EnumParticleType particleType, float startParticleOrientation, float particleWidth, float particleHeight, float startLifetime)
 		{
