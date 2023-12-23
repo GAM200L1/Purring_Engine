@@ -319,7 +319,6 @@ namespace PE {
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
-		io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
@@ -4114,7 +4113,8 @@ namespace PE {
 
 	void Editor::ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
-		if (IsEditorActive()) {
+		if (IsEditorActive()) 
+		{
 			ImGui::Begin("Scene View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
@@ -4231,7 +4231,8 @@ namespace PE {
 				}
 			}
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
-			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
+			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) 
+			{
 				if (r_frameBuffer.GetTextureId())
 				{
 					//the graphics rendered onto an image on the imgui window
