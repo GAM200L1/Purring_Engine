@@ -3809,6 +3809,9 @@ namespace PE {
 			//setting more window flags
 			window_flags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
+
+			
+
 			//begin of dockspace
 			if (!ImGui::Begin("DockSpace", p_active, window_flags))
 			{
@@ -3816,6 +3819,118 @@ namespace PE {
 				ImGui::End();
 			}
 			else {
+				ImGuiStyle& style = ImGui::GetStyle();
+				if (!m_isPrefabMode)
+				{
+					float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
+					float avail = ImGui::GetContentRegionAvail().x;
+
+					float off = (float)((avail - size) * 0.5);
+					if (off > 0.0f)
+						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
+
+					if (ImGui::Button("Play"))
+					{
+						m_isRunTime = true;
+						m_showEditor = false;
+						m_showGameView = true;
+						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+						// This will save all entities to a file
+						serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+						UndoStack::GetInstance().ClearStack();
+						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+					}
+					ImGui::SameLine();
+					ImGui::BeginDisabled();
+					if (ImGui::Button("Stop")) {
+						m_showEditor = true;
+
+						if (m_isRunTime)
+						{
+							ClearObjectList();
+							serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						}
+
+						if (m_showEditor)
+							m_isRunTime = false;
+
+						m_showGameView = false;
+					}
+					ImGui::EndDisabled();
+				}
+				else // is prefab mode
+				{
+					float size = ImGui::CalcTextSize("Return").x + style.FramePadding.x * 2.0f;
+					float avail = ImGui::GetContentRegionAvail().x;
+
+					float off = (float)((avail - size) * 0.5);
+					if (off > 0.0f)
+						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Return").x + style.FramePadding.x) / 2);
+
+					if (ImGui::Button("Return"))
+					{
+						ImGui::OpenPopup("ReqSave?");
+						m_applyPrefab = false;
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button(" Save "))
+					{
+						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+						{
+							auto save = serializationManager.SerializeEntityPrefab(1);
+
+							std::ofstream outFile(prefabFP);
+							if (outFile)
+							{
+								outFile << save.dump(4);
+								outFile.close();
+							}
+						}
+					}
+					if (ImGui::BeginPopup/*Modal*/("ReqSave?"))
+					{
+						ImGui::Text("Do you want to save your changes?");
+						ImGui::Separator();
+
+						ImGui::Separator();
+
+						if (ImGui::Selectable("Yes"))
+						{
+							if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+							{
+								auto save = serializationManager.SerializeEntityPrefab(1);
+								prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
+								prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
+								std::ofstream outFile(prefabFP);
+								if (outFile)
+								{
+									outFile << save.dump(4);
+									outFile.close();
+								}
+							}
+							m_isPrefabMode = false;
+							ClearObjectList();
+							serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+							m_applyPrefab = true;
+						}
+						//ImGui::SameLine();
+						ImGui::Separator();
+						if (ImGui::Selectable("No"))
+						{
+							m_isPrefabMode = false;
+							ClearObjectList();
+							serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+						}
+						ImGui::EndPopup();
+						UndoStack::GetInstance().ClearStack();
+					}
+				}
+				ImGui::Dummy(ImVec2(0, .2f));
+
 				//get io of imgui to ediit
 				ImGuiIO& io = ImGui::GetIO();
 				//get the id so that we can set the port node
@@ -3865,6 +3980,7 @@ namespace PE {
 						ImGui::DockBuilderFinish(dockspace_id);
 
 					}
+
 				}
 
 
@@ -4120,116 +4236,6 @@ namespace PE {
 			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
 
-			ImGuiStyle& style = ImGui::GetStyle();
-			if (!m_isPrefabMode)
-			{
-				float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
-				float avail = ImGui::GetContentRegionAvail().x;
-
-				float off = (float)((avail - size) * 0.5);
-				if (off > 0.0f)
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
-
-				if (ImGui::Button("Play"))
-				{
-					m_isRunTime = true;
-					m_showEditor = false;
-					m_showGameView = true;
-					engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-					// This will save all entities to a file
-					serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
-					UndoStack::GetInstance().ClearStack();
-					engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
-				}
-				ImGui::SameLine();
-				ImGui::BeginDisabled();
-				if (ImGui::Button("Stop")) {
-					m_showEditor = true;
-
-					if (m_isRunTime)
-					{
-						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
-						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-					}
-
-					if (m_showEditor)
-						m_isRunTime = false;
-
-					m_showGameView = false;
-				}
-				ImGui::EndDisabled();
-			}
-			else // is prefab mode
-			{
-				float size = ImGui::CalcTextSize("Return").x + style.FramePadding.x * 2.0f;
-				float avail = ImGui::GetContentRegionAvail().x;
-
-				float off = (float)((avail - size) * 0.5);
-				if (off > 0.0f)
-					ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Return").x + style.FramePadding.x) / 2);
-
-				if (ImGui::Button("Return"))
-				{
-					ImGui::OpenPopup("ReqSave?");
-					m_applyPrefab = false;
-				}
-
-				ImGui::SameLine();
-				if (ImGui::Button(" Save "))
-				{
-					if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
-					{
-						auto save = serializationManager.SerializeEntityPrefab(1);
-
-						std::ofstream outFile(prefabFP);
-						if (outFile)
-						{
-							outFile << save.dump(4);
-							outFile.close();
-						}
-					}
-				}
-				if (ImGui::BeginPopup/*Modal*/("ReqSave?"))
-				{
-					ImGui::Text("Do you want to save your changes?");
-					ImGui::Separator();
-
-					ImGui::Separator();
-
-					if (ImGui::Selectable("Yes"))
-					{
-						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
-						{
-							auto save = serializationManager.SerializeEntityPrefab(1);
-							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
-							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
-							std::ofstream outFile(prefabFP);
-							if (outFile)
-							{
-								outFile << save.dump(4);
-								outFile.close();
-							}
-						}
-						m_isPrefabMode = false;
-						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
-						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-						m_applyPrefab = true;
-					}
-					//ImGui::SameLine();
-					ImGui::Separator();
-					if (ImGui::Selectable("No"))
-					{
-						m_isPrefabMode = false;
-						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
-						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
-					}
-					ImGui::EndPopup();
-					UndoStack::GetInstance().ClearStack();
-				}
-			}
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) 
 			{
