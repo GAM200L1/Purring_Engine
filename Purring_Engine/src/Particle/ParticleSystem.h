@@ -14,6 +14,7 @@
 
 *************************************************************************************/
 #pragma once
+#include <random>
 #include "Math/MathCustom.h"
 #include "Particle.h"
 namespace PE
@@ -26,6 +27,7 @@ namespace PE
 		ParticleSystem(ParticleSystem const& r_cpy);
 		ParticleSystem& operator=(ParticleSystem const& r_cpy);
 		void Update(float deltaTime);
+		void ResetAllParticles(); // resets emission duration, lifetime of each particle and the position of each particle
 		
 	protected:
 		// max number of particles
@@ -53,32 +55,44 @@ namespace PE
 		// on spawn variables
 		float startDelay; // particles appear later after entity is active check if needed
 		float startRotation;
-		float startScaleMultiplier; // multiplier
+		vec2 startScale; // width and height
 		vec4 startColor;
 
 		// end variables
 		float endDelay; // so particles disappear later after reaching max lifetime
 		float endRotation;
-		float endScaleMultiplier;
+		vec2 endScale; // width and height
 		vec4 endColor;
+	
+	private:
+		// Random value generators
+		vec2 GeneratePosition();
+		vec2 GenerateDirectionVector();
 
 	private:
 		// vector of particles belonging to the entity with this system
 		std::vector<Particle> particles;
 
-		// calculated variables
-		float orientationDifference;
-		float scaleDifference;
-		vec4 colorDifference;
+		// calculated variables, rate of change for different variables
+		vec2 positionChangeSpeed;
+		float orientationChangeSpeed;
+		vec2 scaleChangeSpeed;
+		vec4 colorChangeSpeed;
 		vec2 emissionVector;
+
+		// track how long particle system has been emitting particles
+		float emissionElapsed;
+
+		// random seed
+		std::random_device seed;
 	};
 
 	// this is a problem
 	class ParticleSystemManager
 	{
 	public:
-		void Initialize();
+		/*void Initialize();
 		void Update();
-		void Destroy();
+		void Destroy();*/
 	};
 }

@@ -344,6 +344,23 @@ namespace PE
 		return ret;
 	}
 
+	vec4 vec4::operator/(float denominator) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] / denominator;
+
+		return ret;
+	}
+
+	vec4 vec4::operator*(float multiplier) const
+	{
+		vec4 ret{};
+		for (int i{ 0 }; i < 4; ++i)
+			ret[i] = (*this)[i] * multiplier;
+
+		return ret;
+	}
 
 	/*                                                                               mat3x3 struct member implementations
 	--------------------------------------------------------------------------------------------------------------------- */

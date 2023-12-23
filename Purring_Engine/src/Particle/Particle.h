@@ -56,11 +56,14 @@ namespace PE
 			lifetime = startLifetime;
 		}
 
-		void ResetParticle(float particleWidth, float particleHeight, float startLifetime)
+		void ResetParticle(vec2 const& r_startRelPosition, float particleWidth, float particleHeight, float startRotation, float startLifetime)
 		{
+			EntityManager::GetInstance().Get<Transform>(particleID).relPosition = r_startRelPosition;
 			// Sets the starting size of the particle
 			EntityManager::GetInstance().Get<Transform>(particleID).width = particleWidth;
 			EntityManager::GetInstance().Get<Transform>(particleID).height = particleHeight;
+
+			EntityManager::GetInstance().Get<Transform>(particleID).relOrientation = startRotation;
 
 			// Sets the lifetime of the particle
 			lifetime = startLifetime;
@@ -82,10 +85,10 @@ namespace PE
 			EntityManager::GetInstance().Get<Transform>(particleID).height += heightDifference;
 		}
 
-		void UpdateColor(float redDifference, float greenDifference, float blueDifference, float alphaDifference)
+		void UpdateColor(vec4 const& colorDifference)
 		{
 			glm::vec4 const& particleColor = EntityManager::GetInstance().Get<Graphics::Renderer>(particleID).GetColor();
-			EntityManager::GetInstance().Get<Graphics::Renderer>(particleID).SetColor(particleColor.x + redDifference, particleColor.y + greenDifference, particleColor.z + blueDifference, particleColor.w + alphaDifference);
+			EntityManager::GetInstance().Get<Graphics::Renderer>(particleID).SetColor(particleColor.x + colorDifference.x, particleColor.y + colorDifference.y, particleColor.z + colorDifference.z, particleColor.w + colorDifference.w);
 		}
 
 		// void UpdateAnimation()
