@@ -166,11 +166,13 @@ namespace PE
 					{
 						float mouseX{}, mouseY{};
 						InputSystem::GetCursorViewportPosition(p_window, mouseX, mouseY);
-						vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiCamera().GetViewportToWorldPosition(mouseX, mouseY);
+						vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(mouseX, mouseY);
+						//vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiCamera().GetViewportToWorldPosition(mouseX, mouseY);
 
 						Transform& knobTransform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
+						Transform& sliderTransform = EntityManager::GetInstance().Get<Transform>(objectID);
 
-						knobTransform.relPosition.x = CurrentMousePos.x;
+						knobTransform.relPosition.x = CurrentMousePos.x - sliderTransform.position.x;
 
 						if (knobTransform.relPosition.x < slider.m_startPoint)
 						{ 
