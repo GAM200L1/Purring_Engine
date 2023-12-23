@@ -4259,7 +4259,10 @@ namespace PE {
 
 					auto EditorCamera = GETCAMERAMANAGER()->GetEditorCamera();
 					glm::mat4 cameraProjection = EditorCamera.GetViewToNdcMatrix();
-					glm::mat4 cameraView = EditorCamera.GetWorldToViewMatrix();
+
+					// if the selected obj is UI, make the camera view matrix an identity matrix
+					glm::mat4 cameraView = (EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) ? 
+							glm::identity<glm::mat4>() : EditorCamera.GetWorldToViewMatrix());
 
 					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);
 					glm::mat4 transform{ Graphics::RendererManager::GenerateTransformMatrix(ct.width,ct.height,ct.orientation,ct.position.x,ct.position.y)};
