@@ -4233,12 +4233,12 @@ namespace PE {
 		{
 			ImGui::Begin("Scene View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
-			m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
-			m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
-
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) 
 			{
+				m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
+				m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
+
 				if (r_frameBuffer.GetTextureId())
 				{
 					//the graphics rendered onto an image on the imgui window
@@ -4253,6 +4253,9 @@ namespace PE {
 				m_mouseInScene = ImGui::IsWindowHovered();
 				m_sceneViewFocused = ImGui::IsWindowFocused();
 
+				ImGuiStyle& style = ImGui::GetStyle();
+				ImVec2 padding{ style.WindowPadding };
+
 				if (m_currentSelectedObject != -1)
 				{
 					//by default is false though
@@ -4262,7 +4265,7 @@ namespace PE {
 					ImGuizmo::SetDrawlist();
 
 					//basically setting the viewport if the position is off need to change or add/remove offset
-					ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, (float)ImGui::GetWindowWidth(), (float)ImGui::GetWindowHeight());
+					ImGuizmo::SetRect(ImGui::GetWindowPos().x + padding.x, ImGui::GetWindowPos().y + padding.y, m_renderWindowWidth, m_renderWindowHeight);
 
 					auto EditorCamera = GETCAMERAMANAGER()->GetEditorCamera();
 					glm::mat4 cameraProjection = EditorCamera.GetViewToNdcMatrix();
