@@ -100,5 +100,53 @@ namespace PE {
 					if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
 				}
 
+				if (InputSystem::IsKeyHeld(GLFW_KEY_R))
+				{
+
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE_Y;
+					}
+					else
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE;
+					}
+				}
+
+				if (InputSystem::IsKeyHeld(GLFW_KEY_S))
+				{
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE_Y;
+					}
+					else
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE;
+					}
+				}
+
+				if (InputSystem::IsKeyHeld(GLFW_KEY_T))
+				{
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE_Y;
+					}
+					else
+					{
+					m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+					}
+				}
 		}
 }

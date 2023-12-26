@@ -21,6 +21,7 @@
 #include "Singleton.h"
 #include "ECS/EntityFactory.h"
 #include "Hierarchy/HierarchyManager.h"
+#include <glm/glm.hpp>
 typedef unsigned long long EntityID;
 namespace PE
 {
@@ -209,7 +210,7 @@ namespace PE
 		 \brief										constructor taking in values
 		 \param [In]	EntityID id					id that is edited
 		*************************************************************************************/
-		DeleteObjectUndo(EntityID id) : ObjectDeleted(id) 
+		DeleteObjectUndo(EntityID id) : m_objectDeleted(id) 
 		{
 		}
 	public:
@@ -219,34 +220,34 @@ namespace PE
 		*************************************************************************************/
 		virtual void Undo() override
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).UnHandicapEntity();
-			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren)
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).UnHandicapEntity();
+			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren)
 			{
-				Hierarchy::GetInstance().AttachChild(ObjectDeleted, id);
+				Hierarchy::GetInstance().AttachChild(m_objectDeleted, id);
 			}
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren.clear();
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren.clear();
 		}
 		/*!***********************************************************************************
 		 \brief			overriden Redo Function
 		*************************************************************************************/
 		virtual void Redo() override
 		{
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).children.size())
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).children.size())
 			{
-				for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).children)
+				for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).children)
 				{
-					EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren.emplace_back(cid);
+					EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren.emplace_back(cid);
 				}
 
-				for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren)
+				for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren)
 				{
-					if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.has_value())
-						Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.value(), cid);
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).parent.has_value())
+						Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).parent.value(), cid);
 					else
 						Hierarchy::GetInstance().DetachChild(cid);
 				}
 			}
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).HandicapEntity();
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).HandicapEntity();
 			Editor::GetInstance().ResetSelectedObject();
 		}
 		/*!***********************************************************************************
@@ -254,12 +255,12 @@ namespace PE
 		*************************************************************************************/
 		virtual void OnUndoStackLeave() override 
 		{
-			EntityManager::GetInstance().RemoveEntity(ObjectDeleted);
+			EntityManager::GetInstance().RemoveEntity(m_objectDeleted);
 		}
 
 		// ----- Private Variables ----- // 
 	private:
-		EntityID ObjectDeleted;
+		EntityID m_objectDeleted;
 	};
 
 	class CreateObjectUndo : public EditorChanges
@@ -274,7 +275,7 @@ namespace PE
 		 \brief										constructor taking in values
 		 \param [In]	EntityID id					id that is edited
 		*************************************************************************************/
-		CreateObjectUndo(EntityID id): ObjectCreated(id) {}
+		CreateObjectUndo(EntityID id): m_objectCreated(id) {}
 	public:
 		// ----- Public Functions ----- // 
 		/*!***********************************************************************************
@@ -282,7 +283,7 @@ namespace PE
 		*************************************************************************************/
 		virtual void Undo() override
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectCreated).HandicapEntity();
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectCreated).HandicapEntity();
 			Editor::GetInstance().ResetSelectedObject();
 		}
 		/*!***********************************************************************************
@@ -290,17 +291,97 @@ namespace PE
 		*************************************************************************************/
 		virtual void Redo() override
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectCreated).UnHandicapEntity();
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectCreated).UnHandicapEntity();
 		}
 		/*!***********************************************************************************
 		 \brief     When a change leaves the redo stack
 		*************************************************************************************/
 		virtual void OnRedoStackLeave() override
 		{
-			EntityManager::GetInstance().RemoveEntity(ObjectCreated);
+			EntityManager::GetInstance().RemoveEntity(m_objectCreated);
 		}
 		// ----- Private Variables ----- // 
 	private:
-		EntityID ObjectCreated;
+		EntityID m_objectCreated;
+	};
+
+	class GuizmoUndo : public EditorChanges
+	{
+		// ----- Constructors ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief			deleted default constructor
+		*************************************************************************************/
+		GuizmoUndo() = delete;
+		/*!***********************************************************************************
+		 \brief										constructor taking in values
+		 \param [In]	EntityID id					id that is edited
+		*************************************************************************************/
+		GuizmoUndo(float* old_t, float* new_t, Transform* p_t, bool hasParent) : p_location(p_t),m_hasParent(hasParent) 
+		{		
+			for (int i = 0; i < 16; ++i)
+			{
+				m_oldTransform[i] = old_t[i];
+				m_newTransform[i] = new_t[i];
+			}
+		}
+	public:
+		// ----- Public Functions ----- // 
+		/*!***********************************************************************************
+		 \brief			overriden Undo Function
+		*************************************************************************************/
+		virtual void Undo() override
+		{
+			float newPos[3], newRot[3], newScale[3];
+			ImGuizmo::DecomposeMatrixToComponents(m_oldTransform, newPos, newRot, newScale);
+
+			p_location->width = newScale[0];//transform[0][0];
+			p_location->height = newScale[1];//transform[1][1];
+
+			if (m_hasParent)
+			{
+				p_location->relOrientation = newRot[2];//rotationEulerAngles.z;
+				p_location->relPosition.x = newPos[0];
+				p_location->relPosition.y = newPos[1];
+			}
+			else
+			{
+
+				p_location->orientation = newRot[2];//rotationEulerAngles.z;
+				p_location->position.x = newPos[0];
+				p_location->position.y = newPos[1];
+			}
+		}
+		/*!***********************************************************************************
+		 \brief			overriden Redo Function
+		*************************************************************************************/
+		virtual void Redo() override
+		{
+			float newPos[3], newRot[3], newScale[3];
+			ImGuizmo::DecomposeMatrixToComponents(m_newTransform, newPos, newRot, newScale);
+
+			p_location->width = newScale[0];//transform[0][0];
+			p_location->height = newScale[1];//transform[1][1];
+
+			if (m_hasParent)
+			{
+				p_location->relOrientation = newRot[2];//rotationEulerAngles.z;
+				p_location->relPosition.x = newPos[0];
+				p_location->relPosition.y = newPos[1];
+			}
+			else
+			{
+
+				p_location->orientation = newRot[2];//rotationEulerAngles.z;
+				p_location->position.x = newPos[0];
+				p_location->position.y = newPos[1];
+			}
+		}
+		// ----- Private Variables ----- // 
+	private:
+		float m_oldTransform[16]{};
+		float m_newTransform[16]{};
+		Transform* p_location;
+		bool m_hasParent;
 	};
 }

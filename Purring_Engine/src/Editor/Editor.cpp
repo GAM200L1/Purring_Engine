@@ -53,6 +53,7 @@
 #include "GUISystem.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
+#include <cmath>
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
 #include "Graphics/Text.h"
@@ -63,7 +64,6 @@
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
 #include "UndoStack.h"
-#include "ImGuizmo.h"
 #include "System.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -265,6 +265,16 @@ namespace PE {
 			AddInfoLog("Turning Debug lines on");
 		}
 		m_renderDebug = !m_renderDebug;
+	}
+
+	bool Editor::CompareFloat16Arrays(float* a, float* b)
+	{
+		for (int i = 0; i < 16; ++i) {
+			if (a[i] != b[i]) {
+				return false; // Values differ by more than epsilon
+			}
+		}
+		return true; // All values are within epsilon of each other
 	}
 
 	void Editor::ping()
@@ -4231,6 +4241,8 @@ namespace PE {
 	{
 		if (IsEditorActive()) 
 		{
+			static bool hasParent;
+			static bool moving;
 			ImGui::Begin("Scene View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
@@ -4274,19 +4286,77 @@ namespace PE {
 					glm::mat4 cameraView = (EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) ? 
 							glm::identity<glm::mat4>() : EditorCamera.GetWorldToViewMatrix());
 
-					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);
-					glm::mat4 transform{ Graphics::RendererManager::GenerateTransformMatrix(ct.width,ct.height,ct.orientation,ct.position.x,ct.position.y)};
+					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);				
+
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(m_currentSelectedObject))
+					{
+						hasParent = EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value();
+					}
+
+					float transform[16]{};
+					static float OldTransform[16]{};
+
+						float Scale[3]{ ct.width,ct.height,0 }
+							, Rotation[3]{ 0,0,ct.orientation }
+						, Translation[3]{ ct.position.x,ct.position.y };
+
+						ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
+
+
 
 					//for rendering the gizmo
-					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),ImGuizmo::OPERATION::TRANSLATE,ImGuizmo::LOCAL,glm::value_ptr(transform));
+					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),m_currentGizmoOperation,ImGuizmo::LOCAL, transform);
+
+
+					if (moving && !ImGui::IsMouseDown(0))
+					{
+						if (!CompareFloat16Arrays(OldTransform,transform))
+						{
+							UndoStack::GetInstance().AddChange(new GuizmoUndo(OldTransform, transform, &ct, hasParent));
+						}
+						moving = false;
+					}
+
+					if (ImGuizmo::IsUsing())
+					{
+							if (m_mouseInScene && ImGui::IsMouseDown(0) && !moving)
+							{
+								moving = true;
+								for (int i = 0; i < 16; ++i) {
+									OldTransform[i] = transform[i];
+								}
+							}
+
+							float newScale[3];
+							float newRot[3];
+							float newPos[3];
+							ImGuizmo::DecomposeMatrixToComponents(transform, newPos, newRot, newScale);
+
+							ct.width = newScale[0];
+							ct.height = newScale[1];
+
+							if (hasParent)
+							{
+								ct.relOrientation = newRot[2];
+								ct.relPosition.x = newPos[0];
+								ct.relPosition.y = newPos[1];
+							}
+							else
+							{
+
+								ct.orientation = newRot[2];
+								ct.position.x = newPos[0];
+								ct.position.y = newPos[1];
+							}
+					}
 				}
 			}
 			static ImVec2 clickedPosition;
 			static ImVec2 screenPosition; // coordinates from the top left corner
-			static ImVec2 currentPosition;
-			static vec2 startPosition;
-			static bool hasParent;
-			if (m_mouseInScene)
+			//static ImVec2 currentPosition;
+			//static vec2 startPosition;
+
+			if (m_mouseInScene && !ImGuizmo::IsUsing())
 			if (ImGui::IsMouseClicked(0))
 			{
 				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
@@ -4346,224 +4416,225 @@ namespace PE {
 						{
 							// It is within the bounds, break out of the loop
 							m_currentSelectedObject = static_cast<int>(id);
-							if (EntityManager::GetInstance().Has<EntityDescriptor>(m_currentSelectedObject))
-							{
-								hasParent = EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value();
-							}
 							break;
 						}
 					}
 
-					if (m_currentSelectedObject != -1)
-					{
-						if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
-						{
-							if (hasParent)
-							{
-								startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition;
-							}
-							else
-							{
-								startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
-							}
-						}
-					}
+					//if (m_currentSelectedObject != -1)
+					//{
+					//	if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+					//	{
+					//		if (hasParent)
+					//		{
+					//			startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition;
+					//		}
+					//		else
+					//		{
+					//			startPosition = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position;
+					//		}
+					//	}
+					//}
 				}
 
 				std::cout << "\n";
 			}
 
-			static float rotation;
-			static bool rotating = false;
-			static bool scaling = false;
-			static bool moved = false;
-			static float height;
-			static float width;
-			if (m_currentSelectedObject != -1)
-			{
-				if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
-				{
-					if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
-					{
-						if (hasParent)
-						{
-							rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relOrientation;
-						}
-						else
-						{
-							rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation;
-						}
-						clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-						rotating = true;
-					}
-				}
+			//////////////////////////////////////////////////////////////////////////
+			//all the commented out parts is part of our old code for moving objects//
+			// Do not remove incase ImGuizmo suddenly is not allowed				//
+			//////////////////////////////////////////////////////////////////////////
 
-				if (InputSystem::IsKeyTriggered(GLFW_KEY_S) && scaling == false)
-				{
-					if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
-					{
-						height = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height;
-						width = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width;
-						clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-						clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
+			//static float rotation;
+			//static bool rotating = false;
+			//static bool scaling = false;
+			//static bool moved = false;
+			//static float height;
+			//static float width;
+			//if (m_currentSelectedObject != -1)
+			//{
+			//	if (InputSystem::IsKeyTriggered(GLFW_KEY_R) && rotating == false)
+			//	{
+			//		if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+			//		{
+			//			if (hasParent)
+			//			{
+			//				rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relOrientation;
+			//			}
+			//			else
+			//			{
+			//				rotation = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation;
+			//			}
+			//			clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+			//			rotating = true;
+			//		}
+			//	}
 
-						scaling = true;
-					}
-				}
-			}
-			float currentRotation;
-			float currentHeight;
-			float currentWidth;
-			if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0) && m_currentSelectedObject != -1)
-			{
-				currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
-				currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-				// Check that position is within the viewport
-				if (!(clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
-					|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight))
-				{
-					ImVec2 offset;
-					offset.x = currentPosition.x - clickedPosition.x;
-					offset.y = currentPosition.y - clickedPosition.y;
+			//	if (InputSystem::IsKeyTriggered(GLFW_KEY_S) && scaling == false)
+			//	{
+			//		if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+			//		{
+			//			height = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height;
+			//			width = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width;
+			//			clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+			//			clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
 
-					float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
+			//			scaling = true;
+			//		}
+			//	}
+			//}
+			//float currentRotation;
+			//float currentHeight;
+			//float currentWidth;
+			//if (ImGui::IsMouseDragging(0) && (m_currentSelectedObject >= 0) && m_currentSelectedObject != -1)
+			//{
+			//	currentPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
+			//	currentPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+			//	// Check that position is within the viewport
+			//	if (!(clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
+			//		|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight))
+			//	{
+			//		ImVec2 offset;
+			//		offset.x = currentPosition.x - clickedPosition.x;
+			//		offset.y = currentPosition.y - clickedPosition.y;
 
-					if (!EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<TextComponent>())
-						&& !EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-					{
-						offset.x *= magnification;
-						offset.y *= magnification;
-					}
+			//		float magnification = Graphics::CameraManager::GetEditorCamera().GetMagnification();
 
-
-					if (InputSystem::IsKeyHeld(GLFW_KEY_R) && scaling == false)
-					{
-						currentRotation = rotation - offset.y;
-						if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
-						{
-							if (hasParent)
-							{
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relOrientation = currentRotation;
-							}
-							else
-							{
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation = currentRotation;
-							}
-
-							rotating = true;
-						}
-					}
-
-					if (InputSystem::IsKeyHeld(GLFW_KEY_S) && rotating == false)
-					{
-						if (InputSystem::IsKeyHeld(GLFW_KEY_X))
-						{
-							currentWidth = width + offset.x;
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = height;
-						}
-						else if (InputSystem::IsKeyHeld(GLFW_KEY_Y))
-						{
-							currentHeight = height + offset.y;
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = width;
-						}
-						else
-						{
-							currentHeight = height + offset.y;
-							currentWidth = width + offset.x;
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
-								EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
-						}
-						scaling = true;
-					}
-
-					if (m_mouseInScene)
-						if (rotating != true && scaling != true)
-						{ 
-							moved = true;
-							if (InputSystem::IsKeyHeld(GLFW_KEY_X))
-							{
-								if (hasParent)
-								{
-									EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition = vec2(startPosition.x + offset.x, startPosition.y);
-								}
-								else
-								{
-									EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y);
-								}
-
-							}
-							else if (InputSystem::IsKeyHeld(GLFW_KEY_Y))
-							{
-								if (hasParent)
-								{
-									EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition = vec2(startPosition.x, startPosition.y + offset.y);
-								}
-								else
-								{
-									EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x, startPosition.y + offset.y);
-								}
-							}
-							else
-							{
-								if (hasParent)
-								{
-									EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
-								}
-								else
-								{
-									EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
-								}
-							}
-						}
+			//		if (!EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<TextComponent>())
+			//			&& !EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+			//		{
+			//			offset.x *= magnification;
+			//			offset.y *= magnification;
+			//		}
 
 
-				}
+			//		if (InputSystem::IsKeyHeld(GLFW_KEY_R) && scaling == false)
+			//		{
+			//			currentRotation = rotation - offset.y;
+			//			if (EntityManager::GetInstance().Has<Transform>(m_currentSelectedObject))
+			//			{
+			//				if (hasParent)
+			//				{
+			//					EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relOrientation = currentRotation;
+			//				}
+			//				else
+			//				{
+			//					EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation = currentRotation;
+			//				}
 
-			}
-			else
-			{
-				clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
-				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
-			}
+			//				rotating = true;
+			//			}
+			//		}
 
-			if (!ImGui::IsMouseDown(0) && m_currentSelectedObject != -1)
-			{
-				if (moved && EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position != vec2(clickedPosition.x, clickedPosition.y))
-				{
-					if (hasParent)
-					{
-						UndoStack::GetInstance().AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition));
-					}
-					else
-					{
-						UndoStack::GetInstance().AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
-					}
+			//		if (InputSystem::IsKeyHeld(GLFW_KEY_S) && rotating == false)
+			//		{
+			//			if (InputSystem::IsKeyHeld(GLFW_KEY_X))
+			//			{
+			//				currentWidth = width + offset.x;
+			//					EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+			//					EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = height;
+			//			}
+			//			else if (InputSystem::IsKeyHeld(GLFW_KEY_Y))
+			//			{
+			//				currentHeight = height + offset.y;
+			//					EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+			//					EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = width;
+			//			}
+			//			else
+			//			{
+			//				currentHeight = height + offset.y;
+			//				currentWidth = width + offset.x;
+			//					EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height = currentHeight;
+			//					EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width = currentWidth;
+			//			}
+			//			scaling = true;
+			//		}
 
-				}
-				if (rotating && rotation != EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation)
-				{
-					if (hasParent)
-					{
-						UndoStack::GetInstance().AddChange(new ValueChange<float>(rotation, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relOrientation, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relOrientation));
-					}
-					else
-					{
-						UndoStack::GetInstance().AddChange(new ValueChange<float>(rotation, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation));
-					}
-				}
+			//		if (m_mouseInScene)
+			//			if (rotating != true && scaling != true)
+			//			{ 
+			//				moved = true;
+			//				if (InputSystem::IsKeyHeld(GLFW_KEY_X))
+			//				{
+			//					if (hasParent)
+			//					{
+			//						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition = vec2(startPosition.x + offset.x, startPosition.y);
+			//					}
+			//					else
+			//					{
+			//						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y);
+			//					}
 
-				if (scaling)
-				{
-					if (vec2(width, height) != vec2(EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height))
-						UndoStack::GetInstance().AddChange(new ValueChange2<float>(height, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height
-						,width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width));
-				}
-				rotating = false;
-				scaling = false;
-				moved = false;
-			}
+			//				}
+			//				else if (InputSystem::IsKeyHeld(GLFW_KEY_Y))
+			//				{
+			//					if (hasParent)
+			//					{
+			//						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition = vec2(startPosition.x, startPosition.y + offset.y);
+			//					}
+			//					else
+			//					{
+			//						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x, startPosition.y + offset.y);
+			//					}
+			//				}
+			//				else
+			//				{
+			//					if (hasParent)
+			//					{
+			//						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+			//					}
+			//					else
+			//					{
+			//						EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position = vec2(startPosition.x + offset.x, startPosition.y + offset.y);
+			//					}
+			//				}
+			//			}
+
+
+			//	}
+
+			//}
+			//else
+			//{
+			//	clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y;
+			//	clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x;
+			//}
+
+			//if (!ImGui::IsMouseDown(0) && m_currentSelectedObject != -1)
+			//{
+			//	if (moved && EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position != vec2(clickedPosition.x, clickedPosition.y))
+			//	{
+			//		if (hasParent)
+			//		{
+			//			UndoStack::GetInstance().AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relPosition));
+			//		}
+			//		else
+			//		{
+			//			UndoStack::GetInstance().AddChange(new ValueChange<vec2>(startPosition, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).position));
+			//		}
+
+			//	}
+			//	if (rotating && rotation != EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation)
+			//	{
+			//		if (hasParent)
+			//		{
+			//			UndoStack::GetInstance().AddChange(new ValueChange<float>(rotation, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relOrientation, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).relOrientation));
+			//		}
+			//		else
+			//		{
+			//			UndoStack::GetInstance().AddChange(new ValueChange<float>(rotation, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).orientation));
+			//		}
+			//	}
+
+			//	if (scaling)
+			//	{
+			//		if (vec2(width, height) != vec2(EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height))
+			//			UndoStack::GetInstance().AddChange(new ValueChange2<float>(height, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).height
+			//			,width, EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width, &EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject).width));
+			//	}
+			//	rotating = false;
+			//	scaling = false;
+			//	moved = false;
+			//}
 			//end the window
 
 

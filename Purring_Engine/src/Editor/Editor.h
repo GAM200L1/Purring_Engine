@@ -22,6 +22,7 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <misc/cpp/imgui_stdlib.h>
+#include "ImGuizmo.h"
 
 #include "Singleton.h"
 
@@ -280,6 +281,17 @@ namespace PE {
 		 \param[in] string path name
 		*************************************************************************************/
 		void LoadSceneFromGivenPath(std::string const& path);
+
+		/*!***********************************************************************************
+		 \brief	Compare 2 C-Style Float[16] Arrays to check for equality
+
+		 \param[in] float* a	Matrix A
+		 \param[in] float* b	Matrix B
+		 \param[in] float epsilon value to check if values differ by more than episilon
+
+		 \return true if equal, false if not
+		*************************************************************************************/
+		bool CompareFloat16Arrays(float* a, float* b);
 		// ----- ImGui Command Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -362,6 +374,7 @@ namespace PE {
 		bool m_objectIsSelected;
 		bool m_sceneViewFocused;
 		int m_currentSelectedObject;
+		ImGuizmo::OPERATION m_currentGizmoOperation{ImGuizmo::OPERATION::TRANSLATE};
 
 		//variable for assets browser
 		float m_time;

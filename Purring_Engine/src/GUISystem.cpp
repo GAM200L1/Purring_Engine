@@ -293,6 +293,8 @@ namespace PE
 
 	void GUISystem::OnMouseRelease(const Event<MouseEvents>& r_ME)
 	{
+		r_ME; // to stop error
+
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
