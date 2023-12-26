@@ -3171,6 +3171,22 @@ namespace PE {
 			//		ImGui::EndTooltip();
 			//	}
 			//}
+
+
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Separator();
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+			ImGui::Text("Total Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::totalDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Object Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::objectDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Text Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::textDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Debug Shape Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::debugDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+
 			ImGui::End(); //imgui close
 		}
 	}

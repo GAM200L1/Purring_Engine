@@ -47,6 +47,10 @@ namespace PE
         public:
             // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
             static std::vector<EntityID> renderedEntities;
+            static unsigned totalDrawCalls;   // Sum total of all draw calls made
+            static unsigned textDrawCalls;    // Total draw calls made for text (1 draw call per chara)
+            static unsigned objectDrawCalls;  // Total draw calls for gameobjects
+            static unsigned debugDrawCalls;   // Total draw calls for debug shapes
 
             // ----- Constructors ----- //
         public:
@@ -323,6 +327,7 @@ namespace PE
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
             std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
             std::vector<glm::vec2> m_UV{};
+
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************

@@ -60,6 +60,10 @@ namespace PE
     {
         // Initialize static variables
         std::vector<EntityID> RendererManager::renderedEntities{};
+        unsigned RendererManager::totalDrawCalls{};   // Sum total of all draw calls made
+        unsigned RendererManager::textDrawCalls{};    // Total draw calls made for text (1 draw call per chara)
+        unsigned RendererManager::objectDrawCalls{};  // Total draw calls for gameobjects
+        unsigned RendererManager::debugDrawCalls{};   // Total draw calls for debug shapes
 
         RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, int const windowWidth, int const windowHeight)
             : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
@@ -129,6 +133,9 @@ namespace PE
             }
             deltaTime; // Prevent warnings
 
+            // Reset counters
+            totalDrawCalls = 0, textDrawCalls = 0, objectDrawCalls = 0, debugDrawCalls = 0;
+            
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
 
@@ -244,6 +251,8 @@ namespace PE
 
             // Unbind the RBO for rendering the game scene to
             m_renderFrameBuffer.Unbind();
+
+            totalDrawCalls = textDrawCalls + objectDrawCalls + debugDrawCalls;
 
 #ifndef GAMERELEASE
             // Check if the Imgui editor windows are active
@@ -589,6 +598,11 @@ namespace PE
             // Unbind everything
             m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
+
+            if (meshType == EnumMeshType::QUAD || meshType == EnumMeshType::TRIANGLE)
+                ++objectDrawCalls;
+            else
+                ++debugDrawCalls;
         }
 
 
@@ -631,6 +645,11 @@ namespace PE
             m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
             glBindTexture(GL_TEXTURE_2D, 0);
+
+            if (meshType == EnumMeshType::QUAD || meshType == EnumMeshType::TRIANGLE)
+                ++objectDrawCalls;
+            else
+                ++debugDrawCalls;
         }
 
 
@@ -699,6 +718,8 @@ namespace PE
             {
                 p_texture->Unbind();
             }
+
+            ++objectDrawCalls;
         }   
 
 
@@ -806,6 +827,8 @@ namespace PE
             m_colors.clear();
             m_UV.clear();
             m_modelToWorldMatrices.clear();
+
+            ++objectDrawCalls;
         }
 
         void RendererManager::DrawCollider(AABBCollider const& r_aabbCollider,
@@ -968,6 +991,8 @@ namespace PE
 
                     // render quad
                     glDrawArrays(GL_TRIANGLES, 0, 6);
+
+                    ++textDrawCalls;
 
                     // now advance cursors for next glyph
                     position.x += (ch.Advance >> 6) * textComponent.GetSize(); // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
