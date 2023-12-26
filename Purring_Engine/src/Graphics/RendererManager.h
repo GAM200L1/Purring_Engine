@@ -385,5 +385,11 @@ namespace PE
             void PrintSpecifications() const;
         };
 
+        /*!***********************************************************************************
+         \brief Prints error messages from OpenGL.
+        *************************************************************************************/
+        void APIENTRY GlDebugOutput(GLenum source, GLenum type, unsigned int id,
+            GLenum severity, GLsizei length, const char* message, const void* userParam);
+
     } // End of Graphics namespace
 } // End of PE namespace
