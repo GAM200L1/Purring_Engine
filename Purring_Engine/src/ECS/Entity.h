@@ -599,6 +599,8 @@ namespace PE
 		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
 
+		float renderOrder { FLT_MAX };
+
 		bool isActive{ true };  // defaults to true
 		bool isAlive{ true };   // defaults to true, mainly used in undo/redo for editor functionality
 		bool toSave{ true };    // used for whether the entity should be saved or not

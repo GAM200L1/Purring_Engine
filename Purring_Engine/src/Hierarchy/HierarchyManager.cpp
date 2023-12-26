@@ -19,11 +19,15 @@
 #include "prpch.h"
 
 #include "HierarchyManager.h"
+#include "Logging/Logger.h"
+
+extern Logger engine_logger;
 
 
 
 namespace PE
 {
+
 	void Hierarchy::Update()
 	{
 		UpdateParentList();
@@ -47,6 +51,7 @@ namespace PE
 		// set the relative positon to the computed values
 		EntityManager::GetInstance().Get<Transform>(child).relPosition = vec2(tmpc.x, tmpc.y);
 		EntityManager::GetInstance().Get<Transform>(child).relOrientation = EntityManager::GetInstance().Get<Transform>(child).orientation - EntityManager::GetInstance().Get<Transform>(parent).orientation;
+		UpdateRenderOrder(parent);
 	}
 
 	void Hierarchy::DetachChild(const EntityID& child)
@@ -58,6 +63,7 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.reset();
 		EntityManager::GetInstance().Get<Transform>(child).relPosition.Zero();
 		EntityManager::GetInstance().Get<Transform>(child).relOrientation = 0;
+		UpdateRenderOrder(child);
 	}
 
 	inline const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& parent) const
@@ -71,7 +77,7 @@ namespace PE
 	}
 
 	// recursive function to help with parent child ordering
-	void Hierarchy::UpdateHelper(const EntityID& r_parentID)
+	void Hierarchy::TransformUpdateHelper(const EntityID& r_parentID)
 	{
 		const Transform& parent = EntityManager::GetInstance().Get<Transform>(r_parentID);
 
@@ -89,7 +95,7 @@ namespace PE
 			// if it has children recursively call this function, with the current ID as the input
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(childrenID).children.size())
 			{
-				UpdateHelper(childrenID);
+				TransformUpdateHelper(childrenID);
 			}
 		}
 	}
@@ -111,7 +117,7 @@ namespace PE
 	{
 		for (const EntityID& parentID : parentOrder)
 		{
-			UpdateHelper(parentID);
+			TransformUpdateHelper(parentID);
 		}
 	}
 
@@ -120,7 +126,98 @@ namespace PE
 		// empty for now
 	}
 
-	void Hierarchy::UpdateRenderOrder()
+	void Hierarchy::RenderOrderUpdateHelper(const EntityID& parent, float min, float max)
 	{
+		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.size() + 1);
+		unsigned cnt{1};
+		for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(parent).children)
+		{
+			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+
+			const float order = min + (delta * cnt);
+
+			if (desc.renderOrder <= min || desc.renderOrder >= max || (desc.renderOrder != order))
+				sceneHierarchy.erase(desc.renderOrder);
+			desc.renderOrder = order;
+			sceneHierarchy[desc.renderOrder] = id;
+			
+			if (desc.children.size())
+			{
+				RenderOrderUpdateHelper(id, desc.renderOrder, desc.renderOrder + delta);
+			}
+
+			++cnt;
+		}
+	}
+
+
+	void Hierarchy::UpdateRenderOrder(EntityID targetID)
+	{
+		// update specific entity
+		if (targetID != ULLONG_MAX)
+		{
+			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(targetID);
+
+			if (!desc.parent.has_value())
+			{
+				sceneHierarchy.erase(desc.renderOrder);
+				desc.renderOrder = static_cast<float>(desc.sceneID);
+				sceneHierarchy[desc.renderOrder] = targetID;
+			}
+
+			// recursively update children
+			if (desc.children.size())
+			{
+				RenderOrderUpdateHelper(targetID, desc.renderOrder, desc.renderOrder + 1.f);
+			}
+		}
+		else // update all the parents
+		{
+			for (const EntityID& parentID : parentOrder)
+			{
+				EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(parentID);
+
+				// ignoring UI for now
+				if (desc.sceneID == ULLONG_MAX)
+					desc.sceneID = parentID;
+				if (sceneHierarchy.find(desc.renderOrder) == sceneHierarchy.end())
+				{
+					desc.renderOrder = desc.sceneID;
+					sceneHierarchy[desc.renderOrder] = parentID;
+				}
+
+				// recursively update children
+				if (desc.children.size())
+				{
+					RenderOrderUpdateHelper(parentID, desc.renderOrder, desc.renderOrder + 1.f);
+				}
+				
+			}
+		}
+		
+		renderOrder.clear();
+		renderOrderUI.clear();
+		for (auto [k, v] : sceneHierarchy)
+		{
+			if (EntityManager::GetInstance().Has<PE::Graphics::GUIRenderer>(v))
+			{
+				renderOrderUI.emplace_back(v);
+			}
+			else
+			{
+				renderOrder.emplace_back(v);
+			}
+		}
+
+		//std::cout << "-- Object Render Order --" << std::endl;
+		//for (const auto& id : renderOrder)
+		//{
+		//	std::cout << id << std::endl;
+		//}
+		//std::cout << "-- UI Render Order --" << std::endl;
+		//for (const auto& id : renderOrderUI)
+		//{
+		//	std::cout << id << std::endl;
+		//}
 	}
 }

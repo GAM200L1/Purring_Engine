@@ -109,7 +109,7 @@ namespace PE
 		 
 		 \param[in] id 	Parent EntityID
 		*************************************************************************************/
-		void UpdateHelper(const EntityID& id);
+		void TransformUpdateHelper(const EntityID& id);
 
 		/*!***********************************************************************************
 		 \brief Updates the parentOrder vector (grabs all the true parents of the hierarchy, 
@@ -130,15 +130,22 @@ namespace PE
 		*************************************************************************************/
 		void UpdateETC(); // for any other misc behaviour that we may want to add for inheriting stuff
 
+
+		void RenderOrderUpdateHelper(const EntityID& id, float min, float max);
+
 		/*!***********************************************************************************
 		 \brief Updates the renderOrder vector (TODO)
 		 
 		*************************************************************************************/
-		void UpdateRenderOrder();
+		void UpdateRenderOrder(EntityID targetID = ULLONG_MAX);
 
 	// ----- Private Variables ----- //
 	private: 
 		std::vector<EntityID> renderOrder;
+		std::vector<EntityID> renderOrderUI;
+
 		std::vector<EntityID> parentOrder; // wiped every frame? used to keep track of update order for parents, might change to list if i start inserting more...
+
+		std::map<float, EntityID> sceneHierarchy;
 	};
 }
