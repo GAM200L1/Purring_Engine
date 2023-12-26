@@ -197,13 +197,15 @@ namespace PE
 		
 		renderOrder.clear();
 		renderOrderUI.clear();
+		// to update the logic here
+		// main concern is differentiation of UI and world objects will be modified
 		for (auto [k, v] : sceneHierarchy)
 		{
 			if (EntityManager::GetInstance().Has<PE::Graphics::GUIRenderer>(v))
 			{
 				renderOrderUI.emplace_back(v);
 			}
-			else
+			else if (EntityManager::GetInstance().Has<PE::Graphics::Renderer>(v))
 			{
 				renderOrder.emplace_back(v);
 			}
