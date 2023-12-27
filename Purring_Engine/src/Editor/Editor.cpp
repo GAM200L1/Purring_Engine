@@ -154,7 +154,7 @@ namespace PE {
 		m_showGameView = false;
 
 		// Set the default visual theme of the editor
-		m_currentStyle = GuiStyle::DARK;
+		m_currentStyle = GuiStyle::DARKMODE2;
 
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
