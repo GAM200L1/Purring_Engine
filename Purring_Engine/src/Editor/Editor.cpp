@@ -4308,7 +4308,7 @@ namespace PE {
 					ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
 
 					//for rendering the gizmo
-					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),m_currentGizmoOperation,ImGuizmo::LOCAL, transform);
+					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),m_currentGizmoOperation,ImGuizmo::WORLD, transform);
 
 
 					if (moving && !ImGui::IsMouseDown(0))
@@ -4346,6 +4346,13 @@ namespace PE {
 						{
 							ct.position.x = newPos[0];
 							ct.position.y = newPos[1];
+
+							if (hasParent)
+							{
+								Transform const& parentTransform{ EntityManager::GetInstance().Get<Transform>(parentId) };
+								ct.relPosition.x = ct.position.x - parentTransform.position.x;
+								ct.relPosition.y = ct.position.y - parentTransform.position.y;
+							}
 						}
 
 						// Update relative transform values
@@ -4353,8 +4360,6 @@ namespace PE {
 						{
 							Transform const& parentTransform{ EntityManager::GetInstance().Get<Transform>(parentId) };
 							ct.relOrientation = ct.orientation - parentTransform.orientation;
-							ct.relPosition.x = ct.position.x - parentTransform.position.x;
-							ct.relPosition.y = ct.position.y - parentTransform.position.y;
 						}
 					}
 				}
