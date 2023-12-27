@@ -2880,7 +2880,7 @@ namespace PE {
 						}
 					}
 
-					int numItemPerRow = (ImGui::GetWindowSize().x < 100.f) ? 1 : static_cast<int>(ImGui::GetWindowSize().x / 100.f);
+					int numItemPerRow = (ImGui::GetWindowSize().x < 120.f) ? 1 : static_cast<int>(ImGui::GetWindowSize().x / 120.f);
 
 					// list the files in the current showing directory as imgui text
 					for (int n = 0; n < m_files.size(); n++) // loop through resource list here
@@ -2890,7 +2890,7 @@ namespace PE {
 						if (n % numItemPerRow) // to keep it in rows where 3 is max 3 colums
 							ImGui::SameLine();
 
-						if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(100, 100))) //child to hold image n text
+						if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(120, 100))) //child to hold image n text
 						{
 							std::string icon{};
 							std::string const extension{ m_files[n].filename().extension().string() };
@@ -2907,8 +2907,31 @@ namespace PE {
 							else
 								icon = "../Assets/Icons/Other_Icon.png";
 
+							// Centering the Icon
+							float iconPosX = (120 - 50) * 0.5f;
+							ImGui::SetCursorPosX(ImGui::GetCursorPosX() + iconPosX);
+
+							// Display the Icon
 							ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetIcon(icon)->GetTextureID(), ImVec2(50, 50), { 0,1 }, { 1,0 });
-							ImGui::Text(m_files[n].filename().string().c_str()); // text
+
+							// Prepare for Text
+							std::string filename = m_files[n].filename().string();
+							const int maxCharCount = 15;				// Char Limit
+
+							// Truncate Text
+							std::string displayText = filename;
+							if (filename.length() > maxCharCount)
+							{
+								displayText = filename.substr(0, maxCharCount - 3) + "..."; // Truncate and add ellipsis
+							}
+
+							// Centering and Displaying the Text
+							float textWidth = ImGui::CalcTextSize(displayText.c_str()).x;
+							float centerPosX = (120 - textWidth) * 0.5f;
+							ImGui::SetCursorPosX(ImGui::GetCursorPosX() + centerPosX);
+
+							// Display the Truncated Text
+							ImGui::Text("%s", displayText.c_str());
 						}
 						ImGui::EndChild();
 
