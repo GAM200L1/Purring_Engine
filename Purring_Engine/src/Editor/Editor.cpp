@@ -4300,25 +4300,32 @@ namespace PE {
 
 					float transform[16]{};
 					static float OldTransform[16]{};
+					static float OldLocalX,OldLocalY;
+					static Transform currentTransform{};
 
-					float Scale[3]{ ct.width,ct.height,0 },
-						Rotation[3]{ 0,0, glm::degrees(ct.orientation) },
-						Translation[3]{ ct.position.x,ct.position.y };
-
-					ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
-
-					//for rendering the gizmo
-					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),m_currentGizmoOperation,ImGuizmo::WORLD, transform);
-
-
-					if (moving && !ImGui::IsMouseDown(0))
+					if (!hasParent)
 					{
-						if (!CompareFloat16Arrays(OldTransform,transform))
-						{
-							UndoStack::GetInstance().AddChange(new GuizmoUndo(OldTransform, transform, &ct, hasParent));
-						}
-						moving = false;
+						float Scale[3]{ ct.width,ct.height,0 },
+							Rotation[3]{ 0,0, glm::degrees(ct.orientation) },
+							Translation[3]{ ct.position.x,ct.position.y };
+
+						ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
 					}
+					else
+					{
+						float Scale[3]{ ct.width,ct.height,0 },
+							Rotation[3]{ 0,0, glm::degrees(ct.relOrientation) },
+							Translation[3]{ ct.position.x,ct.position.y };
+
+						OldLocalX = ct.relPosition.x;
+						OldLocalY = ct.relPosition.y;
+						ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
+					}
+					//for rendering the gizmo
+					if(!hasParent)
+					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),m_currentGizmoOperation,ImGuizmo::WORLD, transform);
+					else
+					ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform);
 
 					if (ImGuizmo::IsUsing())
 					{
@@ -4328,6 +4335,7 @@ namespace PE {
 							for (int i = 0; i < 16; ++i) {
 								OldTransform[i] = transform[i];
 							}
+							currentTransform = ct;
 						}
 
 						float newScale[3];
@@ -4337,32 +4345,45 @@ namespace PE {
 
 						ct.width = newScale[0];
 						ct.height = newScale[1];
-						ct.orientation = glm::radians(newRot[2]);
 
 						// Update the translation only if we're not updating the rotation
 						if (ImGuizmo::OPERATION::TRANSLATE == m_currentGizmoOperation
 								|| ImGuizmo::OPERATION::TRANSLATE_X == m_currentGizmoOperation
 								|| ImGuizmo::OPERATION::TRANSLATE_Y == m_currentGizmoOperation)
 						{
-							ct.position.x = newPos[0];
-							ct.position.y = newPos[1];
-
 							if (hasParent)
 							{
-								Transform const& parentTransform{ EntityManager::GetInstance().Get<Transform>(parentId) };
-								ct.relPosition.x = ct.position.x - parentTransform.position.x;
-								ct.relPosition.y = ct.position.y - parentTransform.position.y;
+								ct.relPosition.x = OldLocalX + newPos[0] - ct.position.x;
+								ct.relPosition.y = OldLocalY +  newPos[1] - ct.position.y;
+							}
+							else
+							{
+								ct.position.x = newPos[0];
+								ct.position.y = newPos[1];
 							}
 						}
 
 						// Update relative transform values
 						if (hasParent)
 						{
-							Transform const& parentTransform{ EntityManager::GetInstance().Get<Transform>(parentId) };
-							ct.relOrientation = ct.orientation - parentTransform.orientation;
+							ct.relOrientation = glm::radians(newRot[2]);
+						}
+						else
+						{
+							ct.orientation = glm::radians(newRot[2]);
 						}
 					}
-				}
+					
+					if (moving && !ImGui::IsMouseDown(0))
+					{
+						if (!CompareFloat16Arrays(OldTransform, transform))
+						{
+							UndoStack::GetInstance().AddChange(new GuizmoUndo(currentTransform, ct, &ct, hasParent));
+						}
+						moving = false;
+					}
+
+}
 			}
 
 

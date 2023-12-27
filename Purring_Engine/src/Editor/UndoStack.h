@@ -317,13 +317,8 @@ namespace PE
 		 \brief										constructor taking in values
 		 \param [In]	EntityID id					id that is edited
 		*************************************************************************************/
-		GuizmoUndo(float* old_t, float* new_t, Transform* p_t, bool hasParent) : p_location(p_t),m_hasParent(hasParent) 
+		GuizmoUndo(Transform old_t, Transform new_t, Transform* p_t, bool hasParent) :m_oldTransform(old_t),m_newTransform(new_t), p_location(p_t),m_hasParent(hasParent)
 		{		
-			for (int i = 0; i < 16; ++i)
-			{
-				m_oldTransform[i] = old_t[i];
-				m_newTransform[i] = new_t[i];
-			}
 		}
 	public:
 		// ----- Public Functions ----- // 
@@ -332,55 +327,29 @@ namespace PE
 		*************************************************************************************/
 		virtual void Undo() override
 		{
-			float newPos[3], newRot[3], newScale[3];
-			ImGuizmo::DecomposeMatrixToComponents(m_oldTransform, newPos, newRot, newScale);
-
-			p_location->width = newScale[0];//transform[0][0];
-			p_location->height = newScale[1];//transform[1][1];
-
-			if (m_hasParent)
-			{
-				p_location->relOrientation = newRot[2];//rotationEulerAngles.z;
-				p_location->relPosition.x = newPos[0];
-				p_location->relPosition.y = newPos[1];
-			}
-			else
-			{
-
-				p_location->orientation = newRot[2];//rotationEulerAngles.z;
-				p_location->position.x = newPos[0];
-				p_location->position.y = newPos[1];
-			}
+			p_location->width = m_oldTransform.width;
+			p_location->height = m_oldTransform.height;
+			p_location->orientation = m_oldTransform.orientation;
+			p_location->position = m_oldTransform.position;
+			p_location->relOrientation = m_oldTransform.relOrientation;
+			p_location->relPosition = m_oldTransform.relPosition;
 		}
 		/*!***********************************************************************************
 		 \brief			overriden Redo Function
 		*************************************************************************************/
 		virtual void Redo() override
 		{
-			float newPos[3], newRot[3], newScale[3];
-			ImGuizmo::DecomposeMatrixToComponents(m_newTransform, newPos, newRot, newScale);
-
-			p_location->width = newScale[0];//transform[0][0];
-			p_location->height = newScale[1];//transform[1][1];
-
-			if (m_hasParent)
-			{
-				p_location->relOrientation = newRot[2];//rotationEulerAngles.z;
-				p_location->relPosition.x = newPos[0];
-				p_location->relPosition.y = newPos[1];
-			}
-			else
-			{
-
-				p_location->orientation = newRot[2];//rotationEulerAngles.z;
-				p_location->position.x = newPos[0];
-				p_location->position.y = newPos[1];
-			}
+			p_location->width = m_newTransform.width;
+			p_location->height = m_newTransform.height;
+			p_location->orientation = m_newTransform.orientation;
+			p_location->position = m_newTransform.position;
+			p_location->relOrientation = m_newTransform.relOrientation;
+			p_location->relPosition = m_newTransform.relPosition;
 		}
 		// ----- Private Variables ----- // 
 	private:
-		float m_oldTransform[16]{};
-		float m_newTransform[16]{};
+		Transform m_oldTransform{};
+		Transform m_newTransform{};
 		Transform* p_location;
 		bool m_hasParent;
 	};
