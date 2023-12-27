@@ -239,12 +239,15 @@ namespace PE {
 
 		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowApplyWindow(bool*p_active);
+		void ShowApplyWindow(bool* p_active);
 
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Dark();
+
+		void SetImGUIStyle_DarkMode();
+
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
@@ -312,9 +315,10 @@ namespace PE {
 		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** p_paths);
 
 	private:
-		enum class GuiStyle 
+		enum class GuiStyle
 		{
 			DARK,
+			DARKMODE2,
 			PINK,
 			BLUE
 		};
@@ -352,7 +356,7 @@ namespace PE {
 		std::string m_input;
 		std::string m_findText;
 		std::map<std::string_view, void (PE::Editor::*)()> m_commands;
-		
+
 
 		//variable for objects
 		bool m_mouseInObjectWindow;
@@ -365,7 +369,7 @@ namespace PE {
 		//variable for assets browser
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
-		float m_playWindowOffset {27.f};
+		float m_playWindowOffset{ 27.f };
 		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
