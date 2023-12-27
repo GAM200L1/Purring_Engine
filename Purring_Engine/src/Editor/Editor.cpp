@@ -65,6 +65,8 @@
 #include "Logic/RatScript.h"
 #include "UndoStack.h"
 #include "System.h"
+#include "Math/MathCustom.h"
+
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
 
@@ -1222,7 +1224,7 @@ namespace PE {
 												prevVal = vp.get_value<float>();
 												std::cout << prevVal << std::endl;
 											}
-											if (ImGui::IsItemDeactivatedAfterEdit() && prevVal != tmp)
+											if (ImGui::IsItemDeactivatedAfterEdit() && !CompareFloats(prevVal, tmp))
 											{
 												if (prop.get_name() == "Width")
 													UndoStack::GetInstance().AddChange(new ValueChange<float>(prevVal, tmp, &EntityManager::GetInstance().Get<Transform>(entityID).width));
@@ -4288,21 +4290,22 @@ namespace PE {
 
 					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);				
 
+					EntityID parentId{};
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(m_currentSelectedObject))
 					{
-						hasParent = EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value();
+						auto optionalParent{ EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent };
+						hasParent = optionalParent.has_value();
+						if (hasParent) { parentId = optionalParent.value(); }
 					}
 
 					float transform[16]{};
 					static float OldTransform[16]{};
 
-						float Scale[3]{ ct.width,ct.height,0 }
-							, Rotation[3]{ 0,0,ct.orientation }
-						, Translation[3]{ ct.position.x,ct.position.y };
+					float Scale[3]{ ct.width,ct.height,0 },
+						Rotation[3]{ 0,0, glm::degrees(ct.orientation) },
+						Translation[3]{ ct.position.x,ct.position.y };
 
-						ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
-
-
+					ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
 
 					//for rendering the gizmo
 					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),m_currentGizmoOperation,ImGuizmo::LOCAL, transform);
@@ -4319,42 +4322,57 @@ namespace PE {
 
 					if (ImGuizmo::IsUsing())
 					{
-							if (m_mouseInScene && ImGui::IsMouseDown(0) && !moving)
-							{
-								moving = true;
-								for (int i = 0; i < 16; ++i) {
-									OldTransform[i] = transform[i];
-								}
+						if (m_mouseInScene && ImGui::IsMouseDown(0) && !moving)
+						{
+							moving = true;
+							for (int i = 0; i < 16; ++i) {
+								OldTransform[i] = transform[i];
 							}
+						}
 
-							float newScale[3];
-							float newRot[3];
-							float newPos[3];
-							ImGuizmo::DecomposeMatrixToComponents(transform, newPos, newRot, newScale);
+						float newScale[3];
+						float newRot[3];
+						float newPos[3];
+						ImGuizmo::DecomposeMatrixToComponents(transform, newPos, newRot, newScale);
 
-							ct.width = newScale[0];
-							ct.height = newScale[1];
+						ct.width = newScale[0];
+						ct.height = newScale[1];
+						ct.orientation = glm::radians(newRot[2]);
 
-							if (hasParent)
+						// Update the translation only if we're not updating the rotation
+						if (!(ImGuizmo::OPERATION::ROTATE == m_currentGizmoOperation
+								|| ImGuizmo::OPERATION::ROTATE_X == m_currentGizmoOperation
+								|| ImGuizmo::OPERATION::ROTATE_Y == m_currentGizmoOperation))
+						{
+							ct.position.x = newPos[0];
+							ct.position.y = newPos[1];
+						}
+
+						// Update relative transform values
+						if (hasParent)
+						{
+							Transform const& parentTransform{ EntityManager::GetInstance().Get<Transform>(parentId) };
+							ct.relOrientation = ct.orientation - parentTransform.orientation;
+
+							if (!(ImGuizmo::OPERATION::ROTATE == m_currentGizmoOperation
+									|| ImGuizmo::OPERATION::ROTATE_X == m_currentGizmoOperation
+									|| ImGuizmo::OPERATION::ROTATE_Y == m_currentGizmoOperation))
 							{
-								ct.relOrientation = newRot[2];
-								ct.relPosition.x = newPos[0];
-								ct.relPosition.y = newPos[1];
+								ct.relPosition.x = ct.position.x - parentTransform.position.x;
+								ct.relPosition.y = ct.position.y - parentTransform.position.y;
 							}
-							else
-							{
-
-								ct.orientation = newRot[2];
-								ct.position.x = newPos[0];
-								ct.position.y = newPos[1];
-							}
+							
+						}
 					}
 				}
 			}
+
+
+
+			// ----- SCREEN PICKING ----- //
+
 			static ImVec2 clickedPosition;
 			static ImVec2 screenPosition; // coordinates from the top left corner
-			//static ImVec2 currentPosition;
-			//static vec2 startPosition;
 
 			if (m_mouseInScene && !ImGuizmo::IsUsing())
 			if (ImGui::IsMouseClicked(0))
@@ -4438,6 +4456,7 @@ namespace PE {
 
 				std::cout << "\n";
 			}
+			// End of if (m_mouseInScene && !ImGuizmo::IsUsing())
 
 			//////////////////////////////////////////////////////////////////////////
 			//all the commented out parts is part of our old code for moving objects//
