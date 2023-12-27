@@ -4340,9 +4340,9 @@ namespace PE {
 						ct.orientation = glm::radians(newRot[2]);
 
 						// Update the translation only if we're not updating the rotation
-						if (!(ImGuizmo::OPERATION::ROTATE == m_currentGizmoOperation
-								|| ImGuizmo::OPERATION::ROTATE_X == m_currentGizmoOperation
-								|| ImGuizmo::OPERATION::ROTATE_Y == m_currentGizmoOperation))
+						if (ImGuizmo::OPERATION::TRANSLATE == m_currentGizmoOperation
+								|| ImGuizmo::OPERATION::TRANSLATE_X == m_currentGizmoOperation
+								|| ImGuizmo::OPERATION::TRANSLATE_Y == m_currentGizmoOperation)
 						{
 							ct.position.x = newPos[0];
 							ct.position.y = newPos[1];
@@ -4353,15 +4353,8 @@ namespace PE {
 						{
 							Transform const& parentTransform{ EntityManager::GetInstance().Get<Transform>(parentId) };
 							ct.relOrientation = ct.orientation - parentTransform.orientation;
-
-							if (!(ImGuizmo::OPERATION::ROTATE == m_currentGizmoOperation
-									|| ImGuizmo::OPERATION::ROTATE_X == m_currentGizmoOperation
-									|| ImGuizmo::OPERATION::ROTATE_Y == m_currentGizmoOperation))
-							{
-								ct.relPosition.x = ct.position.x - parentTransform.position.x;
-								ct.relPosition.y = ct.position.y - parentTransform.position.y;
-							}
-							
+							ct.relPosition.x = ct.position.x - parentTransform.position.x;
+							ct.relPosition.y = ct.position.y - parentTransform.position.y;
 						}
 					}
 				}
