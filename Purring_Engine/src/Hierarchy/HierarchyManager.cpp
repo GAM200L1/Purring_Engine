@@ -65,7 +65,7 @@ namespace PE
 		return EntityManager::GetInstance().Get<EntityDescriptor>(parent).children;
 	}
 
-	inline const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& child) const
+	const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& child) const
 	{
 		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent;
 	}

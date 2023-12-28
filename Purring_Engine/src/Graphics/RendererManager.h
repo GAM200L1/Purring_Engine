@@ -126,6 +126,22 @@ namespace PE
             void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
 
             /*!***********************************************************************************
+             \brief Loops through all objects with a Renderer component (or a class that
+                    derives from it) and draws it. Batches the colors, transformation matrices 
+                    and textured status together into a vertex buffer object and makes an 
+                    instanced drawcall. The instanced batch is broken when a new texture is encountered.
+
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
+                            NDC space.
+             \param[in] r_rendererContainer Container containing the renderer and transform 
+                            components of the objects to draw
+             \param[in] isGuiRenderer Set to true if the container contains the IDs of GUI 
+                            renderers, false if just regular renderers.
+            *************************************************************************************/
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, 
+                std::vector<EntityID> const& r_rendererIdContainer, bool const isGuiRenderer);
+
+            /*!***********************************************************************************
              \brief Loops through all objects with colliders and rigidbody components and draws 
                     shapes to visualise their bounds, direction and magnitude for debug purposes. 
 
@@ -182,6 +198,13 @@ namespace PE
              \param[in] primitiveType GL Primitive type to make the draw call with.
             *************************************************************************************/
             void DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType);
+
+            /*!***********************************************************************************
+             \brief Retrieves the GUI objects and makes draw calls for them.
+
+             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+            *************************************************************************************/
+            void DrawUi(glm::mat4 const& r_viewToNdc);
 
             /*!***********************************************************************************
              \brief Makes a draw call for a square to represent the AABB collider passed in.

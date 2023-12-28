@@ -19,9 +19,13 @@
 #include "GUISystem.h"
 #include "Graphics/CameraManager.h"
 #include "Events/EventHandler.h"
+
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
+#include "Hierarchy/HierarchyManager.h"
+
 #include "Input/InputSystem.h"
+#include "GUI/Canvas.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -35,8 +39,13 @@ std::map<std::string_view, std::function<void(::EntityID)>> PE::GUISystem::m_uiF
 
 namespace PE
 {
+	// Defining static variables
+	std::unordered_set<EntityID> GUISystem::m_activeCanvases{};
+
 	GUISystem::GUISystem(GLFWwindow* p_glfwWindow) : p_window{ p_glfwWindow }
-	{ /* Empty by design */ }
+	{ 
+			m_activeCanvases.reserve(1000); // Reserve a large amount of entities in advance
+	}
 
 	GUISystem::~GUISystem()
 	{ /* Empty by design */	}
@@ -54,11 +63,36 @@ namespace PE
 	{
 		deltaTime; // Prevent warnings
 
+		// Store the canvas objects
+		m_activeCanvases.clear();
+		for (EntityID canvasId : SceneView<Canvas>())
+		{
+				// Check if the canvas object has been enabled
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(canvasId).isActive)
+				{
+						// Check if the parent of the canvas object is active
+						auto parentCanvas{ Hierarchy::GetInstance().GetParent(canvasId) };
+						if (!parentCanvas.has_value() || EntityManager::GetInstance().Get<EntityDescriptor>(parentCanvas.value()).isActive)
+						{
+								m_activeCanvases.emplace(canvasId);
+						}
+				}
+		}
+
+		if (m_activeCanvases.empty()) { return; } // Don't bother with anything else if there are no canvases
+
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
 			for (EntityID objectID : SceneView<GUI>())
 			{
+				// Check if the object is childed to a canvas object
+				auto parentCanvas{ Hierarchy::GetInstance().GetParent(objectID) };
+				if (!parentCanvas.has_value() || IsChildedToCanvas(parentCanvas.value()))
+				{ 
+						continue; // If not childed to a canvas or canvas is inactive, don't update
+				}
+
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 				gui.Update();
 
@@ -69,7 +103,7 @@ namespace PE
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
 					}
 					continue;
-				}
+				} // End of if (gui.disabled)
 
 
 				if (gui.m_UIType == UIType::Button)
@@ -92,9 +126,9 @@ namespace PE
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
 						}
 					}
+				} // End of if (gui.m_UIType == UIType::Button)
 
-				}
-			}
+			} // end of sceneview loop
 	}
 
 	void GUISystem::DestroySystem()
@@ -105,6 +139,14 @@ namespace PE
 	{
 		return "GUISystem";
 	}
+
+
+	bool GUISystem::IsChildedToCanvas(EntityID const uiId) const
+	{
+			auto parentCanvas{ Hierarchy::GetInstance().GetParent(uiId) };
+			return (parentCanvas.has_value() && m_activeCanvases.find(parentCanvas.value()) != m_activeCanvases.end());
+	}
+
 
 	void GUISystem::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{

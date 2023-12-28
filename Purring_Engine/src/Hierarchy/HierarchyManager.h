@@ -30,6 +30,8 @@
 // for accessing transform information & methods
 #include "Math/Transform.h"
 
+#include <optional>
+
 namespace PE
 {
 	/*!***********************************************************************************
@@ -74,7 +76,7 @@ namespace PE
 		 \param[in] child 	The child to request parent (might not have a parent)
 		 \return const std::optional<EntityID>& The potential parent
 		*************************************************************************************/
-		inline const std::optional<EntityID>& GetParent(const EntityID& child) const;
+		const std::optional<EntityID>& GetParent(const EntityID& child) const;
 
 	// ----- Public Methods ----- //
 	public:

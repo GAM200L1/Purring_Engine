@@ -241,19 +241,20 @@ namespace PE
             // Draw objects in the scene
             DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 
 
+            // Draw UI objects in the scene
+            DrawUi(r_cameraManager.GetUiViewToNdcMatrix()); 
+            //// Draw UI objects in the scene
+            //DrawQuadsInstanced(r_cameraManager.GetUiViewToNdcMatrix(), SceneView<GUIRenderer, Transform>());
+
+            // Render Text
+            RenderText(r_cameraManager.GetUiViewToNdcMatrix());
+
 #ifndef GAMERELEASE
             if (Editor::GetInstance().IsRenderingDebug())
             {
                 DrawDebug(worldToNdcMatrix); // Draw debug gizmos in the scene
             }
 #endif // !GAMERELEASE
-
-            // Draw UI objects in the scene
-            DrawQuadsInstanced(r_cameraManager.GetUiViewToNdcMatrix(), SceneView<GUIRenderer, Transform>());
-
-
-            // Render Text
-            RenderText(r_cameraManager.GetUiViewToNdcMatrix());
 
             // Unbind the RBO for rendering the game scene to
             m_renderFrameBuffer.Unbind();
@@ -415,6 +416,138 @@ namespace PE
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
                 
+                const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+
+                // Attempt to retrieve and bind the texture
+                if (renderer.GetTextureKey().empty())
+                {
+                    m_isTextured.emplace_back(0.f);
+                }
+                else if(currentTexture != renderer.GetTextureKey())
+                {
+                    // Check if we were already 
+                    if (!currentTexture.empty()) 
+                    {
+                        DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                        currentTexture.clear();
+                        count = 0;
+                    }
+
+                    std::shared_ptr<Texture> texture { ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
+
+                    // Check if texture is null
+                    if (!texture)
+                    {
+                        // Remove the texture and set the object to neon pink
+                        renderer.SetTextureKey("");
+                        renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+
+                        m_isTextured.emplace_back(0.f);
+                    }
+                    else
+                    {
+                        // Unbind the existing texture
+                        if (p_texture) 
+                        {
+                            p_texture->Unbind();
+                        }
+
+                        // Store the texture key of the current texture
+                        currentTexture = renderer.GetTextureKey();
+
+                        // Bind the new texture
+                        GLint textureUnit{ 0 };
+                        p_texture = texture;
+                        p_texture->Bind(textureUnit);
+                        r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+
+                        m_isTextured.emplace_back(1.f);
+                    }
+                }
+                else 
+                {
+                    m_isTextured.emplace_back(1.f);
+                }
+
+                // Add the matrix and colors to the buffer
+                m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
+                    transform.height, transform.orientation, // height, orientation
+                    transform.position.x, transform.position.y)); // x, y position
+                m_colors.emplace_back(renderer.GetColor());
+
+                // Add the UV coordinate adjustments
+                m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
+                m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
+                m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
+                m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
+
+                ++count; 
+            }
+
+            // Draw the remaining objects
+            DrawInstanced(count, meshIndex, GL_TRIANGLES);
+
+            // Unbind everything
+            m_meshes[meshIndex].Unbind();
+            r_shaderProgram.UnUse();
+
+            if (p_texture != nullptr)
+            {
+                p_texture->Unbind();
+            }
+        }
+
+
+        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_rendererIdContainer, bool const isGuiRenderer)
+        {
+            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
+
+            // Check if shader program is valid
+            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+            {
+                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+                engine_logger.SetTime();
+                engine_logger.AddLog(false, "Shader program " + m_instancedShaderProgramKey + " does not exist.", __FUNCTION__);
+                return;
+            }
+
+            ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
+            r_shaderProgram.Use();
+
+            // Pass the world to NDC transform matrix as a uniform variable
+            r_shaderProgram.SetUniform("uWorldToNdc", r_worldToNdc);
+
+            // Bind the quad mesh
+            size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
+            m_meshes[meshIndex].Bind();
+
+            // Store the texture being used
+            std::string currentTexture{};
+            std::shared_ptr<Graphics::Texture> p_texture{};
+
+            // Clear the buffers for the 
+            m_isTextured.clear();
+            m_UV.clear();
+            m_modelToWorldMatrices.clear();
+            m_colors.clear();
+
+            int count{};
+
+            // Make draw call for each game object with a renderer component
+
+            for (EntityID const& id : r_rendererIdContainer)
+            {
+                Renderer& renderer{ (isGuiRenderer ? EntityManager::GetInstance().Get<GUIRenderer>(id) : EntityManager::GetInstance().Get<Renderer>(id)) };
+
+                // Skip drawing this object is the entity or renderer is not enabled
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
+                    || !renderer.GetEnabled()) {
+                    continue;
+                }
+
+                // Store the index of the rendered entity
+                renderedEntities.emplace_back(id);
+
                 const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 // Attempt to retrieve and bind the texture
@@ -835,6 +968,45 @@ namespace PE
             m_modelToWorldMatrices.clear();
 
             ++objectDrawCalls;
+        }
+
+        void RendererManager::DrawUi(glm::mat4 const& r_viewToNdc)
+        {
+            /*
+                // Store the sizes of the sub buffers
+                size_t sizeOfTexturedVector{ m_isTextured.size() * sizeof(float) };
+                size_t sizeOfColorVector{ m_colors.size() * sizeof(glm::vec4) };
+                size_t sizeOfMatrixVector{ m_modelToWorldMatrices.size() * sizeof(glm::mat4) };
+                size_t sizeOfUVVector{ m_UV.size() * sizeof(glm::vec2) };
+            */
+
+            if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
+
+            std::vector<EntityID> guiToDraw{};
+            guiToDraw.reserve(100);
+
+            for (EntityID objectID : SceneView<GUIRenderer>())
+            {
+                // Check if the object is childed to a canvas object
+                bool isChild{ GETGUISYSTEM()->IsChildedToCanvas(objectID) };
+                if (!isChild)
+                {
+                    continue; // If not childed to a canvas or canvas is inactive, don't update
+                }
+
+                // Check if the object has a renderer component
+                if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive
+                    && EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID))
+                {
+                    // Store it to be drawn
+                    if (EntityManager::GetInstance().Get<GUIRenderer>(objectID).GetEnabled())
+                    {
+                        guiToDraw.emplace_back(objectID);
+                    }
+                }
+            } // end of sceneview loop
+
+            DrawQuadsInstanced(r_viewToNdc, guiToDraw, true);
         }
 
         void RendererManager::DrawCollider(AABBCollider const& r_aabbCollider,

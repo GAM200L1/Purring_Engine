@@ -22,6 +22,8 @@
 #include "Events/Event.h"
 #include "Math/Transform.h"
 #include "WindowManager.h"
+#include <unordered_set>  // this is in the precompiled header but the compiler was complaining
+
 #define HEX(hexcode)    hexcode/255.f // to convert colors
 #define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this, std::placeholders::_1))
 typedef unsigned long long EntityID;
@@ -66,6 +68,22 @@ namespace PE
 		 \return    std::string The name of the system.
 		*************************************************************************************/
 		virtual std::string GetName() override;
+
+		/*!***********************************************************************************
+		 \brief     Returns true if there are any active canvases in the scene, false otherwise.
+		 \return		bool - Returns true if there are any active canvases in the scene, 
+										false otherwise.
+		*************************************************************************************/
+		inline bool AreThereActiveCanvases() const { return !m_activeCanvases.empty(); }
+
+		/*!***********************************************************************************
+		 \brief     Returns true if the object with the ID passed in is childed to an 
+								active canvas in the scene, false otherwise.
+		 \param[in] uiId - ID of the UI object to check.
+		 \return		bool - Returns true if the object with the ID passed in is childed to an 
+										active canvas in the scene, false otherwise.
+		*************************************************************************************/
+		bool IsChildedToCanvas(EntityID const uiId) const;
 
 		/*!***********************************************************************************
 		 \brief Checks if the mouse cursor is within the bounds of any GUI objects
@@ -114,6 +132,9 @@ namespace PE
 
 	private:
 			GLFWwindow* p_window{};
+
+			// Stores the IDs of the active canvases
+			static std::unordered_set<EntityID> m_activeCanvases;
 	};
 
 	//enum to tell type of UI to make

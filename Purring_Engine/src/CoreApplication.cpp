@@ -71,6 +71,7 @@
 #include "Input/InputSystem.h"
 
 #include "GUISystem.h"
+#include "GUI/Canvas.h"
 
 // RTTR includes
 #include <rttr/type.h>
@@ -120,6 +121,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::AnimationComponent);
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
+    REGISTERCOMPONENT(PE::Canvas);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -290,6 +292,8 @@ RTTR_REGISTRATION
         .property("attackDamage", &PE::RatScriptData::attackDamage)
         .property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScriptData::animationStates);
+
+    rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str());
 }
 
 PE::CoreApplication::CoreApplication()
