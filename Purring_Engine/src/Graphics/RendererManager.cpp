@@ -347,7 +347,7 @@ namespace PE
 
                 // Skip drawing this object is the entity or renderer is not enabled
                 if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
-                    || !renderer.GetEnabled()) { continue; }
+                    || !renderer.GetEnabled() || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
 
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
@@ -411,7 +411,7 @@ namespace PE
                 
                 // Skip drawing this object is the entity or renderer is not enabled
                 if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
-                    || !renderer.GetEnabled()) { continue; }
+                    || !renderer.GetEnabled() || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
 
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
@@ -541,7 +541,7 @@ namespace PE
 
                 // Skip drawing this object is the entity or renderer is not enabled
                 if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
-                    || !renderer.GetEnabled()) {
+                    || !renderer.GetEnabled() || !Hierarchy::GetInstance().AreParentsActive(id)) {
                     continue;
                 }
 
@@ -651,7 +651,7 @@ namespace PE
             for (const EntityID& id : SceneView<Collider>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
 
                 Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
@@ -666,7 +666,7 @@ namespace PE
             for (const EntityID& id : SceneView<RigidBody>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
 
                 RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
@@ -685,7 +685,7 @@ namespace PE
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
 
                 // Don't draw a cross for the UI camera
                 if (id == r_cameraManager.GetUiCameraId()) { continue; }
@@ -995,8 +995,7 @@ namespace PE
                 }
 
                 // Check if the object has a renderer component
-                if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive
-                    && EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID))
+                if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID))
                 {
                     // Store it to be drawn
                     if (EntityManager::GetInstance().Get<GUIRenderer>(objectID).GetEnabled())
@@ -1099,7 +1098,7 @@ namespace PE
             for (const EntityID& id : SceneView<TextComponent, Transform>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
 
                 TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
                 vec2 position{ EntityManager::GetInstance().Get<Transform>(id).position };

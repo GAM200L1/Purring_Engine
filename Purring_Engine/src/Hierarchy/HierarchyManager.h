@@ -68,15 +68,51 @@ namespace PE
 		 \param[in] parent 	EntityID of the parent to fetch children of
 		 \return const std::set<EntityID>& 	The children
 		*************************************************************************************/
-		inline const std::set<EntityID>& GetChildren(const EntityID& parent) const;
+		const std::set<EntityID>& GetChildren(const EntityID& parent) const;
 
 		/*!***********************************************************************************
-		 \brief Get the parent(std::optional, treat properly!) of the current entity 
+		 \brief Get the immediate parent (std::optional, treat properly!) of the current entity 
 		 
 		 \param[in] child 	The child to request parent (might not have a parent)
 		 \return const std::optional<EntityID>& The potential parent
 		*************************************************************************************/
 		const std::optional<EntityID>& GetParent(const EntityID& child) const;
+
+		/*!***********************************************************************************
+		 \brief Returns true if the object is childed to another object, false otherwise
+		 
+		 \param[in] child 	The child to check
+		 \return bool Returns true if the object is childed to another object, false otherwise
+		*************************************************************************************/
+		bool HasParent(const EntityID& child) const;
+
+		/*!***********************************************************************************
+		 \brief Returns false if the object's immediate parent is inactive, true otherwise. 
+						If the object has no parent, its active status is returned.
+		 
+		 \param[in] child 	The child to check the parents of
+		 \return bool Returns false if the object's immediate parent is inactive, true otherwise. 
+						If the object has no parent, its active status is returned.
+		*************************************************************************************/
+		bool IsImmediateParentActive(EntityID child) const;
+
+		/*!***********************************************************************************
+		 \brief Returns false if any of the object's parents is inactive, true otherwise.
+						If the object has no parent, its active status is returned.
+		 
+		 \param[in] child 	The child to check
+		 \return bool Returns false if any of the object's parents is inactive, true otherwise.
+						If the object has no parent, its active status is returned.
+		*************************************************************************************/
+		bool AreParentsActive(EntityID child) const;
+
+		/*!***********************************************************************************
+		 \brief Get the absolute parent (std::optional, treat properly!) of the current entity 
+		 
+		 \param[in] child 	The child to request parent (might not have a parent)
+		 \return const std::optional<EntityID>& The potential absolute parent
+		*************************************************************************************/
+		const std::optional<EntityID>& GetAbsoluteParent(EntityID child) const;
 
 	// ----- Public Methods ----- //
 	public:

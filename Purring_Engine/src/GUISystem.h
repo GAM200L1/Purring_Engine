@@ -83,7 +83,16 @@ namespace PE
 		 \return		bool - Returns true if the object with the ID passed in is childed to an 
 										active canvas in the scene, false otherwise.
 		*************************************************************************************/
-		bool IsChildedToCanvas(EntityID const uiId) const;
+		bool IsChildedToCanvas(EntityID uiId) const;
+
+		/*!***********************************************************************************
+		 \brief     Returns true if the object with the ID passed in is the immediate child 
+								to an active canvas in the scene, false otherwise.
+		 \param[in] uiId - ID of the UI object to check.
+		 \return		bool - Returns true if the object with the ID passed in is the immediate 
+										child to an active canvas in the scene, false otherwise.
+		*************************************************************************************/
+		bool IsImmediatelyChildedToCanvas(EntityID const uiId) const;
 
 		/*!***********************************************************************************
 		 \brief Checks if the mouse cursor is within the bounds of any GUI objects

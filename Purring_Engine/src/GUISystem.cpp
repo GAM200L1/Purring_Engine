@@ -86,12 +86,8 @@ namespace PE
 #endif
 			for (EntityID objectID : SceneView<GUI>())
 			{
-				// Check if the object is childed to a canvas object
-				auto parentCanvas{ Hierarchy::GetInstance().GetParent(objectID) };
-				if (!parentCanvas.has_value() || IsChildedToCanvas(parentCanvas.value()))
-				{ 
-						continue; // If not childed to a canvas or canvas is inactive, don't update
-				}
+				// Check if the object is childed to a canvas object, don't update if not
+				if (!IsChildedToCanvas(objectID)) {  continue; }
 
 				GUI& gui = EntityManager::GetInstance().Get<GUI>(objectID);
 				gui.Update();
@@ -141,10 +137,28 @@ namespace PE
 	}
 
 
-	bool GUISystem::IsChildedToCanvas(EntityID const uiId) const
+	bool GUISystem::IsImmediatelyChildedToCanvas(EntityID const uiId) const
 	{
-			auto parentCanvas{ Hierarchy::GetInstance().GetParent(uiId) };
-			return (parentCanvas.has_value() && m_activeCanvases.find(parentCanvas.value()) != m_activeCanvases.end());
+		auto parentCanvas{ Hierarchy::GetInstance().GetParent(uiId) };
+		return (parentCanvas.has_value() && m_activeCanvases.find(parentCanvas.value()) != m_activeCanvases.end());
+	}
+
+
+	bool GUISystem::IsChildedToCanvas(EntityID uiId) const
+	{
+		// Loop through the parents of the object until we encounter a canvas
+		bool isChilded{ false };
+		while (Hierarchy::GetInstance().HasParent(uiId))
+		{
+			if(IsImmediatelyChildedToCanvas(uiId))
+			{
+				isChilded = true;
+				break;
+			}
+
+			uiId = Hierarchy::GetInstance().GetParent(uiId).value();
+		}
+		return isChilded;
 	}
 
 
