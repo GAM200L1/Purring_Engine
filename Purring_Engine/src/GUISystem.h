@@ -183,14 +183,13 @@ namespace PE
 		float m_clickedTimer{};
 	public:
 		/*!***********************************************************************************
-		 \brief Serializes the UI element data	 
+		 \brief Serializes the GUIButton component data	 
 		*************************************************************************************/
 		virtual nlohmann::json ToJson(size_t id) const;
 		/*!***********************************************************************************
-		 \brief Deserializes the UI element data	 
+		 \brief Deserializes the GUIButton component data	 
 		*************************************************************************************/
 		static GUIButton Deserialize(const nlohmann::json& j);
-
 
 	};
 
@@ -244,12 +243,20 @@ namespace PE
 		//to be assigned on creation
 		std::optional<EntityID> m_knobID;
 		//calculated on update
-		float m_startPoint,m_endPoint;
+		float m_startPoint, m_endPoint;
 		float m_currentValue;
 
 		//set on editor
 		float m_minValue{ 0 }, m_maxValue{100};
 
+		/*!***********************************************************************************
+		 \brief Serializes the GUISlider component data
+		*************************************************************************************/
+		virtual nlohmann::json ToJson(size_t id) const;
+		/*!***********************************************************************************
+		 \brief Deserializes the GUISlider component data
+		*************************************************************************************/
+		static GUISlider Deserialize(const nlohmann::json& j);
 
 
 	};

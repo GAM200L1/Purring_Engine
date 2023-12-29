@@ -395,7 +395,7 @@ namespace PE
 	}
 
 
-	// Serialize GUI
+	// Serialize GUIButton
 	nlohmann::json GUIButton::ToJson(size_t id) const
 	{
 		UNREFERENCED_PARAMETER(id);
@@ -422,7 +422,7 @@ namespace PE
 		return j;
 	}
 
-	// Deserialize GUI
+	// Deserialize GUIButton
 	GUIButton GUIButton::Deserialize(const nlohmann::json& r_j)
 	{
 		GUIButton gui;
@@ -455,6 +455,7 @@ namespace PE
 	{
 
 	}
+
 	float GUISlider::CalculateValue(float currentX)
 	{
 		//current value will be 
@@ -462,4 +463,93 @@ namespace PE
 		m_currentValue = ( (currentX+((m_endPoint - m_startPoint)/2) ) / (m_endPoint - m_startPoint) ) * (m_maxValue - m_minValue) + m_minValue;
 		return m_currentValue;
 	}
+
+	// Serialize GUISlider
+	nlohmann::json GUISlider::ToJson(size_t id) const
+	{
+		nlohmann::json j;
+
+		j["m_Hovered"] = m_Hovered;
+		j["m_disabled"] = m_disabled;
+		j["m_clicked"] = m_clicked;
+		j["m_startPoint"] = m_startPoint;
+		j["m_endPoint"] = m_endPoint;
+		j["m_currentValue"] = m_currentValue;
+		j["m_minValue"] = m_minValue;
+		j["m_maxValue"] = m_maxValue;
+
+		j["m_defaultColor"] = { m_defaultColor.x, m_defaultColor.y, m_defaultColor.z, m_defaultColor.w };
+		j["m_hoveredColor"] = { m_hoveredColor.x, m_hoveredColor.y, m_hoveredColor.z, m_hoveredColor.w };
+		j["m_pressedColor"] = { m_pressedColor.x, m_pressedColor.y, m_pressedColor.z, m_pressedColor.w };
+		j["m_disabledColor"] = { m_disabledColor.x, m_disabledColor.y, m_disabledColor.z, m_disabledColor.w };
+
+		j["m_defaultTexture"] = m_defaultTexture;
+		j["m_hoveredTexture"] = m_hoveredTexture;
+		j["m_pressedTexture"] = m_pressedTexture;
+		j["m_disabledTexture"] = m_disabledTexture;
+
+		j["m_knobID"] = m_knobID.value_or(0);
+
+		return j;
+	}
+
+	// Deserialize GUISlider
+	GUISlider GUISlider::Deserialize(const nlohmann::json& j)
+	{
+		GUISlider slider;
+
+		// GUISlider Properties
+		if (j.contains("m_Hovered")) slider.m_Hovered = j.at("m_Hovered").get<bool>();
+		if (j.contains("m_disabled")) slider.m_disabled = j.at("m_disabled").get<bool>();
+		if (j.contains("m_clicked")) slider.m_clicked = j.at("m_clicked").get<bool>();
+		if (j.contains("m_startPoint")) slider.m_startPoint = j.at("m_startPoint").get<float>();
+		if (j.contains("m_endPoint")) slider.m_endPoint = j.at("m_endPoint").get<float>();
+		if (j.contains("m_currentValue")) slider.m_currentValue = j.at("m_currentValue").get<float>();
+		if (j.contains("m_minValue")) slider.m_minValue = j.at("m_minValue").get<float>();
+		if (j.contains("m_maxValue")) slider.m_maxValue = j.at("m_maxValue").get<float>();
+
+		// Deserialize color vectors
+		if (j.contains("m_defaultColor"))
+		{
+			auto& col = j["m_defaultColor"];
+			slider.m_defaultColor = { col[0], col[1], col[2], col[3] };
+		}
+		if (j.contains("m_hoveredColor"))
+		{
+			auto& col = j["m_hoveredColor"];
+			slider.m_hoveredColor = { col[0], col[1], col[2], col[3] };
+		}
+		if (j.contains("m_pressedColor"))
+		{
+			auto& col = j["m_pressedColor"];
+			slider.m_pressedColor = { col[0], col[1], col[2], col[3] };
+		}
+		if (j.contains("m_disabledColor"))
+		{
+			auto& col = j["m_disabledColor"];
+			slider.m_disabledColor = { col[0], col[1], col[2], col[3] };
+		}
+
+		// Deserialize string textures
+		if (j.contains("m_defaultTexture")) slider.m_defaultTexture = j.at("m_defaultTexture").get<std::string>();
+		if (j.contains("m_hoveredTexture")) slider.m_hoveredTexture = j.at("m_hoveredTexture").get<std::string>();
+		if (j.contains("m_pressedTexture")) slider.m_pressedTexture = j.at("m_pressedTexture").get<std::string>();
+		if (j.contains("m_disabledTexture")) slider.m_disabledTexture = j.at("m_disabledTexture").get<std::string>();
+
+		if (j.contains("m_knobID"))
+		{
+			if (j["m_knobID"].is_null())
+			{
+				slider.m_knobID.reset();
+			}
+			else
+			{
+				slider.m_knobID = j.at("m_knobID").get<EntityID>();
+			}
+		}
+
+		return slider;
+	}
+
+
 }
