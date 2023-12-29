@@ -2979,14 +2979,6 @@ namespace PE {
 								else
 									AddErrorLog("ALREADY HAS TEXT");
 							}
-							//temp for testing
-							if (ImGui::Selectable("Add GUISlider"))
-							{
-								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<GUISlider>()))
-									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<GUISlider>() });
-								else
-									AddErrorLog("ALREADY HAS slider");
-							}
 						}
 
 						ImGui::EndPopup();
@@ -4272,6 +4264,7 @@ namespace PE {
 
 				if (m_currentSelectedObject != -1)
 				{
+
 					//by default is false though
 					ImGuizmo::SetOrthographic(true);
 
@@ -4299,6 +4292,7 @@ namespace PE {
 					}
 
 					float transform[16]{};
+					float transform2[16]{};
 					static float OldTransform[16]{};
 					static float OldLocalX,OldLocalY;
 					static Transform currentTransform{};
@@ -4320,13 +4314,29 @@ namespace PE {
 						OldLocalX = ct.relPosition.x;
 						OldLocalY = ct.relPosition.y;
 						ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
+
+						float Scale2[3]{ ct.width,ct.height,0 },
+							Rotation2[3]{ 0,0, glm::degrees(ct.orientation) },
+							Translation2[3]{ ct.position.x,ct.position.y };
+
+						ImGuizmo::RecomposeMatrixFromComponents(Translation2, Rotation2, Scale2, transform2);
 					}
 					//for rendering the gizmo
-					if(!hasParent)
-					ImGuizmo::Manipulate(glm::value_ptr(cameraView),glm::value_ptr(cameraProjection),m_currentGizmoOperation,ImGuizmo::WORLD, transform);
+					if (!hasParent)
+					{
+						ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::WORLD, transform);
+					}
 					else
-					ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform);
+					{
+						auto ctx = ImGui::GetCurrentContext();
+						auto style2 = ImGuizmo::GetStyle();
 
+						style2.TranslationLineThickness = 10.f;
+
+						ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform);
+						ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform2);
+
+					}
 					if (ImGuizmo::IsUsing())
 					{
 						if (m_mouseInScene && ImGui::IsMouseDown(0) && !moving)
