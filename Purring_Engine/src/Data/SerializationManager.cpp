@@ -37,6 +37,7 @@
 #include "Logic/PlayerControllerScript.h"
 #include "Graphics/Text.h"
 #include "Math/MathCustom.h"
+#include "GUI/Canvas.h"
 
 // RTTR
 #include <rttr/variant.h>
@@ -261,6 +262,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::AnimationComponent>(entityId, "AnimationComponent", j);
     SerializeComponent<PE::TextComponent>(entityId, "TextComponent", j);
     SerializeComponent<PE::AudioComponent>(entityId, "AudioComponent", j);
+    SerializeComponent<PE::Canvas>(entityId, "Canvas", j);
 
 
     return j; 
@@ -447,7 +449,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("AnimationComponent", &SerializationManager::LoadAnimationComponent);
     m_initializeComponent.emplace("TextComponent", &SerializationManager::LoadTextComponent);
     m_initializeComponent.emplace("AudioComponent", &SerializationManager::LoadAudioComponent);
-
+    m_initializeComponent.emplace("Canvas", &SerializationManager::LoadCanvasComponent);
 }
 
 bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
@@ -628,6 +630,18 @@ bool SerializationManager::LoadTextComponent(const size_t& r_id, const nlohmann:
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>(),
         static_cast<void*>(&(PE::TextComponent().Deserialize(r_json["Entity"]["components"]["TextComponent"]))));
     return true;
+}
+
+bool SerializationManager::LoadCanvasComponent(const size_t& r_id, const nlohmann::json& r_json)
+{
+    if (r_json["Entity"]["components"].contains("Canvas"))
+    {
+
+        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>(), 
+            static_cast<void*>(&(PE::Canvas::Deserialize(r_json["Entity"]["components"]["Canvas"]))));
+        return true;
+    }
+    return false;
 }
 
 bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohmann::json& r_json)

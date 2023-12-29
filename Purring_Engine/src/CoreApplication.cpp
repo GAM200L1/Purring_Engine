@@ -293,7 +293,9 @@ RTTR_REGISTRATION
         .property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScriptData::animationStates);
 
-    rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str());
+    rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
+        .property_readonly("Width", &PE::Canvas::GetWidth)
+        .property_readonly("Height", &PE::Canvas::GetHeight);
 }
 
 PE::CoreApplication::CoreApplication()
