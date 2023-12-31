@@ -95,16 +95,37 @@ namespace PE
 			{
 				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
 #ifndef GAMERELEASE
-				if (Editor::GetInstance().IsEditorActive()) {
+				if (Editor::GetInstance().IsEditorActive()) 
+				{
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
 					{
+						bool knobFound = false;
 						for (auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children)
 						{
 							if (EntityManager::GetInstance().Get<EntityDescriptor>(cid).name == "SliderKnob")
 							{
 								slider.m_knobID = cid;
+								knobFound = true;
+
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).isAlive == false)
+								{
+									//EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.erase(slider.m_knobID.value());
+									//EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).parent = std::nullopt;
+									continue;
+								}
+								else
 								break;
 							}
+						}
+
+						//if there is children but no knob
+						if (!knobFound || EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).isAlive == false)
+						{
+							SerializationManager sm;
+
+							slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
+							EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.emplace(slider.m_knobID.value());
+							EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).parent = objectID;
 						}
 					}
 					if (!slider.m_knobID.has_value())
@@ -272,22 +293,26 @@ namespace PE
 			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
 				continue;
 			//get the components
+
+
 			GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
-			Transform& transform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
+			if (EntityManager::GetInstance().Has<Transform>(slider.m_knobID.value()))
+			{
+				Transform& transform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
 
-			if (slider.m_disabled)
-				continue;
+				if (slider.m_disabled)
+					continue;
 
-			float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
-			InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
-			mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
-			mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
+				float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
+				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
+				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
+				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
-			if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
-				continue;
+				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+					continue;
 
-			slider.m_clicked = true;
-			std::cout << "clicked" << std::endl;
+				slider.m_clicked = true;
+			}
 		}
 	}
 
@@ -301,7 +326,6 @@ namespace PE
 		for (EntityID objectID : SceneView<Transform, GUISlider>())
 		{
 			GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
-			std::cout << "released" << std::endl;
 			slider.m_clicked = false;
 		}
 	}
@@ -358,24 +382,28 @@ namespace PE
 					continue;
 				//get the components
 				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
-				Transform& transform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
 
-				if (slider.m_disabled)
-					continue;
-
-				float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
-				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
-				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
-				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
-
-				//check mouse coordinate against transform here
-				if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+				if (EntityManager::GetInstance().Has<Transform>(slider.m_knobID.value()))
 				{
-					slider.m_Hovered = true;
-				}
-				else
-				{
-					slider.m_Hovered = false;
+					Transform& transform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
+
+					if (slider.m_disabled)
+						continue;
+
+					float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
+					InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
+					mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
+					mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
+
+					//check mouse coordinate against transform here
+					if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+					{
+						slider.m_Hovered = true;
+					}
+					else
+					{
+						slider.m_Hovered = false;
+					}
 				}
 			}
 	}

@@ -79,7 +79,8 @@
                     "EntityDescriptor": {
                         "Prefab Type": "SliderBody",
                         "children": [
-                            4
+                            4,
+                            5
                         ],
                         "isActive": true,
                         "name": "SliderBody",
@@ -98,7 +99,7 @@
                     "GUISlider": {
                         "m_Hovered": false,
                         "m_clicked": false,
-                        "m_currentValue": 0.0,
+                        "m_currentValue": 50.0,
                         "m_defaultColor": [
                             0.3921568691730499,
                             0.3921568691730499,
@@ -122,7 +123,7 @@
                             1.0
                         ],
                         "m_hoveredTexture": "",
-                        "m_knobID": 4,
+                        "m_knobID": 5,
                         "m_maxValue": 100.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
@@ -138,7 +139,7 @@
                         "height": 75.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -355.9993896484375,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -176,11 +177,11 @@
                         "height": 75.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -568.4993896484375,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": -212.5,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,

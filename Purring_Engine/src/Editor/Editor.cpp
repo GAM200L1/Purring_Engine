@@ -4313,13 +4313,14 @@ namespace PE {
 
 						OldLocalX = ct.relPosition.x;
 						OldLocalY = ct.relPosition.y;
+
 						ImGuizmo::RecomposeMatrixFromComponents(Translation, Rotation, Scale, transform);
 
-						float Scale2[3]{ ct.width,ct.height,0 },
-							Rotation2[3]{ 0,0, glm::degrees(ct.orientation) },
-							Translation2[3]{ ct.position.x,ct.position.y };
+						//float Scale2[3]{ ct.width,ct.height,0 },
+						//	Rotation2[3]{ 0,0, glm::degrees(ct.orientation) },
+						//	Translation2[3]{ ct.position.x,ct.position.y };
 
-						ImGuizmo::RecomposeMatrixFromComponents(Translation2, Rotation2, Scale2, transform2);
+						//ImGuizmo::RecomposeMatrixFromComponents(Translation2, Rotation2, Scale2, transform2);
 					}
 					//for rendering the gizmo
 					if (!hasParent)
@@ -4328,13 +4329,10 @@ namespace PE {
 					}
 					else
 					{
-						auto ctx = ImGui::GetCurrentContext();
-						auto style2 = ImGuizmo::GetStyle();
-
-						style2.TranslationLineThickness = 10.f;
-
 						ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform);
-						ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform2);
+						
+						//this works, but we will end up drawing 2 gizmo if uncommented, if the first 1 is commented the gizmo will not work.
+						//ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform2);
 
 					}
 					if (ImGuizmo::IsUsing())
