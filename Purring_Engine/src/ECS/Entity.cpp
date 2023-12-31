@@ -220,6 +220,7 @@ namespace PE
 		j["isActive"] = isActive;
 
 		j["Prefab Type"] = prefabType;
+		j["Layer"] = layer;
 
 		return j;
 	}
@@ -250,6 +251,11 @@ namespace PE
 		if (j.contains("Prefab Type"))
 		{
 			desc.prefabType = j["Prefab Type"].get<std::string>();
+		}
+
+		if (j.contains("Layer"))
+		{
+			desc.layer = j["Layer"].get<int>();
 		}
 
 		return desc;

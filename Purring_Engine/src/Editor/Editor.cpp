@@ -1083,6 +1083,10 @@ namespace PE {
 										std::string str = "##" + prop.get_name().to_string();
 										ImGui::SameLine(); ImGui::Checkbox(str.c_str(), &tmp);
 										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+										if (prop.get_name().to_string() == "Active")
+										{
+											(tmp) ? EntityManager::GetInstance().Get<EntityDescriptor>(entityID).EnableEntity() : EntityManager::GetInstance().Get<EntityDescriptor>(entityID).DisableEntity();
+										}
 									}
 								}
 							}

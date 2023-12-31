@@ -51,6 +51,8 @@ namespace PE
 		// set the relative positon to the computed values
 		EntityManager::GetInstance().Get<Transform>(child).relPosition = vec2(tmpc.x, tmpc.y);
 		EntityManager::GetInstance().Get<Transform>(child).relOrientation = EntityManager::GetInstance().Get<Transform>(child).orientation - EntityManager::GetInstance().Get<Transform>(parent).orientation;
+		if (!EntityManager::GetInstance().Get<EntityDescriptor>(parent).isActive)
+			EntityManager::GetInstance().Get<EntityDescriptor>(child).DisableEntity();
 		UpdateRenderOrder(parent);
 	}
 
