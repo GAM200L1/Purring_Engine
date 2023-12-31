@@ -39,9 +39,6 @@ namespace PE
 	// used to check if the target id is found in the child
 	bool RecursionHelper(EntityID targetID, EntityDescriptor& r_targetDescriptor)
 	{
-		if (!r_targetDescriptor.parent)
-			return false;
-
 		if (r_targetDescriptor.children.find(targetID) != std::end(r_targetDescriptor.children))
 		{
 			return true;
@@ -59,26 +56,15 @@ namespace PE
 		if (!EntityManager::GetInstance().Has<EntityDescriptor>(child))
 			return;
 		
+		if (RecursionHelper(parent, EntityManager::GetInstance().Get<EntityDescriptor>(child)))
+		{
+			return;
+		}
 		if (EntityManager::GetInstance().Get<EntityDescriptor>(child).parent)
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()).children.erase(child);
 		}
-
-		// this is to handle if there's a situation where the child is being attached into it's children
-		// so basically there's a paradox happening, so the way to handle it would be do give up all it's children
-		// to the current parent(if there is one, otherwise they will return to the root)
-		if (RecursionHelper(parent, EntityManager::GetInstance().Get<EntityDescriptor>(child)))
-		{
-			//DetachChild(child);
-			auto& pval = EntityManager::GetInstance().Get<EntityDescriptor>(child).parent;
-			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(child).children)
-			{
-				EntityManager::GetInstance().Get<EntityDescriptor>(id).parent = pval;
-				if (pval)
-					EntityManager::GetInstance().Get<EntityDescriptor>(pval.value()).children.emplace(id);
-			}
-			EntityManager::GetInstance().Get<EntityDescriptor>(child).children.clear();
-		}
+		
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.emplace(child);
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = parent;
@@ -91,9 +77,8 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(child).relOrientation = EntityManager::GetInstance().Get<Transform>(child).orientation - EntityManager::GetInstance().Get<Transform>(parent).orientation;
 		if (!EntityManager::GetInstance().Get<EntityDescriptor>(parent).isActive)
 			EntityManager::GetInstance().Get<EntityDescriptor>(child).DisableEntity();
+		
 
-		//RecursionHelper(parent, EntityManager::GetInstance().Get<EntityDescriptor>(child));
-			
 
 		UpdateRenderOrder(parent);
 	}

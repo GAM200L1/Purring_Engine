@@ -646,7 +646,12 @@ namespace PE {
 					continue;
 				std::string name2 = std::to_string(v);
 				name2 += ". ";
+#ifdef _DEBUG 
+				name2 += std::to_string(EntityManager::GetInstance().Get<EntityDescriptor>(v).sceneID);
+				name2 += " ";
+#endif // _DEBUG
 				name2 += EntityManager::GetInstance().Get<EntityDescriptor>(v).name;
+
 				r_selected = (m_currentSelectedObject == static_cast<int>(v));
 
 				if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
@@ -713,6 +718,11 @@ namespace PE {
 
 					std::string name = std::to_string(id);
 					name += ". ";
+#ifdef _DEBUG 
+					name += std::to_string(EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID);
+					name += " ";
+#endif // _DEBUG
+
 					name += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
 					bool is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
