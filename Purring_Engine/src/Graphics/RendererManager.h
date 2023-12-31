@@ -47,6 +47,10 @@ namespace PE
         public:
             // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
             static std::vector<EntityID> renderedEntities;
+            static unsigned totalDrawCalls;   // Sum total of all draw calls made
+            static unsigned textDrawCalls;    // Total draw calls made for text (1 draw call per chara)
+            static unsigned objectDrawCalls;  // Total draw calls for gameobjects
+            static unsigned debugDrawCalls;   // Total draw calls for debug shapes
 
             // ----- Constructors ----- //
         public:
@@ -122,6 +126,22 @@ namespace PE
             void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
 
             /*!***********************************************************************************
+             \brief Loops through all objects with a Renderer component (or a class that
+                    derives from it) and draws it. Batches the colors, transformation matrices 
+                    and textured status together into a vertex buffer object and makes an 
+                    instanced drawcall. The instanced batch is broken when a new texture is encountered.
+
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
+                            NDC space.
+             \param[in] r_rendererContainer Container containing the renderer and transform 
+                            components of the objects to draw
+             \param[in] isGuiRenderer Set to true if the container contains the IDs of GUI 
+                            renderers, false if just regular renderers.
+            *************************************************************************************/
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, 
+                std::vector<EntityID> const& r_rendererIdContainer, bool const isGuiRenderer);
+
+            /*!***********************************************************************************
              \brief Loops through all objects with colliders and rigidbody components and draws 
                     shapes to visualise their bounds, direction and magnitude for debug purposes. 
 
@@ -180,6 +200,13 @@ namespace PE
             void DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType);
 
             /*!***********************************************************************************
+             \brief Retrieves the GUI objects and makes draw calls for them.
+
+             \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+            *************************************************************************************/
+            void DrawUi(glm::mat4 const& r_viewToNdc);
+
+            /*!***********************************************************************************
              \brief Makes a draw call for a square to represent the AABB collider passed in.
 
              \param[in] r_aabbCollider Information about the AABB collider to render.
@@ -202,6 +229,23 @@ namespace PE
             void DrawCollider(CircleCollider const& r_circleCollider,
                 glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
                 glm::vec4 const& r_color = { 0.f, 1.f, 0.f, 1.f });
+
+            /*!***********************************************************************************
+             \brief Makes a draw call for the outline of a rectangle.
+
+             \param[in] width Width of the rectangle.
+             \param[in] height Height of the rectangle.
+             \param[in] orientation Orientation of the rectangle (in radians).
+             \param[in] xPosition X position of the center of the rectangle.
+             \param[in] yPosition Y position of the center of the rectangle.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void RendererManager::DrawDebugRectangle(float const width, float const height,
+                float const orientation, float const xPosition, float const yPosition,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color);
 
             /*!***********************************************************************************
              \brief Makes a draw call for a line to represent the vector passed in.
@@ -323,6 +367,7 @@ namespace PE
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
             std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
             std::vector<glm::vec2> m_UV{};
+
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************
@@ -379,6 +424,12 @@ namespace PE
             *************************************************************************************/
             void PrintSpecifications() const;
         };
+
+        /*!***********************************************************************************
+         \brief Prints error messages from OpenGL.
+        *************************************************************************************/
+        void APIENTRY GlDebugOutput(GLenum source, GLenum type, unsigned int id,
+            GLenum severity, GLsizei length, const char* message, const void* userParam);
 
     } // End of Graphics namespace
 } // End of PE namespace

@@ -98,13 +98,54 @@ namespace PE
 		UpdateRenderOrder(child);
 	}
 
-	inline const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& parent) const
+	const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& parent) const
 	{
 		return EntityManager::GetInstance().Get<EntityDescriptor>(parent).children;
 	}
 
-	inline const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& child) const
+	const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& child) const
 	{
+		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent;
+	}
+
+	bool Hierarchy::HasParent(const EntityID& child) const
+	{
+		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.has_value();
+	}
+
+	bool Hierarchy::IsImmediateParentActive(EntityID child) const
+	{
+		auto const& parent{ EntityManager::GetInstance().Get<EntityDescriptor>(child).parent };
+		return (parent.has_value() ? 
+				EntityManager::GetInstance().Get<EntityDescriptor>(parent.value()).isActive : // return active status of parent
+				EntityManager::GetInstance().Get<EntityDescriptor>(child).isActive);		// return active status of obj
+	}
+
+	bool Hierarchy::AreParentsActive(EntityID child) const
+	{
+		// Loop through all the parents to check their active statues
+		while (HasParent(child))
+		{
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(GetParent(child).value()).isActive)
+				return false;
+
+			child = GetParent(child).value();
+		}
+		return EntityManager::GetInstance().Get<EntityDescriptor>(child).isActive;
+	}
+
+	const std::optional<EntityID>& Hierarchy::GetAbsoluteParent(EntityID child) const
+	{
+		while (HasParent(child))
+		{
+			// If its parent has a parent, store its ID so we can check that its parent has a parent
+			EntityID parentId{ EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value() };
+			if (HasParent(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()))
+				child = parentId;
+			else
+				break;
+		}
+
 		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent;
 	}
 
@@ -142,7 +183,7 @@ namespace PE
 			if (!id)
 				continue;
 			// only if it is base layer
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+			if (!HasParent(id))
 			{
 				sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
 			}

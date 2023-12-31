@@ -51,6 +51,7 @@
 #include "Logic/CameraManagerScript.h"
 #include "Logic/GameStateController.h"
 #include "GUISystem.h"
+#include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
 #include <random>
 #include <rttr/type.h>
@@ -884,6 +885,11 @@ namespace PE {
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
+					if (ImGui::MenuItem("Create Canvas Object")) // the ctrl s is not programmed yet, need add to the key press event
+					{
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
+						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+					}
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
@@ -2263,6 +2269,43 @@ namespace PE {
 								}
 							}
 						}
+
+
+						// ---------- Canvas Component ---------- //
+
+						if (name == EntityManager::GetInstance().GetComponentID<Canvas>() && EntityManager::GetInstance().Has<Canvas>(entityID))
+						{
+							if (ImGui::CollapsingHeader("Canvas", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+							{
+								//setting reset button to open a popup with selectable text
+								ImGui::SameLine();
+								std::string id = "options##", o = "o##";
+								id += std::to_string(componentCount);
+								o += std::to_string(componentCount);
+
+								if (ImGui::Button(o.c_str()))
+										ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								Canvas const& canvasComponent{ EntityManager::GetInstance().Get<Canvas>(entityID) };
+								std::stringstream iss{};
+								iss << std::to_string(static_cast<int>(canvasComponent.GetWidth())) << " x " << std::to_string(static_cast<int>(canvasComponent.GetHeight()));
+								ImGui::Text("Target Resolution: "); ImGui::SameLine(); ImGui::Text(iss.str().c_str());
+
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+										if (ImGui::Selectable("Reset")) {}
+										if (ImGui::Selectable("Remove"))
+										{
+												EntityManager::GetInstance().Remove<Canvas>(entityID);
+										}
+										ImGui::EndPopup();
+								}
+							}
+						}
 					}
 
 					if (hasScripts)
@@ -2763,6 +2806,13 @@ namespace PE {
 								else
 									AddErrorLog("ALREADY HAS ANIMATION");
 							}
+							if (ImGui::Selectable("Add Canvas"))
+							{
+								if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Canvas>()))
+									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<Canvas>() });
+								else
+									AddErrorLog("ALREADY HAS CANVAS");
+							}
 						}
 						if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<Graphics::Renderer>())
 							&& !EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<AudioComponent>()))
@@ -3156,6 +3206,22 @@ namespace PE {
 			//		ImGui::EndTooltip();
 			//	}
 			//}
+
+
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Separator();
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+			ImGui::Text("Total Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::totalDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Object Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::objectDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Text Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::textDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Debug Shape Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::debugDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+
 			ImGui::End(); //imgui close
 		}
 	}
