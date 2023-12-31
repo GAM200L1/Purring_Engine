@@ -41,10 +41,13 @@ namespace PE
 {
 	// Defining static variables
 	std::unordered_set<EntityID> GUISystem::m_activeCanvases{};
+	float GUISystem::m_targetResolutionWidth{};
+	float GUISystem::m_targetResolutionHeight{};
 
-	GUISystem::GUISystem(GLFWwindow* p_glfwWindow) : p_window{ p_glfwWindow }
+	GUISystem::GUISystem(GLFWwindow* p_glfwWindow, float const width, float const height) : p_window{ p_glfwWindow }
 	{ 
-			m_activeCanvases.reserve(1000); // Reserve a large amount of entities in advance
+			m_activeCanvases.reserve(20); // Reserve a large amount of entities in advance
+			m_targetResolutionWidth = width, m_targetResolutionHeight = height;
 	}
 
 	GUISystem::~GUISystem()
@@ -67,8 +70,12 @@ namespace PE
 		m_activeCanvases.clear();
 		for (EntityID canvasId : SceneView<Canvas>())
 		{
+				EntityManager::GetInstance().Get<Canvas>(canvasId).SetTargetResolution(m_targetResolutionWidth, m_targetResolutionHeight);
+				if(EntityManager::GetInstance().Has<Transform>(canvasId))
+						EntityManager::GetInstance().Get<Transform>(canvasId).position = vec2{ 0.f, 0.f };
+
 				// Check if the canvas object has been enabled
-				if (EntityManager::GetInstance().Get<EntityDescriptor>(canvasId).isActive)
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(canvasId).isActive && Hierarchy::GetInstance().AreParentsActive(canvasId))
 				{
 						// Check if the parent of the canvas object is active
 						auto parentCanvas{ Hierarchy::GetInstance().GetParent(canvasId) };

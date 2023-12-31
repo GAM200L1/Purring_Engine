@@ -39,6 +39,27 @@ namespace PE
         inline float GetHeight() const { return m_height; }
 
         /*!***********************************************************************************
+            \brief Sets the width of the canvas. Should match the target resolution 
+                    of the window.
+        *************************************************************************************/
+        void SetWidth(float const width) { m_width = width; }
+
+        /*!***********************************************************************************
+            \brief Sets the height of the canvas. Should match the target resolution 
+                    of the window.
+        *************************************************************************************/
+        void SetHeight(float const height) { m_height = height; }
+
+        /*!***********************************************************************************
+            \brief Sets the width and height of the canvas. Should match the target resolution
+                    of the window.
+        *************************************************************************************/
+        void SetTargetResolution(float const width, float const height)
+        {
+            m_width = width, m_height = height;
+        }
+
+        /*!***********************************************************************************
          \brief Serializes the data to a JSON file
 
          \param[in,out] id - ID of Canvas component to get the data of
@@ -99,7 +120,7 @@ namespace PE
         }
     private:
         // Dimensions of the canvas. Should match the target resolution of the window.
-        float m_width, m_height;
+        float m_width{}, m_height{};
 
     }; // End of class
 

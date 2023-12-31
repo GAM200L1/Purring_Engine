@@ -2297,13 +2297,20 @@ namespace PE {
 									if (ImGui::Selectable("Reset")) {}
 									if (ImGui::Selectable("Remove"))
 									{
-										EntityManager::GetInstance().Remove<TextComponent>(entityID);
+										EntityManager::GetInstance().Remove<Canvas>(entityID);
 									}
 									ImGui::EndPopup();
 								}
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
+								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+								Canvas const& canvasComponent{ EntityManager::GetInstance().Get<Canvas>(entityID) };
+								std::stringstream iss{};
+								iss << std::to_string(static_cast<int>(canvasComponent.GetWidth())) << " x " << std::to_string(static_cast<int>(canvasComponent.GetHeight()));
+								ImGui::Text("Target Resolution: "); ImGui::SameLine(); ImGui::Text(iss.str().c_str());
+
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 							}
 						}

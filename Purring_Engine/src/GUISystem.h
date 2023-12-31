@@ -39,8 +39,10 @@ namespace PE
 
 		 \param [in,out] p_glfwWindow - Pointer to the GLFW window that the GUI system is 
 														rendering to.
+		 \param [in] width - Target width of the canvas.
+		 \param [in] height - Target height of the canvas.
 		*************************************************************************************/
-		GUISystem(GLFWwindow* p_glfwWindow);
+		GUISystem(GLFWwindow* p_glfwWindow, float const width, float const height);
 
 		/*!***********************************************************************************
 		 \brief     Virtual destructor for proper cleanup of derived systems.
@@ -68,6 +70,13 @@ namespace PE
 		 \return    std::string The name of the system.
 		*************************************************************************************/
 		virtual std::string GetName() override;
+
+		/*!***********************************************************************************
+		 \brief     Returns the container of canvases that are active in the scene.
+		 \return		std::unordered_set<EntityID> - Returns the container of canvases that 
+										are active in the scene.
+		*************************************************************************************/
+		static inline auto const& GetActiveCanvases() { return m_activeCanvases; }
 
 		/*!***********************************************************************************
 		 \brief     Returns true if there are any active canvases in the scene, false otherwise.
@@ -144,6 +153,7 @@ namespace PE
 
 			// Stores the IDs of the active canvases
 			static std::unordered_set<EntityID> m_activeCanvases;
+			static float m_targetResolutionWidth, m_targetResolutionHeight; // Dimensions the canvases should have
 	};
 
 	//enum to tell type of UI to make

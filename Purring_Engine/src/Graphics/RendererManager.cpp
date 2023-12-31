@@ -52,6 +52,9 @@
 // Animation
 #include "Animation/Animation.h"
 
+// GUI
+#include "GUI/Canvas.h"
+
 extern Logger engine_logger;
 
 namespace PE
@@ -241,13 +244,19 @@ namespace PE
             // Draw objects in the scene
             DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 
 
+#ifndef GAMERELEASE            
             // Draw UI objects in the scene
-            DrawUi(r_cameraManager.GetUiViewToNdcMatrix()); 
-            //// Draw UI objects in the scene
-            //DrawQuadsInstanced(r_cameraManager.GetUiViewToNdcMatrix(), SceneView<GUIRenderer, Transform>());
+            DrawUi(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix());
+
+            // Render Text
+            RenderText(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix());
+#else
+            // Draw UI objects in the scene
+            DrawUi(r_cameraManager.GetUiViewToNdcMatrix());
 
             // Render Text
             RenderText(r_cameraManager.GetUiViewToNdcMatrix());
+#endif // !GAMERELEASE
 
 #ifndef GAMERELEASE
             if (Editor::GetInstance().IsRenderingDebug())
@@ -347,7 +356,7 @@ namespace PE
 
                 // Skip drawing this object is the entity or renderer is not enabled
                 if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
-                    || !renderer.GetEnabled() || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
+                    || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
@@ -411,7 +420,7 @@ namespace PE
                 
                 // Skip drawing this object is the entity or renderer is not enabled
                 if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
-                    || !renderer.GetEnabled() || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
+                    || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
@@ -541,7 +550,7 @@ namespace PE
 
                 // Skip drawing this object is the entity or renderer is not enabled
                 if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
-                    || !renderer.GetEnabled() || !Hierarchy::GetInstance().AreParentsActive(id)) {
+                    || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) {
                     continue;
                 }
 
@@ -651,7 +660,7 @@ namespace PE
             for (const EntityID& id : SceneView<Collider>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
@@ -666,7 +675,7 @@ namespace PE
             for (const EntityID& id : SceneView<RigidBody>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
@@ -685,7 +694,7 @@ namespace PE
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 // Don't draw a cross for the UI camera
                 if (id == r_cameraManager.GetUiCameraId()) { continue; }
@@ -698,6 +707,26 @@ namespace PE
                 // Draw a cross to represent the orientation and position of the camera
                 DrawDebugCross(glmPosition, camera.GetUpVector(transform.orientation) * 100.f,
                     camera.GetRightVector(transform.orientation) * 100.f, r_worldToNdc, *(shaderProgramIterator->second));
+            }
+
+            glLineWidth(2.f);
+
+            // Draw a rectangle for every canvas component
+            for (auto const& id : GUISystem::GetActiveCanvases())
+            {
+                Canvas& canvasComponent{ EntityManager::GetInstance().Get<Canvas>(id) };
+                glm::vec2 position{ 0.f, 0.f };
+                if (EntityManager::GetInstance().Has<Transform>(id))
+                {
+                    Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
+                    position.x = transformComponent.position.x;
+                    position.y = transformComponent.position.y;
+                }
+
+                // Draw a cross to represent the orientation and position of the camera
+                DrawDebugRectangle(canvasComponent.GetWidth(), canvasComponent.GetHeight(), 
+                    0.f, position.x, position.y, r_worldToNdc, *(shaderProgramIterator->second),
+                    glm::vec4{1.f, 1.f, 1.f, 1.f});
             }
 
             glPointSize(1.f);
@@ -972,14 +1001,6 @@ namespace PE
 
         void RendererManager::DrawUi(glm::mat4 const& r_viewToNdc)
         {
-            /*
-                // Store the sizes of the sub buffers
-                size_t sizeOfTexturedVector{ m_isTextured.size() * sizeof(float) };
-                size_t sizeOfColorVector{ m_colors.size() * sizeof(glm::vec4) };
-                size_t sizeOfMatrixVector{ m_modelToWorldMatrices.size() * sizeof(glm::mat4) };
-                size_t sizeOfUVVector{ m_UV.size() * sizeof(glm::vec2) };
-            */
-
             if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
 
             std::vector<EntityID> guiToDraw{};
@@ -1014,17 +1035,12 @@ namespace PE
         {
             // Derive the scale and position of the debug shape to draw
             // from the bounds of the AABB collider
-            glm::mat4 modelToWorld
-            {
-                GenerateTransformMatrix(r_aabbCollider.max.x - r_aabbCollider.min.x, // width
-                    r_aabbCollider.max.y - r_aabbCollider.min.y, // height
-                    0.f, // orientation
-                    (r_aabbCollider.min.x + r_aabbCollider.max.x) * 0.5f, // x position
-                    (r_aabbCollider.min.y + r_aabbCollider.max.y) * 0.5f) // y position
-            };
-
-            Draw(EnumMeshType::DEBUG_SQUARE, r_color,
-                r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);                
+            DrawDebugRectangle(r_aabbCollider.max.x - r_aabbCollider.min.x, // width
+                r_aabbCollider.max.y - r_aabbCollider.min.y, // height
+                0.f, // orientation
+                (r_aabbCollider.min.x + r_aabbCollider.max.x) * 0.5f, // x position
+                (r_aabbCollider.min.y + r_aabbCollider.max.y) * 0.5f, // y position
+                r_worldToNdc, r_shaderProgram, r_color); 
         }
 
 
@@ -1043,6 +1059,24 @@ namespace PE
             };
 
             Draw(EnumMeshType::DEBUG_CIRCLE, r_color,
+                r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);
+        }
+
+
+        void RendererManager::DrawDebugRectangle(float const width, float const height,
+            float const orientation, float const xPosition, float const yPosition,
+            glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+            glm::vec4 const& r_color)
+        {
+            // Derive the scale and position of the debug shape to draw
+            // from the bounds of the AABB collider
+            glm::mat4 modelToWorld
+            {
+                GenerateTransformMatrix(width, height, orientation, // width, height, orientation
+                    xPosition, yPosition) // x position, y position
+            };
+
+            Draw(EnumMeshType::DEBUG_SQUARE, r_color,
                 r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);
         }
 
@@ -1093,12 +1127,15 @@ namespace PE
         
         void RendererManager::RenderText(glm::mat4 const& r_worldToNdc)
         {
+            // Don't bother if there are no active canvases
+            if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
+
             std::shared_ptr<ShaderProgram> p_textShader{ ResourceManager::GetInstance().ShaderPrograms[m_textShaderProgramKey] };
 
             for (const EntityID& id : SceneView<TextComponent, Transform>())
             {
-                // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !Hierarchy::GetInstance().AreParentsActive(id)) { continue; }
+                // Don't draw anything if the entity is inactive or is not childed to a canvas
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id) /*|| !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
                 vec2 position{ EntityManager::GetInstance().Get<Transform>(id).position };

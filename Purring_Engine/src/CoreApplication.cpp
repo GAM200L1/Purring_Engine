@@ -295,7 +295,10 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
         .property_readonly("Width", &PE::Canvas::GetWidth)
-        .property_readonly("Height", &PE::Canvas::GetHeight);
+        .property_readonly("Height", &PE::Canvas::GetHeight)
+        .method("SetWidth", &PE::Canvas::SetWidth)
+        .method("SetHeight", &PE::Canvas::SetHeight)
+        .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
 }
 
 PE::CoreApplication::CoreApplication()
@@ -510,7 +513,7 @@ void PE::CoreApplication::InitializeSystems()
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window, static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
