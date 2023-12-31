@@ -50,7 +50,7 @@ namespace PE
 		 
 		 \return const std::vector<EntityID>&  the cached vector
 		*************************************************************************************/
-		inline const std::vector<EntityID>& GetRenderOrder() const { return renderOrder; }
+		const std::vector<EntityID>& GetRenderOrder() const { return renderOrder; }
 
 		/*!***********************************************************************************
 		 \brief Get the Parent Order vector object mainly used in Editor.cpp by the object
@@ -58,7 +58,7 @@ namespace PE
 		 
 		 \return const std::vector<EntityID>& the cached vector
 		*************************************************************************************/
-		inline const std::vector<EntityID>& GetParentOrder() const { return parentOrder; }
+		const std::vector<EntityID>& GetParentOrder() const { return parentOrder; }
 
 		/*!***********************************************************************************
 		 \brief Helper function to get the children of the input entity
@@ -66,7 +66,7 @@ namespace PE
 		 \param[in] parent 	EntityID of the parent to fetch children of
 		 \return const std::set<EntityID>& 	The children
 		*************************************************************************************/
-		inline const std::set<EntityID>& GetChildren(const EntityID& parent) const;
+		const std::set<EntityID>& GetChildren(const EntityID& parent) const;
 
 		/*!***********************************************************************************
 		 \brief Get the parent(std::optional, treat properly!) of the current entity 
@@ -74,7 +74,7 @@ namespace PE
 		 \param[in] child 	The child to request parent (might not have a parent)
 		 \return const std::optional<EntityID>& The potential parent
 		*************************************************************************************/
-		inline const std::optional<EntityID>& GetParent(const EntityID& child) const;
+		const std::optional<EntityID>& GetParent(const EntityID& child) const;
 
 	// ----- Public Methods ----- //
 	public:
@@ -91,7 +91,7 @@ namespace PE
 		 \param[in] parent 	ID of the parent entity
 		 \param[in] child 	ID of the child entity
 		*************************************************************************************/
-		void AttachChild(const EntityID& parent, const EntityID& child);
+		void AttachChild(const EntityID parent, const EntityID child);
 		
 		/*!***********************************************************************************
 		 \brief Helper function to detach a child entity from its parent
@@ -99,6 +99,8 @@ namespace PE
 		 \param[in] child	ID of the child entity to detach
 		*************************************************************************************/
 		void DetachChild(const EntityID& child);
+
+		
 		
 	
 	// ----- Private Methods ----- //
@@ -144,7 +146,9 @@ namespace PE
 		std::vector<EntityID> renderOrder;
 		std::vector<EntityID> renderOrderUI;
 
+		std::map<EntityID, EntityID> sceneOrder;
 		std::vector<EntityID> parentOrder; // wiped every frame? used to keep track of update order for parents, might change to list if i start inserting more...
+
 
 		std::map<float, EntityID> sceneHierarchy;
 	};

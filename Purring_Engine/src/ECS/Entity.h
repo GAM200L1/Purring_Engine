@@ -586,7 +586,6 @@ namespace PE
 	{
 		// name of the entity
 		std::string name{ "GameObject" };
-
 		// the parent of the entity
 		std::optional<EntityID> parent;
 
@@ -600,6 +599,8 @@ namespace PE
 
 		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
+		EntityID oldID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
+
 
 		float renderOrder { FLT_MAX };
 
@@ -663,7 +664,7 @@ namespace PE
 		}
 		
 		// render layer settings, currently limited to 0-10 range
-		int& SetLayer(int val) { return layer = (val > 10) ? 10 : (val < 10)? 0 : val; }
+		int& SetLayer(int val) { return layer = (val > 10) ? 10 : (val < 0)? 0 : val; }
 
 		/*!***********************************************************************************
 		 \brief Deserializes the input json file into a copy of the entity descriptor

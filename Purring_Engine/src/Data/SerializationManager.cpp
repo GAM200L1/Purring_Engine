@@ -294,7 +294,7 @@ size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
         const auto& entityJson = r_j["Entity"];
         PE::EntityDescriptor desc = PE::EntityDescriptor::Deserialize(r_j["Entity"]["components"]["EntityDescriptor"]);
 
-        id = PE::EntityManager::GetInstance().NewEntity(desc.sceneID);
+        id = PE::EntityManager::GetInstance().NewEntity(desc.oldID);
         for (const auto& t : r_j["Entity"].items())
         {
             // to change?

@@ -4,6 +4,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -48,6 +50,8 @@
                         "viewportWidth": 1920.0
                     },
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -77,6 +81,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             4
@@ -84,7 +90,7 @@
                         "isActive": true,
                         "name": "Empty Object",
                         "parent": null,
-                        "sceneID": 18446744073709551615
+                        "sceneID": 3
                     },
                     "Renderer": {
                         "Color": {
@@ -125,6 +131,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             5
@@ -165,6 +173,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             6
@@ -185,16 +195,16 @@
                     },
                     "Transform": {
                         "height": 100.0,
-                        "orientation": 0.4000000059604645,
+                        "orientation": 0.40000009536743164,
                         "position": {
                             "x": 198.00665283203125,
-                            "y": 19.866933822631836
+                            "y": 19.866884231567383
                         },
                         "relativeposition": {
-                            "x": 100.0,
-                            "y": 0.0
+                            "x": 99.99999237060547,
+                            "y": -4.76837158203125e-05
                         },
-                        "relorientation": 0.20000000298023224,
+                        "relorientation": 0.2000000923871994,
                         "width": 100.0
                     }
                 },
@@ -205,6 +215,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             7
@@ -225,10 +237,10 @@
                     },
                     "Transform": {
                         "height": 100.0,
-                        "orientation": 0.6000000238418579,
+                        "orientation": 0.6000000834465027,
                         "position": {
                             "x": 290.11273193359375,
-                            "y": 58.80876922607422
+                            "y": 58.80872344970703
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -245,6 +257,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             8
@@ -265,10 +279,10 @@
                     },
                     "Transform": {
                         "height": 100.0,
-                        "orientation": 0.800000011920929,
+                        "orientation": 0.8000000715255737,
                         "position": {
                             "x": 372.64630126953125,
-                            "y": 115.27301788330078
+                            "y": 115.27297973632813
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -285,6 +299,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             9
@@ -305,10 +321,10 @@
                     },
                     "Transform": {
                         "height": 100.0,
-                        "orientation": 1.0,
+                        "orientation": 1.0000001192092896,
                         "position": {
                             "x": 442.31695556640625,
-                            "y": 187.00863647460938
+                            "y": 187.0085906982422
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -325,6 +341,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             10
@@ -345,10 +363,10 @@
                     },
                     "Transform": {
                         "height": 100.0,
-                        "orientation": 1.2000000476837158,
+                        "orientation": 1.2000001668930054,
                         "position": {
                             "x": 496.34716796875,
-                            "y": 271.1557312011719
+                            "y": 271.15570068359375
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -365,6 +383,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             11
@@ -372,7 +392,7 @@
                         "isActive": true,
                         "name": "Empty Object",
                         "parent": 9,
-                        "sceneID": 18446744073709551615
+                        "sceneID": 4
                     },
                     "Renderer": {
                         "Color": {
@@ -385,16 +405,16 @@
                     },
                     "Transform": {
                         "height": 100.0,
-                        "orientation": 1.4000000953674316,
+                        "orientation": 1.4000002145767212,
                         "position": {
                             "x": 532.5829467773438,
-                            "y": 364.35968017578125
+                            "y": 364.359619140625
                         },
                         "relativeposition": {
-                            "x": 100.00006103515625,
+                            "x": 100.0,
                             "y": 0.0
                         },
-                        "relorientation": 0.20000004768371582,
+                        "relorientation": 0.20000000298023224,
                         "width": 100.0
                     }
                 },
@@ -405,6 +425,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             12
@@ -412,7 +434,7 @@
                         "isActive": true,
                         "name": "Empty Object",
                         "parent": 10,
-                        "sceneID": 18446744073709551615
+                        "sceneID": 0
                     },
                     "Renderer": {
                         "Color": {
@@ -427,14 +449,14 @@
                         "height": 100.0,
                         "orientation": 1.6000001430511475,
                         "position": {
-                            "x": 549.5796508789063,
-                            "y": 462.9046630859375
+                            "x": 549.57958984375,
+                            "y": 462.90478515625
                         },
                         "relativeposition": {
-                            "x": 100.0,
-                            "y": 0.0
+                            "x": 100.00018310546875,
+                            "y": 9.1552734375e-05
                         },
-                        "relorientation": 0.20000000298023224,
+                        "relorientation": 0.19999992847442627,
                         "width": 100.0
                     }
                 },
@@ -445,6 +467,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             13
@@ -467,8 +491,8 @@
                         "height": 100.0,
                         "orientation": 1.8000001907348633,
                         "position": {
-                            "x": 546.65966796875,
-                            "y": 562.8619995117188
+                            "x": 546.6596069335938,
+                            "y": 562.8621215820313
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -485,6 +509,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             14
@@ -507,8 +533,8 @@
                         "height": 100.0,
                         "orientation": 2.000000238418579,
                         "position": {
-                            "x": 523.939453125,
-                            "y": 660.2467651367188
+                            "x": 523.9393920898438,
+                            "y": 660.2468872070313
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -525,6 +551,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             15
@@ -547,14 +575,14 @@
                         "height": 100.0,
                         "orientation": 2.200000286102295,
                         "position": {
-                            "x": 482.32464599609375,
-                            "y": 751.1763916015625
+                            "x": 482.3246765136719,
+                            "y": 751.1766357421875
                         },
                         "relativeposition": {
-                            "x": 99.99996948242188,
-                            "y": 0.0001220703125
+                            "x": 100.0,
+                            "y": 0.0
                         },
-                        "relorientation": 0.20000004768371582,
+                        "relorientation": 0.20000000298023224,
                         "width": 100.0
                     }
                 },
@@ -565,6 +593,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             16
@@ -587,8 +617,8 @@
                         "height": 100.0,
                         "orientation": 2.4000003337860107,
                         "position": {
-                            "x": 423.4745178222656,
-                            "y": 832.0260009765625
+                            "x": 423.47454833984375,
+                            "y": 832.0262451171875
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -605,6 +635,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             17
@@ -627,8 +659,8 @@
                         "height": 100.0,
                         "orientation": 2.6000003814697266,
                         "position": {
-                            "x": 349.735107421875,
-                            "y": 899.572265625
+                            "x": 349.73516845703125,
+                            "y": 899.572509765625
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -645,6 +677,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             18
@@ -667,8 +701,8 @@
                         "height": 100.0,
                         "orientation": 2.8000004291534424,
                         "position": {
-                            "x": 264.04620361328125,
-                            "y": 951.1223754882813
+                            "x": 264.0462646484375,
+                            "y": 951.1226196289063
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -685,6 +719,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             19
@@ -707,8 +743,8 @@
                         "height": 100.0,
                         "orientation": 3.000000476837158,
                         "position": {
-                            "x": 169.82395935058594,
-                            "y": 984.6211547851563
+                            "x": 169.8240203857422,
+                            "y": 984.6213989257813
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -725,6 +761,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [
                             20
@@ -747,8 +785,8 @@
                         "height": 100.0,
                         "orientation": 3.200000524520874,
                         "position": {
-                            "x": 70.82470703125,
-                            "y": 998.7330932617188
+                            "x": 70.82476806640625,
+                            "y": 998.7333374023438
                         },
                         "relativeposition": {
                             "x": 100.0,
@@ -765,6 +803,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 18446744073709551615,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -785,8 +825,8 @@
                         "height": 100.0,
                         "orientation": 3.40000057220459,
                         "position": {
-                            "x": -29.00476837158203,
-                            "y": 992.8956298828125
+                            "x": -29.00470733642578,
+                            "y": 992.8958740234375
                         },
                         "relativeposition": {
                             "x": 100.0,

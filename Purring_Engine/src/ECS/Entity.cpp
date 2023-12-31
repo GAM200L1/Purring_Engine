@@ -55,11 +55,13 @@ namespace PE
 		Get<EntityDescriptor>(id).name = "GameObject";
 		Get<EntityDescriptor>(id).name += std::to_string(id);
 		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
+		Get<EntityDescriptor>(id).oldID = Get<EntityDescriptor>(id).sceneID;
 		return id;
 	}
 
 	EntityID EntityManager::NewEntity(EntityID id)
 	{
+		
 		if (m_removed.count(id))
 			m_removed.erase(id);
 		else if (id == ULLONG_MAX || m_entities.count(id)) // if a prefab or the id alread is used
@@ -92,7 +94,8 @@ namespace PE
 		Assign(id, GetComponentID<EntityDescriptor>());
 		Get<EntityDescriptor>(id).name = "GameObject";
 		Get<EntityDescriptor>(id).name += std::to_string(id);
-		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
+		Get<EntityDescriptor>(id).sceneID = (Get<EntityDescriptor>(id).sceneID == ULLONG_MAX)? id : Get<EntityDescriptor>(id).sceneID; // potentially in the future it will not be tied!!
+		Get<EntityDescriptor>(id).oldID = id;
 		return id;
 	}
 
@@ -221,6 +224,7 @@ namespace PE
 
 		j["Prefab Type"] = prefabType;
 		j["Layer"] = layer;
+		j["Old ID"] = oldID;
 
 		return j;
 	}
@@ -256,6 +260,11 @@ namespace PE
 		if (j.contains("Layer"))
 		{
 			desc.layer = j["Layer"].get<int>();
+		}
+
+		if (j.contains("Old ID"))
+		{
+			desc.oldID = j["Old ID"].get<EntityID>();
 		}
 
 		return desc;
