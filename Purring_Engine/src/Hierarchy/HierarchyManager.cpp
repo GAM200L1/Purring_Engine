@@ -250,14 +250,16 @@ namespace PE
 		// main concern is differentiation of UI and world objects will be modified
 		for (auto [k, v] : sceneHierarchy)
 		{
-			if (EntityManager::GetInstance().Has<PE::Graphics::GUIRenderer>(v))
-			{
-				renderOrderUI.emplace_back(v);
-			}
-			else if (EntityManager::GetInstance().Has<PE::Graphics::Renderer>(v))
+			if (EntityManager::GetInstance().Has<PE::Graphics::Renderer>(v))
 			{
 				renderOrder.emplace_back(v);
 			}
+			// to change to canvas!!
+			else if (EntityManager::GetInstance().Has<PE::Graphics::GUIRenderer>(v))
+			{
+				renderOrderUI.emplace_back(v);
+			}
+			
 		}
 		//std::cout << "-- Scene Hierarchy --" << std::endl;
 		//for (auto[k,v] : sceneHierarchy)
