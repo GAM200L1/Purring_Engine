@@ -847,6 +847,11 @@ namespace PE {
 										Hierarchy::GetInstance().DetachChild(cid);
 								}
 							}
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent)
+							{
+								EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value()).children.erase(m_currentSelectedObject);
+							}
+
 							m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 							EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 						}

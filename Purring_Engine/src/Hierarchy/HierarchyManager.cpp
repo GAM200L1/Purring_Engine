@@ -90,8 +90,11 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()).children.erase(child);
 		}
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.reset();
-		EntityManager::GetInstance().Get<Transform>(child).relPosition.Zero();
-		EntityManager::GetInstance().Get<Transform>(child).relOrientation = 0;
+		if (EntityManager::GetInstance().Has<Transform>(child))
+		{
+			EntityManager::GetInstance().Get<Transform>(child).relPosition.Zero();
+			EntityManager::GetInstance().Get<Transform>(child).relOrientation = 0;
+		}
 		UpdateRenderOrder(child);
 	}
 
@@ -266,11 +269,11 @@ namespace PE
 		//{
 		//	std::cout << k << ", " << v << std::endl;
 		//}
-		std::cout << "-- Object Render Order --" << std::endl;
+		/*std::cout << "-- Object Render Order --" << std::endl;
 		for (const auto& id : renderOrder)
 		{
 			std::cout << id << std::endl;
-		}
+		}*/
 
 		/*std::cout << "-- UI Render Order --" << std::endl;
 		for (const auto& id : renderOrderUI)

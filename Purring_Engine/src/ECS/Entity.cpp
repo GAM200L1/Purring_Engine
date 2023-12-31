@@ -170,7 +170,9 @@ namespace PE
 					if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 						Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value(), cid);
 				}
+				
 			}
+			Hierarchy::GetInstance().DetachChild(id);
 			for (const ComponentID& r_pool : GetComponentIDs(id))
 			{
 				m_componentPools[r_pool]->Remove(id);
