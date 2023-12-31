@@ -870,7 +870,7 @@ namespace PE {
 				{
 					if (ImGui::MenuItem("Create Canvas Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas Object_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
 						m_undoStack.AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
