@@ -2292,18 +2292,9 @@ namespace PE {
 								std::string id = "options##", o = "o##";
 								id += std::to_string(componentCount);
 								o += std::to_string(componentCount);
-								if (ImGui::BeginPopup(id.c_str()))
-								{
-									if (ImGui::Selectable("Reset")) {}
-									if (ImGui::Selectable("Remove"))
-									{
-										EntityManager::GetInstance().Remove<Canvas>(entityID);
-									}
-									ImGui::EndPopup();
-								}
 
 								if (ImGui::Button(o.c_str()))
-									ImGui::OpenPopup(id.c_str());
+										ImGui::OpenPopup(id.c_str());
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
 								Canvas const& canvasComponent{ EntityManager::GetInstance().Get<Canvas>(entityID) };
@@ -2312,6 +2303,17 @@ namespace PE {
 								ImGui::Text("Target Resolution: "); ImGui::SameLine(); ImGui::Text(iss.str().c_str());
 
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+
+								if (ImGui::BeginPopup(id.c_str()))
+								{
+										if (ImGui::Selectable("Reset")) {}
+										if (ImGui::Selectable("Remove"))
+										{
+												EntityManager::GetInstance().Remove<Canvas>(entityID);
+										}
+										ImGui::EndPopup();
+								}
 							}
 						}
 					}

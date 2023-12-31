@@ -171,6 +171,8 @@ namespace PE
 
 	void GUISystem::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
+		if (m_activeCanvases.empty()) { return; } // Don't bother with anything else if there are no canvases
+
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		//loop through all objects check for Button Component
 #ifndef GAMERELEASE
@@ -178,7 +180,7 @@ namespace PE
 #endif
 			for (EntityID objectID : SceneView<Transform, GUI>())
 			{
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
 					continue;
 				//get the components
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
@@ -232,7 +234,7 @@ namespace PE
 #endif
 		for (EntityID objectID : SceneView<Transform, GUI>())
 		{
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
 				continue;
 			//get the components
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
