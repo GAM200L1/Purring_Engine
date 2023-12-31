@@ -65,7 +65,6 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()).children.erase(child);
 		}
 		
-
 		EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.emplace(child);
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = parent;
 		vec3 tmpc (EntityManager::GetInstance().Get<Transform>(child).position, 1.f);
@@ -78,8 +77,6 @@ namespace PE
 		if (!EntityManager::GetInstance().Get<EntityDescriptor>(parent).isActive)
 			EntityManager::GetInstance().Get<EntityDescriptor>(child).DisableEntity();
 		
-
-
 		UpdateRenderOrder(parent);
 	}
 
@@ -192,14 +189,15 @@ namespace PE
 	void Hierarchy::UpdateRenderOrder(EntityID targetID)
 	{
 		// update specific entity
+		float delta = 100.f * parentOrder.size();
+
 		if (targetID != ULLONG_MAX)
 		{
 			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(targetID);
-
 			if (!desc.parent.has_value())
 			{
 				sceneHierarchy.erase(desc.renderOrder);
-				desc.renderOrder = static_cast<float>(desc.sceneID);
+				desc.renderOrder = static_cast<float>(desc.sceneID);// +(desc.layer * delta);
 				sceneHierarchy[desc.renderOrder] = targetID;
 			}
 
@@ -220,7 +218,7 @@ namespace PE
 					desc.sceneID = parentID;
 				if (sceneHierarchy.find(desc.renderOrder) == sceneHierarchy.end())
 				{
-					desc.renderOrder = desc.sceneID;
+					desc.renderOrder = static_cast<float>(desc.sceneID);// +(desc.layer * delta);
 					sceneHierarchy[desc.renderOrder] = parentID;
 				}
 
@@ -248,15 +246,15 @@ namespace PE
 			}
 		}
 
-		//std::cout << "-- Object Render Order --" << std::endl;
-		//for (const auto& id : renderOrder)
-		//{
-		//	std::cout << id << std::endl;
-		//}
-		//std::cout << "-- UI Render Order --" << std::endl;
-		//for (const auto& id : renderOrderUI)
-		//{
-		//	std::cout << id << std::endl;
-		//}
+		std::cout << "-- Object Render Order --" << std::endl;
+		for (const auto& id : renderOrder)
+		{
+			std::cout << id << std::endl;
+		}
+		std::cout << "-- UI Render Order --" << std::endl;
+		for (const auto& id : renderOrderUI)
+		{
+			std::cout << id << std::endl;
+		}
 	}
 }

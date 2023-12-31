@@ -55,7 +55,7 @@ namespace PE
 		Get<EntityDescriptor>(id).name = "GameObject";
 		Get<EntityDescriptor>(id).name += std::to_string(id);
 		Get<EntityDescriptor>(id).sceneID = id; // potentially in the future it will not be tied!!
-		Get<EntityDescriptor>(id).oldID = Get<EntityDescriptor>(id).sceneID;
+		Get<EntityDescriptor>(id).oldID = id;
 		return id;
 	}
 
@@ -243,9 +243,12 @@ namespace PE
 			desc.parent = std::nullopt;
 		}
 
-		desc.children = j["children"].get<std::set<EntityID>>();
+		if (j.contains("children"))
+			desc.children = j["children"].get<std::set<EntityID>>();
 
-		desc.sceneID = j["sceneID"].get<EntityID>();
+		if (j.contains("sceneID"))
+			desc.sceneID = j["sceneID"].get<EntityID>();
+
 
 		if (j.contains("isActive"))
 		{
@@ -264,7 +267,9 @@ namespace PE
 
 		if (j.contains("Old ID"))
 		{
-			desc.oldID = j["Old ID"].get<EntityID>();
+			if (j["Old ID"].get<EntityID>() != ULLONG_MAX)
+				desc.oldID = j["Old ID"].get<EntityID>();
+			
 		}
 
 		return desc;

@@ -609,7 +609,9 @@ bool SerializationManager::LoadEntityDescriptor(const EntityID& r_id, const nloh
 {
     // Deserialize EntityDescriptor from the json object
     PE::EntityDescriptor descriptor = PE::EntityDescriptor::Deserialize(r_json["Entity"]["components"]["EntityDescriptor"]);
-
+    if (descriptor.oldID == ULLONG_MAX)
+        descriptor.oldID = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(r_id).oldID;
+    
     // Pass the descriptor to the EntityFactory to create/update the EntityDescriptor component for the entity with id 'r_id'
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>(), static_cast<void*>(&descriptor));
 

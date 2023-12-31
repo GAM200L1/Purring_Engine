@@ -628,7 +628,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::ObjectWindowHelper(const EntityID& r_id, bool& r_selected, bool& r_hoveringObject, bool& r_drag, std::optional<EntityID>& r_hoveredObject, std::optional<EntityID>& r_dragID, std::string& r_dragName)
+	void Editor::ObjectWindowHelper(const EntityID& r_id, bool& r_selected, bool& r_hoveringObject, bool& r_drag, std::optional<EntityID>& r_hoveredObject, std::optional<EntityID>& r_dragID, std::string& r_dragName, std::set<std::string>& usedNames)
 	{
 		if (EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children.size())// has children
 		{
@@ -644,13 +644,14 @@ namespace PE {
 			{
 				if (!EntityManager::GetInstance().Get<EntityDescriptor>(v).isAlive)
 					continue;
-				std::string name2 = std::to_string(v);
-				name2 += ". ";
-#ifdef _DEBUG 
-				name2 += std::to_string(EntityManager::GetInstance().Get<EntityDescriptor>(v).sceneID);
-				name2 += " ";
-#endif // _DEBUG
+				std::string name2;
+
 				name2 += EntityManager::GetInstance().Get<EntityDescriptor>(v).name;
+
+				if (usedNames.count(name2))
+					name2 += "- " + std::to_string(v);
+
+				usedNames.emplace(name2);
 
 				r_selected = (m_currentSelectedObject == static_cast<int>(v));
 
@@ -679,7 +680,7 @@ namespace PE {
 						m_currentSelectedObject = static_cast<int>(r_hoveredObject.value());
 					ImGui::OpenPopup("popup");
 				}
-				ObjectWindowHelper(v, r_selected, r_hoveringObject, r_drag, r_hoveredObject, r_dragID, r_dragName);
+				ObjectWindowHelper(v, r_selected, r_hoveringObject, r_drag, r_hoveredObject, r_dragID, r_dragName, usedNames);
 
 			}
 
@@ -703,7 +704,7 @@ namespace PE {
 			std::optional<EntityID> hoveredObject{};
 			static std::optional<EntityID> dragID{};
 			std::map<EntityID, std::vector<EntityID>> dispMap{};
-
+			std::set<std::string> usedNames;
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
 			{
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
@@ -716,14 +717,14 @@ namespace PE {
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isAlive)
 						continue;
 
-					std::string name = std::to_string(id);
-					name += ". ";
-#ifdef _DEBUG 
-					name += std::to_string(EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID);
-					name += " ";
-#endif // _DEBUG
+					std::string name;
 
 					name += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+					if (usedNames.count(name))
+						name += " - " + std::to_string(id);
+					
+					usedNames.emplace(name);
+
 					bool is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
@@ -753,7 +754,7 @@ namespace PE {
 								m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 							ImGui::OpenPopup("popup");
 						}
-						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName);
+						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName, usedNames);
 
 					}
 					
@@ -1054,8 +1055,14 @@ namespace PE {
 											ImGui::SameLine(); ImGui::SliderInt(str.c_str(), &tmp, 0, 10);
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
 											EntityManager::GetInstance().Get<EntityDescriptor>(entityID).SetLayer(tmp);
+										}	
+									}
+									else if (vp.get_type().get_name() == "unsigned__int64")
+									{
+										if (prop.is_readonly())
+										{
+											ImGui::SameLine(); ImGui::Text(std::to_string(vp.get_value<EntityID>()).c_str());
 										}
-										
 									}
 								}
 							}
