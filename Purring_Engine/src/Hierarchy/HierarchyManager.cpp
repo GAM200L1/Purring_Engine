@@ -164,23 +164,34 @@ namespace PE
 	void Hierarchy::RenderOrderUpdateHelper(const EntityID& parent, float min, float max)
 	{
 		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.size() + 1);
-		unsigned cnt{1};
+		EntityID prevSceneID{ ULLONG_MAX };
+		std::map<EntityID, EntityDescriptor*> descs;
 		for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(parent).children)
 		{
 			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
+			if (desc.sceneID == ULLONG_MAX || desc.sceneID == prevSceneID)
+				desc.sceneID = prevSceneID + 1;
+			descs[desc.sceneID] = &desc;
+			prevSceneID = desc.sceneID;
+		}
 
+		unsigned cnt{ 1 };
+		for (auto [k,desc] : descs)
+		{
+
+			// how to handle when the layer of the child is diff from parents??
+			// currently ignoring
 			const float order = min + (delta * cnt);
 
-			if (desc.renderOrder <= min || desc.renderOrder >= max || (desc.renderOrder != order))
-				sceneHierarchy.erase(desc.renderOrder);
-			desc.renderOrder = order;
-			sceneHierarchy[desc.renderOrder] = id;
-			
-			if (desc.children.size())
-			{
-				RenderOrderUpdateHelper(id, desc.renderOrder, desc.renderOrder + delta);
-			}
+			if (desc->renderOrder <= min || desc->renderOrder >= max || (desc->renderOrder != order))
+				sceneHierarchy.erase(desc->renderOrder);
+			desc->renderOrder = order;
+			sceneHierarchy[desc->renderOrder] = desc->oldID;
 
+			if (desc->children.size())
+			{
+				RenderOrderUpdateHelper(desc->oldID, desc->renderOrder, desc->renderOrder + delta);
+			}
 			++cnt;
 		}
 	}
@@ -197,7 +208,7 @@ namespace PE
 			if (!desc.parent.has_value())
 			{
 				sceneHierarchy.erase(desc.renderOrder);
-				desc.renderOrder = static_cast<float>(desc.sceneID);// +(desc.layer * delta);
+				desc.renderOrder = static_cast<float>(desc.sceneID) + (desc.layer * delta);
 				sceneHierarchy[desc.renderOrder] = targetID;
 			}
 
@@ -216,11 +227,14 @@ namespace PE
 				// ignoring UI for now
 				if (desc.sceneID == ULLONG_MAX)
 					desc.sceneID = parentID;
-				if (sceneHierarchy.find(desc.renderOrder) == sceneHierarchy.end())
-				{
-					desc.renderOrder = static_cast<float>(desc.sceneID);// +(desc.layer * delta);
-					sceneHierarchy[desc.renderOrder] = parentID;
-				}
+
+				float RO = static_cast<float>(desc.sceneID) + (desc.layer * delta);
+				if (RO != desc.renderOrder)
+					sceneHierarchy.erase(desc.renderOrder);
+
+				desc.renderOrder = RO;
+				sceneHierarchy[desc.renderOrder] = parentID;
+				
 
 				// recursively update children
 				if (desc.children.size())
@@ -245,16 +259,21 @@ namespace PE
 				renderOrder.emplace_back(v);
 			}
 		}
-
+		//std::cout << "-- Scene Hierarchy --" << std::endl;
+		//for (auto[k,v] : sceneHierarchy)
+		//{
+		//	std::cout << k << ", " << v << std::endl;
+		//}
 		std::cout << "-- Object Render Order --" << std::endl;
 		for (const auto& id : renderOrder)
 		{
 			std::cout << id << std::endl;
 		}
-		std::cout << "-- UI Render Order --" << std::endl;
+
+		/*std::cout << "-- UI Render Order --" << std::endl;
 		for (const auto& id : renderOrderUI)
 		{
 			std::cout << id << std::endl;
-		}
+		}*/
 	}
 }

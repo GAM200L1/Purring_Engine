@@ -130,6 +130,7 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
         .property_readonly("Entity ID", &PE::EntityDescriptor::oldID)
+        .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
         .property("Layer", &PE::EntityDescriptor::layer)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
