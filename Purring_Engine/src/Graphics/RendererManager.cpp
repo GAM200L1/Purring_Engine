@@ -723,10 +723,26 @@ namespace PE
                     position.y = transformComponent.position.y;
                 }
 
-                // Draw a cross to represent the orientation and position of the camera
+                // Draw a cross to represent the orientation and position of the canvas
                 DrawDebugRectangle(canvasComponent.GetWidth(), canvasComponent.GetHeight(), 
                     0.f, position.x, position.y, r_worldToNdc, *(shaderProgramIterator->second),
                     glm::vec4{1.f, 1.f, 1.f, 1.f});
+            }
+
+            // Draw a rectangle for all the text component bounds
+            for (auto const& id : SceneView<TextComponent, Transform>())
+            {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id)) { continue; }
+
+                Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
+
+                // Draw a cross to represent the orientation and position of the text bounds
+                DrawDebugRectangle(transformComponent.width, transformComponent.height,
+                    transformComponent.orientation, 
+                    transformComponent.position.x, transformComponent.position.y, 
+                    r_worldToNdc, *(shaderProgramIterator->second),
+                    glm::vec4{0.3f, 0.3f, 1.f, 1.f});
             }
 
             glPointSize(1.f);
