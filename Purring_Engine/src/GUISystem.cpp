@@ -260,6 +260,13 @@ namespace PE
 	void GUISystem::ButtonFunctionOne(EntityID)
 	{
 		std::cout << "function 1" << std::endl;
+
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+		{
+			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(1);
+			desc.isActive = !desc.isActive;
+		}
+		
 	}
 
 	void GUISystem::ButtonFunctionTwo(EntityID)

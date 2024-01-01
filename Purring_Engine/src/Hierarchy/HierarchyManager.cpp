@@ -301,7 +301,10 @@ namespace PE
 			// to change to canvas!!
 			else if (EntityManager::GetInstance().Has<PE::Graphics::GUIRenderer>(v))
 			{
-				renderOrderUI.emplace_back(v);
+				if (!GETGUISYSTEM()->AreThereActiveCanvases()) { continue; }
+
+				if(GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
+						renderOrderUI.emplace_back(v);
 			}
 			
 		}
