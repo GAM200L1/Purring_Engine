@@ -8,6 +8,8 @@
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 1,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -52,6 +54,8 @@
                         "viewportWidth": 1920.0
                     },
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 2,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,

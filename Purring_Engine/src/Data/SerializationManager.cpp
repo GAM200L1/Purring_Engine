@@ -296,7 +296,7 @@ size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
         const auto& entityJson = r_j["Entity"];
         PE::EntityDescriptor desc = PE::EntityDescriptor::Deserialize(r_j["Entity"]["components"]["EntityDescriptor"]);
 
-        id = PE::EntityManager::GetInstance().NewEntity(desc.sceneID);
+        id = PE::EntityManager::GetInstance().NewEntity(desc.oldID);
         for (const auto& t : r_j["Entity"].items())
         {
             // to change?
@@ -611,7 +611,9 @@ bool SerializationManager::LoadEntityDescriptor(const EntityID& r_id, const nloh
 {
     // Deserialize EntityDescriptor from the json object
     PE::EntityDescriptor descriptor = PE::EntityDescriptor::Deserialize(r_json["Entity"]["components"]["EntityDescriptor"]);
-
+    if (descriptor.oldID == ULLONG_MAX)
+        descriptor.oldID = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(r_id).oldID;
+    
     // Pass the descriptor to the EntityFactory to create/update the EntityDescriptor component for the entity with id 'r_id'
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>(), static_cast<void*>(&descriptor));
 
