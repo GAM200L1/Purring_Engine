@@ -644,51 +644,48 @@ namespace PE {
 		}
 	}
 
-	void Editor::ObjectWindowHelper(const EntityID& r_id, bool& r_selected, bool& r_hoveringObject, bool& r_drag, std::optional<EntityID>& r_hoveredObject, std::optional<EntityID>& r_dragID, std::string& r_dragName)
+	void Editor::ObjectWindowHelper(const EntityID& r_id, bool& r_selected, bool& r_hoveringObject, bool& r_drag, std::optional<EntityID>& r_hoveredObject, std::optional<EntityID>& r_dragID, std::string& r_dragName, std::set<std::string>& usedNames)
 	{
-		
 		if (EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children.size())// has children
 		{
 			ImGui::Indent();
+			std::map<EntityID, EntityID> childOrder;
 			for (const auto& childID : EntityManager::GetInstance().Get<EntityDescriptor>(r_id).children)
 			{
-				if (!EntityManager::GetInstance().Has<EntityDescriptor>(childID))
+				while (childOrder.count(EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID))
+					++EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID;
+				childOrder[EntityManager::GetInstance().Get<EntityDescriptor>(childID).sceneID] = childID;
+			}
+			for (auto [k,v] : childOrder)
+			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(v).isAlive)
 					continue;
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(childID).isAlive)
-					continue;
-				std::string name2 = std::to_string(childID);
-				name2 += ". ";
-				name2 += EntityManager::GetInstance().Get<EntityDescriptor>(childID).name;
-				r_selected = (m_currentSelectedObject == static_cast<int>(childID));
+				std::string name2;
+
+				name2 += EntityManager::GetInstance().Get<EntityDescriptor>(v).name;
+
+				if (usedNames.count(name2))
+					name2 += "- " + std::to_string(v);
+
+				usedNames.emplace(name2);
+
+				r_selected = (m_currentSelectedObject == static_cast<int>(v));
 
 				if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
-					m_currentSelectedObject = static_cast<int>(childID);
-
-				//if (EntityManager::GetInstance().Get<EntityDescriptor>(childID).children.size() && ImGui::TreeNodeEx(("##" + name2).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen))
-				//{
-				//	ImGui::SameLine(); 
-				//	if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
-				//		m_currentSelectedObject = static_cast<int>(childID);
-				//}
-				//else
-				//{
-				//	if (EntityManager::GetInstance().Get<EntityDescriptor>(childID).children.size())
-				//		ImGui::SameLine();
-				//	if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
-				//		m_currentSelectedObject = static_cast<int>(childID);
-				//}
+					m_currentSelectedObject = static_cast<int>(v);
 
 
 
-				if (ImGui::IsItemHovered()) {
+				if (ImGui::IsItemHovered()) 
+				{
 					r_hoveringObject = true;
-					r_hoveredObject = childID;
+					r_hoveredObject = v;
 					if (ImGui::IsMouseDragging(0) && r_drag == false)
 					{
-						m_currentSelectedObject = static_cast<int>(childID); //seteting current index to check for selection
+						m_currentSelectedObject = static_cast<int>(v); //seteting current index to check for selection
 						r_dragName = name2;
 						r_drag = true;
-						r_dragID = childID;
+						r_dragID = v;
 					}
 				}
 
@@ -699,7 +696,7 @@ namespace PE {
 						m_currentSelectedObject = static_cast<int>(r_hoveredObject.value());
 					ImGui::OpenPopup("popup");
 				}
-				ObjectWindowHelper(childID, r_selected, r_hoveringObject, r_drag, r_hoveredObject, r_dragID, r_dragName);
+				ObjectWindowHelper(v, r_selected, r_hoveringObject, r_drag, r_hoveredObject, r_dragID, r_dragName, usedNames);
 
 			}
 
@@ -723,7 +720,7 @@ namespace PE {
 			std::optional<EntityID> hoveredObject{};
 			static std::optional<EntityID> dragID{};
 			std::map<EntityID, std::vector<EntityID>> dispMap{};
-
+			std::set<std::string> usedNames;
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
 			{
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
@@ -736,27 +733,19 @@ namespace PE {
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isAlive)
 						continue;
 
-					std::string name = std::to_string(id);
-					name += ". ";
+					std::string name;
+
 					name += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+					if (usedNames.count(name))
+						name += " - " + std::to_string(id);
+					
+					usedNames.emplace(name);
+
 					bool is_selected = (m_currentSelectedObject == static_cast<int>(id));
 
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 					{
-						//if (EntityManager::GetInstance().Get<EntityDescriptor>(id).children.size() && ImGui::TreeNodeEx(("##" + name).c_str(), ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_NoTreePushOnOpen))
-						//{
-						//	ImGui::SameLine(); 
-						//	if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						//		m_currentSelectedObject = static_cast<int>(id);
-						//	ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName);
-						//}
-						//else 
-						//{
-						//	if (EntityManager::GetInstance().Get<EntityDescriptor>(id).children.size())
-						//		ImGui::SameLine();
-						//	if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
-						//		m_currentSelectedObject = static_cast<int>(id);
-						//}
+						
 							
 						if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 							m_currentSelectedObject = static_cast<int>(id);
@@ -781,7 +770,7 @@ namespace PE {
 								m_currentSelectedObject = static_cast<int>(hoveredObject.value());
 							ImGui::OpenPopup("popup");
 						}
-						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName);
+						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName, usedNames);
 
 					}
 					
@@ -808,9 +797,30 @@ namespace PE {
 						if(!hoveredObject || dragID.value() != hoveredObject.value())
 						{ 
 							if (hoveredObject)
-								Hierarchy::GetInstance().AttachChild(hoveredObject.value(), dragID.value());
+							{
+								if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl))
+								{
+									std::swap(EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).sceneID, EntityManager::GetInstance().Get<EntityDescriptor>(hoveredObject.value()).sceneID);
+								}
+								else
+								{
+									Hierarchy::GetInstance().AttachChild(hoveredObject.value(), dragID.value());
+								}
+							}
 							else
+							{
 								Hierarchy::GetInstance().DetachChild(dragID.value());
+								EntityID order = 1;
+								EntityID largest = 1;
+								for (const auto& id : Hierarchy::GetInstance().GetParentOrder())
+								{
+									if (id == dragID.value())
+										continue;
+									largest = (EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID < largest) ? largest : EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID;
+									EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID = order++;
+								}
+								EntityManager::GetInstance().Get<EntityDescriptor>(dragID.value()).sceneID = order;
+							}
 						}
 						dragID.reset();
 					}
@@ -853,6 +863,11 @@ namespace PE {
 										Hierarchy::GetInstance().DetachChild(cid);
 								}
 							}
+							if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent)
+							{
+								EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value()).children.erase(m_currentSelectedObject);
+							}
+
 							UndoStack::GetInstance().AddChange(new DeleteObjectUndo(m_currentSelectedObject));
 							EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
 						}
@@ -1032,7 +1047,7 @@ namespace PE {
 									{
 										std::string tmp = vp.get_value<std::string>();
 										std::string str = "##" + prop.get_name().to_string();
-										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmp);
+										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  (prop.get_name().to_string() == "Name")?ImGui::InputText(str.c_str(), &tmp) : ImGui::Text(tmp.c_str());
 										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
 
 									}
@@ -1041,64 +1056,10 @@ namespace PE {
 										std::optional<EntityID> tmp = vp.get_value<std::optional<EntityID>>();
 
 										std::string str = "##" + prop.get_name().to_string();
-										if (tmp.has_value())
-										{
-											EntityID tmp2{ tmp.value()};
-											std::string tmpStr{std::to_string(tmp2)};
-											ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmpStr);
-											std::optional<EntityID> op;
-											if (tmpStr != "")
-											{
-												tmp2 = strtoull(tmpStr.c_str(), NULL, 10);
-												if (errno == ERANGE)
-												{
-													errno = 0;
-													engine_logger.AddLog(false, "Invalid input in editor field!", __FUNCTION__);
-												}
-												else
-												{
-													if(tmp2 != entityID)
-													{
-														op = tmp2;
-														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent && EntityManager::GetInstance().Has<Transform>(entityID))
-														{
-															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
-															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
-														}
-													}
-												}
-											}
-											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
-										}
-										else
-										{
-											EntityID tmp2{0};
-											std::string tmpStr{};
-											ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::InputText(str.c_str(), &tmpStr);
-											std::optional<EntityID> op;
-											if (tmpStr != "")
-											{
-												tmp2 = strtoull(tmpStr.c_str(), NULL, 10);
-												if (errno == ERANGE)
-												{
-													errno = 0;
-													engine_logger.AddLog(false, "Invalid input in editor field!", __FUNCTION__);
-												}
-												else
-												{
-													if (tmp2 != entityID)
-													{
-														op = tmp2;
-														if (!EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent && EntityManager::GetInstance().Has<Transform>(entityID))
-														{
-															EntityManager::GetInstance().Get<Transform>(entityID).relPosition = EntityManager::GetInstance().Get<Transform>(entityID).position;
-															EntityManager::GetInstance().Get<Transform>(entityID).relOrientation = EntityManager::GetInstance().Get<Transform>(entityID).orientation;
-														}
-													}
-												}
-											}
-											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), op);
-										}
+										
+										std::string tmpStr{(tmp.has_value())?std::to_string(tmp.value()) : "None"};
+										ImGui::SameLine(); ImGui::SetNextItemWidth(100.f);  ImGui::Text(tmpStr.c_str());
+											
 									}
 									else if (vp.get_type().get_name() == "bool")
 									{
@@ -1106,6 +1067,34 @@ namespace PE {
 										std::string str = "##" + prop.get_name().to_string();
 										ImGui::SameLine(); ImGui::Checkbox(str.c_str(), &tmp);
 										prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+										if (prop.get_name().to_string() == "Active")
+										{
+											(tmp) ? EntityManager::GetInstance().Get<EntityDescriptor>(entityID).EnableEntity() : EntityManager::GetInstance().Get<EntityDescriptor>(entityID).DisableEntity();
+										}
+									}
+									else if (vp.get_type().get_name() == "int")
+									{
+										if (prop.get_name().to_string() == "Layer")
+										{
+											int tmp = vp.get_value<int>();
+											std::string str = "##" + prop.get_name().to_string();
+											if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+												ImGui::BeginDisabled();
+
+											ImGui::SameLine(); ImGui::SliderInt(str.c_str(), &tmp, 0, 10);
+
+											if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+												ImGui::EndDisabled();
+											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+											EntityManager::GetInstance().Get<EntityDescriptor>(entityID).SetLayer(tmp);
+										}	
+									}
+									else if (vp.get_type().get_name() == "unsigned__int64")
+									{
+										if (prop.is_readonly())
+										{
+											ImGui::SameLine(); ImGui::Text(std::to_string(vp.get_value<EntityID>()).c_str());
+										}
 									}
 								}
 							}

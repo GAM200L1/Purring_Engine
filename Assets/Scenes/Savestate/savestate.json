@@ -4,6 +4,8 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 1,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -48,6 +50,8 @@
                         "viewportWidth": 1920.0
                     },
                     "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 2,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -68,124 +72,6 @@
                         },
                         "relorientation": 0.0,
                         "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "Prefab Type": "SliderBody",
-                        "children": [
-                            4,
-                            5
-                        ],
-                        "isActive": true,
-                        "name": "SliderBody",
-                        "parent": null,
-                        "sceneID": 18446744073709551615
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "GUISlider": {
-                        "m_Hovered": false,
-                        "m_clicked": false,
-                        "m_currentValue": 50.0,
-                        "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
-                        ],
-                        "m_defaultTexture": "",
-                        "m_disabled": false,
-                        "m_disabledColor": [
-                            0.0784313753247261,
-                            0.0784313753247261,
-                            0.0784313753247261,
-                            1.0
-                        ],
-                        "m_disabledTexture": "",
-                        "m_endPoint": 212.5,
-                        "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            1.0
-                        ],
-                        "m_hoveredTexture": "",
-                        "m_knobID": 5,
-                        "m_maxValue": 100.0,
-                        "m_minValue": 0.0,
-                        "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            1.0
-                        ],
-                        "m_pressedTexture": "",
-                        "m_startPoint": -212.5
-                    },
-                    "Transform": {
-                        "height": 75.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 500.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "Prefab Type": "SliderKnob",
-                        "children": [],
-                        "isActive": true,
-                        "name": "SliderKnob",
-                        "parent": 3,
-                        "sceneID": 18446744073709551615
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
-                        },
-                        "TextureKey": ""
-                    },
-                    "Transform": {
-                        "height": 75.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 75.0
                     }
                 },
                 "name": ""

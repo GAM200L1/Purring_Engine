@@ -130,9 +130,12 @@ RTTR_REGISTRATION
     //    .property("x", &PE::vec2::x);
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
-        .property_readonly("Parent", &PE::EntityDescriptor::parent)
+        .property_readonly("Entity ID", &PE::EntityDescriptor::oldID)
+        .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
-        .property("Prefab Type", &PE::EntityDescriptor::prefabType);
+        .property("Layer", &PE::EntityDescriptor::layer)
+        .property_readonly("Parent", &PE::EntityDescriptor::parent)
+        .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
