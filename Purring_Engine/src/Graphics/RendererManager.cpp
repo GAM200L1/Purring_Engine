@@ -226,7 +226,7 @@ namespace PE
 #endif // !GAMERELEASE
 
             // Draw objects in the scene
-            DrawQuadsInstanced(worldToNdcMatrix, SceneView<Renderer, Transform>()); 
+            DrawQuadsInstanced<Renderer>(worldToNdcMatrix, Hierarchy::GetInstance().GetRenderOrder()); 
 
 #ifndef GAMERELEASE
             if (Editor::GetInstance().IsRenderingDebug())
@@ -236,7 +236,7 @@ namespace PE
 #endif // !GAMERELEASE
 
             // Draw UI objects in the scene
-            DrawQuadsInstanced(r_cameraManager.GetUiViewToNdcMatrix(), SceneView<GUIRenderer, Transform>());
+            DrawQuadsInstanced<GUIRenderer>(r_cameraManager.GetUiViewToNdcMatrix(), Hierarchy::GetInstance().GetRenderOrderUI());
 
 
             // Render Text
@@ -351,8 +351,10 @@ namespace PE
         }
 
 
+        //template<typename T>
+        //void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
         template<typename T>
-        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
+        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_sceneView)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
 
