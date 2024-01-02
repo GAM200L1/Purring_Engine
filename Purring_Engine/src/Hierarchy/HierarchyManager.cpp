@@ -87,7 +87,8 @@ namespace PE
 			return;
 		if (EntityManager::GetInstance().Get<EntityDescriptor>(child).parent)
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()).children.erase(child);
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()))
+				EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()).children.erase(child);
 		}
 		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.reset();
 		if (EntityManager::GetInstance().Has<Transform>(child))
