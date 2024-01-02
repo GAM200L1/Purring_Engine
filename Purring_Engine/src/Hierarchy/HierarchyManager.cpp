@@ -83,7 +83,7 @@ namespace PE
 	void Hierarchy::DetachChild(const EntityID& child)
 	{
 		// entity DNE, return
-		if (!EntityManager::GetInstance().Has<EntityDescriptor>(child))
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(child) || !EntityManager::GetInstance().Get<EntityDescriptor>(child).isAlive)
 			return;
 		if (EntityManager::GetInstance().Get<EntityDescriptor>(child).parent)
 		{
@@ -139,7 +139,7 @@ namespace PE
 		for (const EntityID& id : SceneView<EntityDescriptor, Transform>())
 		{
 			// id 0 is default camera, ignore it
-			if (!id)
+			if (id == 0)
 				continue;
 			// only if it is base layer
 			if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
@@ -223,10 +223,10 @@ namespace PE
 		}
 		else // update all the parents
 		{
+			sceneHierarchy.clear();
 			for (const EntityID& parentID : parentOrder)
 			{
 				EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(parentID);
-
 				// ignoring UI for now
 				if (desc.sceneID == ULLONG_MAX)
 					desc.sceneID = parentID;
