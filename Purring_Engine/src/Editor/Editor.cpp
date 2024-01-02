@@ -1063,7 +1063,13 @@ namespace PE {
 										{
 											int tmp = vp.get_value<int>();
 											std::string str = "##" + prop.get_name().to_string();
+											if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+												ImGui::BeginDisabled();
+
 											ImGui::SameLine(); ImGui::SliderInt(str.c_str(), &tmp, 0, 10);
+
+											if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+												ImGui::EndDisabled();
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
 											EntityManager::GetInstance().Get<EntityDescriptor>(entityID).SetLayer(tmp);
 										}	
