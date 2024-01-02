@@ -363,6 +363,7 @@ namespace PE
 
         void CameraManager::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
         {
+			r_event;
 #ifndef GAMERELEASE
             //if not in scene view dont edit camera
             if (!Editor::GetInstance().IsSceneViewFocused())

@@ -209,7 +209,6 @@ namespace PE {
 
 		// ----- Public Variables ----- // 
 	public:
-		Graphics::CameraManager* p_cameraManager;
 		GLFWwindow* p_window;
 		bool godMode{}, noPause{}; // boolean for cheatcode
 

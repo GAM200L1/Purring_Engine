@@ -64,6 +64,7 @@ namespace PE {
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
 					m_undoStack.UndoChange();
+					
 				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Y)
@@ -88,11 +89,10 @@ namespace PE {
 							EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
 					}
 					if (m_currentSelectedObject != -1)
-					EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
-
-					//create undo here
-					if(m_currentSelectedObject != -1)
-					m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+					}
 					//if not first index
 					m_currentSelectedObject = -1; // just reset it
 					//if object selected

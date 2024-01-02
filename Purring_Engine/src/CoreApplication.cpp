@@ -71,6 +71,7 @@
 #include "Input/InputSystem.h"
 
 #include "GUISystem.h"
+#include "GUI/Canvas.h"
 
 // RTTR includes
 #include <rttr/type.h>
@@ -120,6 +121,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::AnimationComponent);
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
+    REGISTERCOMPONENT(PE::Canvas);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -129,9 +131,12 @@ RTTR_REGISTRATION
     //    .property("x", &PE::vec2::x);
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
-        .property_readonly("Parent", &PE::EntityDescriptor::parent)
+        .property_readonly("Entity ID", &PE::EntityDescriptor::oldID)
+        .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
-        .property("Prefab Type", &PE::EntityDescriptor::prefabType);
+        .property("Layer", &PE::EntityDescriptor::layer)
+        .property_readonly("Parent", &PE::EntityDescriptor::parent)
+        .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
@@ -290,6 +295,13 @@ RTTR_REGISTRATION
         .property("attackDamage", &PE::RatScriptData::attackDamage)
         .property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScriptData::animationStates);
+
+    rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
+        .property_readonly("Width", &PE::Canvas::GetWidth)
+        .property_readonly("Height", &PE::Canvas::GetHeight)
+        .method("SetWidth", &PE::Canvas::SetWidth)
+        .method("SetHeight", &PE::Canvas::SetHeight)
+        .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
 }
 
 PE::CoreApplication::CoreApplication()
@@ -456,6 +468,7 @@ void PE::CoreApplication::AddSystem(System* system)
 {
     // Add a system to CoreApplication append the provided system pointer to the m_systemList vector
     m_systemList.push_back(system);
+    SystemManager::GetInstance().AddSystem(system);
 }
 
 
@@ -503,7 +516,7 @@ void PE::CoreApplication::InitializeSystems()
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window, static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
@@ -517,6 +530,5 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_rendererManager);
     //AddSystem(p_audioManager);
 
-    GameStateManager::GetInstance().p_cameraManager = p_cameraManager;
     GameStateManager::GetInstance().RegisterButtonFunctions();
 }
