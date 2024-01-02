@@ -53,12 +53,11 @@ namespace PE
 		const std::vector<EntityID>& GetRenderOrder() const { return renderOrder; }
 
 		/*!***********************************************************************************
-		 \brief Get the cached UI Render Order vector object to assist with rendering
-
+		 \brief Get the cached Render Order UI vector object to assist with rendering
+		 
 		 \return const std::vector<EntityID>&  the cached vector
 		*************************************************************************************/
 		const std::vector<EntityID>& GetRenderOrderUI() const { return renderOrderUI; }
-
 
 		/*!***********************************************************************************
 		 \brief Get the Parent Order vector object mainly used in Editor.cpp by the object
