@@ -242,18 +242,18 @@ namespace PE
 #endif // !GAMERELEASE
 
             // Draw objects in the scene
-            DrawQuadsInstanced(worldToNdcMatrix, Hierarchy::GetInstance().GetRenderOrder(), false);
+            DrawQuadsInstanced<Renderer>(worldToNdcMatrix, Hierarchy::GetInstance().GetRenderOrder());
 
 #ifndef GAMERELEASE            
             // Draw UI objects in the scene
-            DrawQuadsInstanced(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix(),
-                Hierarchy::GetInstance().GetRenderOrderUI(), true);
+            DrawQuadsInstanced<GUIRenderer>(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix(),
+                Hierarchy::GetInstance().GetRenderOrderUI());
 
             // Render Text
             RenderText(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix());
 #else
             // Draw UI objects in the scene
-            DrawQuadsInstanced(r_cameraManager.GetUiViewToNdcMatrix(), Hierarchy::GetInstance().GetRenderOrderUI(), true);
+            DrawQuadsInstanced<GUIRenderer>(r_cameraManager.GetUiViewToNdcMatrix(), Hierarchy::GetInstance().GetRenderOrderUI());
 
             // Render Text
             RenderText(r_cameraManager.GetUiViewToNdcMatrix());
@@ -511,8 +511,9 @@ namespace PE
         //}
 
 //--------------------------------------------------------------------------------------------------------------------------------------------
-
-        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_rendererIdContainer, bool const isGuiRenderer)
+        
+        template<typename T>
+        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_rendererIdContainer)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
 
@@ -551,9 +552,9 @@ namespace PE
             for (EntityID const& id : r_rendererIdContainer)
             {
                 // Skip this object if it has no renderer
-                if(!(EntityManager::GetInstance().Has<Renderer>(id) || EntityManager::GetInstance().Has<GUIRenderer>(id))) { continue; }
+                if(!EntityManager::GetInstance().Has<T>(id)) { continue; }
 
-                Renderer& renderer{ (isGuiRenderer ? EntityManager::GetInstance().Get<GUIRenderer>(id) : EntityManager::GetInstance().Get<Renderer>(id)) };
+                T& renderer{ EntityManager::GetInstance().Get<T>(id) };
 
                 // Skip drawing this object is the entity or renderer is not enabled
                 if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive

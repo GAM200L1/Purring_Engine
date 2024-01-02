@@ -137,15 +137,14 @@ namespace PE
                     and textured status together into a vertex buffer object and makes an 
                     instanced drawcall. The instanced batch is broken when a new texture is encountered.
 
+             \tparam T - A component type derived from the Renderer.
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
                             NDC space.
              \param[in] r_rendererContainer Container containing the renderer and transform 
                             components of the objects to draw
-             \param[in] isGuiRenderer Set to true if the container contains the IDs of GUI 
-                            renderers, false if just regular renderers.
             *************************************************************************************/
-            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, 
-                std::vector<EntityID> const& r_rendererIdContainer, bool const isGuiRenderer);
+            template<typename T>
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_rendererIdContainer);
 
             /*!***********************************************************************************
              \brief Loops through all objects with colliders and rigidbody components and draws 
