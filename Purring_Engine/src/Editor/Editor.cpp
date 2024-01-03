@@ -66,6 +66,9 @@
 //Hierarchy
 #include "Hierarchy/HierarchyManager.h"
 
+//Tagging
+#include "ECS/Tags.h"
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -1004,13 +1007,16 @@ namespace PE {
 								o += std::to_string(componentCount);
 								if (ImGui::BeginPopup(id.c_str()))
 								{
-									if (ImGui::Selectable("Reset")) {}
+									if (ImGui::Selectable("Reset")) 
+									{
+									}
 									
 									ImGui::EndPopup();
 								}
 
 								if (ImGui::Button(o.c_str()))
 									ImGui::OpenPopup(id.c_str());
+
 								for (auto& prop : currType.get_properties())
 								{
 
@@ -1074,6 +1080,61 @@ namespace PE {
 										{
 											ImGui::SameLine(); ImGui::Text(std::to_string(vp.get_value<EntityID>()).c_str());
 										}
+									}
+								}
+
+								ImGui::Separator();
+								// Tags variable (rttr doesnt like bitsets lol)
+								std::string nm("Tags");
+								nm += ": ";
+								ImGui::Text(nm.c_str());
+
+								static std::pair<Tag, std::string> targetChange;
+								static bool rmFlag{ false };
+
+								for (auto [k, v] : TagManager::GetInstance().GetTagMap())
+								{
+									EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(entityID);
+									bool set = desc.tags.test(TagManager::GetInstance().GetTagPos(k));
+									std::string str = ((targetChange.first == k)? targetChange.second : v);
+									ImGui::Checkbox(("##" + v).c_str(), &set); ImGui::SameLine(); 
+									bool changed = ImGui::InputText(("##t" + v).c_str(), &str);
+									desc.tags.set(TagManager::GetInstance().GetTagPos(k), set);
+									
+									if (!changed)
+									{
+										if (targetChange.second == v)
+										{
+											if (!ImGui::IsItemActivated())
+											{
+												rmFlag = true;
+											}
+										}
+									}
+									else
+									{
+										if (v != str)
+										{
+											targetChange.first = k;
+											targetChange.second = str;
+											rmFlag = false;
+										}
+									}
+								}
+								if (rmFlag)
+								{
+									TagManager::GetInstance().RenameTag(targetChange.first, targetChange.second);
+									targetChange.first.reset();
+									targetChange.second = "";
+									rmFlag = false;
+								}
+								ImGui::Text("Add Tag"); ImGui::SameLine();
+								if (ImGui::Button("+"))
+								{
+									std::string str = "NewTag";
+									while (!TagManager::GetInstance().AddTag(str))
+									{
+										str += 1;
 									}
 								}
 							}

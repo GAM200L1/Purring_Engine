@@ -43,6 +43,19 @@ namespace PE
 		return m_tags.at(r_tag);
 	}
 
+	std::vector<std::string> TagManager::GetTagNames(const Tag& r_tag) const
+	{
+		std::vector<std::string> ret;
+		for (size_t i{}; i < r_tag.size(); ++i)
+		{
+			if (r_tag.test(i) && TagManager::GetInstance().ValidTag(Tag().set(i)))
+			{
+				ret.emplace_back(GetTagName(Tag().set(i)));
+			}
+		}
+		return ret;
+	}
+
 	bool TagManager::HasTag(const EntityID& r_id, const Tag& r_tag)  const
 	{
 		size_t ret = 0;
@@ -73,7 +86,8 @@ namespace PE
 
 	bool TagManager::AddTag(const std::string& r_name)
 	{
-		if (m_numTags == MAX)
+		// either max has been hit, or the tag is already existing
+		if (m_numTags == MAX || ValidTag(r_name))
 			return false;
 		m_tags[Tag().set(m_numTags++)] = r_name;
 		return true;

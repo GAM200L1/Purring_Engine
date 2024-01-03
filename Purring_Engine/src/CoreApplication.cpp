@@ -134,6 +134,7 @@ RTTR_REGISTRATION
         .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
         .property("Layer", &PE::EntityDescriptor::layer)
+        //.property("Tags", &PE::EntityDescriptor::tags)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
         .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 
@@ -370,11 +371,11 @@ void PE::CoreApplication::Run()
         }
         if (glfwGetKey(m_window, GLFW_KEY_H) == GLFW_PRESS)
         {
-            TagManager::GetInstance().AssignTag(0, "Constant");
+            TagManager::GetInstance().AssignTag(1, "Constant");
         }
         if (glfwGetKey(m_window, GLFW_KEY_J) == GLFW_PRESS)
         {
-            TagManager::GetInstance().AssignTag(0, "Camera");
+            TagManager::GetInstance().AssignTag(1, "Camera");
         }
         
         if (glfwGetKey(m_window, GLFW_KEY_K) == GLFW_PRESS)

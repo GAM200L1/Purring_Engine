@@ -228,6 +228,8 @@ namespace PE
 		j["Layer"] = layer;
 		j["Old ID"] = oldID;
 
+		j["Tags"] = TagManager::GetInstance().GetTagNames(tags);
+		
 		return j;
 	}
 
@@ -251,6 +253,29 @@ namespace PE
 		if (j.contains("sceneID"))
 			desc.sceneID = j["sceneID"].get<EntityID>();
 
+		if (j.contains("Tags"))
+		{
+			for (std::string t : j["Tags"].get<std::vector<std::string>>())
+			{
+				if (TagManager::GetInstance().AddTag(t))
+				{
+					desc.tags.set(TagManager::GetInstance().GetTagPos(t));
+				}
+				else
+				{
+					engine_logger.AddLog(false, "Unable to add tag when loading new entity.", __FUNCTION__);
+					if (TagManager::GetInstance().ValidTag(t))
+					{
+						desc.tags.set(TagManager::GetInstance().GetTagPos(t));
+						engine_logger.AddLog(false, "Successfully loaded tag (tag already existed)", __FUNCTION__);
+					}
+					else
+					{
+						engine_logger.AddLog(false, "Failed to load tag (tag count limit reached)", __FUNCTION__);
+					}
+				}
+			}
+		}
 
 		if (j.contains("isActive"))
 		{
@@ -271,7 +296,6 @@ namespace PE
 		{
 			if (j["Old ID"].get<EntityID>() != ULLONG_MAX)
 				desc.oldID = j["Old ID"].get<EntityID>();
-			
 		}
 
 		return desc;

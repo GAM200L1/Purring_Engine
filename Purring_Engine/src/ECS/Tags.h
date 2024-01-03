@@ -22,10 +22,13 @@
 #include <map>
 #include <vector>
 // CONSTANT VARIABLES
+constexpr int MAX = 32;
+// up to 32 bits for tagging
+using Tag = std::bitset<MAX>;
 
 namespace
 {
-	constexpr int MAX = 32;
+
 	using EntityID = size_t;
 	struct Comparer 
 	{
@@ -45,8 +48,7 @@ namespace
 
 namespace PE
 {
-	// up to 32 bits for tagging
-	using Tag = std::bitset<MAX>;
+	
 
 	class TagManager : public Singleton<TagManager>
 	{
@@ -56,7 +58,12 @@ namespace PE
 	//----- Public Getters -----//
 	public:
 		std::vector<EntityID> GetEntities(const Tag& r_tags) const;
+
 		const std::string& GetTagName(const Tag& r_tag) const;
+
+		std::vector<std::string> GetTagNames(const Tag& r_tag) const;
+
+		const std::map<Tag, std::string, Comparer>& GetTagMap() const { return m_tags; };
 
 	//----- Public Methods -----//
 	public:
