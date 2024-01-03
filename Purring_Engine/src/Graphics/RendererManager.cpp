@@ -36,7 +36,7 @@
 // ECS Components
 #include "ECS/Entity.h"
 #include "ECS/EntityFactory.h"
-
+#include "Hierarchy/HierarchyManager.h"
 // ImGui
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"

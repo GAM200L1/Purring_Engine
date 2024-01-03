@@ -83,16 +83,17 @@
                     "EntityDescriptor": {
                         "Layer": 0,
                         "Old ID": 3,
-                        "Prefab Type": "",
+                        "Prefab Type": "SliderBody",
                         "children": [
-                            4
+                            4,
+                            5
                         ],
                         "isActive": true,
-                        "name": "Empty Object",
+                        "name": "SliderBody",
                         "parent": null,
                         "sceneID": 3
                     },
-                    "Renderer": {
+                    "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
@@ -101,19 +102,58 @@
                         },
                         "TextureKey": ""
                     },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 0.0,
+                        "m_defaultColor": [
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 212.5,
+                        "m_hoveredColor": [
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_knobID": 4,
+                        "m_maxValue": 100.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -212.5
+                    },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 75.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": 51.00002670288086,
+                            "y": 131.00003051757813
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 500.0
                     }
                 },
                 "name": ""
@@ -125,35 +165,75 @@
                     "EntityDescriptor": {
                         "Layer": 0,
                         "Old ID": 4,
-                        "Prefab Type": "",
+                        "Prefab Type": "SliderKnob",
                         "children": [],
                         "isActive": true,
-                        "name": "Empty Object",
+                        "name": "SliderKnob",
                         "parent": 3,
-                        "sceneID": 4
+                        "sceneID": 0
                     },
-                    "Renderer": {
+                    "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
                         },
                         "TextureKey": ""
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 75.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 79.0,
-                            "y": 0.0
+                            "x": -161.49996948242188,
+                            "y": 131.00003051757813
                         },
                         "relativeposition": {
-                            "x": 79.0,
+                            "x": -212.5,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 75.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 5,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SliderKnob",
+                        "parent": 3,
+                        "sceneID": 1
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 75.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -352.5,
+                            "y": -183.0
+                        },
+                        "relativeposition": {
+                            "x": -403.5000305175781,
+                            "y": -314.0000305175781
+                        },
+                        "relorientation": 0.0,
+                        "width": 75.0
                     }
                 },
                 "name": ""

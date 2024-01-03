@@ -220,12 +220,12 @@ namespace PE
 		*************************************************************************************/
 		virtual void Undo() override
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).UnHandicapEntity();
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent)
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).UnHandicapEntity();
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).parent)
 			{
-				Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.value(), ObjectDeleted);
+				Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).parent.value(), m_objectDeleted);
 			}
-			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren)
+			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren)
 			{
 				Hierarchy::GetInstance().AttachChild(m_objectDeleted, id);
 			}

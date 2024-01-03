@@ -24,6 +24,8 @@
 #include "Input/InputSystem.h"
 #include "System.h"
 #include "WindowManager.h"
+#include "Hierarchy/HierarchyManager.h"
+
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
@@ -97,8 +99,11 @@ namespace PE
 #ifndef GAMERELEASE
 				if (Editor::GetInstance().IsEditorActive()) 
 				{
+
+
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
 					{
+						std::cout<< "has child active" << std::endl;
 						bool knobFound = false;
 						for (auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children)
 						{
@@ -108,13 +113,9 @@ namespace PE
 								knobFound = true;
 
 								if (EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).isAlive == false)
-								{
-									//EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.erase(slider.m_knobID.value());
-									//EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).parent = std::nullopt;
 									continue;
-								}
 								else
-								break;
+									break;
 							}
 						}
 
@@ -124,19 +125,18 @@ namespace PE
 							SerializationManager sm;
 
 							slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
-							EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.emplace(slider.m_knobID.value());
-							EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).parent = objectID;
+							Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
 						}
 					}
-					if (!slider.m_knobID.has_value())
+					else
 					{
 						SerializationManager sm;
 
 						slider.m_knobID = sm.LoadFromFile(("EditorDefaults/SliderKnob_Prefab.json"));
-						EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.emplace(slider.m_knobID.value());
-						EntityManager::GetInstance().Get<EntityDescriptor>(slider.m_knobID.value()).parent = objectID;
+						Hierarchy::GetInstance().AttachChild(objectID, slider.m_knobID.value());
 					}
-					else
+
+					if (slider.m_knobID.has_value())
 					{
 						Transform& knobTransform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
 
