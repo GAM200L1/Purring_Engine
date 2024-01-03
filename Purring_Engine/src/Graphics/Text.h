@@ -172,6 +172,16 @@ namespace PE
 		*************************************************************************************/
 		void SetAlpha(float const alpha);
 
+		void SetHAlignment(TextAlignment hAlignment);
+
+		void SetVAlignment(TextAlignment vAlignment);
+
+		void SetHOverflow(TextOverflow hOverflow);
+
+		void SetVOverflow(TextOverflow vOverflow);
+
+		void SetLineSpacing(float lineSpacing);
+
 		/*!***********************************************************************************
 		 \brief Serializes the specified entity's TextComponent into a json file, returns a
 		 		copy

@@ -146,6 +146,31 @@ namespace PE
         m_color.a = alpha;
     }
 
+    void TextComponent::SetHAlignment(TextAlignment hAlignment)
+    {
+        m_hAlignment = hAlignment;
+    }
+
+    void TextComponent::SetVAlignment(TextAlignment vAlignment)
+    {
+        m_vAlignment = vAlignment;
+    }
+
+    void TextComponent::SetHOverflow(TextOverflow hOverflow)
+    {
+        m_hOverflow = hOverflow;
+    }
+
+    void TextComponent::SetVOverflow(TextOverflow vOverflow)
+    {
+        m_vOverflow = vOverflow;
+    }
+
+    void TextComponent::SetLineSpacing(float lineSpacing)
+    {
+        m_lineSpacing = lineSpacing;
+    }
+
     std::vector<std::string> SplitTextIntoLines(TextComponent const& r_textComponent, TextBox textBox)
     {
         std::vector<std::string> lines;
