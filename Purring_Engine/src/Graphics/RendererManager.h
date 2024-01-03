@@ -204,6 +204,23 @@ namespace PE
                 glm::vec4 const& r_color = { 0.f, 1.f, 0.f, 1.f });
 
             /*!***********************************************************************************
+             \brief Makes a draw call for the outline of a rectangle.
+
+             \param[in] width Width of the rectangle.
+             \param[in] height Height of the rectangle.
+             \param[in] orientation Orientation of the rectangle (in radians).
+             \param[in] xPosition X position of the center of the rectangle.
+             \param[in] yPosition Y position of the center of the rectangle.
+             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to NDC space.
+             \param[in, out] r_shaderProgram Shader program to use.
+             \param[in] r_color Color to draw the shape.
+            *************************************************************************************/
+            void DrawDebugRectangle(float const width, float const height,
+                float const orientation, float const xPosition, float const yPosition,
+                glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
+                glm::vec4 const& r_color);
+
+            /*!***********************************************************************************
              \brief Makes a draw call for a line to represent the vector passed in.
 
              \param[in] r_vector Length and direction of the vector.
@@ -296,6 +313,8 @@ namespace PE
              \param[in] r_color Color to render text as.
             *************************************************************************************/
             void RenderText(glm::mat4 const& r_worldToNdc);
+
+            void RenderLine(TextComponent const& r_textComponent, std::string const& r_line, vec2 position, float currentY, float hAlignOffset, float vAlignOffset);
 
             // ----- Private variables ----- //
         private:

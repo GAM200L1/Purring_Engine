@@ -46,6 +46,7 @@ namespace PE
 	public:
 		std::map<char, Character> Characters;
 		unsigned int m_vertexArrayObject{ 0 }, m_vertexBufferObject{ 0 };
+		float m_lineHeight{ 0.f };
 
 		/*!***********************************************************************************
 			\brief default constructor of the font class
@@ -69,6 +70,16 @@ namespace PE
 		*************************************************************************************/
 		bool Load(std::string const& r_fontPath, unsigned int fontSize = 45);
 		};
+
+	enum class TextAlignment { LEFT, RIGHT, TOP, BOTTOM, CENTER };
+	enum class TextOverflow { WRAP, OVERFLOW_, TRUNCATE };
+
+	struct TextBox
+	{
+		vec2 position{ 0.f, 0.f };
+		float width{ 200.f };
+		float height{ 100.f };
+	};
 
 	class TextComponent
 	{
@@ -108,6 +119,23 @@ namespace PE
 		 \return glm::vec4 const& 
 		*************************************************************************************/
 		inline glm::vec4 const& GetColor() const { return m_color; }
+
+		/*!***********************************************************************************
+		 \brief Get the TextBox object of the text component.
+
+		 \return TextBox const&
+		*************************************************************************************/
+		//inline TextBox const& GetTextBox() const { return m_textBox; }
+
+		inline TextAlignment GetHAlignment() const { return m_hAlignment; }
+
+		inline TextAlignment GetVAlignment() const { return m_vAlignment; }
+
+		inline TextOverflow GetHOverflow()  const { return m_hOverflow; }
+
+		inline TextOverflow GetVOverflow()  const { return m_vOverflow; }
+
+		inline float GetLineSpacing() const { return m_lineSpacing; }
 
 		/*!***********************************************************************************
 		 \brief Set the Font
@@ -215,14 +243,20 @@ namespace PE
 		std::string m_text;
 		std::string m_fontKey;
 		std::shared_ptr<Font> m_font;
+		//TextBox m_textBox;
 		// font style
 		float m_size{ 1.f };
-		// line spacing
-		// paragraph
-		// alignment
-		// h_overflow
-		// v_overflow
+		float m_lineSpacing{ 1.f }; // % of font size
+		TextAlignment m_hAlignment{ TextAlignment::LEFT };
+		TextAlignment m_vAlignment{ TextAlignment::TOP };
+		TextOverflow m_hOverflow { TextOverflow::WRAP }; // wrap, overflow
+		TextOverflow m_vOverflow { TextOverflow::TRUNCATE}; // truncate, overflow
 		glm::vec4 m_color{ 0.f, 0.f, 0.f, 1.f};
 		// material
 	};
+
+	std::vector<std::string> SplitTextIntoLines(TextComponent const& r_textComponent, TextBox textBox);
+	void HorizontalTextAlignment(TextComponent const& r_textComponent,std::string const& line, TextBox textBox, float& hAlignOffset);
+	void VerticalTextAlignment(TextComponent const& r_textComponent, std::vector<std::string> const& lines, TextBox textBox, float& vAlignOffset);
+	float CalculateLineWidth(TextComponent const& r_textComponent, std::string const& line);
 }
