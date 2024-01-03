@@ -316,7 +316,7 @@ PE::CoreApplication::CoreApplication()
     int height = configJson["window"]["height"];
     
     // Initialize Window
-    m_window = m_windowManager.InitWindow(width, height, "Purring_Engine");
+    WindowManager::GetInstance().InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
     
     InitializeLogger();
@@ -355,7 +355,7 @@ void PE::CoreApplication::Run()
 
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
-    while (!glfwWindowShouldClose(m_window))
+    while (!glfwWindowShouldClose(WindowManager::GetInstance().GetWindow()))
     {
         // Time start
         TimeManager::GetInstance().StartFrame();
@@ -371,7 +371,7 @@ void PE::CoreApplication::Run()
         for (int key : keys)
         {
             // Update target FPS if a key is pressed
-            if (glfwGetKey(m_window, key) == GLFW_PRESS)
+            if (glfwGetKey(WindowManager::GetInstance().GetWindow(), key) == GLFW_PRESS)
             {
                 TimeManager::GetInstance().m_frameRateController.UpdateTargetFPSBasedOnKey(key);
             }
@@ -384,7 +384,7 @@ void PE::CoreApplication::Run()
         double currentTime = glfwGetTime();
         if (currentTime - m_lastFrameTime >= 1.0)
         {
-            m_windowManager.UpdateTitle(TimeManager::GetInstance().m_frameRateController.GetFps());
+            WindowManager::GetInstance().UpdateTitle(TimeManager::GetInstance().m_frameRateController.GetFps());
             m_lastFrameTime = currentTime;
         }
 
@@ -438,7 +438,7 @@ void PE::CoreApplication::Run()
 #endif // !GAMERELEASE
 
     // Additional Cleanup (if required)
-    m_windowManager.Cleanup();
+    WindowManager::GetInstance().Cleanup();
     ResourceManager::GetInstance().UnloadResources();
 }
 
@@ -506,17 +506,17 @@ void PE::CoreApplication::InitializeSystems()
 {
     // Get the window width and height to initialize the camera manager with
     int width, height;
-    glfwGetWindowSize(m_window, &width, &height);
+    glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
 
     // Add system to list & assigning memory to them
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager, width, height };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ WindowManager::GetInstance().GetWindow(), *p_cameraManager, width, height };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window, static_cast<float>(width), static_cast<float>(height)};
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ WindowManager::GetInstance().GetWindow(), static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 

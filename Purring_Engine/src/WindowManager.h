@@ -72,6 +72,12 @@ namespace PE
          \return    std::string The name of the system.
         *************************************************************************************/
         virtual std::string GetName() { return "Windows Manager"; }
+
+        /*!***********************************************************************************
+         \brief     Get the pointer to the window being managed.
+         \return    GLFWwindow* const Pointer to the window being managed.
+        *************************************************************************************/
+        GLFWwindow* const GetWindow() const { return p_currWindow; }
 /*                                                                                          Window Callback Functions
 --------------------------------------------------------------------------------------------------------------------- */
         /*!***********************************************************************************

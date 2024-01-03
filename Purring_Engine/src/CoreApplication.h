@@ -116,8 +116,6 @@ namespace PE
 		std::vector<System*> m_systemList;
 
 		// Temporary (or additional) components
-		WindowManager m_windowManager;						// Manages the application window
-		GLFWwindow* m_window;								// Pointer to the GLFW window object
 		float m_time;										// Placeholder for time value
 	};
 
