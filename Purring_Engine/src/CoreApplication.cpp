@@ -25,6 +25,7 @@
 #include "ECS/Components.h"
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
+#include "ECS/Tags.h"
 
 #ifndef GAMERELEASE
 // ImGui Headers
@@ -367,6 +368,33 @@ void PE::CoreApplication::Run()
                 TimeManager::GetInstance().m_frameRateController.UpdateTargetFPSBasedOnKey(key);
             }
         }
+        if (glfwGetKey(m_window, GLFW_KEY_H) == GLFW_PRESS)
+        {
+            TagManager::GetInstance().AssignTag(0, "Constant");
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_J) == GLFW_PRESS)
+        {
+            TagManager::GetInstance().AssignTag(0, "Camera");
+        }
+        
+        if (glfwGetKey(m_window, GLFW_KEY_K) == GLFW_PRESS)
+        {
+            TagManager::GetInstance().RemoveTag(0, "Camera");
+        }
+        if (glfwGetKey(m_window, GLFW_KEY_L) == GLFW_PRESS)
+        {
+            TagManager::GetInstance().EraseTag("Camera");
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_U) == GLFW_PRESS)
+        {
+            TagManager::GetInstance().RenameTag(Tag().set(1), "GAY");
+        }
+
+        if (glfwGetKey(m_window, GLFW_KEY_I) == GLFW_PRESS)
+        {
+            TagManager::GetInstance().RenameTag(Tag().set(1), "Constant");
+        }
 
         //Audio Stuff - HANS
         AudioManager::GetInstance().Update();
@@ -379,20 +407,8 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        //for (const auto& id : SceneView<Transform>())
-        //{
-        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
-        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
-        //    {
-        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-        //        vec3 tmp { trans.relPosition, 1.f };
-        //        tmp = parent.GetTransformMatrix3x3() * tmp;
-        //        trans.position.x = tmp.x;
-        //        trans.position.y = tmp.y;
-        //        trans.orientation = parent.orientation + trans.relOrientation;
-        //    }
-        //}
         Hierarchy::GetInstance().Update();
+
 
 
         // Update system with fixed time step

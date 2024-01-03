@@ -28,6 +28,7 @@
 #include <queue>
 #include <optional>
 #include <climits>
+#include "Tags.h"
 
 // Const expressions
 constexpr unsigned MAX_COMPONENTS = 32;
@@ -46,7 +47,8 @@ namespace PE
 	 \brief Assits in using the bitset as a key when used as a map key
 	 
 	*************************************************************************************/
-	struct Comparer {
+	struct Comparer 
+	{
 		/*!***********************************************************************************
 		 \brief Compares the bitsets lhs < rhs value
 		 
@@ -613,6 +615,8 @@ namespace PE
 		inline bool SaveEntity() { return toSave && isAlive; }
 
 		std::string prefabType{ "" };
+
+		Tag tags;
 
 		/*!***********************************************************************************
 		 \brief Serializes this struct into a json file
