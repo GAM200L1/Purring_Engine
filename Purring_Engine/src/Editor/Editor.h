@@ -230,13 +230,22 @@ namespace PE {
 		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
+
 		/*!***********************************************************************************
 		 \brief render the gameview window
 
 		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
 		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
+		void ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);		
+		
+		/*!***********************************************************************************
+		 \brief render the gameview window
+
+		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowGameFullView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
 
 		/*!***********************************************************************************
 		 \brief render the prefab apply changes window
@@ -350,6 +359,7 @@ namespace PE {
 		bool m_showPerformanceWindow;
 		bool m_showPhysicsWindow;
 		bool m_firstLaunch;
+		bool m_showFullGameView;
 		bool m_showGameView;
 		bool m_showAnimationWindow;
 		//boolean for rendering

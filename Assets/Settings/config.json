@@ -7,11 +7,12 @@
         "showComponentWindow": true,
         "showConsole": false,
         "showEditor": true,
+        "showGameView": true,
         "showLogs": true,
         "showObjectList": true,
         "showPerformanceWindow": false,
         "showPhysicsWindow": false,
-        "showResourceWindow": true,
+        "showResourceWindow": false,
         "showSceneView": true,
         "showTestWindows": false
     },
