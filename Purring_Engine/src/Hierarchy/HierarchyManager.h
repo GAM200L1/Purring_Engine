@@ -139,7 +139,14 @@ namespace PE
 		*************************************************************************************/
 		void UpdateETC(); // for any other misc behaviour that we may want to add for inheriting stuff
 
-
+		/*!***********************************************************************************
+		 \brief Helper function to allow for easy recursion to update parents & it's children
+		 		entities in the correct order.
+		 
+		 \param[in] id 		Target entity ID
+		 \param[in] min 	Minimum value for sorting purposes in the sceneOrder map
+		 \param[in] max 	Maximum value for sorting purposes in the sceneOrder map
+		*************************************************************************************/
 		void RenderOrderUpdateHelper(const EntityID& id, float min, float max);
 
 		/*!***********************************************************************************
