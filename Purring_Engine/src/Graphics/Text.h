@@ -121,20 +121,38 @@ namespace PE
 		inline glm::vec4 const& GetColor() const { return m_color; }
 
 		/*!***********************************************************************************
-		 \brief Get the TextBox object of the text component.
+		 \brief Get the horizontal alignment of the text
 
-		 \return TextBox const&
+		 \return TextAlignment - the horizontal alignment of the text
 		*************************************************************************************/
-		//inline TextBox const& GetTextBox() const { return m_textBox; }
-
 		inline TextAlignment GetHAlignment() const { return m_hAlignment; }
 
+		/*!***********************************************************************************
+		 \brief Get the vertical alignment of the text
+
+		 \return TextAlignment - the vertical alignment of the text
+		*************************************************************************************/
 		inline TextAlignment GetVAlignment() const { return m_vAlignment; }
 
+		/*!***********************************************************************************
+		 \brief Get the horizontal overflow of the text
+
+		 \return TextAlignment - the horizontal overflow of the text
+		*************************************************************************************/
 		inline TextOverflow GetHOverflow()  const { return m_hOverflow; }
 
+		/*!***********************************************************************************
+		 \brief Get the vertical overflow of the text
+
+		 \return TextAlignment - the vertical overflow of the text
+		*************************************************************************************/
 		inline TextOverflow GetVOverflow()  const { return m_vOverflow; }
 
+		/*!***********************************************************************************
+		 \brief Get the line spacing of the text
+
+		 \return float - the line spacing of the text
+		*************************************************************************************/
 		inline float GetLineSpacing() const { return m_lineSpacing; }
 
 		/*!***********************************************************************************
@@ -172,14 +190,39 @@ namespace PE
 		*************************************************************************************/
 		void SetAlpha(float const alpha);
 
+		/*!***********************************************************************************
+		 \brief Set the horizontal alignment of the text
+
+		 \param[in] hAlignment - the horizontal alignment of the text
+		*************************************************************************************/
 		void SetHAlignment(TextAlignment hAlignment);
 
+		/*!***********************************************************************************
+		 \brief Set the vertical alignment of the text
+
+		 \param[in] vAlignment - the vertical alignment of the text
+		*************************************************************************************/
 		void SetVAlignment(TextAlignment vAlignment);
 
+		/*!***********************************************************************************
+		 \brief Set the horizontal overflow of the text
+
+		 \param[in] hOverflow - the horizontal overflow of the text
+		*************************************************************************************/
 		void SetHOverflow(TextOverflow hOverflow);
 
+		/*!***********************************************************************************
+		 \brief Set the vertical overflow of the text
+
+		 \param[in] vOverflow - the vertical overflow of the text
+		*************************************************************************************/
 		void SetVOverflow(TextOverflow vOverflow);
 
+		/*!***********************************************************************************
+		 \brief Set the line spacing of the text
+
+		 \param[in] lineSpacing - the line spacing of the text
+		*************************************************************************************/
 		void SetLineSpacing(float lineSpacing);
 
 		/*!***********************************************************************************
@@ -198,6 +241,7 @@ namespace PE
 			for (auto& prop : type.get_properties())
 			{
 				rttr::variant var = prop.get_value(inst);
+				
 				if (var.get_type().get_name() == "std::string")
 				{
 					ret[prop.get_name().to_string()] = var.get_value<std::string>();
@@ -212,6 +256,18 @@ namespace PE
 					ret[prop.get_name().to_string()]["y"] = var.get_value<glm::vec4>().y;
 					ret[prop.get_name().to_string()]["z"] = var.get_value<glm::vec4>().z;
 					ret[prop.get_name().to_string()]["w"] = var.get_value<glm::vec4>().w;
+				}
+				else if (var.get_type().get_name() == "enumPE::TextAlignment")
+				{
+					ret[prop.get_name().to_string()] = var.get_value<TextAlignment>();
+				}
+				else if (var.get_type().get_name() == "enumPE::TextOverflow")
+				{
+					ret[prop.get_name().to_string()] = var.get_value<TextOverflow>();
+				}
+				else
+				{
+					std::cout << var.get_type().get_name() << std::endl;
 				}
 			}
 
@@ -244,6 +300,18 @@ namespace PE
 				{
 					meth.invoke(inst, j[meth.get_name().to_string()].get<float>());
 				}
+				else if (meth.get_name() == "HAlignment" || meth.get_name() == "VAlignment")
+				{
+					meth.invoke(inst, j[meth.get_name().to_string()].get<TextAlignment>());
+				}
+				else if (meth.get_name() == "HOverflow" || meth.get_name() == "VOverflow")
+				{
+					meth.invoke(inst, j[meth.get_name().to_string()].get<TextOverflow>());
+				}
+				else if (meth.get_name() == "LineSpacing")
+				{
+					meth.invoke(inst, j[meth.get_name().to_string()].get<float>());
+				}
 
 			}
 			return *this;
@@ -253,7 +321,6 @@ namespace PE
 		std::string m_text;
 		std::string m_fontKey;
 		std::shared_ptr<Font> m_font;
-		//TextBox m_textBox;
 		// font style
 		float m_size{ 1.f };
 		float m_lineSpacing{ 1.f }; // % of font size

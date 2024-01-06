@@ -942,28 +942,9 @@ namespace PE
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
 
-                //// get width and height of text - may not need this
-                //glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
-                //textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
-                //textSize.y *= (textComponent.GetSize());
-
-                //// Resize the transform if the entity does not have other renderer components - dont need to resize transform
-                //if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<GUIRenderer>())
-                //&& !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Renderer>()))
-                //{
-                //    EntityManager::GetInstance().Get<Transform>(id).width = textSize.x;
-                //    EntityManager::GetInstance().Get<Transform>(id).height = textSize.y;
-                //}
-
-                //// this is for alignment?
-                //textSize.x *= 0.5f;
-                //textSize.y *= 0.5f;
-
                 std::vector<std::string> lines{ SplitTextIntoLines(textComponent, textBox) };
                 float currentY{ 0.f };
                 float hAlignOffset, vAlignOffset;
-
-                //HorizontalTextAlignment(textComponent, textBox, hAlignOffset, vAlignOffset);
 
                 // activate corresponding render state	
                 p_textShader->Use();
@@ -972,7 +953,6 @@ namespace PE
 
                 glActiveTexture(GL_TEXTURE0);
                 glBindVertexArray(textComponent.GetFont()->m_vertexArrayObject);
-                glDisable(GL_BLEND);
 
                 // get vertical alignment offset
                 VerticalTextAlignment(textComponent, lines, textBox, vAlignOffset);
@@ -994,7 +974,6 @@ namespace PE
 
                 p_textShader->UnUse();
             }
-
         }
 
         void RendererManager::RenderLine(TextComponent const& r_textComponent, std::string const& r_line, vec2 position, float currentY, float hAlignOffset, float vAlignOffset)

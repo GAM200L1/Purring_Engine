@@ -261,10 +261,21 @@ RTTR_REGISTRATION
         .property_readonly("Size", &PE::TextComponent::GetSize)
         .property_readonly("Text", &PE::TextComponent::GetText)
         .property_readonly("Color", &PE::TextComponent::GetColor)
+        .property_readonly("LineSpacing", &PE::TextComponent::GetLineSpacing)
+        .property_readonly("HAlignment", &PE::TextComponent::GetHAlignment)
+        .property_readonly("VAlignment", &PE::TextComponent::GetVAlignment)
+        .property_readonly("HOverflow", &PE::TextComponent::GetHOverflow)
+        .property_readonly("VOverflow", &PE::TextComponent::GetVOverflow)
         .method("Color", &PE::TextComponent::SetColor)
         .method("Text", &PE::TextComponent::SetText)
         .method("Size", &PE::TextComponent::SetSize)
-        .method("Font", &PE::TextComponent::SetFont);
+        .method("Font", &PE::TextComponent::SetFont)
+        .method("LineSpacing", &PE::TextComponent::SetLineSpacing)
+        .method("HAlignment", &PE::TextComponent::SetHAlignment)
+        .method("VAlignment", &PE::TextComponent::SetVAlignment)
+        .method("HOverflow", &PE::TextComponent::SetHOverflow)
+        .method("VOverflow", &PE::TextComponent::SetVOverflow);
+
 
     rttr::registration::class_<PE::CatScriptData>("CatScript")
         .property("catID", &PE::CatScriptData::catID)
