@@ -388,22 +388,6 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        //for (const auto& id : SceneView<Transform>())
-        //{
-        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
-        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
-        //    {
-        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-        //        vec3 tmp { trans.relPosition, 1.f };
-        //        tmp = parent.GetTransformMatrix3x3() * tmp;
-        //        trans.position.x = tmp.x;
-        //        trans.position.y = tmp.y;
-        //        trans.orientation = parent.orientation + trans.relOrientation;
-        //    }
-        //}
-        Hierarchy::GetInstance().Update();
-
-
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();
         while (TimeManager::GetInstance().UpdateAccumulator())
@@ -416,6 +400,8 @@ void PE::CoreApplication::Run()
             }
             TimeManager::GetInstance().EndAccumulator();
         }
+
+        Hierarchy::GetInstance().Update();
 
         // Update Graphics with variable timestep
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);

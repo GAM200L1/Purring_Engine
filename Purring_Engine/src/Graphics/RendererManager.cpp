@@ -42,6 +42,11 @@
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
 
+// to handle missing hierarchy when run in game release
+#ifdef GAMERELEASE
+#include "Hierarchy/HierarchyManager.h"
+#endif
+
 // Physics and collision
 #include "Physics/Colliders.h"
 

@@ -731,8 +731,8 @@ namespace PE {
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 					{
 						
-							
-						if (ImGui::Selectable(name.c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
+						
+						if ((name.length())? ImGui::Selectable(name.c_str(), is_selected) : ImGui::Selectable(("##" + name).c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 							m_currentSelectedObject = static_cast<int>(id);
 
 
