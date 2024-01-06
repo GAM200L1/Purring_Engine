@@ -118,8 +118,10 @@ namespace PE
              \param[in] r_sceneView Only works with SceneView objects that are scoped to
                                 a component derived from the Renderer.
             *************************************************************************************/
+            /*template<typename T>
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);*/
             template<typename T>
-            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_sceneView);
 
             /*!***********************************************************************************
              \brief Loops through all objects with colliders and rigidbody components and draws 

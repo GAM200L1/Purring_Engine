@@ -129,9 +129,12 @@ RTTR_REGISTRATION
     //    .property("x", &PE::vec2::x);
     rttr::registration::class_<PE::EntityDescriptor>(PE::EntityManager::GetInstance().GetComponentID<PE::EntityDescriptor>().to_string().c_str())
         .property("Name", &PE::EntityDescriptor::name)
-        .property_readonly("Parent", &PE::EntityDescriptor::parent)
+        .property_readonly("Entity ID", &PE::EntityDescriptor::oldID)
+        .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
-        .property("Prefab Type", &PE::EntityDescriptor::prefabType);
+        .property("Layer", &PE::EntityDescriptor::layer)
+        .property_readonly("Parent", &PE::EntityDescriptor::parent)
+        .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 
     rttr::registration::class_<PE::Transform>(PE::EntityManager::GetInstance().GetComponentID<PE::Transform>().to_string().c_str())
         .property("Position", &PE::Transform::position)
@@ -387,22 +390,6 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        //for (const auto& id : SceneView<Transform>())
-        //{
-        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
-        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
-        //    {
-        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-        //        vec3 tmp { trans.relPosition, 1.f };
-        //        tmp = parent.GetTransformMatrix3x3() * tmp;
-        //        trans.position.x = tmp.x;
-        //        trans.position.y = tmp.y;
-        //        trans.orientation = parent.orientation + trans.relOrientation;
-        //    }
-        //}
-        Hierarchy::GetInstance().Update();
-
-
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();
         while (TimeManager::GetInstance().UpdateAccumulator())
@@ -415,6 +402,8 @@ void PE::CoreApplication::Run()
             }
             TimeManager::GetInstance().EndAccumulator();
         }
+
+        Hierarchy::GetInstance().Update();
 
         // Update Graphics with variable timestep
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
