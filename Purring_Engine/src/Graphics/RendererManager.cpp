@@ -109,7 +109,7 @@ namespace PE
 
             // Initialize the base meshes to use
             m_meshes.resize(static_cast<size_t>(EnumMeshType::MESH_COUNT));
-            InitializeTriangleMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::TRIANGLE)]);
+            InitializeQuadMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::TEXTURED_QUAD)]);
             InitializeQuadMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::QUAD)]);
             InitializeCircleMesh(32, m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_CIRCLE)]);
             InitializeSquareMesh(m_meshes[static_cast<unsigned char>(EnumMeshType::DEBUG_SQUARE)]);
@@ -791,7 +791,7 @@ namespace PE
             m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
 
-            if (meshType == EnumMeshType::QUAD || meshType == EnumMeshType::TRIANGLE)
+            if (meshType == EnumMeshType::QUAD || meshType == EnumMeshType::TEXTURED_QUAD)
                 ++objectDrawCalls;
             else
                 ++debugDrawCalls;
@@ -838,7 +838,7 @@ namespace PE
             r_shaderProgram.UnUse();
             glBindTexture(GL_TEXTURE_2D, 0);
 
-            if (meshType == EnumMeshType::QUAD || meshType == EnumMeshType::TRIANGLE)
+            if (meshType == EnumMeshType::QUAD || meshType == EnumMeshType::TEXTURED_QUAD)
                 ++objectDrawCalls;
             else
                 ++debugDrawCalls;

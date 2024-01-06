@@ -36,12 +36,13 @@ namespace PE
         enum class EnumMeshType : unsigned char
         {
             QUAD,
-            TRIANGLE,
+            TEXTURED_QUAD,
             DEBUG_SQUARE,
             DEBUG_CIRCLE,
             DEBUG_LINE,
             DEBUG_POINT,
-            MESH_COUNT
+            MESH_COUNT,
+            NONE
         };
 
         /*!***********************************************************************************
