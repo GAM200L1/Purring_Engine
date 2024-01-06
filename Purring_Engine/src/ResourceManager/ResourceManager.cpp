@@ -323,6 +323,21 @@ namespace PE
         return Sounds[r_name];
     }
 
+    std::shared_ptr<Graphics::ShaderProgram> ResourceManager::GetShaderProgram(std::string const& r_name)
+    {
+        // if audio is not found, load it
+        if (ShaderPrograms.find(r_name) == ShaderPrograms.end())
+        {
+            engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+            engine_logger.SetTime();
+            engine_logger.AddLog(false, "Audio " + r_name + " not loaded, loading audio.", __FUNCTION__);
+
+            return nullptr;
+        }
+
+        return ShaderPrograms[r_name];
+    }
+
     void ResourceManager::UnloadResources()
     {
         ShaderPrograms.clear();

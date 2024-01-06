@@ -193,6 +193,17 @@ namespace PE
             \return Audio in map.
         *************************************************************************************/
         std::shared_ptr<AudioManager::Audio> GetAudio(std::string const& r_name);
+
+        /*!***********************************************************************************
+            \brief Gets the shader program stored in the resource manager.
+
+            \param[in] r_name Key to retrieve the shader program.
+
+            \return Pointer to shader program in map.
+        *************************************************************************************/
+        std::shared_ptr<Graphics::ShaderProgram> GetShaderProgram(std::string const& r_name);
+
+
     private:
 
         /*!***********************************************************************************
