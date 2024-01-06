@@ -47,6 +47,8 @@ namespace PE
 			EntityID clone = CreateEntity();
 			for (const ComponentID& r_componentCreator : p_entityManager->GetComponentIDs(id))
 			{
+				if (r_componentCreator == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+					continue;
 				LoadComponent(clone, r_componentCreator,
 					p_entityManager->GetComponentPoolPointer(r_componentCreator)->Get(id));
 			}
