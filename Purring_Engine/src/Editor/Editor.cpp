@@ -4281,7 +4281,7 @@ namespace PE {
 					}
 
 					float transform[16]{};
-					float transform2[16]{};
+					//float transform2[16]{};
 					static float OldTransform[16]{};
 					static float OldLocalX,OldLocalY;
 					static Transform currentTransform{};

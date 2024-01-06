@@ -493,7 +493,7 @@ namespace PE
 	}
 
 	// Serialize GUISlider
-	nlohmann::json GUISlider::ToJson(size_t id) const
+	nlohmann::json GUISlider::ToJson(size_t) const
 	{
 		nlohmann::json j;
 
