@@ -99,14 +99,14 @@ namespace PE
 		UpdateRenderOrder(r_child);
 	}
 
-	const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& parent) const
+	inline const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& r_parent) const
 	{
-		return EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
+			return EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
 	}
 
-	const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& child) const
+	inline const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& r_child) const
 	{
-		return EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent;
+			return EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent;
 	}
 
 	bool Hierarchy::HasParent(const EntityID& child) const
@@ -305,7 +305,7 @@ namespace PE
 				if (!GETGUISYSTEM()->AreThereActiveCanvases()) { continue; }
 
 				if(GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
-						renderOrderUI.emplace_back(v);
+					m_renderOrderUI.emplace_back(v);
 			}
 			
 		}
