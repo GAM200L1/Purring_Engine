@@ -640,7 +640,7 @@ bool SerializationManager::LoadCanvasComponent(const size_t& r_id, const nlohman
     {
 
         PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>(), 
-            static_cast<void*>(&(PE::Canvas::Deserialize(r_json["Entity"]["components"]["Canvas"]))));
+            static_cast<void*>(&(PE::Canvas().Deserialize(r_json["Entity"]["components"]["Canvas"]))));
         return true;
     }
     return false;

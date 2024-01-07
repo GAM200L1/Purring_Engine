@@ -299,8 +299,8 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
         .property_readonly("Width", &PE::Canvas::GetWidth)
         .property_readonly("Height", &PE::Canvas::GetHeight)
-        .method("SetWidth", &PE::Canvas::SetWidth)
-        .method("SetHeight", &PE::Canvas::SetHeight)
+        .method("Width", &PE::Canvas::SetWidth)
+        .method("Height", &PE::Canvas::SetHeight)
         .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
 }
 

@@ -91,32 +91,23 @@ namespace PE
          \param[in,out] j - JSON object with data to load into the Canvas
          \return Canvas - Copy of deserialized Canvas
         *************************************************************************************/
-        static Canvas Deserialize(const nlohmann::json& j)
+        Canvas& Deserialize(const nlohmann::json& j)
         {
-            Canvas ret;
-
-            rttr::type dataType = rttr::type::get_by_name(EntityManager::GetInstance().GetComponentID<Canvas>().to_string().c_str());
-            rttr::instance inst = ret;
-
-            for (auto& prop : dataType.get_properties())
+            rttr::type type = rttr::type::get_by_name(EntityManager::GetInstance().GetComponentID<Canvas>().to_string().c_str());
+            rttr::instance inst(*this);
+            for (auto& meth : type.get_methods())
             {
-                if (!inst.is_valid())
-                    throw;
-                // can ignore testing of type for now cos only hvae floats
-                if (j.contains(prop.get_name().to_string().c_str()))
+                if (meth.get_name() == "Height")
                 {
-                    // can streamline once setters are properly setup
-                    if (prop.get_name() == "Height")
-                    {
-                        ret.m_height = j[prop.get_name().to_string().c_str()];
-                    }
-                    else if (prop.get_name() == "Width")
-                    {
-                        ret.m_width = j[prop.get_name().to_string().c_str()];
-                    }
+                    meth.invoke(inst, j[meth.get_name().to_string().c_str()]);
                 }
+                else if (meth.get_name() == "Width")
+                {
+                    meth.invoke(inst, j[meth.get_name().to_string().c_str()]);
+                }
+
             }
-            return ret;
+            return *this;
         }
     private:
         // Dimensions of the canvas. Should match the target resolution of the window.
