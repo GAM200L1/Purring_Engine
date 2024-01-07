@@ -586,29 +586,22 @@ namespace PE
 	{
 		// name of the entity
 		std::string name{ "GameObject" };
+
 		// the parent of the entity
 		std::optional<EntityID> parent;
 
 		// the children of this entity
 		std::set<EntityID> children;
 
-		std::map<EntityID, bool> childrenState;
-
 		// used for undo stack :(
 		std::vector<EntityID> savedChildren;
 
 		// the SceneID (mainly used to request the ID when loading scene files)
 		EntityID sceneID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
-		EntityID oldID{ ULLONG_MAX }; // technically also kinda stores the order of the entity in the scene
-
-
-		float renderOrder { FLT_MAX };
 
 		bool isActive{ true };  // defaults to true
 		bool isAlive{ true };   // defaults to true, mainly used in undo/redo for editor functionality
 		bool toSave{ true };    // used for whether the entity should be saved or not
-
-		int layer = 0;
 
 		inline bool SaveEntity() { return toSave && isAlive; }
 
@@ -634,37 +627,7 @@ namespace PE
 		 
 		*************************************************************************************/
 		void UnHandicapEntity() { isAlive = toSave = true; }
-
-		void DisableEntity()
-		{
-			isActive = false;
-			if (childrenState.empty())
-			{
-				for (const auto& id : children)
-				{
-					childrenState[id] = EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive;
-					EntityManager::GetInstance().Get<EntityDescriptor>(id).DisableEntity();
-				}
-			}
-		}
-
-		void EnableEntity()
-		{
-			isActive = true;
-			for (const auto& id : children)
-			{
-				if (childrenState.size())
-				{
-					if (childrenState.at(id))
-						EntityManager::GetInstance().Get<EntityDescriptor>(id).EnableEntity();
-				}
-			}
-			// unlikely edge case just clear in case
-			childrenState.clear();
-		}
 		
-		// render layer settings, currently limited to 0-10 range
-		int& SetLayer(int val) { return layer = (val > 10) ? 10 : (val < 0)? 0 : val; }
 
 		/*!***********************************************************************************
 		 \brief Deserializes the input json file into a copy of the entity descriptor

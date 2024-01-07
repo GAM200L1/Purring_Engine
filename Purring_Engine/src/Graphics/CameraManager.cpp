@@ -378,19 +378,19 @@ namespace PE
                 // Move the editor camera
                 if (event.keycode == GLFW_KEY_UP)
                 {
-                    GetEditorCamera().AdjustLocalPosition(0.f, 10.f);
+                    GetEditorCamera().AdjustPosition(0.f, 10.f);
                 }
                 if (event.keycode == GLFW_KEY_DOWN)
                 {
-                    GetEditorCamera().AdjustLocalPosition(0.f, -10.f);
+                    GetEditorCamera().AdjustPosition(0.f, -10.f);
                 }
                 if (event.keycode == GLFW_KEY_LEFT)
                 {
-                    GetEditorCamera().AdjustLocalPosition(-10.f, 0.f);
+                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
                 }
                 if (event.keycode == GLFW_KEY_RIGHT)
                 {
-                    GetEditorCamera().AdjustLocalPosition(10.f, 0.f);
+                    GetEditorCamera().AdjustPosition(10.f, 0.f);
                 }
 
                 // Rotate the editor camera
@@ -411,19 +411,19 @@ namespace PE
                 // Move the editor camera
                 if (event.keycode == GLFW_KEY_UP)
                 {
-                    GetEditorCamera().AdjustLocalPosition(0.f, 10.f);
+                    GetEditorCamera().AdjustPosition(0.f, 10.f);
                 }
                 if (event.keycode == GLFW_KEY_DOWN)
                 {
-                    GetEditorCamera().AdjustLocalPosition(0.f, -10.f);
+                    GetEditorCamera().AdjustPosition(0.f, -10.f);
                 }
                 if (event.keycode == GLFW_KEY_LEFT)
                 {
-                    GetEditorCamera().AdjustLocalPosition(-10.f, 0.f);
+                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
                 }
                 if (event.keycode == GLFW_KEY_RIGHT)
                 {
-                    GetEditorCamera().AdjustLocalPosition(10.f, 0.f);
+                    GetEditorCamera().AdjustPosition(10.f, 0.f);
                 }
 
                 // Rotate the editor camera

@@ -54,18 +54,7 @@ namespace PE
         }
 
         
-        void EditorCamera::AdjustLocalPosition(float const deltaX, float const deltaY)
-        {
-            // Move the camera along its local forward and right axes
-            glm::vec2 rightVector{ glm::cos(m_orientation), glm::sin(m_orientation) }; // cos, sin
-            glm::vec2 upVector{ -rightVector.y, rightVector.x }; // cos, sin
-            
-            m_position += (rightVector * deltaX) + (upVector * deltaY);
-            hasTransformChanged = true;
-        }
-
-        
-        void EditorCamera::AdjustWorldPosition(float const deltaX, float const deltaY)
+        void EditorCamera::AdjustPosition(float const deltaX, float const deltaY)
         {
             m_position.x += deltaX;
             m_position.y += deltaY;

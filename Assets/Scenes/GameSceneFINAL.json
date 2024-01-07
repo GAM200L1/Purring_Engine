@@ -4,8 +4,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 1,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -50,8 +48,6 @@
                         "viewportWidth": 1920.0
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 2,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -104,8 +100,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 3,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -167,8 +161,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 4,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -230,8 +222,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 5,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -293,8 +283,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 6,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -356,8 +344,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 7,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -419,8 +405,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 8,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -482,8 +466,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 9,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -545,8 +527,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 10,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -608,8 +588,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 11,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -671,8 +649,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 12,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -711,8 +687,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 13,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -802,8 +776,6 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 14,
                         "Prefab Type": "OrangeCatPrefab",
                         "children": [],
                         "isActive": true,
@@ -899,8 +871,6 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 15,
                         "Prefab Type": "Rat",
                         "children": [],
                         "isActive": true,
@@ -939,7 +909,7 @@
                                 "collisionDamage": 1,
                                 "detectionRadius": 4.0,
                                 "health": 2,
-                                "mainCatID": 34,
+                                "mainCatID": 100,
                                 "movementSpeed": 200.0
                             },
                             "state": 0
@@ -967,8 +937,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 16,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1007,8 +975,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 17,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1047,8 +1013,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 18,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1087,8 +1051,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 19,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1127,8 +1089,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 20,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1169,8 +1129,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 21,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1243,8 +1201,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 22,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1285,8 +1241,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 23,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1327,8 +1281,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 24,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1369,8 +1321,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 25,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1411,8 +1361,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 26,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1453,8 +1401,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1495,8 +1441,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 28,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1537,8 +1481,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 29,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1579,8 +1521,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 30,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
@@ -1621,8 +1561,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 31,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
@@ -1663,8 +1601,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 32,
                         "Prefab Type": "SplashScreen",
                         "children": [],
                         "isActive": false,
@@ -1703,8 +1639,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 33,
                         "Prefab Type": "FoliageOverlay",
                         "children": [],
                         "isActive": false,
@@ -1769,8 +1703,6 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 34,
                         "Prefab Type": "Player Cat",
                         "children": [],
                         "isActive": true,
@@ -1898,8 +1830,6 @@
                         "loop": false
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 35,
                         "Prefab Type": "Audio Object",
                         "children": [],
                         "isActive": true,

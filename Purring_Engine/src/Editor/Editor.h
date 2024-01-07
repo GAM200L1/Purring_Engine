@@ -305,7 +305,7 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Helper function to help the displaying of obj hierarchy
 		*************************************************************************************/
-		void ObjectWindowHelper(const EntityID& id, bool& is_selected, bool& isHoveringObject, bool& drag, std::optional<EntityID>& hoveredObject, std::optional<EntityID>& dragID, std::string& dragName, std::set<std::string>& usedNames);
+		void ObjectWindowHelper(const EntityID& id, bool& is_selected, bool& isHoveringObject, bool& drag, std::optional<EntityID>& hoveredObject, std::optional<EntityID>& dragID, std::string& dragName);
 
 		/*!***********************************************************************************
 		 \brief Allows files to be dragged into the assets browser and copied from that its

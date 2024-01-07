@@ -214,10 +214,6 @@ namespace PE
 		virtual void Undo() override
 		{
 			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).UnHandicapEntity();
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent)
-			{
-				Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.value(), ObjectDeleted);
-			}
 			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren)
 			{
 				Hierarchy::GetInstance().AttachChild(ObjectDeleted, id);
