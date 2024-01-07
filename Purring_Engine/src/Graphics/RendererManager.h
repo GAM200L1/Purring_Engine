@@ -47,6 +47,10 @@ namespace PE
         public:
             // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
             static std::vector<EntityID> renderedEntities;
+            static unsigned totalDrawCalls;   // Sum total of all draw calls made
+            static unsigned textDrawCalls;    // Total draw calls made for text (1 draw call per chara)
+            static unsigned objectDrawCalls;  // Total draw calls for gameobjects
+            static unsigned debugDrawCalls;   // Total draw calls for debug shapes
 
             // ----- Constructors ----- //
         public:
@@ -93,18 +97,39 @@ namespace PE
             *************************************************************************************/
             void DrawCameraQuad();
 
-            /*!***********************************************************************************
-             \brief Loops through all objects with a Renderer component (or a class that
-                    derives from it) and draws it. Makes a draw call for each object.
 
-             \tparam T - A component type derived from the Renderer.
-             \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
-                                NDC space.
-             \param[in] r_sceneView Only works with SceneView objects that are scoped to
-                                a component derived from the Renderer.
-            *************************************************************************************/
-            template<typename T>
-            void DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+            ///*!***********************************************************************************
+            // \brief Loops through all objects with a Renderer component (or a class that
+            //        derives from it) and draws it. Makes a draw call for each object.
+
+            // \tparam T - A component type derived from the Renderer.
+            // \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
+            //                    NDC space.
+            // \param[in] r_sceneView Only works with SceneView objects that are scoped to
+            //                    a component derived from the Renderer.
+            //*************************************************************************************/
+            //template<typename T>
+            //void DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
+
+            ///*!***********************************************************************************
+            // \brief Loops through all objects with a Renderer component (or a class that
+            //        derives from it) and draws it. Batches the colors, transformation matrices 
+            //        and textured status together into a vertex buffer object and makes an 
+            //        instanced drawcall. The instanced batch is broken when a new texture is encountered.
+
+            // \tparam T - A component type derived from the Renderer.
+            // \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
+            //                    NDC space.
+            // \param[in] r_sceneView Only works with SceneView objects that are scoped to
+            //                    a component derived from the Renderer.
+            //*************************************************************************************/
+            //template<typename T>
+            //void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
 
             /*!***********************************************************************************
              \brief Loops through all objects with a Renderer component (or a class that
@@ -114,14 +139,12 @@ namespace PE
 
              \tparam T - A component type derived from the Renderer.
              \param[in] r_worldToNdc 4x4 matrix that transforms coordinates from world to
-                                NDC space.
-             \param[in] r_sceneView Only works with SceneView objects that are scoped to
-                                a component derived from the Renderer.
+                            NDC space.
+             \param[in] r_rendererContainer Container containing the renderer and transform 
+                            components of the objects to draw
             *************************************************************************************/
-            /*template<typename T>
-            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView);*/
             template<typename T>
-            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_sceneView);
+            void DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_rendererIdContainer);
 
             /*!***********************************************************************************
              \brief Loops through all objects with colliders and rigidbody components and draws 
@@ -131,17 +154,21 @@ namespace PE
             *************************************************************************************/
             void DrawDebug(glm::mat4 const& r_worldToNdc);
 
-            /*!***********************************************************************************
-             \brief Binds the shader program, vertex array object and texture and makes the
-                    draw call for the [r_renderer] passed in.
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
-             \param[in] r_renderer Renderer object with all the information to draw with.
-             \param[in] r_shaderProgram Shader program to use.
-             \param[in] primitiveType GL Primitive type to make the draw call with.
-             \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
-            *************************************************************************************/
-            void Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram, 
-                GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
+            ///*!***********************************************************************************
+            // \brief Binds the shader program, vertex array object and texture and makes the
+            //        draw call for the [r_renderer] passed in.
+
+            // \param[in] r_renderer Renderer object with all the information to draw with.
+            // \param[in] r_shaderProgram Shader program to use.
+            // \param[in] primitiveType GL Primitive type to make the draw call with.
+            // \param[in] r_modelToNdc 4x4 matrix that transforms coordinates from model to NDC space.
+            //*************************************************************************************/
+            //void Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram, 
+            //    GLenum const primitiveType, glm::mat4 const& r_modelToNdc);
+            
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
             /*!***********************************************************************************
              \brief Binds the shader program, vertex array object and texture and makes a
@@ -180,6 +207,17 @@ namespace PE
              \param[in] primitiveType GL Primitive type to make the draw call with.
             *************************************************************************************/
             void DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType);
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+            ///*!***********************************************************************************
+            // \brief Retrieves the GUI objects and makes draw calls for them.
+
+            // \param[in] r_viewToNdc 4x4 matrix that transforms coordinates from view to NDC space.
+            //*************************************************************************************/
+            //void DrawUi(glm::mat4 const& r_viewToNdc);
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
             /*!***********************************************************************************
              \brief Makes a draw call for a square to represent the AABB collider passed in.
@@ -351,6 +389,7 @@ namespace PE
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
             std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
             std::vector<glm::vec2> m_UV{};
+
             // ----- Private methods ----- //
         private:
             /*!***********************************************************************************
@@ -407,6 +446,12 @@ namespace PE
             *************************************************************************************/
             void PrintSpecifications() const;
         };
+
+        /*!***********************************************************************************
+         \brief Prints error messages from OpenGL.
+        *************************************************************************************/
+        void APIENTRY GlDebugOutput(GLenum source, GLenum type, unsigned int id,
+            GLenum severity, GLsizei length, const char* message, const void* userParam);
 
     } // End of Graphics namespace
 } // End of PE namespace

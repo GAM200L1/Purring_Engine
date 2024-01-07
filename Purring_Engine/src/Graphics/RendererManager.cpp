@@ -57,7 +57,8 @@
 // Animation
 #include "Animation/Animation.h"
 
-
+// GUI
+#include "GUI/Canvas.h"
 
 extern Logger engine_logger;
 
@@ -67,6 +68,10 @@ namespace PE
     {
         // Initialize static variables
         std::vector<EntityID> RendererManager::renderedEntities{};
+        unsigned RendererManager::totalDrawCalls{};   // Sum total of all draw calls made
+        unsigned RendererManager::textDrawCalls{};    // Total draw calls made for text (1 draw call per chara)
+        unsigned RendererManager::objectDrawCalls{};  // Total draw calls for gameobjects
+        unsigned RendererManager::debugDrawCalls{};   // Total draw calls for debug shapes
 
         RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, int const windowWidth, int const windowHeight)
             : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
@@ -85,6 +90,12 @@ namespace PE
             glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 #ifndef GAMERELEASE
+            // Enable debug output
+            glEnable(GL_DEBUG_OUTPUT);
+            glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+            glDebugMessageCallback(GlDebugOutput, nullptr);
+            glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
+
             Editor::GetInstance().Init(p_window);
 #endif // !GAMERELEASE
         }
@@ -97,7 +108,7 @@ namespace PE
             // Create the framebuffer to render to a texture object
             int width, height;
             glfwGetWindowSize(p_glfwWindow, &width, &height);
-            m_renderFrameBuffer.CreateFrameBuffer(width, height);
+            m_renderFrameBuffer.CreateFrameBuffer(width, height, true, false);
             m_cachedWindowWidth = static_cast<float>(width), 
                 m_cachedWindowHeight = static_cast<float>(height);
 
@@ -136,6 +147,9 @@ namespace PE
             }
             deltaTime; // Prevent warnings
 
+            // Reset counters
+            totalDrawCalls = 0, textDrawCalls = 0, objectDrawCalls = 0, debugDrawCalls = 0;
+            
             // Get the size of the window to render in
             float windowWidth{}, windowHeight{};
 
@@ -233,7 +247,22 @@ namespace PE
 #endif // !GAMERELEASE
 
             // Draw objects in the scene
-            DrawQuadsInstanced<Renderer>(worldToNdcMatrix, Hierarchy::GetInstance().GetRenderOrder()); 
+            DrawQuadsInstanced<Renderer>(worldToNdcMatrix, Hierarchy::GetInstance().GetRenderOrder());
+
+#ifndef GAMERELEASE            
+            // Draw UI objects in the scene
+            DrawQuadsInstanced<GUIRenderer>(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix(),
+                Hierarchy::GetInstance().GetRenderOrderUI());
+
+            // Render Text
+            RenderText(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix());
+#else
+            // Draw UI objects in the scene
+            DrawQuadsInstanced<GUIRenderer>(r_cameraManager.GetUiViewToNdcMatrix(), Hierarchy::GetInstance().GetRenderOrderUI());
+
+            // Render Text
+            RenderText(r_cameraManager.GetUiViewToNdcMatrix());
+#endif // !GAMERELEASE
 
 #ifndef GAMERELEASE
             if (Editor::GetInstance().IsRenderingDebug())
@@ -242,15 +271,10 @@ namespace PE
             }
 #endif // !GAMERELEASE
 
-            // Draw UI objects in the scene
-            DrawQuadsInstanced<GUIRenderer>(r_cameraManager.GetUiViewToNdcMatrix(), Hierarchy::GetInstance().GetRenderOrderUI());
-
-
-            // Render Text
-            RenderText(r_cameraManager.GetUiViewToNdcMatrix());
-
             // Unbind the RBO for rendering the game scene to
             m_renderFrameBuffer.Unbind();
+
+            totalDrawCalls = textDrawCalls + objectDrawCalls + debugDrawCalls;
 
 #ifndef GAMERELEASE
             // Check if the Imgui editor windows are active
@@ -317,51 +341,184 @@ namespace PE
                 GL_TRIANGLES, windowToNdc* glmObjectTransform);
         }
 
-        template<typename T>
-        void RendererManager::DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
-        {
-            auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
-            // Check if shader program is valid
-            if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
-            {
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(false, "Shader program " + m_defaultShaderProgramKey + " does not exist.", __FUNCTION__);
-                return;
-            }
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
-            // Make draw call for each game object with a renderer component
-            for (const EntityID& id : r_sceneView)
-            {
-                T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+        //template<typename T>
+        //void RendererManager::DrawQuads(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
+        //{
+        //    auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_defaultShaderProgramKey) };
 
-                // Skip drawing this object is the entity or renderer is not enabled
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
-                    || !renderer.GetEnabled()) { continue; }
+        //    // Check if shader program is valid
+        //    if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+        //    {
+        //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+        //        engine_logger.SetTime();
+        //        engine_logger.AddLog(false, "Shader program " + m_defaultShaderProgramKey + " does not exist.", __FUNCTION__);
+        //        return;
+        //    }
 
-                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+        //    // Make draw call for each game object with a renderer component
+        //    for (const EntityID& id : r_sceneView)
+        //    {
+        //        T& renderer{ EntityManager::GetInstance().Get<T>(id) };
 
-                // Store the index of the rendered entity
-                renderedEntities.emplace_back(id);
+        //        // Skip drawing this object is the entity or renderer is not enabled
+        //        if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
+        //            || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
-                glm::mat4 glmObjectTransform
-                {
-                    GenerateTransformMatrix(transform.width, // width
-                        transform.height, transform.orientation, // height, orientation
-                        transform.position.x, transform.position.y) // x, y position
-                };
+        //        Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-                Draw(dynamic_cast<Renderer&>(renderer), *(shaderProgramIterator->second), GL_TRIANGLES,
-                    r_worldToNdc * glmObjectTransform);
-            }
-        }
+        //        // Store the index of the rendered entity
+        //        renderedEntities.emplace_back(id);
+
+        //        glm::mat4 glmObjectTransform
+        //        {
+        //            GenerateTransformMatrix(transform.width, // width
+        //                transform.height, transform.orientation, // height, orientation
+        //                transform.position.x, transform.position.y) // x, y position
+        //        };
+
+        //        Draw(dynamic_cast<Renderer&>(renderer), *(shaderProgramIterator->second), GL_TRIANGLES,
+        //            r_worldToNdc * glmObjectTransform);
+        //    }
+        //}
 
 
         //template<typename T>
         //void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, SceneView<T, Transform> const& r_sceneView)
+        //{
+        //    auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
+
+        //    // Check if shader program is valid
+        //    if (shaderProgramIterator == ResourceManager::GetInstance().ShaderPrograms.end())
+        //    {
+        //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+        //        engine_logger.SetTime();
+        //        engine_logger.AddLog(false, "Shader program " + m_instancedShaderProgramKey + " does not exist.", __FUNCTION__);
+        //        return;
+        //    }
+
+        //    ShaderProgram& r_shaderProgram{ *(shaderProgramIterator->second) };
+        //    r_shaderProgram.Use();
+
+        //    // Pass the world to NDC transform matrix as a uniform variable
+        //    r_shaderProgram.SetUniform("uWorldToNdc", r_worldToNdc);
+
+        //    // Bind the quad mesh
+        //    size_t meshIndex{ static_cast<unsigned char>(EnumMeshType::QUAD) };
+        //    m_meshes[meshIndex].Bind();
+
+        //    // Store the texture being used
+        //    std::string currentTexture{};
+        //    std::shared_ptr<Graphics::Texture> p_texture{};
+
+        //    // Clear the buffers for the 
+        //    m_isTextured.clear();
+        //    m_UV.clear();
+        //    m_modelToWorldMatrices.clear();
+        //    m_colors.clear();
+
+        //    int count{};
+
+        //    // Make draw call for each game object with a renderer component
+
+        //    for (const EntityID& id : r_sceneView)
+        //    {
+        //        T& renderer{ EntityManager::GetInstance().Get<T>(id) };
+        //        
+        //        // Skip drawing this object is the entity or renderer is not enabled
+        //        if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
+        //            || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
+
+        //        // Store the index of the rendered entity
+        //        renderedEntities.emplace_back(id);
+        //        
+        //        const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+
+        //        // Attempt to retrieve and bind the texture
+        //        if (renderer.GetTextureKey().empty())
+        //        {
+        //            m_isTextured.emplace_back(0.f);
+        //        }
+        //        else if(currentTexture != renderer.GetTextureKey())
+        //        {
+        //            // Check if we were already 
+        //            if (!currentTexture.empty()) 
+        //            {
+        //                DrawInstanced(count, meshIndex, GL_TRIANGLES);
+        //                currentTexture.clear();
+        //                count = 0;
+        //            }
+
+        //            std::shared_ptr<Texture> texture { ResourceManager::GetInstance().GetTexture(renderer.GetTextureKey()) };
+
+        //            // Check if texture is null
+        //            if (!texture)
+        //            {
+        //                // Remove the texture and set the object to neon pink
+        //                renderer.SetTextureKey("");
+        //                renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+
+        //                m_isTextured.emplace_back(0.f);
+        //            }
+        //            else
+        //            {
+        //                // Unbind the existing texture
+        //                if (p_texture) 
+        //                {
+        //                    p_texture->Unbind();
+        //                }
+
+        //                // Store the texture key of the current texture
+        //                currentTexture = renderer.GetTextureKey();
+
+        //                // Bind the new texture
+        //                GLint textureUnit{ 0 };
+        //                p_texture = texture;
+        //                p_texture->Bind(textureUnit);
+        //                r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+
+        //                m_isTextured.emplace_back(1.f);
+        //            }
+        //        }
+        //        else 
+        //        {
+        //            m_isTextured.emplace_back(1.f);
+        //        }
+
+        //        // Add the matrix and colors to the buffer
+        //        m_modelToWorldMatrices.emplace_back(GenerateTransformMatrix(transform.width, // width
+        //            transform.height, transform.orientation, // height, orientation
+        //            transform.position.x, transform.position.y)); // x, y position
+        //        m_colors.emplace_back(renderer.GetColor());
+
+        //        // Add the UV coordinate adjustments
+        //        m_UV.emplace_back(renderer.GetUVCoordinatesMin()); // bottom left
+        //        m_UV.emplace_back(renderer.GetUVCoordinatesMax().x, renderer.GetUVCoordinatesMin().y); // bottom right
+        //        m_UV.emplace_back(renderer.GetUVCoordinatesMax()); // top right
+        //        m_UV.emplace_back(renderer.GetUVCoordinatesMin().x, renderer.GetUVCoordinatesMax().y); // top left
+
+        //        ++count; 
+        //    }
+
+        //    // Draw the remaining objects
+        //    DrawInstanced(count, meshIndex, GL_TRIANGLES);
+
+        //    // Unbind everything
+        //    m_meshes[meshIndex].Unbind();
+        //    r_shaderProgram.UnUse();
+
+        //    if (p_texture != nullptr)
+        //    {
+        //        p_texture->Unbind();
+        //    }
+        //}
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+        
         template<typename T>
-        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_sceneView)
+        void RendererManager::DrawQuadsInstanced(glm::mat4 const& r_worldToNdc, std::vector<EntityID> const& r_rendererIdContainer)
         {
             auto shaderProgramIterator{ ResourceManager::GetInstance().ShaderPrograms.find(m_instancedShaderProgramKey) };
 
@@ -397,18 +554,22 @@ namespace PE
             int count{};
 
             // Make draw call for each game object with a renderer component
-
-            for (const EntityID& id : r_sceneView)
+            for (EntityID const& id : r_rendererIdContainer)
             {
+                // Skip this object if it has no renderer
+                if(!EntityManager::GetInstance().Has<T>(id)) { continue; }
+
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
-                
+
                 // Skip drawing this object is the entity or renderer is not enabled
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive 
-                    || !renderer.GetEnabled()) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive
+                    || !renderer.GetEnabled()/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) {
+                    continue;
+                }
 
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
-                
+
                 const Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
                 // Attempt to retrieve and bind the texture
@@ -512,7 +673,7 @@ namespace PE
             for (const EntityID& id : SceneView<Collider>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
@@ -523,23 +684,11 @@ namespace PE
                     }, collider.colliderVariant);
             }
 
-            // Draw textbox for every text component
-            for (const EntityID& id : SceneView<TextComponent, Transform>())
-            {
-                // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
-
-                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
-
-                DrawDebugRectangle(transform.width, transform.height, transform.orientation, transform.position.x, transform.position.y,
-                    r_worldToNdc, *(shaderProgramIterator->second), { 1.f, 0.f, 0.f, 1.f });
-            }
-
             // Draw a point and line for each rigidbody representing the position and velocity
             for (const EntityID& id : SceneView<RigidBody>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
                 Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
@@ -558,7 +707,7 @@ namespace PE
             for (const EntityID& id : SceneView<Camera, Transform>())
             {
                 // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 // Don't draw a cross for the UI camera
                 if (id == r_cameraManager.GetUiCameraId()) { continue; }
@@ -571,6 +720,42 @@ namespace PE
                 // Draw a cross to represent the orientation and position of the camera
                 DrawDebugCross(glmPosition, camera.GetUpVector(transform.orientation) * 100.f,
                     camera.GetRightVector(transform.orientation) * 100.f, r_worldToNdc, *(shaderProgramIterator->second));
+            }
+
+            glLineWidth(2.f);
+
+            // Draw a rectangle for every canvas component
+            for (auto const& id : GUISystem::GetActiveCanvases())
+            {
+                Canvas& canvasComponent{ EntityManager::GetInstance().Get<Canvas>(id) };
+                glm::vec2 position{ 0.f, 0.f };
+                if (EntityManager::GetInstance().Has<Transform>(id))
+                {
+                    Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
+                    position.x = transformComponent.position.x;
+                    position.y = transformComponent.position.y;
+                }
+
+                // Draw a cross to represent the orientation and position of the canvas
+                DrawDebugRectangle(canvasComponent.GetWidth(), canvasComponent.GetHeight(), 
+                    0.f, position.x, position.y, r_worldToNdc, *(shaderProgramIterator->second),
+                    glm::vec4{1.f, 1.f, 1.f, 1.f});
+            }
+
+            // Draw a rectangle for all the text component bounds
+            for (auto const& id : SceneView<TextComponent, Transform>())
+            {
+                // Don't draw anything if the entity is inactive
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id)) { continue; }
+
+                Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
+
+                // Draw a cross to represent the orientation and position of the text bounds
+                DrawDebugRectangle(transformComponent.width, transformComponent.height,
+                    transformComponent.orientation, 
+                    transformComponent.position.x, transformComponent.position.y, 
+                    r_worldToNdc, *(shaderProgramIterator->second),
+                    glm::vec4{0.3f, 0.3f, 1.f, 1.f});
             }
 
             glPointSize(1.f);
@@ -610,6 +795,11 @@ namespace PE
             // Unbind everything
             m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
+
+            if (meshType == EnumMeshType::QUAD || meshType == EnumMeshType::TRIANGLE)
+                ++objectDrawCalls;
+            else
+                ++debugDrawCalls;
         }
 
 
@@ -652,75 +842,85 @@ namespace PE
             m_meshes[meshIndex].Unbind();
             r_shaderProgram.UnUse();
             glBindTexture(GL_TEXTURE_2D, 0);
+
+            if (meshType == EnumMeshType::QUAD || meshType == EnumMeshType::TRIANGLE)
+                ++objectDrawCalls;
+            else
+                ++debugDrawCalls;
         }
+        
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+        //void RendererManager::Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram,
+        //    GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
+        //{
+        //    r_shaderProgram.Use();
+
+        //    // Check if mesh index is valid
+        //    unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.GetMeshType()) };
+        //    if (meshIndex >= m_meshes.size())
+        //    {
+        //        engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+        //        engine_logger.SetTime();
+        //        engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
+        //        return;
+        //    }
+
+        //    m_meshes[meshIndex].Bind();
+
+        //    // Attempt to retrieve and bind the texture
+        //    std::shared_ptr<Graphics::Texture> p_texture{};
+
+        //    if (r_renderer.GetTextureKey().empty()) 
+        //    {
+        //        r_shaderProgram.SetUniform("uIsTextured", false);
+        //    }
+        //    else 
+        //    {
+        //        std::shared_ptr<Texture> texture{ ResourceManager::GetInstance().GetTexture(r_renderer.GetTextureKey()) };
+
+        //        // Check if texture is null
+        //        if (!texture)
+        //        {
+        //            // Remove the texture and set the object to neon pink
+        //            r_renderer.SetTextureKey("");
+        //            r_renderer.SetColor(1.f, 0.f, 1.f, 1.f);
+
+        //            r_shaderProgram.SetUniform("uIsTextured", false);
+        //        }
+        //        else 
+        //        {
+        //            p_texture = texture;
+        //            GLint textureUnit{ 0 };
+        //            p_texture->Bind(textureUnit);
+        //            r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
+        //            r_shaderProgram.SetUniform("uIsTextured", true);
+        //        }
+        //    }
+
+        //    // Pass the model to NDC transform matrix as a uniform variable
+        //    r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
+
+        //    // Pass the color of the quad as a uniform variable
+        //    r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
 
 
-        void RendererManager::Draw(Renderer& r_renderer, ShaderProgram& r_shaderProgram,
-            GLenum const primitiveType, glm::mat4 const& r_modelToNdc)
-        {
-            r_shaderProgram.Use();
+        //    glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
+        //        GL_UNSIGNED_SHORT, NULL);
 
-            // Check if mesh index is valid
-            unsigned char meshIndex{ static_cast<unsigned char>(r_renderer.GetMeshType()) };
-            if (meshIndex >= m_meshes.size())
-            {
-                engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-                engine_logger.SetTime();
-                engine_logger.AddLog(false, "Mesh type is invalid.", __FUNCTION__);
-                return;
-            }
+        //    // Unbind everything
+        //    m_meshes[meshIndex].Unbind();
+        //    r_shaderProgram.UnUse();
 
-            m_meshes[meshIndex].Bind();
+        //    if (p_texture != nullptr)
+        //    {
+        //        p_texture->Unbind();
+        //    }
 
-            // Attempt to retrieve and bind the texture
-            std::shared_ptr<Graphics::Texture> p_texture{};
+        //    ++objectDrawCalls;
+        //}   
 
-            if (r_renderer.GetTextureKey().empty()) 
-            {
-                r_shaderProgram.SetUniform("uIsTextured", false);
-            }
-            else 
-            {
-                std::shared_ptr<Texture> texture{ ResourceManager::GetInstance().GetTexture(r_renderer.GetTextureKey()) };
-
-                // Check if texture is null
-                if (!texture)
-                {
-                    // Remove the texture and set the object to neon pink
-                    r_renderer.SetTextureKey("");
-                    r_renderer.SetColor(1.f, 0.f, 1.f, 1.f);
-
-                    r_shaderProgram.SetUniform("uIsTextured", false);
-                }
-                else 
-                {
-                    p_texture = texture;
-                    GLint textureUnit{ 0 };
-                    p_texture->Bind(textureUnit);
-                    r_shaderProgram.SetUniform("uTextureSampler2d", textureUnit);
-                    r_shaderProgram.SetUniform("uIsTextured", true);
-                }
-            }
-
-            // Pass the model to NDC transform matrix as a uniform variable
-            r_shaderProgram.SetUniform("uModelToNdc", r_modelToNdc);
-
-            // Pass the color of the quad as a uniform variable
-            r_shaderProgram.SetUniform("uColor", r_renderer.GetColor());
-
-
-            glDrawElements(primitiveType, static_cast<GLsizei>(m_meshes[meshIndex].indices.size()),
-                GL_UNSIGNED_SHORT, NULL);
-
-            // Unbind everything
-            m_meshes[meshIndex].Unbind();
-            r_shaderProgram.UnUse();
-
-            if (p_texture != nullptr)
-            {
-                p_texture->Unbind();
-            }
-        }   
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
 
         void RendererManager::DrawInstanced(size_t const count, size_t const meshIndex, GLenum const primitiveType)
@@ -827,7 +1027,43 @@ namespace PE
             m_colors.clear();
             m_UV.clear();
             m_modelToWorldMatrices.clear();
+
+            ++objectDrawCalls;
         }
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
+
+        //void RendererManager::DrawUi(glm::mat4 const& r_viewToNdc)
+        //{
+        //    if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
+
+        //    std::vector<EntityID> guiToDraw{};
+        //    guiToDraw.reserve(100);
+
+        //    for (EntityID objectID : SceneView<GUIRenderer>())
+        //    {
+        //        // Check if the object is childed to a canvas object
+        //        bool isChild{ GETGUISYSTEM()->IsChildedToCanvas(objectID) };
+        //        if (!isChild)
+        //        {
+        //            continue; // If not childed to a canvas or canvas is inactive, don't update
+        //        }
+
+        //        // Check if the object has a renderer component
+        //        if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID))
+        //        {
+        //            // Store it to be drawn
+        //            if (EntityManager::GetInstance().Get<GUIRenderer>(objectID).GetEnabled())
+        //            {
+        //                guiToDraw.emplace_back(objectID);
+        //            }
+        //        }
+        //    } // end of sceneview loop
+
+        //    DrawQuadsInstanced(r_viewToNdc, guiToDraw, true);
+        //}
+
+//--------------------------------------------------------------------------------------------------------------------------------------------
 
         void RendererManager::DrawCollider(AABBCollider const& r_aabbCollider,
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
@@ -835,17 +1071,12 @@ namespace PE
         {
             // Derive the scale and position of the debug shape to draw
             // from the bounds of the AABB collider
-            glm::mat4 modelToWorld
-            {
-                GenerateTransformMatrix(r_aabbCollider.max.x - r_aabbCollider.min.x, // width
-                    r_aabbCollider.max.y - r_aabbCollider.min.y, // height
-                    0.f, // orientation
-                    (r_aabbCollider.min.x + r_aabbCollider.max.x) * 0.5f, // x position
-                    (r_aabbCollider.min.y + r_aabbCollider.max.y) * 0.5f) // y position
-            };
-
-            Draw(EnumMeshType::DEBUG_SQUARE, r_color,
-                r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);                
+            DrawDebugRectangle(r_aabbCollider.max.x - r_aabbCollider.min.x, // width
+                r_aabbCollider.max.y - r_aabbCollider.min.y, // height
+                0.f, // orientation
+                (r_aabbCollider.min.x + r_aabbCollider.max.x) * 0.5f, // x position
+                (r_aabbCollider.min.y + r_aabbCollider.max.y) * 0.5f, // y position
+                r_worldToNdc, r_shaderProgram, r_color); 
         }
 
 
@@ -867,6 +1098,7 @@ namespace PE
                 r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);
         }
 
+
         void RendererManager::DrawDebugRectangle(float const width, float const height,
             float const orientation, float const xPosition, float const yPosition,
             glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
@@ -883,6 +1115,7 @@ namespace PE
             Draw(EnumMeshType::DEBUG_SQUARE, r_color,
                 r_shaderProgram, GL_LINES, r_worldToNdc * modelToWorld);
         }
+
 
         void RendererManager::DrawDebugLine(
             glm::vec2 const& r_vector, glm::vec2 const& r_startPosition,
@@ -930,12 +1163,15 @@ namespace PE
         
         void RendererManager::RenderText(glm::mat4 const& r_worldToNdc)
         {
+            // Don't bother if there are no active canvases
+            if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
+
             std::shared_ptr<ShaderProgram> p_textShader{ ResourceManager::GetInstance().ShaderPrograms[m_textShaderProgramKey] };
 
             for (const EntityID& id : SceneView<TextComponent, Transform>())
             {
-                // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive) { continue; }
+                // Don't draw anything if the entity is inactive or is not childed to a canvas
+                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id) /*|| !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
                 TextBox textBox { EntityManager::GetInstance().Get<Transform>(id).position,
@@ -1026,6 +1262,7 @@ namespace PE
                 // render quad
                 glDrawArrays(GL_TRIANGLES, 0, 6);
 
+                ++textDrawCalls;
                 // now advance cursors for next glyph
                 position.x += (ch.Advance >> 6) * r_textComponent.GetSize(); // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
             }
@@ -1261,6 +1498,53 @@ namespace PE
                 << "\nMaximum Indices Count: " << maxIndicesCount
                 << "\nGL Maximum texture size: " << maxTextureSize
                 << "\nMaximum Viewport Dimensions: " << maxViewportDims[0] << " x " << maxViewportDims[1] << "\n" << std::endl;
+        }
+
+
+        void APIENTRY GlDebugOutput(GLenum source, GLenum type, unsigned int id,
+            GLenum severity, GLsizei length, const char* message, const void* userParam)
+        {
+            // ignore non-significant error/warning codes
+            if (id == 131169 || id == 131185 || id == 131218 || id == 131204) return;
+
+            std::cout << "---------------\n";
+            std::cout << "Debug message (" << id << "): " << message << "\n";
+
+            switch (source)
+            {
+            case GL_DEBUG_SOURCE_API:             std::cout << "Source: API"; break;
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM:   std::cout << "Source: Window System"; break;
+            case GL_DEBUG_SOURCE_SHADER_COMPILER: std::cout << "Source: Shader Compiler"; break;
+            case GL_DEBUG_SOURCE_THIRD_PARTY:     std::cout << "Source: Third Party"; break;
+            case GL_DEBUG_SOURCE_APPLICATION:     std::cout << "Source: Application"; break;
+            case GL_DEBUG_SOURCE_OTHER:           std::cout << "Source: Other"; break;
+            }
+
+            std::cout << "\n";
+
+            switch (type)
+            {
+            case GL_DEBUG_TYPE_ERROR:               std::cout << "Type: Error"; break;
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: std::cout << "Type: Deprecated Behaviour"; break;
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR:  std::cout << "Type: Undefined Behaviour"; break;
+            case GL_DEBUG_TYPE_PORTABILITY:         std::cout << "Type: Portability"; break;
+            case GL_DEBUG_TYPE_PERFORMANCE:         std::cout << "Type: Performance"; break;
+            case GL_DEBUG_TYPE_MARKER:              std::cout << "Type: Marker"; break;
+            case GL_DEBUG_TYPE_PUSH_GROUP:          std::cout << "Type: Push Group"; break;
+            case GL_DEBUG_TYPE_POP_GROUP:           std::cout << "Type: Pop Group"; break;
+            case GL_DEBUG_TYPE_OTHER:               std::cout << "Type: Other"; break;
+            }
+
+            std::cout << "\n";
+
+            switch (severity)
+            {
+            case GL_DEBUG_SEVERITY_HIGH:         std::cout << "Severity: high"; break;
+            case GL_DEBUG_SEVERITY_MEDIUM:       std::cout << "Severity: medium"; break;
+            case GL_DEBUG_SEVERITY_LOW:          std::cout << "Severity: low"; break;
+            case GL_DEBUG_SEVERITY_NOTIFICATION: std::cout << "Severity: notification"; break;
+            }
+            std::cout << "\n---------------\n" << std::endl;
         }
     } // End of Graphics namespace
 } // End of PE namespace
