@@ -19,9 +19,13 @@
 #include "GUISystem.h"
 #include "Graphics/CameraManager.h"
 #include "Events/EventHandler.h"
+
 #include "ECS/EntityFactory.h"
 #include "ECS/SceneView.h"
+#include "Hierarchy/HierarchyManager.h"
+
 #include "Input/InputSystem.h"
+#include "GUI/Canvas.h"
 #include "System.h"
 #include "WindowManager.h"
 #include "Hierarchy/HierarchyManager.h"
@@ -36,8 +40,16 @@ std::map<std::string_view, std::function<void(::EntityID)>> PE::GUISystem::m_uiF
 
 namespace PE
 {
-	GUISystem::GUISystem(GLFWwindow* p_glfwWindow) : p_window{ p_glfwWindow }
-	{ /* Empty by design */ }
+	// Defining static variables
+	std::unordered_set<EntityID> GUISystem::m_activeCanvases{};
+	float GUISystem::m_targetResolutionWidth{};
+	float GUISystem::m_targetResolutionHeight{};
+
+	GUISystem::GUISystem(GLFWwindow* p_glfwWindow, float const width, float const height) : p_window{ p_glfwWindow }
+	{ 
+			m_activeCanvases.reserve(20); // Reserve a large amount of entities in advance
+			m_targetResolutionWidth = width, m_targetResolutionHeight = height;
+	}
 
 	GUISystem::~GUISystem()
 	{ /* Empty by design */	}
@@ -56,11 +68,35 @@ namespace PE
 	{
 		deltaTime; // Prevent warnings
 
+		// Store the canvas objects
+		m_activeCanvases.clear();
+		for (EntityID canvasId : SceneView<Canvas>())
+		{
+				EntityManager::GetInstance().Get<Canvas>(canvasId).SetTargetResolution(m_targetResolutionWidth, m_targetResolutionHeight);
+				if(EntityManager::GetInstance().Has<Transform>(canvasId))
+						EntityManager::GetInstance().Get<Transform>(canvasId).position = vec2{ 0.f, 0.f };
+
+				// Check if the canvas object has been enabled
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(canvasId).isActive && Hierarchy::GetInstance().AreParentsActive(canvasId))
+				{
+						// Check if the parent of the canvas object is active
+						auto parentCanvas{ Hierarchy::GetInstance().GetParent(canvasId) };
+						if (!parentCanvas.has_value() || EntityManager::GetInstance().Get<EntityDescriptor>(parentCanvas.value()).isActive)
+						{
+								m_activeCanvases.emplace(canvasId);
+						}
+				}
+		}
+
+		if (m_activeCanvases.empty()) { return; } // Don't bother with anything else if there are no canvases
+
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
 			for (EntityID objectID : SceneView<GUIButton>())
 			{
+				// Check if the object is childed to a canvas object, don't update if not
+				if (!IsChildedToCanvas(objectID)) {  continue; }
 				GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
 				gui.Update();
 				gui.m_clickedTimer -= deltaTime;
@@ -246,8 +282,36 @@ namespace PE
 		return "GUISystem";
 	}
 
+
+	bool GUISystem::IsImmediatelyChildedToCanvas(EntityID const uiId) const
+	{
+		auto parentCanvas{ Hierarchy::GetInstance().GetParent(uiId) };
+		return (parentCanvas.has_value() && m_activeCanvases.find(parentCanvas.value()) != m_activeCanvases.end());
+	}
+
+
+	bool GUISystem::IsChildedToCanvas(EntityID uiId) const
+	{
+		// Loop through the parents of the object until we encounter a canvas
+		bool isChilded{ false };
+		while (Hierarchy::GetInstance().HasParent(uiId))
+		{
+			if(IsImmediatelyChildedToCanvas(uiId))
+			{
+				isChilded = true;
+				break;
+			}
+
+			uiId = Hierarchy::GetInstance().GetParent(uiId).value();
+		}
+		return isChilded;
+	}
+
+
 	void GUISystem::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
+		if (m_activeCanvases.empty()) { return; } // Don't bother with anything else if there are no canvases
+
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		//loop through all objects check for Button Component
 #ifndef GAMERELEASE
@@ -255,7 +319,7 @@ namespace PE
 #endif
 			for (EntityID objectID : SceneView<Transform, GUIButton>())
 			{
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
 					continue;
 				//get the components
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
@@ -351,7 +415,7 @@ namespace PE
 #endif
 		for (EntityID objectID : SceneView<Transform, GUIButton>())
 		{
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
 				continue;
 			//get the components
 			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
@@ -411,6 +475,13 @@ namespace PE
 	void GUISystem::ButtonFunctionOne(EntityID)
 	{
 		std::cout << "function 1" << std::endl;
+
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+		{
+			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(1);
+			desc.isActive = !desc.isActive;
+		}
+		
 	}
 
 	void GUISystem::ButtonFunctionTwo(EntityID)
@@ -493,7 +564,7 @@ namespace PE
 	}
 
 	// Serialize GUISlider
-	nlohmann::json GUISlider::ToJson(size_t id) const
+	nlohmann::json GUISlider::ToJson(size_t) const
 	{
 		nlohmann::json j;
 

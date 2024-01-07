@@ -71,6 +71,7 @@
 #include "Input/InputSystem.h"
 
 #include "GUISystem.h"
+#include "GUI/Canvas.h"
 
 // RTTR includes
 #include <rttr/type.h>
@@ -121,6 +122,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::AnimationComponent);
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
+    REGISTERCOMPONENT(PE::Canvas);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -294,6 +296,13 @@ RTTR_REGISTRATION
         .property("attackDamage", &PE::RatScriptData::attackDamage)
         .property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScriptData::animationStates);
+
+    rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
+        .property_readonly("Width", &PE::Canvas::GetWidth)
+        .property_readonly("Height", &PE::Canvas::GetHeight)
+        .method("Width", &PE::Canvas::SetWidth)
+        .method("Height", &PE::Canvas::SetHeight)
+        .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
 }
 
 PE::CoreApplication::CoreApplication()
@@ -380,22 +389,6 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        //for (const auto& id : SceneView<Transform>())
-        //{
-        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
-        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
-        //    {
-        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-        //        vec3 tmp { trans.relPosition, 1.f };
-        //        tmp = parent.GetTransformMatrix3x3() * tmp;
-        //        trans.position.x = tmp.x;
-        //        trans.position.y = tmp.y;
-        //        trans.orientation = parent.orientation + trans.relOrientation;
-        //    }
-        //}
-        Hierarchy::GetInstance().Update();
-
-
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();
         while (TimeManager::GetInstance().UpdateAccumulator())
@@ -408,6 +401,8 @@ void PE::CoreApplication::Run()
             }
             TimeManager::GetInstance().EndAccumulator();
         }
+
+        Hierarchy::GetInstance().Update();
 
         // Update Graphics with variable timestep
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
@@ -508,7 +503,7 @@ void PE::CoreApplication::InitializeSystems()
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window, static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
