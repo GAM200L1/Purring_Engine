@@ -21,6 +21,7 @@
 #include "Graphics/Text.h"
 #include "AudioManager/AudioComponent.h"
 #include "Hierarchy/HierarchyManager.h"
+#include "GUI/Canvas.h"
 extern Logger engine_logger;
 
 
@@ -81,6 +82,8 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(),			&EntityFactory::InitializeTextComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<AudioComponent>(),		&EntityFactory::InitializeAudioComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Canvas>(), &EntityFactory::InitializeCanvasComponent);
+
 	}
 
 
@@ -307,6 +310,16 @@ namespace PE
 			AudioComponent()
 			:
 			*reinterpret_cast<AudioComponent*>(p_data);
+		return true;
+	}
+
+	bool EntityFactory::InitializeCanvasComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<Canvas>(r_id) =
+			(p_data == nullptr) ?
+			Canvas()
+			:
+			*reinterpret_cast<Canvas*>(p_data);
 		return true;
 	}
 
