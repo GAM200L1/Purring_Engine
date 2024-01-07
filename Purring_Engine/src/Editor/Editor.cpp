@@ -904,7 +904,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create Canvas Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
-						m_undoStack.AddChange(new CreateObjectUndo(s_id));
+						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -4333,8 +4333,7 @@ namespace PE {
 					glm::mat4 cameraProjection = EditorCamera.GetViewToNdcMatrix();
 
 					// if the selected obj is UI, make the camera view matrix an identity matrix
-					glm::mat4 cameraView = (EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) ? 
-							glm::identity<glm::mat4>() : EditorCamera.GetWorldToViewMatrix());
+					glm::mat4 cameraView = EditorCamera.GetWorldToViewMatrix();
 
 					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);				
 
