@@ -75,7 +75,10 @@ namespace PE
 		 \param[in] r_parent 	EntityID of the parent to fetch children of
 		 \return const std::set<EntityID>& 	The children
 		*************************************************************************************/
-		const std::set<EntityID>& GetChildren(const EntityID& r_parent) const;
+		inline const std::set<EntityID>& GetChildren(const EntityID& r_parent) const
+		{
+				return EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
+		}
 
 		/*!***********************************************************************************
 		 \brief Get the immediate parent (std::optional, treat properly!) of the current entity 
@@ -83,7 +86,10 @@ namespace PE
 		 \param[in] r_child 	The child to request parent (might not have a parent)
 		 \return const std::optional<EntityID>& The potential parent
 		*************************************************************************************/
-		const std::optional<EntityID>& GetParent(const EntityID& r_child) const;
+		inline const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& r_child) const
+		{
+				return EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent;
+		}
 
 		/*!***********************************************************************************
 		 \brief Returns true if the object is childed to another object, false otherwise

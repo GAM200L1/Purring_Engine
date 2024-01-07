@@ -99,16 +99,6 @@ namespace PE
 		UpdateRenderOrder(r_child);
 	}
 
-	inline const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& r_parent) const
-	{
-			return EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
-	}
-
-	inline const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& r_child) const
-	{
-			return EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent;
-	}
-
 	bool Hierarchy::HasParent(const EntityID& child) const
 	{
 		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.has_value();
