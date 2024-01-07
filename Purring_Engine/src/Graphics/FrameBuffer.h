@@ -41,7 +41,7 @@ namespace PE
 
              \return GLuint - Returns the index of the texture bound to the framebuffer.
             *************************************************************************************/
-            inline GLuint GetTextureId() { return m_textureIndex; }
+            inline GLuint GetTextureId() { return m_colorAttachmentIndex; }
 
             /*!***********************************************************************************
              \brief Returns the index of the framebuffer.
@@ -49,21 +49,44 @@ namespace PE
              \return GLuint - Returns the index of the framebuffer.
             *************************************************************************************/
             inline GLuint GetFrameBufferId() { return m_frameBufferObjectIndex; }
-            
+
             // ----- Public methods ----- // 
         public:
             /*!***********************************************************************************
              \brief Creates a frame buffer object with a texture bound to the color buffer so that
-                    the texture can be read back and rendered to an ImGui window. Returns true 
+                    the texture can be read back and rendered to an ImGui window. Returns true
                     if the frame buffer object was created successfully, false otherwise.
 
              \param[in] bufferWidth Width the buffer should be set to.
              \param[in] bufferHeight Height the buffer should be set to.
+             \param[in] hasColorAtachment True if the FBO should have a color attachment, false otherwise.
+             \param[in] hasDepthAttachment True if the FBO should have a depth attachment, false otherwise.
 
              \return true - FrameBuffer created successfully.
              \return false - FrameBuffer was not created.
             *************************************************************************************/
-            bool CreateFrameBuffer(int const bufferWidth, int const bufferHeight);
+            bool CreateFrameBuffer(int const bufferWidth, int const bufferHeight, 
+                bool const hasColorAtachment, bool const hasDepthAttachment);
+
+            /*!***********************************************************************************
+             \brief Creates a 2D texture and binds it to the FBO to use as a color attachment. 
+
+             \param[in] bufferWidth Width the attachment should be set to.
+             \param[in] bufferHeight Height the attachment should be set to.
+
+             \return GLuint - ID of the attachment object created.
+            *************************************************************************************/
+            GLuint CreateColorAttachment(int const bufferWidth, int const bufferHeight);
+
+            /*!***********************************************************************************
+             \brief Creates a 2D texture and binds it to the FBO to use as a depth attachment. 
+
+             \param[in] bufferWidth Width the attachment should be set to.
+             \param[in] bufferHeight Height the attachment should be set to.
+
+             \return GLuint - ID of the attachment object created.
+            *************************************************************************************/
+            GLuint CreateDepthAttachment(int const bufferWidth, int const bufferHeight);
 
             /*!***********************************************************************************
              \brief Binds the framebuffer.
@@ -101,9 +124,12 @@ namespace PE
             // ----- Private variables ----- // 
         private:
             GLuint m_frameBufferObjectIndex{}; // Frame buffer object to draw to
-            GLuint m_textureIndex{}; // ID of texture attachment that the scene window content is drawn to
+            GLuint m_colorAttachmentIndex{}; // ID of texture attachment that the content is drawn to
+            GLuint m_depthAttachmentIndex{}; // ID of depth buffer attachment that the depth pass is drawn to
 
             int m_bufferWidth{}, m_bufferHeight{}; // Width and height of the buffer object            
+            bool m_hasColor{}; // True if this framebuffer has a color attachment
+            bool m_hasDepth{}; // True if this framebuffer has a depth attachment
         };
     } // End of Graphics namespace
 } // End of PE namespace
