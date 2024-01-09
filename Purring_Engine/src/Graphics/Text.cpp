@@ -28,10 +28,10 @@ namespace PE
             return false;;
         }
 
-        glGenVertexArrays(1, &m_vertexArrayObject);
-        glGenBuffers(1, &m_vertexBufferObject);
-        glBindVertexArray(m_vertexArrayObject);
-        glBindBuffer(GL_ARRAY_BUFFER, m_vertexBufferObject);
+        glGenVertexArrays(1, &vertexArrayObject);
+        glGenBuffers(1, &vertexBufferObject);
+        glBindVertexArray(vertexArrayObject);
+        glBindBuffer(GL_ARRAY_BUFFER, vertexBufferObject);
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
@@ -43,7 +43,7 @@ namespace PE
 
     bool Font::Load(const std::string& r_fontPath, unsigned int fontSize)
     {
-        Characters.clear();
+        characters.clear();
         
         // Initialize freetype library
         FT_Library ft;
@@ -67,7 +67,7 @@ namespace PE
         // disable byte-alignment restriction
         glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
 
-        m_lineHeight = static_cast<float>(face->size->metrics.height >> 6) * 0.7f;
+        lineHeight = static_cast<float>(face->size->metrics.height >> 6) * 0.7f;
 
         // load first 128 ASCII characters for now
         for (GLubyte ch = 0; ch < 128; ch++)
@@ -109,7 +109,7 @@ namespace PE
                 static_cast<unsigned int>(face->glyph->advance.x)
             };
 
-            Characters.insert(std::pair<char, Character>(ch, character));
+            characters.insert(std::pair<char, Character>(ch, character));
         }
         glBindTexture(GL_TEXTURE_2D, 0);
 
@@ -146,22 +146,22 @@ namespace PE
         m_color.a = alpha;
     }
 
-    void TextComponent::SetHAlignment(TextAlignment hAlignment)
+    void TextComponent::SetHAlignment(EnumTextAlignment hAlignment)
     {
         m_hAlignment = hAlignment;
     }
 
-    void TextComponent::SetVAlignment(TextAlignment vAlignment)
+    void TextComponent::SetVAlignment(EnumTextAlignment vAlignment)
     {
         m_vAlignment = vAlignment;
     }
 
-    void TextComponent::SetHOverflow(TextOverflow hOverflow)
+    void TextComponent::SetHOverflow(EnumTextOverflow hOverflow)
     {
         m_hOverflow = hOverflow;
     }
 
-    void TextComponent::SetVOverflow(TextOverflow vOverflow)
+    void TextComponent::SetVOverflow(EnumTextOverflow vOverflow)
     {
         m_vOverflow = vOverflow;
     }
@@ -190,10 +190,10 @@ namespace PE
 				continue;
 			}
 
-            if (r_textComponent.GetHOverflow() == TextOverflow::WRAP)
+            if (r_textComponent.GetHOverflow() == EnumTextOverflow::WRAP)
             {
-                Character ch = r_textComponent.GetFont()->Characters.at(c);
-                currentLineWidth += (ch.Advance >> 6) * r_textComponent.GetSize();
+                Character ch = r_textComponent.GetFont()->characters.at(c);
+                currentLineWidth += (ch.advance >> 6) * r_textComponent.GetSize();
 
                 if (currentLineWidth > textBox.width)
                 {
@@ -230,7 +230,7 @@ namespace PE
 		}
 
         // handle vertical overflow
-        if (r_textComponent.GetVOverflow() == TextOverflow::TRUNCATE)
+        if (r_textComponent.GetVOverflow() == EnumTextOverflow::TRUNCATE)
         {
 			// get text height, first line is not included
             std::vector<std::string> truncatedLines;
@@ -240,7 +240,7 @@ namespace PE
             for (std::string const& line : lines)
             {
                 // add line height to text height
-                textHeight += r_textComponent.GetFont()->m_lineHeight * r_textComponent.GetLineSpacing() * r_textComponent.GetSize();
+                textHeight += r_textComponent.GetFont()->lineHeight * r_textComponent.GetLineSpacing() * r_textComponent.GetSize();
 
                 // if text height exceeds, truncate text
                 if (textHeight > textBox.height)
@@ -257,53 +257,53 @@ namespace PE
         return lines;
     }
 
-    void HorizontalTextAlignment(TextComponent const& r_textComponent, std::string const& line, TextBox textBox, float& hAlignOffset)
+    void HorizontalTextAlignment(TextComponent const& r_textComponent, std::string const& r_line, TextBox textBox, float& hAlignOffset)
     {
         // get line width
-        float lineWidth{ CalculateLineWidth(r_textComponent, line) };
+        float lineWidth{ CalculateLineWidth(r_textComponent, r_line) };
 
         switch (r_textComponent.GetHAlignment())
         {
-        case TextAlignment::LEFT:
+        case EnumTextAlignment::LEFT:
             hAlignOffset = -textBox.width / 2.f;
             break;
-        case TextAlignment::CENTER:
+        case EnumTextAlignment::CENTER:
             hAlignOffset = -lineWidth / 2.f;
             break;
-        case TextAlignment::RIGHT:
+        case EnumTextAlignment::RIGHT:
             hAlignOffset = (textBox.width / 2.f) - lineWidth;
             break;
         }
     }
 
-    void VerticalTextAlignment(TextComponent const& r_textComponent, std::vector<std::string> const& lines, TextBox textBox, float& vAlignOffset)
+    void VerticalTextAlignment(TextComponent const& r_textComponent, std::vector<std::string> const& r_lines, TextBox textBox, float& vAlignOffset)
     {
         // get text height, first line is not included
-        float textHeight = (lines.size() - 1) * (r_textComponent.GetFont()->m_lineHeight * r_textComponent.GetLineSpacing() * r_textComponent.GetSize());
+        float textHeight = (r_lines.size() - 1) * (r_textComponent.GetFont()->lineHeight * r_textComponent.GetLineSpacing() * r_textComponent.GetSize());
 
         switch (r_textComponent.GetVAlignment())
         {
-        case TextAlignment::TOP:
-            vAlignOffset = textBox.height / 2.f - r_textComponent.GetFont()->m_lineHeight * r_textComponent.GetSize();
+        case EnumTextAlignment::TOP:
+            vAlignOffset = textBox.height / 2.f - r_textComponent.GetFont()->lineHeight * r_textComponent.GetSize();
             break;
-        case TextAlignment::CENTER:
-            vAlignOffset = (textHeight - r_textComponent.GetFont()->m_lineHeight * r_textComponent.GetSize()) / 2.f;
+        case EnumTextAlignment::CENTER:
+            vAlignOffset = (textHeight - r_textComponent.GetFont()->lineHeight * r_textComponent.GetSize()) / 2.f;
             break;
-        case TextAlignment::BOTTOM:
+        case EnumTextAlignment::BOTTOM:
             vAlignOffset = - (textBox.height / 2.f) + textHeight;
             break;
         }
     }
 
-    float CalculateLineWidth(TextComponent const& r_textComponent, std::string const& line)
+    float CalculateLineWidth(TextComponent const& r_textComponent, std::string const& r_line)
     {
         float lineWidth{ 0.f };
 
         // get the width of each character and add them to line width
-        for (char c : line)
+        for (char c : r_line)
         {
-            Character ch = r_textComponent.GetFont()->Characters.at(c);
-            lineWidth += (ch.Advance >> 6) * r_textComponent.GetSize();
+            Character ch = r_textComponent.GetFont()->characters.at(c);
+            lineWidth += (ch.advance >> 6) * r_textComponent.GetSize();
         }
 
         return lineWidth;

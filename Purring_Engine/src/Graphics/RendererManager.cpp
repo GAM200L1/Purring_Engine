@@ -1197,7 +1197,7 @@ namespace PE
                 p_textShader->SetUniform("textColor", textComponent.GetColor());
 
                 glActiveTexture(GL_TEXTURE0);
-                glBindVertexArray(textComponent.GetFont()->m_vertexArrayObject);
+                glBindVertexArray(textComponent.GetFont()->vertexArrayObject);
 
                 // get vertical alignment offset
                 VerticalTextAlignment(textComponent, lines, textBox, vAlignOffset);
@@ -1211,7 +1211,7 @@ namespace PE
 					RenderLine(textComponent, line, textBox.position, currentY, hAlignOffset, vAlignOffset);
 
                     // add line height to current y, need to multiply by line spacing
-                    currentY += textComponent.GetFont()->m_lineHeight * textComponent.GetLineSpacing();
+                    currentY += textComponent.GetFont()->lineHeight * textComponent.GetLineSpacing();
 				}
 
                 glBindTexture(GL_TEXTURE_2D, 0);
@@ -1230,16 +1230,16 @@ namespace PE
 
             for (c = r_line.begin(); c != r_line.end(); c++)
             {
-                Character ch = r_textComponent.GetFont()->Characters.at(*c);
+                Character ch = r_textComponent.GetFont()->characters.at(*c);
 
-                currentX += ch.Size.x;
+                currentX += ch.size.x;
 
                 // calculate position to render character based on bearings, and alignment offset
-                float xPosition = position.x + ch.Bearing.x * r_textComponent.GetSize() + hAlignOffset;
-                float yPosition = position.y - (ch.Size.y - ch.Bearing.y + currentY) * r_textComponent.GetSize() + vAlignOffset;
+                float xPosition = position.x + ch.bearing.x * r_textComponent.GetSize() + hAlignOffset;
+                float yPosition = position.y - (ch.size.y - ch.bearing.y + currentY) * r_textComponent.GetSize() + vAlignOffset;
 
-                float w = ch.Size.x * r_textComponent.GetSize();
-                float h = ch.Size.y * r_textComponent.GetSize();
+                float w = ch.size.x * r_textComponent.GetSize();
+                float h = ch.size.y * r_textComponent.GetSize();
                 // update VBO for each character
                 float vertices[6][4] = {
                     { xPosition,     yPosition + h,   0.0f, 0.0f },
@@ -1252,10 +1252,10 @@ namespace PE
                 };
 
                 // render glyph texture over quad
-                glBindTexture(GL_TEXTURE_2D, ch.TextureID);
+                glBindTexture(GL_TEXTURE_2D, ch.textureID);
 
                 // update content of VBO memory
-                glBindBuffer(GL_ARRAY_BUFFER, r_textComponent.GetFont()->m_vertexBufferObject);
+                glBindBuffer(GL_ARRAY_BUFFER, r_textComponent.GetFont()->vertexBufferObject);
                 glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -1264,7 +1264,7 @@ namespace PE
 
                 ++textDrawCalls;
                 // now advance cursors for next glyph
-                position.x += (ch.Advance >> 6) * r_textComponent.GetSize(); // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
+                position.x += (ch.advance >> 6) * r_textComponent.GetSize(); // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
             }
         }
 
