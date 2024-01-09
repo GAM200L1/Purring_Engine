@@ -290,7 +290,7 @@ namespace PE
 			{
 				if (meth.get_name() == "Color")
 				{
-					meth.invoke(inst, glm::vec4{ j[meth.get_name().to_string()]["x"].get<float>(), j[meth.get_name().to_string()]["y"].get<float>(), j[meth.get_name().to_string()]["z"].get<float>(), j[meth.get_name().to_string()]["w"].get<float>() });
+					meth.invoke(inst, j[meth.get_name().to_string()]["x"].get<float>(), j[meth.get_name().to_string()]["y"].get<float>(), j[meth.get_name().to_string()]["z"].get<float>(), j[meth.get_name().to_string()]["w"].get<float>() );
 				}
 				else if (meth.get_name() == "Text" || meth.get_name() == "Font")
 				{
@@ -332,8 +332,42 @@ namespace PE
 		// material
 	};
 
+	/*!***********************************************************************************
+	 \brief Splits the text into lines based on the width of the text box
+
+	 \param[in] r_textComponent The text component to split
+	 \param[in] textBox The text box to split the text into
+	 \return std::vector<std::string> The vector of lines
+	*************************************************************************************/
 	std::vector<std::string> SplitTextIntoLines(TextComponent const& r_textComponent, TextBox textBox);
+
+	/*!***********************************************************************************
+	 \brief Horizontally aligns the text based on the horizontal alignment of the text
+
+	 \param[in] r_textComponent The text component to align
+	 \param[in] line The line to align
+	 \param[in] textBox The text box to align the text into
+	 \param[in/out] hAlignOffset The horizontal offset of the text
+	*************************************************************************************/
 	void HorizontalTextAlignment(TextComponent const& r_textComponent,std::string const& line, TextBox textBox, float& hAlignOffset);
+
+	/*!***********************************************************************************
+	 \brief Vertically aligns the text based on the vertical alignment of the text
+
+	 \param[in] r_textComponent The text component to align
+	 \param[in] lines The lines to align
+	 \param[in] textBox The text box to align the text into
+	 \param[in/out] vAlignOffset The vertical offset of the text
+	*************************************************************************************/
 	void VerticalTextAlignment(TextComponent const& r_textComponent, std::vector<std::string> const& lines, TextBox textBox, float& vAlignOffset);
+
+	/*!***********************************************************************************
+	 \brief Calculates the width of the line
+
+	 \param[in] r_textComponent The text component to calculate the width
+	 \param[in] line The line to calculate the width
+	 \return float The width of the line
+	*************************************************************************************/
 	float CalculateLineWidth(TextComponent const& r_textComponent, std::string const& line);
+
 }
