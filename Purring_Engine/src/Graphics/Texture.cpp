@@ -35,8 +35,9 @@ namespace PE
 		void Texture::Bind(unsigned int textureUnit) const
 		{
 			// Bind the texture
-			glActiveTexture(GL_TEXTURE0 + textureUnit);
-			glBindTexture(GL_TEXTURE_2D, m_textureID);
+			//glActiveTexture(GL_TEXTURE0 + textureUnit);
+			//glBindTexture(GL_TEXTURE_2D, m_textureID);
+			glBindTextureUnit(0 + textureUnit, m_textureID);
 		}
 
 		void Texture::Unbind() const

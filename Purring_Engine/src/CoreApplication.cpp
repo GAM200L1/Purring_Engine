@@ -38,6 +38,7 @@
 #include "Graphics/GLHeaders.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/GUIRenderer.h"
+#include "Graphics/NewRendererManager.h"
 #include "Graphics/CameraManager.h"
 
 // Core Functionality
@@ -318,7 +319,7 @@ PE::CoreApplication::CoreApplication()
     // Initialize Window
     WindowManager::GetInstance().InitWindow(width, height, "Purring_Engine");
     TimeManager::GetInstance().m_frameRateController.SetTargetFPS(60);
-    
+
     InitializeLogger();
     InitializeMemoryManager();
     InitializeSystems();
@@ -403,6 +404,7 @@ void PE::CoreApplication::Run()
         //}
         Hierarchy::GetInstance().Update();
 
+#ifndef TEST_BATCH_RENDERER   // Run as per usual
 
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();
@@ -421,6 +423,40 @@ void PE::CoreApplication::Run()
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
         m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
         TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
+
+#else   // Test the batch renderer
+
+        //// Only update the input system
+        //TimeManager::GetInstance().StartAccumulator();
+        //while (TimeManager::GetInstance().UpdateAccumulator())
+        //{
+        //    TimeManager::GetInstance().SystemStartFrame(SystemID::INPUT);
+        //    m_systemList[SystemID::INPUT]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+        //    TimeManager::GetInstance().SystemEndFrame(SystemID::INPUT);
+
+        //    TimeManager::GetInstance().EndAccumulator();
+        //}
+
+        
+        // Update system with fixed time step
+        TimeManager::GetInstance().StartAccumulator();
+        while (TimeManager::GetInstance().UpdateAccumulator())
+        {
+            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            {
+                TimeManager::GetInstance().SystemStartFrame(systemID);
+                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                TimeManager::GetInstance().SystemEndFrame(systemID);
+            }
+            TimeManager::GetInstance().EndAccumulator();
+        }
+
+        // Update Graphics with variable timestep
+        TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
+        m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
+        TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
+
+#endif
 
         // Flush log entries
         engine_logger.FlushLog();
@@ -449,6 +485,12 @@ void PE::CoreApplication::Initialize()
     {
         system->InitializeSystem();                             // Call the InitializeSystem method for each system
     }
+
+#ifndef GAMERELEASE
+#ifdef TEST_BATCH_RENDERER
+    Editor::GetInstance().Init(); // Needs to be called after GLEW has been initialized
+#endif
+#endif
 }
 
 void PE::CoreApplication::DestroySystems()
@@ -512,7 +554,11 @@ void PE::CoreApplication::InitializeSystems()
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
+#ifndef TEST_BATCH_RENDERER
     Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ WindowManager::GetInstance().GetWindow(), *p_cameraManager, width, height };
+#else
+    Graphics::NewRendererManager* p_newRendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::NewRendererManager)))Graphics::NewRendererManager{ width, height };
+#endif // !TEST_BATCH_RENDERER
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
@@ -527,7 +573,11 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_collisionManager);
     AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
+#ifndef TEST_BATCH_RENDERER
     AddSystem(p_rendererManager);
+#else
+    AddSystem(p_newRendererManager);
+#endif // !TEST_BATCH_RENDERER
     //AddSystem(p_audioManager);
 
     GameStateManager::GetInstance().RegisterButtonFunctions();

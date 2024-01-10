@@ -64,11 +64,23 @@
 *************************************************************************************/
 #define GETCAMERAMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::Graphics::CameraManager, PE::SystemID::CAMERA>()
 
+#ifndef TEST_BATCH_RENDERER // !TEST_BATCH_RENDERER
+
 /*!***********************************************************************************
  \brief Retrieves Renderer system instance to use its functions
  
 *************************************************************************************/
 #define GETRENDERERMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::Graphics::RendererManager, PE::SystemID::GRAPHICS>()
+
+#else
+
+/*!***********************************************************************************
+ \brief Retrieves new Renderer system instance to use its functions
+ 
+*************************************************************************************/
+#define GETRENDERERMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::Graphics::NewRendererManager, PE::SystemID::GRAPHICS>()
+
+#endif // !TEST_BATCH_RENDERER
 
 namespace PE
 {

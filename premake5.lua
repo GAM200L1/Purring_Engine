@@ -156,6 +156,11 @@ project "Purring_Engine"
     pchheader "prpch.h"
     pchsource "Purring_Engine/src/prpch/prpch.cpp"
 
+    defines 
+    { 
+        "TEST_BATCH_RENDERER" -- Macro to use to use the new batch renderer
+    }
+
     flags
     {
         "MultiProcessorCompile"
