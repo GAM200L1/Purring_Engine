@@ -3976,6 +3976,9 @@ namespace PE {
 			//setting more window flags
 			window_flags |= ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
+
+			
+
 			//begin of dockspace
 			if (!ImGui::Begin("DockSpace", p_active, window_flags))
 			{
@@ -4658,7 +4661,7 @@ namespace PE {
 			ImGui::End();
 		}
 	}
-
+	
 	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
 		if (IsEditorActive())
@@ -4697,7 +4700,7 @@ namespace PE {
 
 		}
 	}
-
+	
 	void Editor::ShowGameFullView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
 	{
 		if (!IsEditorActive())
