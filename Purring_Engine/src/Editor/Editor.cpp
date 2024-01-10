@@ -895,6 +895,8 @@ namespace PE {
 			}
 
 			ImGui::EndChild();
+			
+			EntityID NextCanvasID{};
 			if (ImGui::IsItemClicked(1) && !isHoveringObject)
 			{
 				ImGui::OpenPopup("Object");
@@ -915,22 +917,31 @@ namespace PE {
 					}
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
+		
+						NextCanvasID = CheckCanvas();
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
+						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
+						NextCanvasID = CheckCanvas();
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
+						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Slider")) // the ctrl s is not programmed yet, need add to the key press event
 					{
+						NextCanvasID = CheckCanvas();
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody_Prefab.json");
+						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
+						NextCanvasID = CheckCanvas();
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
+						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					ImGui::EndMenu();
@@ -4594,22 +4605,14 @@ namespace PE {
 						screenPosition.x = clickedPosition.x - m_renderWindowWidth * 0.5f; // in viewport space, origin in the center
 						screenPosition.y = clickedPosition.y - m_renderWindowHeight * 0.5f; // in viewport space, origin in the center
 
-						// Check that position is within the viewport
-						if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
-							|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight)
-						{
+						glm::vec4 transformedCursor{ screenPosition.x, screenPosition.y, 0.f, 1.f };
 
-						}
-						else
-						{
-							m_currentSelectedObject = -1;
-							// Loop through all objects
-							for (long i{ static_cast<long>(Graphics::RendererManager::renderedEntities.size() - 1) }; i >= 0; --i)
-							{
-								EntityID id{ Graphics::RendererManager::renderedEntities[i] };
+						// Transform the position of the mouse cursor from screen space to model space
+						transformedCursor = Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
+								* transformedCursor;
 
-								// Get the transform component of the entity
-								Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
+						transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+							* transformedCursor;
 
 								glm::vec4 transformedCursor{ screenPosition.x, screenPosition.y, 0.f, 1.f };
 
@@ -4630,76 +4633,20 @@ namespace PE {
 									transformedCursor /= Graphics::CameraManager::GetEditorCamera().GetMagnification();
 								}
 
-								transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
-									* transformedCursor;
+				}
 
 								glm::vec4 backToWorldSpacePosition{
 										Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
 										* transformedCursor
 								};
 
-
-								// Check if the cursor position is within the bounds of the object
-								if (!(transformedCursor.x < -0.5f || transformedCursor.x > 0.5f
-									|| transformedCursor.y < -0.5f || transformedCursor.y > 0.5f))
-								{
-									// It is within the bounds, break out of the loop
-									m_currentSelectedObject = static_cast<int>(id);
-									break;
-								}
-							}
+			
 
 
-						}
-
-						std::cout << "\n";
-					}
+			ImGui::EndChild();
 
 
-				ImGui::EndChild();
-
-
-				ImGui::End();
-			}
-		}
-	}
-
-	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
-	{
-		if (IsEditorActive())
-		{
-			if (!ImGui::Begin("Game View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar))
-			{
-				ImGui::End();
-			}
-			else
-			{
-				static bool hasParent;
-				static bool moving;
-				
-				//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
-				if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
-				{
-					auto mn_renderWindowWidth = ImGui::GetContentRegionAvail().x;
-					auto mn_renderWindowHeight = ImGui::GetContentRegionAvail().y;
-
-					if (r_frameBuffer.GetTextureId())
-					{
-						//the graphics rendered onto an image on the imgui window
-						ImGui::Image(
-							reinterpret_cast<void*>(
-								static_cast<intptr_t>(r_frameBuffer.GetTextureId())),
-							ImVec2(mn_renderWindowWidth, mn_renderWindowHeight),
-							ImVec2(0, 1),
-							ImVec2(1, 0)
-						);
-					}
-
-					ImGui::EndChild();
-				}
-				ImGui::End();
-			}
-
+			ImGui::End();
 		}
 	}
 
@@ -4980,6 +4927,32 @@ namespace PE {
 		}
 	}
 
+	EntityID Editor::CountCanvas()
+	{
+		int count{};
+
+		for (EntityID objectID : SceneView<Canvas>())
+		{
+			return objectID;
+		}
+		return count;
+	}
+
+	EntityID Editor::CheckCanvas()
+	{
+		EntityID NextCanvasID{};
+		if (NextCanvasID = CountCanvas())
+		{
+			//if more than 1 canvas popup choose which canvas, to be done in the future
+		}
+		else
+		{
+			NextCanvasID = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
+		}
+
+		return NextCanvasID;
+	}
+
 	void Editor::SetImGUIStyle_Dark()
 	{
 		ImGuiStyle* style = &ImGui::GetStyle();
@@ -5039,52 +5012,6 @@ namespace PE {
 		colors[ImGuiCol_NavWindowingHighlight] = ImVec4(1.00f, 1.00f, 1.00f, 0.70f);
 		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
 		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
-
-		//[ImGuiCol_Text] = The color for the text that will be used for the whole menu.
-		//	[ImGuiCol_TextDisabled] = Color for "not active / disabled text".
-		//	[ImGuiCol_WindowBg] = Background color.
-		//	[ImGuiCol_PopupBg] = The color used for the background in ImGui::Combo and ImGui::MenuBar.
-		//	[ImGuiCol_Border] = The color that is used to outline your menu.
-		//	[ImGuiCol_BorderShadow] = Color for the stroke shadow.
-		//	[ImGuiCol_FrameBg] = Color for ImGui::InputText and for background ImGui::Checkbox
-		//	[ImGuiCol_FrameBgHovered] = The color that is used in almost the same way as the one above, except that it changes color when guiding it to ImGui::Checkbox.
-		//	[ImGuiCol_FrameBgActive] = Active color.
-		//	[ImGuiCol_TitleBg] = The color for changing the main place at the very top of the menu(where the name of your "top-of-the-table" is shown.
-		//		ImGuiCol_TitleBgCollapsed = ImguiCol_TitleBgActive
-		//		= The color of the active title window, ie if you have a menu with several windows, this color will be used for the window in which you will be at the moment.
-		//		[ImGuiCol_MenuBarBg] = The color for the bar menu. (Not all sawes saw this, but still)
-		//		[ImGuiCol_ScrollbarBg] = The color for the background of the "strip", through which you can "flip" functions in the software vertically.
-		//		[ImGuiCol_ScrollbarGrab] = Color for the scoll bar, ie for the "strip", which is used to move the menu vertically.
-		//		[ImGuiCol_ScrollbarGrabHovered] = Color for the "minimized / unused" scroll bar.
-		//		[ImGuiCol_ScrollbarGrabActive] = The color for the "active" activity in the window where the scroll bar is located.
-		//		[ImGuiCol_ComboBg] = Color for the background for ImGui::Combo.
-		//		[ImGuiCol_CheckMark] = Color for your ImGui::Checkbox.
-		//		[ImGuiCol_SliderGrab] = Color for the slider ImGui::SliderInt and ImGui::SliderFloat.
-		//		[ImGuiCol_SliderGrabActive] = Color of the slider,
-		//		[ImGuiCol_Button] = the color for the button.
-		//		[ImGuiCol_ButtonHovered] = Color when hovering over the button.
-		//		[ImGuiCol_ButtonActive] = Button color used.
-		//		[ImGuiCol_Header] = Color for ImGui::CollapsingHeader.
-		//		[ImGuiCol_HeaderHovered] = Color, when hovering over ImGui::CollapsingHeader.
-		//		[ImGuiCol_HeaderActive] = Used color ImGui::CollapsingHeader.
-		//		[ImGuiCol_Column] = Color for the "separation strip" ImGui::Column and ImGui::NextColumn.
-		//		[ImGuiCol_ColumnHovered] = Color, when hovering on the "strip strip" ImGui::Column and ImGui::NextColumn.
-		//		[ImGuiCol_ColumnActive] = The color used for the "separation strip" ImGui::Column and ImGui::NextColumn.
-		//		[ImGuiCol_ResizeGrip] = The color for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-		//		[ImGuiCol_ResizeGripHovered] = Color, when hovering to the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-		//		[ImGuiCol_ResizeGripActive] = The color used for the "triangle" in the lower right corner, which is used to increase or decrease the size of the menu.
-		//		[ImGuiCol_CloseButton] = The color for the button - closing menu.
-		//		[ImGuiCol_CloseButtonHovered] = Color, when you hover over the button - close menu.
-		//		[ImGuiCol_CloseButtonActive] = The color used for the button - closing menu.
-		//		[ImGuiCol_TextSelectedBg] = The color of the selected text, in ImGui::MenuBar.
-		//		[ImGuiCol_ModalWindowDarkening] = The color of the "Blackout Window" of your menu.
-		//		I rarely see these designations, but still decided to put them here.
-		//		[ImGuiCol_Tab] = The color for tabs in the menu.
-		//		[ImGuiCol_TabActive] = The active color of tabs, ie when you click on the tab you will have this color.
-		//		[ImGuiCol_TabHovered] = The color that will be displayed when hovering on the table.
-		//		[ImGuiCol_TabSelected] = The color that is used when you are in one of the tabs.
-		//		[ImGuiCol_TabText] = Text color that only applies to tabs.
-		//		[ImGuiCol_TabTextActive] = Active text color for tabs.
 	}
 
 	void Editor::LoadSceneFromGivenPath(std::string const& path)

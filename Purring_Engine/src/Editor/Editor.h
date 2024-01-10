@@ -335,6 +335,16 @@ namespace PE {
 		*************************************************************************************/
 		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** p_paths);
 
+		/*!***********************************************************************************
+		 \brief Count Number of canvases including inactive ones
+		*************************************************************************************/
+		EntityID CountCanvas();
+
+		/*!***********************************************************************************
+		 \brief Check what is the current canvas and returns it
+		*************************************************************************************/
+		EntityID CheckCanvas();
+
 	private:
 		enum class GuiStyle 
 		{
