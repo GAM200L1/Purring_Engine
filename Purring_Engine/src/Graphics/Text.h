@@ -290,26 +290,36 @@ namespace PE
 			{
 				if (meth.get_name() == "Color")
 				{
+					if(j.contains(meth.get_name().to_string()))
 					meth.invoke(inst, j[meth.get_name().to_string()]["x"].get<float>(), j[meth.get_name().to_string()]["y"].get<float>(), j[meth.get_name().to_string()]["z"].get<float>(), j[meth.get_name().to_string()]["w"].get<float>() );
 				}
 				else if (meth.get_name() == "Text" || meth.get_name() == "Font")
 				{
+					if (j.contains(meth.get_name().to_string()))
+
 					meth.invoke(inst, j[meth.get_name().to_string()].get<std::string>());
 				}
 				else if (meth.get_name() == "Size")
 				{
+					if (j.contains(meth.get_name().to_string()))
+
 					meth.invoke(inst, j[meth.get_name().to_string()].get<float>());
 				}
 				else if (meth.get_name() == "HAlignment" || meth.get_name() == "VAlignment")
 				{
+					if (j.contains(meth.get_name().to_string()))
+
 					meth.invoke(inst, j[meth.get_name().to_string()].get<EnumTextAlignment>());
 				}
 				else if (meth.get_name() == "HOverflow" || meth.get_name() == "VOverflow")
 				{
+					if (j.contains(meth.get_name().to_string()))
+
 					meth.invoke(inst, j[meth.get_name().to_string()].get<EnumTextOverflow>());
 				}
 				else if (meth.get_name() == "LineSpacing")
 				{
+					if (j.contains(meth.get_name().to_string()))
 					meth.invoke(inst, j[meth.get_name().to_string()].get<float>());
 				}
 
