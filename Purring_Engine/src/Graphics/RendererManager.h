@@ -365,7 +365,7 @@ namespace PE
             std::string m_systemName{ "RendererManager" }; // Name of system
 
             // Default shader program to use
-            std::string m_defaultShaderProgramKey{"Textured"};
+            std::string m_defaultShaderProgramKey{"OldTextured"};
             std::string m_instancedShaderProgramKey{"Instanced"};
             std::string m_textShaderProgramKey{ "Text" };
 

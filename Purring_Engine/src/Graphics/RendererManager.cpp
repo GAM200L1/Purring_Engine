@@ -279,7 +279,7 @@ namespace PE
                 DrawCameraQuad();
             }
 
-            Editor::GetInstance().Render(m_renderFrameBuffer);
+            Editor::GetInstance().Render(m_renderFrameBuffer.GetTextureId(), m_renderFrameBuffer.GetTextureId());
 #else
             DrawCameraQuad();
 #endif // !GAMERELEASE

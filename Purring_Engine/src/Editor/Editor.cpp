@@ -220,6 +220,12 @@ namespace PE {
 		height = m_renderWindowHeight;
 	}
 
+	void Editor::GetGameWindowSize(float& width, float& height)
+	{
+		width = m_gameWindowWidth;
+		height = m_gameWindowHeight;
+	}
+
 	float Editor::GetPlayWindowOffset()
 	{
 		return m_playWindowOffset;
@@ -339,7 +345,7 @@ namespace PE {
 		ImGui_ImplOpenGL3_Init("#version 450");
 	}
 
-	void Editor::Render(Graphics::FrameBuffer& r_frameBuffer)
+	void Editor::Render(GLuint const sceneTexture, GLuint const gameTexture)
 	{
 		//hide the entire editor
 			//imgui start frame
@@ -363,7 +369,7 @@ namespace PE {
 			if (m_showConsole) ShowConsoleWindow(&m_showConsole);
 
 			//draw scene view
-			if (m_showSceneView) ShowSceneView(r_frameBuffer, &m_showSceneView);
+			if (m_showSceneView) ShowSceneView(sceneTexture, &m_showSceneView);
 
 			//draw the stuff for ellie to test
 			if (m_showTestWindows) ShowDemoWindow(&m_showTestWindows);
@@ -378,7 +384,7 @@ namespace PE {
 
 			if (m_showPhysicsWindow) ShowPhysicsWindow(&m_showPhysicsWindow);
 
-			if (m_showGameView) ShowGameView(r_frameBuffer , &m_showGameView);
+			if (m_showGameView) ShowGameView(gameTexture, &m_showGameView);
 
 			if (m_applyPrefab) ShowApplyWindow(&m_applyPrefab);
 
@@ -3981,7 +3987,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
+	void Editor::ShowSceneView(GLuint const sceneTexture, bool* p_active)
 	{
 		if (IsEditorActive()) {
 			ImGui::Begin("Scene View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
@@ -4101,12 +4107,12 @@ namespace PE {
 			}
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
-				if (r_frameBuffer.GetTextureId())
+				if (sceneTexture)
 				{
 					//the graphics rendered onto an image on the imgui window
 					ImGui::Image(
 						reinterpret_cast<void*>(
-							static_cast<intptr_t>(r_frameBuffer.GetTextureId())),
+							static_cast<intptr_t>(sceneTexture)),
 						ImVec2(m_renderWindowWidth, m_renderWindowHeight),
 						ImVec2(0, 1),
 						ImVec2(1, 0)
@@ -4347,7 +4353,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active)
+	void Editor::ShowGameView(GLuint const gameTexture, bool* p_active)
 	{
 		if (!IsEditorActive())
 		{
@@ -4362,9 +4368,8 @@ namespace PE {
 
 		ImGui::Begin("Game View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoDecoration);
 
-
-		m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
-		m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
+		m_gameWindowWidth = ImGui::GetContentRegionAvail().x;
+		m_gameWindowHeight = ImGui::GetContentRegionAvail().y;
 
 		ImGuiStyle& style = ImGui::GetStyle();
 		float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.5f + ImGui::CalcTextSize("Pause").x;
@@ -4412,12 +4417,12 @@ namespace PE {
 
 		//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
 		if (ImGui::BeginChild("GamesViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
-			if (r_frameBuffer.GetTextureId())
+			if (gameTexture)
 			{
 				//the graphics rendered onto an image on the imgui window
 				ImGui::Image(
 					reinterpret_cast<void*>(
-						static_cast<intptr_t>(r_frameBuffer.GetTextureId())),
+						static_cast<intptr_t>(gameTexture)),
 					ImVec2(m_renderWindowWidth, m_renderWindowHeight),
 					ImVec2(0, 1),
 					ImVec2(1, 0)

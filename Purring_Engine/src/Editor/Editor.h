@@ -65,18 +65,25 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Render all imgui windows
 
-		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
+		 \param[in] sceneTexture - ID of the texture to use to draw the scene window
+		 \param[in] gameTexture - ID of the texture to use to draw the game window
 		*************************************************************************************/
-		void Render(Graphics::FrameBuffer& r_framebuffer);
+		void Render(GLuint const sceneTexture, GLuint const gameTexture);
 
 		// ----- Public Getters ----- // 
 	public:
 		/*!***********************************************************************************
-		 \brief Return the size of the imgui window
-		 \param[out] float x value
-		 \param[out] float y value
+		 \brief Return the size of the imgui scene window
+		 \param[out] float width of the window
+		 \param[out] float height of the window
 		*************************************************************************************/
 		void GetWindowSize(float&, float&);
+		/*!***********************************************************************************
+		 \brief Return the size of the imgui game window
+		 \param[out] float width of the window
+		 \param[out] float height of the window
+		*************************************************************************************/
+		void GetGameWindowSize(float& width, float& height);
 		/*!***********************************************************************************
 		 \brief Return the size of the y offset of the play window
 		*************************************************************************************/
@@ -220,17 +227,17 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief render the sceneview window
 
-		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
+		 \param[in] sceneTexture - ID of the texture to use to draw the scene window
 		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowSceneView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
+		void ShowSceneView(GLuint const sceneTexture, bool* p_active);
 		/*!***********************************************************************************
 		 \brief render the gameview window
 
-		 \param[in] r_framebuffer Framebuffer object that the scene is being rendered to
+		 \param[in] gameTexture - ID of the texture to use to draw the game window
 		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
-		void ShowGameView(Graphics::FrameBuffer& r_frameBuffer, bool* p_active);
+		void ShowGameView(GLuint const gameTexture, bool* p_active);
 
 		/*!***********************************************************************************
 		 \brief render the prefab apply changes window
