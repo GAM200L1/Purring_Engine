@@ -131,6 +131,12 @@ namespace PE
 
             // Compute vertex positions in NDC space
             Vector2Container ndcPositions{ QuadMeshData::GetTransformedVertexPositions(modelToNdc) };
+            //Vector2Container ndcPositions{ 
+            //    glm::vec2{-0.5f, -0.5f}, // bottom left
+            //    glm::vec2{ 0.5f, -0.5f}, // bottom right
+            //    glm::vec2{ 0.5f,  0.5f}, // top right
+            //    glm::vec2{-0.5f,  0.5f}  // top left
+            //};
 
             // Create vertex data
             const std::size_t containerSize{ 4 };
@@ -484,6 +490,14 @@ namespace PE
             CreateIndexBufferObject();
             glVertexArrayElementBuffer(m_texturedVAO, m_indexBufferObject);
 
+            std::string vboName{ "Textured VBO" };
+            GLsizei vboNameLength{ static_cast<GLsizei>(vboName.length()) };
+            glObjectLabel(GL_BUFFER, m_texturedVBO, vboNameLength, vboName.c_str());
+
+            std::string vaoName{ "Textured VAO" };
+            GLsizei vaoNameLength{ static_cast<GLsizei>(vaoName.length()) };
+            glObjectLabel(GL_VERTEX_ARRAY, m_texturedVAO, vaoNameLength, vaoName.c_str());
+
             // Break the binding
             UnbindAllVAO();
         }
@@ -526,6 +540,14 @@ namespace PE
             CreateIndexBufferObject();
             glVertexArrayElementBuffer(m_untexturedVAO, m_indexBufferObject);
 
+            std::string vboName{ "Untextured VBO" };
+            GLsizei vboNameLength{ static_cast<GLsizei>(vboName.length()) };
+            glObjectLabel(GL_BUFFER, m_untexturedVBO, vboNameLength, vboName.c_str());
+
+            std::string vaoName{ "Untextured VAO" };
+            GLsizei vaoNameLength{ static_cast<GLsizei>(vaoName.length()) };
+            glObjectLabel(GL_VERTEX_ARRAY, m_untexturedVAO, vaoNameLength, vaoName.c_str());
+
             // Break the binding
             UnbindAllVAO();
         }
@@ -540,6 +562,10 @@ namespace PE
             glNamedBufferStorage(m_indexBufferObject,
                 static_cast<GLsizeiptr>(m_maxVertices * sizeof(GLushort)),
                 nullptr, GL_DYNAMIC_STORAGE_BIT);
+
+            std::string objectName{ "Index Buffer Object" };
+            GLsizei nameLength{ static_cast<GLsizei>(objectName.length()) };
+            glObjectLabel(GL_BUFFER, m_indexBufferObject, nameLength, objectName.c_str());
         }
 
 
@@ -548,8 +574,6 @@ namespace PE
             //@CHECK krystal
             
             // Bind the buffer and VAO
-            glBindBuffer(GL_ARRAY_BUFFER, m_texturedVBO);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObject);
             BindTexturedVAO();
 
             /*
@@ -557,15 +581,28 @@ namespace PE
                 GLintptr offset,
                 GLsizei size,
                 const void *data);
+
+
+            TexturedVertexData(glm::vec2 const& r_position, glm::vec2 const& r_color,
+                glm::vec2 const& r_textureCoord, float const bindingPoint)
             */
+            m_texturedVertices.resize(m_maxVertices, TexturedVertexData{
+                glm::vec2{}, glm::vec4{}, glm::vec2{}, 0.f });
+            m_texturedIndices.resize(m_maxVertices, restartIndex);
 
             // Update the buffer data of the VBO
+            //glBindBuffer(GL_ARRAY_BUFFER, m_texturedVBO);
             glNamedBufferSubData(m_texturedVBO, static_cast<GLintptr>(0), 
-                static_cast<GLsizei>(m_texturedVertices.size()), m_texturedVertices.data());
+                static_cast<GLsizei>(m_texturedVertices.size() * sizeof(TexturedVertexData)), m_texturedVertices.data());
+            //glNamedBufferData(m_texturedVBO, static_cast<GLsizeiptr>(m_texturedVertices.size() * sizeof(TexturedVertexData)),
+            //    m_texturedVertices.data(), GL_DYNAMIC_DRAW);
 
             // Update the index buffer data of the EBO
+            //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObject);
             glNamedBufferSubData(m_indexBufferObject, static_cast<GLintptr>(0),
-                static_cast<GLsizei>(m_texturedIndices.size()), m_texturedIndices.data());
+                static_cast<GLsizei>(m_texturedIndices.size() * sizeof(GLushort)), m_texturedIndices.data());
+            //glNamedBufferData(m_indexBufferObject, static_cast<GLsizeiptr>(m_texturedIndices.size() * sizeof(GLushort)),
+            //    m_texturedIndices.data(), GL_DYNAMIC_DRAW);
 
             // Unbind the VAO
             UnbindAllVAO();
@@ -577,8 +614,6 @@ namespace PE
             //@CHECK krystal
             
             // Bind the buffer and VAO
-            glBindBuffer(GL_ARRAY_BUFFER, m_untexturedVBO);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObject);
             BindTexturedVAO();
 
             /*
@@ -589,10 +624,12 @@ namespace PE
             */
 
             // Update the sub buffer data of the VBO
+            glBindBuffer(GL_ARRAY_BUFFER, m_untexturedVBO);
             glNamedBufferSubData(m_untexturedVBO, static_cast<GLintptr>(0),
                 static_cast<GLsizei>(m_untexturedVertices.size()), m_untexturedVertices.data());
 
             // Update the index buffer data of the EBO
+            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObject);
             glNamedBufferSubData(m_indexBufferObject, static_cast<GLintptr>(0),
                 static_cast<GLsizei>(m_untexturedIndices.size()), m_untexturedIndices.data());
 
@@ -616,8 +653,8 @@ namespace PE
         void BatchRenderer::UnbindAllVAO()
         {
             glBindVertexArray(0);
-            glBindBuffer(GL_ARRAY_BUFFER, 0);
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            //glBindBuffer(GL_ARRAY_BUFFER, 0);
+            //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
         }
 
         //void BatchRenderer::ConfigureVAOAttribute(GLuint VAOID, GLuint VBOID, GLuint attributeIndex, GLuint bindingIndex, GLintptr VBOoffset,

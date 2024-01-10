@@ -29,6 +29,6 @@ void main(void) {
 
 	// Sample the texture using the texture coordinates
 	fFragColor = texture(uTextureSamplers[textureIndex], vTextureCoord);
-	fFragColor *= vec4(vTextureCoord, 0.0, 1.0);
-	//fFragColor *= vColor;
+	//fFragColor *= vec4(vTextureCoord, 0.0, 1.0);
+	fFragColor *= vColor;
 }
