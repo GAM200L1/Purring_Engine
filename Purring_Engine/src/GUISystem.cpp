@@ -135,11 +135,8 @@ namespace PE
 #ifndef GAMERELEASE
 				if (Editor::GetInstance().IsEditorActive()) 
 				{
-
-
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
 					{
-						std::cout<< "has child active" << std::endl;
 						bool knobFound = false;
 						for (auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children)
 						{

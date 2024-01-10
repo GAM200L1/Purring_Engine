@@ -326,6 +326,10 @@ namespace PE {
 		*************************************************************************************/
 		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** p_paths);
 
+		EntityID CountCanvas();
+
+		EntityID CheckCanvas();
+
 	private:
 		enum class GuiStyle 
 		{

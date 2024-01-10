@@ -888,6 +888,8 @@ namespace PE {
 			}
 
 			ImGui::EndChild();
+			
+			EntityID NextCanvasID{};
 			if (ImGui::IsItemClicked(1) && !isHoveringObject)
 			{
 				ImGui::OpenPopup("Object");
@@ -908,22 +910,31 @@ namespace PE {
 					}
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
+		
+						NextCanvasID = CheckCanvas();
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
+						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
+						NextCanvasID = CheckCanvas();
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
+						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create UI Slider")) // the ctrl s is not programmed yet, need add to the key press event
 					{
+						NextCanvasID = CheckCanvas();
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody_Prefab.json");
+						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
+						NextCanvasID = CheckCanvas();
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
+						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					}
 					ImGui::EndMenu();
@@ -4901,6 +4912,32 @@ namespace PE {
 			if (!std::filesystem::equivalent(r_path.parent_path(), m_parentPath))
 				std::filesystem::copy(r_path, std::filesystem::path{ m_parentPath.string() + "/" + r_path.filename().string()}, std::filesystem::copy_options::recursive | std::filesystem::copy_options::overwrite_existing);
 		}
+	}
+
+	EntityID Editor::CountCanvas()
+	{
+		int count{};
+
+		for (EntityID objectID : SceneView<Canvas>())
+		{
+			return objectID;
+		}
+		return count;
+	}
+
+	EntityID Editor::CheckCanvas()
+	{
+		EntityID NextCanvasID{};
+		if (NextCanvasID = CountCanvas())
+		{
+			//if more than 1 canvas popup choose which canvas, to be done in the future
+		}
+		else
+		{
+			NextCanvasID = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
+		}
+
+		return NextCanvasID;
 	}
 
 	void Editor::SetImGUIStyle_Dark()
