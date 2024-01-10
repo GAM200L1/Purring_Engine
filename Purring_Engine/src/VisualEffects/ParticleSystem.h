@@ -88,11 +88,11 @@ namespace PE
 	};
 
 	// this is a problem
-	class ParticleSystemManager
-	{
-	public:
-		/*void Initialize();
-		void Update();
-		void Destroy();*/
-	};
+	//class ParticleSystemManager
+	//{
+	//public:
+	//	/*void Initialize();
+	//	void Update();
+	//	void Destroy();*/
+	//};
 }
