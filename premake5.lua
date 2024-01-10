@@ -156,6 +156,11 @@ project "Purring_Engine"
     pchheader "prpch.h"
     pchsource "Purring_Engine/src/prpch/prpch.cpp"
 
+    buildoptions
+    {
+        "/bigobj"
+    }
+
     flags
     {
         "MultiProcessorCompile"

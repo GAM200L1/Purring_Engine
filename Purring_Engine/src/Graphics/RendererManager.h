@@ -255,7 +255,7 @@ namespace PE
              \param[in, out] r_shaderProgram Shader program to use.
              \param[in] r_color Color to draw the shape.
             *************************************************************************************/
-            void RendererManager::DrawDebugRectangle(float const width, float const height,
+            void DrawDebugRectangle(float const width, float const height,
                 float const orientation, float const xPosition, float const yPosition,
                 glm::mat4 const& r_worldToNdc, ShaderProgram& r_shaderProgram,
                 glm::vec4 const& r_color);
@@ -346,13 +346,22 @@ namespace PE
              \brief Renders text from r_text parameter. Retrieves glyph information from map
                    and renders a quad with the data.
 
-             \param[in] r_text String to render.
-             \param[in] position Position of text to render onto the screen.s
-             \param[in] scale Amount to scale text size.
              \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
-             \param[in] r_color Color to render text as.
             *************************************************************************************/
             void RenderText(glm::mat4 const& r_worldToNdc);
+
+            /*!***********************************************************************************
+             \brief Renders a line of text from r_line parameter. Retrieves glyph information from
+                    map and renders a quad with the data.
+
+             \param[in] r_textComponent Component to get text data.
+             \param[in] r_line line to render.
+             \param[in] position Position of text to render on to the screen.
+             \param[in] currentY y position of the line.
+             \param[in] hAlignOffset horizontal alignment offset.
+             \param[in] vAlignOffset vertical alignment offset.
+            *************************************************************************************/
+            void RenderLine(TextComponent const& r_textComponent, std::string const& r_line, vec2 position, float currentY, float hAlignOffset, float vAlignOffset);
 
             // ----- Private variables ----- //
         private:
