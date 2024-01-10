@@ -209,59 +209,62 @@ namespace PE
 #ifndef GAMERELEASE
 				if (Editor::GetInstance().IsRunTime()) {
 #endif
-					if (slider.m_disabled)
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
 					{
-						if (EntityManager::GetInstance().Has(slider.m_knobID.value(), EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+						if (slider.m_disabled)
 						{
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetColor(slider.m_disabledColor.x, slider.m_disabledColor.y, slider.m_disabledColor.z, slider.m_disabledColor.w);
-							//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetTextureKey(slider.m_disabledTexture);
-						}
-						continue;
-					}
-
-					if (slider.m_clicked)
-					{
-						float mouseX{}, mouseY{};
-						InputSystem::GetCursorViewportPosition(p_window, mouseX, mouseY);
-						vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(mouseX, mouseY);
-						//vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiCamera().GetViewportToWorldPosition(mouseX, mouseY);
-
-						Transform& knobTransform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
-						Transform& sliderTransform = EntityManager::GetInstance().Get<Transform>(objectID);
-
-						knobTransform.relPosition.x = CurrentMousePos.x - sliderTransform.position.x;
-
-						if (knobTransform.relPosition.x < slider.m_startPoint)
-						{ 
-							knobTransform.relPosition.x = slider.m_startPoint;
-						}
-						else if (knobTransform.relPosition.x > slider.m_endPoint)
-						{
-							knobTransform.relPosition.x = slider.m_endPoint;
+							if (EntityManager::GetInstance().Has(slider.m_knobID.value(), EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+							{
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetColor(slider.m_disabledColor.x, slider.m_disabledColor.y, slider.m_disabledColor.z, slider.m_disabledColor.w);
+								//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetTextureKey(slider.m_disabledTexture);
+							}
+							continue;
 						}
 
-						slider.CalculateValue(knobTransform.relPosition.x);
+						if (slider.m_clicked)
+						{
+							float mouseX{}, mouseY{};
+							InputSystem::GetCursorViewportPosition(p_window, mouseX, mouseY);
+							vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(mouseX, mouseY);
+							//vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiCamera().GetViewportToWorldPosition(mouseX, mouseY);
 
-						if (EntityManager::GetInstance().Has(slider.m_knobID.value(), EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-						{
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetColor(slider.m_pressedColor.x, slider.m_pressedColor.y, slider.m_pressedColor.z, slider.m_pressedColor.w);
-							//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetTextureKey(slider.m_pressedTexture);
+							Transform& knobTransform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
+							Transform& sliderTransform = EntityManager::GetInstance().Get<Transform>(objectID);
+
+							knobTransform.relPosition.x = CurrentMousePos.x - sliderTransform.position.x;
+
+							if (knobTransform.relPosition.x < slider.m_startPoint)
+							{
+								knobTransform.relPosition.x = slider.m_startPoint;
+							}
+							else if (knobTransform.relPosition.x > slider.m_endPoint)
+							{
+								knobTransform.relPosition.x = slider.m_endPoint;
+							}
+
+							slider.CalculateValue(knobTransform.relPosition.x);
+
+							if (EntityManager::GetInstance().Has(slider.m_knobID.value(), EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+							{
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetColor(slider.m_pressedColor.x, slider.m_pressedColor.y, slider.m_pressedColor.z, slider.m_pressedColor.w);
+								//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetTextureKey(slider.m_pressedTexture);
+							}
 						}
-					}
-					else if (slider.m_Hovered && !slider.m_clicked)
-					{
-						if (EntityManager::GetInstance().Has(slider.m_knobID.value(), EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+						else if (slider.m_Hovered && !slider.m_clicked)
 						{
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetColor(slider.m_hoveredColor.x, slider.m_hoveredColor.y, slider.m_hoveredColor.z, slider.m_hoveredColor.w);
-							//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetTextureKey(slider.m_hoveredTexture);
+							if (EntityManager::GetInstance().Has(slider.m_knobID.value(), EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+							{
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetColor(slider.m_hoveredColor.x, slider.m_hoveredColor.y, slider.m_hoveredColor.z, slider.m_hoveredColor.w);
+								//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetTextureKey(slider.m_hoveredTexture);
+							}
 						}
-					}
-					else
-					{
-						if (EntityManager::GetInstance().Has(slider.m_knobID.value(), EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+						else
 						{
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetColor(slider.m_defaultColor.x, slider.m_defaultColor.y, slider.m_defaultColor.z, slider.m_defaultColor.w);
-							//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetTextureKey(slider.m_defaultTexture);
+							if (EntityManager::GetInstance().Has(slider.m_knobID.value(), EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
+							{
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetColor(slider.m_defaultColor.x, slider.m_defaultColor.y, slider.m_defaultColor.z, slider.m_defaultColor.w);
+								//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(slider.m_knobID.value()).SetTextureKey(slider.m_defaultTexture);
+							}
 						}
 					}
 #ifndef GAMERELEASE
@@ -354,7 +357,11 @@ namespace PE
 #endif
 		for (EntityID objectID : SceneView<Transform, GUISlider>())
 		{
+
 			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+				continue;
+
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
 				continue;
 			//get the components
 
@@ -444,6 +451,10 @@ namespace PE
 			{
 				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
 					continue;
+
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
+					continue;
+
 				//get the components
 				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
 
