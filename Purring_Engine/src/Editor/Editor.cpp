@@ -4588,21 +4588,8 @@ namespace PE {
 						glm::vec4 transformedCursor{ screenPosition.x, screenPosition.y, 0.f, 1.f };
 
 						// Transform the position of the mouse cursor from screen space to model space
-						glm::vec4 worldSpacePosition{
-								Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
-								* transformedCursor // screen position
-						};
-
-						// If trying to pick text or UI, don't transform to world space
-						if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<TextComponent>())
-							&& !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()))
-						{
-							transformedCursor = worldSpacePosition;
-						}
-						else
-						{
-							transformedCursor /= Graphics::CameraManager::GetEditorCamera().GetMagnification();
-						}
+						transformedCursor = Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
+								* transformedCursor;
 
 						transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
 							* transformedCursor;
