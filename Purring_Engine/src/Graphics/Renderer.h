@@ -85,6 +85,15 @@ namespace PE
             inline std::string const& GetTextureKey() const { return m_textureKey; }
 
             /*!***********************************************************************************
+             \brief Returns true if this object is textured (i.e. the texture key is not empty),
+                    false if it is just colored.
+             
+             \return bool - Returns true if this object is textured (i.e. the texture key is not empty),
+                        false if it is just colored.
+            *************************************************************************************/
+            inline bool GetIsTextured() const { return !m_textureKey.empty(); }
+
+            /*!***********************************************************************************
              \brief Gets the minimum uv coordinates of the renderer component
 
              \return glm::vec2 const& Min uv coordinates

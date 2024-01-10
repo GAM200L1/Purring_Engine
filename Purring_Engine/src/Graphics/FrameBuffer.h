@@ -19,7 +19,6 @@
 #include "Graphics/GLHeaders.h"
 
 #include "VertexData.h"
-#include "ECS/Entity.h"
 
 namespace PE
 {
@@ -49,6 +48,20 @@ namespace PE
              \return GLuint - Returns the index of the framebuffer.
             *************************************************************************************/
             inline GLuint GetFrameBufferId() { return m_frameBufferObjectIndex; }
+
+            /*!***********************************************************************************
+             \brief Returns the width of the framebuffer.
+
+             \return int - Returns the width of the framebuffer.
+            *************************************************************************************/
+            inline int GetWidth() { return m_bufferWidth; }
+
+            /*!***********************************************************************************
+             \brief Returns the height of the framebuffer.
+
+             \return int - Returns the height of the framebuffer.
+            *************************************************************************************/
+            inline int GetHeight() { return m_bufferHeight; }
 
             // ----- Public methods ----- // 
         public:

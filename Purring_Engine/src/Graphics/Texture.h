@@ -26,6 +26,21 @@ namespace PE
 						~Texture(); // Deletes the texture object
 
 
+						// ----- Operator Overloads ----- // 
+				public:
+
+						/*!***********************************************************************************
+						\brief  Equivalence operator overload. Returns true if the IDs of the texture are 
+										the same, false otherwise.
+
+						\return bool - True if the texture IDs are the same, false otherwise.
+						*************************************************************************************/
+						inline bool operator==(Texture const& rhs) const
+						{
+								return this->m_textureID == rhs.m_textureID;
+						}
+
+
 						// ----- Public getters ----- // 
 				public:
 

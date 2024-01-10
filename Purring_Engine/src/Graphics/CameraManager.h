@@ -61,7 +61,7 @@ namespace PE
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            glm::mat4 GetWorldToNdcMatrix(bool const editorMode);
+            glm::mat4 GetWorldToNdcMatrix(bool const editorMode) const;
 
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 view to NDC matrix 
@@ -75,7 +75,7 @@ namespace PE
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            glm::mat4 GetViewToNdcMatrix(bool const editorMode);
+            glm::mat4 GetViewToNdcMatrix(bool const editorMode) const;
             
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 NDC to world matrix 
@@ -89,7 +89,7 @@ namespace PE
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            glm::mat4 GetNdcToWorldMatrix(bool const editorMode);
+            glm::mat4 GetNdcToWorldMatrix(bool const editorMode) const;
 
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 NDC to view matrix 
@@ -103,7 +103,7 @@ namespace PE
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            glm::mat4 GetNdcToViewMatrix(bool const editorMode);
+            glm::mat4 GetNdcToViewMatrix(bool const editorMode) const;
             
             /*!***********************************************************************************
              \brief Returns an optional object initalized with the 4x4 view to world matrix 
@@ -117,21 +117,21 @@ namespace PE
                         runtime camera. If editorMode is false and there are no runtime cameras, 
                         optional::has_value() will return false.
             *************************************************************************************/
-            glm::mat4 GetViewToWorldMatrix(bool const editorMode);
+            glm::mat4 GetViewToWorldMatrix(bool const editorMode) const;
 
             /*!***********************************************************************************
              \brief Returns the 4x4 view to NDC matrix of the UI camera.
 
              \return glm::mat4 - The 4x4 view to NDC matrix of the UI camera.
             *************************************************************************************/
-            glm::mat4 GetUiViewToNdcMatrix();
+            glm::mat4 GetUiViewToNdcMatrix() const;
 
             /*!***********************************************************************************
              \brief Returns the 4x4 NDC to view matrix of the UI camera.
 
              \return glm::mat4 - The 4x4 NDC to view matrix of the UI camera.
             *************************************************************************************/
-            glm::mat4 GetUiNdcToViewMatrix();
+            glm::mat4 GetUiNdcToViewMatrix() const;
 
             /*!***********************************************************************************
              \brief Returns an optional object with a reference to the Camera component for 

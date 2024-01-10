@@ -43,7 +43,7 @@ namespace PE
         }
 
 
-        glm::mat4 CameraManager::GetWorldToNdcMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetWorldToNdcMatrix(bool const editorMode) const
         {
             if (editorMode) 
             {
@@ -64,7 +64,7 @@ namespace PE
         }
 
 
-        glm::mat4 CameraManager::GetViewToNdcMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetViewToNdcMatrix(bool const editorMode) const
         {
             if (editorMode)
             {
@@ -85,20 +85,20 @@ namespace PE
         }
 
 
-        glm::mat4 CameraManager::GetUiViewToNdcMatrix()
+        glm::mat4 CameraManager::GetUiViewToNdcMatrix() const
         {
             return GetUiCamera().GetViewToNdcMatrix();
         }
         
 
 
-        glm::mat4 CameraManager::GetUiNdcToViewMatrix()
+        glm::mat4 CameraManager::GetUiNdcToViewMatrix() const
         {
             return GetUiCamera().GetNdcToViewMatrix();
         }
 
 
-        glm::mat4 CameraManager::GetNdcToWorldMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetNdcToWorldMatrix(bool const editorMode) const
         {
             if (editorMode)
             {
@@ -119,7 +119,7 @@ namespace PE
         }
 
 
-        glm::mat4 CameraManager::GetNdcToViewMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetNdcToViewMatrix(bool const editorMode) const
         {
             if (editorMode)
             {
@@ -140,7 +140,7 @@ namespace PE
         }
 
 
-        glm::mat4 CameraManager::GetViewToWorldMatrix(bool const editorMode)
+        glm::mat4 CameraManager::GetViewToWorldMatrix(bool const editorMode) const
         {
             if (editorMode)
             {
@@ -164,7 +164,8 @@ namespace PE
         std::optional<std::reference_wrapper<Camera>> CameraManager::GetMainCamera() const
         {
             // Check if the main camera ID stored is valid
-            if (EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()))
+            if (EntityManager::GetInstance().Has<Camera>(m_mainCameraId)
+                && EntityManager::GetInstance().Get<EntityDescriptor>(m_mainCameraId).isActive)
             {
                 return std::reference_wrapper<Camera>{EntityManager::GetInstance().Get<Camera>(m_mainCameraId)};
             }
