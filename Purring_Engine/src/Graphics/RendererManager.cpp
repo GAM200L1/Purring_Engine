@@ -36,6 +36,7 @@
 // ECS Components
 #include "ECS/Entity.h"
 #include "ECS/EntityFactory.h"
+#include "Hierarchy/HierarchyManager.h"
 
 // ImGui
 #ifndef GAMERELEASE
@@ -91,7 +92,7 @@ namespace PE
             glDebugMessageCallback(GlDebugOutput, nullptr);
             glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
-            Editor::GetInstance().Init(p_window);
+            Editor::GetInstance().Init();
 #endif // !GAMERELEASE
         }
         
