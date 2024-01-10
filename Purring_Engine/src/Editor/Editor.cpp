@@ -2443,10 +2443,103 @@ namespace PE {
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
 									float size{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetSize() };
+									float lineSpacing{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetLineSpacing() };
+
+									EnumTextAlignment selectedButtonHAlignment{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetHAlignment() };
+									EnumTextAlignment selectedButtonVAlignment{ EntityManager::GetInstance().Get<TextComponent>(entityID).GetVAlignment() };
+
 									ImGui::Text("Font Size: "); ImGui::SameLine(); ImGui::InputFloat("##FontSize", &size, 1.0f, 100.f, "%.3f");
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
+									ImGui::Text("Line Spacing: "); ImGui::SameLine(); ImGui::InputFloat("##LineSpacing", &lineSpacing, 1.0f, 100.f, "%.3f");
+									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
 									EntityManager::GetInstance().Get<TextComponent>(entityID).SetSize(size);
+									EntityManager::GetInstance().Get<TextComponent>(entityID).SetLineSpacing(lineSpacing);
+
+									// Horizontal Alignment
+									ImGui::Text("Horizontal Alignment ");
+									
+									ImGui::SameLine();									
+									ImGui::BeginDisabled(selectedButtonHAlignment == EnumTextAlignment::LEFT);
+									if (ImGui::Button("Left"))
+									{
+										selectedButtonHAlignment = EnumTextAlignment::LEFT;
+									}
+									ImGui::EndDisabled();
+
+									ImGui::SameLine();
+									ImGui::BeginDisabled(selectedButtonHAlignment == EnumTextAlignment::CENTER);
+									if (ImGui::Button("Center##hAlignment"))
+									{
+										selectedButtonHAlignment = EnumTextAlignment::CENTER;
+									}
+									ImGui::EndDisabled();
+
+									ImGui::SameLine();
+									ImGui::BeginDisabled(selectedButtonHAlignment == EnumTextAlignment::RIGHT);
+									if (ImGui::Button("Right"))
+									{										
+										selectedButtonHAlignment = EnumTextAlignment::RIGHT;
+									}
+									ImGui::EndDisabled();
+
+									EntityManager::GetInstance().Get<TextComponent>(entityID).SetHAlignment(selectedButtonHAlignment);
+
+									// Vertical Alignment
+									ImGui::Text("Vertical Alignment ");
+
+									ImGui::SameLine();
+									ImGui::BeginDisabled(selectedButtonVAlignment == EnumTextAlignment::TOP);
+									if (ImGui::Button("Top"))
+									{
+										selectedButtonVAlignment = EnumTextAlignment::TOP;
+									}
+									ImGui::EndDisabled();
+
+									ImGui::SameLine();
+									ImGui::BeginDisabled(selectedButtonVAlignment == EnumTextAlignment::CENTER);
+									if (ImGui::Button("Center##vAlignment"))
+									{
+										selectedButtonVAlignment = EnumTextAlignment::CENTER;
+									}
+									ImGui::EndDisabled();
+
+									ImGui::SameLine();
+									ImGui::BeginDisabled(selectedButtonVAlignment == EnumTextAlignment::BOTTOM);
+									if (ImGui::Button("Bottom"))
+									{
+										selectedButtonVAlignment = EnumTextAlignment::BOTTOM;
+									}
+									ImGui::EndDisabled();
+
+									EntityManager::GetInstance().Get<TextComponent>(entityID).SetVAlignment(selectedButtonVAlignment);
+
+									// Overflow
+									int hOverflowIndex = static_cast<int>(EntityManager::GetInstance().Get<TextComponent>(entityID).GetHOverflow());
+									int vOverflowIndex = static_cast<int>(EntityManager::GetInstance().Get<TextComponent>(entityID).GetVOverflow()) - 1; // shared enum
+									const char* hOverflowTypes[] = { "Wrap", "Overflow" };
+									const char* vOverflowTypes[] = { "Overflow", "Truncate" };
+
+									// horizontal overflow
+									ImGui::Text("Horizontal Overflow: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+
+									// set combo box for the different collider types
+									if (ImGui::Combo("##hOverflow", &hOverflowIndex, hOverflowTypes, IM_ARRAYSIZE(hOverflowTypes)))
+									{
+										EntityManager::GetInstance().Get<TextComponent>(entityID).SetHOverflow(static_cast<EnumTextOverflow>(hOverflowIndex));
+									}
+
+									// vertical overflow
+									ImGui::Text("Vertical Overflow: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+
+									// set combo box for the different collider types
+									if (ImGui::Combo("##vOverflow", &vOverflowIndex, vOverflowTypes, IM_ARRAYSIZE(vOverflowTypes)))
+									{
+										EntityManager::GetInstance().Get<TextComponent>(entityID).SetVOverflow(static_cast<EnumTextOverflow>(vOverflowIndex + 1)); // shared enum
+									}
 
 									// Color
 
