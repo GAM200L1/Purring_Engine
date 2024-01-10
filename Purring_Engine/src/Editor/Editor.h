@@ -22,8 +22,7 @@
 #include <backends/imgui_impl_glfw.h>
 #include <backends/imgui_impl_opengl3.h>
 #include <misc/cpp/imgui_stdlib.h>
-
-#include "UndoStack.h"
+#include "ImGuizmo.h"
 
 #include "Singleton.h"
 
@@ -149,7 +148,12 @@ namespace PE {
 		\param[in] std::string the string to print on the console window
 		*************************************************************************************/
 		void AddWarningLog(std::string_view text);
-
+		// -----Public Helper Functions ----- // 
+	public:
+		/*!***********************************************************************************
+		\brief Reset Selected Object to be used externally
+		*************************************************************************************/
+		void ResetSelectedObject();
 		// -----Event Callbacks ----- // 
 	public:
 		/*!***********************************************************************************
@@ -277,6 +281,17 @@ namespace PE {
 		 \param[in] string path name
 		*************************************************************************************/
 		void LoadSceneFromGivenPath(std::string const& path);
+
+		/*!***********************************************************************************
+		 \brief	Compare 2 C-Style Float[16] Arrays to check for equality
+
+		 \param[in] float* a	Matrix A
+		 \param[in] float* b	Matrix B
+		 \param[in] float epsilon value to check if values differ by more than episilon
+
+		 \return true if equal, false if not
+		*************************************************************************************/
+		bool CompareFloat16Arrays(float* a, float* b);
 		// ----- ImGui Command Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -310,6 +325,16 @@ namespace PE {
 		 \param[in] const char** - filepaths of the files that have been dragged into the browser
 		*************************************************************************************/
 		static void HotLoadingNewFiles(GLFWwindow* p_window, int count, const char** p_paths);
+
+		/*!***********************************************************************************
+		 \brief Count Number of canvases including inactive ones
+		*************************************************************************************/
+		EntityID CountCanvas();
+
+		/*!***********************************************************************************
+		 \brief Check what is the current canvas and returns it
+		*************************************************************************************/
+		EntityID CheckCanvas();
 
 	private:
 		enum class GuiStyle 
@@ -359,8 +384,7 @@ namespace PE {
 		bool m_objectIsSelected;
 		bool m_sceneViewFocused;
 		int m_currentSelectedObject;
-
-		UndoStack m_undoStack;
+		ImGuizmo::OPERATION m_currentGizmoOperation{ImGuizmo::OPERATION::TRANSLATE};
 
 		//variable for assets browser
 		float m_time;

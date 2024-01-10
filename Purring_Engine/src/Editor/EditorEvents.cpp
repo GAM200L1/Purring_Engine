@@ -18,7 +18,7 @@
 #include "Data/SerializationManager.h"
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
-
+#include "UndoStack.h"
 extern SerializationManager serializationManager;  // Create an instance
 extern Logger engine_logger;
 
@@ -63,13 +63,12 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
-					m_undoStack.UndoChange();
-					
+					UndoStack::GetInstance().UndoChange();
 				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Y)
 				{
-					m_undoStack.RedoChange();
+					UndoStack::GetInstance().RedoChange();
 				}
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_SHIFT) && KTE.keycode == GLFW_KEY_F10)
@@ -83,23 +82,81 @@ namespace PE {
 
 				if (KTE.keycode == GLFW_KEY_DELETE)
 				{
-					for (const auto& id : SceneView())
-					{
-						if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent && EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value() == m_currentSelectedObject)
-							EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.reset();
-					}
+					AddInfoLog("Object Deleted");
 					if (m_currentSelectedObject != -1)
 					{
-						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
-						m_undoStack.AddChange(new DeleteObjectUndo(m_currentSelectedObject));
-					}
-					//if not first index
-					m_currentSelectedObject = -1; // just reset it
-					//if object selected
-					m_objectIsSelected = false;
+						if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children.size())
+						{
+							for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).children)
+							{
+								EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).savedChildren.emplace_back(cid);
+							}
 
-					if (EntityManager::GetInstance().GetEntitiesInPool(ALL).empty()) m_currentSelectedObject = -1;//if nothing selected
+							for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).savedChildren)
+							{
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.has_value())
+									Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value(), cid);
+								else
+									Hierarchy::GetInstance().DetachChild(cid);
+							}
+						}
+						if (EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent)
+						{
+							EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).parent.value()).children.erase(m_currentSelectedObject);
+						}
+
+						UndoStack::GetInstance().AddChange(new DeleteObjectUndo(m_currentSelectedObject));
+						EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).HandicapEntity();
+					}
 				}
 
+				if (InputSystem::IsKeyHeld(GLFW_KEY_R))
+				{
+
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE_Y;
+					}
+					else
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE;
+					}
+				}
+
+				if (InputSystem::IsKeyHeld(GLFW_KEY_S))
+				{
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE_Y;
+					}
+					else
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE;
+					}
+				}
+
+				if (InputSystem::IsKeyHeld(GLFW_KEY_T))
+				{
+					if (KTE.keycode == GLFW_KEY_X)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE_X;
+					}
+					else if (KTE.keycode == GLFW_KEY_Y)
+					{
+						m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE_Y;
+					}
+					else
+					{
+					m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+					}
+				}
 		}
 }

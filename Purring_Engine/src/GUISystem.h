@@ -24,8 +24,9 @@
 #include "WindowManager.h"
 #include <unordered_set>  // this is in the precompiled header but the compiler was complaining
 
+#include <optional>
+#define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this, std::placeholders::_1)) 
 #define HEX(hexcode)    hexcode/255.f // to convert colors
-#define	REGISTER_UI_FUNCTION(func,namespace) GUISystem::AddFunction(#func, std::bind(&##namespace::##func, this, std::placeholders::_1))
 typedef unsigned long long EntityID;
 namespace PE 
 {
@@ -111,6 +112,13 @@ namespace PE
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
 		/*!***********************************************************************************
+		 \brief Checks if the mouse cursor is within the bounds of any GUI objects
+
+		 \param[in,out] r_ME mouse click event details
+		*************************************************************************************/
+		void OnMouseRelease(const Event<MouseEvents>& r_ME);
+
+		/*!***********************************************************************************
 		 \brief Checks if a point is within the square bounds of a transform
 		 
 		 \param[in,out] x - x coordinate in view space
@@ -157,38 +165,46 @@ namespace PE
 	};
 
 	//enum to tell type of UI to make
-	enum class UIType { Button = 0, TextBox };
+	enum class UIType { Button = 0, Slider };
 
-	struct GUI
+	struct GUIButton
 	{		
 		/*!***********************************************************************************
 		 \brief Constructor. Does nothing 
 		*************************************************************************************/
-		GUI(){}
+		GUIButton(){}
 		/*!***********************************************************************************
 		 \brief Initializes the UI element.		 
 		*************************************************************************************/
-		virtual void Init() {}
+		void Init() {}
 		/*!***********************************************************************************
 		 \brief Update the UI element.		 
 		*************************************************************************************/
-		virtual void Update() {}
+		void Update() {}
 		/*!***********************************************************************************
 		 \brief Destroy the UI element.		 
 		*************************************************************************************/
-		virtual void Destroy() {}
+		void Destroy() {}
 		/*!***********************************************************************************
 		 \brief On hovering over the UI element	 
 		*************************************************************************************/
-		virtual void OnHover(EntityID) {}
+		void OnHover(EntityID id) 
+		{
+			if (m_onHovered != "")
+				GUISystem::m_uiFunc[m_onHovered](id);
+		}
 		/*!***********************************************************************************
 		 \brief On clicking the UI element	 
 		*************************************************************************************/
-		virtual void OnClick(EntityID) {}
+		void OnClick(EntityID id) 
+		{
+			if (m_onClicked != "")
+				GUISystem::m_uiFunc[m_onClicked](id);
+		}
 		/*!***********************************************************************************
 		 \brief Destructor	 
 		*************************************************************************************/
-		virtual ~GUI() {};
+		virtual ~GUIButton() {};
 	public:
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
@@ -207,52 +223,81 @@ namespace PE
 		float m_clickedTimer{};
 	public:
 		/*!***********************************************************************************
-		 \brief Serializes the UI element data	 
+		 \brief Serializes the GUIButton component data	 
 		*************************************************************************************/
 		virtual nlohmann::json ToJson(size_t id) const;
 		/*!***********************************************************************************
-		 \brief Deserializes the UI element data	 
+		 \brief Deserializes the GUIButton component data	 
 		*************************************************************************************/
-		static GUI Deserialize(const nlohmann::json& j);
-
+		static GUIButton Deserialize(const nlohmann::json& j);
 
 	};
 
-
-	struct Button : public GUI
+	struct GUISlider
 	{
 		/*!***********************************************************************************
-		 \brief Serializes the UI element data	 
+		 \brief Constructor. Does nothing
 		*************************************************************************************/
-		virtual void Init() override {}
+		GUISlider() {}
 		/*!***********************************************************************************
-		 \brief Update the button		 
+		 \brief Initializes the UI element.
 		*************************************************************************************/
-		virtual void Update() override {}
+		void Init() {}
 		/*!***********************************************************************************
-		 \brief Destory the button		 
+		 \brief Update the UI element.
 		*************************************************************************************/
-		virtual void Destroy() override {}
+		void Update();
 		/*!***********************************************************************************
-		 \brief Calls the onhover function 
+		 \brief Destroy the UI element.
 		*************************************************************************************/
-		inline virtual void OnHover(EntityID id) override
-		{
-			if (m_onHovered != "")
-				GUISystem::m_uiFunc[m_onHovered](id);
-		}
+		void Destroy();
+
 		/*!***********************************************************************************
-		 \brief Calls the onClick function 
+		 \brief Calculate the current value of the slider based on given min and max values.
 		*************************************************************************************/
-		inline virtual void OnClick(EntityID id) override
-		{
-			if (m_onClicked != "")
-				GUISystem::m_uiFunc[m_onClicked](id);
-		}
+		float CalculateValue(float currentX);
+
 		/*!***********************************************************************************
-		 \brief Does nothing
+		 \brief Destructor
 		*************************************************************************************/
-		virtual ~Button() {};
+		~GUISlider() {};
+	public:
+		//if knob is hovered
+		bool m_Hovered{};
+		bool m_disabled{ false };
+
+		//if knob is clicked to be changed by events
+		bool m_clicked{ false };
+
+
+		//texture for knob
+		vec4 m_defaultColor{ HEX(100),HEX(100) ,HEX(100),HEX(100) };
+		std::string m_defaultTexture{};
+		vec4 m_hoveredColor{ HEX(90),HEX(90) ,HEX(90),HEX(255) };
+		std::string m_hoveredTexture{ m_defaultTexture };
+		vec4 m_pressedColor{ HEX(60),HEX(60) ,HEX(60),HEX(255) };
+		std::string m_pressedTexture{ m_defaultTexture };
+		vec4 m_disabledColor{ HEX(20),HEX(20) ,HEX(20),HEX(255) };
+		std::string m_disabledTexture{ m_defaultTexture };
+
+		//to be assigned on creation
+		std::optional<EntityID> m_knobID;
+		//calculated on update
+		float m_startPoint, m_endPoint;
+		float m_currentValue;
+
+		//set on editor
+		float m_minValue{ 0 }, m_maxValue{100};
+
+		/*!***********************************************************************************
+		 \brief Serializes the GUISlider component data
+		*************************************************************************************/
+		virtual nlohmann::json ToJson(size_t id) const;
+		/*!***********************************************************************************
+		 \brief Deserializes the GUISlider component data
+		*************************************************************************************/
+		static GUISlider Deserialize(const nlohmann::json& j);
+
 
 	};
 }
