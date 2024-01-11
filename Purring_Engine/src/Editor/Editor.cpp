@@ -3997,12 +3997,10 @@ namespace PE {
 					if (off > 0.0f)
 						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2 - (ImGui::CalcTextSize("Pause").x + style.FramePadding.x) / 4);
 
-					static bool GameRunning {};
-
 					ImGui::BeginDisabled(m_isRunTime);
 					if (ImGui::Button("Play"))
 					{
-						if (!GameRunning)
+						if (!m_StopPlay)
 						{
 							m_isRunTime = true;
 							m_showEditor = false;
@@ -4013,7 +4011,7 @@ namespace PE {
 							UndoStack::GetInstance().ClearStack();
 							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 
-							GameRunning = true;
+							m_StopPlay = true;
 						}
 						else
 						{
@@ -4031,23 +4029,18 @@ namespace PE {
 					ImGui::EndDisabled();
 					ImGui::SameLine();
 
-					ImGui::BeginDisabled(!GameRunning);
+					ImGui::BeginDisabled(!m_StopPlay);
 					if (ImGui::Button("Stop")) {
 						m_showEditor = true;
-
+						m_isRunTime = false;
+						m_showFullGameView = false;
+						m_StopPlay = false;
 						if (m_isRunTime)
 						{
 							ClearObjectList();
 							serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
-
-						if (m_showEditor)
-							m_isRunTime = false;
-
-						m_showFullGameView = false;
-
-						GameRunning = false;
 					}
 					ImGui::EndDisabled();
 				}
@@ -4749,6 +4742,7 @@ namespace PE {
 				GameStateManager::GetInstance().ResetDefaultState();
 				m_showEditor = true;
 				toDisable = true;
+				m_StopPlay = false;
 				if (m_isRunTime)
 				{
 					ClearObjectList();

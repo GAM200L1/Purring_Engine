@@ -374,12 +374,15 @@ namespace PE {
 		bool m_showAnimationWindow;
 		//boolean for rendering
 		bool m_renderDebug;
-		bool m_isRunTime;
+
 
 		//boolean for prefabs
 		bool m_isPrefabMode;
 		bool m_applyPrefab;
 
+		//boolean for playstop
+		bool m_isRunTime;
+		bool m_StopPlay;
 
 		//variables for logging
 		std::vector<std::string> m_logOutput;
