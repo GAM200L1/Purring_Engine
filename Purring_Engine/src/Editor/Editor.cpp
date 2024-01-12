@@ -1514,7 +1514,7 @@ namespace PE {
 
 										// Shows a drop down of selectable textures
 										ImGui::Text("Textures: "); ImGui::SameLine();
-										ImGui::SetNextItemWidth(200.0f);
+										ImGui::SetNextItemWidth(300.0f);
 										bool bl{};
 										if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
 										{
