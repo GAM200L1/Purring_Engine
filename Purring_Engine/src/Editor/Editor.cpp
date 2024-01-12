@@ -314,10 +314,22 @@ namespace PE {
 		IMGUI_CHECKVERSION();
 		//create imgui context 
 		ImGui::CreateContext();
+
+		// Load Editor Fonts
+		ImGuiIO& io = ImGui::GetIO();
+		io.Fonts->AddFontFromFileTTF("../Assets/Fonts/San Francisco/SFUIText-Regular.ttf", 16.0f);
+		io.Fonts->Build();
+
 		switch (m_currentStyle)
 		{
 		case GuiStyle::DARK:
 			SetImGUIStyle_Dark();
+			break;
+		case GuiStyle::LIGHT:
+			SetImGUIStyle_Light();
+			break;
+		case GuiStyle::KURUMI:
+			SetImGUIStyle_Kurumi();
 			break;
 		case GuiStyle::PINK:
 			SetImGUIStyle_Pink();
@@ -327,8 +339,6 @@ namespace PE {
 			break;
 		}
 
-
-		ImGuiIO& io = ImGui::GetIO();
 		io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;
 		io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;
 
@@ -1504,7 +1514,7 @@ namespace PE {
 
 										// Shows a drop down of selectable textures
 										ImGui::Text("Textures: "); ImGui::SameLine();
-										ImGui::SetNextItemWidth(200.0f);
+										ImGui::SetNextItemWidth(300.0f);
 										bool bl{};
 										if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
 										{
@@ -3205,7 +3215,7 @@ namespace PE {
 					}
 				}
 
-				int numItemPerRow = (ImGui::GetWindowSize().x < 100.f) ? 1 : static_cast<int>(ImGui::GetWindowSize().x / 100.f);
+				int numItemPerRow = (ImGui::GetWindowSize().x < 120.f) ? 1 : static_cast<int>(ImGui::GetWindowSize().x / 120.f);
 
 				// list the files in the current showing directory as imgui text
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
@@ -3215,7 +3225,7 @@ namespace PE {
 					if (n % numItemPerRow) // to keep it in rows where 3 is max 3 colums
 						ImGui::SameLine();
 					
-					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(100, 100))) //child to hold image n text
+					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(120, 100))) //child to hold image n text
 					{
 						std::string icon{};
 						std::string const extension{ m_files[n].filename().extension().string() };
@@ -3232,14 +3242,43 @@ namespace PE {
 						else
 							icon = "../Assets/Icons/Other_Icon.png";
 
+						// Centering the Icon
+						float iconPosX = (120 - 50) * 0.5f;
+						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + iconPosX);
+
+						// Display the Icon
 						ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetIcon(icon)->GetTextureID(), ImVec2(50, 50), { 0,1 }, { 1,0 });
-						ImGui::Text(m_files[n].filename().string().c_str()); // text
+
+						// Prepare for Text
+						std::string filename = m_files[n].filename().string();
+						const int maxCharCount = 15;				// Char Limit
+
+						// Truncate Text
+						std::string displayText = filename;
+						if (filename.length() > maxCharCount)
+						{
+							displayText = filename.substr(0, maxCharCount - 3) + "..."; // Truncate and add ellipsis
+						}
+
+						// Centering and Displaying the Text
+						float textWidth = ImGui::CalcTextSize(displayText.c_str()).x;
+						float centerPosX = (120 - textWidth) * 0.5f;
+						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + centerPosX);
+
+						// Display the Truncated Text
+						ImGui::Text("%s", displayText.c_str());
+
 					}
 					ImGui::EndChild();
 
 					// check if the mouse is hovering the asset
 					if (ImGui::IsItemHovered())
 					{
+						// Hover over asset browser icons tooltip
+						ImGui::BeginTooltip();
+						ImGui::TextUnformatted(m_files[n].filename().string().c_str());
+						ImGui::EndTooltip();
+
 						// if item is a file with extension eg. .txt , .png
 						if (m_files[n].extension() != "")
 						{
@@ -4267,10 +4306,20 @@ namespace PE {
 						}
 						if (ImGui::BeginMenu("Theme"))
 						{
-							if (ImGui::MenuItem("Kurumi", ""))
+							if (ImGui::MenuItem("Dark", ""))
 							{
 								m_currentStyle = GuiStyle::DARK;
 								SetImGUIStyle_Dark();
+							}
+							if (ImGui::MenuItem("Light", ""))
+							{
+								m_currentStyle = GuiStyle::LIGHT;
+								SetImGUIStyle_Light();
+							}
+							if (ImGui::MenuItem("Kurumi", ""))
+							{
+								m_currentStyle = GuiStyle::KURUMI;
+								SetImGUIStyle_Kurumi();
 							}
 							if (ImGui::MenuItem("My Melody [WIP]", ""))
 							{
@@ -4282,6 +4331,7 @@ namespace PE {
 								m_currentStyle = GuiStyle::BLUE;
 								SetImGUIStyle_Blue();
 							}
+
 							ImGui::EndMenu();
 						}
 					}
@@ -4928,6 +4978,192 @@ namespace PE {
 	}
 
 	void Editor::SetImGUIStyle_Dark()
+	{
+		ImGuiStyle* style = &ImGui::GetStyle();
+		ImVec4* colors = style->Colors;
+
+		// Base colors
+		ImVec4 darkBg = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+		ImVec4 lightText = ImVec4(0.85f, 0.85f, 0.85f, 1.00f);
+		ImVec4 subtleAccent = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
+		ImVec4 borderGray = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+
+		// Text
+		colors[ImGuiCol_Text] = lightText;
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.50f, 0.50f, 0.50f, 1.00f);
+
+		// Backgrounds
+		colors[ImGuiCol_WindowBg] = darkBg;
+		colors[ImGuiCol_ChildBg] = darkBg;
+		colors[ImGuiCol_PopupBg] = ImVec4(0.10f, 0.10f, 0.10f, 0.94f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		colors[ImGuiCol_DockingEmptyBg] = darkBg;
+
+		// Borders
+		colors[ImGuiCol_Border] = borderGray;
+		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+
+		// Frames
+		colors[ImGuiCol_FrameBg] = ImVec4(0.20f, 0.20f, 0.20f, 1.00f);
+		colors[ImGuiCol_FrameBgHovered] = subtleAccent;
+		colors[ImGuiCol_FrameBgActive] = borderGray;
+
+		// Titles
+		colors[ImGuiCol_TitleBg] = darkBg;
+		colors[ImGuiCol_TitleBgActive] = subtleAccent;
+		colors[ImGuiCol_TitleBgCollapsed] = darkBg;
+
+		// Buttons
+		colors[ImGuiCol_Button] = subtleAccent;
+		colors[ImGuiCol_ButtonHovered] = borderGray;
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+
+		// Headers
+		colors[ImGuiCol_Header] = subtleAccent;
+		colors[ImGuiCol_HeaderHovered] = borderGray;
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+
+		// Other UI elements
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.12f, 0.12f, 0.12f, 0.53f);
+		colors[ImGuiCol_CheckMark] = lightText;
+		colors[ImGuiCol_SliderGrab] = subtleAccent;
+		colors[ImGuiCol_SliderGrabActive] = borderGray;
+		colors[ImGuiCol_ResizeGrip] = subtleAccent;
+		colors[ImGuiCol_ResizeGripHovered] = borderGray;
+		colors[ImGuiCol_ResizeGripActive] = borderGray;
+		colors[ImGuiCol_Tab] = subtleAccent;
+		colors[ImGuiCol_TabHovered] = borderGray;
+		colors[ImGuiCol_TabActive] = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
+		colors[ImGuiCol_TabUnfocused] = darkBg;
+		colors[ImGuiCol_TabUnfocusedActive] = darkBg;
+		colors[ImGuiCol_PlotLines] = lightText;
+		colors[ImGuiCol_PlotLinesHovered] = subtleAccent;
+		colors[ImGuiCol_PlotHistogram] = subtleAccent;
+		colors[ImGuiCol_PlotHistogramHovered] = borderGray;
+		colors[ImGuiCol_TextSelectedBg] = borderGray;
+		colors[ImGuiCol_DragDropTarget] = subtleAccent;
+		colors[ImGuiCol_NavHighlight] = subtleAccent;
+		colors[ImGuiCol_NavWindowingHighlight] = subtleAccent;
+		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.20f);
+		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.20f, 0.20f, 0.20f, 0.35f);
+
+		// Table colors
+		colors[ImGuiCol_TableHeaderBg] = ImVec4(0.19f, 0.19f, 0.20f, 1.00f);
+		colors[ImGuiCol_TableBorderStrong] = borderGray;
+		colors[ImGuiCol_TableBorderLight] = ImVec4(0.23f, 0.23f, 0.25f, 1.00f);
+		colors[ImGuiCol_TableRowBg] = darkBg;
+		colors[ImGuiCol_TableRowBgAlt] = darkBg;
+
+		// Rounding
+		float rounding = 5.0f;
+		style->WindowRounding = rounding;
+		style->ChildRounding = rounding;
+		style->FrameRounding = rounding;
+		style->PopupRounding = rounding;
+		style->ScrollbarRounding = rounding;
+		style->GrabRounding = rounding;
+		style->TabRounding = rounding;
+
+		// Padding
+		style->WindowPadding = ImVec2(8.0f, 8.0f);
+		style->FramePadding = ImVec2(5.0f, 2.0f);
+		style->ItemSpacing = ImVec2(6.0f, 4.0f);
+	}
+
+	void Editor::SetImGUIStyle_Light()
+	{
+		ImGuiStyle* style = &ImGui::GetStyle();
+		ImVec4* colors = style->Colors;
+
+		// Base colors
+		ImVec4 lightBg = ImVec4(0.94f, 0.94f, 0.94f, 1.00f);
+		ImVec4 darkText = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
+		ImVec4 mediumAccent = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
+		ImVec4 lightBorder = ImVec4(0.75f, 0.75f, 0.75f, 1.00f);
+
+		// Text
+		colors[ImGuiCol_Text] = darkText;
+		colors[ImGuiCol_TextDisabled] = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
+
+		// Backgrounds
+		colors[ImGuiCol_WindowBg] = lightBg;
+		colors[ImGuiCol_ChildBg] = lightBg;
+		colors[ImGuiCol_PopupBg] = ImVec4(0.98f, 0.98f, 0.98f, 0.94f);
+		colors[ImGuiCol_MenuBarBg] = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
+		colors[ImGuiCol_DockingEmptyBg] = lightBg;
+
+		// Borders
+		colors[ImGuiCol_Border] = lightBorder;
+		colors[ImGuiCol_BorderShadow] = ImVec4(0.00f, 0.00f, 0.00f, 0.00f);
+
+		// Frames
+		colors[ImGuiCol_FrameBg] = ImVec4(0.88f, 0.88f, 0.88f, 1.00f);
+		colors[ImGuiCol_FrameBgHovered] = mediumAccent;
+		colors[ImGuiCol_FrameBgActive] = lightBorder;
+
+		// Titles
+		colors[ImGuiCol_TitleBg] = lightBg;
+		colors[ImGuiCol_TitleBgActive] = mediumAccent;
+		colors[ImGuiCol_TitleBgCollapsed] = lightBg;
+
+		// Buttons
+		colors[ImGuiCol_Button] = mediumAccent;
+		colors[ImGuiCol_ButtonHovered] = lightBorder;
+		colors[ImGuiCol_ButtonActive] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
+
+		// Headers
+		colors[ImGuiCol_Header] = mediumAccent;
+		colors[ImGuiCol_HeaderHovered] = lightBorder;
+		colors[ImGuiCol_HeaderActive] = ImVec4(0.85f, 0.85f, 0.85f, 1.00f);
+
+		// Other UI elements
+		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.92f, 0.92f, 0.92f, 0.53f);
+		colors[ImGuiCol_CheckMark] = darkText;
+		colors[ImGuiCol_SliderGrab] = mediumAccent;
+		colors[ImGuiCol_SliderGrabActive] = lightBorder;
+		colors[ImGuiCol_ResizeGrip] = mediumAccent;
+		colors[ImGuiCol_ResizeGripHovered] = lightBorder;
+		colors[ImGuiCol_ResizeGripActive] = lightBorder;
+		colors[ImGuiCol_Tab] = mediumAccent;
+		colors[ImGuiCol_TabHovered] = lightBorder;
+		colors[ImGuiCol_TabActive] = ImVec4(0.80f, 0.80f, 0.80f, 1.00f);
+		colors[ImGuiCol_TabUnfocused] = lightBg;
+		colors[ImGuiCol_TabUnfocusedActive] = lightBg;
+		colors[ImGuiCol_PlotLines] = darkText;
+		colors[ImGuiCol_PlotLinesHovered] = mediumAccent;
+		colors[ImGuiCol_PlotHistogram] = mediumAccent;
+		colors[ImGuiCol_PlotHistogramHovered] = lightBorder;
+		colors[ImGuiCol_TextSelectedBg] = lightBorder;
+		colors[ImGuiCol_DragDropTarget] = mediumAccent;
+		colors[ImGuiCol_NavHighlight] = mediumAccent;
+		colors[ImGuiCol_NavWindowingHighlight] = mediumAccent;
+		colors[ImGuiCol_NavWindowingDimBg] = ImVec4(0.20f, 0.20f, 0.20f, 0.20f);
+		colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0.80f, 0.80f, 0.80f, 0.35f);
+
+		// Table colors
+		colors[ImGuiCol_TableHeaderBg] = ImVec4(0.89f, 0.89f, 0.90f, 1.00f);
+		colors[ImGuiCol_TableBorderStrong] = lightBorder;
+		colors[ImGuiCol_TableBorderLight] = ImVec4(0.93f, 0.93f, 0.95f, 1.00f);
+		colors[ImGuiCol_TableRowBg] = lightBg;
+		colors[ImGuiCol_TableRowBgAlt] = lightBg;
+
+		// Rounding
+		float rounding = 5.0f;
+		style->WindowRounding = rounding;
+		style->ChildRounding = rounding;
+		style->FrameRounding = rounding;
+		style->PopupRounding = rounding;
+		style->ScrollbarRounding = rounding;
+		style->GrabRounding = rounding;
+		style->TabRounding = rounding;
+
+		// Padding
+		style->WindowPadding = ImVec2(8.0f, 8.0f);
+		style->FramePadding = ImVec2(5.0f, 2.0f);
+		style->ItemSpacing = ImVec2(6.0f, 4.0f);
+	}
+
+	void Editor::SetImGUIStyle_Kurumi()
 	{
 		ImGuiStyle* style = &ImGui::GetStyle();
 		ImVec4* colors = style->Colors;
