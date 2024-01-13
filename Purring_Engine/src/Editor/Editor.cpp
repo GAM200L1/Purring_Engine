@@ -2128,7 +2128,10 @@ namespace PE {
 								}
 
 								ImGui::SeparatorText("Value");
-
+								ImGui::Checkbox("Is Health Bar", &EntityManager::GetInstance().Get<GUISlider>(entityID).m_isHealthBar);
+								ImGui::Text("Knob Width: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+								ImGui::DragFloat("##knobw", &EntityManager::GetInstance().Get<GUISlider>(entityID).m_currentWidth);
 								ImGui::Text("Min Value: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
 								ImGui::DragFloat("##Min Value", &EntityManager::GetInstance().Get<GUISlider>(entityID).m_minValue);
@@ -2139,8 +2142,7 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Current Value: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
-								float currVal = EntityManager::GetInstance().Get<GUISlider>(entityID).m_currentValue;
-								ImGui::DragFloat("##Current Value", &currVal);
+								ImGui::DragFloat("##Current Value", &EntityManager::GetInstance().Get<GUISlider>(entityID).m_currentValue);
 							}
 						}
 						
