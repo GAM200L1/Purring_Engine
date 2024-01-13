@@ -172,6 +172,7 @@ namespace PE
 					if (slider.m_knobID.has_value())
 					{
 						Transform& knobTransform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
+						knobTransform.height = EntityManager::GetInstance().Get<Transform>(objectID).height;
 
 						if (!slider.m_isHealthBar)
 						{
