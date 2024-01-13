@@ -66,10 +66,6 @@ namespace PE
         public: 
             // the Entity IDs of the entities that have been rendered, in the order they were rendered in.
             static std::vector<EntityID> renderedEntities;
-            static unsigned totalDrawCalls;   // Sum total of all draw calls made
-            static unsigned textDrawCalls;    // Total draw calls made for text (1 draw call per chara)
-            static unsigned objectDrawCalls;  // Total draw calls for gameobjects
-            static unsigned debugDrawCalls;   // Total draw calls for debug shapes
 
 
             // ----- Constructor ----- //
@@ -279,8 +275,20 @@ namespace PE
 
              \param[in] width - Width to set the viewport to.
              \param[in] height - Height to set the viewport to.
+             \param[in] x - x coordinate of the bottom left corner of the viewport.
+             \param[in] y - y coordinate of the bottom left corner of the viewport.
             *************************************************************************************/
-            void SetViewport(float const width, float const height);
+            void SetViewport(float const width, float const height, GLint x = 0, GLint y = 0);
+
+            /*!***********************************************************************************
+             \brief Set the OpenGL viewport to the size passed in.
+
+             \param[in] width - Width to set the viewport to.
+             \param[in] height - Height to set the viewport to.
+             \param[in] x - x coordinate of the bottom left corner of the viewport.
+             \param[in] y - y coordinate of the bottom left corner of the viewport.
+            *************************************************************************************/
+            void SetViewport(int const width, int const height, GLint x = 0, GLint y = 0);
 
         }; // End of class
 

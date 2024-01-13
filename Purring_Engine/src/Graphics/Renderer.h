@@ -41,6 +41,7 @@ namespace PE
             DEBUG_CIRCLE,
             DEBUG_LINE,
             DEBUG_POINT,
+            TEXT,
             MESH_COUNT,
             NONE
         };

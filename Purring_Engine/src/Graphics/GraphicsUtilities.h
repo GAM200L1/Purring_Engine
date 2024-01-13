@@ -17,6 +17,8 @@
 #include "GLHeaders.h"
 #include <glm/glm.hpp>
 
+#include "Renderer.h"
+
 namespace PE
 {
     namespace Graphics
@@ -29,6 +31,11 @@ namespace PE
         GLint inline maxIndicesCount{};      // GL_MAX_ELEMENTS_INDICES
         GLint inline maxTextureBindings{};   // GL_MAX_COMBINED_TEXTURE_IMAGE_UNITS
         GLint inline maxTextureSize{};       // GL_MAX_TEXTURE_SIZE
+
+        unsigned inline totalDrawCalls{};   // Sum total of all draw calls made
+        unsigned inline textDrawCalls{};    // Total draw calls made for text (1 draw call per chara)
+        unsigned inline objectDrawCalls{};  // Total draw calls for gameobjects
+        unsigned inline debugDrawCalls{};   // Total draw calls for debug shapes
 
         /*!***********************************************************************************
          \brief Prints the hardware specifications of the device related to graphics.
@@ -98,5 +105,17 @@ namespace PE
         *************************************************************************************/
         glm::mat4 GenerateInverseTransformMatrix(float const width, float const height,
             float const orientation, float const positionX, float const positionY);
+
+        /*!***********************************************************************************
+         \brief Increments the draw call count.
+
+         \param[in] meshType - Type of mesh the draw call is being made for.
+        *************************************************************************************/
+        void IncrementDrawCallCount(EnumMeshType meshType);
+
+        /*!***********************************************************************************
+         \brief Resets the draw call count.
+        *************************************************************************************/
+        void ResetDrawCallCount();
     } // End of Graphics namespace
 } // End of PE namespace

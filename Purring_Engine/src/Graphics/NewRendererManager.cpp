@@ -43,10 +43,6 @@ namespace PE
     {
         // Initialize static variables
         std::vector<EntityID> NewRendererManager::renderedEntities{};
-        unsigned NewRendererManager::totalDrawCalls{};   // Sum total of all draw calls made
-        unsigned NewRendererManager::textDrawCalls{};    // Total draw calls made for text (1 draw call per chara)
-        unsigned NewRendererManager::objectDrawCalls{};  // Total draw calls for gameobjects
-        unsigned NewRendererManager::debugDrawCalls{};   // Total draw calls for debug shapes
 
         NewRendererManager::NewRendererManager(int const _width, int const _height)
             : m_targetWidth{ _width }, m_targetHeight{ _height }, 
@@ -90,6 +86,8 @@ namespace PE
             m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::PLAY_MODE)].CreateFrameBuffer(width, height, true, false, "Play FBO");
 
             // Update the size fo the framebuffers
+            m_cachedPlayWindowWidth = static_cast<float>(width), m_cachedPlayWindowHeight = static_cast<float>(height);
+            m_cachedSceneWindowWidth = static_cast<float>(width), m_cachedSceneWindowHeight = static_cast<float>(height);
             UpdatePlayWindowSize();
 #ifndef GAMERELEASE
             UpdateSceneWindowSize();
@@ -119,6 +117,10 @@ namespace PE
                 return;
             }
 
+            // Clear list of gameobjects that have been rendered (used for screenpicking)
+            renderedEntities.clear();
+
+            // Resize the framebuffers 
             UpdatePlayWindowSize();
 #ifndef GAMERELEASE
             UpdateSceneWindowSize();
@@ -167,7 +169,10 @@ namespace PE
             {
                 FrameBuffer& editorBuffer{ m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::EDIT_MODE)] };
                 editorBuffer.Bind(); 
-                SetViewport(m_cachedSceneWindowWidth, m_cachedSceneWindowHeight);
+
+                float windowX, windowY;
+                Editor::GetInstance().GetSceneWindowBottomLeft(windowX, windowY);
+                SetViewport(m_cachedSceneWindowWidth, m_cachedSceneWindowHeight);//m_targetWidth, m_targetHeight, -static_cast<GLint>(windowX), -static_cast<GLint>(windowY));
 
                 ClearBackground(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 
@@ -328,7 +333,9 @@ namespace PE
                             rendererComponent.GetColor(), // color
                         }, r_worldToNdc
                     );
-                }                
+                }
+
+                renderedEntities.emplace_back(id);
             } // End of for (EntityID const& id : renderableContainer)
 
             m_batchRenderer.Flush(); // Ensure all objects have been rendered
@@ -414,6 +421,8 @@ namespace PE
                         }, r_toNdc
                     );
                 }
+
+                renderedEntities.emplace_back(id);
             } // End of for (EntityID const& id : renderableContainer)
 
             m_batchRenderer.Flush(); // Ensure all objects have been rendered
@@ -584,8 +593,9 @@ namespace PE
 
                 // render quad
                 glDrawArrays(GL_TRIANGLES, 0, 6);
+                
+                IncrementDrawCallCount(EnumMeshType::TEXT);
 
-                ++textDrawCalls;
                 // now advance cursors for next glyph
                 position.x += (ch.advance >> 6) * r_textComponent.GetSize(); // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
             }
@@ -729,13 +739,26 @@ namespace PE
                 GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
                 glViewport(0, 0, windowWidthInt, windowHeightInt);
+
+                // Update the editor camera viewport size
+                GETCAMERAMANAGER()->GetEditorCamera().SetViewDimensions(windowWidth, windowHeight);
+
                 m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::EDIT_MODE)].Resize(windowWidthInt, windowHeightInt);
             }
 
 #endif // !GAMERELEASE
         }
 
-        void NewRendererManager::SetViewport(float const width, float const height)
+        void NewRendererManager::SetViewport(float const width, float const height, GLint x, GLint y)
+        {
+            // Update the frame buffer
+            GLsizei const windowWidthInt{ static_cast<GLsizei>(width) };
+            GLsizei const windowHeightInt{ static_cast<GLsizei>(height) };
+            glViewport(0, 0, windowWidthInt, windowHeightInt);
+        }
+
+
+        void NewRendererManager::SetViewport(int const width, int const height, GLint x, GLint y)
         {
             // Update the frame buffer
             GLsizei const windowWidthInt{ static_cast<GLsizei>(width) };

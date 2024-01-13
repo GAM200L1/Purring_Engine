@@ -44,6 +44,8 @@
 #include "Logging/Logger.h"
 #include "Logic/LogicSystem.h"
 #include "Graphics/RendererManager.h"
+#include "Graphics/NewRendererManager.h"
+#include "Graphics/GraphicsUtilities.h"
 #include "Logic/testScript.h"
 #include "Logic/PlayerControllerScript.h"
 #include "Logic/EnemyTestScript.h"
@@ -237,6 +239,12 @@ namespace PE {
 	{
 		width = m_gameWindowWidth;
 		height = m_gameWindowHeight;
+	}
+
+	void Editor::GetSceneWindowBottomLeft(float& x, float& y)
+	{
+		x = m_sceneWindowBottomLeftX;
+		y = m_sceneWindowBottomLeftY;
 	}
 
 	float Editor::GetPlayWindowOffset()
@@ -3564,6 +3572,7 @@ namespace PE {
 			ImGui::Separator();
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 
+#ifndef TEST_BATCH_RENDERER
 			ImGui::Text("Total Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::totalDrawCalls).c_str());
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 			ImGui::Text("Object Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::objectDrawCalls).c_str());
@@ -3572,7 +3581,16 @@ namespace PE {
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 			ImGui::Text("Debug Shape Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::RendererManager::debugDrawCalls).c_str());
 			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
+#else
+			ImGui::Text("Total Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::totalDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Object Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::objectDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Text Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::textDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+			ImGui::Text("Debug Shape Draw Calls: "); ImGui::SameLine(); ImGui::Text(std::to_string(Graphics::debugDrawCalls).c_str());
+			ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+#endif //!TEST_BATCH_RENDERER
 
 			ImGui::End(); //imgui close
 		}
@@ -4039,7 +4057,6 @@ namespace PE {
 				ImGuiStyle& style = ImGui::GetStyle();
 				if (!m_isPrefabMode)
 				{
-					ImGuiStyle& style = ImGui::GetStyle();
 					float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.5f + ImGui::CalcTextSize("Pause").x;
 					float avail = ImGui::GetContentRegionAvail().x;
 
@@ -4488,6 +4505,10 @@ namespace PE {
 			static bool moving;
 			ImGui::Begin("Scene View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
+			ImVec2 windowPosition = ImGui::GetWindowPos();
+			m_sceneWindowBottomLeftX = windowPosition.x;
+			m_sceneWindowBottomLeftY = windowPosition.y + ImGui::GetWindowSize().y;
+
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
 			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
 			{
@@ -4668,9 +4689,16 @@ namespace PE {
 					{
 						m_currentSelectedObject = -1;
 						// Loop through all objects
-						for (long i{ static_cast<long>(Graphics::RendererManager::renderedEntities.size() - 1) }; i >= 0; --i)
+
+#ifndef TEST_BATCH_RENDERER
+						auto const& r_renderedEntities{ Graphics::RendererManager::renderedEntities };
+#else
+						auto const& r_renderedEntities{ Graphics::NewRendererManager::renderedEntities };
+#endif //!TEST_BATCH_RENDERER
+
+						for (long i{ static_cast<long>(r_renderedEntities.size() - 1) }; i >= 0; --i)
 						{
-							EntityID id{ Graphics::RendererManager::renderedEntities[i] };
+							EntityID id{ r_renderedEntities[i] };
 
 							// Get the transform component of the entity
 							Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
@@ -4681,11 +4709,11 @@ namespace PE {
 							transformedCursor = Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
 								* transformedCursor;
 
-							transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+							transformedCursor = Graphics::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
 								* transformedCursor;
 
 							glm::vec4 backToWorldSpacePosition{
-									Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+									Graphics::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
 									* transformedCursor
 							};
 

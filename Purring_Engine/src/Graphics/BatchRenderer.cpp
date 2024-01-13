@@ -385,6 +385,8 @@ namespace PE
             // Make drawcall
             glDrawElements(primitiveType, static_cast<GLsizei>(m_texturedIndices.size()), GL_UNSIGNED_SHORT, NULL);
 
+            IncrementDrawCallCount(m_lastMeshDrawn);
+
             // Unbind all textures
             for (unsigned int i{}; i < m_textureIds.size(); ++i)
             {
@@ -420,6 +422,7 @@ namespace PE
             // Make drawcall
             glDrawElements(primitiveType, static_cast<GLsizei>(m_untexturedIndices.size()), GL_UNSIGNED_SHORT, NULL);
 
+            IncrementDrawCallCount(m_lastMeshDrawn);
 
             // Unbind shader program and VAO
             shaderProgramPointer->UnUse();

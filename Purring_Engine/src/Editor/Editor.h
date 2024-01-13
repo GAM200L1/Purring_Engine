@@ -84,6 +84,12 @@ namespace PE {
 		*************************************************************************************/
 		void GetGameWindowSize(float& width, float& height);
 		/*!***********************************************************************************
+		 \brief Return the bottom left corner of the scene window
+		 \param[out] float x coordinate of the bottom left corner of the scene window
+		 \param[out] float y coordinate of the bottom left corner of the scene window
+		*************************************************************************************/
+		void GetSceneWindowBottomLeft(float& x, float& y);
+		/*!***********************************************************************************
 		 \brief Return the size of the y offset of the play window
 		*************************************************************************************/
 		float GetPlayWindowOffset();
@@ -422,6 +428,7 @@ namespace PE {
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
 		float m_gameWindowWidth, m_gameWindowHeight; // dimensions of the game window
+		float m_sceneWindowBottomLeftX, m_sceneWindowBottomLeftY; // dimensions of the game window
 		float m_playWindowOffset {27.f};
 		bool m_mouseInScene, m_mouseInGameWindow; // True if the mouse is hovering over the scene or game windows
 		static std::filesystem::path m_parentPath;

@@ -156,5 +156,45 @@ namespace PE
                 -rightDotPosition, -upDotPosition, 0.f, 1.f
             };
         }
+
+
+        void IncrementDrawCallCount(EnumMeshType meshType)
+        {
+            switch (meshType)
+            {
+            case EnumMeshType::TEXT:
+            {
+                ++textDrawCalls;
+                break;
+            }
+            case EnumMeshType::QUAD:
+            case EnumMeshType::TEXTURED_QUAD:
+            {
+                ++objectDrawCalls;
+                break;
+            }
+            case EnumMeshType::DEBUG_CIRCLE:
+            case EnumMeshType::DEBUG_SQUARE:
+            case EnumMeshType::DEBUG_LINE:
+            case EnumMeshType::DEBUG_POINT:
+            {
+                ++debugDrawCalls;
+                break;
+            }
+            default: break;
+            }
+
+            totalDrawCalls = textDrawCalls + objectDrawCalls + debugDrawCalls;
+        }
+
+
+        void ResetDrawCallCount()
+        {
+            totalDrawCalls = 0;
+            textDrawCalls = 0;
+            objectDrawCalls = 0;
+            debugDrawCalls = 0;
+        }
+
     } // End of Graphics namespace
 } // End of PE namespace
