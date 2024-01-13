@@ -50,62 +50,53 @@ namespace PE
 		return false;
 	}
 
-	void Hierarchy::AttachChild(const EntityID parent, const EntityID child)
+	void Hierarchy::AttachChild(const EntityID& r_parent, const EntityID& r_child)
 	{
 		// entity DNE, return
-		if (!EntityManager::GetInstance().Has<EntityDescriptor>(child))
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(r_child))
 			return;
 		
-		if (RecursionHelper(parent, EntityManager::GetInstance().Get<EntityDescriptor>(child)))
+		if (RecursionHelper(r_parent, EntityManager::GetInstance().Get<EntityDescriptor>(r_child)))
 		{
 			return;
 		}
-		if (EntityManager::GetInstance().Get<EntityDescriptor>(child).parent)
+		if (EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent)
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()).children.erase(child);
+			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent.value()).children.erase(r_child);
 		}
 		
-		EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.emplace(child);
-		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent = parent;
-		vec3 tmpc (EntityManager::GetInstance().Get<Transform>(child).position, 1.f);
+		EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children.emplace(r_child);
+		EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent = r_parent;
+		vec3 tmpc (EntityManager::GetInstance().Get<Transform>(r_child).position, 1.f);
 		// compute the relative position of the current object to the parent to get the proper relative position to set
-		tmpc = EntityManager::GetInstance().Get<Transform>(parent).GetTransformMatrix3x3().Inverse() * tmpc;
+		tmpc = EntityManager::GetInstance().Get<Transform>(r_parent).GetTransformMatrix3x3().Inverse() * tmpc;
 
 		// set the relative positon to the computed values
-		EntityManager::GetInstance().Get<Transform>(child).relPosition = vec2(tmpc.x, tmpc.y);
-		EntityManager::GetInstance().Get<Transform>(child).relOrientation = EntityManager::GetInstance().Get<Transform>(child).orientation - EntityManager::GetInstance().Get<Transform>(parent).orientation;
-		if (!EntityManager::GetInstance().Get<EntityDescriptor>(parent).isActive)
-			EntityManager::GetInstance().Get<EntityDescriptor>(child).DisableEntity();
+		EntityManager::GetInstance().Get<Transform>(r_child).relPosition = vec2(tmpc.x, tmpc.y);
+		EntityManager::GetInstance().Get<Transform>(r_child).relOrientation = EntityManager::GetInstance().Get<Transform>(r_child).orientation - EntityManager::GetInstance().Get<Transform>(r_parent).orientation;
+		if (!EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).isActive)
+			EntityManager::GetInstance().Get<EntityDescriptor>(r_child).DisableEntity();
 		
-		UpdateRenderOrder(parent);
+		UpdateRenderOrder(r_parent);
 	}
 
-	void Hierarchy::DetachChild(const EntityID& child)
+	void Hierarchy::DetachChild(const EntityID& r_child)
 	{
 		// entity DNE, return
-		if (!EntityManager::GetInstance().Has<EntityDescriptor>(child))
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(r_child) || !EntityManager::GetInstance().Get<EntityDescriptor>(r_child).isAlive)
 			return;
-		if (EntityManager::GetInstance().Get<EntityDescriptor>(child).parent)
+		if (EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent)
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()).children.erase(child);
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent.value()))
+				EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent.value()).children.erase(r_child);
 		}
-		EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.reset();
-		if (EntityManager::GetInstance().Has<Transform>(child))
+		EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent.reset();
+		if (EntityManager::GetInstance().Has<Transform>(r_child))
 		{
-			EntityManager::GetInstance().Get<Transform>(child).relPosition.Zero();
-			EntityManager::GetInstance().Get<Transform>(child).relOrientation = 0;
+			EntityManager::GetInstance().Get<Transform>(r_child).relPosition.Zero();
+			EntityManager::GetInstance().Get<Transform>(r_child).relOrientation = 0;
 		}
-		UpdateRenderOrder(child);
-	}
-
-	const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& parent) const
-	{
-		return EntityManager::GetInstance().Get<EntityDescriptor>(parent).children;
-	}
-
-	const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& child) const
-	{
-		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent;
+		UpdateRenderOrder(r_child);
 	}
 
 	bool Hierarchy::HasParent(const EntityID& child) const
@@ -166,6 +157,7 @@ namespace PE
 				trans.orientation = parent.orientation + trans.relOrientation;
 			}
 			// if it has children recursively call this function, with the current ID as the input
+			if(EntityManager::GetInstance().Has<EntityDescriptor>(childrenID))
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(childrenID).children.size())
 			{
 				TransformUpdateHelper(childrenID);
@@ -175,26 +167,26 @@ namespace PE
 
 	void Hierarchy::UpdateParentList()
 	{
-		parentOrder.clear();
-		sceneOrder.clear();
+		m_parentOrder.clear();
+		m_sceneOrder.clear();
 		for (const EntityID& id : SceneView<EntityDescriptor, Transform>())
 		{
 			// id 0 is default camera, ignore it
-			if (!id)
+			if (id == 0)
 				continue;
 			// only if it is base layer
 			if (!HasParent(id))
 			{
-				sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+				m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
 			}
 		}
-		for (auto [k,v] : sceneOrder)
-			parentOrder.emplace_back(v);
+		for (auto [k,v] : m_sceneOrder)
+			m_parentOrder.emplace_back(v);
 	}
 
 	void Hierarchy::UpdateTransform()
 	{
-		for (const EntityID& parentID : parentOrder)
+		for (const EntityID& parentID : m_parentOrder)
 		{
 			TransformUpdateHelper(parentID);
 		}
@@ -205,12 +197,12 @@ namespace PE
 		// empty for now
 	}
 
-	void Hierarchy::RenderOrderUpdateHelper(const EntityID& parent, float min, float max)
+	void Hierarchy::RenderOrderUpdateHelper(const EntityID& r_parent, float min, float max)
 	{
-		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(parent).children.size() + 1);
+		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children.size() + 1);
 		EntityID prevSceneID{ ULLONG_MAX };
 		std::map<EntityID, EntityDescriptor*> descs;
-		for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(parent).children)
+		for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children)
 		{
 			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
 			if (desc.sceneID == ULLONG_MAX || desc.sceneID == prevSceneID)
@@ -228,9 +220,9 @@ namespace PE
 			const float order = min + (delta * cnt);
 
 			if (desc->renderOrder <= min || desc->renderOrder >= max || (desc->renderOrder != order))
-				sceneHierarchy.erase(desc->renderOrder);
+				m_sceneHierarchy.erase(desc->renderOrder);
 			desc->renderOrder = order;
-			sceneHierarchy[desc->renderOrder] = desc->oldID;
+			m_sceneHierarchy[desc->renderOrder] = desc->oldID;
 
 			if (desc->children.size())
 			{
@@ -244,16 +236,16 @@ namespace PE
 	void Hierarchy::UpdateRenderOrder(EntityID targetID)
 	{
 		// update specific entity
-		float delta = 100.f * parentOrder.size();
+		float delta = 100.f * m_parentOrder.size();
 
 		if (targetID != ULLONG_MAX)
 		{
 			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(targetID);
 			if (!desc.parent.has_value())
 			{
-				sceneHierarchy.erase(desc.renderOrder);
+				m_sceneHierarchy.erase(desc.renderOrder);
 				desc.renderOrder = static_cast<float>(desc.sceneID) + (desc.layer * delta);
-				sceneHierarchy[desc.renderOrder] = targetID;
+				m_sceneHierarchy[desc.renderOrder] = targetID;
 			}
 
 			// recursively update children
@@ -264,20 +256,20 @@ namespace PE
 		}
 		else // update all the parents
 		{
-			for (const EntityID& parentID : parentOrder)
+			m_sceneHierarchy.clear();
+			for (const EntityID& parentID : m_parentOrder)
 			{
 				EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(parentID);
-
 				// ignoring UI for now
 				if (desc.sceneID == ULLONG_MAX)
 					desc.sceneID = parentID;
 
 				float RO = static_cast<float>(desc.sceneID) + (desc.layer * delta);
 				if (RO != desc.renderOrder)
-					sceneHierarchy.erase(desc.renderOrder);
+					m_sceneHierarchy.erase(desc.renderOrder);
 
 				desc.renderOrder = RO;
-				sceneHierarchy[desc.renderOrder] = parentID;
+				m_sceneHierarchy[desc.renderOrder] = parentID;
 				
 
 				// recursively update children
@@ -288,15 +280,15 @@ namespace PE
 			}
 		}
 		
-		renderOrder.clear();
-		renderOrderUI.clear();
+		m_renderOrder.clear();
+		m_renderOrderUI.clear();
 		// to update the logic here
 		// main concern is differentiation of UI and world objects will be modified
-		for (auto [k, v] : sceneHierarchy)
+		for (auto [k, v] : m_sceneHierarchy)
 		{
 			if (EntityManager::GetInstance().Has<PE::Graphics::Renderer>(v))
 			{
-				renderOrder.emplace_back(v);
+				m_renderOrder.emplace_back(v);
 			}
 			// to change to canvas!!
 			else if (EntityManager::GetInstance().Has<PE::Graphics::GUIRenderer>(v))
@@ -304,7 +296,7 @@ namespace PE
 				if (!GETGUISYSTEM()->AreThereActiveCanvases()) { continue; }
 
 				if(GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
-						renderOrderUI.emplace_back(v);
+					m_renderOrderUI.emplace_back(v);
 			}
 			
 		}

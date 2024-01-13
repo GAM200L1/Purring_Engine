@@ -35,7 +35,6 @@
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
 
-
 //#define MY_DEBUG
 
 namespace PE
@@ -186,13 +185,11 @@ namespace PE
                 editorBuffer.Unbind();
 
                 // Update Editor windows
-                GLuint sceneTexId{ editorBuffer.GetTextureId() }, playTexId{ playBuffer.GetTextureId() };
                 Editor::GetInstance().Render(editorBuffer.GetTextureId(), playBuffer.GetTextureId());
             }
             else
             {
                 // Update Editor windows
-                GLuint playTexId{ playBuffer.GetTextureId() };
                 Editor::GetInstance().Render(0, playBuffer.GetTextureId());
             }
 #else 
@@ -498,7 +495,9 @@ namespace PE
                 if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive /*|| !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
                 TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
-                vec2 position{ EntityManager::GetInstance().Get<Transform>(id).position };
+                TextBox textBox{ EntityManager::GetInstance().Get<Transform>(id).position,
+                                  EntityManager::GetInstance().Get<Transform>(id).width,
+                                  EntityManager::GetInstance().Get<Transform>(id).height };
 
                 // if component has no font
                 if (textComponent.GetFont() == nullptr)
@@ -509,21 +508,9 @@ namespace PE
                 // Store the index of the rendered entity
                 renderedEntities.emplace_back(id);
 
-                // get width and height of text
-                glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
-                textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
-                textSize.y *= (textComponent.GetSize());
-
-                // Resize the transform if the entity does not have other renderer components
-                if (!EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<GUIRenderer>())
-                    && !EntityManager::GetInstance().Has(id, EntityManager::GetInstance().GetComponentID<Renderer>()))
-                {
-                    EntityManager::GetInstance().Get<Transform>(id).width = textSize.x;
-                    EntityManager::GetInstance().Get<Transform>(id).height = textSize.y;
-                }
-
-                textSize.x *= 0.5f;
-                textSize.y *= 0.5f;
+                std::vector<std::string> lines{ SplitTextIntoLines(textComponent, textBox) };
+                float currentY{ 0.f };
+                float hAlignOffset, vAlignOffset;
 
                 // activate corresponding render state	
                 p_textShader->Use();
@@ -531,45 +518,21 @@ namespace PE
                 p_textShader->SetUniform("textColor", textComponent.GetColor());
 
                 glActiveTexture(GL_TEXTURE0);
-                glBindVertexArray(textComponent.GetFont()->m_vertexArrayObject);
+                glBindVertexArray(textComponent.GetFont()->vertexArrayObject);
 
-                // iterate through all characters
-                std::string::const_iterator c;
-                for (c = textComponent.GetText().begin(); c != textComponent.GetText().end(); c++)
+                // get vertical alignment offset
+                VerticalTextAlignment(textComponent, lines, textBox, vAlignOffset);
+
+                // render line
+                for (std::string const& line : lines)
                 {
-                    Character ch = textComponent.GetFont()->Characters.at(*c);
+                    // get horizontal alignment offset
+                    HorizontalTextAlignment(textComponent, line, textBox, hAlignOffset);
 
-                    float xPosition = position.x + ch.Bearing.x * textComponent.GetSize() - textSize.x;
-                    float yPosition = position.y - (ch.Size.y - ch.Bearing.y) * textComponent.GetSize() - textSize.y;
+                    DrawTextLine(textComponent, line, textBox.position, currentY, hAlignOffset, vAlignOffset);
 
-                    float w = ch.Size.x * textComponent.GetSize();
-                    float h = ch.Size.y * textComponent.GetSize();
-                    // update VBO for each character
-                    float vertices[6][4] = {
-                        { xPosition,     yPosition + h,   0.0f, 0.0f },
-                        { xPosition ,    yPosition,       0.0f, 1.0f },
-                        { xPosition + w, yPosition,       1.0f, 1.0f },
-
-                        { xPosition,     yPosition + h,   0.0f, 0.0f },
-                        { xPosition + w, yPosition ,      1.0f, 1.0f },
-                        { xPosition + w, yPosition + h,   1.0f, 0.0f }
-                    };
-
-                    // render glyph texture over quad
-                    glBindTexture(GL_TEXTURE_2D, ch.TextureID);
-
-                    // update content of VBO memory
-                    glBindBuffer(GL_ARRAY_BUFFER, textComponent.GetFont()->m_vertexBufferObject);
-                    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-                    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-                    // render quad
-                    glDrawArrays(GL_TRIANGLES, 0, 6);
-
-                    ++textDrawCalls;
-
-                    // now advance cursors for next glyph
-                    position.x += (ch.Advance >> 6) * textComponent.GetSize(); // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
+                    // add line height to current y, need to multiply by line spacing
+                    currentY += textComponent.GetFont()->lineHeight * textComponent.GetLineSpacing();
                 }
 
                 glBindTexture(GL_TEXTURE_2D, 0);
@@ -578,6 +541,54 @@ namespace PE
                 p_textShader->UnUse();
             }
 
+        }
+
+
+        void NewRendererManager::DrawTextLine(TextComponent const& r_textComponent, std::string const& r_line, vec2 position, float currentY, float hAlignOffset, float vAlignOffset)
+        {
+            // iterate through all characters
+            std::string::const_iterator c;
+
+            float currentX{ 0.f };
+
+            for (c = r_line.begin(); c != r_line.end(); c++)
+            {
+                Character ch = r_textComponent.GetFont()->characters.at(*c);
+
+                currentX += ch.size.x;
+
+                // calculate position to render character based on bearings, and alignment offset
+                float xPosition = position.x + ch.bearing.x * r_textComponent.GetSize() + hAlignOffset;
+                float yPosition = position.y - (ch.size.y - ch.bearing.y + currentY) * r_textComponent.GetSize() + vAlignOffset;
+
+                float w = ch.size.x * r_textComponent.GetSize();
+                float h = ch.size.y * r_textComponent.GetSize();
+                // update VBO for each character
+                float vertices[6][4] = {
+                    { xPosition,     yPosition + h,   0.0f, 0.0f },
+                    { xPosition ,    yPosition,       0.0f, 1.0f },
+                    { xPosition + w, yPosition,       1.0f, 1.0f },
+
+                    { xPosition,     yPosition + h,   0.0f, 0.0f },
+                    { xPosition + w, yPosition ,      1.0f, 1.0f },
+                    { xPosition + w, yPosition + h,   1.0f, 0.0f }
+                };
+
+                // render glyph texture over quad
+                glBindTexture(GL_TEXTURE_2D, ch.textureID);
+
+                // update content of VBO memory
+                glBindBuffer(GL_ARRAY_BUFFER, r_textComponent.GetFont()->vertexBufferObject);
+                glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+                glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+                // render quad
+                glDrawArrays(GL_TRIANGLES, 0, 6);
+
+                ++textDrawCalls;
+                // now advance cursors for next glyph
+                position.x += (ch.advance >> 6) * r_textComponent.GetSize(); // bitshift by 6 to get value in pixels (1/64th times 2^6 = 64)
+            }
         }
 
 

@@ -117,7 +117,8 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::Graphics::Renderer);
     REGISTERCOMPONENT(PE::Graphics::Camera);
     REGISTERCOMPONENT(PE::ScriptComponent);
-    REGISTERCOMPONENT(PE::GUI);
+    REGISTERCOMPONENT(PE::GUIButton);
+    REGISTERCOMPONENT(PE::GUISlider);
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
     REGISTERCOMPONENT(PE::TextComponent);
@@ -267,10 +268,21 @@ RTTR_REGISTRATION
         .property_readonly("Size", &PE::TextComponent::GetSize)
         .property_readonly("Text", &PE::TextComponent::GetText)
         .property_readonly("Color", &PE::TextComponent::GetColor)
+        .property_readonly("LineSpacing", &PE::TextComponent::GetLineSpacing)
+        .property_readonly("HAlignment", &PE::TextComponent::GetHAlignment)
+        .property_readonly("VAlignment", &PE::TextComponent::GetVAlignment)
+        .property_readonly("HOverflow", &PE::TextComponent::GetHOverflow)
+        .property_readonly("VOverflow", &PE::TextComponent::GetVOverflow)
         .method("Color", &PE::TextComponent::SetColor)
         .method("Text", &PE::TextComponent::SetText)
         .method("Size", &PE::TextComponent::SetSize)
-        .method("Font", &PE::TextComponent::SetFont);
+        .method("Font", &PE::TextComponent::SetFont)
+        .method("LineSpacing", &PE::TextComponent::SetLineSpacing)
+        .method("HAlignment", &PE::TextComponent::SetHAlignment)
+        .method("VAlignment", &PE::TextComponent::SetVAlignment)
+        .method("HOverflow", &PE::TextComponent::SetHOverflow)
+        .method("VOverflow", &PE::TextComponent::SetVOverflow);
+
 
     rttr::registration::class_<PE::CatScriptData>("CatScript")
         .property("catID", &PE::CatScriptData::catID)
@@ -300,8 +312,8 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
         .property_readonly("Width", &PE::Canvas::GetWidth)
         .property_readonly("Height", &PE::Canvas::GetHeight)
-        .method("SetWidth", &PE::Canvas::SetWidth)
-        .method("SetHeight", &PE::Canvas::SetHeight)
+        .method("Width", &PE::Canvas::SetWidth)
+        .method("Height", &PE::Canvas::SetHeight)
         .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
 }
 
@@ -389,23 +401,6 @@ void PE::CoreApplication::Run()
             m_lastFrameTime = currentTime;
         }
 
-        //for (const auto& id : SceneView<Transform>())
-        //{
-        //    Transform& trans = EntityManager::GetInstance().Get<Transform>(id);
-        //    if (EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
-        //    {
-        //        const Transform& parent = EntityManager::GetInstance().Get<Transform>(EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.value());
-        //        vec3 tmp { trans.relPosition, 1.f };
-        //        tmp = parent.GetTransformMatrix3x3() * tmp;
-        //        trans.position.x = tmp.x;
-        //        trans.position.y = tmp.y;
-        //        trans.orientation = parent.orientation + trans.relOrientation;
-        //    }
-        //}
-        Hierarchy::GetInstance().Update();
-
-#ifndef TEST_BATCH_RENDERER   // Run as per usual
-
         // Update system with fixed time step
         TimeManager::GetInstance().StartAccumulator();
         while (TimeManager::GetInstance().UpdateAccumulator())
@@ -419,12 +414,12 @@ void PE::CoreApplication::Run()
             TimeManager::GetInstance().EndAccumulator();
         }
 
+        Hierarchy::GetInstance().Update();
+
         // Update Graphics with variable timestep
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
         m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
         TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
-
-#else   // Test the batch renderer
 
         //// Only update the input system
         //TimeManager::GetInstance().StartAccumulator();
@@ -436,27 +431,6 @@ void PE::CoreApplication::Run()
 
         //    TimeManager::GetInstance().EndAccumulator();
         //}
-
-        
-        // Update system with fixed time step
-        TimeManager::GetInstance().StartAccumulator();
-        while (TimeManager::GetInstance().UpdateAccumulator())
-        {
-            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
-            {
-                TimeManager::GetInstance().SystemStartFrame(systemID);
-                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
-                TimeManager::GetInstance().SystemEndFrame(systemID);
-            }
-            TimeManager::GetInstance().EndAccumulator();
-        }
-
-        // Update Graphics with variable timestep
-        TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
-        m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
-        TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
-
-#endif
 
         // Flush log entries
         engine_logger.FlushLog();

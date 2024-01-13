@@ -34,6 +34,10 @@
 
 #include "FrameBuffer.h"
 
+// text
+#include "Text.h"
+#include "Time/TimeManager.h"
+
 using ShaderProgramKey = std::string;
 
 namespace PE
@@ -211,6 +215,19 @@ namespace PE
              \param[in] r_toNdc - Matrix for transforming coordinates from world or view to NDC space.
             *************************************************************************************/
             void DrawTextObjects(std::vector<EntityID> const& r_textObjects, glm::mat4 const& r_toNdc);
+
+            /*!***********************************************************************************
+             \brief Renders a line of text from r_line parameter. Retrieves glyph information from
+                    map and renders a quad with the data.
+
+             \param[in] r_textComponent Component to get text data.
+             \param[in] r_line line to render.
+             \param[in] position Position of text to render on to the screen.
+             \param[in] currentY y position of the line.
+             \param[in] hAlignOffset horizontal alignment offset.
+             \param[in] vAlignOffset vertical alignment offset.
+            *************************************************************************************/
+            void DrawTextLine(TextComponent const& r_textComponent, std::string const& r_line, vec2 position, float currentY, float hAlignOffset, float vAlignOffset);
 
             /*!***********************************************************************************
              \brief Helper method to sort text components in the scene into world space
