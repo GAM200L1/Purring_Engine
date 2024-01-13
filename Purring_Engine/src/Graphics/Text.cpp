@@ -35,6 +35,15 @@ namespace PE
         glBufferData(GL_ARRAY_BUFFER, sizeof(float) * 6 * 4, NULL, GL_DYNAMIC_DRAW);
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(float), 0);
+
+        std::string vboName{ "Text VBO" };
+        GLsizei vboNameLength{ static_cast<GLsizei>(vboName.length()) };
+        glObjectLabel(GL_BUFFER, m_vertexBufferObject, vboNameLength, vboName.c_str());
+
+        std::string vaoName{ "Text VAO" };
+        GLsizei vaoNameLength{ static_cast<GLsizei>(vaoName.length()) };
+        glObjectLabel(GL_VERTEX_ARRAY, m_vertexArrayObject, vaoNameLength, vaoName.c_str());
+
         glBindBuffer(GL_ARRAY_BUFFER, 0);
         glBindVertexArray(0);
         

@@ -4423,7 +4423,7 @@ namespace PE {
 				ImGui::Image(
 					reinterpret_cast<void*>(
 						static_cast<intptr_t>(gameTexture)),
-					ImVec2(m_renderWindowWidth, m_renderWindowHeight),
+					ImVec2(m_gameWindowWidth, m_gameWindowHeight),
 					ImVec2(0, 1),
 					ImVec2(1, 0)
 				);

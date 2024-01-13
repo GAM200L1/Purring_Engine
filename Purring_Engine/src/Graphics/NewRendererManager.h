@@ -257,6 +257,14 @@ namespace PE
             *************************************************************************************/
             void UpdateSceneWindowSize();
 
+            /*!***********************************************************************************
+             \brief Set the OpenGL viewport to the size passed in.
+
+             \param[in] width - Width to set the viewport to.
+             \param[in] height - Height to set the viewport to.
+            *************************************************************************************/
+            void SetViewport(float const width, float const height);
+
         }; // End of class
 
     } // End of Graphics namespace

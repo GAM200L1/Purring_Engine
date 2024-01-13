@@ -28,7 +28,7 @@ namespace PE
     namespace Graphics
     {
         bool FrameBuffer::CreateFrameBuffer(int const bufferWidth, int const bufferHeight, 
-            bool const hasColorAtachment, bool const hasDepthAttachment)
+            bool const hasColorAtachment, bool const hasDepthAttachment, std::string const& r_name)
         {
             // Create a frame buffer
             glGenFramebuffers(1, &m_frameBufferObjectIndex);
@@ -83,6 +83,11 @@ namespace PE
                 }
 
                 return false;
+            }
+
+            if (!r_name.empty()) {
+                GLsizei vboNameLength{ static_cast<GLsizei>(r_name.length()) };
+                glObjectLabel(GL_FRAMEBUFFER, m_frameBufferObjectIndex, vboNameLength, r_name.c_str());
             }
 
             // Unbind all the buffers created

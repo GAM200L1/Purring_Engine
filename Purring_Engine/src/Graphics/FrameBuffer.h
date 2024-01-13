@@ -74,12 +74,13 @@ namespace PE
              \param[in] bufferHeight Height the buffer should be set to.
              \param[in] hasColorAtachment True if the FBO should have a color attachment, false otherwise.
              \param[in] hasDepthAttachment True if the FBO should have a depth attachment, false otherwise.
+             \param[in] r_name Name to name the framebuffer object to.
 
              \return true - FrameBuffer created successfully.
              \return false - FrameBuffer was not created.
             *************************************************************************************/
             bool CreateFrameBuffer(int const bufferWidth, int const bufferHeight, 
-                bool const hasColorAtachment, bool const hasDepthAttachment);
+                bool const hasColorAtachment, bool const hasDepthAttachment, std::string const& r_name = "");
 
             /*!***********************************************************************************
              \brief Creates a 2D texture and binds it to the FBO to use as a color attachment. 

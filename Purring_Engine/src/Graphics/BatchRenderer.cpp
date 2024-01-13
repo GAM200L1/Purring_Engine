@@ -407,7 +407,7 @@ namespace PE
             if (m_untexturedVertices.empty()) { return; }
 
             // Bind shaderprogram
-            std::shared_ptr<ShaderProgram> shaderProgramPointer{ ResourceManager::GetInstance().GetShaderProgram(m_texturedShaderProgramKey) };
+            std::shared_ptr<ShaderProgram> shaderProgramPointer{ ResourceManager::GetInstance().GetShaderProgram(m_coloredShaderProgramKey) };
             if (!shaderProgramPointer) { return; }
             shaderProgramPointer->Use();
 
@@ -621,17 +621,19 @@ namespace PE
                 GLintptr offset,
                 GLsizei size,
                 const void *data);
-            */
+            */            
+            m_untexturedVertices.resize(m_maxVertices, VertexDataBase{ glm::vec2{}, glm::vec4{}});
+            m_untexturedIndices.resize(m_maxVertices, restartIndex);
 
             // Update the sub buffer data of the VBO
-            glBindBuffer(GL_ARRAY_BUFFER, m_untexturedVBO);
+            //glBindBuffer(GL_ARRAY_BUFFER, m_untexturedVBO);
             glNamedBufferSubData(m_untexturedVBO, static_cast<GLintptr>(0),
-                static_cast<GLsizei>(m_untexturedVertices.size()), m_untexturedVertices.data());
+                static_cast<GLsizei>(m_untexturedVertices.size() * sizeof(VertexDataBase)), m_untexturedVertices.data());
 
             // Update the index buffer data of the EBO
-            glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObject);
+            //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBufferObject);
             glNamedBufferSubData(m_indexBufferObject, static_cast<GLintptr>(0),
-                static_cast<GLsizei>(m_untexturedIndices.size()), m_untexturedIndices.data());
+                static_cast<GLsizei>(m_untexturedIndices.size() * sizeof(GLushort)), m_untexturedIndices.data());
 
             // Unbind the VAO
             UnbindAllVAO();

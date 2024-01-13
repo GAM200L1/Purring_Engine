@@ -36,6 +36,8 @@
 #endif // !GAMERELEASE
 
 
+//#define MY_DEBUG
+
 namespace PE
 {
     namespace Graphics
@@ -85,8 +87,14 @@ namespace PE
             glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
 
             m_frameBuffers.resize(static_cast<std::size_t>(EnumFrameBuffer::FRAMEBUFFER_COUNT));
-            m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::EDIT_MODE)].CreateFrameBuffer(width, height, true, false);
-            m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::PLAY_MODE)].CreateFrameBuffer(width, height, true, false);
+            m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::EDIT_MODE)].CreateFrameBuffer(width, height, true, false, "Edit FBO");
+            m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::PLAY_MODE)].CreateFrameBuffer(width, height, true, false, "Play FBO");
+
+            // Update the size fo the framebuffers
+            UpdatePlayWindowSize();
+#ifndef GAMERELEASE
+            UpdateSceneWindowSize();
+#endif !GAMERELEASE
 
 
             // Create renderers and configure
@@ -118,7 +126,7 @@ namespace PE
 #endif !GAMERELEASE
 
             // Set background color of the window
-            ClearBackground(m_clearColor.x, m_clearColor.y, m_clearColor.z, m_clearColor.w);
+            ClearBackground(0.f, 0.f, 0.f, 1.f);
 
             // Retrieve text objects
             // Sort into world space text and screen space text
@@ -127,8 +135,15 @@ namespace PE
             // Get the world to NDC matrix
             glm::mat4 worldToNdcMatrix{ GETCAMERAMANAGER()->GetWorldToNdcMatrix(false)};
 
+
+#ifndef GAMERELEASE
             FrameBuffer& playBuffer{ m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::PLAY_MODE)] };
             playBuffer.Bind();
+#endif //!GAMERELEASE
+
+            SetViewport(m_cachedPlayWindowWidth, m_cachedPlayWindowHeight);
+
+            ClearBackground(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
 
             // Render game objects if there is a main camera
             if (GETCAMERAMANAGER()->GetMainCamera().has_value()) 
@@ -142,9 +157,9 @@ namespace PE
             // Render debug shapes
             DrawDebug(worldToNdcMatrix);
 
-            m_batchRenderer.Flush(); // Ensure all objects have been rendered
-
+#ifndef GAMERELEASE
             playBuffer.Unbind();
+#endif //!GAMERELEASE
 
 #ifndef GAMERELEASE
             // ----- In the editor, if the editor is active, draw the scene window ----- //
@@ -152,7 +167,12 @@ namespace PE
             if (Editor::GetInstance().IsEditorActive())
             {
                 FrameBuffer& editorBuffer{ m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::EDIT_MODE)] };
-                editorBuffer.Bind();
+                editorBuffer.Bind(); 
+                SetViewport(m_cachedSceneWindowWidth, m_cachedSceneWindowHeight);
+
+                ClearBackground(m_clearColor.r, m_clearColor.g, m_clearColor.b, m_clearColor.a);
+
+                worldToNdcMatrix = GETCAMERAMANAGER()->GetWorldToNdcMatrix(true);
 
                 // Render game objects
                 DrawGameObjects(worldToNdcMatrix);
@@ -162,8 +182,6 @@ namespace PE
 
                 // Render debug shapes
                 DrawDebug(worldToNdcMatrix);
-
-                m_batchRenderer.Flush();// Ensure all objects have been rendered
 
                 editorBuffer.Unbind();
 
@@ -180,7 +198,7 @@ namespace PE
 #else 
 
             // Draw the camera quad
-            DrawScreenQuad(playBuffer.GetTextureId());
+            //DrawScreenQuad(playBuffer.GetTextureId());
 
 #endif
 
@@ -248,14 +266,19 @@ namespace PE
             std::vector<EntityID> const& renderableContainer{ Hierarchy::GetInstance().GetRenderOrder() };
             for (EntityID const& id : renderableContainer)
             {
+#ifdef MY_DEBUG
                 std::cout << "NewRendererManager::DrawGameObjects(): Rendering entity " << id << "\n";
+#endif // !MY_DEBUG
 
                 // @FUTURE krystal -> add a check for whether this has a text component or a renderer component
 
                 if (!EntityManager::GetInstance().Has<Transform>(id))
                 {
+#ifdef MY_DEBUG
                     // if there's no transform
                     std::cout << "NewRendererManager::DrawGameObjects(): Attempted to render entity " << id << " but it does not have a transform component\n";
+
+#endif // !MY_DEBUG
                     continue;
                 }
 
@@ -275,7 +298,9 @@ namespace PE
                     */
                     std::shared_ptr<Texture> const& textureObj{ ResourceManager::GetInstance().GetTexture(rendererComponent.GetTextureKey()) };
 
+#ifdef MY_DEBUG
                     std::cout << "NewRendererManager::DrawGameObjects(): entity " << id << " is textured with texture " << textureObj->GetTextureID() << "\n";
+#endif // !MY_DEBUG
 
                     // Construct textured render data + call draw function in batch renderer
                     m_batchRenderer.DrawQuad(
@@ -294,7 +319,9 @@ namespace PE
                        RenderData(EnumMeshType _meshType, float const _width, float const _height,
                             float const _orientation, glm::vec2 const& r_position, glm::vec4 const& r_color)
                     */
+#ifdef MY_DEBUG
                     std::cout << "NewRendererManager::DrawGameObjects(): entity " << id << " is NOT textured\n";
+#endif // !MY_DEBUG
 
                     // Construct render data + call draw function in batch renderer
                     m_batchRenderer.DrawQuad(
@@ -307,11 +334,19 @@ namespace PE
                 }                
             } // End of for (EntityID const& id : renderableContainer)
 
+            m_batchRenderer.Flush(); // Ensure all objects have been rendered
+
+#ifdef MY_DEBUG
             std::cout << "NewRendererManager::DrawGameObjects(): end renderer loop\n";
+#endif // !MY_DEBUG
             // Loop through text objects
             //m_worldTextObjects
             DrawTextObjects(m_worldTextObjects, r_worldToNdc);
+#ifdef MY_DEBUG
             std::cout << "NewRendererManager::DrawGameObjects(): exit\n";
+#endif // !MY_DEBUG
+
+            m_batchRenderer.Flush(); // Ensure all objects have been rendered
         }
 
 
@@ -328,10 +363,13 @@ namespace PE
             {
                 // @FUTURE krystal -> add a check for whether this has a text component or a renderer component
 
-                if (EntityManager::GetInstance().Has<Transform>(id))
+                if (!EntityManager::GetInstance().Has<Transform>(id))
                 {
+#ifdef MY_DEBUG
                     // if there's no transform
                     std::cout << "NewRendererManager::DrawGameObjects(): Attempted to render entity " << id << " but it does not have a transform component\n";
+#endif // !MY_DEBUG
+                    
                     continue;
                 }
 
@@ -381,9 +419,13 @@ namespace PE
                 }
             } // End of for (EntityID const& id : renderableContainer)
 
+            m_batchRenderer.Flush(); // Ensure all objects have been rendered
+
             // Loop through text objects
             //m_uiTextObjects
             DrawTextObjects(m_uiTextObjects, r_toNdc);
+
+            m_batchRenderer.Flush(); // Ensure all objects have been rendered
         }
 
 
@@ -406,6 +448,8 @@ namespace PE
             {
                 m_batchRenderer.DrawPoint(point, r_worldToNdc);
             }
+
+            m_batchRenderer.Flush(); // Ensure all objects have been rendered
         }
 
 
@@ -439,6 +483,8 @@ namespace PE
 
             // Add this to the batch
             m_batchRenderer.DrawQuad(renderData, windowToNdc);
+
+            m_batchRenderer.Flush(); // Ensure all objects have been rendered
         }
 
 
@@ -560,7 +606,9 @@ namespace PE
                 return;
             }
             PE::KeyTriggeredEvent triggeredEvent = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
+#ifdef MY_DEBUG
             std::cout << "NewRendererManager::OnKeyTriggeredEvent(): " << triggeredEvent.keycode << "\n";
+#endif
         }
 
 
@@ -633,12 +681,12 @@ namespace PE
                 (!CompareFloats(m_cachedPlayWindowWidth, windowWidth) || !CompareFloats(m_cachedPlayWindowHeight, windowHeight)))
             {
                 m_cachedPlayWindowWidth = windowWidth, m_cachedPlayWindowHeight = windowHeight;
-                std::cout << "NewRendererManager::UpdatePlayWindowSize(): changing scene window to " << m_cachedPlayWindowWidth << " x " << m_cachedPlayWindowHeight << "\n";
-
+//#ifdef MY_DEBUG
+                std::cout << "NewRendererManager::UpdatePlayWindowSize(): changing play window to " << m_cachedPlayWindowWidth << " x " << m_cachedPlayWindowHeight << "\n";
+//#endif 
                 // Update the frame buffer
                 GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
-                glViewport(0, 0, windowWidthInt, windowHeightInt);
                 m_frameBuffers[static_cast<std::size_t>(EnumFrameBuffer::PLAY_MODE)].Resize(windowWidthInt, windowHeightInt);
             }
         }
@@ -663,8 +711,9 @@ namespace PE
                 (!CompareFloats(m_cachedSceneWindowWidth, windowWidth) || !CompareFloats(m_cachedSceneWindowHeight, windowHeight)))
             {
                 m_cachedSceneWindowWidth = windowWidth, m_cachedSceneWindowHeight = windowHeight;
+//#ifdef MY_DEBUG
                 std::cout << "NewRendererManager::UpdateSceneWindowSize(): changing scene window to " << m_cachedSceneWindowWidth << " x " << m_cachedSceneWindowHeight << "\n";
-
+//#endif
                 // Update the frame buffer
                 GLsizei const windowWidthInt{ static_cast<GLsizei>(windowWidth) };
                 GLsizei const windowHeightInt{ static_cast<GLsizei>(windowHeight) };
@@ -673,6 +722,14 @@ namespace PE
             }
 
 #endif // !GAMERELEASE
+        }
+
+        void NewRendererManager::SetViewport(float const width, float const height)
+        {
+            // Update the frame buffer
+            GLsizei const windowWidthInt{ static_cast<GLsizei>(width) };
+            GLsizei const windowHeightInt{ static_cast<GLsizei>(height) };
+            glViewport(0, 0, windowWidthInt, windowHeightInt);
         }
 
     } // End of Graphics namespace
