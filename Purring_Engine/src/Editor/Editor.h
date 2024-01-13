@@ -247,6 +247,14 @@ namespace PE {
 		 \param[in] active reference to the boolean that sets the window active
 		*************************************************************************************/
 		void ShowGameView(GLuint const gameTexture, bool* p_active);
+		
+		/*!***********************************************************************************
+		 \brief render the gameview window
+
+		 \param[in] gameTexture - ID of the texture to use to draw the game window
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowGameFullView(GLuint const gameTexture, bool* p_active);
 
 		/*!***********************************************************************************
 		 \brief render the prefab apply changes window
@@ -380,16 +388,20 @@ namespace PE {
 		bool m_showPerformanceWindow;
 		bool m_showPhysicsWindow;
 		bool m_firstLaunch;
+		bool m_showFullGameView;
 		bool m_showGameView;
 		bool m_showAnimationWindow;
 		//boolean for rendering
 		bool m_renderDebug;
-		bool m_isRunTime;
+
 
 		//boolean for prefabs
 		bool m_isPrefabMode;
 		bool m_applyPrefab;
 
+		//boolean for playstop
+		bool m_isRunTime;
+		bool m_StopPlay;
 
 		//variables for logging
 		std::vector<std::string> m_logOutput;

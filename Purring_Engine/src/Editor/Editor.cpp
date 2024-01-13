@@ -126,6 +126,9 @@ namespace PE {
 
 			if (configJson["Editor"].contains("showPhysicsWindow"))
 				m_showPhysicsWindow = configJson["Editor"]["showPhysicsWindow"].get<bool>();
+
+			if (configJson["Editor"].contains("showGameView"))
+				m_showGameView = configJson["Editor"]["showGameView"].get<bool>();
 				//show the entire gui 
 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
@@ -151,6 +154,7 @@ namespace PE {
 			m_showPerformanceWindow = false;
 			m_showAnimationWindow = false;
 			m_showPhysicsWindow = false;
+			m_showGameView = true;
 			//show the entire gui 
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = true; // whether to render debug lines
@@ -159,7 +163,7 @@ namespace PE {
 
 		configFile.close();
 
-		m_showGameView = false;
+		m_showFullGameView = false;
 
 		// Set the default visual theme of the editor
 		m_currentStyle = GuiStyle::DARK;
@@ -202,6 +206,7 @@ namespace PE {
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
 		configJson["Editor"]["showAnimationWindow"] = m_showAnimationWindow;
 		configJson["Editor"]["showPhysicsWindow"] = m_showPhysicsWindow;
+		configJson["Editor"]["showGameView"] = m_showGameView;
 		//show the entire gui 
 		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
 		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
@@ -417,6 +422,8 @@ namespace PE {
 			if (m_showPhysicsWindow) ShowPhysicsWindow(&m_showPhysicsWindow);
 
 			if (m_showGameView) ShowGameView(gameTexture, &m_showGameView);
+			
+			if (m_showFullGameView) ShowGameFullView(gameTexture, &m_showFullGameView);
 
 			if (m_applyPrefab) ShowApplyWindow(&m_applyPrefab);
 
@@ -1039,10 +1046,7 @@ namespace PE {
 					bool hasScripts = false;
 					for (const ComponentID& name : components)
 					{
-						++componentCount;//increment unique id
-
-						
-
+						++componentCount;//increment unique id				
 
 						// ---------- ENTITY DESCRIPTOR ---------- //
 						ImGui::SetNextItemAllowOverlap(); // allow the stacking of buttons
@@ -4035,40 +4039,58 @@ namespace PE {
 				ImGuiStyle& style = ImGui::GetStyle();
 				if (!m_isPrefabMode)
 				{
-					float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.0f;
+					ImGuiStyle& style = ImGui::GetStyle();
+					float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.5f + ImGui::CalcTextSize("Pause").x;
 					float avail = ImGui::GetContentRegionAvail().x;
 
 					float off = (float)((avail - size) * 0.5);
 					if (off > 0.0f)
-						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
+						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2 - (ImGui::CalcTextSize("Pause").x + style.FramePadding.x) / 4);
 
+					ImGui::BeginDisabled(m_isRunTime);
 					if (ImGui::Button("Play"))
 					{
-						m_isRunTime = true;
-						m_showEditor = false;
-						m_showGameView = true;
-						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-						// This will save all entities to a file
-						serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
-						UndoStack::GetInstance().ClearStack();
-						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+						if (!m_StopPlay)
+						{
+							m_isRunTime = true;
+							m_showEditor = false;
+							m_showFullGameView = true;
+							engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+							// This will save all entities to a file
+							serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+							UndoStack::GetInstance().ClearStack();
+							engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+
+							m_StopPlay = true;
+						}
+						else
+						{
+							m_isRunTime = true;
+						}
 					}
+					ImGui::EndDisabled();
 					ImGui::SameLine();
-					ImGui::BeginDisabled();
+
+					ImGui::BeginDisabled(!m_isRunTime);
+					if (ImGui::Button("Pause"))
+					{
+						m_isRunTime = false;
+					}
+					ImGui::EndDisabled();
+					ImGui::SameLine();
+
+					ImGui::BeginDisabled(!m_StopPlay);
 					if (ImGui::Button("Stop")) {
 						m_showEditor = true;
-
+						m_isRunTime = false;
+						m_showFullGameView = false;
+						m_StopPlay = false;
 						if (m_isRunTime)
 						{
 							ClearObjectList();
 							serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
-
-						if (m_showEditor)
-							m_isRunTime = false;
-
-						m_showGameView = false;
 					}
 					ImGui::EndDisabled();
 				}
@@ -4167,11 +4189,15 @@ namespace PE {
 
 						//Imgui docks right side by default
 						ImGui::DockBuilderDockWindow("Scene View", dockspace_id);
-
 						//set the other sides
 						ImGuiID dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.3f, nullptr, &dockspace_id);
 						ImGuiID dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.25f, &dockspace_id, &dockspace_id);
 						ImGuiID dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.3f, &dockspace_id, &dockspace_id);
+
+						//for the 2nd scene view
+						ImGuiID dock_id_rightless = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.5f, &dockspace_id, &dockspace_id);
+
+						ImGui::DockBuilderDockWindow("Game View", dock_id_rightless);
 
 						//setting the other dock locations
 						ImGui::DockBuilderDockWindow("Object Hierarchy Window", dock_id_right);
@@ -4299,6 +4325,10 @@ namespace PE {
 							if (ImGui::MenuItem("PhysicsWindow", "", m_showPhysicsWindow, !m_showPhysicsWindow))
 							{
 								m_showPhysicsWindow = !m_showPhysicsWindow;
+							}							
+							if (ImGui::MenuItem("Game View", "", m_showGameView, !m_showGameView))
+							{
+								m_showGameView = !m_showGameView;
 							}
 							ImGui::Separator();
 							if (ImGui::MenuItem("Rubrics Test", "", m_showTestWindows, !m_showTestWindows))
@@ -4309,7 +4339,6 @@ namespace PE {
 							if (ImGui::MenuItem("Reset Default", "", false, true))
 							{
 								m_firstLaunch = true;
-								m_showResourceWindow = false;
 								m_showPerformanceWindow = false;
 								m_showAnimationWindow = false;
 							}
@@ -4453,14 +4482,14 @@ namespace PE {
 
 	void Editor::ShowSceneView(GLuint const sceneTexture, bool* p_active)
 	{
-		if (IsEditorActive()) 
+		if (IsEditorActive())
 		{
 			static bool hasParent;
 			static bool moving;
 			ImGui::Begin("Scene View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar);
 
 			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
-			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) 
+			if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
 			{
 				m_renderWindowWidth = ImGui::GetContentRegionAvail().x;
 				m_renderWindowHeight = ImGui::GetContentRegionAvail().y;
@@ -4500,7 +4529,7 @@ namespace PE {
 					// if the selected obj is UI, make the camera view matrix an identity matrix
 					glm::mat4 cameraView = EditorCamera.GetWorldToViewMatrix();
 
-					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);				
+					auto& ct = EntityManager::GetInstance().Get<Transform>(m_currentSelectedObject);
 
 					EntityID parentId{};
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(m_currentSelectedObject))
@@ -4513,7 +4542,7 @@ namespace PE {
 					float transform[16]{};
 					//float transform2[16]{};
 					static float OldTransform[16]{};
-					static float OldLocalX,OldLocalY;
+					static float OldLocalX, OldLocalY;
 					static Transform currentTransform{};
 
 					if (!hasParent)
@@ -4549,7 +4578,7 @@ namespace PE {
 					else
 					{
 						ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform);
-						
+
 						//this works, but we will end up drawing 2 gizmo if uncommented, if the first 1 is commented the gizmo will not work.
 						//ImGuizmo::Manipulate(glm::value_ptr(cameraView), glm::value_ptr(cameraProjection), m_currentGizmoOperation, ImGuizmo::LOCAL, transform2);
 
@@ -4575,13 +4604,13 @@ namespace PE {
 
 						// Update the translation only if we're not updating the rotation
 						if (ImGuizmo::OPERATION::TRANSLATE == m_currentGizmoOperation
-								|| ImGuizmo::OPERATION::TRANSLATE_X == m_currentGizmoOperation
-								|| ImGuizmo::OPERATION::TRANSLATE_Y == m_currentGizmoOperation)
+							|| ImGuizmo::OPERATION::TRANSLATE_X == m_currentGizmoOperation
+							|| ImGuizmo::OPERATION::TRANSLATE_Y == m_currentGizmoOperation)
 						{
 							if (hasParent)
 							{
 								ct.relPosition.x = OldLocalX + newPos[0] - ct.position.x;
-								ct.relPosition.y = OldLocalY +  newPos[1] - ct.position.y;
+								ct.relPosition.y = OldLocalY + newPos[1] - ct.position.y;
 							}
 							else
 							{
@@ -4600,7 +4629,7 @@ namespace PE {
 							ct.orientation = glm::radians(newRot[2]);
 						}
 					}
-					
+
 					if (moving && !ImGui::IsMouseDown(0))
 					{
 						if (!CompareFloat16Arrays(OldTransform, transform))
@@ -4610,7 +4639,7 @@ namespace PE {
 						moving = false;
 					}
 
-}
+				}
 			}
 
 
@@ -4621,63 +4650,63 @@ namespace PE {
 			static ImVec2 screenPosition; // coordinates from the top left corner
 
 			if (m_mouseInScene && !ImGuizmo::IsUsing())
-			if (ImGui::IsMouseClicked(0))
-			{
-				clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
-				clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // from bottom left corner
-
-				screenPosition.x = clickedPosition.x - m_renderWindowWidth * 0.5f; // in viewport space, origin in the center
-				screenPosition.y = clickedPosition.y - m_renderWindowHeight * 0.5f; // in viewport space, origin in the center
-
-				// Check that position is within the viewport
-				if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
-					|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight)
+				if (ImGui::IsMouseClicked(0))
 				{
-					
-				}
-				else
-				{
-					m_currentSelectedObject = -1;
-					// Loop through all objects
-					for (long i{ static_cast<long>(Graphics::RendererManager::renderedEntities.size() - 1) }; i >= 0; --i)
+					clickedPosition.x = ImGui::GetMousePos().x - ImGui::GetCursorScreenPos().x; // from bottom left corner
+					clickedPosition.y = ImGui::GetCursorScreenPos().y - ImGui::GetMousePos().y; // from bottom left corner
+
+					screenPosition.x = clickedPosition.x - m_renderWindowWidth * 0.5f; // in viewport space, origin in the center
+					screenPosition.y = clickedPosition.y - m_renderWindowHeight * 0.5f; // in viewport space, origin in the center
+
+					// Check that position is within the viewport
+					if (clickedPosition.x < 0 || clickedPosition.x >= m_renderWindowWidth
+						|| clickedPosition.y < 0 || clickedPosition.y >= m_renderWindowHeight)
 					{
-						EntityID id{ Graphics::RendererManager::renderedEntities[i] };
 
-						// Get the transform component of the entity
-						Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
+					}
+					else
+					{
+						m_currentSelectedObject = -1;
+						// Loop through all objects
+						for (long i{ static_cast<long>(Graphics::RendererManager::renderedEntities.size() - 1) }; i >= 0; --i)
+						{
+							EntityID id{ Graphics::RendererManager::renderedEntities[i] };
 
-						glm::vec4 transformedCursor{ screenPosition.x, screenPosition.y, 0.f, 1.f };
+							// Get the transform component of the entity
+							Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-						// Transform the position of the mouse cursor from screen space to model space
-						transformedCursor = Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
+							glm::vec4 transformedCursor{ screenPosition.x, screenPosition.y, 0.f, 1.f };
+
+							// Transform the position of the mouse cursor from screen space to model space
+							transformedCursor = Graphics::CameraManager::GetEditorCamera().GetViewToWorldMatrix() // screen to world position
 								* transformedCursor;
 
-						transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
-							* transformedCursor;
+							transformedCursor = Graphics::RendererManager::GenerateInverseTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+								* transformedCursor;
 
-						glm::vec4 backToWorldSpacePosition{
-								Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
-								* transformedCursor
-						};
+							glm::vec4 backToWorldSpacePosition{
+									Graphics::RendererManager::GenerateTransformMatrix(r_transform.width, r_transform.height, r_transform.orientation, r_transform.position.x, r_transform.position.y) // world to model
+									* transformedCursor
+							};
 
 
-						// Check if the cursor position is within the bounds of the object
-						if (!(transformedCursor.x < -0.5f || transformedCursor.x > 0.5f
-							|| transformedCursor.y < -0.5f || transformedCursor.y > 0.5f))
-						{
-							// It is within the bounds, break out of the loop
-							m_currentSelectedObject = static_cast<int>(id);
-							break;
+							// Check if the cursor position is within the bounds of the object
+							if (!(transformedCursor.x < -0.5f || transformedCursor.x > 0.5f
+								|| transformedCursor.y < -0.5f || transformedCursor.y > 0.5f))
+							{
+								// It is within the bounds, break out of the loop
+								m_currentSelectedObject = static_cast<int>(id);
+								break;
+							}
 						}
+
 					}
 
+					std::cout << "\n";
 				}
-
-				std::cout << "\n";
-			}
 			// End of if (m_mouseInScene && !ImGuizmo::IsUsing())
 
-			
+
 
 
 			ImGui::EndChild();
@@ -4689,6 +4718,45 @@ namespace PE {
 
 	void Editor::ShowGameView(GLuint const gameTexture, bool* p_active)
 	{
+		if (IsEditorActive())
+		{
+			if (!ImGui::Begin("Game View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar))
+			{
+				ImGui::End();
+			}
+			else
+			{
+				static bool hasParent;
+				static bool moving;
+
+				//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
+				if (ImGui::BeginChild("SceneViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar))
+				{
+					m_gameWindowWidth = ImGui::GetContentRegionAvail().x;
+					m_gameWindowHeight = ImGui::GetContentRegionAvail().y;
+
+					if (gameTexture)
+					{
+						//the graphics rendered onto an image on the imgui window
+						ImGui::Image(
+							reinterpret_cast<void*>(
+								static_cast<intptr_t>(gameTexture)),
+							ImVec2(m_gameWindowWidth, m_gameWindowHeight),
+							ImVec2(0, 1),
+							ImVec2(1, 0)
+						);
+					}
+					m_mouseInGameWindow = ImGui::IsWindowHovered();
+					ImGui::EndChild();
+				}
+				ImGui::End();
+			}
+
+		}
+	}
+	
+	void Editor::ShowGameFullView(GLuint const gameTexture, bool* p_active)
+	{
 		if (!IsEditorActive())
 		{
 			//get the current viewport so that i can get the full size of the window
@@ -4698,78 +4766,81 @@ namespace PE {
 			ImGui::SetNextWindowPos(viewport->Pos);
 			ImGui::SetNextWindowSize(viewport->Size);
 			ImGui::SetNextWindowViewport(viewport->ID);
-		}
 
-		ImGui::Begin("Game View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoDecoration);
+			ImGui::Begin("Full Game View", p_active, ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoDecoration);
 
-		m_gameWindowWidth = ImGui::GetContentRegionAvail().x;
-		m_gameWindowHeight = ImGui::GetContentRegionAvail().y;
+			m_gameWindowWidth = ImGui::GetContentRegionAvail().x;
+			m_gameWindowHeight = ImGui::GetContentRegionAvail().y;
 
-		ImGuiStyle& style = ImGui::GetStyle();
-		float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.5f + ImGui::CalcTextSize("Pause").x;
-		float avail = ImGui::GetContentRegionAvail().x;
+			ImGuiStyle& style = ImGui::GetStyle();
+			float size = ImGui::CalcTextSize("Play").x + style.FramePadding.x * 2.5f + ImGui::CalcTextSize("Pause").x;
+			float avail = ImGui::GetContentRegionAvail().x;
 
-		float off = (float)((avail - size) * 0.5);
-		if (off > 0.0f)
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2 - (ImGui::CalcTextSize("Pause").x + style.FramePadding.x)/4);
+			float off = (float)((avail - size) * 0.5);
+			if (off > 0.0f)
+				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2 - (ImGui::CalcTextSize("Pause").x + style.FramePadding.x) / 4);
 
-		static bool toDisable = true;
+			static bool toDisable = true;
 
-		ImGui::BeginDisabled(toDisable);
-		if (ImGui::Button("Play"))
-		{
-			m_isRunTime = true;	
-			toDisable = true;
-		}
-		ImGui::EndDisabled();
-		ImGui::SameLine();
-		ImGui::BeginDisabled(!toDisable);
-		if (ImGui::Button("Pause"))
-		{
-			m_isRunTime = false;
-			toDisable = false;
-		}
-		ImGui::EndDisabled();
-		ImGui::SameLine();
-		if (ImGui::Button("Stop")) 
-		{
-			GameStateManager::GetInstance().ResetDefaultState();
-			m_showEditor = true;
-			toDisable = true;
-			if (m_isRunTime)
+			ImGui::BeginDisabled(toDisable);
+			if (ImGui::Button("Play"))
 			{
-				ClearObjectList();
-				serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
-				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+				m_isRunTime = true;
+				toDisable = true;
 			}
-
-			if (m_showEditor)
+			ImGui::EndDisabled();
+			ImGui::SameLine();
+			ImGui::BeginDisabled(!toDisable);
+			if (ImGui::Button("Pause"))
+			{
 				m_isRunTime = false;
-
-			m_showGameView = false;
-		}
-
-		//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
-		if (ImGui::BeginChild("GamesViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
-			if (gameTexture)
-			{
-				//the graphics rendered onto an image on the imgui window
-				ImGui::Image(
-					reinterpret_cast<void*>(
-						static_cast<intptr_t>(gameTexture)),
-					ImVec2(m_gameWindowWidth, m_gameWindowHeight),
-					ImVec2(0, 1),
-					ImVec2(1, 0)
-				);
+				toDisable = false;
 			}
-			m_mouseInGameWindow = ImGui::IsWindowHovered();
+			ImGui::EndDisabled();
+			ImGui::SameLine();
+			if (ImGui::Button("Stop"))
+			{
+				GameStateManager::GetInstance().ResetDefaultState();
+				m_showEditor = true;
+				toDisable = true;
+				m_StopPlay = false;
+				if (m_isRunTime)
+				{
+					ClearObjectList();
+					serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+					engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+				}
+
+				if (m_showEditor)
+					m_isRunTime = false;
+
+				m_showFullGameView = false;
+			}
+
+			//ImGui::SetCursorPos(ImVec2(ImGui::GetContentRegionAvail().x / 2.f, ImGui::GetCursorPosY()));
+			if (ImGui::BeginChild("GamesViewChild", ImVec2(0, 0), true, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoScrollWithMouse | ImGuiWindowFlags_NoScrollbar)) {
+				if (gameTexture)
+				{
+					//the graphics rendered onto an image on the imgui window
+					ImGui::Image(
+						reinterpret_cast<void*>(
+							static_cast<intptr_t>(gameTexture)),
+						ImVec2(m_gameWindowWidth, m_gameWindowHeight),
+						ImVec2(0, 1),
+						ImVec2(1, 0)
+					);
+				}
+				m_mouseInGameWindow = ImGui::IsWindowHovered();
+			}
+
+
+			ImGui::EndChild();
+
+
+			ImGui::End();
 		}
+
 		
-
-		ImGui::EndChild();
-
-
-		ImGui::End();
 
 	}
 

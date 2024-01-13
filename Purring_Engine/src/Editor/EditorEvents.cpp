@@ -60,6 +60,9 @@ namespace PE {
 				if (KTE.keycode == GLFW_KEY_F9)
 					m_showAnimationWindow = !m_showAnimationWindow;
 
+				if (KTE.keycode == GLFW_KEY_P)
+					m_showEditor = !m_showEditor;
+
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_CONTROL) && KTE.keycode == GLFW_KEY_Z)
 				{
