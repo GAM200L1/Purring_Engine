@@ -192,7 +192,18 @@ namespace PE
 #ifndef GAMERELEASE
                 // Get the size of the render window
                 float editorWindowSizeX{}, editorWindowSizeY{};
-                Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+                if (Editor::GetInstance().IsMouseInGameWindow())
+                {
+                    Editor::GetInstance().GetGameWindowSize(editorWindowSizeX, editorWindowSizeY);
+                }
+                else if (Editor::GetInstance().IsMouseInScene())
+                {
+                    Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+                }
+                else
+                {
+                    editorWindowSizeX = 0.f, editorWindowSizeY = 0.f;
+                }
                 float widthRatio{ !CompareFloats(editorWindowSizeX, 0.f) ? m_viewportWidth / editorWindowSizeX : 1.f };
                 float heightRatio{ !CompareFloats(editorWindowSizeY, 0.f) ? m_viewportHeight / editorWindowSizeY : 1.f };
 
@@ -218,15 +229,30 @@ namespace PE
         {
             // Get the UI camera
 #ifndef GAMERELEASE
-                // Get the size of the render window
+            // Get the size of the render window
             float editorWindowSizeX{}, editorWindowSizeY{};
-            Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+            if (Editor::GetInstance().IsMouseInGameWindow()) 
+            {
+                Editor::GetInstance().GetGameWindowSize(editorWindowSizeX, editorWindowSizeY);
+            } 
+            else if (Editor::GetInstance().IsMouseInScene())
+            {
+                Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+            }
+            else
+            {
+                editorWindowSizeX = m_windowWidth, editorWindowSizeY = m_windowHeight;
+            }
+            float widthRatio{ !CompareFloats(editorWindowSizeX, 0.f) ? GetUiCamera().GetViewportWidth() / editorWindowSizeX : 1.f };
+            float heightRatio{ !CompareFloats(editorWindowSizeY, 0.f) ? GetUiCamera().GetViewportHeight() / editorWindowSizeY : 1.f };
 
             // Adjust scale of the position
-            vec2 ret{ x * GetUiCamera().GetViewportWidth() / editorWindowSizeX, y * GetUiCamera().GetViewportHeight() / editorWindowSizeY };
+            vec2 ret{ x * widthRatio, y * heightRatio };
             ret.y += Editor::GetInstance().GetPlayWindowOffset();
 #else
-            vec2 ret{ x * GetUiCamera().GetViewportWidth() / m_windowWidth, y * GetUiCamera().GetViewportHeight() / m_windowHeight};
+            float widthRatio{ !CompareFloats(m_windowWidth, 0.f) ? GetUiCamera().GetViewportWidth() / m_windowWidth : 1.f };
+            float heightRatio{ !CompareFloats(m_windowHeight, 0.f) ? GetUiCamera().GetViewportHeight() / m_windowHeight : 1.f };
+            vec2 ret{ x * widthRatio / m_windowWidth, y * heightRatio };
 #endif // !GAMERELEASE
 
             return ret;

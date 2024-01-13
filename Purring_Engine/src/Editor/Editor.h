@@ -109,6 +109,11 @@ namespace PE {
 		*************************************************************************************/
 		bool IsMouseInScene();
 		/*!***********************************************************************************
+		 \brief get the boolean to know if mouse is hovering in the scene window
+		 \return bool return whether the mouse is hovering in the scene window
+		*************************************************************************************/
+		bool IsMouseInGameWindow();
+		/*!***********************************************************************************
 		 \brief get the boolean to know if scene view was last clicked
 		 \return bool return whether the focus is on scene view
 		*************************************************************************************/
@@ -372,7 +377,7 @@ namespace PE {
 		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
 		float m_gameWindowWidth, m_gameWindowHeight; // dimensions of the game window
 		float m_playWindowOffset {27.f};
-		bool m_mouseInScene;
+		bool m_mouseInScene, m_mouseInGameWindow; // True if the mouse is hovering over the scene or game windows
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
 		std::pair<std::string, int> m_entityToModify;

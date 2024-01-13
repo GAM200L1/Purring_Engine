@@ -169,6 +169,7 @@ namespace PE {
 		// loading for assets window
 		GetFileNamesInParentPath(m_parentPath, m_files);
 		m_mouseInScene = false;
+		m_mouseInGameWindow = false;
 		m_entityToModify = std::make_pair<std::string, int>("", -1);
 
 	}
@@ -249,6 +250,11 @@ namespace PE {
 	bool Editor::IsMouseInScene()
 	{
 		return m_mouseInScene;
+	}
+
+	bool Editor::IsMouseInGameWindow()
+	{
+		return m_mouseInGameWindow;
 	}
 
 	bool Editor::IsSceneViewFocused()
@@ -4428,7 +4434,7 @@ namespace PE {
 					ImVec2(1, 0)
 				);
 			}
-			m_mouseInScene = ImGui::IsWindowHovered();
+			m_mouseInGameWindow = ImGui::IsWindowHovered();
 		}
 		
 
