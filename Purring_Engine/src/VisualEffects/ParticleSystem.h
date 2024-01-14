@@ -53,6 +53,9 @@ namespace PE
 
 		// how long each particle should exist
 		float startLifetime;
+		
+		// how often and how much the particles will stray off an intended path
+		float randomnessFactor;
 
 		// on spawn variables
 		float startDelay; // particles appear later after entity is active check if needed

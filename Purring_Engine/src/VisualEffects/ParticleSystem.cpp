@@ -16,7 +16,7 @@
 #include "prpch.h"
 #include "ParticleSystem.h"
 #include "Logging/Logger.h"
-# define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
+#define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 extern Logger engine_logger;
 
@@ -28,7 +28,8 @@ namespace PE
 		startDelay{ 0.f }, startRotation{ 0.f }, startScale{ 1.f, 1.f }, startColor{ 1.f,1.f,1.f,1.f },
 		endDelay{ 0.f }, endRotation{ 0.f }, endScale{ 1.f, 1.f }, endColor{ 1.f,1.f,1.f,1.f },
 		emissionDirection{ 0.f }, emissionVector{ sinf(emissionDirection), cosf(emissionDirection) },
-		emissionArc{ M_PI / 4.f }, startEmissionRadius{ 0.f }, emissionElapsed{ emissionDuration }
+		emissionArc{ M_PI / 4.f }, startEmissionRadius{ 0.f }, emissionElapsed{ emissionDuration },
+		randomnessFactor{ 0.f }
 	{
 		emissionVector.Normalize();
 		orientationChangeSpeed = (endRotation - startRotation) / emissionDuration;
@@ -43,7 +44,8 @@ namespace PE
 		startDelay{ r_cpy.startDelay }, startRotation{ r_cpy.startRotation }, startScale{ r_cpy.startScale }, startColor{ r_cpy.startColor },
 		endDelay{ r_cpy.endDelay }, endRotation{ r_cpy.endRotation }, endScale{ r_cpy.endScale }, endColor{ r_cpy.endColor },
 		emissionDirection{ r_cpy.emissionDirection }, emissionVector{ sinf(emissionDirection), cosf(emissionDirection) },
-		emissionArc{ r_cpy.emissionArc }, startEmissionRadius{ r_cpy.startEmissionRadius }, emissionElapsed{ emissionDuration }
+		emissionArc{ r_cpy.emissionArc }, startEmissionRadius{ r_cpy.startEmissionRadius }, emissionElapsed{ emissionDuration },
+		randomnessFactor{ r_cpy.randomnessFactor }
 		{
 			emissionVector.Normalize();
 			orientationChangeSpeed = (endRotation - startRotation) / emissionDuration;

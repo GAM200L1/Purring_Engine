@@ -91,7 +91,7 @@
 #include "GameStateManager.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
-#include "Particle/ParticleSystem.h"
+#include "VisualEffects/ParticleSystem.h"
 
 
 // Scene Manager
