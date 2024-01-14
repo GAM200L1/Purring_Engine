@@ -11,7 +11,16 @@
                         "name": "Audio Object",
                         "parent": null,
                         "sceneID": 18446744073709551615
-                    }
+                    },
+					            "Transform": {
+                "height": 100.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "width": 250.0
+            }
                 },
                 "name": ""
             }
