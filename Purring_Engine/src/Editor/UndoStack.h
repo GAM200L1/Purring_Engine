@@ -17,8 +17,11 @@
 *************************************************************************************/
 #pragma once
 #include <deque>
+#include "Editor.h"
+#include "Singleton.h"
 #include "ECS/EntityFactory.h"
 #include "Hierarchy/HierarchyManager.h"
+#include <glm/glm.hpp>
 typedef unsigned long long EntityID;
 namespace PE
 {
@@ -48,8 +51,11 @@ namespace PE
 		virtual ~EditorChanges() {}
 	};
 
-	class UndoStack
+	class UndoStack : public Singleton<UndoStack>
 	{
+		// ----- Singleton ----- // 
+		friend class Singleton<UndoStack>;
+
 		// ----- Constructors ----- // 
 	public:
 		/*!***********************************************************************************
@@ -85,6 +91,7 @@ namespace PE
 		std::deque<EditorChanges*> m_redoStack; // might not do this yet ill see
 		int m_undoCount;
 	};
+
 
 	template <typename T>
 	class ValueChange : public EditorChanges
@@ -203,7 +210,7 @@ namespace PE
 		 \brief										constructor taking in values
 		 \param [In]	EntityID id					id that is edited
 		*************************************************************************************/
-		DeleteObjectUndo(EntityID id) : ObjectDeleted(id) 
+		DeleteObjectUndo(EntityID id) : m_objectDeleted(id) 
 		{
 		}
 	public:
@@ -213,50 +220,51 @@ namespace PE
 		*************************************************************************************/
 		virtual void Undo() override
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).UnHandicapEntity();
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent)
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).UnHandicapEntity();
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).parent)
 			{
-				Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.value(), ObjectDeleted);
+				Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).parent.value(), m_objectDeleted);
 			}
-			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren)
+			for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren)
 			{
-				Hierarchy::GetInstance().AttachChild(ObjectDeleted, id);
+				Hierarchy::GetInstance().AttachChild(m_objectDeleted, id);
 			}
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren.clear();
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren.clear();
 		}
 		/*!***********************************************************************************
 		 \brief			overriden Redo Function
 		*************************************************************************************/
 		virtual void Redo() override
 		{
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).children.size())
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).children.size())
 			{
-				for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).children)
+				for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).children)
 				{
-					EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren.emplace_back(cid);
+					EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren.emplace_back(cid);
 				}
 
-				for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).savedChildren)
+				for (const auto& cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).savedChildren)
 				{
-					if (EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.has_value())
-						Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).parent.value(), cid);
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).parent.has_value())
+						Hierarchy::GetInstance().AttachChild(EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).parent.value(), cid);
 					else
 						Hierarchy::GetInstance().DetachChild(cid);
 				}
 			}
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectDeleted).HandicapEntity();
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectDeleted).HandicapEntity();
+			Editor::GetInstance().ResetSelectedObject();
 		}
 		/*!***********************************************************************************
 		 \brief     When a change leaves the undo stack
 		*************************************************************************************/
 		virtual void OnUndoStackLeave() override 
 		{
-			EntityManager::GetInstance().RemoveEntity(ObjectDeleted);
+			EntityManager::GetInstance().RemoveEntity(m_objectDeleted);
 		}
 
 		// ----- Private Variables ----- // 
 	private:
-		EntityID ObjectDeleted;
+		EntityID m_objectDeleted;
 	};
 
 	class CreateObjectUndo : public EditorChanges
@@ -271,7 +279,7 @@ namespace PE
 		 \brief										constructor taking in values
 		 \param [In]	EntityID id					id that is edited
 		*************************************************************************************/
-		CreateObjectUndo(EntityID id): ObjectCreated(id) {}
+		CreateObjectUndo(EntityID id): m_objectCreated(id) {}
 	public:
 		// ----- Public Functions ----- // 
 		/*!***********************************************************************************
@@ -279,24 +287,74 @@ namespace PE
 		*************************************************************************************/
 		virtual void Undo() override
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectCreated).HandicapEntity();
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectCreated).HandicapEntity();
+			Editor::GetInstance().ResetSelectedObject();
 		}
 		/*!***********************************************************************************
 		 \brief			overriden Redo Function
 		*************************************************************************************/
 		virtual void Redo() override
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(ObjectCreated).UnHandicapEntity();
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_objectCreated).UnHandicapEntity();
 		}
 		/*!***********************************************************************************
 		 \brief     When a change leaves the redo stack
 		*************************************************************************************/
 		virtual void OnRedoStackLeave() override
 		{
-			EntityManager::GetInstance().RemoveEntity(ObjectCreated);
+			EntityManager::GetInstance().RemoveEntity(m_objectCreated);
 		}
 		// ----- Private Variables ----- // 
 	private:
-		EntityID ObjectCreated;
+		EntityID m_objectCreated;
+	};
+
+	class GuizmoUndo : public EditorChanges
+	{
+		// ----- Constructors ----- // 
+	public:
+		/*!***********************************************************************************
+		 \brief			deleted default constructor
+		*************************************************************************************/
+		GuizmoUndo() = delete;
+		/*!***********************************************************************************
+		 \brief										constructor taking in values
+		 \param [In]	EntityID id					id that is edited
+		*************************************************************************************/
+		GuizmoUndo(Transform old_t, Transform new_t, Transform* p_t, bool hasParent) :m_oldTransform(old_t),m_newTransform(new_t), p_location(p_t),m_hasParent(hasParent)
+		{		
+		}
+	public:
+		// ----- Public Functions ----- // 
+		/*!***********************************************************************************
+		 \brief			overriden Undo Function
+		*************************************************************************************/
+		virtual void Undo() override
+		{
+			p_location->width = m_oldTransform.width;
+			p_location->height = m_oldTransform.height;
+			p_location->orientation = m_oldTransform.orientation;
+			p_location->position = m_oldTransform.position;
+			p_location->relOrientation = m_oldTransform.relOrientation;
+			p_location->relPosition = m_oldTransform.relPosition;
+		}
+		/*!***********************************************************************************
+		 \brief			overriden Redo Function
+		*************************************************************************************/
+		virtual void Redo() override
+		{
+			p_location->width = m_newTransform.width;
+			p_location->height = m_newTransform.height;
+			p_location->orientation = m_newTransform.orientation;
+			p_location->position = m_newTransform.position;
+			p_location->relOrientation = m_newTransform.relOrientation;
+			p_location->relPosition = m_newTransform.relPosition;
+		}
+		// ----- Private Variables ----- // 
+	private:
+		Transform m_oldTransform{};
+		Transform m_newTransform{};
+		Transform* p_location;
+		bool m_hasParent;
 	};
 }

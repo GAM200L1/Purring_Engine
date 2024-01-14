@@ -106,6 +106,11 @@ namespace PE
 		return window;
 	}
 
+	GLFWwindow* WindowManager::GetWindow()
+	{
+		return p_currWindow;
+	}
+
 
 	void WindowManager::TestFunction(EntityID)
 	{
