@@ -112,7 +112,7 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_R))
 				{
-
+					if(m_sceneViewFocused)
 					if (KTE.keycode == GLFW_KEY_X)
 					{
 						m_currentGizmoOperation = ImGuizmo::OPERATION::ROTATE_X;
@@ -129,6 +129,7 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 				{
+					if (m_sceneViewFocused)
 					if (KTE.keycode == GLFW_KEY_X)
 					{
 						m_currentGizmoOperation = ImGuizmo::OPERATION::SCALE_X;
@@ -145,6 +146,7 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_T))
 				{
+					if (m_sceneViewFocused)
 					if (KTE.keycode == GLFW_KEY_X)
 					{
 						m_currentGizmoOperation = ImGuizmo::OPERATION::TRANSLATE_X;
