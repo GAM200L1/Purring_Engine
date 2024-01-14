@@ -64,6 +64,10 @@
 #include "Physics/CollisionManager.h"
 #include "Physics/PhysicsManager.h"
 
+// Visual Effects
+#include "VisualEffects/VisualEffectsManager.h"
+#include "VisualEffects/ParticleSystem.h"
+
 // Serialization
 #include "Data/SerializationManager.h"
 
@@ -91,7 +95,6 @@
 #include "GameStateManager.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
-#include "VisualEffects/ParticleSystem.h"
 
 
 // Scene Manager
@@ -518,6 +521,7 @@ void PE::CoreApplication::InitializeSystems()
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
     GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window, static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
+    VisualEffectsManager* p_visualEffectsManager = new (MemoryManager::GetInstance().AllocateMemory("Visual Effects Manager", sizeof(VisualEffectsManager)))VisualEffectsManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
     AddSystem(p_inputSystem);

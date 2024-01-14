@@ -21,10 +21,22 @@ namespace PE
 	class VisualEffectsManager : public System
 	{
 	public:
+		VisualEffectsManager() = default;
+
 		void InitializeSystem();
 
 		void UpdateSystem(float deltaTime);
 
 		void DestroySystem();
+
+		/*!***********************************************************************************
+		 \brief Get the name of the system which is Collision
+
+		 \return std::string - m_systemName variable
+		*************************************************************************************/
+		std::string GetName() { return m_systemName; }
+
+	private:
+		std::string m_systemName{ "VisualEffectsManager" };
 	};
 }
