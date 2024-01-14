@@ -91,6 +91,7 @@
 #include "GameStateManager.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
+#include "Particle/ParticleSystem.h"
 
 
 // Scene Manager
@@ -122,6 +123,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
     REGISTERCOMPONENT(PE::Canvas);
+    REGISTERCOMPONENT(PE::ParticleSystem);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...

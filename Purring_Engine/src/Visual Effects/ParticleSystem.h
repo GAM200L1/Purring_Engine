@@ -17,6 +17,7 @@
 #include <random>
 #include "Math/MathCustom.h"
 #include "Particle.h"
+#include "Singleton.h"
 namespace PE
 {
 	// component assigned to an entity to make it spit out particles
@@ -27,9 +28,10 @@ namespace PE
 		ParticleSystem(ParticleSystem const& r_cpy);
 		ParticleSystem& operator=(ParticleSystem const& r_cpy);
 		void Update(float deltaTime);
+		void CreateAllParticles(EntityID emitterID);
 		void ResetAllParticles(); // resets emission duration, lifetime of each particle and the position of each particle
 		
-	protected:
+	public:
 		// max number of particles
 		unsigned maxParticles;
 
@@ -54,6 +56,7 @@ namespace PE
 
 		// on spawn variables
 		float startDelay; // particles appear later after entity is active check if needed
+		float startSpeed;
 		float startRotation;
 		vec2 startScale; // width and height
 		vec4 startColor;
@@ -66,15 +69,13 @@ namespace PE
 	
 	private:
 		// Random value generators
-		vec2 GeneratePosition();
-		vec2 GenerateDirectionVector();
+		vec2 GeneratePosition(float radius);
+		vec2 GenerateDirectionVector(vec2 const& r_startPosition);
 
 	private:
 		// vector of particles belonging to the entity with this system
 		std::vector<Particle> particles;
 
-		// calculated variables, rate of change for different variables
-		vec2 positionChangeSpeed;
 		float orientationChangeSpeed;
 		vec2 scaleChangeSpeed;
 		vec4 colorChangeSpeed;
@@ -82,17 +83,9 @@ namespace PE
 
 		// track how long particle system has been emitting particles
 		float emissionElapsed;
+		unsigned existingParticles;
 
 		// random seed
 		std::random_device seed;
-	};
-
-	// this is a problem
-	class ParticleSystemManager
-	{
-	public:
-		/*void Initialize();
-		void Update();
-		void Destroy();*/
 	};
 }

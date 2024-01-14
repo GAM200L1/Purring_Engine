@@ -1,6 +1,22 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401-A
+ \file     Particle.h
+ \date     15-12-2023
+
+ \author               Liew Yeni
+ \par      email:      yeni.l@digipen.edu
+
+ \brief
+
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #pragma once
 #include "ECS/Entity.h"
 #include "ECS/EntityFactory.h"
+#include "Hierarchy/HierarchyManager.h"
 #include "Graphics/Renderer.h"
 
 namespace PE
@@ -18,12 +34,15 @@ namespace PE
 		//EntityID spawnerID;
 		EntityID particleID;
 		float lifetime = 0.f;
+		vec2 directionVector{ 0.f, 1.f };
 
 		EnumParticleType type;
 
-		void CreateParticle(EntityID particleId, EntityID spawnerId, EnumParticleType particleType, float startParticleOrientation, float particleWidth, float particleHeight, float startLifetime)
+		Particle() = delete; // no default creation, all values to be based off an existing emitter
+
+		Particle(EntityID spawnerId, EnumParticleType particleType)
 		{
-			particleID = particleId;
+			particleID = EntityFactory::GetInstance().CreateEntity();
 			type = particleType;
 			
 			// assigns a transform to the particle
@@ -43,35 +62,34 @@ namespace PE
 			}
 
 			// sets parent ID as spawner ID
-			EntityManager::GetInstance().Get<EntityDescriptor>(particleID).parent = spawnerId;
-			
-			// Sets the rotation of the particle
-			EntityManager::GetInstance().Get<Transform>(particleID).relOrientation = startParticleOrientation;
-			
-			// Sets the starting size of the particle
-			EntityManager::GetInstance().Get<Transform>(particleID).width = particleWidth;
-			EntityManager::GetInstance().Get<Transform>(particleID).height = particleHeight;
-
-			// Sets the lifetime of the particle
-			lifetime = startLifetime;
+			Hierarchy::GetInstance().AttachChild(spawnerId, particleID);
 		}
 
-		void ResetParticle(vec2 const& r_startRelPosition, float particleWidth, float particleHeight, float startRotation, float startLifetime)
+		void SetActive(bool isActive)
 		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(particleID).isActive = isActive;
+		}
+
+		void ResetParticle(vec2 const& r_startRelPosition, vec2 const& r_directionVector, float particleWidth, float particleHeight, float startRotation, float startLifetime)
+		{
+			// sets the starting position of the object relative to the position of the emitter
 			EntityManager::GetInstance().Get<Transform>(particleID).relPosition = r_startRelPosition;
+
 			// Sets the starting size of the particle
 			EntityManager::GetInstance().Get<Transform>(particleID).width = particleWidth;
 			EntityManager::GetInstance().Get<Transform>(particleID).height = particleHeight;
 
 			EntityManager::GetInstance().Get<Transform>(particleID).relOrientation = startRotation;
 
+			directionVector = r_directionVector;
+
 			// Sets the lifetime of the particle
 			lifetime = startLifetime;
 		}
 
-		void UpdatePosition(vec2 const& r_positionDifference)
+		void UpdatePosition(float speedPerFrame)
 		{
-			EntityManager::GetInstance().Get<Transform>(particleID).relPosition += r_positionDifference;
+			EntityManager::GetInstance().Get<Transform>(particleID).relPosition += directionVector * speedPerFrame;
 		}
 
 		void UpdateRotation(float rotationDifference)
