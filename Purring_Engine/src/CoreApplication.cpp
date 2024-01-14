@@ -531,6 +531,7 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_collisionManager);
     AddSystem(p_animationManager);
     AddSystem(p_cameraManager);
+    AddSystem(p_visualEffectsManager);
     AddSystem(p_rendererManager);
     //AddSystem(p_audioManager);
 

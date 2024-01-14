@@ -16,7 +16,7 @@
 #include "prpch.h"
 #include "ParticleSystem.h"
 #include "Logging/Logger.h"
-#define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
+#define M_PI           3.14159265358979323846f // temp definition of pi, will need to discuss where shld we leave this later on
 
 extern Logger engine_logger;
 
@@ -35,7 +35,6 @@ namespace PE
 		orientationChangeSpeed = (endRotation - startRotation) / emissionDuration;
 		scaleChangeSpeed = (endScale - startScale) / emissionDuration;
 		colorChangeSpeed = (endColor - startColor) / emissionDuration;
-		seed();
 	}
 
 	ParticleSystem::ParticleSystem(ParticleSystem const& r_cpy) :
@@ -51,13 +50,18 @@ namespace PE
 			orientationChangeSpeed = (endRotation - startRotation) / emissionDuration;
 			scaleChangeSpeed = (endScale - startScale) / emissionDuration;
 			colorChangeSpeed = (endColor - startColor) / emissionDuration;
-			seed();
 		}
 
 	ParticleSystem& ParticleSystem::operator=(ParticleSystem const& r_cpy)
 	{
-		ParticleSystem ret{ r_cpy };
-		return ret;
+		maxParticles = r_cpy.maxParticles , isActive = r_cpy.isActive , isLooping = r_cpy.isLooping , particleType = r_cpy.particleType ,
+		emissionRate = r_cpy.emissionRate , emissionDuration = r_cpy.emissionDuration , startLifetime = r_cpy.startLifetime , startSpeed = r_cpy.startSpeed ,
+		startDelay = r_cpy.startDelay , startRotation = r_cpy.startRotation , startScale = r_cpy.startScale , startColor = r_cpy.startColor ,
+		endDelay = r_cpy.endDelay , endRotation = r_cpy.endRotation , endScale = r_cpy.endScale , endColor = r_cpy.endColor ,
+		emissionDirection = r_cpy.emissionDirection, emissionVector = vec2{ sinf(emissionDirection), cosf(emissionDirection) },
+		emissionArc = r_cpy.emissionArc , startEmissionRadius = r_cpy.startEmissionRadius , emissionElapsed = emissionDuration ,
+		randomnessFactor = r_cpy.randomnessFactor ;
+		return *this;
 	}
 
 	void ParticleSystem::Update(float deltaTime)
@@ -131,7 +135,7 @@ namespace PE
 		vec2 rightVector{ emissionVector.y, -emissionVector.x };
 		vec2 leftVector{ -emissionVector.y, emissionVector.x };
 
-		std::mt19937 generator(seed);
+		std::mt19937 generator(seed());
 
 		if (std::rand() % 2)
 		{
@@ -149,7 +153,7 @@ namespace PE
 	{
 		// internal formula is to get the end of the particle emission's 'radius'
 		vec2 generatedEndPosition = GeneratePosition((startSpeed * emissionDuration) * tanf(emissionArc * 0.5f));
-		
+
 		return generatedEndPosition - r_startPosition;
 	}
 }
