@@ -485,6 +485,8 @@ namespace PE {
 
 	void Editor::ShowLogsWindow(bool* p_active)
 	{
+		const LogColors& colors = GetLogColorsForCurrentStyle();
+
 		//if active
 		if (IsEditorActive())
 		if (!ImGui::Begin("Debug Log Window", p_active))
@@ -559,25 +561,25 @@ namespace PE {
 					{
 						if (errorfilter)
 							continue;
-						color = ImVec4(1.0f, 0.4f, 0.4f, 1.0f); has_color = true;
+						color = colors.errorColor; has_color = true;
 					}
 					else if (i->find("[INFO]") != std::string::npos)
 					{
 						if (infofilter)
 							continue;
-						color = ImVec4(0.4f, 1.f, 1.f, 1.0f); has_color = true;
+						color = colors.infoColor; has_color = true;
 					}
 					else if (i->find("[WARNING]") != std::string::npos)
 					{
 						if (warningfilter)
 							continue;
-						color = ImVec4(1.0f, 1.0f, 0.0f, 1.0f); has_color = true;
+						color = colors.warningColor; has_color = true;
 					}
 					else if (i->find("[EVENT]") != std::string::npos)
 					{
 						if (eventfilter)
 							continue;
-						color = ImVec4(0.4f, 0.4f, 0.4f, 1.0f); has_color = true;
+						color = colors.eventColor; has_color = true;
 					}
 					else if (otherfilter)
 						continue;
@@ -4987,6 +4989,7 @@ namespace PE {
 		ImVec4 lightText = ImVec4(0.85f, 0.85f, 0.85f, 1.00f);
 		ImVec4 subtleAccent = ImVec4(0.35f, 0.35f, 0.35f, 1.00f);
 		ImVec4 borderGray = ImVec4(0.25f, 0.25f, 0.25f, 1.00f);
+		ImVec4 brightAccent = ImVec4(0.70f, 0.70f, 0.70f, 1.00f);
 
 		// Text
 		colors[ImGuiCol_Text] = lightText;
@@ -5026,8 +5029,8 @@ namespace PE {
 		// Other UI elements
 		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.12f, 0.12f, 0.12f, 0.53f);
 		colors[ImGuiCol_CheckMark] = lightText;
-		colors[ImGuiCol_SliderGrab] = subtleAccent;
-		colors[ImGuiCol_SliderGrabActive] = borderGray;
+		colors[ImGuiCol_SliderGrab] = brightAccent;
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.90f, 0.90f, 0.90f, 1.00f);
 		colors[ImGuiCol_ResizeGrip] = subtleAccent;
 		colors[ImGuiCol_ResizeGripHovered] = borderGray;
 		colors[ImGuiCol_ResizeGripActive] = borderGray;
@@ -5080,6 +5083,7 @@ namespace PE {
 		ImVec4 darkText = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
 		ImVec4 mediumAccent = ImVec4(0.60f, 0.60f, 0.60f, 1.00f);
 		ImVec4 lightBorder = ImVec4(0.75f, 0.75f, 0.75f, 1.00f);
+		ImVec4 darkAccent = ImVec4(0.30f, 0.30f, 0.30f, 1.00f);
 
 		// Text
 		colors[ImGuiCol_Text] = darkText;
@@ -5119,8 +5123,8 @@ namespace PE {
 		// Other UI elements
 		colors[ImGuiCol_ScrollbarBg] = ImVec4(0.92f, 0.92f, 0.92f, 0.53f);
 		colors[ImGuiCol_CheckMark] = darkText;
-		colors[ImGuiCol_SliderGrab] = mediumAccent;
-		colors[ImGuiCol_SliderGrabActive] = lightBorder;
+		colors[ImGuiCol_SliderGrab] = darkAccent;
+		colors[ImGuiCol_SliderGrabActive] = ImVec4(0.15f, 0.15f, 0.15f, 1.00f);
 		colors[ImGuiCol_ResizeGrip] = mediumAccent;
 		colors[ImGuiCol_ResizeGripHovered] = lightBorder;
 		colors[ImGuiCol_ResizeGripActive] = lightBorder;
@@ -5294,8 +5298,6 @@ namespace PE {
 
 	}
 
-
-
 	void Editor::SetImGUIStyle_Blue()
 	{
 		ImGuiStyle* style = &ImGui::GetStyle();
@@ -5341,7 +5343,51 @@ namespace PE {
 		colors[ImGuiCol_TabUnfocusedActive] = ImLerp(colors[ImGuiCol_TabActive], colors[ImGuiCol_TitleBg], 0.40f);
 	}
 
-	std::string GenerateTimestampID() {
+	Editor::LogColors Editor::GetLogColorsForCurrentStyle() const
+	{
+		switch (m_currentStyle)
+		{
+		case GuiStyle::DARK:
+			return
+			{
+				ImVec4(1.0f, 0.4f, 0.4f, 1.0f),
+				ImVec4(0.4f, 1.0f, 1.0f, 1.0f),
+				ImVec4(1.0f, 1.0f, 0.0f, 1.0f),
+				ImVec4(0.6f, 0.6f, 0.6f, 1.0f)
+			};
+		case GuiStyle::LIGHT:
+			return
+			{
+				ImVec4(0.9f, 0.1f, 0.1f, 1.0f),
+				ImVec4(0.1f, 0.2f, 0.9f, 1.0f),
+				ImVec4(0.9f, 0.5f, 0.0f, 1.0f),
+				ImVec4(0.0f, 0.5f, 0.0f, 1.0f)
+			};
+
+		// Dark Blue theme
+		case GuiStyle::KURUMI:
+			return
+			{
+				ImVec4(0.7f, 0.3f, 0.3f, 1.0f),
+				ImVec4(0.3f, 0.7f, 0.7f, 1.0f),
+				ImVec4(0.7f, 0.7f, 0.3f, 1.0f),
+				ImVec4(0.5f, 0.5f, 0.5f, 1.0f)
+			};
+
+		// Grey
+		default:
+			return
+			{
+				ImVec4(0.5f, 0.5f, 0.5f, 1.0f),
+				ImVec4(0.5f, 0.5f, 0.5f, 1.0f),
+				ImVec4(0.5f, 0.5f, 0.5f, 1.0f),
+				ImVec4(0.5f, 0.5f, 0.5f, 1.0f)
+			};
+		}
+	}
+
+	std::string GenerateTimestampID()
+	{
 		auto now = std::chrono::system_clock::now();
 		auto now_c = std::chrono::system_clock::to_time_t(now);
 		return std::to_string(now_c);
