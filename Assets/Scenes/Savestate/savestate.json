@@ -20,10 +20,10 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/MapBackground_1920x1080_filled.png"
+                        "TextureKey": "../Assets/Textures/bg.png"
                     },
                     "Transform": {
-                        "height": 1080.0,
+                        "height": 1000.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -34,7 +34,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 1920.0
+                        "width": 1000.0
                     }
                 },
                 "name": ""
@@ -67,8 +67,8 @@
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": -100.0,
-                            "y": -100.0
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relorientation": 0.0,
                         "width": 100.0
@@ -80,21 +80,158 @@
         {
             "Entity": {
                 "components": {
-                    "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
-                    },
                     "EntityDescriptor": {
                         "Layer": 0,
                         "Old ID": 3,
-                        "Prefab Type": "Canvas Object",
-                        "children": [
-                            4
-                        ],
+                        "Prefab Type": "",
+                        "children": [],
                         "isActive": true,
-                        "name": "Canvas Object",
+                        "name": "EmptyObject",
                         "parent": null,
                         "sceneID": 3
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.3294117748737335,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -263.0,
+                            "y": 90.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [],
+                        "CurrentAnimationID": ""
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 4,
+                        "Prefab Type": "",
+                        "children": [
+                            2,
+                            8,
+                            9
+                        ],
+                        "isActive": true,
+                        "name": "Player",
+                        "parent": null,
+                        "sceneID": 4
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "FollowScript": {
+                            "data": {
+                                "CurrentPosition": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "FollowingObject": [
+                                    18446744073709551615,
+                                    9,
+                                    10,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "IsAttaching": false,
+                                "LookTowardsMovement": true,
+                                "NextPosition": {
+                                    "0": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "1": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "2": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "3": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "4": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    }
+                                },
+                                "NumberOfAttacher": 1,
+                                "NumberOfFollower": 2,
+                                "Size": 100,
+                                "SoundID": 0,
+                                "Speed": 100.0,
+                                "ToAttach": [
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "rotation": 0.0
+                            },
+                            "state": 0
+                        },
+                        "PlayerControllerScript": {
+                            "data": {
+                                "HP": 100,
+                                "PlayerState": 0,
+                                "speed": 100.0
+                            },
+                            "state": 0
+                        }
                     },
                     "Transform": {
                         "height": 100.0,
@@ -119,15 +256,47 @@
                 "components": {
                     "EntityDescriptor": {
                         "Layer": 0,
-                        "Old ID": 4,
-                        "Prefab Type": "SliderBody",
-                        "children": [
-                            7
-                        ],
+                        "Old ID": 5,
+                        "Prefab Type": "",
+                        "children": [],
                         "isActive": true,
-                        "name": "SliderBody",
-                        "parent": 3,
-                        "sceneID": 0
+                        "name": "GUIButton",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledColor": [
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            0.8627451062202454,
+                            0.8627451062202454,
+                            0.8627451062202454,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_onClicked": "PlayAudio1",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.7843137383460999,
+                            0.7843137383460999,
+                            0.7843137383460999,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -136,52 +305,13 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": ""
-                    },
-                    "GUISlider": {
-                        "m_Hovered": false,
-                        "m_clicked": false,
-                        "m_currentValue": 0.0,
-                        "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
-                        ],
-                        "m_defaultTexture": "",
-                        "m_disabled": false,
-                        "m_disabledColor": [
-                            0.0784313753247261,
-                            0.0784313753247261,
-                            0.0784313753247261,
-                            1.0
-                        ],
-                        "m_disabledTexture": "",
-                        "m_endPoint": 212.5,
-                        "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            1.0
-                        ],
-                        "m_hoveredTexture": "",
-                        "m_knobID": 7,
-                        "m_maxValue": 100.0,
-                        "m_minValue": 0.0,
-                        "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            1.0
-                        ],
-                        "m_pressedTexture": "",
-                        "m_startPoint": -212.5
+                        "TextureKey": "../Assets/Textures/Button_White_128px.png"
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": 285.0,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -189,7 +319,49 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 500.0
+                        "width": 250.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 6,
+                        "Prefab Type": "",
+                        "children": [
+                            8
+                        ],
+                        "isActive": true,
+                        "name": "Hi yeni",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 116.0,
+                            "y": -177.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""
@@ -201,35 +373,218 @@
                     "EntityDescriptor": {
                         "Layer": 0,
                         "Old ID": 7,
-                        "Prefab Type": "SliderKnob",
-                        "children": [],
+                        "Prefab Type": "",
+                        "children": [
+                            7
+                        ],
                         "isActive": true,
-                        "name": "SliderKnob",
-                        "parent": 4,
-                        "sceneID": 0
+                        "name": "Yes im bored",
+                        "parent": 7,
+                        "sceneID": 7
                     },
-                    "GUIRenderer": {
+                    "Renderer": {
                         "Color": {
-                            "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "a": 0.364705890417099,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Icons/Audio_Icon.png"
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -212.5,
-                            "y": 0.0
+                            "x": 116.0,
+                            "y": -177.0
                         },
                         "relativeposition": {
-                            "x": -212.5,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 75.0
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": false,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 8,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 8
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 116.0,
+                            "y": -177.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [],
+                        "CurrentAnimationID": ""
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 9,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Follow1",
+                        "parent": null,
+                        "sceneID": 9
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "ScriptComponent": {
+                        "FollowScript": {
+                            "data": {
+                                "CurrentPosition": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "FollowingObject": [
+                                    18446744073709551615,
+                                    10,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "IsAttaching": false,
+                                "LookTowardsMovement": true,
+                                "NextPosition": {
+                                    "0": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "1": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "2": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "3": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "4": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    }
+                                },
+                                "NumberOfAttacher": 1,
+                                "NumberOfFollower": 2,
+                                "Size": 100,
+                                "SoundID": 0,
+                                "Speed": 100.0,
+                                "ToAttach": [
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "rotation": 0.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [],
+                        "CurrentAnimationID": ""
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 10,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Follow2",
+                        "parent": null,
+                        "sceneID": 10
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -417.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""

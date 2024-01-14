@@ -17,10 +17,10 @@
 #pragma once
 #pragma warning(disable : 4505) // warning C4505: ('FMOD_ErrorString': unreferenced function with internal linkage has been removed)
 
-#include "fmod.hpp"
 #include "fmod_errors.h"
 #include "Singleton.h"
 #include "System.h"
+#include "fmod_studio.hpp"
 /*                                                                                                          includes
 --------------------------------------------------------------------------------------------------------------------- */
 
@@ -98,7 +98,7 @@ namespace PE
          \brief     Get the FMOD system.
          \return    FMOD::System* The current FMOD system.
         *************************************************************************************/
-        FMOD::System* GetFMODSystem() { return m_system; }
+        FMOD::System* GetFMODSystem();
 
     private:
         /*!***********************************************************************************
@@ -112,6 +112,6 @@ namespace PE
         ~AudioManager();
 
         // Audio Variables
-        FMOD::System* m_system;
+        FMOD::Studio::System* m_system;
     };
 }

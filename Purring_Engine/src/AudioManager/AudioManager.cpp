@@ -24,41 +24,53 @@
 namespace PE
 {
     AudioManager::AudioManager()
-        : m_system(nullptr)  // Initialize FMOD system to nullptr
+        : m_system(nullptr)
     {}
 
     AudioManager::~AudioManager()
     {
         if (m_system)
+        {
             m_system->release();
+        }
     }
 
     bool AudioManager::Init()
     {
-        FMOD_RESULT result = FMOD::System_Create(&m_system);
+        FMOD_RESULT result;
+
+        // Create the Studio system
+        result = FMOD::Studio::System::create(&m_system);
         if (result != FMOD_OK)
         {
-            std::cout << "FMOD System_Create failed: " << FMOD_ErrorString(result) << "\n";
+            std::cout << "FMOD Studio System_Create failed: " << FMOD_ErrorString(result) << "\n";
             return false;
         }
 
-        result = m_system->init(512, FMOD_INIT_NORMAL, nullptr);
+        // Initialize the system
+        result = m_system->initialize(512, FMOD_STUDIO_INIT_NORMAL, FMOD_INIT_NORMAL, nullptr);
         if (result != FMOD_OK)
         {
-            std::cout << "FMOD init failed: " << FMOD_ErrorString(result) << "\n";
+            std::cout << "FMOD Studio init failed: " << FMOD_ErrorString(result) << "\n";
             return false;
         }
 
         return true;
     }
 
+
     void AudioManager::Update()
     {
-        m_system->update();
+        if (m_system)
+        {
+            m_system->update();
+        }
     }
 
-/*                                                                                                    Audio Controls
---------------------------------------------------------------------------------------------------------------------- */
+
+
+    /*                                                                                                    Audio Controls
+    --------------------------------------------------------------------------------------------------------------------- */
     bool AudioManager::Audio::LoadSound(const std::string& r_path, FMOD::System* p_system)
     {
         FMOD_RESULT result = p_system->createSound(r_path.c_str(), FMOD_DEFAULT, nullptr, &m_sound);
@@ -88,5 +100,16 @@ namespace PE
             }
         }
     }
+
+    FMOD::System* AudioManager::GetFMODSystem()
+    {
+        FMOD::System* lowLevelSystem = nullptr;
+        if (m_system) {
+            m_system->getCoreSystem(&lowLevelSystem);
+        }
+        return lowLevelSystem;
+    }
+
+
 
 }
