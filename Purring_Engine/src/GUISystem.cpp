@@ -649,6 +649,10 @@ namespace PE
 		j["m_pressedTexture"] = m_pressedTexture;
 		j["m_disabledTexture"] = m_disabledTexture;
 
+		j["m_isHealthBar"] = m_isHealthBar;
+		j["m_currentXpos"] = m_currentXpos;
+		j["m_currentWidth"] = m_currentWidth;
+
 		j["m_knobID"] = m_knobID.value_or(0);
 
 		return j;
@@ -709,8 +713,11 @@ namespace PE
 			}
 		}
 
+		if (j.contains("m_isHealthBar")) slider.m_isHealthBar = j.at("m_isHealthBar").get<bool>();
+		if (j.contains("m_currentXpos")) slider.m_currentXpos = j.at("m_currentXpos").get<float>();
+		if (j.contains("m_currentWidth")) slider.m_currentWidth = j.at("m_currentWidth").get<float>();
+
 		return slider;
 	}
-
 
 }

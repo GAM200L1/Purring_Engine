@@ -806,6 +806,10 @@ bool SerializationManager::LoadGUISlider(const EntityID& r_id, const nlohmann::j
             }
         }
 
+        if (sliderJson.contains("m_isHealthBar")) slider.m_isHealthBar = sliderJson["m_isHealthBar"].get<bool>();
+        if (sliderJson.contains("m_currentXpos")) slider.m_currentXpos = sliderJson["m_currentXpos"].get<float>();
+        if (sliderJson.contains("m_currentWidth")) slider.m_currentWidth = sliderJson["m_currentWidth"].get<float>();
+
         PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUISlider>(), static_cast<void*>(&slider));
         return true;
     }
