@@ -65,6 +65,12 @@
 #define GETCAMERAMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::Graphics::CameraManager, PE::SystemID::CAMERA>()
 
 /*!***********************************************************************************
+ \brief Retrieves Visual Effects system instance to use its functions
+
+*************************************************************************************/
+#define GETVISUALEFFECTSMANAGER() PE::SystemManager::GetInstance().GetSystem<PE::VisualEffectsManager, PE::SystemID::VISUALEFFECTS>()
+
+/*!***********************************************************************************
  \brief Retrieves Renderer system instance to use its functions
  
 *************************************************************************************/
@@ -85,6 +91,7 @@ namespace PE
 		COLLISION,
 		ANIMATION,
 		CAMERA,
+		VISUALEFFECTS,
 		GRAPHICS,
 		SYSTEMCOUNT
 	};

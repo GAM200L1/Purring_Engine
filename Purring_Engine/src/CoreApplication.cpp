@@ -367,9 +367,15 @@ void PE::CoreApplication::Run()
 #else
     SceneManager::GetInstance().SetStartScene("GameSceneFINAL.json"); // set game scene here <-
 #endif // !GAMERELEASE
+    
     // Load scene
     SceneManager::GetInstance().LoadCurrentScene();
 
+    // REMOVE LATER - TEST FOR PARTICLE SYSTEM //
+    EntityID id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
+    EntityManager::GetInstance().Assign<ParticleSystem>(id);
+    ////////////////////////////////////////////
+    
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
     while (!glfwWindowShouldClose(m_window))
