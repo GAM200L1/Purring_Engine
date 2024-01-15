@@ -50,6 +50,7 @@
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
 #include "Logic/GameStateController.h"
+#include "Logic/GameStateController_v2_0.h"
 #include "GUISystem.h"
 #include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
@@ -3048,7 +3049,38 @@ namespace PE {
 								}
 							}
 
+							if (key == "GameStateController_v2_0")
+							{
+								GameStateController_v2_0* p_script = dynamic_cast<GameStateController_v2_0*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("GameStateController_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act", &it->second.GameStateManagerActive);
+										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
+										int PauseMenuCanvasID = static_cast<int> (it->second.PauseMenuCanvas);
+										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
+										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
+										int LoseCanvasID = static_cast<int> (it->second.LoseCanvas);
+									
+										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ssc", &SplashScreenID);
+										if (SplashScreenID != m_currentSelectedObject) { it->second.SplashScreen = SplashScreenID; }
 
+										ImGui::Text("PauseMenuCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##pmc", &PauseMenuCanvasID);
+										if (PauseMenuCanvasID != m_currentSelectedObject) { it->second.PauseMenuCanvas = PauseMenuCanvasID; }
+
+										ImGui::Text("AreYouSureCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ays", &AreYouSureCanvasID);
+										if (AreYouSureCanvasID != m_currentSelectedObject) { it->second.AreYouSureCanvas = AreYouSureCanvasID; }
+
+										ImGui::Text("WinCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ws", &WinCanvasID);
+										if (WinCanvasID != m_currentSelectedObject) { it->second.WinCanvas = WinCanvasID; }
+
+										ImGui::Text("LoseCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ls", &LoseCanvasID);
+										if (LoseCanvasID != m_currentSelectedObject) { it->second.LoseCanvas = LoseCanvasID; }
+									}
+								}
+							}
 
 						}
 					}

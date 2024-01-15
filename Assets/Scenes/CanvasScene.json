@@ -94,7 +94,7 @@
                             6,
                             7
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PauseCanvas",
                         "parent": null,
                         "sceneID": 4
@@ -125,7 +125,7 @@
                         "Old ID": 4,
                         "Prefab Type": "Pawsed Text Object",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Pawsed Text Object",
                         "parent": 3,
                         "sceneID": 4
@@ -165,7 +165,7 @@
                         "Old ID": 5,
                         "Prefab Type": "HowToPlayButton",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "HowToPlayButton",
                         "parent": 3,
                         "sceneID": 5
@@ -239,7 +239,7 @@
                         "Old ID": 6,
                         "Prefab Type": "QuitGameButton",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "QuitGameButton",
                         "parent": 3,
                         "sceneID": 6
@@ -313,7 +313,7 @@
                         "Old ID": 7,
                         "Prefab Type": "ResumeGameButton",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "ResumeGameButton",
                         "parent": 3,
                         "sceneID": 7
@@ -342,7 +342,7 @@
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_ResumeGame_Highlighted_512x128.png",
-                        "m_onClicked": "ResumeState",
+                        "m_onClicked": "ResumeStateV2",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -396,7 +396,7 @@
                             11,
                             12
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
                         "sceneID": 5
@@ -427,7 +427,7 @@
                         "Old ID": 9,
                         "Prefab Type": "areyousure",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "areyousure",
                         "parent": 8,
                         "sceneID": 9
@@ -467,7 +467,7 @@
                         "Old ID": 10,
                         "Prefab Type": "yesbutton",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "yesbutton",
                         "parent": 8,
                         "sceneID": 5
@@ -541,7 +541,7 @@
                         "Old ID": 11,
                         "Prefab Type": "SadCat",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "SadCat",
                         "parent": 8,
                         "sceneID": 11
@@ -581,7 +581,7 @@
                         "Old ID": 12,
                         "Prefab Type": "nobutton",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "nobutton",
                         "parent": 8,
                         "sceneID": 12
@@ -661,7 +661,7 @@
                         "children": [
                             15
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
                         "sceneID": 3
@@ -692,7 +692,7 @@
                         "Old ID": 15,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Transparent Background",
                         "parent": 13,
                         "sceneID": 8
@@ -741,7 +741,7 @@
                         "isActive": true,
                         "name": "SplashScreenCanvas",
                         "parent": null,
-                        "sceneID": 16
+                        "sceneID": 6
                     },
                     "Transform": {
                         "height": 100.0,
@@ -796,6 +796,51 @@
                         },
                         "relorientation": 0.0,
                         "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 14,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Empty Object",
+                        "parent": null,
+                        "sceneID": 7
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "ScriptComponent": {
+                        "GameStateController_v2_0": {
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""

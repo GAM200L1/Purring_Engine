@@ -91,7 +91,7 @@
 #include "GameStateManager.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
-
+#include "Logic/GameStateController_v2_0.h"
 
 // Scene Manager
 #include "SceneManager/SceneManager.h"
@@ -204,7 +204,14 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
-  
+    rttr::registration::class_<PE::GameStateController_v2_0>("GameStateController_V2_0")
+        .property("GameStateManagerActive", &PE::GameStateController_v2_0Data::GameStateManagerActive)
+        .property("SplashScreen", &PE::GameStateController_v2_0Data::SplashScreen)
+        .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
+        .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)
+        .property("LoseCanvas", &PE::GameStateController_v2_0Data::LoseCanvas)
+        .property("WinCanvas", &PE::GameStateController_v2_0Data::WinCanvas);
+
     rttr::registration::class_<PE::GameStateController>("GameStateController")
         .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
         .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
