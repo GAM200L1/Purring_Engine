@@ -3231,10 +3231,17 @@ namespace PE {
 					{
 						std::string icon{};
 						std::string const extension{ m_files[n].filename().extension().string() };
+
 						if (extension == "")
 							icon = "../Assets/Icons/Directory_Icon.png";
-						else if (extension == ".mp3" || extension == ".wav" || extension == ".ogg")
-							icon = "../Assets/Icons/Audio_Icon.png";
+						else if (extension == ".mp3")
+							icon = "../Assets/Icons/Mp3_Icon.png";
+						else if (extension == ".wav")
+							icon = "../Assets/Icons/Wav_Icon.png";
+						else if (extension == ".ogg")
+							icon = "../Assets/Icons/Ogg_Icon.png";
+						else if (extension == ".txt")
+							icon = "../Assets/Icons/Text_Icon.png";
 						else if (extension == ".ttf")
 							icon = "../Assets/Icons/Font_Icon.png";
 						else if (extension == ".json")
@@ -3242,7 +3249,7 @@ namespace PE {
 						else if (extension == ".png")
 							icon = "../Assets/Icons/Texture_Icon.png";
 						else
-							icon = "../Assets/Icons/Other_Icon.png";
+							icon = "../Assets/Icons/Others_Icon.png"; // Default case for unknown file types
 
 						// Centering the Icon
 						float iconPosX = (120 - 50) * 0.5f;
@@ -3290,16 +3297,14 @@ namespace PE {
 								isDragging = true;
 
 								std::string iconDraggedExtension = m_files[n].extension().string();
-								if (iconDraggedExtension == "")
-									iconDragged = "../Assets/Icons/Directory_Icon.png";
-								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav" ||
-									iconDraggedExtension == ".ogg" || iconDraggedExtension == ".flac" ||
-									iconDraggedExtension == ".aiff" || iconDraggedExtension == ".mod" ||
-									iconDraggedExtension == ".s3m" || iconDraggedExtension == ".xm" ||
-									iconDraggedExtension == ".midi" || iconDraggedExtension == ".mid")
-								{
-									iconDragged = "../Assets/Icons/Audio_Icon.png";
-								}
+								if (iconDraggedExtension == ".mp3")
+									iconDragged = "../Assets/Icons/Mp3_Icon.png";
+								else if (iconDraggedExtension == ".wav")
+									iconDragged = "../Assets/Icons/Wav_Icon.png";
+								else if (iconDraggedExtension == ".ogg")
+									iconDragged = "../Assets/Icons/Ogg_Icon.png";
+								else if (iconDraggedExtension == ".txt")
+									iconDragged = "../Assets/Icons/Text_Icon.png";
 								else if (iconDraggedExtension == ".ttf")
 									iconDragged = "../Assets/Icons/Font_Icon.png";
 								else if (iconDraggedExtension == ".json")
