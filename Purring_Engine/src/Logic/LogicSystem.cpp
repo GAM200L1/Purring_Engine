@@ -34,7 +34,7 @@
 #include "FollowScript.h"
 #include "CameraManagerScript.h"
 #include "CatScript.h"
-#include "GameStateController.h"
+//#include "GameStateController.h"
 #include "RatScript.h"
 #include "GameStateController_v2_0.h"
 
@@ -62,7 +62,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(CameraManagerScript);
 	REGISTER_SCRIPT(CatScript);
 	REGISTER_SCRIPT(RatScript);
-	REGISTER_SCRIPT(GameStateController);
+	//REGISTER_SCRIPT(GameStateController);
 	REGISTER_SCRIPT(GameStateController_v2_0);
 }
 

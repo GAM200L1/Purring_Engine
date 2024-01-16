@@ -204,7 +204,7 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
-    rttr::registration::class_<PE::GameStateController_v2_0>("GameStateController_V2_0")
+    rttr::registration::class_<PE::GameStateController_v2_0Data>("GameStateController_v2_0")
         .property("GameStateManagerActive", &PE::GameStateController_v2_0Data::GameStateManagerActive)
         .property("SplashScreen", &PE::GameStateController_v2_0Data::SplashScreen)
         .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
@@ -212,25 +212,25 @@ RTTR_REGISTRATION
         .property("LoseCanvas", &PE::GameStateController_v2_0Data::LoseCanvas)
         .property("WinCanvas", &PE::GameStateController_v2_0Data::WinCanvas);
 
-    rttr::registration::class_<PE::GameStateController>("GameStateController")
-        .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
-        .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
-        .property("executingStatement", &PE::GameStateControllerData::executingStatement)
-        .property("mapOverlay", &PE::GameStateControllerData::mapOverlay)
-        .property("pawOverlay", &PE::GameStateControllerData::pawOverlay)
-        .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
-        .property("energyHeader", &PE::GameStateControllerData::energyHeader)
-        .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
-        .property("slashText", &PE::GameStateControllerData::slashText)
-        .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
-        .property("energyBackground", &PE::GameStateControllerData::energyBackground)
-        .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
-        .property("planAttackText", &PE::GameStateControllerData::planAttackText)
-        .property("planMovementText", &PE::GameStateControllerData::planMovementText)
-        .property("turnBackground", &PE::GameStateControllerData::turnBackground)
-        .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
-        .property("endMovementText", &PE::GameStateControllerData::endMovementText)
-        .property("endTurnText", &PE::GameStateControllerData::endTurnText);
+    //rttr::registration::class_<PE::GameStateController>("GameStateController")
+    //    .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
+    //    .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
+    //    .property("executingStatement", &PE::GameStateControllerData::executingStatement)
+    //    .property("mapOverlay", &PE::GameStateControllerData::mapOverlay)
+    //    .property("pawOverlay", &PE::GameStateControllerData::pawOverlay)
+    //    .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
+    //    .property("energyHeader", &PE::GameStateControllerData::energyHeader)
+    //    .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
+    //    .property("slashText", &PE::GameStateControllerData::slashText)
+    //    .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
+    //    .property("energyBackground", &PE::GameStateControllerData::energyBackground)
+    //    .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
+    //    .property("planAttackText", &PE::GameStateControllerData::planAttackText)
+    //    .property("planMovementText", &PE::GameStateControllerData::planMovementText)
+    //    .property("turnBackground", &PE::GameStateControllerData::turnBackground)
+    //    .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
+    //    .property("endMovementText", &PE::GameStateControllerData::endMovementText)
+    //    .property("endTurnText", &PE::GameStateControllerData::endTurnText);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);

@@ -825,6 +825,14 @@
                     },
                     "ScriptComponent": {
                         "GameStateController_v2_0": {
+                            "data": {
+                                "AreYouSureCanvas": 0,
+                                "GameStateManagerActive": false,
+                                "LoseCanvas": 0,
+                                "PauseMenuCanvas": 0,
+                                "SplashScreen": 17,
+                                "WinCanvas": 0
+                            },
                             "state": 0
                         }
                     },
