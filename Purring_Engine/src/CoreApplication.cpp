@@ -206,6 +206,7 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::GameStateController_v2_0Data>("GameStateController_v2_0")
         .property("GameStateManagerActive", &PE::GameStateController_v2_0Data::GameStateManagerActive)
+        .property("BackGroundCanvas", &PE::GameStateController_v2_0Data::BackGroundCanvas)
         .property("SplashScreen", &PE::GameStateController_v2_0Data::SplashScreen)
         .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
         .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)

@@ -3059,11 +3059,15 @@ namespace PE {
 									{
 										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act", &it->second.GameStateManagerActive);
 										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
+										int BackgroundID = static_cast<int> (it->second.BackGroundCanvas);
 										int PauseMenuCanvasID = static_cast<int> (it->second.PauseMenuCanvas);
 										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
 										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
 										int LoseCanvasID = static_cast<int> (it->second.LoseCanvas);
 									
+										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &BackgroundID);
+										if (BackgroundID != m_currentSelectedObject) { it->second.BackGroundCanvas = BackgroundID; }
+
 										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ssc", &SplashScreenID);
 										if (SplashScreenID != m_currentSelectedObject) { it->second.SplashScreen = SplashScreenID; }
 

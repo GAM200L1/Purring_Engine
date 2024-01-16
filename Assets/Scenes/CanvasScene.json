@@ -81,8 +81,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -383,8 +383,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -651,8 +651,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -707,7 +707,7 @@
                         "TextureKey": ""
                     },
                     "Transform": {
-                        "height": 1074.9991455078125,
+                        "height": 1146.6640625,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -728,8 +728,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -825,6 +825,15 @@
                     },
                     "ScriptComponent": {
                         "GameStateController_v2_0": {
+                            "data": {
+                                "AreYouSureCanvas": 0,
+                                "BackGroundCanvas": 13,
+                                "GameStateManagerActive": true,
+                                "LoseCanvas": 0,
+                                "PauseMenuCanvas": 3,
+                                "SplashScreen": 17,
+                                "WinCanvas": 0
+                            },
                             "state": 0
                         }
                     },

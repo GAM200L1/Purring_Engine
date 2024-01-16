@@ -29,6 +29,7 @@ namespace PE
 	struct GameStateController_v2_0Data
 	{
 		bool GameStateManagerActive;
+		EntityID BackGroundCanvas;
 		EntityID SplashScreen;
 		float SplashTimer{ 2.f }; // Time in seconds that the splashscreen is displayed for
 		EntityID PauseMenuCanvas;
@@ -118,11 +119,14 @@ namespace PE
 		void SetPauseState();
 		void SetGameState(GameStates_v2_0);
 		void ResumeStateV2(EntityID=0);
+		void ActiveObject(EntityID);
+		void DeactiveObject(EntityID);
 	public:
 		GameStates_v2_0 m_currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 m_prevState = GameStates_v2_0::INACTIVE;
 	private:
 		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
+		bool m_pauseMenuOpenOnce{false};
 	};
 }
 

@@ -58,12 +58,18 @@ namespace PE
 
 		if (m_currentState == GameStates_v2_0::PAUSE)
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].PauseMenuCanvas).isActive = true;
+			ActiveObject(m_ScriptData[id].BackGroundCanvas);
+			if (m_pauseMenuOpenOnce)
+			{
+				ActiveObject(m_ScriptData[id].PauseMenuCanvas);
+				m_pauseMenuOpenOnce = false;
+			}
 			return;
 		}
 		else
 		{
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].PauseMenuCanvas).isActive = false;
+			DeactiveObject(m_ScriptData[id].BackGroundCanvas);
+			DeactiveObject(m_ScriptData[id].PauseMenuCanvas);
 		}
 
 		if (m_currentState == GameStates_v2_0::SPLASHSCREEN)
@@ -71,7 +77,7 @@ namespace PE
 			m_ScriptData[id].SplashTimer -= deltaTime;
 			if (m_ScriptData[id].SplashTimer <= 0)
 			{
-				EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].SplashScreen).isActive = false;
+				DeactiveObject(m_ScriptData[id].SplashScreen);
 				SetGameState(GameStates_v2_0::PLANNING);
 			}
 		}
@@ -86,6 +92,7 @@ namespace PE
 		}
 
 		m_currentState = GameStates_v2_0::INACTIVE;
+		PauseManager::GetInstance().SetPaused(false);
 	}
 	void GameStateController_v2_0::OnAttach(EntityID id)
 	{
@@ -160,6 +167,7 @@ namespace PE
 			m_currentState = GameStates_v2_0::PAUSE;
 
 			PauseManager::GetInstance().SetPaused(true);
+			m_pauseMenuOpenOnce = true;
 		}
 	}
 	void GameStateController_v2_0::SetGameState(GameStates_v2_0 gameState)
@@ -179,4 +187,26 @@ namespace PE
 			PauseManager::GetInstance().SetPaused(false);
 		}
 	}
+
+	void GameStateController_v2_0::ActiveObject(EntityID id)
+	{
+		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = true;
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+		}
+	}
+
+	void GameStateController_v2_0::DeactiveObject(EntityID id)
+	{
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+		{
+			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+		}
+
+		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
+	}
+
+
 }
