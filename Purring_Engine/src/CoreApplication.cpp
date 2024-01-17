@@ -135,6 +135,7 @@ RTTR_REGISTRATION
         .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
         .property("Layer", &PE::EntityDescriptor::layer)
+        .property("InteractionLayer", &PE::EntityDescriptor::interactionLayer)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
         .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 

@@ -280,7 +280,7 @@ namespace PE {
 		//delete all objects
 
 		std::vector<EntityID> temp = EntityManager::GetInstance().GetEntitiesInPool(ALL);
-
+		
 		for (auto n :temp)
 		{
 			if (n != Graphics::CameraManager::GetUiCameraId())
@@ -289,6 +289,7 @@ namespace PE {
 				EntityManager::GetInstance().RemoveEntity(n);
 			}
 		}
+		Hierarchy::GetInstance().Update();
 	}
 
 	void Editor::Init(GLFWwindow* p_window_)

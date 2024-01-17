@@ -609,6 +609,7 @@ namespace PE
 		bool toSave{ true };    // used for whether the entity should be saved or not
 
 		int layer = 0;
+		int interactionLayer = 0;
 
 		inline bool SaveEntity() { return toSave && isAlive; }
 

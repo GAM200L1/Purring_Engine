@@ -226,6 +226,7 @@ namespace PE
 
 		j["Prefab Type"] = prefabType;
 		j["Layer"] = layer;
+		j["InteractionLayer"] = interactionLayer;
 		j["Old ID"] = oldID;
 
 		return j;
@@ -265,6 +266,10 @@ namespace PE
 		if (j.contains("Layer"))
 		{
 			desc.layer = j["Layer"].get<int>();
+		}
+		if (j.contains("InteractionLayer"))
+		{
+			desc.interactionLayer = j["InteractionLayer"].get<int>();
 		}
 
 		if (j.contains("Old ID"))
