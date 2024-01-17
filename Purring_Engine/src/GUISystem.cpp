@@ -495,6 +495,9 @@ namespace PE
 
 				//get the components
 				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
+				
+				if (slider.m_isHealthBar)
+					continue;
 
 				if (EntityManager::GetInstance().Has<Transform>(slider.m_knobID.value()))
 				{
