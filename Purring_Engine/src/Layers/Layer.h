@@ -25,9 +25,10 @@ namespace PE
     public:
 
     public:
-        InteractionLayers() = delete;
-        InteractionLayers(const std::initializer_list<EntityID>& r_eid);
+        InteractionLayers();
+        InteractionLayers(const std::vector<EntityID>& r_eid);
         operator const std::array<Layer, MAX_LAYERS>& () const { return layers; }
+        const std::array<Layer, MAX_LAYERS>& GetLayers() const { return layers; }
     public:
         void UpdateLayers(const EntityID& r_id, bool add = true);
         void UpdateLayers(const EntityID& r_id, const int& r_newLayer);
@@ -37,7 +38,7 @@ namespace PE
     private:
 
     private:
-        LayerState layerState;
+        //LayerState layerState;
         std::array<Layer, MAX_LAYERS> layers;
     };
 }

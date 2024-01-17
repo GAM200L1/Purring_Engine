@@ -22,9 +22,13 @@ namespace PE
 
 
 
-    InteractionLayers::InteractionLayers(const std::initializer_list<EntityID>& r_eid)
+    InteractionLayers::InteractionLayers()
     {
-        layerState.flip();
+    }
+
+    InteractionLayers::InteractionLayers(const std::vector<EntityID>& r_eid)
+    {
+        //layerState.flip();
         for (const auto& id : r_eid)
         {
             const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
@@ -70,6 +74,7 @@ namespace PE
                 engine_logger.AddLog(true, "New layer larger than the limit!!", __FUNCTION__);
                 throw;
             }
+
             //remove from old layer
             layers[desc.interactionLayer].erase(std::find(layers[desc.interactionLayer].begin(), layers[desc.interactionLayer].end(), r_id));
             

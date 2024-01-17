@@ -98,6 +98,8 @@
 
 #include "Hierarchy/HierarchyManager.h"
 
+#include "Layers/LayerManager.h"
+
 // Testing
 Logger engine_logger = Logger("ENGINE");
 
@@ -135,7 +137,7 @@ RTTR_REGISTRATION
         .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
         .property("Layer", &PE::EntityDescriptor::layer)
-        .property("InteractionLayer", &PE::EntityDescriptor::interactionLayer)
+        .property("Interaction Layer", &PE::EntityDescriptor::interactionLayer)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
         .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 
@@ -414,6 +416,13 @@ void PE::CoreApplication::Run()
         }
 
         Hierarchy::GetInstance().Update();
+        for (const auto& layer : LayerManager::GetInstance().GetLayers(EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() | EntityManager::GetInstance().GetComponentID<Transform>()).GetLayers())
+        {
+            for (const auto& id : layer)
+            {
+                std::cout << id << std::endl;
+            }
+        }
 
         // Update Graphics with variable timestep
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
