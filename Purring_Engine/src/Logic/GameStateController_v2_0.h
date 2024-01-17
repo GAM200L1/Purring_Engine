@@ -36,9 +36,11 @@ namespace PE
 		EntityID AreYouSureCanvas;
 		EntityID LoseCanvas;
 		EntityID WinCanvas;
+		EntityID HowToPlayCanvas;
 		EntityID HowToPlayPageOne;
 		EntityID HowToPlayPageTwo;
-
+		EntityID HUDCanvas;
+		EntityID ExecuteCanvas;
 
 		int keyEventHandlerId, outOfFocusEventHandlerId;
 	};
@@ -124,14 +126,27 @@ namespace PE
 		void ResumeStateV2(EntityID=0);
 		void ActiveObject(EntityID);
 		void DeactiveObject(EntityID);
-		void NextState(EntityID);
-
+		void FadeAllObject(EntityID Canvas, float const alpha);
+		void DeactiveAllMenu();
+		void NextState(EntityID=0);
+		void GoNextLevel();
+		void CloseHTP(EntityID);
+		void OpenHTP(EntityID);
+		void HTPPage2(EntityID);
+		void HTPPage1(EntityID);
+		void PlanningStateHUD(EntityID const id, float deltaTime);
+		void ExecutionStateHUD(EntityID const id, float deltaTime);
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
 	private:
 		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
 		bool m_pauseMenuOpenOnce{false};
+		int m_currentLevel;
+		EntityID m_currentGameStateControllerID;
+		float m_UIFadeTimer{.5f};
+		float m_timeSinceEnteredState{ 1.f };
+		float m_timeSinceExitedState{};
 	};
 }
 

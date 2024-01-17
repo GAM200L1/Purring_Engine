@@ -219,7 +219,7 @@ namespace PE
 #else
 			if (r_event.GetType() == WindowEvents::WindowLostFocus)
 			{
-					GameStateManager::GetInstance().SetPauseState();
+					PauseManager::GetInstance().SetPaused(true);
 					if (msepress)
 							glfwIconifyWindow(p_currWindow);
 

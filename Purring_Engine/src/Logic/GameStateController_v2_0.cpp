@@ -25,12 +25,16 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Text.h"
 #include "GUISystem.h"
-
 namespace PE
 {
 	GameStateController_v2_0::GameStateController_v2_0()
 	{
 		REGISTER_UI_FUNCTION(ResumeStateV2, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(CloseHTP, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(OpenHTP, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(HTPPage1, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(HTPPage2, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(NextState, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -38,11 +42,14 @@ namespace PE
 		if (m_ScriptData[id].GameStateManagerActive)
 		{
 			currentState = GameStates_v2_0::SPLASHSCREEN;
+			ActiveObject(m_ScriptData[id].SplashScreen);
 			//make sure all canvas inactive except for splashscreen 
 		}
 
 		m_ScriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController_v2_0::OnWindowOutOfFocus, this)
+
+		m_currentGameStateControllerID = id;
 
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
@@ -69,8 +76,7 @@ namespace PE
 		}
 		else
 		{
-			DeactiveObject(m_ScriptData[id].BackGroundCanvas);
-			DeactiveObject(m_ScriptData[id].PauseMenuCanvas);
+			DeactiveAllMenu();
 		}
 
 		if (currentState == GameStates_v2_0::SPLASHSCREEN)
@@ -79,7 +85,29 @@ namespace PE
 			if (m_ScriptData[id].SplashTimer <= 0)
 			{
 				DeactiveObject(m_ScriptData[id].SplashScreen);
+				ActiveObject(m_ScriptData[id].HUDCanvas);
 				SetGameState(GameStates_v2_0::PLANNING);
+			}
+		}
+		else
+		{
+			switch (currentState)
+			{
+			case GameStates_v2_0::PLANNING:
+				PlanningStateHUD(id, deltaTime);
+				prevState = currentState;
+				break;
+			case GameStates_v2_0::EXECUTE:
+				ExecutionStateHUD(id, deltaTime);
+				prevState = currentState;
+				break;
+			case GameStates_v2_0::WIN:
+				ActiveObject(m_ScriptData[id].WinCanvas);
+				break;
+			case GameStates_v2_0::LOSE:
+				ActiveObject(m_ScriptData[id].LoseCanvas);
+				break;
+
 			}
 		}
 	}
@@ -119,7 +147,8 @@ namespace PE
 	{
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
-			currentState = GameStates_v2_0::PAUSE;
+			//SetPauseState();
+			//PauseManager::GetInstance().SetPaused(true);
 		}
 	}
 	void GameStateController_v2_0::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
@@ -156,6 +185,10 @@ namespace PE
 			if (KTE.keycode == GLFW_KEY_F2)
 			{
 				currentState = GameStates_v2_0::LOSE;
+			}			
+			if (KTE.keycode == GLFW_KEY_F11)
+			{
+				NextState();
 			}
 		}
 	}
@@ -219,6 +252,121 @@ namespace PE
 			return;
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
+	}
+
+	void GameStateController_v2_0::FadeAllObject(EntityID id, float const alpha)
+	{
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+		{
+			if (EntityManager::GetInstance().Has<TextComponent>(id2))
+			{
+				EntityManager::GetInstance().Get<TextComponent>(id2).SetAlpha(alpha);
+			}
+			else if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+			{
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetAlpha(alpha);
+			}
+		}
+
+		if (!EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id))
+			return;
+
+		EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetAlpha(alpha);
+	}
+
+	void GameStateController_v2_0::DeactiveAllMenu()
+	{
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseMenuCanvas);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureCanvas);
+	}
+
+	void GameStateController_v2_0::NextState(EntityID)
+	{
+		if (currentState == GameStates_v2_0::PLANNING)
+		{
+			SetGameState(GameStates_v2_0::EXECUTE);
+		}
+		else if (currentState == GameStates_v2_0::EXECUTE)
+		{
+			SetGameState(GameStates_v2_0::PLANNING);
+		}
+	}
+
+	void GameStateController_v2_0::CloseHTP(EntityID)
+	{
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas);
+		ActiveObject(m_ScriptData[m_currentGameStateControllerID].PauseMenuCanvas);
+	}
+
+	void GameStateController_v2_0::OpenHTP(EntityID)
+	{
+		ActiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseMenuCanvas);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageTwo);
+	}
+
+	void GameStateController_v2_0::HTPPage2(EntityID)
+	{
+		ActiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageTwo);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageOne);
+	}
+
+	void GameStateController_v2_0::HTPPage1(EntityID)
+	{
+		ActiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageOne);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageTwo);
+	}
+
+	void GameStateController_v2_0::PlanningStateHUD(EntityID const id, float deltaTime)
+	{
+		ActiveObject(m_ScriptData[id].HUDCanvas);
+
+		if (prevState == GameStates_v2_0::EXECUTE)
+		{
+			m_timeSinceEnteredState = 0;
+			m_timeSinceExitedState = m_UIFadeTimer;
+		}
+
+		m_timeSinceEnteredState += deltaTime;
+		m_timeSinceExitedState -= deltaTime;
+
+		float fadeOutSpeed = std::clamp(m_timeSinceExitedState / m_UIFadeTimer, 0.0f, 1.0f);
+		float fadeInSpeed = std::clamp(m_timeSinceEnteredState / m_UIFadeTimer, 0.0f, 1.0f);
+
+		FadeAllObject(m_ScriptData[id].HUDCanvas, fadeInSpeed);
+		FadeAllObject(m_ScriptData[id].ExecuteCanvas, fadeOutSpeed);
+
+		if (fadeInSpeed >= 1)
+		{
+			DeactiveObject(m_ScriptData[id].ExecuteCanvas);
+		}
+	}
+
+	void GameStateController_v2_0::ExecutionStateHUD(EntityID const id, float deltaTime)
+	{
+		ActiveObject(m_ScriptData[id].ExecuteCanvas);
+
+		if (prevState == GameStates_v2_0::PLANNING)
+		{
+			m_timeSinceEnteredState = 0;
+			m_timeSinceExitedState = m_UIFadeTimer;
+		}
+
+		m_timeSinceEnteredState += deltaTime;
+		m_timeSinceExitedState -= deltaTime;
+
+		float fadeOutSpeed = std::clamp(m_timeSinceExitedState / m_UIFadeTimer, 0.0f, 1.0f);
+		float fadeInSpeed = std::clamp(m_timeSinceEnteredState / m_UIFadeTimer, 0.0f, 1.0f);
+
+		FadeAllObject(m_ScriptData[id].HUDCanvas, fadeOutSpeed);
+		FadeAllObject(m_ScriptData[id].ExecuteCanvas, fadeInSpeed);
+
+		if (fadeInSpeed >= 1)
+		{
+			DeactiveObject(m_ScriptData[id].HUDCanvas);
+		}
 	}
 
 

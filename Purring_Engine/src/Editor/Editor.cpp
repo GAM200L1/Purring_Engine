@@ -3064,6 +3064,9 @@ namespace PE {
 										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
 										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
 										int LoseCanvasID = static_cast<int> (it->second.LoseCanvas);
+										int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
+										int HUDCanvasID = static_cast<int> (it->second.HUDCanvas);
+										int ExecuteCanvasID = static_cast<int> (it->second.ExecuteCanvas);
 										int HTPID1 = static_cast<int> (it->second.HowToPlayPageOne);
 										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
 									
@@ -3085,11 +3088,22 @@ namespace PE {
 										ImGui::Text("LoseCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ls", &LoseCanvasID);
 										if (LoseCanvasID != m_currentSelectedObject) { it->second.LoseCanvas = LoseCanvasID; }
 
+										ImGui::Text("HowToPlayCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htps", &HowToPlayCanvasID);
+										if (HowToPlayCanvasID != m_currentSelectedObject) { it->second.HowToPlayCanvas = HowToPlayCanvasID; }
+
 										ImGui::Text("How to Play P1 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htp1", &HTPID1);
 										if (HTPID1 != m_currentSelectedObject) { it->second.HowToPlayPageOne = HTPID1; }
 
 										ImGui::Text("How to Play P2 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htp2", &HTPID2);
 										if (HTPID2 != m_currentSelectedObject) { it->second.HowToPlayPageTwo = HTPID2; }
+
+										ImGui::Text("HUD Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##hudc", &HUDCanvasID);
+										if (HUDCanvasID != m_currentSelectedObject) { it->second.HUDCanvas = HUDCanvasID; }
+
+										ImGui::Text("Foliage ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##folc", &ExecuteCanvasID);
+										if (ExecuteCanvasID != m_currentSelectedObject) { it->second.ExecuteCanvas = ExecuteCanvasID; }
+
+
 									}
 								}
 							}
