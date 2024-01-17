@@ -23,7 +23,7 @@ namespace PE
 {
 	enum class GameStates_v2_0
 	{
-		PLANNING, EXECUTE, PAUSE, WIN, LOSE, SPLASHSCREEN, INACTIVE
+		PLANNING, DEPLOYMENT, EXECUTE, PAUSE, WIN, LOSE, SPLASHSCREEN, INACTIVE
 	};
 
 	struct GameStateController_v2_0Data
@@ -36,6 +36,9 @@ namespace PE
 		EntityID AreYouSureCanvas;
 		EntityID LoseCanvas;
 		EntityID WinCanvas;
+		EntityID HowToPlayPageOne;
+		EntityID HowToPlayPageTwo;
+
 
 		int keyEventHandlerId, outOfFocusEventHandlerId;
 	};
@@ -121,6 +124,8 @@ namespace PE
 		void ResumeStateV2(EntityID=0);
 		void ActiveObject(EntityID);
 		void DeactiveObject(EntityID);
+		void NextState(EntityID);
+
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;

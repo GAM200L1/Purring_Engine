@@ -3064,6 +3064,8 @@ namespace PE {
 										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
 										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
 										int LoseCanvasID = static_cast<int> (it->second.LoseCanvas);
+										int HTPID1 = static_cast<int> (it->second.HowToPlayPageOne);
+										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &BackgroundID);
 										if (BackgroundID != m_currentSelectedObject) { it->second.BackGroundCanvas = BackgroundID; }
@@ -3082,6 +3084,12 @@ namespace PE {
 
 										ImGui::Text("LoseCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ls", &LoseCanvasID);
 										if (LoseCanvasID != m_currentSelectedObject) { it->second.LoseCanvas = LoseCanvasID; }
+
+										ImGui::Text("How to Play P1 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htp1", &HTPID1);
+										if (HTPID1 != m_currentSelectedObject) { it->second.HowToPlayPageOne = HTPID1; }
+
+										ImGui::Text("How to Play P2 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htp2", &HTPID2);
+										if (HTPID2 != m_currentSelectedObject) { it->second.HowToPlayPageTwo = HTPID2; }
 									}
 								}
 							}

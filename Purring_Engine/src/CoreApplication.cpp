@@ -212,6 +212,8 @@ RTTR_REGISTRATION
         .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)
         .property("LoseCanvas", &PE::GameStateController_v2_0Data::LoseCanvas)
         .property("WinCanvas", &PE::GameStateController_v2_0Data::WinCanvas);
+        .property("HowToPlayPageOne", &PE::GameStateController_v2_0Data::HowToPlayPageOne);
+        .property("HowToPlayPageTwo", &PE::GameStateController_v2_0Data::HowToPlayPageTwo);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
     //    .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
