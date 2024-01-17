@@ -36,7 +36,7 @@ namespace PE
 	{
 		if (m_ScriptData[id].GameStateManagerActive)
 		{
-			m_currentState = GameStates_v2_0::SPLASHSCREEN;
+			currentState = GameStates_v2_0::SPLASHSCREEN;
 			//make sure all canvas inactive except for splashscreen 
 		}
 
@@ -56,7 +56,7 @@ namespace PE
 			ResumeStateV2();
 		}
 
-		if (m_currentState == GameStates_v2_0::PAUSE)
+		if (currentState == GameStates_v2_0::PAUSE)
 		{
 			ActiveObject(m_ScriptData[id].BackGroundCanvas);
 			if (m_pauseMenuOpenOnce)
@@ -72,7 +72,7 @@ namespace PE
 			DeactiveObject(m_ScriptData[id].PauseMenuCanvas);
 		}
 
-		if (m_currentState == GameStates_v2_0::SPLASHSCREEN)
+		if (currentState == GameStates_v2_0::SPLASHSCREEN)
 		{
 			m_ScriptData[id].SplashTimer -= deltaTime;
 			if (m_ScriptData[id].SplashTimer <= 0)
@@ -91,7 +91,7 @@ namespace PE
 			REMOVE_WINDOW_EVENT_LISTENER(m_ScriptData[id].outOfFocusEventHandlerId);
 		}
 
-		m_currentState = GameStates_v2_0::INACTIVE;
+		currentState = GameStates_v2_0::INACTIVE;
 		PauseManager::GetInstance().SetPaused(false);
 	}
 	void GameStateController_v2_0::OnAttach(EntityID id)
@@ -116,9 +116,9 @@ namespace PE
 
 	void GameStateController_v2_0::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)
 	{
-		if (m_currentState != GameStates_v2_0::INACTIVE && m_currentState != GameStates_v2_0::WIN && m_currentState != GameStates_v2_0::LOSE)
+		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
-			m_currentState = GameStates_v2_0::PAUSE;
+			currentState = GameStates_v2_0::PAUSE;
 		}
 	}
 	void GameStateController_v2_0::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
@@ -132,16 +132,16 @@ namespace PE
 
 			if (KTE.keycode == GLFW_KEY_ESCAPE)
 			{
-				if (m_currentState == GameStates_v2_0::WIN || m_currentState == GameStates_v2_0::LOSE)
+				if (currentState == GameStates_v2_0::WIN || currentState == GameStates_v2_0::LOSE)
 				{
 					return;
 				}
 
-				if (m_currentState == GameStates_v2_0::PAUSE)
+				if (currentState == GameStates_v2_0::PAUSE)
 				{
 					ResumeStateV2();
 				}
-				else if (m_currentState != GameStates_v2_0::INACTIVE)
+				else if (currentState != GameStates_v2_0::INACTIVE)
 				{
 					SetPauseState();
 				}
@@ -149,22 +149,22 @@ namespace PE
 
 			if (KTE.keycode == GLFW_KEY_F1)
 			{
-				m_currentState = GameStates_v2_0::WIN;
+				currentState = GameStates_v2_0::WIN;
 			}
 
 			if (KTE.keycode == GLFW_KEY_F2)
 			{
-				m_currentState = GameStates_v2_0::LOSE;
+				currentState = GameStates_v2_0::LOSE;
 			}
 		}
 	}
 
 	void GameStateController_v2_0::SetPauseState()
 	{
-		if (m_currentState != GameStates_v2_0::PAUSE)
+		if (currentState != GameStates_v2_0::PAUSE)
 		{
-			m_prevState = m_currentState;
-			m_currentState = GameStates_v2_0::PAUSE;
+			prevState = currentState;
+			currentState = GameStates_v2_0::PAUSE;
 
 			PauseManager::GetInstance().SetPaused(true);
 			m_pauseMenuOpenOnce = true;
@@ -172,17 +172,17 @@ namespace PE
 	}
 	void GameStateController_v2_0::SetGameState(GameStates_v2_0 gameState)
 	{
-		if (m_currentState != gameState)
-			m_prevState = m_currentState;
-		m_currentState = gameState;
+		if (currentState != gameState)
+			prevState = currentState;
+		currentState = gameState;
 
 	}
 	void GameStateController_v2_0::ResumeStateV2(EntityID)
 	{
-		if (m_currentState == GameStates_v2_0::PAUSE)
+		if (currentState == GameStates_v2_0::PAUSE)
 		{
-			m_currentState = m_prevState;
-			m_prevState = GameStates_v2_0::PAUSE;
+			currentState = prevState;
+			prevState = GameStates_v2_0::PAUSE;
 
 			PauseManager::GetInstance().SetPaused(false);
 		}

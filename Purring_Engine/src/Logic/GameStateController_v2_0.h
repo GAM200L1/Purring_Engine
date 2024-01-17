@@ -122,8 +122,8 @@ namespace PE
 		void ActiveObject(EntityID);
 		void DeactiveObject(EntityID);
 	public:
-		GameStates_v2_0 m_currentState = GameStates_v2_0::INACTIVE;
-		GameStates_v2_0 m_prevState = GameStates_v2_0::INACTIVE;
+		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
+		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
 	private:
 		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
 		bool m_pauseMenuOpenOnce{false};
