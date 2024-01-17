@@ -102,6 +102,7 @@ namespace PE
 		ADD_ALL_KEY_EVENT_LISTENER(WindowManager::OnKeyEvent, this)
 
 		REGISTER_UI_FUNCTION(TestFunction, WindowManager);
+		REGISTER_UI_FUNCTION(CloseWindow, WindowManager);
 
 		return window;
 	}
@@ -109,6 +110,11 @@ namespace PE
 	GLFWwindow* WindowManager::GetWindow()
 	{
 		return p_currWindow;
+	}
+
+	void WindowManager::CloseWindow(EntityID)
+	{
+		glfwSetWindowShouldClose(p_currWindow, true);
 	}
 
 

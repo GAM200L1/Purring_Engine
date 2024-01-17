@@ -25,6 +25,7 @@
 #include "Graphics/Renderer.h"
 #include "Graphics/Text.h"
 #include "GUISystem.h"
+#include "SceneManager/scenemanager.h"
 namespace PE
 {
 	GameStateController_v2_0::GameStateController_v2_0()
@@ -35,14 +36,25 @@ namespace PE
 		REGISTER_UI_FUNCTION(HTPPage1, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(HTPPage2, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(NextState, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(OpenAYS, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(ReturnFromAYS, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(RetryStage, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
 	{
 		if (m_ScriptData[id].GameStateManagerActive)
 		{
+			if(m_currentLevel == 0)
+			{ 
 			currentState = GameStates_v2_0::SPLASHSCREEN;
 			ActiveObject(m_ScriptData[id].SplashScreen);
+			}
+			else
+			{
+				currentState = GameStates_v2_0::PLANNING;
+				ActiveObject(m_ScriptData[id].HUDCanvas);
+			}
 			//make sure all canvas inactive except for splashscreen 
 		}
 
@@ -74,10 +86,6 @@ namespace PE
 			}
 			return;
 		}
-		else
-		{
-			DeactiveAllMenu();
-		}
 
 		if (currentState == GameStates_v2_0::SPLASHSCREEN)
 		{
@@ -85,6 +93,8 @@ namespace PE
 			if (m_ScriptData[id].SplashTimer <= 0)
 			{
 				DeactiveObject(m_ScriptData[id].SplashScreen);
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
+				DeactiveAllMenu();
 				ActiveObject(m_ScriptData[id].HUDCanvas);
 				SetGameState(GameStates_v2_0::PLANNING);
 			}
@@ -94,18 +104,32 @@ namespace PE
 			switch (currentState)
 			{
 			case GameStates_v2_0::PLANNING:
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
+				DeactiveAllMenu();
 				PlanningStateHUD(id, deltaTime);
 				prevState = currentState;
 				break;
 			case GameStates_v2_0::EXECUTE:
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
+				DeactiveAllMenu();
 				ExecutionStateHUD(id, deltaTime);
 				prevState = currentState;
 				break;
 			case GameStates_v2_0::WIN:
-				ActiveObject(m_ScriptData[id].WinCanvas);
+				if (m_winOnce)
+				{
+					ActiveObject(m_ScriptData[id].BackGroundCanvas);
+					ActiveObject(m_ScriptData[id].WinCanvas);
+					m_winOnce = false;
+				}
 				break;
-			case GameStates_v2_0::LOSE:
-				ActiveObject(m_ScriptData[id].LoseCanvas);
+			case GameStates_v2_0::LOSE:				
+				if (m_loseOnce)
+				{
+					ActiveObject(m_ScriptData[id].BackGroundCanvas);
+					ActiveObject(m_ScriptData[id].LoseCanvas);
+					m_loseOnce = false;
+				}
 				break;
 
 			}
@@ -147,8 +171,8 @@ namespace PE
 	{
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
-			//SetPauseState();
-			//PauseManager::GetInstance().SetPaused(true);
+			SetPauseState();
+			PauseManager::GetInstance().SetPaused(true);
 		}
 	}
 	void GameStateController_v2_0::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
@@ -179,12 +203,12 @@ namespace PE
 
 			if (KTE.keycode == GLFW_KEY_F1)
 			{
-				currentState = GameStates_v2_0::WIN;
+				WinGame();
 			}
 
-			if (KTE.keycode == GLFW_KEY_F2)
+			if (KTE.keycode == GLFW_KEY_F3)
 			{
-				currentState = GameStates_v2_0::LOSE;
+				LoseGame();
 			}			
 			if (KTE.keycode == GLFW_KEY_F11)
 			{
@@ -276,10 +300,11 @@ namespace PE
 
 	void GameStateController_v2_0::DeactiveAllMenu()
 	{
-		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseMenuCanvas);
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas);
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureCanvas);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].LoseCanvas);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].WinCanvas);
 	}
 
 	void GameStateController_v2_0::NextState(EntityID)
@@ -294,6 +319,18 @@ namespace PE
 		}
 	}
 
+	void GameStateController_v2_0::WinGame()
+	{
+		SetGameState(GameStates_v2_0::WIN);
+		m_winOnce = true;
+	}
+
+	void GameStateController_v2_0::LoseGame()
+	{
+		SetGameState(GameStates_v2_0::LOSE);
+		m_loseOnce = true;
+	}
+
 	void GameStateController_v2_0::CloseHTP(EntityID)
 	{
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas);
@@ -305,18 +342,49 @@ namespace PE
 		ActiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas);
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseMenuCanvas);
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageTwo);
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+		}
 	}
 
 	void GameStateController_v2_0::HTPPage2(EntityID)
 	{
 		ActiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageTwo);
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageOne);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+			}
+			else if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg2")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+		}
 	}
 
 	void GameStateController_v2_0::HTPPage1(EntityID)
 	{
 		ActiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageOne);
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].HowToPlayPageTwo);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[m_currentGameStateControllerID].HowToPlayCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg1")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+			}
+			else if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "pg2")
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
+			}
+		}
 	}
 
 	void GameStateController_v2_0::PlanningStateHUD(EntityID const id, float deltaTime)
@@ -367,6 +435,35 @@ namespace PE
 		{
 			DeactiveObject(m_ScriptData[id].HUDCanvas);
 		}
+	}
+
+	void GameStateController_v2_0::ReturnFromAYS(EntityID)
+	{
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureCanvas);
+		switch (currentState)
+		{
+		case GameStates_v2_0::PAUSE:
+			ActiveObject(m_ScriptData[m_currentGameStateControllerID].PauseMenuCanvas);
+			break;
+		case GameStates_v2_0::WIN:
+			ActiveObject(m_ScriptData[m_currentGameStateControllerID].WinCanvas);
+			break;
+		case GameStates_v2_0::LOSE:
+			ActiveObject(m_ScriptData[m_currentGameStateControllerID].LoseCanvas);
+			break;
+		}
+	}
+
+	void GameStateController_v2_0::OpenAYS(EntityID)
+	{
+		DeactiveAllMenu();
+		ActiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureCanvas);
+	}
+
+	void GameStateController_v2_0::RetryStage(EntityID)
+	{
+		//other stuff that needs to resetted
+		SceneManager::GetInstance().LoadCurrentScene();
 	}
 
 

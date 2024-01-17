@@ -92,7 +92,8 @@
                             4,
                             5,
                             6,
-                            7
+                            7,
+                            31
                         ],
                         "isActive": false,
                         "name": "PauseCanvas",
@@ -218,11 +219,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": -45.0
+                            "y": -205.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": -45.0
+                            "y": -205.0
                         },
                         "relorientation": 0.0,
                         "width": 624.0
@@ -249,8 +250,8 @@
                         "m_UIType": 0,
                         "m_defaultColor": [
                             1.0,
-                            1.0,
-                            1.0,
+                            0.5534883737564087,
+                            0.5534883737564087,
                             1.0
                         ],
                         "m_defaultTexture": "../Assets/Textures/Button_QuitGame_512x128.png",
@@ -263,17 +264,17 @@
                         "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
                         "m_hoveredColor": [
                             1.0,
-                            1.0,
-                            1.0,
+                            0.5529412031173706,
+                            0.5529412031173706,
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
-                        "m_onClicked": "AreYouSureExit",
+                        "m_onClicked": "OpenAYS",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
-                            1.0,
-                            1.0,
+                            0.5529412031173706,
+                            0.5529412031173706,
                             1.0
                         ],
                         "m_pressedTexture": "../Assets/Textures/Button_QuitGame_Dark_512x128.png"
@@ -281,8 +282,8 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
+                            "b": 0.5529412031173706,
+                            "g": 0.5529412031173706,
                             "r": 1.0
                         },
                         "TextureKey": "../Assets/Textures/Button_QuitGame_512x128.png"
@@ -292,11 +293,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": -254.0
+                            "y": -405.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": -254.0
+                            "y": -405.0
                         },
                         "relorientation": 0.0,
                         "width": 624.0
@@ -362,18 +363,18 @@
                         "TextureKey": "../Assets/Textures/Button_ResumeGame_512x128.png"
                     },
                     "Transform": {
-                        "height": 184.0,
+                        "height": 232.75999450683594,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
-                            "y": 164.0
+                            "y": 215.0
                         },
                         "relativeposition": {
                             "x": 0.0,
-                            "y": 164.0
+                            "y": 215.0
                         },
                         "relorientation": 0.0,
-                        "width": 624.0
+                        "width": 789.3599853515625
                     }
                 },
                 "name": ""
@@ -496,7 +497,7 @@
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
-                        "m_onClicked": "ExitGame",
+                        "m_onClicked": "CloseWindow",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -610,7 +611,7 @@
                             1.0
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
-                        "m_onClicked": "ReturnToPauseMenuFromExit",
+                        "m_onClicked": "ReturnFromAYS",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -810,7 +811,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Empty Object",
+                        "name": "GameStateControllerObject",
                         "parent": null,
                         "sceneID": 3
                     },
@@ -826,7 +827,7 @@
                     "ScriptComponent": {
                         "GameStateController_v2_0": {
                             "data": {
-                                "AreYouSureCanvas": 0,
+                                "AreYouSureCanvas": 8,
                                 "BackGroundCanvas": 13,
                                 "ExecuteCanvas": 25,
                                 "GameStateManagerActive": true,
@@ -834,10 +835,10 @@
                                 "HowToPlayCanvas": 18,
                                 "HowToPlayPageOne": 19,
                                 "HowToPlayPageTwo": 20,
-                                "LoseCanvas": 0,
+                                "LoseCanvas": 37,
                                 "PauseMenuCanvas": 3,
                                 "SplashScreen": 17,
-                                "WinCanvas": 0
+                                "WinCanvas": 32
                             },
                             "state": 0
                         }
@@ -921,7 +922,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/HowToPlay_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/HowToPlay_Page1_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -957,11 +958,11 @@
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.0,
-                            "g": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/HowToPlay_1920x1080.png"
+                        "TextureKey": "../Assets/Textures/HowToPlay_Page2_1920x1080.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -1064,7 +1065,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
-                        "name": "HTPPage2Button",
+                        "name": "pg2",
                         "parent": 18,
                         "sceneID": 11
                     },
@@ -1077,7 +1078,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_defaultTexture": "../Assets/Textures/Button_Next_79x77.png",
                         "m_disabledColor": [
                             0.5,
                             0.5,
@@ -1091,7 +1092,7 @@
                             0.800000011920929,
                             1.0
                         ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_Next_Highlighted_79x77.png",
                         "m_onClicked": "HTPPage2",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1100,7 +1101,7 @@
                             0.6000000238418579,
                             1.0
                         ],
-                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png"
+                        "m_pressedTexture": "../Assets/Textures/Button_Next_Dark_79x77.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1109,10 +1110,10 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_512x128.png"
+                        "TextureKey": "../Assets/Textures/Button_Next_79x77.png"
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 77.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 849.999267578125,
@@ -1123,7 +1124,7 @@
                             "y": -54.99995422363281
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 79.0
                     }
                 },
                 "name": ""
@@ -1138,7 +1139,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
-                        "name": "HTPPage1Button",
+                        "name": "pg1",
                         "parent": 18,
                         "sceneID": 12
                     },
@@ -1151,7 +1152,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_defaultTexture": "../Assets/Textures/Button_Back_79x77.png",
                         "m_disabledColor": [
                             0.5,
                             0.5,
@@ -1165,7 +1166,7 @@
                             0.800000011920929,
                             1.0
                         ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredTexture": "../Assets/Textures/Button_Back_Highlighted_79x77.png",
                         "m_onClicked": "HTPPage1",
                         "m_onHovered": "",
                         "m_pressedColor": [
@@ -1174,7 +1175,7 @@
                             0.6000000238418579,
                             1.0
                         ],
-                        "m_pressedTexture": "../Assets/Textures/Button_White_128px.png"
+                        "m_pressedTexture": "../Assets/Textures/Button_Back_Dark_79x77.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1183,10 +1184,10 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_512x128.png"
+                        "TextureKey": "../Assets/Textures/Button_Back_79x77.png"
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 77.0,
                         "orientation": 0.0,
                         "position": {
                             "x": -880.00048828125,
@@ -1197,7 +1198,7 @@
                             "y": -55.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 79.0
                     }
                 },
                 "name": ""
@@ -1516,6 +1517,616 @@
                         },
                         "relorientation": 0.0,
                         "width": 292.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 31,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "RetryStageButton",
+                        "parent": 3,
+                        "sceneID": 31
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_RetryLevel_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
+                        "m_onClicked": "RetryStage",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_RetryLevel_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_RetryLevel_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 5.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 5.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 32,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            33,
+                            34,
+                            35,
+                            36
+                        ],
+                        "isActive": false,
+                        "name": "WinCanvas",
+                        "parent": null,
+                        "sceneID": 32
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 33,
+                        "Prefab Type": "youwin",
+                        "children": [],
+                        "isActive": false,
+                        "name": "youwintextobj",
+                        "parent": 32,
+                        "sceneID": 33
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/YouWin_Text_1024x256.png"
+                    },
+                    "Transform": {
+                        "height": 217.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 418.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 418.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 858.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 34,
+                        "Prefab Type": "HappyCat",
+                        "children": [],
+                        "isActive": false,
+                        "name": "HappyCat",
+                        "parent": 32,
+                        "sceneID": 34
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/HappyCat_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 64.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 64.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 35,
+                        "Prefab Type": "restartbutton",
+                        "children": [],
+                        "isActive": false,
+                        "name": "WinRetryButton",
+                        "parent": 32,
+                        "sceneID": 35
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_RetryLevel_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
+                        "m_onClicked": "RestartGame",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_RetryLevel_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_RetryLevel_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -500.0,
+                            "y": -320.0
+                        },
+                        "relativeposition": {
+                            "x": -500.0,
+                            "y": -320.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 36,
+                        "Prefab Type": "wlquitbutton",
+                        "children": [],
+                        "isActive": false,
+                        "name": "WinQuitButton",
+                        "parent": 32,
+                        "sceneID": 36
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_QuitGame_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
+                        "m_onClicked": "OpenAYS",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_QuitGame_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_QuitGame_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relativeposition": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 37,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            38,
+                            39,
+                            40,
+                            41
+                        ],
+                        "isActive": false,
+                        "name": "LoseCanvas",
+                        "parent": null,
+                        "sceneID": 37
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 38,
+                        "Prefab Type": "SadCat",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SadCat",
+                        "parent": 37,
+                        "sceneID": 38
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/SadCat_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 47.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 47.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 39,
+                        "Prefab Type": "wlquitbutton",
+                        "children": [],
+                        "isActive": false,
+                        "name": "LoseQuitButton",
+                        "parent": 37,
+                        "sceneID": 39
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_QuitGame_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
+                        "m_onClicked": "OpenAYS",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_QuitGame_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_QuitGame_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relativeposition": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 40,
+                        "Prefab Type": "restartbutton",
+                        "children": [],
+                        "isActive": false,
+                        "name": "restartbutton",
+                        "parent": 37,
+                        "sceneID": 40
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_RetryLevel_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
+                        "m_onClicked": "RetryStage",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_RetryLevel_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_RetryLevel_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -500.0,
+                            "y": -320.0
+                        },
+                        "relativeposition": {
+                            "x": -500.0,
+                            "y": -320.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 41,
+                        "Prefab Type": "youlose",
+                        "children": [],
+                        "isActive": false,
+                        "name": "youlosetextobj",
+                        "parent": 37,
+                        "sceneID": 41
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/YouLose_Text_1024x256.png"
+                    },
+                    "Transform": {
+                        "height": 217.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 76.0,
+                            "y": 418.0
+                        },
+                        "relativeposition": {
+                            "x": 76.0,
+                            "y": 418.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 858.0
                     }
                 },
                 "name": ""

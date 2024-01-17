@@ -62,6 +62,11 @@ namespace PE
         GLFWwindow* GetWindow();
 
         /*!***********************************************************************************
+         \brief     Close The Window
+        *************************************************************************************/
+        void CloseWindow(EntityID = -1);
+
+        /*!***********************************************************************************
          \brief     Update the window title to show current FPS.
          \param     window Pointer to the GLFW window.
          \param     fps Current frames per second.
