@@ -32,6 +32,7 @@ namespace PE
 	{
 		REGISTER_UI_FUNCTION(ResumeStateV2, PE::GameStateController_v2_0);
 	}
+
 	void GameStateController_v2_0::Init(EntityID id)
 	{
 		if (m_ScriptData[id].GameStateManagerActive)
@@ -190,10 +191,16 @@ namespace PE
 
 	void GameStateController_v2_0::ActiveObject(EntityID id)
 	{
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
+
 		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = true;
 
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
+			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+				break;
+
 			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
 		}
 	}
@@ -202,8 +209,14 @@ namespace PE
 	{
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
+			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+				break;
+
 			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
 		}
+
+		if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			return;
 
 		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
 	}
