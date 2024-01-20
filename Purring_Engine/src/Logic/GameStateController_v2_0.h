@@ -122,7 +122,7 @@ namespace PE
 
 		// ----- Helper Functions ----- //
 	public:
-		void SetPauseState();
+		void SetPauseStateV2(EntityID = 0);
 		void SetGameState(GameStates_v2_0);
 		void ResumeStateV2(EntityID=0);
 		void ActiveObject(EntityID);

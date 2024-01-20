@@ -39,6 +39,7 @@ namespace PE
 		REGISTER_UI_FUNCTION(OpenAYS, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(ReturnFromAYS, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(RetryStage, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(SetPauseStateV2, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -69,7 +70,7 @@ namespace PE
 
 		if (PauseManager::GetInstance().IsPaused())
 		{
-			SetPauseState();
+			SetPauseStateV2();
 		}
 		else
 		{
@@ -178,7 +179,7 @@ namespace PE
 	{
 		if (currentState != GameStates_v2_0::INACTIVE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
-			SetPauseState();
+			SetPauseStateV2();
 			PauseManager::GetInstance().SetPaused(true);
 		}
 	}
@@ -204,7 +205,7 @@ namespace PE
 				}
 				else if (currentState != GameStates_v2_0::INACTIVE)
 				{
-					SetPauseState();
+					SetPauseStateV2();
 				}
 			}
 
@@ -224,7 +225,7 @@ namespace PE
 		}
 	}
 
-	void GameStateController_v2_0::SetPauseState()
+	void GameStateController_v2_0::SetPauseStateV2(EntityID)
 	{
 		if (currentState != GameStates_v2_0::PAUSE)
 		{

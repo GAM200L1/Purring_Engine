@@ -1220,7 +1220,8 @@
                             27,
                             28,
                             29,
-                            30
+                            30,
+                            44
                         ],
                         "isActive": false,
                         "name": "HUDCanvas",
@@ -2156,7 +2157,7 @@
                         "TextureKey": "../Assets/Textures/LongNote_512x128.png"
                     },
                     "Transform": {
-                        "height": 181.0,
+                        "height": 159.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 643.0,
@@ -2301,6 +2302,80 @@
                         },
                         "relorientation": 0.0,
                         "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 44,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "PauseButton",
+                        "parent": 24,
+                        "sceneID": 43
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Menu_127x107.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_Menu_127x107.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Menu_Highlighted_127x107.png",
+                        "m_onClicked": "SetPauseStateV2",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Menu_Dark_127x107.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Menu_127x107.png"
+                    },
+                    "Transform": {
+                        "height": 107.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 890.0001220703125,
+                            "y": 337.9999694824219
+                        },
+                        "relativeposition": {
+                            "x": 890.0001220703125,
+                            "y": 337.9999694824219
+                        },
+                        "relorientation": 0.0,
+                        "width": 127.0
                     }
                 },
                 "name": ""
