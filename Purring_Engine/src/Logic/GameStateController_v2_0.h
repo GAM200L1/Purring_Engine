@@ -41,6 +41,7 @@ namespace PE
 		EntityID HowToPlayPageTwo;
 		EntityID HUDCanvas;
 		EntityID ExecuteCanvas;
+		EntityID TurnCounterCanvas;
 
 		int keyEventHandlerId, outOfFocusEventHandlerId;
 	};

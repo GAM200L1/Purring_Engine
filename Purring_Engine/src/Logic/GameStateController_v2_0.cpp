@@ -390,6 +390,7 @@ namespace PE
 	void GameStateController_v2_0::PlanningStateHUD(EntityID const id, float deltaTime)
 	{
 		ActiveObject(m_ScriptData[id].HUDCanvas);
+		ActiveObject(m_ScriptData[id].TurnCounterCanvas);
 
 		if (prevState == GameStates_v2_0::EXECUTE)
 		{

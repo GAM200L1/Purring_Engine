@@ -214,6 +214,7 @@ RTTR_REGISTRATION
         .property("WinCanvas", &PE::GameStateController_v2_0Data::WinCanvas)
         .property("HUDCanvas", &PE::GameStateController_v2_0Data::HUDCanvas)
         .property("ExecuteCanvas", &PE::GameStateController_v2_0Data::ExecuteCanvas)
+        .property("TurnCounterCanvas", &PE::GameStateController_v2_0Data::TurnCounterCanvas)
         .property("HowToPlayCanvas", &PE::GameStateController_v2_0Data::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::GameStateController_v2_0Data::HowToPlayPageOne)
         .property("HowToPlayPageTwo", &PE::GameStateController_v2_0Data::HowToPlayPageTwo);

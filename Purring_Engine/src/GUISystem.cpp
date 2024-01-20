@@ -615,13 +615,13 @@ namespace PE
 		return m_currentValue;
 	}
 
-	float GUISlider::CalculateKnobCenter(float m_currentValue)
+	float GUISlider::CalculateKnobCenter(float currentValue)
 	{
 		//current value will be 
 		//current x transform / total transform * (max value - min value)	
 		float totalVal = m_maxValue - m_minValue;
 		float totalDistance = m_endPoint - m_startPoint;
-		float currentTransform = (m_currentValue - m_minValue) / totalVal * totalDistance;
+		float currentTransform = (currentValue - m_minValue) / totalVal * totalDistance;
 		m_currentXpos = m_startPoint + currentTransform;
 
 		return m_currentXpos;

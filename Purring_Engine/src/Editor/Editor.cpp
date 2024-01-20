@@ -3067,6 +3067,7 @@ namespace PE {
 										int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
 										int HUDCanvasID = static_cast<int> (it->second.HUDCanvas);
 										int ExecuteCanvasID = static_cast<int> (it->second.ExecuteCanvas);
+										int TurnCounterCanvasID = static_cast<int> (it->second.TurnCounterCanvas);
 										int HTPID1 = static_cast<int> (it->second.HowToPlayPageOne);
 										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
 									
@@ -3103,7 +3104,8 @@ namespace PE {
 										ImGui::Text("Foliage ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##folc", &ExecuteCanvasID);
 										if (ExecuteCanvasID != m_currentSelectedObject) { it->second.ExecuteCanvas = ExecuteCanvasID; }
 
-
+										ImGui::Text("Turn Counter Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tcc", &TurnCounterCanvasID);
+										if (TurnCounterCanvasID != m_currentSelectedObject) { it->second.TurnCounterCanvas = TurnCounterCanvasID; }
 									}
 								}
 							}
@@ -5027,7 +5029,8 @@ namespace PE {
 	EntityID Editor::CheckCanvas()
 	{
 		EntityID NextCanvasID{};
-		if (NextCanvasID = CountCanvas())
+		NextCanvasID = CountCanvas();
+		if (NextCanvasID)
 		{
 			//if more than 1 canvas popup choose which canvas, to be done in the future
 		}

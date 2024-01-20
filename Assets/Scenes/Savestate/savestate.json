@@ -98,7 +98,7 @@
                         "isActive": false,
                         "name": "PauseCanvas",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 9
                     },
                     "Transform": {
                         "height": 100.0,
@@ -400,7 +400,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 8
+                        "sceneID": 10
                     },
                     "Transform": {
                         "height": 100.0,
@@ -543,7 +543,7 @@
                         "Prefab Type": "SadCat",
                         "children": [],
                         "isActive": false,
-                        "name": "SadCat",
+                        "name": "LeaveSadCat",
                         "parent": 8,
                         "sceneID": 11
                     },
@@ -665,7 +665,7 @@
                         "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
-                        "sceneID": 6
+                        "sceneID": 7
                     },
                     "Transform": {
                         "height": 100.0,
@@ -742,7 +742,7 @@
                         "isActive": true,
                         "name": "SplashScreenCanvas",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 43
                     },
                     "Transform": {
                         "height": 100.0,
@@ -838,6 +838,7 @@
                                 "LoseCanvas": 37,
                                 "PauseMenuCanvas": 3,
                                 "SplashScreen": 17,
+                                "TurnCounterCanvas": 43,
                                 "WinCanvas": 32
                             },
                             "state": 0
@@ -882,7 +883,7 @@
                         "isActive": false,
                         "name": "HowToPlayCanvas",
                         "parent": null,
-                        "sceneID": 7
+                        "sceneID": 8
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1221,7 +1222,7 @@
                             29,
                             30
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 4
@@ -1332,7 +1333,7 @@
                         "isActive": false,
                         "name": "PawOverlay",
                         "parent": 24,
-                        "sceneID": 11
+                        "sceneID": 14
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1412,7 +1413,7 @@
                         "isActive": false,
                         "name": "EndTurnButton",
                         "parent": 24,
-                        "sceneID": 12
+                        "sceneID": 11
                     },
                     "GUI": {
                         "disabled": false,
@@ -1461,15 +1462,15 @@
                         "height": 150.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 441.0,
-                            "y": -411.0
+                            "x": 683.5001220703125,
+                            "y": -418.5
                         },
                         "relativeposition": {
-                            "x": 441.0,
-                            "y": -411.0
+                            "x": 683.5001220703125,
+                            "y": -418.5
                         },
                         "relorientation": 0.0,
-                        "width": 430.0
+                        "width": 554.0
                     }
                 },
                 "name": ""
@@ -1484,23 +1485,23 @@
                         "Prefab Type": "Text",
                         "children": [],
                         "isActive": false,
-                        "name": "Text",
+                        "name": "EndPlanningText",
                         "parent": 24,
                         "sceneID": 13
                     },
                     "TextComponent": {
                         "Color": {
                             "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
+                            "x": 0.2980392277240753,
+                            "y": 0.2549019753932953,
+                            "z": 0.21176470816135406
                         },
                         "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
                         "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 0.0,
                         "Size": 1.2999999523162842,
-                        "Text": "Execute",
+                        "Text": "End Planning",
                         "VAlignment": 4,
                         "VOverflow": 2
                     },
@@ -1508,15 +1509,15 @@
                         "height": 103.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 442.5,
-                            "y": -395.0
+                            "x": 685.0,
+                            "y": -402.50006103515625
                         },
                         "relativeposition": {
-                            "x": 442.5,
-                            "y": -395.0
+                            "x": 685.0,
+                            "y": -402.50006103515625
                         },
                         "relorientation": 0.0,
-                        "width": 292.0
+                        "width": 356.0
                     }
                 },
                 "name": ""
@@ -1616,7 +1617,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 32
+                        "sceneID": 11
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1884,7 +1885,7 @@
                         "isActive": false,
                         "name": "LoseCanvas",
                         "parent": null,
-                        "sceneID": 37
+                        "sceneID": 12
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1913,7 +1914,7 @@
                         "Prefab Type": "SadCat",
                         "children": [],
                         "isActive": false,
-                        "name": "SadCat",
+                        "name": "LoseSadCat",
                         "parent": 37,
                         "sceneID": 38
                     },
@@ -1955,7 +1956,7 @@
                         "isActive": false,
                         "name": "LoseQuitButton",
                         "parent": 37,
-                        "sceneID": 39
+                        "sceneID": 13
                     },
                     "GUI": {
                         "disabled": false,
@@ -2027,7 +2028,7 @@
                         "Prefab Type": "restartbutton",
                         "children": [],
                         "isActive": false,
-                        "name": "restartbutton",
+                        "name": "LoseRetryButton",
                         "parent": 37,
                         "sceneID": 40
                     },
@@ -2127,6 +2128,179 @@
                         },
                         "relorientation": 0.0,
                         "width": 858.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 42,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "TurnCounter",
+                        "parent": 43,
+                        "sceneID": 42
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/LongNote_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 181.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 643.0,
+                            "y": 461.0
+                        },
+                        "relativeposition": {
+                            "x": 643.0,
+                            "y": 461.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 735.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 45,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "CurrentTurnPhase",
+                        "parent": 43,
+                        "sceneID": 45
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.2980392277240753,
+                            "y": 0.2549019753932953,
+                            "z": 0.21176470816135406
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                        "HAlignment": 4,
+                        "HOverflow": 0,
+                        "LineSpacing": 0.0,
+                        "Size": 1.2000000476837158,
+                        "Text": "Plan Movement",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 103.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 765.0,
+                            "y": 473.4999084472656
+                        },
+                        "relativeposition": {
+                            "x": 765.0,
+                            "y": 473.4999084472656
+                        },
+                        "relorientation": 0.0,
+                        "width": 356.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 46,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "TurnNumberText",
+                        "parent": 43,
+                        "sceneID": 46
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.2980392277240753,
+                            "y": 0.2549019753932953,
+                            "z": 0.21176470816135406
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Bold.ttf",
+                        "HAlignment": 4,
+                        "HOverflow": 0,
+                        "LineSpacing": 0.0,
+                        "Size": 1.399999976158142,
+                        "Text": "Turn No",
+                        "VAlignment": 4,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 103.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 430.99981689453125,
+                            "y": 473.4997863769531
+                        },
+                        "relativeposition": {
+                            "x": 430.99981689453125,
+                            "y": 473.4997863769531
+                        },
+                        "relorientation": 0.0,
+                        "width": 356.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 43,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            42,
+                            45,
+                            46
+                        ],
+                        "isActive": false,
+                        "name": "TurnCounterCanvas",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""
