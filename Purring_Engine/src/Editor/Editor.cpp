@@ -5017,13 +5017,12 @@ namespace PE {
 
 	EntityID Editor::CountCanvas()
 	{
-		int count{};
-
-		for (EntityID objectID : SceneView<Canvas>())
+		EntityID FirstCanvasID{};
+		for (auto objectID : SceneView<Canvas>())
 		{
-			return objectID;
+			FirstCanvasID = objectID;
 		}
-		return count;
+		return FirstCanvasID;
 	}
 
 	EntityID Editor::CheckCanvas()

@@ -81,6 +81,13 @@ namespace PE
 			ActiveObject(m_ScriptData[id].BackGroundCanvas);
 			if (m_pauseMenuOpenOnce)
 			{
+				for (auto id2 : SceneView<GUIButton>())
+				{
+					if (EntityManager::GetInstance().Has<GUIButton>(id2))
+					{
+						EntityManager::GetInstance().Get<GUIButton>(id2).disabled = true;
+					}
+				}
 				ActiveObject(m_ScriptData[id].PauseMenuCanvas);
 				m_pauseMenuOpenOnce = false;
 			}
@@ -239,6 +246,14 @@ namespace PE
 	{
 		if (currentState == GameStates_v2_0::PAUSE)
 		{
+			for (auto id : SceneView<GUIButton>())
+			{
+				if (EntityManager::GetInstance().Has<GUIButton>(id))
+				{
+					EntityManager::GetInstance().Get<GUIButton>(id).disabled = false;
+				}
+			}
+
 			currentState = prevState;
 			prevState = GameStates_v2_0::PAUSE;
 
@@ -255,7 +270,12 @@ namespace PE
 
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
-			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			if (EntityManager::GetInstance().Has<GUIButton>(id2))
+			{
+				EntityManager::GetInstance().Get<GUIButton>(id2).disabled = false;
+			}
+
+			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
 				break;
 
 			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = true;
@@ -266,7 +286,7 @@ namespace PE
 	{
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
 		{
-			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
 				break;
 
 			EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
