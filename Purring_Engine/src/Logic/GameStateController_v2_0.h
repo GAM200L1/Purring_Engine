@@ -36,9 +36,12 @@ namespace PE
 		EntityID AreYouSureCanvas;
 		EntityID LoseCanvas;
 		EntityID WinCanvas;
+		EntityID HowToPlayCanvas;
 		EntityID HowToPlayPageOne;
 		EntityID HowToPlayPageTwo;
-
+		EntityID HUDCanvas;
+		EntityID ExecuteCanvas;
+		EntityID TurnCounterCanvas;
 
 		int keyEventHandlerId, outOfFocusEventHandlerId;
 	};
@@ -119,19 +122,36 @@ namespace PE
 
 		// ----- Helper Functions ----- //
 	public:
-		void SetPauseState();
+		void SetPauseStateV2(EntityID = 0);
 		void SetGameState(GameStates_v2_0);
 		void ResumeStateV2(EntityID=0);
 		void ActiveObject(EntityID);
 		void DeactiveObject(EntityID);
-		void NextState(EntityID);
-
+		void FadeAllObject(EntityID Canvas, float const alpha);
+		void DeactiveAllMenu();
+		void NextState(EntityID=0);
+		void WinGame();
+		void LoseGame();
+		void CloseHTP(EntityID);
+		void OpenHTP(EntityID);
+		void HTPPage2(EntityID);
+		void HTPPage1(EntityID);
+		void PlanningStateHUD(EntityID const id, float deltaTime);
+		void ExecutionStateHUD(EntityID const id, float deltaTime);
+		void ReturnFromAYS(EntityID);
+		void OpenAYS(EntityID);
+		void RetryStage(EntityID);
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
 	private:
 		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
-		bool m_pauseMenuOpenOnce{false};
+		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
+		int m_currentLevel{};
+		EntityID m_currentGameStateControllerID;
+		float m_UIFadeTimer{.5f};
+		float m_timeSinceEnteredState{ 1.f };
+		float m_timeSinceExitedState{};
 	};
 }
 
