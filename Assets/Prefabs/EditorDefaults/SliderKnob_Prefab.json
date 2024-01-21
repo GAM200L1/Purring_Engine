@@ -2,34 +2,27 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
-                "Prefab Type": "Text",
+                "Prefab Type": "SliderKnob",
                 "children": [],
                 "isActive": true,
-                "name": "Text",
+                "name": "SliderKnob",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
-            "TextComponent": {
+            "GUIRenderer": {
                 "Color": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
+                    "a": 1.0,
+                    "b": 0.5735294222831726,
+                    "g": 0.5735294222831726,
+                    "r": 0.5735294222831726
                 },
-                "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
-                "HAlignment": 0,
-                "HOverflow": 0,
-                "LineSpacing": 1.0,
-                "Size": 1.0,
-                "Text": "Text here",
-                "VAlignment": 2,
-                "VOverflow": 2
+                "TextureKey": ""
             },
             "Transform": {
-                "height": 100.0,
+                "height": 75.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 0.0,
+                    "x": -213.0,
                     "y": 0.0
                 },
                 "relativeposition": {
@@ -37,7 +30,7 @@
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 200.0
+                "width": 75.0
             }
         },
         "name": ""

@@ -99,14 +99,45 @@ namespace PE
 		UpdateRenderOrder(r_child);
 	}
 
-	inline const std::set<EntityID>& Hierarchy::GetChildren(const EntityID& r_parent) const
+	bool Hierarchy::HasParent(const EntityID& child) const
 	{
-		return EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
+		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.has_value();
 	}
 
-	inline const std::optional<EntityID>& Hierarchy::GetParent(const EntityID& r_child) const
+	bool Hierarchy::IsImmediateParentActive(EntityID child) const
 	{
-		return EntityManager::GetInstance().Get<EntityDescriptor>(r_child).parent;
+		auto const& parent{ EntityManager::GetInstance().Get<EntityDescriptor>(child).parent };
+		return (parent.has_value() ? 
+				EntityManager::GetInstance().Get<EntityDescriptor>(parent.value()).isActive : // return active status of parent
+				EntityManager::GetInstance().Get<EntityDescriptor>(child).isActive);		// return active status of obj
+	}
+
+	bool Hierarchy::AreParentsActive(EntityID child) const
+	{
+		// Loop through all the parents to check their active statues
+		while (HasParent(child))
+		{
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(GetParent(child).value()).isActive)
+				return false;
+
+			child = GetParent(child).value();
+		}
+		return EntityManager::GetInstance().Get<EntityDescriptor>(child).isActive;
+	}
+
+	const std::optional<EntityID>& Hierarchy::GetAbsoluteParent(EntityID child) const
+	{
+		while (HasParent(child))
+		{
+			// If its parent has a parent, store its ID so we can check that its parent has a parent
+			EntityID parentId{ EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value() };
+			if (HasParent(EntityManager::GetInstance().Get<EntityDescriptor>(child).parent.value()))
+				child = parentId;
+			else
+				break;
+		}
+
+		return EntityManager::GetInstance().Get<EntityDescriptor>(child).parent;
 	}
 
 	// recursive function to help with parent child ordering
@@ -126,6 +157,7 @@ namespace PE
 				trans.orientation = parent.orientation + trans.relOrientation;
 			}
 			// if it has children recursively call this function, with the current ID as the input
+			if(EntityManager::GetInstance().Has<EntityDescriptor>(childrenID))
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(childrenID).children.size())
 			{
 				TransformUpdateHelper(childrenID);
@@ -143,7 +175,7 @@ namespace PE
 			if (id == 0)
 				continue;
 			// only if it is base layer
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
+			if (!HasParent(id))
 			{
 				m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
 			}
@@ -261,7 +293,10 @@ namespace PE
 			// to change to canvas!!
 			else if (EntityManager::GetInstance().Has<PE::Graphics::GUIRenderer>(v))
 			{
-				m_renderOrderUI.emplace_back(v);
+				if (!GETGUISYSTEM()->AreThereActiveCanvases()) { continue; }
+
+				if(GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
+					m_renderOrderUI.emplace_back(v);
 			}
 			
 		}

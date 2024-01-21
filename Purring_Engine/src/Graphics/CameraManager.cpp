@@ -64,6 +64,27 @@ namespace PE
         }
 
 
+        glm::mat4 CameraManager::GetWorldToViewMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetWorldToViewMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetWorldToViewMatrix();
+                }
+
+                return glm::mat4{ 0 };
+            }
+        }
+
+
         glm::mat4 CameraManager::GetViewToNdcMatrix(bool const editorMode)
         {
             if (editorMode)
@@ -378,19 +399,19 @@ namespace PE
                 // Move the editor camera
                 if (event.keycode == GLFW_KEY_UP)
                 {
-                    GetEditorCamera().AdjustPosition(0.f, 10.f);
+                    GetEditorCamera().AdjustLocalPosition(0.f, 10.f);
                 }
                 if (event.keycode == GLFW_KEY_DOWN)
                 {
-                    GetEditorCamera().AdjustPosition(0.f, -10.f);
+                    GetEditorCamera().AdjustLocalPosition(0.f, -10.f);
                 }
                 if (event.keycode == GLFW_KEY_LEFT)
                 {
-                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
+                    GetEditorCamera().AdjustLocalPosition(-10.f, 0.f);
                 }
                 if (event.keycode == GLFW_KEY_RIGHT)
                 {
-                    GetEditorCamera().AdjustPosition(10.f, 0.f);
+                    GetEditorCamera().AdjustLocalPosition(10.f, 0.f);
                 }
 
                 // Rotate the editor camera
@@ -411,19 +432,19 @@ namespace PE
                 // Move the editor camera
                 if (event.keycode == GLFW_KEY_UP)
                 {
-                    GetEditorCamera().AdjustPosition(0.f, 10.f);
+                    GetEditorCamera().AdjustLocalPosition(0.f, 10.f);
                 }
                 if (event.keycode == GLFW_KEY_DOWN)
                 {
-                    GetEditorCamera().AdjustPosition(0.f, -10.f);
+                    GetEditorCamera().AdjustLocalPosition(0.f, -10.f);
                 }
                 if (event.keycode == GLFW_KEY_LEFT)
                 {
-                    GetEditorCamera().AdjustPosition(-10.f, 0.f);
+                    GetEditorCamera().AdjustLocalPosition(-10.f, 0.f);
                 }
                 if (event.keycode == GLFW_KEY_RIGHT)
                 {
-                    GetEditorCamera().AdjustPosition(10.f, 0.f);
+                    GetEditorCamera().AdjustLocalPosition(10.f, 0.f);
                 }
 
                 // Rotate the editor camera

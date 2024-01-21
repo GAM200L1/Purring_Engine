@@ -21,6 +21,7 @@
 #include "Graphics/Text.h"
 #include "AudioManager/AudioComponent.h"
 #include "Hierarchy/HierarchyManager.h"
+#include "GUI/Canvas.h"
 extern Logger engine_logger;
 
 
@@ -75,11 +76,14 @@ namespace PE
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Renderer>(),	&EntityFactory::InitializeRenderer);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<ScriptComponent>(),		&EntityFactory::InitializeScriptComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::Camera>(),		&EntityFactory::InitializeCamera);
-		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUI>(),					&EntityFactory::InitializeGUI);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUIButton>(),					&EntityFactory::InitializeGUIButton);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<GUISlider>(),					&EntityFactory::InitializeGUISlider);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<AnimationComponent>(),	&EntityFactory::InitializeAnimationComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<Graphics::GUIRenderer>(), &EntityFactory::InitializeGUIRenderer);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<TextComponent>(),			&EntityFactory::InitializeTextComponent);
 		m_initializeComponent.emplace(p_entityManager->GetComponentID<AudioComponent>(),		&EntityFactory::InitializeAudioComponent);
+		m_initializeComponent.emplace(p_entityManager->GetComponentID<Canvas>(), &EntityFactory::InitializeCanvasComponent);
+
 	}
 
 
@@ -259,13 +263,23 @@ namespace PE
 		return true;
 	}
 
-	bool EntityFactory::InitializeGUI(const EntityID& r_id, void* p_data)
+	bool EntityFactory::InitializeGUIButton(const EntityID& r_id, void* p_data)
 	{
-		EntityManager::GetInstance().Get<GUI>(r_id) =
+		EntityManager::GetInstance().Get<GUIButton>(r_id) =
 			(p_data == nullptr) ?
-			GUI()
+			GUIButton()
 			:
-			*reinterpret_cast<GUI*>(p_data);
+			*reinterpret_cast<GUIButton*>(p_data);
+		return true;
+	}	
+	
+	bool EntityFactory::InitializeGUISlider(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<GUISlider>(r_id) =
+			(p_data == nullptr) ?
+			GUISlider()
+			:
+			*reinterpret_cast<GUISlider*>(p_data);
 		return true;
 	}
 
@@ -296,6 +310,16 @@ namespace PE
 			AudioComponent()
 			:
 			*reinterpret_cast<AudioComponent*>(p_data);
+		return true;
+	}
+
+	bool EntityFactory::InitializeCanvasComponent(const EntityID& r_id, void* p_data)
+	{
+		EntityManager::GetInstance().Get<Canvas>(r_id) =
+			(p_data == nullptr) ?
+			Canvas()
+			:
+			*reinterpret_cast<Canvas*>(p_data);
 		return true;
 	}
 

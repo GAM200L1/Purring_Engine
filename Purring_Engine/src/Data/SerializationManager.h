@@ -205,6 +205,11 @@ private:
     bool LoadTextComponent(const size_t& r_id, const nlohmann::json& r_json);
 
     /*!***********************************************************************************
+     \brief Load the Text component from JSON.
+    *************************************************************************************/
+    bool LoadCanvasComponent(const size_t& r_id, const nlohmann::json& r_json);
+
+    /*!***********************************************************************************
      \brief Load the Script component from JSON.
     *************************************************************************************/
     bool LoadScriptComponent(const size_t& r_id, const nlohmann::json& r_json);
@@ -214,6 +219,10 @@ private:
     *************************************************************************************/
     bool LoadAudioComponent(const size_t& r_id, const nlohmann::json& r_json);
 
+    /*!***********************************************************************************
+     \brief Load the Transform component from JSON.
+    *************************************************************************************/
+    bool LoadGUISlider(const size_t& r_id, const nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:

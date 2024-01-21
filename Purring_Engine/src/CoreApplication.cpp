@@ -71,6 +71,7 @@
 #include "Input/InputSystem.h"
 
 #include "GUISystem.h"
+#include "GUI/Canvas.h"
 
 // RTTR includes
 #include <rttr/type.h>
@@ -115,11 +116,13 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::Graphics::Renderer);
     REGISTERCOMPONENT(PE::Graphics::Camera);
     REGISTERCOMPONENT(PE::ScriptComponent);
-    REGISTERCOMPONENT(PE::GUI);
+    REGISTERCOMPONENT(PE::GUIButton);
+    REGISTERCOMPONENT(PE::GUISlider);
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
+    REGISTERCOMPONENT(PE::Canvas);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -264,10 +267,21 @@ RTTR_REGISTRATION
         .property_readonly("Size", &PE::TextComponent::GetSize)
         .property_readonly("Text", &PE::TextComponent::GetText)
         .property_readonly("Color", &PE::TextComponent::GetColor)
+        .property_readonly("LineSpacing", &PE::TextComponent::GetLineSpacing)
+        .property_readonly("HAlignment", &PE::TextComponent::GetHAlignment)
+        .property_readonly("VAlignment", &PE::TextComponent::GetVAlignment)
+        .property_readonly("HOverflow", &PE::TextComponent::GetHOverflow)
+        .property_readonly("VOverflow", &PE::TextComponent::GetVOverflow)
         .method("Color", &PE::TextComponent::SetColor)
         .method("Text", &PE::TextComponent::SetText)
         .method("Size", &PE::TextComponent::SetSize)
-        .method("Font", &PE::TextComponent::SetFont);
+        .method("Font", &PE::TextComponent::SetFont)
+        .method("LineSpacing", &PE::TextComponent::SetLineSpacing)
+        .method("HAlignment", &PE::TextComponent::SetHAlignment)
+        .method("VAlignment", &PE::TextComponent::SetVAlignment)
+        .method("HOverflow", &PE::TextComponent::SetHOverflow)
+        .method("VOverflow", &PE::TextComponent::SetVOverflow);
+
 
     rttr::registration::class_<PE::CatScriptData>("CatScript")
         .property("catID", &PE::CatScriptData::catID)
@@ -293,6 +307,13 @@ RTTR_REGISTRATION
         .property("attackDamage", &PE::RatScriptData::attackDamage)
         .property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScriptData::animationStates);
+
+    rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
+        .property_readonly("Width", &PE::Canvas::GetWidth)
+        .property_readonly("Height", &PE::Canvas::GetHeight)
+        .method("Width", &PE::Canvas::SetWidth)
+        .method("Height", &PE::Canvas::SetHeight)
+        .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
 }
 
 PE::CoreApplication::CoreApplication()
@@ -493,7 +514,7 @@ void PE::CoreApplication::InitializeSystems()
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window };
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window, static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
