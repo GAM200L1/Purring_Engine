@@ -3210,6 +3210,11 @@ namespace PE {
 
 	void Editor::ShowResourceWindow(bool* p_active)
 	{
+		const ImVec2 childWindowSize = ImVec2(150, 130); 
+		const float maxImageSize = 70.0f;
+		const int maxCharCount = 15;
+		const float childWindowPadding = 10.0f;
+
 		if (IsEditorActive())
 		//testing for drag and drop
 		if (!ImGui::Begin("Assets Browser", p_active)) // draw resource list
@@ -3279,59 +3284,90 @@ namespace PE {
 					}
 				}
 
-				int numItemPerRow = (ImGui::GetWindowSize().x < 120.f) ? 1 : static_cast<int>(ImGui::GetWindowSize().x / 120.f);
+				// Calculate number of items per row
+				float totalChildWidth = childWindowSize.x + childWindowPadding;
+				int numItemPerRow = static_cast<int>(ImGui::GetContentRegionAvail().x / totalChildWidth);
+				if (numItemPerRow < 1) numItemPerRow = 1;				// Toe nsure at least one item per row
 
 				// list the files in the current showing directory as imgui text
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
 				{	//resource list needs a list of icons for the texture for the image if possible
 					//else just give a standard object icon here
 					
-					if (n % numItemPerRow) // to keep it in rows where 3 is max 3 colums
+					if (n % numItemPerRow != 0)
 						ImGui::SameLine();
-					
-					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), ImVec2(120, 100))) //child to hold image n text
+
+					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), childWindowSize, false)) //child to hold image n text
 					{
 						std::string icon{};
 						std::string const extension{ m_files[n].filename().extension().string() };
-						if (extension == "")
-							icon = "../Assets/Icons/Directory_Icon.png";
-						else if (extension == ".mp3" || extension == ".wav" || extension == ".ogg")
-							icon = "../Assets/Icons/Audio_Icon.png";
-						else if (extension == ".ttf")
-							icon = "../Assets/Icons/Font_Icon.png";
-						else if (extension == ".json")
-							icon = "../Assets/Icons/Prefabs_Icon.png";
-						else if (extension == ".png")
-							icon = "../Assets/Icons/Texture_Icon.png";
-						else
-							icon = "../Assets/Icons/Other_Icon.png";
+						GLuint textureID = 0; 
+						ImVec2 image_size = ImVec2(50, 50);
 
-						// Centering the Icon
-						float iconPosX = (120 - 50) * 0.5f;
+						if (extension == ".png")
+						{
+							// Load the actual texture and get its ID
+							textureID = ResourceManager::GetInstance().GetTexture(m_files[n].string())->GetTextureID();
+							// Retrieve the actual size of the texture
+							ImVec2 textureSize = ResourceManager::GetInstance().GetTextureSize(m_files[n].string());
+							// Calculate the aspect ratio
+							float aspectRatio = textureSize.x / textureSize.y;
+							if (aspectRatio > 1.0f)
+							{
+								// Width is greater than height
+								image_size.x = maxImageSize;
+								image_size.y = maxImageSize / aspectRatio;
+							}
+							else
+							{
+								// Height is greater than width or square
+								image_size.x = maxImageSize * aspectRatio;
+								image_size.y = maxImageSize;
+							}
+						}
+						else
+						{
+							if (extension == "")
+								icon = "../Assets/Icons/Directory_Icon.png";
+							else if (extension == ".mp3" || extension == ".wav" || extension == ".ogg")
+								icon = "../Assets/Icons/Audio_Icon.png";
+							else if (extension == ".ttf")
+								icon = "../Assets/Icons/Font_Icon.png";
+							else if (extension == ".json")
+								icon = "../Assets/Icons/Prefabs_Icon.png";
+							else
+								icon = "../Assets/Icons/Other_Icon.png";
+
+							textureID = ResourceManager::GetInstance().GetIcon(icon)->GetTextureID();
+						}
+
+						// fixed height for the image area
+						const float imageAreaHeight = 80.0f;
+
+						// Cal vertical position to center the image within the image area
+						float spaceAboveImage = (imageAreaHeight - image_size.y) * 0.5f;
+						ImGui::Dummy(ImVec2(0.0f, spaceAboveImage));
+
+						float iconPosX = (childWindowSize.x - image_size.x) * 0.5f;
 						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + iconPosX);
 
-						// Display the Icon
-						ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetIcon(icon)->GetTextureID(), ImVec2(50, 50), { 0,1 }, { 1,0 });
+						// Display the Icon or actual texture
+						ImGui::Image((void*)(intptr_t)textureID, image_size, ImVec2(0, 1), ImVec2(1, 0));
 
-						// Prepare for Text
+						float spaceBelowImage = imageAreaHeight - spaceAboveImage - image_size.y;
+						ImGui::Dummy(ImVec2(0.0f, spaceBelowImage));
+
+						// Truncation of Text
 						std::string filename = m_files[n].filename().string();
-						const int maxCharCount = 15;				// Char Limit
-
-						// Truncate Text
-						std::string displayText = filename;
-						if (filename.length() > maxCharCount)
-						{
-							displayText = filename.substr(0, maxCharCount - 3) + "..."; // Truncate and add ellipsis
-						}
+						std::string displayText = filename.length() > maxCharCount
+							? filename.substr(0, maxCharCount - 3) + "..."
+							: filename;
 
 						// Centering and Displaying the Text
 						float textWidth = ImGui::CalcTextSize(displayText.c_str()).x;
-						float centerPosX = (120 - textWidth) * 0.5f;
-						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + centerPosX);
-
-						// Display the Truncated Text
+						float centerTextPosX = (childWindowSize.x - textWidth) * 0.5f;
+						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + centerTextPosX);
 						ImGui::Text("%s", displayText.c_str());
-
 					}
 					ImGui::EndChild();
 
