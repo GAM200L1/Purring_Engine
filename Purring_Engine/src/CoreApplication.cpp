@@ -217,7 +217,10 @@ RTTR_REGISTRATION
         .property("TurnCounterCanvas", &PE::GameStateController_v2_0Data::TurnCounterCanvas)
         .property("HowToPlayCanvas", &PE::GameStateController_v2_0Data::HowToPlayCanvas)
         .property("HowToPlayPageOne", &PE::GameStateController_v2_0Data::HowToPlayPageOne)
-        .property("HowToPlayPageTwo", &PE::GameStateController_v2_0Data::HowToPlayPageTwo);
+        .property("HowToPlayPageTwo", &PE::GameStateController_v2_0Data::HowToPlayPageTwo)
+        .property("CatPortrait", &PE::GameStateController_v2_0Data::CatPortrait)
+        .property("RatPortrait", &PE::GameStateController_v2_0Data::RatPortrait)
+        .property("Portrait", &PE::GameStateController_v2_0Data::Portrait);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
     //    .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)

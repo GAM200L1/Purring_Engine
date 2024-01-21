@@ -115,12 +115,43 @@ namespace PE
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
 				DeactiveAllMenu();
 				PlanningStateHUD(id, deltaTime);
+				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].TurnCounterCanvas).children)
+				{
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "TurnNumberText")
+					{
+						if (EntityManager::GetInstance().Has<TextComponent>(id2))
+						{
+							EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn: " + std::to_string(CurrentTurn));
+						}
+						continue;
+					}
+
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CurrentTurnPhase")
+					{
+						if (EntityManager::GetInstance().Has<TextComponent>(id2))
+						{
+							EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Plan Movement");
+						}
+						continue;
+					}
+				}
 				prevState = currentState;
 				break;
 			case GameStates_v2_0::EXECUTE:
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
 				DeactiveAllMenu();
 				ExecutionStateHUD(id, deltaTime);
+				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].TurnCounterCanvas).children)
+				{
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CurrentTurnPhase")
+					{
+						if (EntityManager::GetInstance().Has<TextComponent>(id2))
+						{
+							EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Executing...");
+						}
+						continue;
+					}
+				}
 				prevState = currentState;
 				break;
 			case GameStates_v2_0::WIN:
@@ -336,6 +367,7 @@ namespace PE
 		}
 		else if (currentState == GameStates_v2_0::EXECUTE)
 		{
+			CurrentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
 		}
 	}

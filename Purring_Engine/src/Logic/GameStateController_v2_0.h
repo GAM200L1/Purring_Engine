@@ -43,6 +43,10 @@ namespace PE
 		EntityID ExecuteCanvas;
 		EntityID TurnCounterCanvas;
 
+		EntityID CatPortrait,RatPortrait;
+		EntityID Portrait;
+
+
 		int keyEventHandlerId, outOfFocusEventHandlerId;
 	};
 
@@ -144,6 +148,7 @@ namespace PE
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
+		int CurrentTurn{1};
 	private:
 		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
 		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};

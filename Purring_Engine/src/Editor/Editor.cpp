@@ -3070,6 +3070,9 @@ namespace PE {
 										int TurnCounterCanvasID = static_cast<int> (it->second.TurnCounterCanvas);
 										int HTPID1 = static_cast<int> (it->second.HowToPlayPageOne);
 										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
+										int CatPortID = static_cast<int> (it->second.CatPortrait);
+										int RatPortID = static_cast<int> (it->second.RatPortrait);
+										int PortID = static_cast<int> (it->second.Portrait);
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &BackgroundID);
 										if (BackgroundID != m_currentSelectedObject) { it->second.BackGroundCanvas = BackgroundID; }
@@ -3106,6 +3109,15 @@ namespace PE {
 
 										ImGui::Text("Turn Counter Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tcc", &TurnCounterCanvasID);
 										if (TurnCounterCanvasID != m_currentSelectedObject) { it->second.TurnCounterCanvas = TurnCounterCanvasID; }
+
+										ImGui::Text("Cat Portrait Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##cpt", &CatPortID);
+										if (CatPortID != m_currentSelectedObject) { it->second.CatPortrait = CatPortID; }
+
+										ImGui::Text("Rat Portrait Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rpt", &RatPortID);
+										if (RatPortID != m_currentSelectedObject) { it->second.RatPortrait = RatPortID; }
+
+										ImGui::Text("Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##npt", &PortID);
+										if (PortID != m_currentSelectedObject) { it->second.Portrait = PortID; }
 									}
 								}
 							}
