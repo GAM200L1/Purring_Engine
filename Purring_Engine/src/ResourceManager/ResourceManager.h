@@ -193,6 +193,59 @@ namespace PE
             \return Audio in map.
         *************************************************************************************/
         std::shared_ptr<AudioManager::Audio> GetAudio(std::string const& r_name);
+
+        /*!***********************************************************************************
+        \brief Loads all the textures in texture key map.
+        *************************************************************************************/
+        void LoadAllTextures();
+
+        /*!***********************************************************************************
+        \brief Loads all the audio in audio key map.
+        *************************************************************************************/
+        void LoadAllAudio();
+
+        /*!***********************************************************************************
+        \brief Loads all the fonts in texture key map.
+        *************************************************************************************/
+        void LoadAllFonts();
+
+        /*!***********************************************************************************
+        \brief Loads all the animations in texture key map.
+        *************************************************************************************/
+        void LoadAllAnimations();
+
+        /*!***********************************************************************************
+        \brief Loads all the resources in the resource key maps.
+        *************************************************************************************/
+        void LoadAllResources();
+
+        /*!***********************************************************************************
+        \brief Adds shader key to load.
+
+        \param[in] r_key Filepath of texture.
+        *************************************************************************************/
+        void AddTextureKeyToLoad(std::string const& r_key);
+
+        /*!***********************************************************************************
+        \brief Loads all the audio in audio key map.
+
+        \param[in] r_key Filepath of audio.
+        *************************************************************************************/
+        void AddAudioKeyToLoad(std::string const& r_key);
+
+        /*!***********************************************************************************
+        \brief Adds font key to load.
+
+        \param[in] r_key Filepath of font.
+        *************************************************************************************/
+        void AddFontKeyToLoad(std::string const& r_key);
+
+        /*!***********************************************************************************
+        \brief Adds animation key to load.
+
+        \param[in] r_key Filepath of animation.
+        *************************************************************************************/
+        void AddAnimationKeyToLoad(std::string const& r_key);
     private:
 
         /*!***********************************************************************************
@@ -200,9 +253,24 @@ namespace PE
         *************************************************************************************/
         ResourceManager();
 
+        /*!***********************************************************************************
+         \brief Destructor for the resource manager. Unloads all the default assets for use.
+        *************************************************************************************/
+        ~ResourceManager();
+
         std::shared_ptr<Graphics::Texture> m_defaultTexture;
         std::shared_ptr<AudioManager::Audio > m_defaultAudio;
         std::shared_ptr<Font> m_defaultFont;
         std::shared_ptr<Animation> m_defaultAnimation;
+
+        std::string m_defaultTextureKey;
+        std::string m_defaultAudioKey;
+        std::string m_defaultFontKey;
+        std::string m_defaultAnimationKey;
+
+        std::unordered_set<std::string> m_allTextureKeys;
+        std::unordered_set<std::string> m_allAudioKeys;
+        std::unordered_set<std::string> m_allFontKeys;
+        std::unordered_set<std::string> m_allAnimationKeys;
     };
 }

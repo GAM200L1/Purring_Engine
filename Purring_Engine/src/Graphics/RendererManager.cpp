@@ -912,8 +912,8 @@ namespace PE
                 TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
                 vec2 position{ EntityManager::GetInstance().Get<Transform>(id).position };
 
-                // if component has no font
-                if (textComponent.GetFont() == nullptr)
+                // if component has no font key
+                if (textComponent.GetFontKey() == "")
                 {
                     break;
                 }
@@ -922,8 +922,10 @@ namespace PE
                 renderedEntities.emplace_back(id);
 
                 // get width and height of text
-                glm::vec2 textSize{ textComponent.GetFont()->Characters.at('a').Size };
-                textSize.x = textComponent.GetFont()->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
+                std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(textComponent.GetFontKey()) };
+
+                glm::vec2 textSize{ p_font->Characters.at('a').Size };
+                textSize.x = p_font->Characters.at('a').Size.x * textComponent.GetText().size() * textComponent.GetSize();
                 textSize.y *= (textComponent.GetSize());
 
                 // Resize the transform if the entity does not have other renderer components
@@ -943,13 +945,13 @@ namespace PE
                 p_textShader->SetUniform("textColor", textComponent.GetColor());
 
                 glActiveTexture(GL_TEXTURE0);
-                glBindVertexArray(textComponent.GetFont()->m_vertexArrayObject);
+                glBindVertexArray(p_font->m_vertexArrayObject);
 
                 // iterate through all characters
                 std::string::const_iterator c;
                 for (c = textComponent.GetText().begin(); c != textComponent.GetText().end(); c++)
                 {
-                    Character ch = textComponent.GetFont()->Characters.at(*c);
+                    Character ch = p_font->Characters.at(*c);
 
                     float xPosition = position.x + ch.Bearing.x * textComponent.GetSize() - textSize.x;
                     float yPosition = position.y - (ch.Size.y - ch.Bearing.y) * textComponent.GetSize() - textSize.y;
@@ -971,7 +973,7 @@ namespace PE
                     glBindTexture(GL_TEXTURE_2D, ch.TextureID);
 
                     // update content of VBO memory
-                    glBindBuffer(GL_ARRAY_BUFFER, textComponent.GetFont()->m_vertexBufferObject);
+                    glBindBuffer(GL_ARRAY_BUFFER, p_font->m_vertexBufferObject);
                     glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
                     glBindBuffer(GL_ARRAY_BUFFER, 0);
 

@@ -62,6 +62,7 @@
 #include "Layers/CollisionLayer.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
+#include "SceneManager/SceneManager.h"
 
 //Hierarchy
 #include "Hierarchy/HierarchyManager.h"
@@ -274,7 +275,7 @@ namespace PE {
 
 	void Editor::ClearObjectList()
 	{
-		//make sure not hovering any objects as we are deleting
+		// make sure not hovering any objects as we are deleting
 		m_currentSelectedObject = -1;
 		//delete all objects
 
@@ -288,6 +289,7 @@ namespace PE {
 				EntityManager::GetInstance().RemoveEntity(n);
 			}
 		}
+		Hierarchy::GetInstance().Update();
 	}
 
 	void Editor::Init(GLFWwindow* p_window_)
@@ -414,8 +416,11 @@ namespace PE {
 							}
 						}
 						m_isPrefabMode = false;
-						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+						
+						// deselect object
+						m_currentSelectedObject = -1;
+						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
 					}
@@ -424,8 +429,11 @@ namespace PE {
 					if (ImGui::Selectable("No"))
 					{
 						m_isPrefabMode = false;
-						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+
+						// deselect object
+						m_currentSelectedObject = -1;
+						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
 					}
@@ -3705,6 +3713,17 @@ namespace PE {
 							}
 							else
 							{
+								if (ImGui::MenuItem("Create")) // the ctrl s is not programmed yet, need add to the key press event
+								{
+									engine_logger.AddLog(false, "Create empty scene...", __FUNCTION__);
+									// This will create a default scene
+
+									m_undoStack.ClearStack();
+
+									SceneManager::GetInstance().CreateDefaultScene();
+
+									engine_logger.AddLog(false, "Default scene created", __FUNCTION__);
+								}
 								if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 								{
 									engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
@@ -3724,9 +3743,14 @@ namespace PE {
 										engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
 
 										// This will load all entities from the file
+										// clear undo stack
                                         m_undoStack.ClearStack();
-										ClearObjectList();
-										serializationManager.LoadAllEntitiesFromFile(filePath, true);
+
+										// deselect object
+										m_currentSelectedObject = -1;
+
+										// load scene from filepath
+										SceneManager::GetInstance().LoadSceneFromPath(filePath);
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 									}
 									else
@@ -3942,7 +3966,10 @@ namespace PE {
 					engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 					// This will save all entities to a file
 					serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+
+					// may want to remove this? after playing scene, might want to be able to undo
                     m_undoStack.ClearStack();
+
 					engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 				}
 				ImGui::SameLine();
@@ -3952,8 +3979,10 @@ namespace PE {
 
 					if (m_isRunTime)
 					{
-						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+						// deselect object
+						m_currentSelectedObject = -1;
+						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					}
 
@@ -4016,8 +4045,11 @@ namespace PE {
 							}
 						}
 						m_isPrefabMode = false;
-						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+
+						// deselect object
+						m_currentSelectedObject = -1;
+						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						m_applyPrefab = true;
 					}
@@ -4026,8 +4058,11 @@ namespace PE {
 					if (ImGui::Selectable("No"))
 					{
 						m_isPrefabMode = false;
-						ClearObjectList();
-						serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+
+						// deselect object
+						m_currentSelectedObject = -1;
+						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 					}
 					ImGui::EndPopup();
@@ -4334,8 +4369,10 @@ namespace PE {
 			toDisable = true;
 			if (m_isRunTime)
 			{
-				ClearObjectList();
-				serializationManager.LoadAllEntitiesFromFile("Savestate/savestate.json");
+				// deselect object
+				m_currentSelectedObject = -1;
+				SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+
 				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}
 
@@ -4661,10 +4698,12 @@ namespace PE {
 
 	void Editor::LoadSceneFromGivenPath(std::string const& path)
 	{
-
 		m_undoStack.ClearStack();
-		ClearObjectList();
-		serializationManager.LoadAllEntitiesFromFile(path);
+
+		// deselect object
+		m_currentSelectedObject = -1;
+		SceneManager::GetInstance().LoadScene(path);
+
 	}
 
 	void Editor::SetImGUIStyle_Pink()

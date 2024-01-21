@@ -28,29 +28,68 @@ namespace PE
         // ----- Public methods ----- //
         
         /*!***********************************************************************************
-            \brief Loads shaders from file, compile them and inserts into ShaderProgram map
-                   container.
+        \brief Sets the start scene to be loaded when the engine starts.
 
-            \param[in] r_key Name of shader program.
-            \param[in] r_vertexShaderPath File path of vertex shader.
-            \param[in] r_fragmentShaderPath File path of fragment shader.
+        \param[in] r_sceneName Name of the scene to be loaded.
         *************************************************************************************/
         void SetStartScene(std::string const& r_sceneName);
 
-        void SetCurrentScene(std::string const& r_sceneName);
+        /*!***********************************************************************************
+        \brief Sets the active scene.
 
-        void LoadCurrentScene();
+        \param[in] r_sceneName Name of the scene to set active.
+        *************************************************************************************/
+        void SetActiveScene(std::string const& r_sceneName);
 
+        /*!***********************************************************************************
+        \brief Loads a scene.
+
+        \param[in] r_sceneName Name of the scene to be loaded.
+        *************************************************************************************/
+        void LoadScene(std::string const& r_sceneName);
+
+        /*!***********************************************************************************
+        \brief Loads a scene from a absolute path.
+
+        \param[in] r_scenePath Path of the scene to be loaded.
+        *************************************************************************************/
+        void LoadSceneFromPath(std::string const& r_scenePath);
+
+        /*!***********************************************************************************
+        \brief Restarts the scene with reloading resources.
+
+        \param[in] r_scenePath Path of the scene to be loaded.
+        *************************************************************************************/
+        void RestartScene(std::string const& r_scenePath);
+
+        /*!***********************************************************************************
+        \brief Deletes all objects in the scene.
+        *************************************************************************************/
+        void DeleteObjects();
+
+        /*!***********************************************************************************
+        \brief Creates a default scene.
+        *************************************************************************************/
+        void CreateDefaultScene();
+
+        /*!***********************************************************************************
+        \brief Gets the name of the start scene.
+        *************************************************************************************/
         inline std::string const& GetStartScene() const { return m_startScene; }
 
-        std::string const& GetCurrentScene() const { return m_currentScene; }
+        /*!***********************************************************************************
+        \brief Gets the name of the active scene.
+        *************************************************************************************/
+        inline std::string const& GetActiveScene() const { return m_activeScene; }
 
     private:
-        // constructor
+        /*!***********************************************************************************
+        \brief Default constructor.
+        *************************************************************************************/
         SceneManager();
 
         std::string m_sceneDirectory;
         std::string m_startScene;
-        std::string m_currentScene;
+        std::string m_activeScene;
     };
 }
