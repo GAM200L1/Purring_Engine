@@ -3210,10 +3210,10 @@ namespace PE {
 
 	void Editor::ShowResourceWindow(bool* p_active)
 	{
-		const ImVec2 childWindowSize = ImVec2(150, 130); 
+		const ImVec2 childWindowSize = ImVec2(130, 130); 
 		const float maxImageSize = 70.0f;
 		const int maxCharCount = 15;
-		const float childWindowPadding = 10.0f;
+		const float childWindowPadding = 5.0f;
 
 		if (IsEditorActive())
 		//testing for drag and drop
@@ -3303,27 +3303,51 @@ namespace PE {
 						std::string const extension{ m_files[n].filename().extension().string() };
 						GLuint textureID = 0; 
 						ImVec2 image_size = ImVec2(50, 50);
+						// fixed height for the image area
+						const float imageAreaHeight = 80.0f;
 
 						if (extension == ".png")
 						{
-							// Load the actual texture and get its ID
 							textureID = ResourceManager::GetInstance().GetTexture(m_files[n].string())->GetTextureID();
-							// Retrieve the actual size of the texture
 							ImVec2 textureSize = ResourceManager::GetInstance().GetTextureSize(m_files[n].string());
+
 							// Calculate the aspect ratio
 							float aspectRatio = textureSize.x / textureSize.y;
-							if (aspectRatio > 1.0f)
+							if (aspectRatio > 2.0f)
 							{
-								// Width is greater than height
 								image_size.x = maxImageSize;
 								image_size.y = maxImageSize / aspectRatio;
 							}
 							else
 							{
-								// Height is greater than width or square
 								image_size.x = maxImageSize * aspectRatio;
 								image_size.y = maxImageSize;
 							}
+
+							ImVec4 darkBg = ImVec4(0.14f, 0.14f, 0.14f, 1.00f); // Background color from theme
+							ImVec4 darkerBorder = ImVec4(0.10f, 0.10f, 0.10f, 1.00f); // Slightly darker color for border
+
+							// Calculate vertical position to center the image within the image area
+							float spaceAboveImage = (imageAreaHeight - image_size.y) * 0.5f;
+
+							// Centering the background and border
+							ImVec2 borderPadding(2, 2);
+							ImVec2 totalBorderSize = ImVec2(image_size.x + 2 * borderPadding.x, image_size.y + 2 * borderPadding.y);
+							float borderPosX = (childWindowSize.x - totalBorderSize.x) * 0.5f;
+
+							// Use the same spaceAboveImage for aligning the top of the border
+							ImVec2 borderPos = ImGui::GetCursorScreenPos();
+							borderPos.x += borderPosX;
+							borderPos.y += spaceAboveImage;
+
+
+							// Draw background and border
+							ImDrawList* draw_list = ImGui::GetWindowDrawList();
+							ImVec2 p_min = ImVec2(borderPos.x, borderPos.y);
+							ImVec2 p_max = ImVec2(p_min.x + totalBorderSize.x, p_min.y + totalBorderSize.y);
+
+							draw_list->AddRectFilled(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkBg)); // Use darkBg for background
+							draw_list->AddRect(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkerBorder), 0.0f, ImDrawFlags_RoundCornersAll, 2.0f); // Use darkerBorder for border
 						}
 						else
 						{
@@ -3341,10 +3365,7 @@ namespace PE {
 							textureID = ResourceManager::GetInstance().GetIcon(icon)->GetTextureID();
 						}
 
-						// fixed height for the image area
-						const float imageAreaHeight = 80.0f;
-
-						// Cal vertical position to center the image within the image area
+						// Calculate vertical position to center the image within the image area
 						float spaceAboveImage = (imageAreaHeight - image_size.y) * 0.5f;
 						ImGui::Dummy(ImVec2(0.0f, spaceAboveImage));
 
