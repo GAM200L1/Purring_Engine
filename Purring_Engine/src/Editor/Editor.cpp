@@ -3210,10 +3210,12 @@ namespace PE {
 
 	void Editor::ShowResourceWindow(bool* p_active)
 	{
-		const ImVec2 childWindowSize = ImVec2(130, 130); 
-		const float maxImageSize = 70.0f;
+		const ImVec2 childWindowSize = ImVec2(140, 130); 
 		const int maxCharCount = 15;
 		const float childWindowPadding = 5.0f;
+		static float scaleFactor = 1.0f;
+		const float minScaleFactor = 0.9f;		// Minimum scale factor
+		const float maxScaleFactor = 1.4f;		// Maximum scale factor
 
 		if (IsEditorActive())
 		//testing for drag and drop
@@ -3227,6 +3229,20 @@ namespace PE {
 			static bool isDragging = false;
 			static std::string iconDragged{};
 			static int rmbIndex = -1;
+
+			// Check for Ctrl key and mouse wheel usage
+			ImGuiIO& io = ImGui::GetIO();
+			if (io.KeyCtrl && io.MouseWheel != 0)
+			{
+				scaleFactor += io.MouseWheel * 0.05f;
+				scaleFactor = std::max(minScaleFactor, std::min(scaleFactor, maxScaleFactor));
+			}
+
+			// Modify the size variables based on the scale factor
+			ImVec2 scaledChildWindowSize = ImVec2(140 * scaleFactor, 130 * scaleFactor);
+			float scaledMaxImageSize = 70.0f * scaleFactor;
+			float scaledIconSize = 50.0f * scaleFactor;
+
 			//ImGuiStyle& style = ImGui::GetStyle();
 			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
 				
@@ -3285,9 +3301,10 @@ namespace PE {
 				}
 
 				// Calculate number of items per row
-				float totalChildWidth = childWindowSize.x + childWindowPadding;
+				float totalChildWidth = scaledChildWindowSize.x + childWindowPadding;
 				int numItemPerRow = static_cast<int>(ImGui::GetContentRegionAvail().x / totalChildWidth);
-				if (numItemPerRow < 1) numItemPerRow = 1;				// Toe nsure at least one item per row
+				if (numItemPerRow < 1) numItemPerRow = 1;
+
 
 				// list the files in the current showing directory as imgui text
 				for (int n = 0; n < m_files.size(); n++) // loop through resource list here
@@ -3296,13 +3313,15 @@ namespace PE {
 					
 					if (n % numItemPerRow != 0)
 						ImGui::SameLine();
+					else
+						ImGui::NewLine();
 
-					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), childWindowSize, false)) //child to hold image n text
+					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), scaledChildWindowSize, false)) //child to hold image n text
 					{
 						std::string icon{};
 						std::string const extension{ m_files[n].filename().extension().string() };
 						GLuint textureID = 0; 
-						ImVec2 image_size = ImVec2(50, 50);
+						ImVec2 image_size = ImVec2(scaledIconSize, scaledIconSize);
 						// fixed height for the image area
 						const float imageAreaHeight = 80.0f;
 
@@ -3315,17 +3334,17 @@ namespace PE {
 							float aspectRatio = textureSize.x / textureSize.y;
 							if (aspectRatio > 2.0f)
 							{
-								image_size.x = maxImageSize;
-								image_size.y = maxImageSize / aspectRatio;
+								image_size.x = scaledMaxImageSize;
+								image_size.y = scaledMaxImageSize / aspectRatio;
 							}
 							else
 							{
-								image_size.x = maxImageSize * aspectRatio;
-								image_size.y = maxImageSize;
+								image_size.x = scaledMaxImageSize * aspectRatio;
+								image_size.y = scaledMaxImageSize;
 							}
 
-							ImVec4 darkBg = ImVec4(0.14f, 0.14f, 0.14f, 1.00f); // Background color from theme
-							ImVec4 darkerBorder = ImVec4(0.10f, 0.10f, 0.10f, 1.00f); // Slightly darker color for border
+							ImVec4 darkBg = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+							ImVec4 darkerBorder = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
 
 							// Calculate vertical position to center the image within the image area
 							float spaceAboveImage = (imageAreaHeight - image_size.y) * 0.5f;
@@ -3346,8 +3365,8 @@ namespace PE {
 							ImVec2 p_min = ImVec2(borderPos.x, borderPos.y);
 							ImVec2 p_max = ImVec2(p_min.x + totalBorderSize.x, p_min.y + totalBorderSize.y);
 
-							draw_list->AddRectFilled(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkBg)); // Use darkBg for background
-							draw_list->AddRect(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkerBorder), 0.0f, ImDrawFlags_RoundCornersAll, 2.0f); // Use darkerBorder for border
+							draw_list->AddRectFilled(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkBg));
+							draw_list->AddRect(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkerBorder), 0.0f, ImDrawFlags_RoundCornersAll, 2.0f);
 						}
 						else
 						{
