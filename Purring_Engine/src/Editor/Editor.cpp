@@ -3210,9 +3210,9 @@ namespace PE {
 
 	void Editor::ShowResourceWindow(bool* p_active)
 	{
+		// Dynamic Scaling Variables
 		const ImVec2 childWindowSize = ImVec2(150, 130); 
 		const int baseMaxCharCount = 15;
-
 		const float childWindowPadding = 5.0f;
 		static float scaleFactor = 1.0f;
 		const float minScaleFactor = 0.9f;		// Minimum scale factor
@@ -3270,18 +3270,29 @@ namespace PE {
 						break;
 					}
 				}
+
+				// Calculate the space needed for the refresh button
 				ImGuiStyle& style = ImGui::GetStyle();
-				float pos = ImGui::CalcTextSize("Refresh").x + style.FramePadding.x * 2.0f;
-				ImGui::SameLine(ImGui::GetWindowContentRegionMax().x - pos);
-				// Refresh button
+				float refreshButtonWidth = ImGui::CalcTextSize("Refresh").x + style.FramePadding.x * 2.0f;
+				float searchBarWidth = 600.f;
+
+				// Calculate the position to right-align the search bar and refresh button
+				float availableWidth = ImGui::GetContentRegionAvail().x - searchBarWidth - refreshButtonWidth;
+
+				// Align the search bar to the right
+				ImGui::SameLine(availableWidth);
+				ImGui::SetNextItemWidth(searchBarWidth);
+				static char searchQuery[256] = "";
+				ImGui::InputTextWithHint("##Search", "Type to Search...", searchQuery, IM_ARRAYSIZE(searchQuery));
+
+				// Align the Refresh button next to the search bar
+				ImGui::SameLine();
 				if (ImGui::Button("Refresh"))
 				{
 					GetFileNamesInParentPath(m_parentPath, m_files);
 				}
-				
 
 				ImGui::Separator();
-				
 
 				ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 
@@ -3316,229 +3327,236 @@ namespace PE {
 				{	//resource list needs a list of icons for the texture for the image if possible
 					//else just give a standard object icon here
 					
-					if (n % numItemPerRow != 0)
-						ImGui::SameLine();
-					else
-						ImGui::NewLine();
+					std::string filename = m_files[n].filename().string();
 
-					if (ImGui::BeginChild(m_files[n].filename().string().c_str(), scaledChildWindowSize, false)) //child to hold image n text
+					// Filter files based on search query
+					if (searchQuery[0] == '\0' || CaseInsensitiveFind(filename, searchQuery))
 					{
-						std::string icon{};
-						std::string const extension{ m_files[n].filename().extension().string() };
-						GLuint textureID = 0; 
-						ImVec2 image_size = ImVec2(scaledIconSize, scaledIconSize);
-						// fixed height for the image area
-						const float imageAreaHeight = 80.0f;
 
-						if (extension == ".png")
+						if (n % numItemPerRow != 0)
+							ImGui::SameLine();
+						else
+							ImGui::NewLine();
+
+						if (ImGui::BeginChild(m_files[n].filename().string().c_str(), scaledChildWindowSize, false)) //child to hold image n text
 						{
-							textureID = ResourceManager::GetInstance().GetTexture(m_files[n].string())->GetTextureID();
-							ImVec2 textureSize = ResourceManager::GetInstance().GetTextureSize(m_files[n].string());
+							std::string icon{};
+							std::string const extension{ m_files[n].filename().extension().string() };
+							GLuint textureID = 0;
+							ImVec2 image_size = ImVec2(scaledIconSize, scaledIconSize);
+							// fixed height for the image area
+							const float imageAreaHeight = 80.0f;
 
-							// Calculate the aspect ratio
-							float aspectRatio = textureSize.x / textureSize.y;
-							if (aspectRatio > 2.0f)
+							if (extension == ".png")
 							{
-								image_size.x = scaledMaxImageSize;
-								image_size.y = scaledMaxImageSize / aspectRatio;
+								textureID = ResourceManager::GetInstance().GetTexture(m_files[n].string())->GetTextureID();
+								ImVec2 textureSize = ResourceManager::GetInstance().GetTextureSize(m_files[n].string());
+
+								// Calculate the aspect ratio
+								float aspectRatio = textureSize.x / textureSize.y;
+								if (aspectRatio > 2.0f)
+								{
+									image_size.x = scaledMaxImageSize;
+									image_size.y = scaledMaxImageSize / aspectRatio;
+								}
+								else
+								{
+									image_size.x = scaledMaxImageSize * aspectRatio;
+									image_size.y = scaledMaxImageSize;
+								}
+
+								ImVec4 darkBg = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
+								ImVec4 darkerBorder = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+
+								// Calculate vertical position to center the image within the image area
+								float spaceAboveImage = (imageAreaHeight - image_size.y) * 0.5f;
+
+								// Centering the background and border
+								ImVec2 borderPadding(2, 2);
+								ImVec2 totalBorderSize = ImVec2(image_size.x + 2 * borderPadding.x, image_size.y + 2 * borderPadding.y);
+								float borderPosX = (childWindowSize.x - totalBorderSize.x) * 0.5f;
+
+								// Use the same spaceAboveImage for aligning the top of the border
+								ImVec2 borderPos = ImGui::GetCursorScreenPos();
+								borderPos.x += borderPosX;
+								borderPos.y += spaceAboveImage;
+
+								// Draw background and border
+								ImDrawList* draw_list = ImGui::GetWindowDrawList();
+								ImVec2 p_min = ImVec2(borderPos.x, borderPos.y);
+								ImVec2 p_max = ImVec2(p_min.x + totalBorderSize.x, p_min.y + totalBorderSize.y);
+
+								draw_list->AddRectFilled(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkBg));
+								draw_list->AddRect(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkerBorder), 0.0f, ImDrawFlags_RoundCornersAll, 2.0f);
 							}
 							else
 							{
-								image_size.x = scaledMaxImageSize * aspectRatio;
-								image_size.y = scaledMaxImageSize;
-							}
+								if (extension == "")
+									icon = "../Assets/Icons/Directory_Icon.png";
+								else if (extension == ".mp3" || extension == ".wav" || extension == ".ogg")
+									icon = "../Assets/Icons/Audio_Icon.png";
+								else if (extension == ".ttf")
+									icon = "../Assets/Icons/Font_Icon.png";
+								else if (extension == ".json")
+									icon = "../Assets/Icons/Prefabs_Icon.png";
+								else
+									icon = "../Assets/Icons/Other_Icon.png";
 
-							ImVec4 darkBg = ImVec4(0.14f, 0.14f, 0.14f, 1.00f);
-							ImVec4 darkerBorder = ImVec4(0.10f, 0.10f, 0.10f, 1.00f);
+								textureID = ResourceManager::GetInstance().GetIcon(icon)->GetTextureID();
+							}
 
 							// Calculate vertical position to center the image within the image area
 							float spaceAboveImage = (imageAreaHeight - image_size.y) * 0.5f;
+							ImGui::Dummy(ImVec2(0.0f, spaceAboveImage));
 
-							// Centering the background and border
-							ImVec2 borderPadding(2, 2);
-							ImVec2 totalBorderSize = ImVec2(image_size.x + 2 * borderPadding.x, image_size.y + 2 * borderPadding.y);
-							float borderPosX = (childWindowSize.x - totalBorderSize.x) * 0.5f;
+							float iconPosX = (childWindowSize.x - image_size.x) * 0.5f;
+							ImGui::SetCursorPosX(ImGui::GetCursorPosX() + iconPosX);
 
-							// Use the same spaceAboveImage for aligning the top of the border
-							ImVec2 borderPos = ImGui::GetCursorScreenPos();
-							borderPos.x += borderPosX;
-							borderPos.y += spaceAboveImage;
+							// Display the Icon or actual texture
+							ImGui::Image((void*)(intptr_t)textureID, image_size, ImVec2(0, 1), ImVec2(1, 0));
 
-							// Draw background and border
-							ImDrawList* draw_list = ImGui::GetWindowDrawList();
-							ImVec2 p_min = ImVec2(borderPos.x, borderPos.y);
-							ImVec2 p_max = ImVec2(p_min.x + totalBorderSize.x, p_min.y + totalBorderSize.y);
+							float spaceBelowImage = imageAreaHeight - spaceAboveImage - image_size.y;
+							ImGui::Dummy(ImVec2(0.0f, spaceBelowImage));
 
-							draw_list->AddRectFilled(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkBg));
-							draw_list->AddRect(p_min, p_max, ImGui::ColorConvertFloat4ToU32(darkerBorder), 0.0f, ImDrawFlags_RoundCornersAll, 2.0f);
+							// Truncation of Text based on scaled character count
+							filename = m_files[n].filename().string();
+							std::string displayText = filename.length() > scaledMaxCharCount
+								? filename.substr(0, scaledMaxCharCount - 3) + "..."
+								: filename;
+
+							// Centering and Displaying the Text
+							float textWidth = ImGui::CalcTextSize(displayText.c_str()).x;
+							float centerTextPosX = (childWindowSize.x - textWidth) * 0.5f;
+							ImGui::SetCursorPosX(ImGui::GetCursorPosX() + centerTextPosX);
+							ImGui::Text("%s", displayText.c_str());
 						}
-						else
+						ImGui::EndChild();
+
+						// check if the mouse is hovering the asset
+						if (ImGui::IsItemHovered())
 						{
-							if (extension == "")
-								icon = "../Assets/Icons/Directory_Icon.png";
-							else if (extension == ".mp3" || extension == ".wav" || extension == ".ogg")
-								icon = "../Assets/Icons/Audio_Icon.png";
-							else if (extension == ".ttf")
-								icon = "../Assets/Icons/Font_Icon.png";
-							else if (extension == ".json")
-								icon = "../Assets/Icons/Prefabs_Icon.png";
-							else
-								icon = "../Assets/Icons/Other_Icon.png";
+							// Hover over asset browser icons tooltip
+							ImGui::BeginTooltip();
+							ImGui::TextUnformatted(m_files[n].filename().string().c_str());
+							ImGui::EndTooltip();
 
-							textureID = ResourceManager::GetInstance().GetIcon(icon)->GetTextureID();
-						}
+							// if item is a file with extension eg. .txt , .png
+							if (m_files[n].extension() != "")
+							{
+								// Handle item clicks and drags
+								if (ImGui::IsMouseClicked(0)) {
+									draggedItemIndex = n; // Start dragging
+									isDragging = true;
 
-						// Calculate vertical position to center the image within the image area
-						float spaceAboveImage = (imageAreaHeight - image_size.y) * 0.5f;
-						ImGui::Dummy(ImVec2(0.0f, spaceAboveImage));
-
-						float iconPosX = (childWindowSize.x - image_size.x) * 0.5f;
-						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + iconPosX);
-
-						// Display the Icon or actual texture
-						ImGui::Image((void*)(intptr_t)textureID, image_size, ImVec2(0, 1), ImVec2(1, 0));
-
-						float spaceBelowImage = imageAreaHeight - spaceAboveImage - image_size.y;
-						ImGui::Dummy(ImVec2(0.0f, spaceBelowImage));
-
-						// Truncation of Text based on scaled character count
-						std::string filename = m_files[n].filename().string();
-						std::string displayText = filename.length() > scaledMaxCharCount
-							? filename.substr(0, scaledMaxCharCount - 3) + "..."
-							: filename;
-
-						// Centering and Displaying the Text
-						float textWidth = ImGui::CalcTextSize(displayText.c_str()).x;
-						float centerTextPosX = (childWindowSize.x - textWidth) * 0.5f;
-						ImGui::SetCursorPosX(ImGui::GetCursorPosX() + centerTextPosX);
-						ImGui::Text("%s", displayText.c_str());
-					}
-					ImGui::EndChild();
-
-					// check if the mouse is hovering the asset
-					if (ImGui::IsItemHovered())
-					{
-						// Hover over asset browser icons tooltip
-						ImGui::BeginTooltip();
-						ImGui::TextUnformatted(m_files[n].filename().string().c_str());
-						ImGui::EndTooltip();
-
-						// if item is a file with extension eg. .txt , .png
-						if (m_files[n].extension() != "")
-						{
-							// Handle item clicks and drags
-							if (ImGui::IsMouseClicked(0)) {
-								draggedItemIndex = n; // Start dragging
-								isDragging = true;
-
-								std::string iconDraggedExtension = m_files[n].extension().string();
-								if (iconDraggedExtension == "")
-									iconDragged = "../Assets/Icons/Directory_Icon.png";
-								else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav" ||
-									iconDraggedExtension == ".ogg" || iconDraggedExtension == ".flac" ||
-									iconDraggedExtension == ".aiff" || iconDraggedExtension == ".mod" ||
-									iconDraggedExtension == ".s3m" || iconDraggedExtension == ".xm" ||
-									iconDraggedExtension == ".midi" || iconDraggedExtension == ".mid")
-								{
-									iconDragged = "../Assets/Icons/Audio_Icon.png";
+									std::string iconDraggedExtension = m_files[n].extension().string();
+									if (iconDraggedExtension == "")
+										iconDragged = "../Assets/Icons/Directory_Icon.png";
+									else if (iconDraggedExtension == ".mp3" || iconDraggedExtension == ".wav" ||
+										iconDraggedExtension == ".ogg" || iconDraggedExtension == ".flac" ||
+										iconDraggedExtension == ".aiff" || iconDraggedExtension == ".mod" ||
+										iconDraggedExtension == ".s3m" || iconDraggedExtension == ".xm" ||
+										iconDraggedExtension == ".midi" || iconDraggedExtension == ".mid")
+									{
+										iconDragged = "../Assets/Icons/Audio_Icon.png";
+									}
+									else if (iconDraggedExtension == ".ttf")
+										iconDragged = "../Assets/Icons/Font_Icon.png";
+									else if (iconDraggedExtension == ".json")
+										iconDragged = "../Assets/Icons/Prefabs_Icon.png";
+									else if (iconDraggedExtension == ".png")
+										iconDragged = "../Assets/Icons/Texture_Icon.png";
+									else
+										iconDragged = "../Assets/Icons/Other_Icon.png";
 								}
-								else if (iconDraggedExtension == ".ttf")
-									iconDragged = "../Assets/Icons/Font_Icon.png";
-								else if (iconDraggedExtension == ".json")
-									iconDragged = "../Assets/Icons/Prefabs_Icon.png";
-								else if (iconDraggedExtension == ".png")
-									iconDragged = "../Assets/Icons/Texture_Icon.png";
-								else
-									iconDragged = "../Assets/Icons/Other_Icon.png";
+								else if (ImGui::IsMouseClicked(1))
+								{
+									ImGui::OpenPopup("AssetDeletePopup");
+								}
 							}
-							else if (ImGui::IsMouseClicked(1))
+							else
+							{
+								if (ImGui::IsMouseClicked(0)) {
+									std::string replaceSeparators = m_files[n].string();
+									std::replace(replaceSeparators.begin(), replaceSeparators.end(), '\\', '/');
+									m_parentPath = std::filesystem::path{ replaceSeparators };
+									GetFileNamesInParentPath(m_parentPath, m_files);
+								}
+							}
+
+						}
+
+						if (ImGui::IsItemClicked(1))
+						{
+							rmbIndex = n;
+
+							if (m_files[n].extension().string() == ".json")
+							{
+								ImGui::OpenPopup("EditPrefab");
+							}
+							else
 							{
 								ImGui::OpenPopup("AssetDeletePopup");
 							}
 						}
-						else
+						if (n == rmbIndex && ImGui::BeginPopup("AssetDeletePopup"))
 						{
-							if (ImGui::IsMouseClicked(0)) {
-								std::string replaceSeparators = m_files[n].string();
-								std::replace(replaceSeparators.begin(), replaceSeparators.end(), '\\', '/');
-								m_parentPath = std::filesystem::path{ replaceSeparators };
-								GetFileNamesInParentPath(m_parentPath, m_files);
+							if (ImGui::Selectable("Delete Asset"))
+							{
+								try
+								{
+									std::filesystem::remove(m_files[n]);
+									GetFileNamesInParentPath(m_parentPath, m_files);
+								}
+								catch (std::filesystem::filesystem_error& e)
+								{
+									engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+									engine_logger.SetTime();
+									engine_logger.AddLog(false, e.what(), __FUNCTION__);
+								}
 							}
+							ImGui::EndPopup();
 						}
-						
-					}
+						if (n == rmbIndex && ImGui::BeginPopup("EditPrefab"))
+						{
+							if (ImGui::Selectable("Modify Prefab"))
+							{
 
-					if (ImGui::IsItemClicked(1))
-					{
-						rmbIndex = n;
+								engine_logger.AddLog(false, "Enterting PreFabEditorMode...", __FUNCTION__);
+								prefabFP = (m_isPrefabMode) ? prefabFP : m_files[n].string();
 
-						if (m_files[n].extension().string() == ".json")
-						{
-							ImGui::OpenPopup("EditPrefab");
-						}
-						else
-						{
-							ImGui::OpenPopup("AssetDeletePopup");
-						}
-					}
-					if (n == rmbIndex && ImGui::BeginPopup("AssetDeletePopup"))
-					{
-						if (ImGui::Selectable("Delete Asset"))
-						{
-							try
+								if (!m_isPrefabMode)
+								{
+									m_isPrefabMode = true;
+									engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
+									// This will save all entities to a file
+
+									serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+									engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
+
+								}
+								else if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
+								{
+
+									auto save = serializationManager.SerializeEntityPrefab(1);
+									std::ofstream outFile(prefabFP);
+									if (outFile)
+									{
+										outFile << save.dump(4);
+										outFile.close();
+									}
+									prefabFP = m_files[n].string();
+								}
+								ClearObjectList();
+								engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
+								serializationManager.LoadFromFile(prefabFP, true);
+							}
+							if (ImGui::Selectable("Delete Asset"))
 							{
 								std::filesystem::remove(m_files[n]);
 								GetFileNamesInParentPath(m_parentPath, m_files);
 							}
-							catch (std::filesystem::filesystem_error& e)
-							{
-								engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
-								engine_logger.SetTime();
-								engine_logger.AddLog(false, e.what(), __FUNCTION__);
-							}
+							ImGui::EndPopup();
 						}
-						ImGui::EndPopup();
-					}
-					if (n == rmbIndex && ImGui::BeginPopup("EditPrefab"))
-					{
-						if (ImGui::Selectable("Modify Prefab"))
-						{
-							
-							engine_logger.AddLog(false, "Enterting PreFabEditorMode...", __FUNCTION__);
-							prefabFP = (m_isPrefabMode)? prefabFP : m_files[n].string();
-
-							if (!m_isPrefabMode)
-							{
-								m_isPrefabMode = true;
-								engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-								// This will save all entities to a file
-		
-								serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
-								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
-								
-							}
-							else if(EntityManager::GetInstance().Has<EntityDescriptor>(1))
-							{
-
-								auto save = serializationManager.SerializeEntityPrefab(1);
-								std::ofstream outFile(prefabFP);
-								if (outFile)
-								{
-									outFile << save.dump(4);
-									outFile.close();
-								}
-								prefabFP = m_files[n].string();
-							}
-							ClearObjectList();
-							engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-							serializationManager.LoadFromFile(prefabFP, true);
-						}
-						if (ImGui::Selectable("Delete Asset"))
-						{
-							std::filesystem::remove(m_files[n]);
-							GetFileNamesInParentPath(m_parentPath, m_files);
-						}
-						ImGui::EndPopup();
 					}
 					
 				}
@@ -5534,4 +5552,23 @@ namespace PE {
 		auto now_c = std::chrono::system_clock::to_time_t(now);
 		return std::to_string(now_c);
 	}
+
+	// Function to convert a string to lowercase
+	std::string Editor::ToLower(const std::string& str)
+	{
+		std::string lowerStr = str;
+		std::transform(lowerStr.begin(), lowerStr.end(), lowerStr.begin(),
+			[](unsigned char c) { return std::tolower(c); });
+		return lowerStr;
+	}
+
+	// Function to check if one string is a substring of another, ignoring case
+	bool Editor::CaseInsensitiveFind(const std::string& str, const std::string& toFind)
+	{
+		std::string lowerStr = ToLower(str);
+		std::string lowerToFind = ToLower(toFind);
+		return lowerStr.find(lowerToFind) != std::string::npos;
+	}
+
 }
+

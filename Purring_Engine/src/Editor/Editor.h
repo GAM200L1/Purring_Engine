@@ -265,6 +265,13 @@ namespace PE {
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Blue();
+
+
+		std::string ToLower(const std::string& str);
+		bool CaseInsensitiveFind(const std::string& str, const std::string& toFind);
+
+
+
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
