@@ -3210,12 +3210,13 @@ namespace PE {
 
 	void Editor::ShowResourceWindow(bool* p_active)
 	{
-		const ImVec2 childWindowSize = ImVec2(140, 130); 
-		const int maxCharCount = 15;
+		const ImVec2 childWindowSize = ImVec2(150, 130); 
+		const int baseMaxCharCount = 15;
+
 		const float childWindowPadding = 5.0f;
 		static float scaleFactor = 1.0f;
 		const float minScaleFactor = 0.9f;		// Minimum scale factor
-		const float maxScaleFactor = 1.4f;		// Maximum scale factor
+		const float maxScaleFactor = 1.2f;		// Maximum scale factor
 
 		if (IsEditorActive())
 		//testing for drag and drop
@@ -3238,10 +3239,15 @@ namespace PE {
 				scaleFactor = std::max(minScaleFactor, std::min(scaleFactor, maxScaleFactor));
 			}
 
-			// Modify the size variables based on the scale factor
+			// Adjust the maximum character count and the size variables based on the scale factor
+			int scaledMaxCharCount = static_cast<int>(baseMaxCharCount * scaleFactor);
 			ImVec2 scaledChildWindowSize = ImVec2(140 * scaleFactor, 130 * scaleFactor);
 			float scaledMaxImageSize = 70.0f * scaleFactor;
 			float scaledIconSize = 50.0f * scaleFactor;
+
+			// Calculate the total width including dynamic padding
+			float dynamicPadding = childWindowPadding * scaleFactor;
+			float totalChildWidth = scaledChildWindowSize.x + dynamicPadding;
 
 			//ImGuiStyle& style = ImGui::GetStyle();
 			if (ImGui::BeginChild("resource list", ImVec2(0, 0), true)) {
@@ -3300,8 +3306,7 @@ namespace PE {
 					}
 				}
 
-				// Calculate number of items per row
-				float totalChildWidth = scaledChildWindowSize.x + childWindowPadding;
+				// Calculate number of items per row with dynamic padding
 				int numItemPerRow = static_cast<int>(ImGui::GetContentRegionAvail().x / totalChildWidth);
 				if (numItemPerRow < 1) numItemPerRow = 1;
 
@@ -3359,7 +3364,6 @@ namespace PE {
 							borderPos.x += borderPosX;
 							borderPos.y += spaceAboveImage;
 
-
 							// Draw background and border
 							ImDrawList* draw_list = ImGui::GetWindowDrawList();
 							ImVec2 p_min = ImVec2(borderPos.x, borderPos.y);
@@ -3397,10 +3401,10 @@ namespace PE {
 						float spaceBelowImage = imageAreaHeight - spaceAboveImage - image_size.y;
 						ImGui::Dummy(ImVec2(0.0f, spaceBelowImage));
 
-						// Truncation of Text
+						// Truncation of Text based on scaled character count
 						std::string filename = m_files[n].filename().string();
-						std::string displayText = filename.length() > maxCharCount
-							? filename.substr(0, maxCharCount - 3) + "..."
+						std::string displayText = filename.length() > scaledMaxCharCount
+							? filename.substr(0, scaledMaxCharCount - 3) + "..."
 							: filename;
 
 						// Centering and Displaying the Text
