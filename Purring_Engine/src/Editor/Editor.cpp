@@ -3118,6 +3118,18 @@ namespace PE {
 
 										ImGui::Text("Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##npt", &PortID);
 										if (PortID != m_currentSelectedObject) { it->second.Portrait = PortID; }
+
+										for (int i = 0; i < 5; i++)
+										{
+											if (i != 0)
+											{
+												int id = static_cast<int> (it->second.clicklisttest[i]);
+												std::string test = std::string("##id2") + std::to_string(i);
+												ImGui::Text("Click Test ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												if (id != m_currentSelectedObject)
+													it->second.clicklisttest[i] = id;
+											}
+										}
 									}
 								}
 							}

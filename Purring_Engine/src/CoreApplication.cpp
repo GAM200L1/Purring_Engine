@@ -220,7 +220,8 @@ RTTR_REGISTRATION
         .property("HowToPlayPageTwo", &PE::GameStateController_v2_0Data::HowToPlayPageTwo)
         .property("CatPortrait", &PE::GameStateController_v2_0Data::CatPortrait)
         .property("RatPortrait", &PE::GameStateController_v2_0Data::RatPortrait)
-        .property("Portrait", &PE::GameStateController_v2_0Data::Portrait);
+        .property("Portrait", &PE::GameStateController_v2_0Data::Portrait)
+        .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
     //    .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)

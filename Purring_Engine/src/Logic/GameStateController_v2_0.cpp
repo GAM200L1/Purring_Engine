@@ -26,6 +26,9 @@
 #include "Graphics/Text.h"
 #include "GUISystem.h"
 #include "SceneManager/scenemanager.h"
+#include "System.h"
+#include <Graphics/CameraManager.h>
+#include <Physics/CollisionManager.h>
 namespace PE
 {
 	GameStateController_v2_0::GameStateController_v2_0()
@@ -61,7 +64,8 @@ namespace PE
 
 		m_ScriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController_v2_0::OnWindowOutOfFocus, this)
-
+		m_ScriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
+		
 		m_currentGameStateControllerID = id;
 
 	}
@@ -189,6 +193,8 @@ namespace PE
 	void GameStateController_v2_0::OnAttach(EntityID id)
 	{
 		m_ScriptData[id] = GameStateController_v2_0Data();
+		m_ScriptData[id].clicklisttest.resize(5);
+		std::fill(m_ScriptData[id].clicklisttest.begin(), m_ScriptData[id].clicklisttest.end(), static_cast<EntityID>(-1));
 	}
 	void GameStateController_v2_0::OnDetach(EntityID id)
 	{
@@ -252,6 +258,38 @@ namespace PE
 			if (KTE.keycode == GLFW_KEY_F11)
 			{
 				NextState();
+			}
+		}
+	}
+
+	void GameStateController_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)
+	{
+		MouseButtonPressedEvent MBPE;
+		MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+
+		if (MBPE.button == GLFW_MOUSE_BUTTON_LEFT)
+		{
+			if (currentState == GameStates_v2_0::PLANNING)
+			{
+				for (auto id : m_ScriptData[m_currentGameStateControllerID].clicklisttest)
+				{
+					if (EntityManager::GetInstance().Has<Transform>(id) && EntityManager::GetInstance().Has<Collider>(id))
+					{
+						vec2 cursorPosition{};
+						InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().p_currWindow, cursorPosition.x, cursorPosition.y);
+						GETCAMERAMANAGER()->GetWindowToWorldPosition(cursorPosition.x, cursorPosition.y);
+
+						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
+
+						// Check if the rat/cat has been clicked
+						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+						if (PointCollision(col, cursorPosition))
+						{
+							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(id).name << std::endl;
+							//EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey();
+						}
+					}
+				}
 			}
 		}
 	}
@@ -519,6 +557,12 @@ namespace PE
 		//other stuff that needs to resetted
 		SceneManager::GetInstance().LoadCurrentScene();
 	}
+
+	bool GameStateController_v2_0::WithinRadius(vec2 transform, vec2 mousePos, float radius)
+	{
+		return (std::abs((mousePos.x - transform.x) * (mousePos.x - transform.x) + (mousePos.y - transform.y) * (mousePos.y - transform.y)) <= (radius * radius));
+	}
+
 
 
 }

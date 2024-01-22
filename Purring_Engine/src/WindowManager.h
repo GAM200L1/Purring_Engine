@@ -147,8 +147,10 @@ namespace PE
         *************************************************************************************/
         void TestFunction(EntityID);
 
-    private:
+    public:
         GLFWwindow* p_currWindow;
+
+    private:
         GLFWmonitor* p_monitor;
         static bool msepress;
         bool m_showFps;

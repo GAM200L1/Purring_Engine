@@ -64,14 +64,15 @@ namespace PE
 #ifndef GAMERELEASE
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
 		p_monitor = glfwGetWindowMonitor(window);
-		p_currWindow = window;
+
 #else
 		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, p_title, glfwGetPrimaryMonitor(), nullptr);
 
 		p_monitor = glfwGetWindowMonitor(window);
-		p_currWindow = window;
 #endif
+		p_currWindow = window;
+		WindowManager::GetInstance().p_currWindow = window;
 		GameStateManager::GetInstance().p_window = window;
 
 		if (!window)

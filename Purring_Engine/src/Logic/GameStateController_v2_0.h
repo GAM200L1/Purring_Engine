@@ -46,8 +46,10 @@ namespace PE
 		EntityID CatPortrait,RatPortrait;
 		EntityID Portrait;
 
+		int NumberInList{5};
+		std::vector<EntityID> clicklisttest;
 
-		int keyEventHandlerId, outOfFocusEventHandlerId;
+		int keyEventHandlerId, outOfFocusEventHandlerId, mouseClickEventID;
 	};
 
 	class GameStateController_v2_0 : public Script
@@ -124,6 +126,13 @@ namespace PE
 		*************************************************************************************/
 		void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
+		/*!***********************************************************************************
+		 \brief Checks if the mouse cursor is within the bounds of any GUI objects
+
+		 \param[in,out] r_ME mouse click event details
+		*************************************************************************************/
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
 		// ----- Helper Functions ----- //
 	public:
 		void SetPauseStateV2(EntityID = 0);
@@ -145,6 +154,7 @@ namespace PE
 		void ReturnFromAYS(EntityID);
 		void OpenAYS(EntityID);
 		void RetryStage(EntityID);
+		bool WithinRadius(vec2 transform ,vec2 mousePos, float radius);
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
