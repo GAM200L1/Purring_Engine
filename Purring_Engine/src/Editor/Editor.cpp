@@ -3256,7 +3256,7 @@ namespace PE {
 									//{
 									//	ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
 									//}
-									ResourceManager::GetInstance().GetTexture(r_filepath.string());
+									ResourceManager::GetInstance().GetIcon(r_filepath.string());
 								}
 							}
 							m_fileDragged = false;
