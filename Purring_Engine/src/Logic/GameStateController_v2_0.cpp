@@ -277,7 +277,7 @@ namespace PE
 					{
 						vec2 cursorPosition{};
 						InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().p_currWindow, cursorPosition.x, cursorPosition.y);
-						GETCAMERAMANAGER()->GetWindowToWorldPosition(cursorPosition.x, cursorPosition.y);
+						cursorPosition = GETCAMERAMANAGER()->GetWindowToWorldPosition(cursorPosition.x, cursorPosition.y);
 
 						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
 

@@ -2400,7 +2400,7 @@
                         "Old ID": 47,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
                         "sceneID": 13
@@ -2442,7 +2442,7 @@
                         "children": [
                             49
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "CatEnergyBar",
                         "parent": 51,
                         "sceneID": 48
@@ -2564,7 +2564,7 @@
                         "Old ID": 50,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "EnergyFrame",
                         "parent": 51,
                         "sceneID": 49
@@ -2613,7 +2613,7 @@
                             52,
                             54
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "CatPortraitCanvas",
                         "parent": null,
                         "sceneID": 5
@@ -2644,7 +2644,7 @@
                         "Old ID": 54,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "EnergyIcon",
                         "parent": 51,
                         "sceneID": 50
@@ -2724,7 +2724,7 @@
                         "Old ID": 52,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "CatPortraitName",
                         "parent": 51,
                         "sceneID": 0
