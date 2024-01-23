@@ -149,6 +149,14 @@ namespace PE
         *************************************************************************************/
         bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
 
+        std::string LoadTexture(std::string const& fileName);
+
+        std::string LoadAudio(std::string const& fileName);
+
+        std::string LoadFont(std::string const& fileName);
+
+        std::string LoadAnimation(std::string const& fileName);
+
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.
 

@@ -282,6 +282,58 @@ namespace PE
         return true;
     }
 
+    std::string ResourceManager::LoadTexture(std::string const& fileName)
+    {
+        std::string filePath = "../Assets/Textures/Resources/" + fileName;
+
+        // if texture is loaded, return key
+        if(LoadTextureFromFile(filePath, filePath))
+        {
+            return filePath;
+        }
+
+        return m_defaultTextureKey;
+    }
+
+    std::string ResourceManager::LoadAudio(std::string const& fileName)
+    {
+        std::string filePath = "../Assets/Audio/Resources/" + fileName;
+
+        // if audio is loaded, return key
+        if (LoadAudioFromFile(filePath, filePath))
+        {
+            return filePath;
+        }
+
+        return m_defaultAudioKey;
+    }
+
+    std::string ResourceManager::LoadFont(std::string const& fileName)
+    {
+        std::string filePath = "../Assets/Fonts/Resources/" + fileName;
+
+        // if texture is loaded, return key
+        if (LoadFontFromFile(filePath, filePath))
+        {
+            return filePath;
+        }
+
+        return m_defaultFontKey;
+    }
+
+    std::string ResourceManager::LoadAnimation(std::string const& fileName)
+    {
+        std::string filePath = "../Assets/Animation/Resources/" + fileName;
+
+        // if texture is loaded, return key
+        if (LoadAnimationFromFile(filePath, filePath))
+        {
+            return filePath;
+        }
+
+        return m_defaultAnimationKey;
+    }
+
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
     {
         // if texture is not found
