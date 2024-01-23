@@ -4966,7 +4966,7 @@ namespace PE {
 	EntityID Editor::CheckCanvas()
 	{
 		EntityID NextCanvasID{};
-		if (NextCanvasID = CountCanvas())
+		if (NextCanvasID == CountCanvas())
 		{
 			//if more than 1 canvas popup choose which canvas, to be done in the future
 		}
