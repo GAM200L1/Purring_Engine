@@ -43,6 +43,7 @@
 #include "AudioManager/AudioManager.h"
 #include "Graphics/Text.h"
 #include "Animation/Animation.h"
+#include "imgui.h"
 
 //class Resource
 //{
@@ -148,6 +149,15 @@ namespace PE
             \return True if animation is loaded successfully, false otherwise.
         *************************************************************************************/
         bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Gets the size of a texture with the given name from the ResourceManager.
+
+            \param[in] name The name of the texture to retrieve the size for.
+
+            \return An ImVec2 containing the width and height of the texture.
+        *************************************************************************************/
+        ImVec2 GetTextureSize(const std::string& name);
 
         std::string LoadTexture(std::string const& fileName);
 

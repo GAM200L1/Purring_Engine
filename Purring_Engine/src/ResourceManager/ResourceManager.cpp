@@ -282,6 +282,20 @@ namespace PE
         return true;
     }
 
+    ImVec2 ResourceManager::GetTextureSize(const std::string& name)
+    {
+        auto it = Textures.find(name);
+        if (it != Textures.end()) {
+            auto texture = it->second;
+            return ImVec2(static_cast<float>(texture->GetWidth()), static_cast<float>(texture->GetHeight()));
+        }
+        else
+        {
+            // If Texture not found, maybe load a PURPLE icon? @Brandon -Hans
+            return ImVec2(1.0f, 1.0f); // Default size to avoid division by zero in aspect ratio calculations
+        }
+    }
+
     std::string ResourceManager::LoadTexture(std::string const& fileName)
     {
         std::string filePath = "../Assets/Textures/Resources/" + fileName;
