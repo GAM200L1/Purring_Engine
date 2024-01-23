@@ -43,7 +43,7 @@ namespace PE
 		 \param [in] width - Target width of the canvas.
 		 \param [in] height - Target height of the canvas.
 		*************************************************************************************/
-		GUISystem(GLFWwindow* p_glfwWindow, float const width, float const height);
+		GUISystem(float const width, float const height);
 
 		/*!***********************************************************************************
 		 \brief     Virtual destructor for proper cleanup of derived systems.
@@ -157,8 +157,6 @@ namespace PE
 			static std::map<std::string_view, std::function<void(EntityID)>> m_uiFunc;
 
 	private:
-			GLFWwindow* p_window{};
-
 			// Stores the IDs of the active canvases
 			static std::unordered_set<EntityID> m_activeCanvases;
 			static float m_targetResolutionWidth, m_targetResolutionHeight; // Dimensions the canvases should have

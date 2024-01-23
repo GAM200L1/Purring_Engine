@@ -308,7 +308,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::Init(GLFWwindow* p_window_)
+	void Editor::Init()
 	{
 		//check imgui's version 
 		IMGUI_CHECKVERSION();
@@ -345,10 +345,9 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		p_window = p_window_;
 		//getting the full display size of glfw so that the ui know where to be in
 		int width, height;
-		glfwGetWindowSize(p_window, &width, &height);
+		glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
 		io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
 		m_renderWindowWidth = static_cast<float>(width) * 0.1f;
 		m_renderWindowHeight = static_cast<float>(height) * 0.1f;
@@ -361,7 +360,7 @@ namespace PE {
 		}
 
 		//init imgui for glfw and opengl 
-		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
+		ImGui_ImplGlfw_InitForOpenGL(WindowManager::GetInstance().GetWindow(), true);
 
 		ImGui_ImplOpenGL3_Init("#version 450");
 	}
@@ -3198,7 +3197,7 @@ namespace PE {
 
 				if (ImGui::IsWindowHovered())
 				{
-					glfwSetDropCallback(p_window, &HotLoadingNewFiles);
+					glfwSetDropCallback(WindowManager::GetInstance().GetWindow(), &HotLoadingNewFiles);
 					if (m_fileDragged)
 					{
 						GetFileNamesInParentPath(m_parentPath, m_files);

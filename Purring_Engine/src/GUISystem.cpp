@@ -45,7 +45,7 @@ namespace PE
 	float GUISystem::m_targetResolutionWidth{};
 	float GUISystem::m_targetResolutionHeight{};
 
-	GUISystem::GUISystem(GLFWwindow* p_glfwWindow, float const width, float const height) : p_window{ p_glfwWindow }
+	GUISystem::GUISystem(float const width, float const height)
 	{ 
 			m_activeCanvases.reserve(20); // Reserve a large amount of entities in advance
 			m_targetResolutionWidth = width, m_targetResolutionHeight = height;
@@ -221,7 +221,7 @@ namespace PE
 						if (slider.m_clicked)
 						{
 							float mouseX{}, mouseY{};
-							InputSystem::GetCursorViewportPosition(p_window, mouseX, mouseY);
+							InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
 							vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(mouseX, mouseY);
 							//vec2 CurrentMousePos = GETCAMERAMANAGER()->GetUiCamera().GetViewportToWorldPosition(mouseX, mouseY);
 
@@ -329,7 +329,7 @@ namespace PE
 					continue;
 
 				float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
-				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
+				InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
 				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
 				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
@@ -372,7 +372,7 @@ namespace PE
 					continue;
 
 				float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
-				InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
+				InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
 				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
 				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 
@@ -427,7 +427,7 @@ namespace PE
 			if (gui.disabled)
 				continue;
 			float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
-			InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
+			InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
 			mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
 			mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 			//check mouse coordinate against transform here
@@ -463,7 +463,7 @@ namespace PE
 						continue;
 
 					float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
-					InputSystem::ConvertGLFWToTransform(p_window, mouseX, mouseY);
+					InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
 					mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
 					mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
 

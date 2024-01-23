@@ -424,7 +424,7 @@ namespace PE
 	vec2 CatScript::GetCursorPositionInWorld()
 	{
 			float mouseX{}, mouseY{};
-			InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
+			InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
 			return GETCAMERAMANAGER()->GetWindowToWorldPosition(mouseX, mouseY);
 	}
 
