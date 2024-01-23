@@ -63,7 +63,7 @@ namespace PE
              \param[in] windowWidth Width of the window.
              \param[in] windowHeight Height of the window.
             *************************************************************************************/
-            RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, 
+            RendererManager( CameraManager& r_cameraManagerArg, 
                 int const windowWidth, int const windowHeight);
 
             // ----- Public methods ----- //
@@ -365,7 +365,6 @@ namespace PE
 
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to
             CameraManager& r_cameraManager; // Reference to the camera manager
 
             // Framebuffer object for rendering game scene rendered through the editor or in-game runtime camera

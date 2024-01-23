@@ -64,16 +64,13 @@ namespace PE
 #ifndef GAMERELEASE
 		GLFWwindow* window = glfwCreateWindow(width, height, p_title, nullptr, nullptr);
 		p_monitor = glfwGetWindowMonitor(window);
-
 #else
 		const GLFWvidmode* mode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 		GLFWwindow* window = glfwCreateWindow(mode->width, mode->height, p_title, glfwGetPrimaryMonitor(), nullptr);
 
 		p_monitor = glfwGetWindowMonitor(window);
 #endif
-		p_currWindow = window;
-		WindowManager::GetInstance().p_currWindow = window;
-		GameStateManager::GetInstance().p_window = window;
+		WindowManager::GetInstance().SetWindow(window);
 
 		if (!window)
 		{
@@ -113,9 +110,13 @@ namespace PE
 		return p_currWindow;
 	}
 
+	void WindowManager::SetWindow(GLFWwindow* p_win)
+	{
+		p_currWindow = p_win;
+	}
 	void WindowManager::CloseWindow(EntityID)
 	{
-		glfwSetWindowShouldClose(p_currWindow, true);
+		glfwSetWindowShouldClose(WindowManager::GetInstnace().GetWindow(), true);
 	}
 
 
@@ -138,7 +139,7 @@ namespace PE
 			titleStream << " | FPS: " << static_cast<int>(fps);
 		}
 #endif
-		glfwSetWindowTitle(p_currWindow, titleStream.str().c_str());
+		glfwSetWindowTitle(WindowManager::GetInstance().GetWindow(), titleStream.str().c_str());
 	}
 
 
@@ -228,7 +229,7 @@ namespace PE
 			{
 					PauseManager::GetInstance().SetPaused(true);
 					if (msepress)
-							glfwIconifyWindow(p_currWindow);
+							glfwIconifyWindow(WindowManager::GetInstance().GetWindow());
 
 					msepress = true;
 			}
@@ -278,18 +279,18 @@ namespace PE
 
 							if (!fs)
 							{
-									glfwSetWindowMonitor(p_currWindow, NULL, 30, 30, 1920, 1080, 0);
+									glfwSetWindowMonitor(WindowManager::GetInstance().GetWindow(), NULL, 30, 30, 1920, 1080, 0);
 									HWND windowHandle = GetActiveWindow();
 									long Style = GetWindowLong(windowHandle, GWL_STYLE);
 									Style &= ~WS_MAXIMIZEBOX; //this makes it still work when WS_MAXIMIZEBOX is actually already toggled off
 									SetWindowLong(windowHandle, GWL_STYLE, Style);
-									glfwSetWindowAttrib(p_currWindow, GLFW_RESIZABLE, false);
+									glfwSetWindowAttrib(WindowManager::GetInstance().GetWindow(), GLFW_RESIZABLE, false);
 									fs = !fs;
 							}
 							else
 							{
 
-									glfwSetWindowMonitor(p_currWindow, p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+									glfwSetWindowMonitor(WindowManager::GetInstance().GetWindow(), p_monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
 									fs = !fs;
 							}
 					}
