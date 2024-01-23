@@ -3295,7 +3295,7 @@ namespace PE {
 
 								if (extension == ".png")
 								{
-									textureID = ResourceManager::GetInstance().GetTexture(m_files[n].string())->GetTextureID();
+									textureID = ResourceManager::GetInstance().GetIcon(m_files[n].string())->GetTextureID();
 									ImVec2 textureSize = ResourceManager::GetInstance().GetTextureSize(m_files[n].string());
 
 									// Calculate the aspect ratio

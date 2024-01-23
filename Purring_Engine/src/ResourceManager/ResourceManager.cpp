@@ -284,8 +284,8 @@ namespace PE
 
     ImVec2 ResourceManager::GetTextureSize(const std::string& name)
     {
-        auto it = Textures.find(name);
-        if (it != Textures.end()) {
+        auto it = Icons.find(name);
+        if (it != Icons.end()) {
             auto texture = it->second;
             return ImVec2(static_cast<float>(texture->GetWidth()), static_cast<float>(texture->GetHeight()));
         }
