@@ -310,7 +310,7 @@ namespace PE {
 		Hierarchy::GetInstance().Update();
 	}
 
-	void Editor::Init(GLFWwindow* p_window_)
+	void Editor::Init()
 	{
 		//check imgui's version 
 		IMGUI_CHECKVERSION();
@@ -347,10 +347,9 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		p_window = p_window_;
 		//getting the full display size of glfw so that the ui know where to be in
 		int width, height;
-		glfwGetWindowSize(p_window, &width, &height);
+		glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
 		io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
 		m_renderWindowWidth = static_cast<float>(width) * 0.1f;
 		m_renderWindowHeight = static_cast<float>(height) * 0.1f;
@@ -363,7 +362,7 @@ namespace PE {
 		}
 
 		//init imgui for glfw and opengl 
-		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
+		ImGui_ImplGlfw_InitForOpenGL(WindowManager::GetInstance().GetWindow(), true);
 
 		ImGui_ImplOpenGL3_Init("#version 450");
 	}
@@ -3242,26 +3241,26 @@ namespace PE {
 
 					ImGui::BeginChild(ImGui::GetID((void*)(intptr_t)2), ImVec2(0, 0), false, ImGuiWindowFlags_HorizontalScrollbar);
 
-					if (ImGui::IsWindowHovered())
+				if (ImGui::IsWindowHovered())
+				{
+					glfwSetDropCallback(WindowManager::GetInstance().GetWindow(), &HotLoadingNewFiles);
+					if (m_fileDragged)
 					{
-						glfwSetDropCallback(p_window, &HotLoadingNewFiles);
-						if (m_fileDragged)
+						GetFileNamesInParentPath(m_parentPath, m_files);
+						for (std::filesystem::path const& r_filepath : m_files)
 						{
-							GetFileNamesInParentPath(m_parentPath, m_files);
-							for (std::filesystem::path const& r_filepath : m_files)
+							if (r_filepath.extension() == ".png")
 							{
-								if (r_filepath.extension() == ".png")
-								{
-									//if (ResourceManager::GetInstance().Textures.find(r_filepath.string()) != ResourceManager::GetInstance().Textures.end())
-									//{
-									//	ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
-									//}
-									ResourceManager::GetInstance().GetTexture(r_filepath.string());
-								}
+								//if (ResourceManager::GetInstance().Textures.find(r_filepath.string()) != ResourceManager::GetInstance().Textures.end())
+								//{
+								//	ResourceManager::GetInstance().Textures[r_filepath.string()]->CreateTexture(r_filepath.string());
+								//}
+								ResourceManager::GetInstance().GetTexture(r_filepath.string());
 							}
-							m_fileDragged = false;
 						}
+						m_fileDragged = false;
 					}
+				}
 
 					// Calculate number of items per row with dynamic padding
 					int numItemPerRow = static_cast<int>(ImGui::GetContentRegionAvail().x / totalChildWidth);
@@ -5099,7 +5098,7 @@ namespace PE {
 	EntityID Editor::CheckCanvas()
 	{
 		EntityID NextCanvasID{};
-		if (CountCanvas())
+		if (NextCanvasID == CountCanvas())
 		{
 			//if more than 1 canvas popup choose which canvas, to be done in the future
 		}

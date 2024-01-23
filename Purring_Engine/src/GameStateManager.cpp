@@ -324,7 +324,7 @@ namespace PE
 	void GameStateManager::ExitGame(EntityID)
 	{
 		ButtonPressSound();
-		glfwSetWindowShouldClose(p_window, GL_TRUE);
+		glfwSetWindowShouldClose(WindowManager::GetInstance().GetWindow(), GL_TRUE);
 	}
 
 	void GameStateManager::ToggleWin(bool b)
