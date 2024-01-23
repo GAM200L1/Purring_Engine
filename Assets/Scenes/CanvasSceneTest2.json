@@ -1234,7 +1234,7 @@
                             44,
                             47
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 4
@@ -2419,11 +2419,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -805.2999267578125,
-                            "y": -388.7999267578125
+                            "y": -351.2999267578125
                         },
                         "relativeposition": {
                             "x": -805.2999267578125,
-                            "y": -388.7999267578125
+                            "y": -351.2999267578125
                         },
                         "relorientation": 0.0,
                         "width": 256.0
@@ -2567,7 +2567,7 @@
                         "isActive": false,
                         "name": "EnergyFrame",
                         "parent": 51,
-                        "sceneID": 50
+                        "sceneID": 49
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2647,7 +2647,7 @@
                         "isActive": false,
                         "name": "EnergyIcon",
                         "parent": 51,
-                        "sceneID": 49
+                        "sceneID": 50
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2743,11 +2743,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -823.0994262695313,
-                            "y": -260.3999328613281
+                            "y": -225.39999389648438
                         },
                         "relativeposition": {
                             "x": -823.0994262695313,
-                            "y": -260.3999328613281
+                            "y": -225.39999389648438
                         },
                         "relorientation": 0.0,
                         "width": 241.0
@@ -2987,11 +2987,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -823.0989990234375,
-                            "y": -260.3999938964844
+                            "y": -222.89996337890625
                         },
                         "relativeposition": {
                             "x": -823.0989990234375,
-                            "y": -260.3999938964844
+                            "y": -222.89996337890625
                         },
                         "relorientation": 0.0,
                         "width": 241.0

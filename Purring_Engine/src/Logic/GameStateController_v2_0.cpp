@@ -286,7 +286,40 @@ namespace PE
 						if (PointCollision(col, cursorPosition))
 						{
 							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(id).name << std::endl;
-							//EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey();
+							//add a switch statement here
+							//need specific texture
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_Cat_Orange_256px.png");
+							//set other prtrait stuff active and set right texture
+							ActiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
+							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].CatPortrait).children)
+							{
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPotraitName")
+								{
+									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+									{
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_CatNameFrame_OrangeCat_239x82.png");
+									}
+									break;
+								}
+							}
+							return;
+						}
+						else
+						{
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_Default_256px.png");
+							//set other portrait stuff inactive
+							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].CatPortrait).children)
+							{
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPotraitName")
+								{
+									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+									{
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_NameFrame_Cat_239x82.png");
+									}
+									break;
+								}
+							}
+							DeactiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
 						}
 					}
 				}
