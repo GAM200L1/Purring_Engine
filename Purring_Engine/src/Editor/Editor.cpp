@@ -4370,6 +4370,7 @@ namespace PE {
 										m_currentSelectedObject = -1;
 
 										// load scene from filepath
+										SceneManager::GetInstance().SetActiveScene(filePath.substr(filePath.find_last_of('/') + 1));
 										SceneManager::GetInstance().LoadSceneFromPath(filePath);
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 									}
@@ -5098,7 +5099,7 @@ namespace PE {
 	EntityID Editor::CheckCanvas()
 	{
 		EntityID NextCanvasID{};
-		if (NextCanvasID = CountCanvas())
+		if (CountCanvas())
 		{
 			//if more than 1 canvas popup choose which canvas, to be done in the future
 		}
