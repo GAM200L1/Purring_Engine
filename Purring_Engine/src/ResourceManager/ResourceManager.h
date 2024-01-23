@@ -159,13 +159,41 @@ namespace PE
         *************************************************************************************/
         ImVec2 GetTextureSize(const std::string& name);
 
-        std::string LoadTexture(std::string const& fileName);
+        /*!***********************************************************************************
+        \brief Load texture from Resource folder in Textures folder
 
-        std::string LoadAudio(std::string const& fileName);
+        \param[in] r_fileName Name of texture.
 
-        std::string LoadFont(std::string const& fileName);
+        \return key of texture object
+        *************************************************************************************/
+        std::string LoadTexture(std::string const& r_fileName);
 
-        std::string LoadAnimation(std::string const& fileName);
+        /*!***********************************************************************************
+        \brief Load audio from Resource folder in Audio folder
+
+        \param[in] r_fileName Name of audio.
+
+        \return key of audio object
+        *************************************************************************************/
+        std::string LoadAudio(std::string const& r_fileName);
+
+        /*!***********************************************************************************
+        \brief Load font from Resource folder in Fonts folder
+
+        \param[in] r_fileName Name of font.
+
+        \return key of font object
+        *************************************************************************************/
+        std::string LoadFont(std::string const& r_fileName);
+
+        /*!***********************************************************************************
+        \brief Load animation from Resource folder in Animation folder
+
+        \param[in] r_fileName Name of animation.
+
+        \return key of animation object
+        *************************************************************************************/
+        std::string LoadAnimation(std::string const& r_fileName);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.

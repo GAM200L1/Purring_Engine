@@ -296,9 +296,9 @@ namespace PE
         }
     }
 
-    std::string ResourceManager::LoadTexture(std::string const& fileName)
+    std::string ResourceManager::LoadTexture(std::string const& r_fileName)
     {
-        std::string filePath = "../Assets/Textures/Resources/" + fileName;
+        std::string filePath = "../Assets/Textures/Resources/" + r_fileName;
 
         // if texture is loaded, return key
         if(LoadTextureFromFile(filePath, filePath))
@@ -309,9 +309,9 @@ namespace PE
         return m_defaultTextureKey;
     }
 
-    std::string ResourceManager::LoadAudio(std::string const& fileName)
+    std::string ResourceManager::LoadAudio(std::string const& r_fileName)
     {
-        std::string filePath = "../Assets/Audio/Resources/" + fileName;
+        std::string filePath = "../Assets/Audio/Resources/" + r_fileName;
 
         // if audio is loaded, return key
         if (LoadAudioFromFile(filePath, filePath))
@@ -322,9 +322,9 @@ namespace PE
         return m_defaultAudioKey;
     }
 
-    std::string ResourceManager::LoadFont(std::string const& fileName)
+    std::string ResourceManager::LoadFont(std::string const& r_fileName)
     {
-        std::string filePath = "../Assets/Fonts/Resources/" + fileName;
+        std::string filePath = "../Assets/Fonts/Resources/" + r_fileName;
 
         // if texture is loaded, return key
         if (LoadFontFromFile(filePath, filePath))
@@ -335,9 +335,9 @@ namespace PE
         return m_defaultFontKey;
     }
 
-    std::string ResourceManager::LoadAnimation(std::string const& fileName)
+    std::string ResourceManager::LoadAnimation(std::string const& r_fileName)
     {
-        std::string filePath = "../Assets/Animation/Resources/" + fileName;
+        std::string filePath = "../Assets/Animation/Resources/" + r_fileName;
 
         // if texture is loaded, return key
         if (LoadAnimationFromFile(filePath, filePath))
