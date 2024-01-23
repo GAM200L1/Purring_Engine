@@ -81,8 +81,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -384,8 +384,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -652,8 +652,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -729,8 +729,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -876,8 +876,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1219,8 +1219,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1261,8 +1261,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1613,8 +1613,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1881,8 +1881,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -2283,8 +2283,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -2503,11 +2503,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -794.5001831054688,
-                            "y": -469.9000244140625
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -794.5001831054688,
-                            "y": -469.9000244140625
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 203.0
@@ -2543,7 +2543,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -819.8751831054688,
-                            "y": -469.9000244140625
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -25.375,
@@ -2583,11 +2583,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -797.300048828125,
-                            "y": -468.0000305175781
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -797.300048828125,
-                            "y": -468.0000305175781
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 231.0
@@ -2600,8 +2600,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -2663,11 +2663,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -906.3993530273438,
-                            "y": -468.9000244140625
+                            "y": -444.9000244140625
                         },
                         "relativeposition": {
                             "x": -906.3993530273438,
-                            "y": -468.9000244140625
+                            "y": -444.9000244140625
                         },
                         "relorientation": 0.0,
                         "width": 55.0
@@ -2680,8 +2680,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -2827,11 +2827,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -794.0,
-                            "y": -469.0
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -794.0,
-                            "y": -469.0
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 203.0
@@ -2867,7 +2867,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -861.6666870117188,
-                            "y": -469.0
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -67.66666412353516,
@@ -2907,11 +2907,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -791.0000610351563,
-                            "y": -468.0
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -791.0000610351563,
-                            "y": -468.0
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 231.0
@@ -2947,11 +2947,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -907.5989990234375,
-                            "y": -468.300048828125
+                            "y": -444.29998779296875
                         },
                         "relativeposition": {
                             "x": -907.5989990234375,
-                            "y": -468.300048828125
+                            "y": -444.29998779296875
                         },
                         "relorientation": 0.0,
                         "width": 77.0

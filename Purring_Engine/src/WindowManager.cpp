@@ -116,7 +116,7 @@ namespace PE
 	}
 	void WindowManager::CloseWindow(EntityID)
 	{
-		glfwSetWindowShouldClose(WindowManager::GetInstnace().GetWindow(), true);
+		glfwSetWindowShouldClose(WindowManager::GetInstance().GetWindow(), true);
 	}
 
 
