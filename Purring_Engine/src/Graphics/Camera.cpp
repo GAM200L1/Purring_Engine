@@ -109,6 +109,15 @@ namespace PE
         }
 
 
+        vec2 Camera::GetWorldToViewportPosition(float const x, float const y) const
+        {
+            return vec2{
+                (x * m_cachedWorldToViewMatrix[0][0] + m_cachedWorldToViewMatrix[3][0]),
+                (y * m_cachedWorldToViewMatrix[1][1] + m_cachedWorldToViewMatrix[3][1])
+            };
+        }
+
+
         bool Camera::GetPositionWithinViewport(float const x, float const y, float const padding) const
         {
             // Transform the coordinates into viewport space 
