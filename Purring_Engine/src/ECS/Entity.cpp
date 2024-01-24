@@ -21,6 +21,7 @@
 #include "Logging/Logger.h"
 #include "EntityFactory.h"
 #include "Hierarchy/HierarchyManager.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -125,6 +126,7 @@ namespace PE
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[r_componentID]->size);
+		LayerManager::GetInstance().AddEntity(r_id);
 	}
 
 	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& r_component) const
@@ -181,6 +183,7 @@ namespace PE
 			m_removed.emplace(id);
 			
 			UpdateVectors(id, false);
+			LayerManager::GetInstance().RemoveEntity(id);
 		}
 	}
 
@@ -202,6 +205,16 @@ namespace PE
 			}
 			return m_poolsEntity.at(r_pool);
 		}
+	}
+
+	void EntityManager::AddHelper(const EntityID& r_id)
+	{
+		LayerManager::GetInstance().AddEntity(r_id);
+	}
+
+	void EntityManager::RemoveHelper(const EntityID& r_id)
+	{
+		LayerManager::GetInstance().RemoveEntity(r_id);
 	}
 
 	nlohmann::json EntityDescriptor::ToJson(size_t id) const

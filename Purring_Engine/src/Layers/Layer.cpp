@@ -15,6 +15,7 @@
 #include "prpch.h"
 #include "Layer.h"
 #include "Logging/Logger.h"
+#include "ECS/Entity.h"
 extern Logger engine_logger;
 
 namespace PE
@@ -43,22 +44,34 @@ namespace PE
 
     void InteractionLayers::UpdateLayers(const EntityID& r_id, bool add)
     {
-        const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(r_id);
-        if (desc.interactionLayer >= MAX_LAYERS)
+        if (!r_id)
+            return;
+        try
         {
-            engine_logger.AddLog(true, "Entity had interaction layer larger than the limit!!", __FUNCTION__);
-            throw;
-        }
-        if (add)
-        { 
-            if (layers[desc.interactionLayer].end() == std::find(layers[desc.interactionLayer].begin(), layers[desc.interactionLayer].end(), r_id))
+            const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(r_id);
+            if (desc.interactionLayer >= MAX_LAYERS)
             {
-                layers[desc.interactionLayer].emplace_back(r_id);
+                engine_logger.AddLog(true, "Entity had interaction layer larger than the limit!!", __FUNCTION__);
+                throw;
+            }
+            auto loc = std::find(layers[desc.interactionLayer].begin(), layers[desc.interactionLayer].end(), r_id);
+            if (add)
+            {
+                if (layers[desc.interactionLayer].end() == loc)
+                {
+                    layers[desc.interactionLayer].emplace_back(r_id);
+                }
+            }
+            else
+            {
+                if (layers[desc.interactionLayer].end() != loc)
+                {
+                    layers[desc.interactionLayer].erase(loc);
+                }
             }
         }
-        else
+        catch (...)
         {
-            layers[desc.interactionLayer].erase(std::find(layers[desc.interactionLayer].begin(), layers[desc.interactionLayer].end(), r_id));
         }
     }
 

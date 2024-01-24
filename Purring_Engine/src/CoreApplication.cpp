@@ -417,12 +417,16 @@ void PE::CoreApplication::Run()
         }
 
         Hierarchy::GetInstance().Update();
-        for (const auto& layer : LayerManager::GetInstance().GetLayers(EntityManager::GetInstance().GetComponentID<Graphics::Renderer>() | EntityManager::GetInstance().GetComponentID<Transform>()).GetLayers())
+        int cnt{};
+        for (const auto& layer : LayerManager::GetInstance().GetLayers(ALL).GetLayers())
         {
+            std::string lr = "layer: " + std::to_string(cnt++) + ": ";
             for (const auto& id : layer)
             {
-                std::cout << id << std::endl;
+                lr += " ";
+                lr += std::to_string(id);
             }
+            std::cout << lr << std::endl;
         }
 
         // Update Graphics with variable timestep

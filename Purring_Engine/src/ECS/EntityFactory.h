@@ -367,6 +367,7 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(ret);
+		p_entityManager->AddHelper(ret);
 		return ret;
 	}
 
@@ -384,6 +385,7 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(ret);
+		p_entityManager->AddHelper(ret);
 		return ret;
 	}
 
@@ -406,6 +408,8 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(id);
+		p_entityManager->RemoveHelper(ret);
+		p_entityManager->AddHelper(ret);
 	}
 
 }

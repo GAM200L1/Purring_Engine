@@ -13,8 +13,16 @@
  All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
 #pragma once
-#include "ECS/Entity.h"
+
 constexpr size_t MAX_LAYERS = 10;
+constexpr unsigned MAX_COMP = 32;
+
+// Typedefs
+typedef unsigned long long EntityID;								// typedef for storing the unique ID of the entity, same as size_t
+typedef std::bitset<MAX_COMP> ComponentID;					// ComponentID type, internally it is a bitset
+
+
+
 namespace PE
 {
     using Layer = std::vector<EntityID>;

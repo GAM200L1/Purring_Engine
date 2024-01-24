@@ -37,9 +37,9 @@ namespace PE
             components |= comp;
         }
 
-        for (auto [k, layer] : m_cachedLayers)
+        for (auto &[k, layer] : m_cachedLayers)
         {
-            if ((k & components).count() != k.count())
+            if (k == ALL || (k & components).count() != k.count())
             {
                 layer.UpdateLayers(r_id, false);
             }
@@ -54,9 +54,10 @@ namespace PE
         {
             components |= comp;
         }
-        for (auto [k, layer] : m_cachedLayers)
+       
+        for (auto &[k, layer] : m_cachedLayers)
         {
-            if ((k & components).count() == k.count())
+            if (k == ALL  || (k & components).count() == k.count())
             {
                 layer.UpdateLayers(r_id);
             }

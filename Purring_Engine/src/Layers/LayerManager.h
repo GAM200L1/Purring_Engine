@@ -14,8 +14,29 @@
 *************************************************************************************/
 #include "Singleton.h"
 #include "Layer.h"
+
 namespace PE
 {
+    /*!***********************************************************************************
+    \brief Assits in using the bitset as a key when used as a map key
+
+    *************************************************************************************/
+    struct Comparer2
+    {
+        /*!***********************************************************************************
+         \brief Compares the bitsets lhs < rhs value
+
+         \param[in] b1 bitset lhs
+         \param[in] b2 bitset rhs
+         \return true 	lhs < rhs
+         \return false  rhs > lhs
+        *************************************************************************************/
+        bool operator() (const std::bitset<MAX_COMP>& b1, const std::bitset<MAX_COMP>& b2) const 
+        {
+            return b1.to_ulong() < b2.to_ulong();
+        }
+    };
+
     class LayerManager : public Singleton<LayerManager>
     {
     public:
@@ -36,7 +57,7 @@ namespace PE
     private:
 
     private:
-        std::map<ComponentID, InteractionLayers, Comparer> m_cachedLayers;
+        std::map<ComponentID, InteractionLayers, Comparer2> m_cachedLayers;
         LayerState m_layerStates;
     };
 

@@ -429,6 +429,20 @@ namespace PE
 				}
 			}
 		}
+		/*!***********************************************************************************
+		\brief helper function to prevent circular includes of layermanager
+		
+		\param[in] r_id 
+		*************************************************************************************/
+		void AddHelper(const EntityID& r_id);
+
+		/*!***********************************************************************************
+		 \brief helper function to prevent circular includes of layermanager
+		 
+		 \param[in] r_id 
+		*************************************************************************************/
+		void RemoveHelper(const EntityID& r_id);
+
 			// ----- Private Variables ----- //
 	private:
 		// set of entities picked over vector to increase the speed of searches for specific entites
@@ -523,7 +537,7 @@ namespace PE
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
 		{
-			throw;	// to add error
+			throw 1;	// to add error
 		}
 		return *p_comp;
 	}
@@ -576,6 +590,7 @@ namespace PE
 		}
 		--(m_componentPools[componentID]->size);
 		UpdateVectors(id, false, componentID);
+		RemoveHelper(id);
 	}
 
 	/*!***********************************************************************************
