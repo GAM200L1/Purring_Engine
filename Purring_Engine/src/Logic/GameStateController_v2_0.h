@@ -23,7 +23,7 @@ namespace PE
 {
 	enum class GameStates_v2_0
 	{
-		PLANNING, EXECUTE, PAUSE, WIN, LOSE, SPLASHSCREEN, INACTIVE
+		PLANNING, DEPLOYMENT, EXECUTE, PAUSE, WIN, LOSE, SPLASHSCREEN, INACTIVE
 	};
 
 	struct GameStateController_v2_0Data
@@ -36,8 +36,20 @@ namespace PE
 		EntityID AreYouSureCanvas;
 		EntityID LoseCanvas;
 		EntityID WinCanvas;
+		EntityID HowToPlayCanvas;
+		EntityID HowToPlayPageOne;
+		EntityID HowToPlayPageTwo;
+		EntityID HUDCanvas;
+		EntityID ExecuteCanvas;
+		EntityID TurnCounterCanvas;
 
-		int keyEventHandlerId, outOfFocusEventHandlerId;
+		EntityID CatPortrait,RatPortrait;
+		EntityID Portrait;
+
+		int NumberInList{5};
+		std::vector<EntityID> clicklisttest;
+
+		int keyEventHandlerId, outOfFocusEventHandlerId, mouseClickEventID;
 	};
 
 	class GameStateController_v2_0 : public Script
@@ -114,19 +126,47 @@ namespace PE
 		*************************************************************************************/
 		void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
+		/*!***********************************************************************************
+		 \brief Checks if the mouse cursor is within the bounds of any GUI objects
+
+		 \param[in,out] r_ME mouse click event details
+		*************************************************************************************/
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
 		// ----- Helper Functions ----- //
 	public:
-		void SetPauseState();
+		void SetPauseStateV2(EntityID = 0);
 		void SetGameState(GameStates_v2_0);
 		void ResumeStateV2(EntityID=0);
 		void ActiveObject(EntityID);
 		void DeactiveObject(EntityID);
+		void FadeAllObject(EntityID Canvas, float const alpha);
+		void DeactiveAllMenu();
+		void NextState(EntityID=0);
+		void WinGame();
+		void LoseGame();
+		void CloseHTP(EntityID);
+		void OpenHTP(EntityID);
+		void HTPPage2(EntityID);
+		void HTPPage1(EntityID);
+		void PlanningStateHUD(EntityID const id, float deltaTime);
+		void ExecutionStateHUD(EntityID const id, float deltaTime);
+		void ReturnFromAYS(EntityID);
+		void OpenAYS(EntityID);
+		void RetryStage(EntityID);
+		bool WithinRadius(vec2 transform ,vec2 mousePos, float radius);
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
+		int CurrentTurn{1};
 	private:
 		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
-		bool m_pauseMenuOpenOnce{false};
+		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
+		int m_currentLevel{};
+		EntityID m_currentGameStateControllerID;
+		float m_UIFadeTimer{.5f};
+		float m_timeSinceEnteredState{ 1.f };
+		float m_timeSinceExitedState{};
 	};
 }
 
