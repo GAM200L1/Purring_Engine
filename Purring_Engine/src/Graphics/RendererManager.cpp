@@ -36,7 +36,7 @@
 // ECS Components
 #include "ECS/Entity.h"
 #include "ECS/EntityFactory.h"
-
+#include "Hierarchy/HierarchyManager.h"
 // ImGui
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -73,8 +73,8 @@ namespace PE
         unsigned RendererManager::objectDrawCalls{};  // Total draw calls for gameobjects
         unsigned RendererManager::debugDrawCalls{};   // Total draw calls for debug shapes
 
-        RendererManager::RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, int const windowWidth, int const windowHeight)
-            : p_glfwWindow{ p_window }, r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
+        RendererManager::RendererManager(CameraManager& r_cameraManagerArg, int const windowWidth, int const windowHeight)
+            :  r_cameraManager{ r_cameraManagerArg }, m_windowStartWidth{ windowWidth }, m_windowStartHeight{ windowHeight }
         {
             // Initialize GLEW
             if (glewInit() != GLEW_OK)
@@ -96,7 +96,7 @@ namespace PE
             glDebugMessageCallback(GlDebugOutput, nullptr);
             glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, nullptr, GL_TRUE);
 
-            Editor::GetInstance().Init(p_window);
+            Editor::GetInstance().Init();
 #endif // !GAMERELEASE
         }
         
@@ -107,7 +107,7 @@ namespace PE
 
             // Create the framebuffer to render to a texture object
             int width, height;
-            glfwGetWindowSize(p_glfwWindow, &width, &height);
+            glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
             m_renderFrameBuffer.CreateFrameBuffer(width, height, true, false);
             m_cachedWindowWidth = static_cast<float>(width), 
                 m_cachedWindowHeight = static_cast<float>(height);
@@ -141,7 +141,7 @@ namespace PE
 
         void RendererManager::UpdateSystem(float deltaTime)
         {
-            if (!p_glfwWindow)
+            if (!WindowManager::GetInstance().GetWindow())
             {
                 return;
             }
@@ -165,7 +165,7 @@ namespace PE
             else 
             {
                 int width, height;
-                glfwGetWindowSize(p_glfwWindow, &width, &height);
+                glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
                 windowWidth = static_cast<float>(width);
                 windowHeight = static_cast<float>(height);
             }
@@ -293,7 +293,7 @@ namespace PE
             glfwPollEvents(); // should be called before glfwSwapbuffers
 
             // Swap front and back buffers
-            glfwSwapBuffers(p_glfwWindow);
+            glfwSwapBuffers(WindowManager::GetInstance().GetWindow());
         }
 
 

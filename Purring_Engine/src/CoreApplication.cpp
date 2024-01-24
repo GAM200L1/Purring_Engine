@@ -118,7 +118,8 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::Graphics::Renderer);
     REGISTERCOMPONENT(PE::Graphics::Camera);
     REGISTERCOMPONENT(PE::ScriptComponent);
-    REGISTERCOMPONENT(PE::GUI);
+    REGISTERCOMPONENT(PE::GUIButton);
+    REGISTERCOMPONENT(PE::GUISlider);
     REGISTERCOMPONENT(PE::Graphics::GUIRenderer);
     REGISTERCOMPONENT(PE::AnimationComponent);
     REGISTERCOMPONENT(PE::TextComponent);
@@ -513,17 +514,17 @@ void PE::CoreApplication::InitializeSystems()
 {
     // Get the window width and height to initialize the camera manager with
     int width, height;
-    glfwGetWindowSize(m_window, &width, &height);
+    glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
 
     // Add system to list & assigning memory to them
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager, width, height };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{*p_cameraManager, width, height };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window, static_cast<float>(width), static_cast<float>(height)};
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 

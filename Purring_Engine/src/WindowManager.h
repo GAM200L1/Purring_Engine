@@ -56,6 +56,18 @@ namespace PE
         GLFWwindow* InitWindow(int width, int height, const char* p_title);
 
         /*!***********************************************************************************
+         \brief     return the current window.
+         \return    GLFWwindow* the window
+        *************************************************************************************/
+        GLFWwindow* GetWindow();
+
+        /*!***********************************************************************************
+         \brief     set current window.
+         \param    GLFWwindow* the window
+        *************************************************************************************/
+        void SetWindow(GLFWwindow* p_win);
+
+        /*!***********************************************************************************
          \brief     Update the window title to show current FPS.
          \param     window Pointer to the GLFW window.
          \param     fps Current frames per second.

@@ -158,6 +158,7 @@ namespace PE
 				trans.orientation = parent.orientation + trans.relOrientation;
 			}
 			// if it has children recursively call this function, with the current ID as the input
+			if(EntityManager::GetInstance().Has<EntityDescriptor>(childrenID))
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(childrenID).children.size())
 			{
 				TransformUpdateHelper(childrenID);

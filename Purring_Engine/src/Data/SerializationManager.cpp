@@ -255,7 +255,8 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::RigidBody>(entityId, "RigidBody", j);
     SerializeComponent<PE::Collider>(entityId, "Collider", j);
     SerializeComponent<PE::Graphics::Camera>(entityId, "Camera", j);
-    SerializeComponent<PE::GUI>(entityId, "GUI", j);
+    SerializeComponent<PE::GUIButton>(entityId, "GUI", j);
+    //SerializeComponent<PE::GUISlider>(entityId, "GUISlider", j);
     SerializeComponent<PE::Graphics::GUIRenderer>(entityId, "GUIRenderer", j); 
     SerializeComponent<PE::EntityDescriptor>(entityId, "EntityDescriptor", j);
     SerializeComponent<PE::ScriptComponent>(entityId, "ScriptComponent", j);
@@ -263,6 +264,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::TextComponent>(entityId, "TextComponent", j);
     SerializeComponent<PE::AudioComponent>(entityId, "AudioComponent", j);
     SerializeComponent<PE::Canvas>(entityId, "Canvas", j);
+    SerializeComponent<PE::GUISlider>(entityId, "GUISlider", j);
 
 
     return j; 
@@ -450,6 +452,8 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("TextComponent", &SerializationManager::LoadTextComponent);
     m_initializeComponent.emplace("AudioComponent", &SerializationManager::LoadAudioComponent);
     m_initializeComponent.emplace("Canvas", &SerializationManager::LoadCanvasComponent);
+    m_initializeComponent.emplace("GUISlider", &SerializationManager::LoadGUISlider);
+
 }
 
 bool SerializationManager::LoadTransform(const EntityID& r_id, const nlohmann::json& r_json)
@@ -542,7 +546,7 @@ bool SerializationManager::LoadCamera(const EntityID& r_id, const nlohmann::json
 
 bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r_json)
 {
-    PE::GUI gui;
+    PE::GUIButton gui;
 
     if (r_json["Entity"]["components"].contains("GUI"))
     {    
@@ -593,7 +597,7 @@ bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r
             r_json["Entity"]["components"]["GUI"]["m_disabledColor"][3].get<float>()
         );
     }
-    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUI>(), static_cast<void*>(&gui));
+    PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUIButton>(), static_cast<void*>(&gui));
     return true;
 }
 
@@ -737,11 +741,72 @@ bool SerializationManager::LoadAudioComponent(const size_t& r_id, const nlohmann
     {
         PE::AudioComponent audioComponent;
 
-        // Example of setting properties, adjust according to your actual component properties
         audioComponent.SetAudioKey(r_json["Entity"]["components"]["AudioComponent"]["audioKey"].get<std::string>());
         audioComponent.SetLoop(r_json["Entity"]["components"]["AudioComponent"]["loop"].get<bool>());
 
         PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::AudioComponent>(), static_cast<void*>(&audioComponent));
+        return true;
+    }
+    return false;
+}
+
+bool SerializationManager::LoadGUISlider(const EntityID& r_id, const nlohmann::json& r_json)
+{
+    if (r_json["Entity"]["components"].contains("GUISlider"))
+    {
+        PE::GUISlider slider;
+
+        const auto& sliderJson = r_json["Entity"]["components"]["GUISlider"];
+        if (sliderJson.contains("m_Hovered")) slider.m_Hovered = sliderJson["m_Hovered"].get<bool>();
+        if (sliderJson.contains("m_disabled")) slider.m_disabled = sliderJson["m_disabled"].get<bool>();
+        if (sliderJson.contains("m_clicked")) slider.m_clicked = sliderJson["m_clicked"].get<bool>();
+        if (sliderJson.contains("m_startPoint")) slider.m_startPoint = sliderJson["m_startPoint"].get<float>();
+        if (sliderJson.contains("m_endPoint")) slider.m_endPoint = sliderJson["m_endPoint"].get<float>();
+        if (sliderJson.contains("m_currentValue")) slider.m_currentValue = sliderJson["m_currentValue"].get<float>();
+        if (sliderJson.contains("m_minValue")) slider.m_minValue = sliderJson["m_minValue"].get<float>();
+        if (sliderJson.contains("m_maxValue")) slider.m_maxValue = sliderJson["m_maxValue"].get<float>();
+
+        // Deserialize color vectors
+        if (sliderJson.contains("m_defaultColor"))
+        {
+            auto& col = sliderJson["m_defaultColor"];
+            slider.m_defaultColor = { col[0], col[1], col[2], col[3] };
+        }
+        if (sliderJson.contains("m_hoveredColor"))
+        {
+            auto& col = sliderJson["m_hoveredColor"];
+            slider.m_hoveredColor = { col[0], col[1], col[2], col[3] };
+        }
+        if (sliderJson.contains("m_pressedColor"))
+        {
+            auto& col = sliderJson["m_pressedColor"];
+            slider.m_pressedColor = { col[0], col[1], col[2], col[3] };
+        }
+        if (sliderJson.contains("m_disabledColor"))
+        {
+            auto& col = sliderJson["m_disabledColor"];
+            slider.m_disabledColor = { col[0], col[1], col[2], col[3] };
+        }
+
+        // Deserialize string textures
+        if (sliderJson.contains("m_defaultTexture")) slider.m_defaultTexture = sliderJson["m_defaultTexture"].get<std::string>();
+        if (sliderJson.contains("m_hoveredTexture")) slider.m_hoveredTexture = sliderJson["m_hoveredTexture"].get<std::string>();
+        if (sliderJson.contains("m_pressedTexture")) slider.m_pressedTexture = sliderJson["m_pressedTexture"].get<std::string>();
+        if (sliderJson.contains("m_disabledTexture")) slider.m_disabledTexture = sliderJson["m_disabledTexture"].get<std::string>();
+
+        if (sliderJson.contains("m_knobID"))
+        {
+            if (sliderJson["m_knobID"].is_null())
+            {
+                slider.m_knobID.reset();
+            }
+            else
+            {
+                slider.m_knobID = sliderJson["m_knobID"].get<EntityID>();
+            }
+        }
+
+        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUISlider>(), static_cast<void*>(&slider));
         return true;
     }
     return false;

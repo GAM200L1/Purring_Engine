@@ -64,6 +64,27 @@ namespace PE
         }
 
 
+        glm::mat4 CameraManager::GetWorldToViewMatrix(bool const editorMode)
+        {
+            if (editorMode)
+            {
+                // Return the editor camera matrix
+                return m_editorCamera.GetWorldToViewMatrix();
+            }
+            else
+            {
+                // Return the main camera matrix
+                std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
+                if (mainCamera.has_value())
+                {
+                    return mainCamera.value().get().GetWorldToViewMatrix();
+                }
+
+                return glm::mat4{ 0 };
+            }
+        }
+
+
         glm::mat4 CameraManager::GetViewToNdcMatrix(bool const editorMode)
         {
             if (editorMode)
