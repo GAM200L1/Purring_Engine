@@ -842,7 +842,14 @@
                                 "RatPortrait": 53,
                                 "SplashScreen": 17,
                                 "TurnCounterCanvas": 43,
-                                "WinCanvas": 32
+                                "WinCanvas": 32,
+                                "clicklisttest": [
+                                    18446744073709551615,
+                                    60,
+                                    61,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ]
                             },
                             "state": 0
                         }
@@ -1227,7 +1234,7 @@
                             44,
                             47
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 4
@@ -2412,11 +2419,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -805.2999267578125,
-                            "y": -388.7999267578125
+                            "y": -351.2999267578125
                         },
                         "relativeposition": {
                             "x": -805.2999267578125,
-                            "y": -388.7999267578125
+                            "y": -351.2999267578125
                         },
                         "relorientation": 0.0,
                         "width": 256.0
@@ -2436,7 +2443,7 @@
                             49
                         ],
                         "isActive": false,
-                        "name": "EnergyBar",
+                        "name": "CatEnergyBar",
                         "parent": 51,
                         "sceneID": 48
                     },
@@ -2496,11 +2503,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -794.5001831054688,
-                            "y": -469.9000244140625
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -794.5001831054688,
-                            "y": -469.9000244140625
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 203.0
@@ -2536,7 +2543,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -819.8751831054688,
-                            "y": -469.9000244140625
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -25.375,
@@ -2576,11 +2583,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -797.300048828125,
-                            "y": -468.0000305175781
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -797.300048828125,
-                            "y": -468.0000305175781
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 231.0
@@ -2656,11 +2663,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -906.3993530273438,
-                            "y": -468.9000244140625
+                            "y": -444.9000244140625
                         },
                         "relativeposition": {
                             "x": -906.3993530273438,
-                            "y": -468.9000244140625
+                            "y": -444.9000244140625
                         },
                         "relorientation": 0.0,
                         "width": 55.0
@@ -2736,11 +2743,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -823.0994262695313,
-                            "y": -260.3999328613281
+                            "y": -225.39999389648438
                         },
                         "relativeposition": {
                             "x": -823.0994262695313,
-                            "y": -260.3999328613281
+                            "y": -225.39999389648438
                         },
                         "relorientation": 0.0,
                         "width": 241.0
@@ -2762,7 +2769,7 @@
                         "isActive": false,
                         "name": "RatHealthBar",
                         "parent": 53,
-                        "sceneID": 0
+                        "sceneID": 1
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2820,11 +2827,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -794.0,
-                            "y": -469.0
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -794.0,
-                            "y": -469.0
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 203.0
@@ -2860,7 +2867,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -861.6666870117188,
-                            "y": -469.0
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -67.66666412353516,
@@ -2882,9 +2889,9 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
-                        "name": "HealthFrameThreeSegment",
+                        "name": "HealthFrame",
                         "parent": 53,
-                        "sceneID": 1
+                        "sceneID": 2
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2900,11 +2907,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -791.0000610351563,
-                            "y": -468.0
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -791.0000610351563,
-                            "y": -468.0
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 231.0
@@ -2924,7 +2931,7 @@
                         "isActive": false,
                         "name": "HealthIcon",
                         "parent": 53,
-                        "sceneID": 2
+                        "sceneID": 3
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2940,11 +2947,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -907.5989990234375,
-                            "y": -468.300048828125
+                            "y": -444.29998779296875
                         },
                         "relativeposition": {
                             "x": -907.5989990234375,
-                            "y": -468.300048828125
+                            "y": -444.29998779296875
                         },
                         "relorientation": 0.0,
                         "width": 77.0
@@ -2964,7 +2971,7 @@
                         "isActive": false,
                         "name": "RatPortraitName",
                         "parent": 53,
-                        "sceneID": 3
+                        "sceneID": 0
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2980,14 +2987,140 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -823.0989990234375,
-                            "y": -260.3999938964844
+                            "y": -222.89996337890625
                         },
                         "relativeposition": {
                             "x": -823.0989990234375,
-                            "y": -260.3999938964844
+                            "y": -222.89996337890625
                         },
                         "relorientation": 0.0,
                         "width": 241.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 60,
+                        "Prefab Type": "OrangeCatPrefab",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Orange Cat 1",
+                        "parent": null,
+                        "sceneID": 60
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 140.7998046875,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 61,
+                        "Prefab Type": "OrangeCatPrefab",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Orange Cat 2",
+                        "parent": null,
+                        "sceneID": 61
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 140.7998046875,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""

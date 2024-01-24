@@ -98,7 +98,7 @@
                         "isActive": false,
                         "name": "PauseCanvas",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 11
                     },
                     "Transform": {
                         "height": 100.0,
@@ -400,7 +400,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 12
                     },
                     "Transform": {
                         "height": 100.0,
@@ -665,7 +665,7 @@
                         "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
-                        "sceneID": 7
+                        "sceneID": 9
                     },
                     "Transform": {
                         "height": 100.0,
@@ -742,7 +742,7 @@
                         "isActive": true,
                         "name": "SplashScreenCanvas",
                         "parent": null,
-                        "sceneID": 43
+                        "sceneID": 53
                     },
                     "Transform": {
                         "height": 100.0,
@@ -829,6 +829,7 @@
                             "data": {
                                 "AreYouSureCanvas": 8,
                                 "BackGroundCanvas": 13,
+                                "CatPortrait": 51,
                                 "ExecuteCanvas": 25,
                                 "GameStateManagerActive": true,
                                 "HUDCanvas": 24,
@@ -837,9 +838,18 @@
                                 "HowToPlayPageTwo": 20,
                                 "LoseCanvas": 37,
                                 "PauseMenuCanvas": 3,
+                                "Portrait": 47,
+                                "RatPortrait": 53,
                                 "SplashScreen": 17,
                                 "TurnCounterCanvas": 43,
-                                "WinCanvas": 32
+                                "WinCanvas": 32,
+                                "clicklisttest": [
+                                    18446744073709551615,
+                                    60,
+                                    61,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ]
                             },
                             "state": 0
                         }
@@ -883,7 +893,7 @@
                         "isActive": false,
                         "name": "HowToPlayCanvas",
                         "parent": null,
-                        "sceneID": 8
+                        "sceneID": 10
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1221,9 +1231,10 @@
                             28,
                             29,
                             30,
-                            44
+                            44,
+                            47
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 4
@@ -1260,10 +1271,10 @@
                         "children": [
                             26
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "FoliageCanvas",
                         "parent": null,
-                        "sceneID": 5
+                        "sceneID": 7
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1488,7 +1499,7 @@
                         "isActive": false,
                         "name": "EndPlanningText",
                         "parent": 24,
-                        "sceneID": 13
+                        "sceneID": 47
                     },
                     "TextComponent": {
                         "Color": {
@@ -1618,7 +1629,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 11
+                        "sceneID": 13
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1886,7 +1897,7 @@
                         "isActive": false,
                         "name": "LoseCanvas",
                         "parent": null,
-                        "sceneID": 12
+                        "sceneID": 14
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2287,7 +2298,7 @@
                         "isActive": false,
                         "name": "TurnCounterCanvas",
                         "parent": null,
-                        "sceneID": 6
+                        "sceneID": 8
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2376,6 +2387,740 @@
                         },
                         "relorientation": 0.0,
                         "width": 127.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 47,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "UnitPortrait",
+                        "parent": 24,
+                        "sceneID": 13
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_Default_256px.png"
+                    },
+                    "Transform": {
+                        "height": 256.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -805.2999267578125,
+                            "y": -351.2999267578125
+                        },
+                        "relativeposition": {
+                            "x": -805.2999267578125,
+                            "y": -351.2999267578125
+                        },
+                        "relorientation": 0.0,
+                        "width": 256.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 48,
+                        "Prefab Type": "SliderBody",
+                        "children": [
+                            49
+                        ],
+                        "isActive": false,
+                        "name": "CatEnergyBar",
+                        "parent": 51,
+                        "sceneID": 48
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.3674418330192566,
+                            "g": 0.3674418330192566,
+                            "r": 0.3674418330192566
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 3.0,
+                        "m_currentWidth": 45.0,
+                        "m_currentXpos": 50.75,
+                        "m_defaultColor": [
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 101.5,
+                        "m_hoveredColor": [
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": true,
+                        "m_knobID": 49,
+                        "m_maxValue": 4.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -101.5
+                    },
+                    "Transform": {
+                        "height": 50.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -794.5001831054688,
+                            "y": -454.8999938964844
+                        },
+                        "relativeposition": {
+                            "x": -794.5001831054688,
+                            "y": -454.8999938964844
+                        },
+                        "relorientation": 0.0,
+                        "width": 203.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 49,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SliderKnob",
+                        "parent": 48,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.0,
+                            "g": 0.5042725801467896,
+                            "r": 0.8604651093482971
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 50.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -819.8751831054688,
+                            "y": -454.8999938964844
+                        },
+                        "relativeposition": {
+                            "x": -25.375,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 152.25
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 50,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "EnergyFrame",
+                        "parent": 51,
+                        "sceneID": 49
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_180x46.png"
+                    },
+                    "Transform": {
+                        "height": 72.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -797.300048828125,
+                            "y": -455.0
+                        },
+                        "relativeposition": {
+                            "x": -797.300048828125,
+                            "y": -455.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 231.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 51,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            48,
+                            50,
+                            52,
+                            54
+                        ],
+                        "isActive": false,
+                        "name": "CatPortraitCanvas",
+                        "parent": null,
+                        "sceneID": 5
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 54,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "EnergyIcon",
+                        "parent": 51,
+                        "sceneID": 50
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyIcon_41x86.png"
+                    },
+                    "Transform": {
+                        "height": 116.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -906.3993530273438,
+                            "y": -444.9000244140625
+                        },
+                        "relativeposition": {
+                            "x": -906.3993530273438,
+                            "y": -444.9000244140625
+                        },
+                        "relorientation": 0.0,
+                        "width": 55.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 53,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            55,
+                            57,
+                            58,
+                            59
+                        ],
+                        "isActive": false,
+                        "name": "RatPortraitCanvas",
+                        "parent": null,
+                        "sceneID": 6
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 52,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "CatPortraitName",
+                        "parent": 51,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_NameFrame_Cat_239x82.png"
+                    },
+                    "Transform": {
+                        "height": 96.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -823.0994262695313,
+                            "y": -225.39999389648438
+                        },
+                        "relativeposition": {
+                            "x": -823.0994262695313,
+                            "y": -225.39999389648438
+                        },
+                        "relorientation": 0.0,
+                        "width": 241.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 55,
+                        "Prefab Type": "SliderBody",
+                        "children": [
+                            56
+                        ],
+                        "isActive": false,
+                        "name": "RatHealthBar",
+                        "parent": 53,
+                        "sceneID": 1
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 1.0,
+                        "m_currentWidth": 75.0,
+                        "m_currentXpos": -33.83332824707031,
+                        "m_defaultColor": [
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499,
+                            0.3921568691730499
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            0.0784313753247261,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 101.5,
+                        "m_hoveredColor": [
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            0.3529411852359772,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": true,
+                        "m_knobID": 56,
+                        "m_maxValue": 3.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -101.5
+                    },
+                    "Transform": {
+                        "height": 50.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -794.0,
+                            "y": -445.0
+                        },
+                        "relativeposition": {
+                            "x": -794.0,
+                            "y": -445.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 203.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 56,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": false,
+                        "name": "SliderKnob",
+                        "parent": 55,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.3074093163013458,
+                            "g": 0.9441860318183899,
+                            "r": 0.7990602254867554
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 50.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -861.6666870117188,
+                            "y": -445.0
+                        },
+                        "relativeposition": {
+                            "x": -67.66666412353516,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 67.66667175292969
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 57,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "HealthFrame",
+                        "parent": 53,
+                        "sceneID": 2
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                    },
+                    "Transform": {
+                        "height": 72.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -791.0000610351563,
+                            "y": -440.0
+                        },
+                        "relativeposition": {
+                            "x": -791.0000610351563,
+                            "y": -440.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 231.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 58,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "HealthIcon",
+                        "parent": 53,
+                        "sceneID": 3
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_HealthIcon_66x70.png"
+                    },
+                    "Transform": {
+                        "height": 79.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -907.5989990234375,
+                            "y": -444.29998779296875
+                        },
+                        "relativeposition": {
+                            "x": -907.5989990234375,
+                            "y": -444.29998779296875
+                        },
+                        "relorientation": 0.0,
+                        "width": 77.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 59,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "RatPortraitName",
+                        "parent": 53,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_NameFrame_Rat_239x82.png"
+                    },
+                    "Transform": {
+                        "height": 96.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -823.0989990234375,
+                            "y": -222.89996337890625
+                        },
+                        "relativeposition": {
+                            "x": -823.0989990234375,
+                            "y": -222.89996337890625
+                        },
+                        "relorientation": 0.0,
+                        "width": 241.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 60,
+                        "Prefab Type": "OrangeCatPrefab",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Orange Cat 1",
+                        "parent": null,
+                        "sceneID": 60
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 140.7998046875,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 61,
+                        "Prefab Type": "OrangeCatPrefab",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Orange Cat 2",
+                        "parent": null,
+                        "sceneID": 61
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": null,
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 140.7998046875,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""

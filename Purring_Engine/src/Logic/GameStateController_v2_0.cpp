@@ -26,6 +26,9 @@
 #include "Graphics/Text.h"
 #include "GUISystem.h"
 #include "SceneManager/scenemanager.h"
+#include "System.h"
+#include <Graphics/CameraManager.h>
+#include <Physics/CollisionManager.h>
 namespace PE
 {
 	GameStateController_v2_0::GameStateController_v2_0()
@@ -61,7 +64,8 @@ namespace PE
 
 		m_ScriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController_v2_0::OnWindowOutOfFocus, this)
-
+		m_ScriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
+		
 		m_currentGameStateControllerID = id;
 
 	}
@@ -115,12 +119,43 @@ namespace PE
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
 				DeactiveAllMenu();
 				PlanningStateHUD(id, deltaTime);
+				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].TurnCounterCanvas).children)
+				{
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "TurnNumberText")
+					{
+						if (EntityManager::GetInstance().Has<TextComponent>(id2))
+						{
+							EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Turn: " + std::to_string(CurrentTurn));
+						}
+						continue;
+					}
+
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CurrentTurnPhase")
+					{
+						if (EntityManager::GetInstance().Has<TextComponent>(id2))
+						{
+							EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Plan Movement");
+						}
+						continue;
+					}
+				}
 				prevState = currentState;
 				break;
 			case GameStates_v2_0::EXECUTE:
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
 				DeactiveAllMenu();
 				ExecutionStateHUD(id, deltaTime);
+				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].TurnCounterCanvas).children)
+				{
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CurrentTurnPhase")
+					{
+						if (EntityManager::GetInstance().Has<TextComponent>(id2))
+						{
+							EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Executing...");
+						}
+						continue;
+					}
+				}
 				prevState = currentState;
 				break;
 			case GameStates_v2_0::WIN:
@@ -158,6 +193,8 @@ namespace PE
 	void GameStateController_v2_0::OnAttach(EntityID id)
 	{
 		m_ScriptData[id] = GameStateController_v2_0Data();
+		m_ScriptData[id].clicklisttest.resize(5);
+		std::fill(m_ScriptData[id].clicklisttest.begin(), m_ScriptData[id].clicklisttest.end(), static_cast<EntityID>(-1));
 	}
 	void GameStateController_v2_0::OnDetach(EntityID id)
 	{
@@ -221,6 +258,71 @@ namespace PE
 			if (KTE.keycode == GLFW_KEY_F11)
 			{
 				NextState();
+			}
+		}
+	}
+
+	void GameStateController_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)
+	{
+		MouseButtonPressedEvent MBPE;
+		MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+
+		if (MBPE.button == GLFW_MOUSE_BUTTON_LEFT)
+		{
+			if (currentState == GameStates_v2_0::PLANNING)
+			{
+				for (auto id : m_ScriptData[m_currentGameStateControllerID].clicklisttest)
+				{
+					if (EntityManager::GetInstance().Has<Transform>(id) && EntityManager::GetInstance().Has<Collider>(id))
+					{
+						vec2 cursorPosition{};
+						InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().p_currWindow, cursorPosition.x, cursorPosition.y);
+						cursorPosition = GETCAMERAMANAGER()->GetWindowToWorldPosition(cursorPosition.x, cursorPosition.y);
+
+						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
+
+						// Check if the rat/cat has been clicked
+						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+						if (PointCollision(col, cursorPosition))
+						{
+							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(id).name << std::endl;
+							//add a switch statement here
+							//need specific texture
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_Cat_Orange_256px.png");
+							//set other prtrait stuff active and set right texture
+							ActiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
+							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].CatPortrait).children)
+							{
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPotraitName")
+								{
+									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+									{
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_CatNameFrame_OrangeCat_239x82.png");
+									}
+									break;
+								}
+							}
+							return;
+						}
+						else
+						{
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_Default_256px.png");
+							//set other portrait stuff inactive
+							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].CatPortrait).children)
+							{
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPotraitName")
+								{
+									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+									{
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_NameFrame_Cat_239x82.png");
+									}
+									break;
+								}
+							}
+							DeactiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
+						}
+					}
+				}
 			}
 		}
 	}
@@ -336,6 +438,7 @@ namespace PE
 		}
 		else if (currentState == GameStates_v2_0::EXECUTE)
 		{
+			CurrentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
 		}
 	}
@@ -487,6 +590,12 @@ namespace PE
 		//other stuff that needs to resetted
 		SceneManager::GetInstance().LoadCurrentScene();
 	}
+
+	bool GameStateController_v2_0::WithinRadius(vec2 transform, vec2 mousePos, float radius)
+	{
+		return (std::abs((mousePos.x - transform.x) * (mousePos.x - transform.x) + (mousePos.y - transform.y) * (mousePos.y - transform.y)) <= (radius * radius));
+	}
+
 
 
 }

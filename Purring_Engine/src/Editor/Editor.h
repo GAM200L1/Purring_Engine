@@ -62,7 +62,7 @@ namespace PE {
 
 		 \param[in] GLFWwindow 	the glfw window that we are drawing onto
 		*************************************************************************************/
-		void Init(GLFWwindow* p_window);
+		void Init();
 		/*!***********************************************************************************
 		 \brief Render all imgui windows
 
@@ -410,7 +410,6 @@ namespace PE {
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
 		float m_playWindowOffset {27.f};
-		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;

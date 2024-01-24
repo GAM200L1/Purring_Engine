@@ -62,6 +62,12 @@ namespace PE
         GLFWwindow* GetWindow();
 
         /*!***********************************************************************************
+         \brief     set current window.
+         \param    GLFWwindow* the window
+        *************************************************************************************/
+        void SetWindow(GLFWwindow* p_win);
+
+        /*!***********************************************************************************
          \brief     Close The Window
         *************************************************************************************/
         void CloseWindow(EntityID = -1);
@@ -147,8 +153,10 @@ namespace PE
         *************************************************************************************/
         void TestFunction(EntityID);
 
-    private:
+    public:
         GLFWwindow* p_currWindow;
+
+    private:
         GLFWmonitor* p_monitor;
         static bool msepress;
         bool m_showFps;

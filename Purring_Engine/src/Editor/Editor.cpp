@@ -309,7 +309,7 @@ namespace PE {
 		}
 	}
 
-	void Editor::Init(GLFWwindow* p_window_)
+	void Editor::Init()
 	{
 		//check imgui's version 
 		IMGUI_CHECKVERSION();
@@ -346,10 +346,9 @@ namespace PE {
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 		io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable;
 
-		p_window = p_window_;
 		//getting the full display size of glfw so that the ui know where to be in
 		int width, height;
-		glfwGetWindowSize(p_window, &width, &height);
+		glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
 		io.DisplaySize = ImVec2(static_cast<float>(width), static_cast<float>(height));
 		m_renderWindowWidth = static_cast<float>(width) * 0.1f;
 		m_renderWindowHeight = static_cast<float>(height) * 0.1f;
@@ -362,7 +361,7 @@ namespace PE {
 		}
 
 		//init imgui for glfw and opengl 
-		ImGui_ImplGlfw_InitForOpenGL(p_window, true);
+		ImGui_ImplGlfw_InitForOpenGL(WindowManager::GetInstance().GetWindow(), true);
 
 		ImGui_ImplOpenGL3_Init("#version 450");
 	}
@@ -3070,6 +3069,9 @@ namespace PE {
 										int TurnCounterCanvasID = static_cast<int> (it->second.TurnCounterCanvas);
 										int HTPID1 = static_cast<int> (it->second.HowToPlayPageOne);
 										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
+										int CatPortID = static_cast<int> (it->second.CatPortrait);
+										int RatPortID = static_cast<int> (it->second.RatPortrait);
+										int PortID = static_cast<int> (it->second.Portrait);
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &BackgroundID);
 										if (BackgroundID != m_currentSelectedObject) { it->second.BackGroundCanvas = BackgroundID; }
@@ -3106,6 +3108,27 @@ namespace PE {
 
 										ImGui::Text("Turn Counter Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tcc", &TurnCounterCanvasID);
 										if (TurnCounterCanvasID != m_currentSelectedObject) { it->second.TurnCounterCanvas = TurnCounterCanvasID; }
+
+										ImGui::Text("Cat Portrait Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##cpt", &CatPortID);
+										if (CatPortID != m_currentSelectedObject) { it->second.CatPortrait = CatPortID; }
+
+										ImGui::Text("Rat Portrait Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rpt", &RatPortID);
+										if (RatPortID != m_currentSelectedObject) { it->second.RatPortrait = RatPortID; }
+
+										ImGui::Text("Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##npt", &PortID);
+										if (PortID != m_currentSelectedObject) { it->second.Portrait = PortID; }
+
+										for (int i = 0; i < 5; i++)
+										{
+											if (i != 0)
+											{
+												int id = static_cast<int> (it->second.clicklisttest[i]);
+												std::string test = std::string("##id2") + std::to_string(i);
+												ImGui::Text("Click Test ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												if (id != m_currentSelectedObject)
+													it->second.clicklisttest[i] = id;
+											}
+										}
 									}
 								}
 							}
@@ -3260,7 +3283,7 @@ namespace PE {
 
 				if (ImGui::IsWindowHovered())
 				{
-					glfwSetDropCallback(p_window, &HotLoadingNewFiles);
+					glfwSetDropCallback(WindowManager::GetInstance().GetWindow(), &HotLoadingNewFiles);
 					if (m_fileDragged)
 					{
 						GetFileNamesInParentPath(m_parentPath, m_files);
