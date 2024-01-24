@@ -4304,6 +4304,7 @@ namespace PE {
 
 				//docking port menu bar
 				if (IsEditorActive()) {
+					static bool ToSavePopup{};
 					if (ImGui::BeginMainMenuBar())
 					{
 						//menu 1
@@ -4336,10 +4337,7 @@ namespace PE {
 								{
 									engine_logger.AddLog(false, "Create empty scene...", __FUNCTION__);
 									// This will create a default scene
-
-									UndoStack::GetInstance().ClearStack();
-
-									SceneManager::GetInstance().CreateDefaultScene();
+									ToSavePopup = true;
 
 									engine_logger.AddLog(false, "Default scene created", __FUNCTION__);
 								}
@@ -4466,6 +4464,52 @@ namespace PE {
 						}
 					}
 					ImGui::EndMainMenuBar(); // closing of menu begin function
+
+					if (ToSavePopup)
+					{
+						float size = ImGui::CalcTextSize("Do You Want To Save Your Current Scene?").x + style.FramePadding.x * 2.0f;
+						ImGui::SetNextWindowSize(ImVec2(size, 70));
+						ImGui::OpenPopup("To Save");
+					}
+
+					if (ImGui::BeginPopupModal("To Save",nullptr,ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoDecoration))
+					{
+						ImGui::Text("Do You Want To Save Your Current Scene?");
+
+						ImGui::Dummy(ImVec2(0,7));
+
+						float size = ImGui::CalcTextSize("Yes").x + style.FramePadding.x * 2.0f;
+						float avail = ImGui::GetContentRegionAvail().x;
+
+						float off = (float)((avail - size) * 0.5);
+						if (off > 0.0f)
+							ImGui::SetCursorPosX(ImGui::GetCursorPosX() + off - (ImGui::CalcTextSize("Play").x + style.FramePadding.x) / 2);
+
+						if (ImGui::Button("Yes"))
+						{
+							UndoStack::GetInstance().ClearStack();
+
+							SceneManager::GetInstance().CreateDefaultScene();
+
+							ToSavePopup = false;
+
+							ImGui::ClosePopupToLevel(0, true);
+						}
+
+						ImGui::SameLine();
+
+						if(ImGui::Button("No"))
+						{
+							UndoStack::GetInstance().ClearStack();
+
+							SceneManager::GetInstance().CreateDefaultScene();
+
+							ToSavePopup = false;
+
+							ImGui::ClosePopupToLevel(0, true);
+						}
+						ImGui::EndPopup();
+					}
 				}
 				ImGui::End(); //finish drawing
 			}
