@@ -171,7 +171,7 @@ namespace PE
             }
 #else
             int width, height;
-            glfwGetWindowSize(p_glfwWindow, &width, &height);
+            glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
             windowWidth = static_cast<float>(width);
             windowHeight = static_cast<float>(height);
 #endif

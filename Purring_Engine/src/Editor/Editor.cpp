@@ -5087,9 +5087,10 @@ namespace PE {
 	{
 		int count{};
 
-		for (EntityID objectID : SceneView<Canvas>())
+		for (const EntityID& objectID : SceneView<Canvas>())
 		{
-			return objectID;
+			UNREFERENCED_PARAMETER(objectID);
+			++count;
 		}
 		return count;
 	}
