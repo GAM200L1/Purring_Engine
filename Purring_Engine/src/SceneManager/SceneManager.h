@@ -90,6 +90,6 @@ namespace PE
 
         std::string m_sceneDirectory;
         std::string m_startScene;
-        std::string m_activeScene;
+        std::string m_activeScene{ "DefaultScene.json" };
     };
 }

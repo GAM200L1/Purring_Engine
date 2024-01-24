@@ -358,12 +358,12 @@ void PE::CoreApplication::Run()
 
     // Set start scene
 #ifndef GAMERELEASE
-    SceneManager::GetInstance().SetStartScene("DefaultScene.json");
+    SceneManager::GetInstance().CreateDefaultScene();
 #else
     SceneManager::GetInstance().SetStartScene("GameSceneFINAL.json"); // set game scene here <-
-#endif // !GAMERELEASE
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
+#endif // !GAMERELEASE
 
     // Main Application Loop
     // Continue until the GLFW window is flagged to close

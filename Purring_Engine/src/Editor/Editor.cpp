@@ -169,7 +169,7 @@ namespace PE {
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
-		m_currentSelectedObject = 1;
+		m_currentSelectedObject = -1;
 		m_mouseInObjectWindow = false;
 		//mapping commands to function calls
 		m_commands.insert(std::pair<std::string_view, void(PE::Editor::*)()>("test", &PE::Editor::test));
@@ -4338,8 +4338,6 @@ namespace PE {
 									engine_logger.AddLog(false, "Create empty scene...", __FUNCTION__);
 									// This will create a default scene
 									ToSavePopup = true;
-
-									engine_logger.AddLog(false, "Default scene created", __FUNCTION__);
 								}
 								if (ImGui::MenuItem("Save", "CTRL+S")) // the ctrl s is not programmed yet, need add to the key press event
 								{
@@ -4489,8 +4487,19 @@ namespace PE {
 						{
 							UndoStack::GetInstance().ClearStack();
 
-							SceneManager::GetInstance().CreateDefaultScene();
+							// if active scene is default scene, open file explorer to save new scene
+							if (SceneManager::GetInstance().GetActiveScene() == "DefaultScene.json")
+							{
+								serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath(), true);
+							}
+							else
+							{
+								// save active scene
+								serializationManager.SaveAllEntitiesToFile(SceneManager::GetInstance().GetActiveScene());
+							}
 
+							SceneManager::GetInstance().CreateDefaultScene();
+							engine_logger.AddLog(false, "Default scene created", __FUNCTION__);
 							ToSavePopup = false;
 
 							ImGui::ClosePopupToLevel(0, true);
@@ -4503,6 +4512,7 @@ namespace PE {
 							UndoStack::GetInstance().ClearStack();
 
 							SceneManager::GetInstance().CreateDefaultScene();
+							engine_logger.AddLog(false, "Default scene created", __FUNCTION__);
 
 							ToSavePopup = false;
 
