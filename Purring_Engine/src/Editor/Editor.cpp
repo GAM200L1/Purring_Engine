@@ -4369,8 +4369,7 @@ namespace PE {
 										m_currentSelectedObject = -1;
 
 										// load scene from filepath
-										SceneManager::GetInstance().SetActiveScene(filePath.substr(filePath.find_last_of('/') + 1));
-										SceneManager::GetInstance().LoadSceneFromPath(filePath);
+										SceneManager::GetInstance().LoadScene(filePath.substr(filePath.find_last_of('\\') + 1));
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 									}
 									else
