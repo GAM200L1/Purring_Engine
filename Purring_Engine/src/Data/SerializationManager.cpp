@@ -38,6 +38,7 @@
 #include "Graphics/Text.h"
 #include "Math/MathCustom.h"
 #include "GUI/Canvas.h"
+#include "ResourceManager/ResourceManager.h"
 
 // RTTR
 #include <rttr/variant.h>
@@ -130,6 +131,9 @@ std::string SerializationManager::OpenFileExplorerRequestPath()
     {
         nlohmann::json allEntitiesJson;
 
+        // Serialize all loaded resources metafile
+        //std::vector<std::string> allResources = 
+
         // Use GetEntitiesInPool with the "ALL" constant to get all entity IDs - JW and Hans
         std::vector<EntityID>& allEntityIds = PE::EntityManager::GetInstance().GetEntitiesInPool(ALL);
 
@@ -182,40 +186,6 @@ void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bo
     else
     {
         std::cerr << "Could not open the file for writing: " << filepath << std::endl;
-    }
-}
-
-void SerializationManager::LoadAllEntitiesFromFile(std::string const& filename, bool fp)
-{
-    std::filesystem::path filepath;
-
-    // if using filepath
-    if (fp)
-    {
-        filepath = filename;
-    }
-    else
-    {
-        filepath = std::string{ "../Assets/Scenes/" } + filename;
-    }
-
-    if (!std::filesystem::exists(filepath))
-    {
-        std::cerr << "File does not exist: " << filepath << std::endl;
-        return;
-    }
-
-    std::ifstream inFile(filepath);
-    if (inFile)
-    {
-        nlohmann::json allEntitiesJson;
-        inFile >> allEntitiesJson;
-        DeserializeAllEntities(allEntitiesJson);
-        inFile.close();
-    }
-    else
-    {
-        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
     }
 }
 
@@ -383,43 +353,6 @@ size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
     }
 }
 
-void SerializationManager::DeleteAllObjectAndLoadAllEntitiesFromFile(const std::filesystem::path& filepath)
-{
-    std::vector<EntityID> temp = PE::EntityManager::GetInstance().GetEntitiesInPool(ALL);
-
-    for (auto n : temp)
-    {
-        if (n != PE::Graphics::CameraManager::GetUiCameraId())
-        {
-            PE::LogicSystem::DeleteScriptData(n);
-            PE::EntityManager::GetInstance().RemoveEntity(n);
-        }
-    }
-
-
-    if (!std::filesystem::exists(filepath))
-    {
-        std::cerr << "File does not exist: " << filepath << std::endl;
-        return;
-    }
-
-    std::ifstream inFile(filepath);
-    if (inFile)
-    {
-        nlohmann::json allEntitiesJson;
-        inFile >> allEntitiesJson;
-        DeserializeAllEntities(allEntitiesJson);
-        inFile.close();
-    }
-    else
-    {
-        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
-    }
-}
-
-
-
-
 nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem::path& filepath)
 {
     nlohmann::json loadedData;
@@ -477,6 +410,10 @@ bool SerializationManager::LoadRenderer(const EntityID& r_id, const nlohmann::js
     ren.SetColor(r_json["Entity"]["components"]["Renderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["Renderer"]["Color"]["a"].get<float>());
     ren.SetTextureKey(r_json["Entity"]["components"]["Renderer"]["TextureKey"].get<std::string>());
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::Renderer>(), static_cast<void*>(&ren));
+
+    // Load resource
+    PE::ResourceManager::GetInstance().AddTextureKeyToLoad(ren.GetTextureKey());
+
     return true;
 }
 
@@ -608,6 +545,10 @@ bool SerializationManager::LoadGUIRenderer(const EntityID& r_id, const nlohmann:
     guiren.SetColor(r_json["Entity"]["components"]["GUIRenderer"]["Color"]["r"].get<float>(), r_json["Entity"]["components"]["GUIRenderer"]["Color"]["g"].get<float>(), r_json["Entity"]["components"]["GUIRenderer"]["Color"]["b"].get<float>(), r_json["Entity"]["components"]["GUIRenderer"]["Color"]["a"].get<float>());
     guiren.SetTextureKey(r_json["Entity"]["components"]["GUIRenderer"]["TextureKey"].get<std::string>());
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::Graphics::GUIRenderer>(), static_cast<void*>(&guiren));
+    
+    // Load resource
+    PE::ResourceManager::GetInstance().AddTextureKeyToLoad(guiren.GetTextureKey());
+
     return true;
 }
 
@@ -626,15 +567,24 @@ bool SerializationManager::LoadEntityDescriptor(const EntityID& r_id, const nloh
 
 bool SerializationManager::LoadAnimationComponent(const size_t& r_id, const nlohmann::json& r_json)
 {
+    PE::AnimationComponent comp{ (PE::AnimationComponent().Deserialize(r_json["Entity"]["components"]["AnimationComponent"])) };
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>(),
-        static_cast<void*>(&(PE::AnimationComponent().Deserialize(r_json["Entity"]["components"]["AnimationComponent"]))));
+        static_cast<void*>(&comp));
+
+    // load resource
+    PE::ResourceManager::GetInstance().AddAnimationKeyToLoad(comp.GetAnimationID());
+    PE::ResourceManager::GetInstance().AddTextureKeyToLoad(PE::ResourceManager::GetInstance().GetAnimation(comp.GetAnimationID())->GetSpriteSheetKey());
     return true;
 }
 
 bool SerializationManager::LoadTextComponent(const size_t& r_id, const nlohmann::json& r_json)
 {
+    PE::TextComponent comp{ (PE::TextComponent().Deserialize(r_json["Entity"]["components"]["TextComponent"])) };
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::TextComponent>(),
-        static_cast<void*>(&(PE::TextComponent().Deserialize(r_json["Entity"]["components"]["TextComponent"]))));
+        static_cast<void*>(&comp));
+
+    // load resource
+    PE::ResourceManager::GetInstance().AddFontKeyToLoad(comp.GetFontKey());
     return true;
 }
 
@@ -745,6 +695,9 @@ bool SerializationManager::LoadAudioComponent(const size_t& r_id, const nlohmann
         audioComponent.SetLoop(r_json["Entity"]["components"]["AudioComponent"]["loop"].get<bool>());
 
         PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::AudioComponent>(), static_cast<void*>(&audioComponent));
+
+        // Load resource
+        PE::ResourceManager::GetInstance().AddAudioKeyToLoad(audioComponent.GetAudioKey());
         return true;
     }
     return false;
