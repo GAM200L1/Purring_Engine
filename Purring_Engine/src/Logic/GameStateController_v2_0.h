@@ -154,7 +154,8 @@ namespace PE
 		void ReturnFromAYS(EntityID);
 		void OpenAYS(EntityID);
 		void RetryStage(EntityID);
-		bool WithinRadius(vec2 transform ,vec2 mousePos, float radius);
+		void GetMouseCurrentPosition(vec2& Output);
+		void SetPortraitName(std::string_view TextureName);
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
