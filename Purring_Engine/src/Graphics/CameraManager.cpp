@@ -200,6 +200,40 @@ namespace PE
         }
 
 
+        vec2 CameraManager::GetWorldToWindowPosition(float const x, float const y) const
+        {
+            // Get the main camera
+            std::optional<std::reference_wrapper<Camera>> ref_mainCamera{ GetMainCamera() };
+
+            if (ref_mainCamera.has_value())
+            {
+                Camera& r_mainCamera = ref_mainCamera.value().get();
+                
+#ifndef GAMERELEASE
+                // Get the size of the render window
+                float editorWindowSizeX{}, editorWindowSizeY{};
+                Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+                float widthRatio{ !CompareFloats(editorWindowSizeX, 0.f) ? m_viewportWidth / editorWindowSizeX : 1.f };
+                float heightRatio{ !CompareFloats(editorWindowSizeY, 0.f) ? m_viewportHeight / editorWindowSizeY : 1.f };
+
+                // Adjust scale of the position
+                vec2 ret{ r_mainCamera.GetWorldToViewportPosition(x * widthRatio, y * heightRatio) };
+                ret.y += Editor::GetInstance().GetPlayWindowOffset();
+#else
+                float widthRatio{ !CompareFloats(m_windowWidth, 0.f) ? m_viewportWidth / m_windowWidth : 1.f };
+                float heightRatio{ !CompareFloats(m_windowHeight, 0.f) ? m_viewportHeight / m_windowHeight : 1.f };
+                vec2 ret{ r_mainCamera.GetWorldToViewportPosition(x * widthRatio, y * heightRatio) };
+#endif // !GAMERELEASE
+
+                return ret;
+            }
+            else 
+            {
+                return vec2{x, y};
+            }
+        }
+
+
         vec2 CameraManager::GetWindowToWorldPosition(float const x, float const y) const
         {
             // Get the main camera
