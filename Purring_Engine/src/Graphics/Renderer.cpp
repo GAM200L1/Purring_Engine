@@ -40,6 +40,7 @@ namespace PE
         void Renderer::SetEnabled(bool const newEnabled)
         {
             m_enabled = newEnabled;
+
         }
 
 
@@ -78,6 +79,7 @@ namespace PE
             Renderer r;
             r.SetTextureKey(j["TextureKey"]);
             r.SetColor(j["Color"]["r"], j["Color"]["g"], j["Color"]["b"], j["Color"]["a"]);
+
             return r;
         }
     } // End of Graphics namespace

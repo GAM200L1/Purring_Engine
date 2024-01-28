@@ -123,7 +123,6 @@ namespace PE
     void TextComponent::SetFont(std::string fontKey)
     {
         m_fontKey = fontKey;
-        m_font = ResourceManager::GetInstance().GetFont(fontKey);
     }
 
     void TextComponent::SetText(std::string const& r_text)
@@ -177,6 +176,8 @@ namespace PE
         std::string text{ r_textComponent.GetText() };
         std::string currentLine;
 
+        std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(r_textComponent.GetFontKey()) };
+
         float currentLineWidth{ 0.f }; // width of current line
 
         for (char c : text)
@@ -192,7 +193,7 @@ namespace PE
 
             if (r_textComponent.GetHOverflow() == EnumTextOverflow::WRAP)
             {
-                Character ch = r_textComponent.GetFont()->characters.at(c);
+                Character ch = p_font->characters.at(c);
                 currentLineWidth += (ch.advance >> 6) * r_textComponent.GetSize();
 
                 if (currentLineWidth > textBox.width)
@@ -240,7 +241,7 @@ namespace PE
             for (std::string const& line : lines)
             {
                 // add line height to text height
-                textHeight += r_textComponent.GetFont()->lineHeight * r_textComponent.GetLineSpacing() * r_textComponent.GetSize();
+                textHeight += p_font->lineHeight * r_textComponent.GetLineSpacing() * r_textComponent.GetSize();
 
                 // if text height exceeds, truncate text
                 if (textHeight > textBox.height)
@@ -278,16 +279,18 @@ namespace PE
 
     void VerticalTextAlignment(TextComponent const& r_textComponent, std::vector<std::string> const& r_lines, TextBox textBox, float& vAlignOffset)
     {
+        std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(r_textComponent.GetFontKey()) };
+
         // get text height, first line is not included
-        float textHeight = (r_lines.size() - 1) * (r_textComponent.GetFont()->lineHeight * r_textComponent.GetLineSpacing() * r_textComponent.GetSize());
+        float textHeight = (r_lines.size() - 1) * (p_font->lineHeight * r_textComponent.GetLineSpacing() * r_textComponent.GetSize());
 
         switch (r_textComponent.GetVAlignment())
         {
         case EnumTextAlignment::TOP:
-            vAlignOffset = textBox.height / 2.f - r_textComponent.GetFont()->lineHeight * r_textComponent.GetSize();
+            vAlignOffset = textBox.height / 2.f - p_font->lineHeight * r_textComponent.GetSize();
             break;
         case EnumTextAlignment::CENTER:
-            vAlignOffset = (textHeight - r_textComponent.GetFont()->lineHeight * r_textComponent.GetSize()) / 2.f;
+            vAlignOffset = (textHeight - p_font->lineHeight * r_textComponent.GetSize()) / 2.f;
             break;
         case EnumTextAlignment::BOTTOM:
             vAlignOffset = - (textBox.height / 2.f) + textHeight;
@@ -299,10 +302,12 @@ namespace PE
     {
         float lineWidth{ 0.f };
 
+        std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(r_textComponent.GetFontKey()) };
+
         // get the width of each character and add them to line width
         for (char c : r_line)
         {
-            Character ch = r_textComponent.GetFont()->characters.at(c);
+            Character ch = p_font->characters.at(c);
             lineWidth += (ch.advance >> 6) * r_textComponent.GetSize();
         }
 
