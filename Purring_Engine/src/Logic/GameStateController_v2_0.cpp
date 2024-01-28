@@ -65,8 +65,6 @@ namespace PE
 		m_ScriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController_v2_0::OnWindowOutOfFocus, this)
 		m_ScriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
-		
-		m_currentGameStateControllerID = id;
 
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
@@ -144,6 +142,10 @@ namespace PE
 			case GameStates_v2_0::EXECUTE:
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
 				DeactiveAllMenu();
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].RatPortrait);
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_Default_256px.png");
+
 				ExecutionStateHUD(id, deltaTime);
 				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].TurnCounterCanvas).children)
 				{
@@ -195,6 +197,8 @@ namespace PE
 		m_ScriptData[id] = GameStateController_v2_0Data();
 		m_ScriptData[id].clicklisttest.resize(5);
 		std::fill(m_ScriptData[id].clicklisttest.begin(), m_ScriptData[id].clicklisttest.end(), static_cast<EntityID>(-1));
+
+		m_currentGameStateControllerID = id;
 	}
 	void GameStateController_v2_0::OnDetach(EntityID id)
 	{
@@ -378,6 +382,18 @@ namespace PE
 				EntityManager::GetInstance().Get<GUIButton>(id2).disabled = false;
 			}
 
+			for (auto id3 : EntityManager::GetInstance().Get<EntityDescriptor>(id2).children)
+			{
+				if (EntityManager::GetInstance().Has<GUIButton>(id3))
+				{
+					EntityManager::GetInstance().Get<GUIButton>(id3).disabled = false;
+				}
+
+				if (!EntityManager::GetInstance().Has<EntityDescriptor>(id3))
+					break;
+
+				EntityManager::GetInstance().Get<EntityDescriptor>(id3).isActive = true;
+			}
 			if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
 				break;
 
