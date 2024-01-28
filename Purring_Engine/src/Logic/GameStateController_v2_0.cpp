@@ -29,6 +29,7 @@
 #include "System.h"
 #include <Graphics/CameraManager.h>
 #include <Physics/CollisionManager.h>
+#include "ResourceManager/ResourceManager.h"
 namespace PE
 {
 	GameStateController_v2_0::GameStateController_v2_0()
@@ -141,6 +142,9 @@ namespace PE
 				break;
 			case GameStates_v2_0::EXECUTE:
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Default_256px.png"));
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].RatPortrait);
 				DeactiveAllMenu();
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].RatPortrait);
@@ -292,7 +296,7 @@ namespace PE
 							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(id).name << std::endl;
 							//add a switch statement here
 							//need specific texture
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_Cat_Orange_256px.png");
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
 							//set other prtrait stuff active and set right texture
 							ActiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
 							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].CatPortrait).children)
@@ -301,7 +305,7 @@ namespace PE
 								{
 									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
 									{
-										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_CatNameFrame_OrangeCat_239x82.png");
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_NameFrame_Cat_239x82.png"));
 									}
 									break;
 								}
@@ -310,7 +314,7 @@ namespace PE
 						}
 						else
 						{
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_Default_256px.png");
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Default_256px.png"));
 							//set other portrait stuff inactive
 							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].CatPortrait).children)
 							{
@@ -318,7 +322,7 @@ namespace PE
 								{
 									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
 									{
-										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey("../Assets/Textures/UnitPortrait_NameFrame_Cat_239x82.png");
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_NameFrame_Cat_239x82.png"));
 									}
 									break;
 								}
@@ -604,7 +608,9 @@ namespace PE
 	void GameStateController_v2_0::RetryStage(EntityID)
 	{
 		//other stuff that needs to resetted
-		SceneManager::GetInstance().LoadCurrentScene();
+		//SceneManager::GetInstance().LoadCurrentScene();
+
+		//rmb to ask brandon for a restart scene function that dont need a filepath
 	}
 
 	bool GameStateController_v2_0::WithinRadius(vec2 transform, vec2 mousePos, float radius)
