@@ -51,6 +51,7 @@
 #include "Logic/CameraManagerScript.h"
 #include "Logic/GameStateController.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "Logic/UI/HealthBarScript_v2_0.h"
 #include "GUISystem.h"
 #include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
@@ -3141,6 +3142,37 @@ namespace PE {
 								}
 							}
 
+							if (key == "HealthBarScript_v2_0")
+							{
+									HealthBarScript_v2_0* p_Script = dynamic_cast<HealthBarScript_v2_0*>(val);
+									auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+									if (it != p_Script->GetScriptData().end())
+									{
+											if (ImGui::CollapsingHeader("HealthBarScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+											{
+													int id = static_cast<int> (it->second.followObjectID);
+													ImGui::Text("Follow Object ID: "); ImGui::SameLine(); ImGui::InputInt("##healthbarfollowid", &id);
+													it->second.followObjectID = id;
+
+													//get and set color variable of the healthbar
+													ImVec4 color;
+													color.x = it->second.fillColor.x;
+													color.y = it->second.fillColor.y;
+													color.z = it->second.fillColor.z;
+													color.w = it->second.fillColor.w;
+
+													ImGui::Text("Health Bar Color: "); ImGui::SameLine();
+													ImGui::ColorEdit4("##healthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+													it->second.fillColor.x = color.x;
+													it->second.fillColor.y = color.y;
+													it->second.fillColor.z = color.z;
+													it->second.fillColor.w = color.w;
+
+													ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+											}
+									}
+							}
 						}
 					}
 
@@ -3226,6 +3258,13 @@ namespace PE {
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
 								else
 									AddErrorLog("ALREADY HAS TEXT");
+							}
+							if (ImGui::Selectable("Add ScriptComponent"))
+							{
+									if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+											EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
+									else
+											AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 							}
 						}
 

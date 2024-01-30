@@ -24,7 +24,7 @@ namespace PE
 		{
 				EntityID myID{ 0 };
 				EntityID followObjectID{ 0 }; // ID of the object whose position we should follow
-				std::array<float, 4> fillColor{ 1.f, 0.f, 0.f, 1.f };
+				vec4 fillColor{ 1.f, 0.f, 0.f, 1.f };
 		};
 
 		class HealthBarScript_v2_0 : public Script
@@ -64,7 +64,7 @@ namespace PE
 				/*!***********************************************************************************
 				 \brief Does nothing
 				*************************************************************************************/
-				virtual void Destroy(EntityID) {}
+				virtual void Destroy(EntityID) { /* Empty by design */ }
 
 				/*!***********************************************************************************
 				 \brief Called when the script is attached to an entity (NOTE: even within the editor!).
