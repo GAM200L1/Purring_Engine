@@ -45,6 +45,8 @@ namespace PE
 		REGISTER_UI_FUNCTION(ReturnFromAYS, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(RetryStage, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(SetPauseStateV2, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(RestartGame, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(OpenAYSR, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -653,6 +655,7 @@ namespace PE
 	void GameStateController_v2_0::ReturnFromAYS(EntityID)
 	{
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureCanvas);
+		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureRestartCanvas);
 		switch (currentState)
 		{
 		case GameStates_v2_0::PAUSE:
@@ -673,12 +676,26 @@ namespace PE
 		ActiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureCanvas);
 	}
 
+	void GameStateController_v2_0::OpenAYSR(EntityID)
+	{
+		DeactiveAllMenu();
+		ActiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureRestartCanvas);
+	}
+
 	void GameStateController_v2_0::RetryStage(EntityID)
 	{
 		//other stuff that needs to resetted
 		//SceneManager::GetInstance().LoadCurrentScene();
 
 		//rmb to ask brandon for a restart scene function that dont need a filepath
+	}
+
+	void GameStateController_v2_0::RestartGame(EntityID)
+	{
+		//Set current stage to 0
+		m_currentLevel = 0;
+		//load that scene
+		//i might want to store an array of scene names to load from actually
 	}
 
 	void GameStateController_v2_0::GetMouseCurrentPosition(vec2& Output)

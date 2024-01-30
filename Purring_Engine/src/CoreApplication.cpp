@@ -210,6 +210,7 @@ RTTR_REGISTRATION
         .property("SplashScreen", &PE::GameStateController_v2_0Data::SplashScreen)
         .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
         .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)
+        .property("AreYouSureRestartCanvas", &PE::GameStateController_v2_0Data::AreYouSureRestartCanvas)
         .property("LoseCanvas", &PE::GameStateController_v2_0Data::LoseCanvas)
         .property("WinCanvas", &PE::GameStateController_v2_0Data::WinCanvas)
         .property("HUDCanvas", &PE::GameStateController_v2_0Data::HUDCanvas)

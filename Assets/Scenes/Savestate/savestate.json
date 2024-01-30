@@ -742,7 +742,7 @@
                         "isActive": true,
                         "name": "SplashScreenCanvas",
                         "parent": null,
-                        "sceneID": 53
+                        "sceneID": 60
                     },
                     "Transform": {
                         "height": 100.0,
@@ -828,6 +828,7 @@
                         "GameStateController_v2_0": {
                             "data": {
                                 "AreYouSureCanvas": 8,
+                                "AreYouSureRestartCanvas": 64,
                                 "BackGroundCanvas": 13,
                                 "CatPortrait": 51,
                                 "ExecuteCanvas": 25,
@@ -1237,7 +1238,7 @@
                             44,
                             47
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 4
@@ -1632,7 +1633,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 13
+                        "sceneID": 14
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1741,7 +1742,7 @@
                         "Prefab Type": "restartbutton",
                         "children": [],
                         "isActive": false,
-                        "name": "WinRetryButton",
+                        "name": "WinRestartButton",
                         "parent": 32,
                         "sceneID": 35
                     },
@@ -1754,7 +1755,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_defaultTexture": "../Assets/Textures/Button_RetryLevel_512x128.png",
+                        "m_defaultTexture": "../Assets/Textures/Button_RestartGame_512x128.png",
                         "m_disabledColor": [
                             0.5,
                             0.5,
@@ -1768,8 +1769,8 @@
                             1.0,
                             1.0
                         ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
-                        "m_onClicked": "RestartGame",
+                        "m_hoveredTexture": "../Assets/Textures/Button_RestartGame_Highlighted_512x128.png",
+                        "m_onClicked": "OpenAYSR",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1777,7 +1778,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_pressedTexture": "../Assets/Textures/Button_RetryLevel_Dark_512x128.png"
+                        "m_pressedTexture": "../Assets/Textures/Button_RestartGame_Dark_512x128.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1786,7 +1787,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_RetryLevel_512x128.png"
+                        "TextureKey": "../Assets/Textures/Button_RestartGame_512x128.png"
                     },
                     "Transform": {
                         "height": 184.0,
@@ -1900,7 +1901,7 @@
                         "isActive": false,
                         "name": "LoseCanvas",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 53
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1969,7 +1970,7 @@
                         "Prefab Type": "wlquitbutton",
                         "children": [],
                         "isActive": false,
-                        "name": "LoseQuitButton",
+                        "name": "LoseRestartButton",
                         "parent": 37,
                         "sceneID": 13
                     },
@@ -1982,7 +1983,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_defaultTexture": "../Assets/Textures/Button_QuitGame_512x128.png",
+                        "m_defaultTexture": "../Assets/Textures/Button_RestartGame_512x128.png",
                         "m_disabledColor": [
                             0.5,
                             0.5,
@@ -1996,8 +1997,8 @@
                             1.0,
                             1.0
                         ],
-                        "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
-                        "m_onClicked": "OpenAYS",
+                        "m_hoveredTexture": "../Assets/Textures/Button_RestartGame_Highlighted_512x128.png",
+                        "m_onClicked": "OpenAYSR",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -2005,7 +2006,7 @@
                             1.0,
                             1.0
                         ],
-                        "m_pressedTexture": "../Assets/Textures/Button_QuitGame_Dark_512x128.png"
+                        "m_pressedTexture": "../Assets/Textures/Button_RestartGame_Dark_512x128.png"
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -2014,7 +2015,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Button_QuitGame_512x128.png"
+                        "TextureKey": "../Assets/Textures/Button_RestartGame_512x128.png"
                     },
                     "Transform": {
                         "height": 184.0,
@@ -2403,7 +2404,7 @@
                         "Old ID": 47,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
                         "sceneID": 13
@@ -3031,7 +3032,7 @@
                         "isActive": true,
                         "name": "Orange Cat 1",
                         "parent": null,
-                        "sceneID": 60
+                        "sceneID": 61
                     },
                     "Renderer": {
                         "Color": {
@@ -3094,7 +3095,7 @@
                         "isActive": true,
                         "name": "Orange Cat 2",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 62
                     },
                     "Renderer": {
                         "Color": {
@@ -3157,7 +3158,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 62
+                        "sceneID": 63
                     },
                     "Renderer": {
                         "Color": {
@@ -3224,7 +3225,7 @@
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 63
+                        "sceneID": 64
                     },
                     "Renderer": {
                         "Color": {
@@ -3258,6 +3259,274 @@
                         },
                         "relorientation": 0.0,
                         "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 881.0,
+                        "Width": 1604.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 64,
+                        "Prefab Type": "",
+                        "children": [
+                            65,
+                            66,
+                            67,
+                            68
+                        ],
+                        "isActive": false,
+                        "name": "AreYouSureRestartCanvas",
+                        "parent": null,
+                        "sceneID": 13
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 65,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "RestartYes",
+                        "parent": 64,
+                        "sceneID": 65
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_Yes_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
+                        "m_onClicked": "RestartGame",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_Yes_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_Yes_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relativeposition": {
+                            "x": 500.0,
+                            "y": -310.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 66,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "AreYouSure",
+                        "parent": 64,
+                        "sceneID": 66
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/AreYouSure_Text_1024x256.png"
+                    },
+                    "Transform": {
+                        "height": 217.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 418.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 418.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 858.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 67,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "RestartSadCat",
+                        "parent": 64,
+                        "sceneID": 67
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/SadCat_1920x1080.png"
+                    },
+                    "Transform": {
+                        "height": 1080.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 47.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 47.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 1920.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 68,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "RestartNo",
+                        "parent": 64,
+                        "sceneID": 68
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_No_512x128.png",
+                        "m_disabledColor": [
+                            0.5,
+                            0.5,
+                            0.5,
+                            1.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_hoveredColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
+                        "m_onClicked": "ReturnFromAYS",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            1.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Button_No_Dark_512x128.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Button_No_512x128.png"
+                    },
+                    "Transform": {
+                        "height": 184.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -500.0,
+                            "y": -310.0
+                        },
+                        "relativeposition": {
+                            "x": -500.0,
+                            "y": -310.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 624.0
                     }
                 },
                 "name": ""

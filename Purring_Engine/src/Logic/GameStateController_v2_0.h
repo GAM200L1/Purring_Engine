@@ -34,6 +34,7 @@ namespace PE
 		float SplashTimer{ 2.f }; // Time in seconds that the splashscreen is displayed for
 		EntityID PauseMenuCanvas;
 		EntityID AreYouSureCanvas;
+		EntityID AreYouSureRestartCanvas;
 		EntityID LoseCanvas;
 		EntityID WinCanvas;
 		EntityID HowToPlayCanvas;
@@ -153,7 +154,9 @@ namespace PE
 		void ExecutionStateHUD(EntityID const id, float deltaTime);
 		void ReturnFromAYS(EntityID);
 		void OpenAYS(EntityID);
+		void OpenAYSR(EntityID);
 		void RetryStage(EntityID);
+		void RestartGame(EntityID);
 		void GetMouseCurrentPosition(vec2& Output);
 		void SetPortraitName(std::string_view TextureName);
 	public:

@@ -3069,6 +3069,7 @@ namespace PE {
 										int BackgroundID = static_cast<int> (it->second.BackGroundCanvas);
 										int PauseMenuCanvasID = static_cast<int> (it->second.PauseMenuCanvas);
 										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
+										int AreYouSureRestartCanvasID = static_cast<int> (it->second.AreYouSureRestartCanvas);
 										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
 										int LoseCanvasID = static_cast<int> (it->second.LoseCanvas);
 										int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
@@ -3092,6 +3093,9 @@ namespace PE {
 
 										ImGui::Text("AreYouSureCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ays", &AreYouSureCanvasID);
 										if (AreYouSureCanvasID != m_currentSelectedObject) { it->second.AreYouSureCanvas = AreYouSureCanvasID; }
+
+										ImGui::Text("AreYouSureRestartCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##aysr", &AreYouSureRestartCanvasID);
+										if (AreYouSureRestartCanvasID != m_currentSelectedObject) { it->second.AreYouSureRestartCanvas = AreYouSureRestartCanvasID; }
 
 										ImGui::Text("WinCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ws", &WinCanvasID);
 										if (WinCanvasID != m_currentSelectedObject) { it->second.WinCanvas = WinCanvasID; }
