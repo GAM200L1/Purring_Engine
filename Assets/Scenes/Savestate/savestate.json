@@ -81,8 +81,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -384,8 +384,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -652,8 +652,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -729,8 +729,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -879,8 +879,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1222,8 +1222,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1264,8 +1264,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1616,8 +1616,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1884,8 +1884,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -1947,11 +1947,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": 47.0,
-                            "y": 0.0
+                            "y": -17.499980926513672
                         },
                         "relativeposition": {
                             "x": 47.0,
-                            "y": 0.0
+                            "y": -17.499980926513672
                         },
                         "relorientation": 0.0,
                         "width": 1920.0
@@ -2134,11 +2134,11 @@
                         "height": 217.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 76.0,
+                            "x": 39.99989318847656,
                             "y": 418.0
                         },
                         "relativeposition": {
-                            "x": 76.0,
+                            "x": 39.99989318847656,
                             "y": 418.0
                         },
                         "relorientation": 0.0,
@@ -2286,8 +2286,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -2403,7 +2403,7 @@
                         "Old ID": 47,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "UnitPortrait",
                         "parent": 24,
                         "sceneID": 13
@@ -2582,7 +2582,7 @@
                         "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_180x46.png"
                     },
                     "Transform": {
-                        "height": 72.0,
+                        "height": 62.63999938964844,
                         "orientation": 0.0,
                         "position": {
                             "x": -797.300048828125,
@@ -2593,7 +2593,7 @@
                             "y": -455.0
                         },
                         "relorientation": 0.0,
-                        "width": 231.0
+                        "width": 200.97000122070313
                     }
                 },
                 "name": ""
@@ -2603,8 +2603,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -2662,18 +2662,18 @@
                         "TextureKey": "../Assets/Textures/UnitPortrait_EnergyIcon_41x86.png"
                     },
                     "Transform": {
-                        "height": 116.0,
+                        "height": 95.12000274658203,
                         "orientation": 0.0,
                         "position": {
-                            "x": -902.3989868164063,
-                            "y": -447.8999938964844
+                            "x": -887.3989868164063,
+                            "y": -450.8999938964844
                         },
                         "relativeposition": {
-                            "x": -902.3989868164063,
-                            "y": -447.8999938964844
+                            "x": -887.3989868164063,
+                            "y": -450.8999938964844
                         },
                         "relorientation": 0.0,
-                        "width": 55.0
+                        "width": 45.099998474121094
                     }
                 },
                 "name": ""
@@ -2683,8 +2683,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -2696,7 +2696,7 @@
                             58,
                             59
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "RatPortraitCanvas",
                         "parent": null,
                         "sceneID": 6
@@ -2906,7 +2906,7 @@
                         "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
                     },
                     "Transform": {
-                        "height": 72.0,
+                        "height": 61.92000198364258,
                         "orientation": 0.0,
                         "position": {
                             "x": -797.0,
@@ -2917,7 +2917,7 @@
                             "y": -455.0
                         },
                         "relorientation": 0.0,
-                        "width": 231.0
+                        "width": 198.66000366210938
                     }
                 },
                 "name": ""
@@ -2946,18 +2946,18 @@
                         "TextureKey": "../Assets/Textures/UnitPortrait_HealthIcon_66x70.png"
                     },
                     "Transform": {
-                        "height": 79.0,
+                        "height": 68.84849548339844,
                         "orientation": 0.0,
                         "position": {
-                            "x": -907.5989990234375,
+                            "x": -887.7989501953125,
                             "y": -454.29998779296875
                         },
                         "relativeposition": {
-                            "x": -907.5989990234375,
+                            "x": -887.7989501953125,
                             "y": -454.29998779296875
                         },
                         "relorientation": 0.0,
-                        "width": 77.0
+                        "width": 67.10549926757813
                     }
                 },
                 "name": ""
