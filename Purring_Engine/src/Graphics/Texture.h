@@ -41,14 +41,14 @@ namespace PE
 
 						\return unsigned int - The width of the texture.
 						*************************************************************************************/
-						inline unsigned int GetWidth() { return m_width; }
+						inline unsigned int GetWidth() const { return m_width; }
 
 						/*!***********************************************************************************
 						\brief  Gets the texture height.
 
 						\return unsigned int - The height of the texture.
 						*************************************************************************************/
-						inline unsigned int GetHeight() { return m_height; }
+						inline unsigned int GetHeight() const { return m_height; }
 
 
 						// ----- Public methods ----- // 

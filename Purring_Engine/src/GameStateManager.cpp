@@ -478,7 +478,7 @@ namespace PE
 		Won = false;
 		Lost = false;
 
-		SceneManager::GetInstance().LoadCurrentScene();
+		SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 	}
 
 	void GameStateManager::ReturnToWinLoseScreenFromExit(EntityID)

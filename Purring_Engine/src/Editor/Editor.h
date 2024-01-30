@@ -265,6 +265,10 @@ namespace PE {
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Blue();
+
+		std::string ToLower(const std::string& str);
+		bool CaseInsensitiveFind(const std::string& str, const std::string& toFind);
+
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -403,7 +407,7 @@ namespace PE {
 		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
 		bool m_sceneViewFocused;
-		int m_currentSelectedObject;
+		int m_currentSelectedObject{ -1 };
 		ImGuizmo::OPERATION m_currentGizmoOperation{ImGuizmo::OPERATION::TRANSLATE};
 
 		//variable for assets browser
