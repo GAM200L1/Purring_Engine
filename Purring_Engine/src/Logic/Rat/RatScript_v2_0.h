@@ -51,6 +51,7 @@ namespace PE
 
 		// Attack entities and variables
 		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
+		EntityID attackTelegraphEntityID{ 0 };			// id of cross attack telegraph
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
 		EntityID redTelegraphEntityID{ 0 };				// id of red detection telegraph
 

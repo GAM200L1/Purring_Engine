@@ -1,6 +1,6 @@
 #include "prpch.h"
 #include "RatIdle_v2_0.h"
-#include "Physics/CollisionManager.h" // Ensure this path is correct
+#include "Physics/CollisionManager.h"
 #include "Animation/Animation.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/Rat/RatScript_v2_0.h"
@@ -9,13 +9,13 @@
 
 namespace PE
 {
-    // ---------- RAT IDLE PLAN STATE v2.0 ---------- //
+    // ---------- RAT IDLE STATE v2.0 ---------- //
 
-    RatIdlePLAN_v2_0::RatIdlePLAN_v2_0() { }
+    RatIdle_v2_0::RatIdle_v2_0(RatType type) : m_type(type) { }
 
-    RatIdlePLAN_v2_0::~RatIdlePLAN_v2_0() { }
+    RatIdle_v2_0::~RatIdle_v2_0() { }
 
-    void RatIdlePLAN_v2_0::StateEnter_v2_0(EntityID id)
+    void RatIdle_v2_0::StateEnter_v2_0(EntityID id)
     {
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
 
@@ -83,7 +83,7 @@ namespace PE
         }
     }
 
-    void RatIdlePLAN_v2_0::StateUpdate_v2_0(EntityID id, float deltaTime)
+    void RatIdle_v2_0::StateUpdate_v2_0(EntityID id, float deltaTime)
     {
         // Access GameStateController_v2_0 instance
         GameStateController_v2_0* gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
@@ -93,54 +93,34 @@ namespace PE
             return;
         }
 
-        // other things need to update for idle
-    }
-
-    void RatIdlePLAN_v2_0::StateExit_v2_0(EntityID id)
-    {
-        RatScript_v2
-    }
-
-    std::string_view RatIdlePLAN_v2_0::GetName_v2_0() const
-    {
-        return "IdlePLAN_v2_0";
-    }
-
-
-
-    // ---------- RAT IDLE EXECUTE STATE v2.0 ---------- //
-
-    RatIdleEXECUTE_v2_0::RatIdleEXECUTE_v2_0() { }
-
-    RatIdleEXECUTE_v2_0::~RatIdleEXECUTE_v2_0() { }
-
-    void RatIdleEXECUTE_v2_0::StateEnter_v2_0(EntityID id)
-    {
-        p_data = GETSCRIPTDATA(RatScript, id);
-
-        // Initialize or reset values for the execution state
-        EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0); // Reset animation frame index
-    }
-
-    void RatIdleEXECUTE_v2_0::StateUpdate_v2_0(EntityID id, float deltaTime)
-    {
-        // Access GameStateController_v2_0 instance
-        GameStateController_v2_0* gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-
-        if (gameStateController->currentState == GameStates_v2_0::PAUSE)
+        // Conditional logic based on rat type
+        if (m_type == RatType::IDLE)
         {
-            return;
+            // STAY put logic aka do nnothing
         }
+        else if (m_type == RatType::PATROL)
+        {
+            // Patrolling behavior logic, only during execution phase
+            if (GameStateController_v2_0::GetInstance().GetCurrentState() == GameStates_v2_0::EXECUTE)
+            {
+                // aixian's patrol code.
+            }
+        }
+
     }
 
-    void RatIdleEXECUTE_v2_0::StateExit_v2_0(EntityID id)
+    void RatIdle_v2_0::StateExit_v2_0(EntityID id)
     {
-        // Cleanup logic for exiting the Idle Execution state
+        // disables all the UI from showing up
+        RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false);
+        RatScript_v2_0::ToggleEntity(p_data->redTelegraphEntityID, false);
+        RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
+        EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(false);
     }
 
-    std::string_view RatIdleEXECUTE_v2_0::GetName_v2_0() const
+    std::string_view RatIdle_v2_0::GetName_v2_0() const
     {
-        return "IdleEXECUTE_v2_0";
+        return "Idle_v2_0";
     }
 
 } // namespace PE
