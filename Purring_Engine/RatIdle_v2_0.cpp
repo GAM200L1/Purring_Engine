@@ -1,11 +1,13 @@
 #include "prpch.h"
 #include "RatIdle_v2_0.h"
+
+#include "Logic/Rat/RatScript_v2_0.h"
+
 #include "Physics/CollisionManager.h"
 #include "Animation/Animation.h"
 #include "Logic/GameStateController_v2_0.h"
-#include "Logic/Rat/RatScript_v2_0.h"
-#include "Math/Transform.h"
 #include "Math/MathCustom.h"
+#include "Math/Transform.h"
 
 namespace PE
 {
@@ -19,8 +21,12 @@ namespace PE
     {
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
 
-        // Reset Rat animaition to its first frame.
-        EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
+        // ----- Reset -----
+        if (m_type == RatType::PATROL)
+        {
+            InitializePatrolPoints();                                                               // Initialize patrol points if the rat type is PATROL
+        }
+        EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);           // Reset Rat animaition to first frame.
 
         // Position the ratTelegraph entity where the said rat is.
         RatScript_v2_0::PositionEntity(p_data->ratTelegraphID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
@@ -93,20 +99,61 @@ namespace PE
             return;
         }
 
-        // Conditional logic based on rat type
-        if (m_type == RatType::IDLE)
+        switch (m_type)
         {
-            // STAY put logic aka do nnothing
-        }
-        else if (m_type == RatType::PATROL)
-        {
-            // Patrolling behavior logic, only during execution phase
-            if (GameStateController_v2_0::GetInstance().GetCurrentState() == GameStates_v2_0::EXECUTE)
+        case RatType::IDLE:
+            // Idle logic doing nothing
+            break;
+        case RatType::PATROL:
+            // Patrol behavior: Execute during the EXECUTE phase
+            if (gameStateController->currentState == GameStates_v2_0::EXECUTE)
             {
-                // aixian's patrol code.
+                PatrolLogic(id, deltaTime);
             }
+            break;
         }
 
+    }
+
+    void RatIdle_v2_0::PatrolLogic(EntityID id, float deltaTime)
+    {
+        if (p_data->patrolPoints.empty()) return;               // this is to ensure patrol points are defined. Check InitializePatrolPoints function
+
+        vec3& currentTarget = p_data->patrolPoints[p_data->patrolIndex];
+        MoveTowards(id, currentTarget, deltaTime);              // Move the rat towards the target
+
+        if (HasReachedDestination(id, currentTarget))
+        {
+            // Update the patrol index to the next point
+            p_data->patrolIndex = (p_data->patrolIndex + 1) % p_data->patrolPoints.size();
+        }
+    }
+
+    void RatIdle_v2_0::MoveTowards(EntityID id, const vec3& target, float deltaTime)
+    {
+        Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
+        vec3 direction = (target - ratTransform.position).Normalized();
+        float speed = p_data->movementSpeed;
+        ratTransform.position += direction * speed * deltaTime;
+    }
+
+    bool RatIdle_v2_0::HasReachedDestination(EntityID id, const vec3& target)
+    {
+        Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
+        return (ratTransform.position - target).Length() <= 0.1f;  // Adjust threshold as necessary
+    }
+
+    void RatIdle_v2_0::InitializePatrolPoints()
+    {
+        p_data->patrolPoints.clear();                           // clear existing points.
+
+        p_data->patrolPoints.push_back(vec3(-3, -1.56, 0));     // Patrol Point A
+        p_data->patrolPoints.push_back(vec3(0, 0, 0));          // Patrol Point B
+
+        p_data->patrolIndex = 0;                                // Reset patrol index
+
+        // in the future if more than 2 points can use this.
+        //p_data->returnToFirstPoint = false;
     }
 
     void RatIdle_v2_0::StateExit_v2_0(EntityID id)

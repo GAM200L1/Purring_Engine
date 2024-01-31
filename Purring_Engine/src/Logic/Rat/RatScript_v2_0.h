@@ -71,6 +71,11 @@ namespace PE
 		// Attack 
 		int skillDamage{};
 		int skillArea{}; // probably dependent on the attack and cannot be stored as a flat var
+
+		// Patrol Points
+		std::vector<vec3> patrolPoints;
+		int patrolIndex{ 0 };							// Index of the current patrol point the rat is moving towards
+		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
 	};
 	
 	class RatScript_v2_0 : public Script

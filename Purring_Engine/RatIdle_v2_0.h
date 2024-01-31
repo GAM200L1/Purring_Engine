@@ -4,7 +4,6 @@
 #include "Logic/LogicSystem.h"
 #include "ECS/Entity.h"
 
-//#include "Logic/StateManager.h"
 namespace PE
 {
     enum class RatType
@@ -26,6 +25,11 @@ namespace PE
         virtual void StateEnter_v2_0(EntityID id) override;
 
         virtual void StateUpdate_v2_0(EntityID id, float deltaTime) override;
+
+        void PatrolLogic(EntityID id, float deltaTime);
+        void MoveTowards(EntityID id, const vec3& target, float deltaTime);
+        bool HasReachedDestination(EntityID id, const vec3& target);
+        void InitializePatrolPoints();
 
         virtual void StateExit_v2_0(EntityID id) override;
 
