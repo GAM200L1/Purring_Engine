@@ -86,13 +86,6 @@ namespace PE
 
 	public:
 		/*!***********************************************************************************
-		 \brief Get the Font 
-		 
-		 \return std::shared_ptr<const Font> 
-		*************************************************************************************/
-		inline std::shared_ptr<Font> GetFont() const { return m_font; }
-
-		/*!***********************************************************************************
 		 \brief Get the Font Key 
 		 
 		 \return std::string const& 
@@ -330,7 +323,6 @@ namespace PE
 	private:
 		std::string m_text;
 		std::string m_fontKey;
-		std::shared_ptr<Font> m_font;
 		// font style
 		float m_size{ 1.f };
 		float m_lineSpacing{ 1.f }; // % of font size

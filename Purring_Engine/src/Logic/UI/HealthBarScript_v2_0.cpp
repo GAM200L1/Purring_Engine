@@ -1,0 +1,140 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401/2451-A
+ \file     HealthBarScript_v2_0.cpp
+ \date     17-01-2024
+
+ \author               Krystal YAMIN
+ \par      email:      krystal.y@digipen.edu
+
+ \brief
+	This file contains functions to update the position and visuals of the health bar UI.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
+
+#include "prpch.h"
+#include "HealthBarScript_v2_0.h"
+#include "../LogicSystem.h"
+#include "../ECS/Entity.h"
+#include "../ECS/EntityFactory.h"
+#include "../Graphics/CameraManager.h"
+
+namespace PE
+{
+	// ---------- FUNCTION DEFINITIONS ---------- //
+
+	void HealthBarScript_v2_0::Init(EntityID id)
+	{
+		// Reset the values
+		SetFillAmount(id, 1.f);
+	}
+
+	void HealthBarScript_v2_0::Update(EntityID id, float deltaTime)
+	{
+		// Get the transform of the object we're supposed to be following
+		if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].followObjectID))
+		{
+			// Update the position of the healthbar
+			vec2 newPosition{ EntityManager::GetInstance().Get<Transform>(m_scriptData[id].followObjectID).position };
+			PositionEntityRelative(id, GETCAMERAMANAGER()->GetWorldToWindowPosition(newPosition.x, newPosition.y));
+		}
+	}
+
+	void HealthBarScript_v2_0::OnAttach(EntityID id)
+	{
+		//// Add gui slider component
+		//if (!EntityManager::GetInstance().Has<GUISlider>(id))
+		//{
+		//	EntityFactory::GetInstance().Assign(id, {EntityManager::GetInstance().GetComponentID<GUISlider>()});
+		//	EntityManager::GetInstance().Get<GUISlider>(id).m_isHealthBar = true;
+		//}
+		//else
+		//{
+		//	EntityManager::GetInstance().Get<GUISlider>(id).m_isHealthBar = true;
+		//}
+
+		// Create script instance data
+		m_scriptData[id] = HealthBarScript_v2_0_Data();
+		m_scriptData[id].myID = id;
+	}
+
+	void HealthBarScript_v2_0::OnDetach(EntityID id)
+	{
+		// Delete this instance's script data
+		auto it = m_scriptData.find(id);
+		if (it != m_scriptData.end())
+		{
+			m_scriptData.erase(id);
+		}
+	}
+
+	std::map<EntityID, HealthBarScript_v2_0_Data> &HealthBarScript_v2_0::GetScriptData()
+	{
+		return m_scriptData;
+	}
+
+	rttr::instance HealthBarScript_v2_0::GetScriptData(EntityID id)
+	{
+		return rttr::instance(m_scriptData.at(id));
+	}
+
+	float HealthBarScript_v2_0::GetFillAmount(EntityID id) const
+	{
+		// Get the GUI slider component
+		if (EntityManager::GetInstance().Has<GUISlider>(id))
+		{
+			return EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue;
+		}
+		return 0.f;
+	}
+
+	void HealthBarScript_v2_0::SetFillAmount(EntityID id, float const fillAmount)
+	{
+		// Get the GUI slider component
+		if (EntityManager::GetInstance().Has<GUISlider>(id))
+		{
+			EntityManager::GetInstance().Get<GUISlider>(id).CalculateKnobCenter(std::clamp(fillAmount, 0.f, 1.f));
+		}
+	}
+
+	void HealthBarScript_v2_0::ToggleEntity(EntityID id, bool setToActive)
+	{
+		// Exit if the entity is not valid
+		if (!EntityManager::GetInstance().IsEntityValid(id))
+		{
+			return;
+		}
+
+		// Toggle the entity
+		EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
+	}
+
+	void HealthBarScript_v2_0::PositionEntity(EntityID const transformId, vec2 const &r_position)
+	{
+		try
+		{
+			Transform &r_transform{EntityManager::GetInstance().Get<Transform>(transformId)}; // Get the transform of the player
+			r_transform.position = r_position;
+		}
+		catch (...)
+		{
+			return;
+		}
+	}
+
+	void HealthBarScript_v2_0::PositionEntityRelative(EntityID const transformId, vec2 const &r_position)
+	{
+		try
+		{
+			Transform &r_transform{EntityManager::GetInstance().Get<Transform>(transformId)}; // Get the transform of the player
+			r_transform.relPosition = r_position;
+		}
+		catch (...)
+		{
+			return;
+		}
+	}
+
+} // End of namespace PE

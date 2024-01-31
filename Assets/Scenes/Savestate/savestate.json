@@ -852,6 +852,9 @@
                                 ]
                             },
                             "state": 0
+                        },
+                        "RatController_v2_0": {
+                            "state": 0
                         }
                     },
                     "Transform": {
@@ -2503,11 +2506,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -794.5001831054688,
-                            "y": -454.8999938964844
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -794.5001831054688,
-                            "y": -454.8999938964844
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 203.0
@@ -2543,7 +2546,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -819.8751831054688,
-                            "y": -454.8999938964844
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -25.375,
@@ -2662,12 +2665,12 @@
                         "height": 116.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -906.3993530273438,
-                            "y": -444.9000244140625
+                            "x": -902.3989868164063,
+                            "y": -447.8999938964844
                         },
                         "relativeposition": {
-                            "x": -906.3993530273438,
-                            "y": -444.9000244140625
+                            "x": -902.3989868164063,
+                            "y": -447.8999938964844
                         },
                         "relorientation": 0.0,
                         "width": 55.0
@@ -2827,11 +2830,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -794.0,
-                            "y": -445.0
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -794.0,
-                            "y": -445.0
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 203.0
@@ -2867,7 +2870,7 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -861.6666870117188,
-                            "y": -445.0
+                            "y": -455.0
                         },
                         "relativeposition": {
                             "x": -67.66666412353516,
@@ -2906,12 +2909,12 @@
                         "height": 72.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -791.0000610351563,
-                            "y": -440.0
+                            "x": -797.0,
+                            "y": -455.0
                         },
                         "relativeposition": {
-                            "x": -791.0000610351563,
-                            "y": -440.0
+                            "x": -797.0,
+                            "y": -455.0
                         },
                         "relorientation": 0.0,
                         "width": 231.0
@@ -2947,11 +2950,11 @@
                         "orientation": 0.0,
                         "position": {
                             "x": -907.5989990234375,
-                            "y": -444.29998779296875
+                            "y": -454.29998779296875
                         },
                         "relativeposition": {
                             "x": -907.5989990234375,
-                            "y": -444.29998779296875
+                            "y": -454.29998779296875
                         },
                         "relorientation": 0.0,
                         "width": 77.0
@@ -3121,6 +3124,140 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": -163.000244140625,
+                                "y": 102.99998474121094
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 62,
+                        "Prefab Type": "GutterRat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GutterRat",
+                        "parent": null,
+                        "sceneID": 62
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -163.000244140625,
+                            "y": 102.99998474121094
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 106.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 63,
+                        "Prefab Type": "GutterRat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "GutterRat",
+                        "parent": null,
+                        "sceneID": 63
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 106.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""
