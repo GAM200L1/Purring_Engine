@@ -47,10 +47,13 @@ namespace PE
 		StateMachine* p_stateManager;
 
 		// Movement Variables
-		float distanceFromPlayer{ 0.f };				// stores distance of rat from player cat to determine movement
+		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
 
 		// Attack entities and variables
-		vec2 directionToTarget{ 0.f, 0.f };				// stores the normalized vector pointing at player cat
+		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
+		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
+		EntityID redTelegraphEntityID{ 0 };				// id of red detection telegraph
+
 
 		std::map<std::string, std::string> animationStates;
 
@@ -123,6 +126,48 @@ namespace PE
 		 \param[in,out] id - ID of instance of script to clear
 		*************************************************************************************/
 		virtual void OnDetach(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Helper function to en/disables an entity.
+
+		 \param[in] id EntityID of the entity to en/disable.
+		 \param[in] setToActive Whether this entity should be set to active or inactive.
+		*************************************************************************************/
+		static void ToggleEntity(EntityID id, bool setToActive);
+
+		/*!***********************************************************************************
+		 \brief Adjusts the position of the transform to the value passed in.
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] r_position Position to set the transform to.
+		*************************************************************************************/
+		static void PositionEntity(EntityID const transformId, vec2 const& r_position);
+
+		/*!***********************************************************************************
+		 \brief Adjusts the scale of the transform to the value passed in.
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] width Width to set the transform to.
+		 \param[in] height Height to set the transform to.
+		*************************************************************************************/
+		static void ScaleEntity(EntityID const transformId, float const width, float const height);
+
+
+		// ----- Getters/RTTR ----- //
+
+		/*!***********************************************************************************
+		 \brief Returns the position of the transform of the entity passed in.
+
+		 \param[in] transformId ID of the entity to retrieve the position of.
+		*************************************************************************************/
+		static vec2 GetEntityPosition(EntityID const transformId);
+
+		/*!***********************************************************************************
+		 \brief Returns the scale of the transform of the entity passed in.
+
+		 \param[in] transformId ID of the entity to retrieve the scale of.
+		*************************************************************************************/
+		static vec2 GetEntityScale(EntityID const transformId);
 
 		/*!***********************************************************************************
 		 \brief Get the Script Data object

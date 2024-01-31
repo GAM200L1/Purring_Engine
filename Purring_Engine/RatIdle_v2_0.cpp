@@ -1,8 +1,11 @@
 #include "prpch.h"
-#include "RatIdle_v2.0.h"
+#include "RatIdle_v2_0.h"
 #include "Physics/CollisionManager.h" // Ensure this path is correct
 #include "Animation/Animation.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "Logic/Rat/RatScript_v2_0.h"
+#include "Math/Transform.h"
+#include "Math/MathCustom.h"
 
 namespace PE
 {
@@ -14,70 +17,70 @@ namespace PE
 
     void RatIdlePLAN_v2_0::StateEnter_v2_0(EntityID id)
     {
-        p_data = GETSCRIPTDATA(RatScript, id);
+        p_data = GETSCRIPTDATA(RatScript_v2_0, id);
 
         // Reset Rat animaition to its first frame.
         EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 
-        //// Position the pseudo-rat entity used for telegraphs.
-        //RatScript::PositionEntity(p_data->ratTelegraphID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
+        // Position the ratTelegraph entity where the said rat is.
+        RatScript_v2_0::PositionEntity(p_data->ratTelegraphID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
 
-        //// Make the detection radius visual indicator visible
-        //RatScript::ToggleEntity(p_data->detectionTelegraphID, true);
+        // Make the detection radius visual indicator visible
+        RatScript_v2_0::ToggleEntity(p_data->redTelegraphEntityID, true);
 
-        //// This retrieve the rat's and the main cat's transform components (for position, scale, rotation)
-        //Transform const& ratObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
-        //Transform const& catObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
+        // This retrieve the rat's and the main cat's transform components (for position, scale, rotation)
+        Transform const& ratObject_v2_0 = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+        Transform const& catObject_v2_0 = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
 
-        //// Calculate and store the absolute scales of the rat and cat (ensuring positive values)
-        //vec2 absRatScale = vec2{ abs(ratObject.width), abs(ratObject.height) };
-        //vec2 absCatScale = vec2{ abs(catObject.width), abs(catObject.height) };
+        // Calculate and store the absolute scales of the rat and cat (ensuring positive values)
+        vec2 absRatScale_v2_0 = vec2{ abs(ratObject_v2_0.width), abs(ratObject_v2_0.height) };
+        vec2 absCatScale_v2_0 = vec2{ abs(catObject_v2_0.width), abs(catObject_v2_0.height) };
 
-        //// Calculate the distance from the rat to the cat, adjusting for their sizes
-        //p_data->distanceFromPlayer = RatScript::GetEntityPosition(id).Distance(catObject.position) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f);
+        // Calculate the distance from the rat to the cat, adjusting for their sizes
+        p_data->ratPlayerDistance = RatScript_v2_0::GetEntityPosition(id).Distance(catObject_v2_0.position) - (absCatScale_v2_0.x * 0.5f) - (absRatScale_v2_0.x * 0.5f);
 
-        //// Calculate the direction vector from the rat to the cat
-        //p_data->directionToTarget = RatScript::GetEntityPosition(p_data->mainCatID) - RatScript::GetEntityPosition(id);
+        // Calculate the direction vector from the rat to the cat
+        p_data->directionFromRatToPlayerCat = RatScript_v2_0::GetEntityPosition(p_data->mainCatID) - RatScript_v2_0::GetEntityPosition(id);
 
-        //// Normalize the direction vector to have a length of 1
-        //p_data->directionToTarget.Normalize();
+        // Normalize the direction vector to have a length of 1
+        p_data->directionFromRatToPlayerCat.Normalize();
 
-        //// Check if the cat is within the rat's detection radius and the cat entity is active
-        //if (p_data->distanceFromPlayer <= ((RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f)) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
-        //{
-        //    if (p_data->distanceFromPlayer <= (absCatScale.x * 0.5f))
-        //    {
-        //        // If the rat is very close to the cat, consider them in direct contact
-        //        p_data->distanceFromPlayer = 0.f;
-        //    }
-        //    else
-        //    {
-        //        // Configure the arrow indicator to point towards the cat
-        //        EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).relPosition.x = catObject.position.Distance(ratObject.position) * 0.5f;
-        //        EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).width = p_data->distanceFromPlayer;
+        // Check if the cat is within the rat's detection radius and the cat entity is active
+        if (p_data->ratPlayerDistance <= ((RatScript_v2_0::GetEntityScale(p_data->redTelegraphEntityID).x * 0.5f) - (absCatScale_v2_0.x * 0.5f) - (absRatScale_v2_0.x * 0.5f)) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
+        {
+            if (p_data->ratPlayerDistance <= (absCatScale_v2_0.x * 0.5f))
+            {
+                // If the rat is very close to the cat, consider them in direct contact
+                p_data->ratPlayerDistance = 0.f;
+            }
+            else
+            {
+                // Configure the arrow indicator to point towards the cat
+                EntityManager::GetInstance().Get<Transform>(p_data->telegraphArrowEntityID).relPosition.x = catObject_v2_0.position.Distance(ratObject_v2_0.position) * 0.5f;
+                EntityManager::GetInstance().Get<Transform>(p_data->telegraphArrowEntityID).width = p_data->ratPlayerDistance;
 
-        //        // Calculate and apply the rotation needed to point the arrow towards the cat
-        //        float rotation = atan2(p_data->directionToTarget.y, p_data->directionToTarget.x);
-        //        PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->psudoRatID).orientation = rotation;
+                // Calculate and apply the rotation needed to point the arrow towards the cat
+                float rotation = atan2(p_data->directionFromRatToPlayerCat.y, p_data->directionFromRatToPlayerCat.x);
+                PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->ratTelegraphID).orientation = rotation;
 
-        //        // Make the arrow indicator visible
-        //        RatScript::ToggleEntity(p_data->arrowTelegraphID, true);
-        //    }
+                // Make the arrow indicator visible
+                RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, true);
+            }
 
-        //    // Adjust the rat's scale to ensure it faces the direction of the cat
-        //    vec2 newScale{ RatScript::GetEntityScale(id) };
-        //    newScale.x = std::abs(newScale.x) * (((catObject.position - ratObject.position).Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f);
-        //    RatScript::ScaleEntity(id, newScale.x, newScale.y);
+            // Adjust the rat's scale to ensure it faces the direction of the cat
+            vec2 newScale{ RatScript_v2_0::GetEntityScale(id) };
+            newScale.x = std::abs(newScale.x) * (((catObject_v2_0.position - ratObject_v2_0.position).Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f);
+            RatScript_v2_0::ScaleEntity(id, newScale.x, newScale.y);
 
-        //    // Position and display the attack indicator at the cat's location
-        //    RatScript::PositionEntity(p_data->attackTelegraphID, catObject.position);
-        //    RatScript::ToggleEntity(p_data->attackTelegraphID, true);
-        //}
-        //else
-        //{
-        //    // If the cat is not within the detection radius, no action is needed
-        //    p_data->distanceFromPlayer = 0.f;
-        //}
+            // Position and display the attack indicator at the cat's location
+            RatScript_v2_0::PositionEntity(p_data->attackTelegraphID, catObject_v2_0.position);
+            RatScript_v2_0::ToggleEntity(p_data->attackTelegraphID, true);
+        }
+        else
+        {
+            // If the cat is not within the detection radius, no action is needed
+            p_data->ratPlayerDistance = 0.f;
+        }
     }
 
     void RatIdlePLAN_v2_0::StateUpdate_v2_0(EntityID id, float deltaTime)

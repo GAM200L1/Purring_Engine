@@ -1,8 +1,11 @@
 #pragma once
 
-//#include "Logic/RatScript.h"
 #include "Logic/Rat/RatScript_v2_0.h"
+//#include "Logic/RatScript.h"  // @KRYSTAL depends if you still using this RatScript file or a new file for the base class you working on.
+#include "Logic/LogicSystem.h"
+#include "ECS/Entity.h"
 
+//#include "Logic/StateManager.h"
 namespace PE {
 
     // ----- RAT IDLE PLANNING STATE v2.0 ----- //

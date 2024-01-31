@@ -77,6 +77,55 @@ namespace PE
 				}
 		}
 
+		void RatScript_v2_0::ToggleEntity(EntityID id, bool setToActive)
+		{
+			// Exit if the entity is not valid
+			if (!EntityManager::GetInstance().IsEntityValid(id)) { return; }
+
+			// Toggle the entity
+			EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
+		}
+
+		void RatScript_v2_0::PositionEntity(EntityID const transformId, vec2 const& r_position)
+		{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.position = r_position;
+			}
+			catch (...) { return; }
+		}
+
+		void RatScript_v2_0::ScaleEntity(EntityID const transformId, float const width, float const height)
+		{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.width = width;
+				r_transform.height = height;
+			}
+			catch (...) { return; }
+		}
+
+		vec2 RatScript_v2_0::GetEntityPosition(EntityID const transformId)
+		{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				return r_transform.position;
+			}
+			catch (...) { return vec2{}; }
+		}
+
+		vec2 RatScript_v2_0::GetEntityScale(EntityID const transformId)
+		{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				return vec2{ r_transform.width, r_transform.height };
+			}
+			catch (...) { return vec2{}; }
+		}
 
 		std::map<EntityID, RatScript_v2_0_Data>& RatScript_v2_0::GetScriptData()
 		{
