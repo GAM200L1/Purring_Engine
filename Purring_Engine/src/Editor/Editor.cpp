@@ -3066,7 +3066,7 @@ namespace PE {
 									{
 										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act", &it->second.GameStateManagerActive);
 										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
-										int BackgroundID = static_cast<int> (it->second.BackGroundCanvas);
+										int PauseBackGroundCanvasID = static_cast<int> (it->second.PauseBackGroundCanvas);
 										int PauseMenuCanvasID = static_cast<int> (it->second.PauseMenuCanvas);
 										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
 										int AreYouSureRestartCanvasID = static_cast<int> (it->second.AreYouSureRestartCanvas);
@@ -3081,9 +3081,11 @@ namespace PE {
 										int CatPortID = static_cast<int> (it->second.CatPortrait);
 										int RatPortID = static_cast<int> (it->second.RatPortrait);
 										int PortID = static_cast<int> (it->second.Portrait);
+										int BackgroundID = static_cast<int> (it->second.Background);
+										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 									
-										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &BackgroundID);
-										if (BackgroundID != m_currentSelectedObject) { it->second.BackGroundCanvas = BackgroundID; }
+										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
+										if (PauseBackGroundCanvasID != m_currentSelectedObject) { it->second.PauseBackGroundCanvas = PauseBackGroundCanvasID; }
 
 										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ssc", &SplashScreenID);
 										if (SplashScreenID != m_currentSelectedObject) { it->second.SplashScreen = SplashScreenID; }
@@ -3129,6 +3131,12 @@ namespace PE {
 
 										ImGui::Text("Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##npt", &PortID);
 										if (PortID != m_currentSelectedObject) { it->second.Portrait = PortID; }
+
+										ImGui::Text("Level Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bg", &BackgroundID);
+										if (BackgroundID != m_currentSelectedObject) { it->second.Background = BackgroundID; }
+
+										ImGui::Text("Transition Panel ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tpc", &TransitionPanelID);
+										if (TransitionPanelID != m_currentSelectedObject) { it->second.TransitionPanel = TransitionPanelID; }
 
 										for (int i = 0; i < 5; i++)
 										{

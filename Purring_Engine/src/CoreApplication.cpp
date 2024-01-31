@@ -206,7 +206,7 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::GameStateController_v2_0Data>("GameStateController_v2_0")
         .property("GameStateManagerActive", &PE::GameStateController_v2_0Data::GameStateManagerActive)
-        .property("BackGroundCanvas", &PE::GameStateController_v2_0Data::BackGroundCanvas)
+        .property("PauseBackGroundCanvas", &PE::GameStateController_v2_0Data::PauseBackGroundCanvas)
         .property("SplashScreen", &PE::GameStateController_v2_0Data::SplashScreen)
         .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
         .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)
@@ -222,6 +222,8 @@ RTTR_REGISTRATION
         .property("CatPortrait", &PE::GameStateController_v2_0Data::CatPortrait)
         .property("RatPortrait", &PE::GameStateController_v2_0Data::RatPortrait)
         .property("Portrait", &PE::GameStateController_v2_0Data::Portrait)
+        .property("Background", &PE::GameStateController_v2_0Data::Background)
+        .property("TransitionPanel", &PE::GameStateController_v2_0Data::TransitionPanel)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")

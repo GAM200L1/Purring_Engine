@@ -29,7 +29,7 @@ namespace PE
 	struct GameStateController_v2_0Data
 	{
 		bool GameStateManagerActive;
-		EntityID BackGroundCanvas;
+		EntityID PauseBackGroundCanvas;
 		EntityID SplashScreen;
 		float SplashTimer{ 2.f }; // Time in seconds that the splashscreen is displayed for
 		EntityID PauseMenuCanvas;
@@ -46,6 +46,9 @@ namespace PE
 
 		EntityID CatPortrait,RatPortrait;
 		EntityID Portrait;
+
+		EntityID Background;
+		EntityID TransitionPanel;
 
 		int NumberInList{5};
 		std::vector<EntityID> clicklisttest;
@@ -158,7 +161,7 @@ namespace PE
 		void RetryStage(EntityID);
 		void RestartGame(EntityID);
 		void GetMouseCurrentPosition(vec2& Output);
-		void SetPortraitName(std::string_view TextureName);
+		void SetPortraitInformation(std::string_view TextureName,int Current, int Max);
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
@@ -171,6 +174,8 @@ namespace PE
 		float m_UIFadeTimer{.5f};
 		float m_timeSinceEnteredState{ 1.f };
 		float m_timeSinceExitedState{};
+		std::string m_currentLevelBackground;
+		std::string m_currentLevelSepiaBackground;
 	};
 }
 

@@ -70,6 +70,14 @@ namespace PE
 		m_ScriptData[id].outOfFocusEventHandlerId = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, GameStateController_v2_0::OnWindowOutOfFocus, this)
 		m_ScriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GameStateController_v2_0::OnMouseClick, this)
 
+		
+		m_currentLevelBackground = EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background).GetTextureKey();
+		std::stringstream newTextureName;
+		newTextureName << m_currentLevelBackground.substr(m_currentLevelBackground.find_last_of('/') + 1, m_currentLevelBackground.find_last_of('_'));
+		m_currentLevelBackground = newTextureName.str();
+		newTextureName = std::stringstream();
+		newTextureName << m_currentLevelBackground.substr(0, m_currentLevelBackground.find_last_of('_')) << "_Sepia" << m_currentLevelBackground.substr(m_currentLevelBackground.find_last_of('_'), m_currentLevelBackground.length());
+		m_currentLevelSepiaBackground = newTextureName.str();
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
@@ -85,7 +93,7 @@ namespace PE
 
 		if (currentState == GameStates_v2_0::PAUSE)
 		{
-			ActiveObject(m_ScriptData[id].BackGroundCanvas);
+			ActiveObject(m_ScriptData[id].PauseBackGroundCanvas);
 			if (m_pauseMenuOpenOnce)
 			{
 				for (auto id2 : SceneView<GUIButton>())
@@ -107,7 +115,7 @@ namespace PE
 			if (m_ScriptData[id].SplashTimer <= 0)
 			{
 				DeactiveObject(m_ScriptData[id].SplashScreen);
-				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 				DeactiveAllMenu();
 				ActiveObject(m_ScriptData[id].HUDCanvas);
 				SetGameState(GameStates_v2_0::PLANNING);
@@ -118,9 +126,14 @@ namespace PE
 			switch (currentState)
 			{
 			case GameStates_v2_0::PLANNING:
-				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
+			{
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 				DeactiveAllMenu();
 				PlanningStateHUD(id, deltaTime);
+
+				if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background))
+					EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background).SetTextureKey(ResourceManager::GetInstance().LoadTexture(m_currentLevelSepiaBackground));
+
 				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].TurnCounterCanvas).children)
 				{
 					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "TurnNumberText")
@@ -143,8 +156,14 @@ namespace PE
 				}
 				prevState = currentState;
 				break;
+			}
 			case GameStates_v2_0::EXECUTE:
-				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].BackGroundCanvas);
+			{
+
+				if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background))
+					EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background).SetTextureKey(ResourceManager::GetInstance().LoadTexture(m_currentLevelBackground));
+
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Default_256px.png"));
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].CatPortrait);
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].RatPortrait);
@@ -167,10 +186,11 @@ namespace PE
 				}
 				prevState = currentState;
 				break;
+			}
 			case GameStates_v2_0::WIN:
 				if (m_winOnce)
 				{
-					ActiveObject(m_ScriptData[id].BackGroundCanvas);
+					ActiveObject(m_ScriptData[id].PauseBackGroundCanvas);
 					ActiveObject(m_ScriptData[id].WinCanvas);
 					m_winOnce = false;
 				}
@@ -178,7 +198,7 @@ namespace PE
 			case GameStates_v2_0::LOSE:				
 				if (m_loseOnce)
 				{
-					ActiveObject(m_ScriptData[id].BackGroundCanvas);
+					ActiveObject(m_ScriptData[id].PauseBackGroundCanvas);
 					ActiveObject(m_ScriptData[id].LoseCanvas);
 					m_loseOnce = false;
 				}
@@ -313,11 +333,12 @@ namespace PE
 							{
 							case 0: //GUTTER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
-								SetPortraitName("UnitPortrait_RatNameFrame_GutterRat_239x82.png");
+								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png",0,3);
+
 								break;
 							case 1: //BRAWLER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Brawler_256px.png"));
-								SetPortraitName("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png");
+								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png",0,3);
 								break;
 							case 2: //SNIPER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Sniper_256px.png"));
@@ -704,7 +725,7 @@ namespace PE
 		Output = GETCAMERAMANAGER()->GetWindowToWorldPosition(Output.x, Output.y);
 	}
 
-	void GameStateController_v2_0::SetPortraitName(const std::string_view TextureName)
+	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, int Current, int Max)
 	{
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[m_currentGameStateControllerID].RatPortrait).children)
 		{
