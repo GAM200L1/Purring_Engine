@@ -41,9 +41,16 @@ namespace PE
 		}
 
 		// reference entities
-		EntityID myID{ 0 }; // id of the rat with this data
+		EntityID myID{ 0 };								// id of the rat with this data
+		EntityID ratTelegraphID{ 0 };					// id of an additional invisible object with transform for rotating the arrow telegraph
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		StateMachine* p_stateManager;
+
+		// Movement Variables
+		float distanceFromPlayer{ 0.f };				// stores distance of rat from player cat to determine movement
+
+		// Attack entities and variables
+		vec2 directionToTarget{ 0.f, 0.f };				// stores the normalized vector pointing at player cat
 
 		std::map<std::string, std::string> animationStates;
 
