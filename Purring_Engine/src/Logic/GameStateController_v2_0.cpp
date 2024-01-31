@@ -746,6 +746,7 @@ namespace PE
 		{
 			m_isTransitioning = false;
 			m_isTransitioningIn = true;	
+			//SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
 		}
 		else if(fadeOutSpeed >= 1 && in)
 		{
@@ -794,7 +795,9 @@ namespace PE
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
 
-		SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
+
+		//uncomment this to retry stage
+		//SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
 
 	}
 
