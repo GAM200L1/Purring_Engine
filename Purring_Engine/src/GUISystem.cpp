@@ -545,6 +545,11 @@ namespace PE
 		m_uiFunc[str] = func;
 	}
 
+	std::map<std::string_view, std::function<void(EntityID)>> GUISystem::GetButtonFunctions()
+	{
+		return m_uiFunc;
+	}
+
 
 	// Serialize GUIButton
 	nlohmann::json GUIButton::ToJson(size_t id) const

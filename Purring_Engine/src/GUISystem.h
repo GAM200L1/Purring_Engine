@@ -153,6 +153,11 @@ namespace PE
 		*************************************************************************************/
 		static void AddFunction(std::string_view, const std::function<void(EntityID)>& func);
 
+		/*!***********************************************************************************
+		 \brief returns the map of functionss
+		*************************************************************************************/
+		static std::map<std::string_view, std::function<void(EntityID)>> GetButtonFunctions();
+
 	public:
 			static std::map<std::string_view, std::function<void(EntityID)>> m_uiFunc;
 

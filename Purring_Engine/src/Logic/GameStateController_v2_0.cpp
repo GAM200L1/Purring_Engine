@@ -47,6 +47,7 @@ namespace PE
 		REGISTER_UI_FUNCTION(SetPauseStateV2, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(RestartGame, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(OpenAYSR, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(LoadSceneFunction, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -58,6 +59,8 @@ namespace PE
 				prevState = GameStates_v2_0::INACTIVE;
 				currentState = GameStates_v2_0::SPLASHSCREEN;
 				ActiveObject(m_ScriptData[id].SplashScreen);
+
+				m_isTransitioning = false;
 			}
 			else
 			{
@@ -67,7 +70,6 @@ namespace PE
 				currentState = GameStates_v2_0::PLANNING;
 				ActiveObject(m_ScriptData[id].HUDCanvas);
 			}
-			//make sure all canvas inactive except for splashscreen 
 		}
 
 		m_ScriptData[id].keyEventHandlerId = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, GameStateController_v2_0::OnKeyEvent, this)
@@ -82,14 +84,18 @@ namespace PE
 		newTextureName = std::stringstream();
 		newTextureName << m_currentLevelBackground.substr(0, m_currentLevelBackground.find_last_of('_')) << "_Sepia" << m_currentLevelBackground.substr(m_currentLevelBackground.find_last_of('_'), m_currentLevelBackground.length());
 		m_currentLevelSepiaBackground = newTextureName.str();
+
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
+
+		m_goNextStage = false;
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
-
-		//if (m_isTransitioning)
-		//{
-		//	ExecuteTransition(id, deltaTime, m_isTransitioningIn);
-		//}
+		if (m_isTransitioning)
+		{
+			ExecuteTransition(id, deltaTime, m_isTransitioningIn);
+		}
 
 		if (PauseManager::GetInstance().IsPaused())
 		{
@@ -728,6 +734,25 @@ namespace PE
 	{
 		ActiveObject(m_ScriptData[id].TransitionPanel);
 
+		m_timeSinceTransitionStarted += deltaTime;
+		m_timeSinceTransitionEnded -= deltaTime;
+
+		float fadeOutSpeed = std::clamp(m_timeSinceTransitionEnded / m_transitionTimer, 0.0f, 1.0f);
+		float fadeInSpeed = std::clamp(m_timeSinceTransitionStarted / m_transitionTimer, 0.0f, 1.0f);
+
+		FadeAllObject(m_ScriptData[id].TransitionPanel, in ? fadeOutSpeed : fadeInSpeed);
+
+		if(fadeInSpeed >= 1 && !in)
+		{
+			m_isTransitioning = false;
+			m_isTransitioningIn = true;	
+		}
+		else if(fadeOutSpeed >= 1 && in)
+		{
+			m_isTransitioning = false;
+			m_isTransitioningIn = false;
+			DeactiveObject(m_ScriptData[m_currentGameStateControllerID].TransitionPanel);
+		}
 	}
 
 	void GameStateController_v2_0::ReturnFromAYS(EntityID)
@@ -767,7 +792,10 @@ namespace PE
 
 		//rmb to ask brandon for a restart scene function that dont need a filepath
 		m_isTransitioning = true;
+		m_isTransitioningIn = false;
+
 		SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
+
 	}
 
 	void GameStateController_v2_0::RestartGame(EntityID)
@@ -797,6 +825,11 @@ namespace PE
 				break;
 			}
 		}
+	}
+
+	void GameStateController_v2_0::LoadSceneFunction(EntityID)
+	{
+		SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
 	}
 
 

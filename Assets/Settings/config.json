@@ -9,7 +9,7 @@
         "showEditor": true,
         "showLogs": true,
         "showObjectList": true,
-        "showPerformanceWindow": false,
+        "showPerformanceWindow": true,
         "showPhysicsWindow": false,
         "showResourceWindow": false,
         "showSceneView": true,

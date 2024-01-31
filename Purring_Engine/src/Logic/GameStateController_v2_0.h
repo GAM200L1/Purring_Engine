@@ -164,6 +164,7 @@ namespace PE
 		void RestartGame(EntityID);
 		void GetMouseCurrentPosition(vec2& Output);
 		void SetPortraitInformation(std::string_view TextureName,int Current, int Max);
+		void LoadSceneFunction(EntityID = 0);
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
@@ -176,10 +177,15 @@ namespace PE
 		float m_UIFadeTimer{.5f};
 		float m_timeSinceEnteredState{ 1.f };
 		float m_timeSinceExitedState{};
+		float m_transitionTimer{ 0.5f };
+		float m_timeSinceTransitionStarted{};
+		float m_timeSinceTransitionEnded{};
 		std::string m_currentLevelBackground;
 		std::string m_currentLevelSepiaBackground;
 		bool m_isTransitioning{ false };
 		bool m_isTransitioningIn{ false };
+		bool m_goNextStage{ false };
+		std::string m_currentSceneName{ "CanvasSceneTest5.json" };
 	};
 }
 
