@@ -1,5 +1,7 @@
 #pragma once
 #include "Logic/RatScript.h"  // @KRYSTAL depends if you still using this RatScript file or a new file for the base class you working on.
+#include "Logic/LogicSystem.h"
+
 
 //#include "Logic/StateManager.h"
 
