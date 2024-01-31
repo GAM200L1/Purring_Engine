@@ -11,7 +11,7 @@
         "showObjectList": true,
         "showPerformanceWindow": false,
         "showPhysicsWindow": false,
-        "showResourceWindow": true,
+        "showResourceWindow": false,
         "showSceneView": true,
         "showTestWindows": false
     },

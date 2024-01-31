@@ -55,11 +55,15 @@ namespace PE
 		{
 			if(m_currentLevel == 0)
 			{ 
-			currentState = GameStates_v2_0::SPLASHSCREEN;
-			ActiveObject(m_ScriptData[id].SplashScreen);
+				prevState = GameStates_v2_0::INACTIVE;
+				currentState = GameStates_v2_0::SPLASHSCREEN;
+				ActiveObject(m_ScriptData[id].SplashScreen);
 			}
 			else
 			{
+				m_isTransitioning = true;
+				m_isTransitioningIn = true;
+				prevState = GameStates_v2_0::INACTIVE;
 				currentState = GameStates_v2_0::PLANNING;
 				ActiveObject(m_ScriptData[id].HUDCanvas);
 			}
@@ -81,6 +85,11 @@ namespace PE
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
+
+		//if (m_isTransitioning)
+		//{
+		//	ExecuteTransition(id, deltaTime, m_isTransitioningIn);
+		//}
 
 		if (PauseManager::GetInstance().IsPaused())
 		{
@@ -111,15 +120,8 @@ namespace PE
 
 		if (currentState == GameStates_v2_0::SPLASHSCREEN)
 		{
-			m_ScriptData[id].SplashTimer -= deltaTime;
-			if (m_ScriptData[id].SplashTimer <= 0)
-			{
-				DeactiveObject(m_ScriptData[id].SplashScreen);
-				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
-				DeactiveAllMenu();
-				ActiveObject(m_ScriptData[id].HUDCanvas);
-				SetGameState(GameStates_v2_0::PLANNING);
-			}
+			ExecuteSplashScreen(id, deltaTime);
+			prevState = currentState;
 		}
 		else
 		{
@@ -290,6 +292,16 @@ namespace PE
 			{
 				NextState();
 			}
+
+			if (KTE.keycode == GLFW_KEY_F6)
+			{
+				m_currentLevel++;
+			}
+
+			if (KTE.keycode == GLFW_KEY_F5)
+			{
+				m_currentLevel--;
+			}
 		}
 	}
 
@@ -422,6 +434,15 @@ namespace PE
 						}
 					}
 				}
+			}
+		}
+
+		if (MBPE.button == GLFW_MOUSE_BUTTON_RIGHT)
+		{
+			if (currentState == GameStates_v2_0::SPLASHSCREEN)
+			{
+				m_timeSinceEnteredState = m_ScriptData[m_currentGameStateControllerID].SplashTimer;
+
 			}
 		}
 	}
@@ -673,6 +694,42 @@ namespace PE
 		}
 	}
 
+	void GameStateController_v2_0::ExecuteSplashScreen(EntityID const id, float deltaTime)
+	{
+		ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].SplashScreen).parent.value());
+
+		if (prevState == GameStates_v2_0::INACTIVE)
+		{
+			m_timeSinceEnteredState = 0;
+			m_timeSinceExitedState = m_ScriptData[id].SplashTimer;
+		}
+
+		m_timeSinceEnteredState += deltaTime;
+		m_timeSinceExitedState -= deltaTime;
+
+		float fadeOutSpeed = std::clamp(m_timeSinceExitedState / m_ScriptData[id].SplashTimer, 0.0f, 1.0f);
+		float fadeInSpeed = std::clamp(m_timeSinceEnteredState / m_ScriptData[id].SplashTimer, 0.0f, 1.0f);
+
+		FadeAllObject(m_ScriptData[id].SplashScreen, fadeOutSpeed);
+
+
+		if (fadeInSpeed >= 1)
+		{
+			DeactiveObject(m_ScriptData[id].SplashScreen);
+			DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
+			DeactiveAllMenu();
+			ActiveObject(m_ScriptData[id].HUDCanvas);
+			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].SplashScreen).parent.value()).isActive = false;
+			SetGameState(GameStates_v2_0::PLANNING);
+		}
+	}
+
+	void GameStateController_v2_0::ExecuteTransition(EntityID const id, float deltaTime, bool in)
+	{
+		ActiveObject(m_ScriptData[id].TransitionPanel);
+
+	}
+
 	void GameStateController_v2_0::ReturnFromAYS(EntityID)
 	{
 		DeactiveObject(m_ScriptData[m_currentGameStateControllerID].AreYouSureCanvas);
@@ -709,6 +766,8 @@ namespace PE
 		//SceneManager::GetInstance().LoadCurrentScene();
 
 		//rmb to ask brandon for a restart scene function that dont need a filepath
+		m_isTransitioning = true;
+		SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
 	}
 
 	void GameStateController_v2_0::RestartGame(EntityID)

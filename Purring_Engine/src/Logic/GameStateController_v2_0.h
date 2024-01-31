@@ -155,6 +155,8 @@ namespace PE
 		void HTPPage1(EntityID);
 		void PlanningStateHUD(EntityID const id, float deltaTime);
 		void ExecutionStateHUD(EntityID const id, float deltaTime);
+		void ExecuteSplashScreen(EntityID const id, float deltaTime);
+		void ExecuteTransition(EntityID const id, float deltaTime, bool in);
 		void ReturnFromAYS(EntityID);
 		void OpenAYS(EntityID);
 		void OpenAYSR(EntityID);
@@ -176,6 +178,8 @@ namespace PE
 		float m_timeSinceExitedState{};
 		std::string m_currentLevelBackground;
 		std::string m_currentLevelSepiaBackground;
+		bool m_isTransitioning{ false };
+		bool m_isTransitioningIn{ false };
 	};
 }
 
