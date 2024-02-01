@@ -92,6 +92,7 @@
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "Logic/DeploymentScript.h"
 
 // Scene Manager
 #include "SceneManager/SceneManager.h"
@@ -245,6 +246,11 @@ RTTR_REGISTRATION
     //    .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
     //    .property("endMovementText", &PE::GameStateControllerData::endMovementText)
     //    .property("endTurnText", &PE::GameStateControllerData::endTurnText);
+
+    rttr::registration::class_<PE::DeploymentScriptData>("DeploymentScript")
+        .property("FollowingTextureObject", &PE::DeploymentScriptData::FollowingTextureObject)
+        .property("NoGoArea", &PE::DeploymentScriptData::NoGoArea)
+        .property("DeploymentArea", &PE::DeploymentScriptData::DeploymentArea);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);

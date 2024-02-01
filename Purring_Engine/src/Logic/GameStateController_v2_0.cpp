@@ -85,6 +85,9 @@ namespace PE
 		newTextureName << m_currentLevelBackground.substr(0, m_currentLevelBackground.find_last_of('_')) << "_Sepia" << m_currentLevelBackground.substr(m_currentLevelBackground.find_last_of('_'), m_currentLevelBackground.length());
 		m_currentLevelSepiaBackground = newTextureName.str();
 
+		m_currentLevelBackground = ResourceManager::GetInstance().LoadTexture(m_currentLevelBackground);
+		m_currentLevelSepiaBackground = ResourceManager::GetInstance().LoadTexture(m_currentLevelSepiaBackground);
+
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
 
@@ -140,7 +143,7 @@ namespace PE
 				PlanningStateHUD(id, deltaTime);
 
 				if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background))
-					EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background).SetTextureKey(ResourceManager::GetInstance().LoadTexture(m_currentLevelSepiaBackground));
+					EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
 				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].TurnCounterCanvas).children)
 				{
@@ -169,7 +172,7 @@ namespace PE
 			{
 
 				if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background))
-					EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background).SetTextureKey(ResourceManager::GetInstance().LoadTexture(m_currentLevelBackground));
+					EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelBackground);
 
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_ScriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Default_256px.png"));

@@ -51,6 +51,7 @@
 #include "Logic/CameraManagerScript.h"
 #include "Logic/GameStateController.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "Logic/DeploymentScript.h"
 #include "GUISystem.h"
 #include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
@@ -3153,6 +3154,30 @@ namespace PE {
 								}
 							}
 
+							if (key == "DeploymentScript")
+							{
+								DeploymentScript* p_script = dynamic_cast<DeploymentScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("DeploymentScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int FollowingTextureObjectID = static_cast<int> (it->second.FollowingTextureObject);
+										int NoGoAreaID = static_cast<int> (it->second.NoGoArea);
+										int DeploymentAreaID = static_cast<int> (it->second.DeploymentArea);
+
+										ImGui::Text("Following Texture Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##FTO", &FollowingTextureObjectID);
+										 it->second.FollowingTextureObject = FollowingTextureObjectID;
+
+										ImGui::Text("No Go Areas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##NGA", &NoGoAreaID);
+										if (NoGoAreaID != m_currentSelectedObject) { it->second.NoGoArea = NoGoAreaID; }
+
+
+										ImGui::Text("Deployment Zone ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##DPZ", &DeploymentAreaID);
+										if (DeploymentAreaID != m_currentSelectedObject) { it->second.DeploymentArea = DeploymentAreaID; }
+									}
+								}
+							}
 						}
 					}
 
