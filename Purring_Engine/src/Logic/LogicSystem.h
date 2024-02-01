@@ -37,6 +37,7 @@ namespace PE {
 	{
 	public:
 		static std::map<std::string, Script*> m_scriptContainer;
+		static bool restartingScene;
 	public:
 		LogicSystem();
 		virtual ~LogicSystem();

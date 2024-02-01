@@ -749,7 +749,8 @@ namespace PE
 		{
 			m_isTransitioning = false;
 			m_isTransitioningIn = true;	
-			//SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
+			LogicSystem::restartingScene = true;
+			SceneManager::GetInstance().RestartScene();
 		}
 		else if(fadeOutSpeed >= 1 && in)
 		{

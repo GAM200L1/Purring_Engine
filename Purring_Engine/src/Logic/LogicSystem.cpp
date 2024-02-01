@@ -48,6 +48,7 @@
 #endif // !GAMERELEASE
 
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
+bool PE::LogicSystem::restartingScene = false;
 
 PE::LogicSystem::LogicSystem()
 {
@@ -102,6 +103,11 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 					break;
 				case ScriptState::UPDATE:
 					m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
+					if (restartingScene)
+					{
+						restartingScene = false;
+						return;
+					}
 					break;
 				case ScriptState::EXIT:
 					m_scriptContainer.find(key)->second->Destroy(objectID);
