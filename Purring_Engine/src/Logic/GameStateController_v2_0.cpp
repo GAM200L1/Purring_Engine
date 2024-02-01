@@ -33,6 +33,8 @@
 #include "Rat/RatController_v2_0.h"
 namespace PE
 {
+	int GameStateController_v2_0::m_currentLevel = 0;
+
 	GameStateController_v2_0::GameStateController_v2_0()
 	{
 		REGISTER_UI_FUNCTION(ResumeStateV2, PE::GameStateController_v2_0);
@@ -47,7 +49,6 @@ namespace PE
 		REGISTER_UI_FUNCTION(SetPauseStateV2, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(RestartGame, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(OpenAYSR, PE::GameStateController_v2_0);
-		REGISTER_UI_FUNCTION(LoadSceneFunction, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -64,11 +65,13 @@ namespace PE
 			}
 			else
 			{
+				ActiveObject(m_ScriptData[id].HUDCanvas);
+				ActiveObject(m_ScriptData[id].TurnCounterCanvas);
 				m_isTransitioning = true;
 				m_isTransitioningIn = true;
 				prevState = GameStates_v2_0::INACTIVE;
-				currentState = GameStates_v2_0::PLANNING;
-				ActiveObject(m_ScriptData[id].HUDCanvas);
+				currentState = GameStates_v2_0::DEPLOYMENT;
+
 			}
 		}
 
@@ -124,7 +127,6 @@ namespace PE
 				ActiveObject(m_ScriptData[id].PauseMenuCanvas);
 				m_pauseMenuOpenOnce = false;
 			}
-			return;
 		}
 
 		if (currentState == GameStates_v2_0::SPLASHSCREEN)
@@ -136,6 +138,26 @@ namespace PE
 		{
 			switch (currentState)
 			{
+			case GameStates_v2_0::DEPLOYMENT:
+			{
+				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
+				DeactiveAllMenu();
+				ActiveObject(m_ScriptData[id].HUDCanvas);
+				ActiveObject(m_ScriptData[id].TurnCounterCanvas);
+
+				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].TurnCounterCanvas).children)
+				{
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CurrentTurnPhase")
+					{
+						if (EntityManager::GetInstance().Has<TextComponent>(id2))
+						{
+							EntityManager::GetInstance().Get<TextComponent>(id2).SetText("Deployment");
+						}
+						continue;
+					}
+				}
+				break;
+			}
 			case GameStates_v2_0::PLANNING:
 			{
 				DeactiveObject(m_ScriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
@@ -297,6 +319,12 @@ namespace PE
 			{
 				LoseGame();
 			}			
+
+			if (KTE.keycode == GLFW_KEY_F4)
+			{
+				NextStage(1);
+			}
+
 			if (KTE.keycode == GLFW_KEY_F11)
 			{
 				NextState();
@@ -318,6 +346,8 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE;
 		MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+
+		std::cout << "test number" << std::endl;
 
 		if (MBPE.button == GLFW_MOUSE_BUTTON_LEFT)
 		{
@@ -750,7 +780,7 @@ namespace PE
 			m_isTransitioning = false;
 			m_isTransitioningIn = true;	
 			LogicSystem::restartingScene = true;
-			SceneManager::GetInstance().RestartScene();
+			LoadSceneFunction(m_leveltoLoad);
 		}
 		else if(fadeOutSpeed >= 1 && in)
 		{
@@ -799,10 +829,16 @@ namespace PE
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
 
+		m_leveltoLoad = SceneManager::GetInstance().GetActiveScene();
+	}
 
-		//uncomment this to retry stage
-		//SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
+	void GameStateController_v2_0::NextStage(int nextStage)
+	{
+		m_isTransitioning = true;
+		m_isTransitioningIn = false;
 
+		m_currentLevel = nextStage;
+		m_leveltoLoad = m_level2SceneName;
 	}
 
 	void GameStateController_v2_0::RestartGame(EntityID)
@@ -834,9 +870,9 @@ namespace PE
 		}
 	}
 
-	void GameStateController_v2_0::LoadSceneFunction(EntityID)
+	void GameStateController_v2_0::LoadSceneFunction(std::string levelname)
 	{
-		SceneManager::GetInstance().RestartScene("CanvasSceneTest5.json");
+		SceneManager::GetInstance().LoadScene(levelname);
 	}
 
 

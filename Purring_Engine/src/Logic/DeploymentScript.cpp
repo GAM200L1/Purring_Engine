@@ -21,18 +21,56 @@
 #include "ECS/Entity.h"
 #include "ResourceManager/ResourceManager.h"
 #include "Physics/CollisionManager.h"
+#include "GameStateController_v2_0.h"
+#include "LogicSystem.h"
 namespace PE
 {
 
 	void PE::DeploymentScript::Init(EntityID id)
 	{
-		ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
+		m_ScriptData[id].keyEventHandlerId = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
 
 		m_currentDeploymentScriptEntityID = id;
+		m_catPlaced = 0;
 	}
 
 	void DeploymentScript::Update(EntityID id, float)
 	{
+		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+
+		if (m_catPlaced >= 2 && gsc->currentState == GameStates_v2_0::DEPLOYMENT)
+		{
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].DeploymentArea))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].DeploymentArea).SetColor(1, 1, 1, 0);
+
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject))
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive = false;
+
+			gsc->currentState = GameStates_v2_0::PLANNING;
+			gsc->prevState = GameStates_v2_0::DEPLOYMENT;
+
+			return;
+		}
+
+		if (gsc->currentState != GameStates_v2_0::DEPLOYMENT)
+		{
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].DeploymentArea))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].DeploymentArea).SetColor(1,1, 1, 0);
+
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject))
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive = false;
+
+			m_inNoGoArea = true;
+
+			return;
+		}
+
+		if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].DeploymentArea))
+			EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].DeploymentArea).SetColor(1,1,1,1);
+
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject))
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive = true;
+
 		GetMouseCurrentPosition(m_mousepos);
 
 		if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].DeploymentArea))
@@ -44,6 +82,7 @@ namespace PE
 			EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingTextureObject).position = m_mousepos;
 		else
 			return;
+
 		//for setting texture, check what cat is is rn and set it as texture.
 			/*if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].FollowingTextureObject))
 			EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture());*/
@@ -78,6 +117,13 @@ namespace PE
 			if(!m_inNoGoArea)
 			for (auto cid : m_ScriptData[id].AddedCats)
 			{
+				if (EntityManager::GetInstance().Has<EntityDescriptor>(cid))
+				{
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive)
+					{
+						continue;
+					}
+				}
 				CircleCollider cc2;
 
 				if (EntityManager::GetInstance().Has<Collider>(cid))
@@ -114,8 +160,13 @@ namespace PE
 
 	}
 
-	void DeploymentScript::Destroy(EntityID)
+	void DeploymentScript::Destroy(EntityID id)
 	{
+		auto it = m_ScriptData.find(id);
+		if (it != m_ScriptData.end())
+		{
+			REMOVE_KEY_EVENT_LISTENER(m_ScriptData[id].keyEventHandlerId);
+		}
 	}
 
 	void DeploymentScript::OnAttach(EntityID id)
@@ -149,18 +200,21 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE;
 		MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
 		if (MBPE.button == GLFW_MOUSE_BUTTON_LEFT)
 		{
-			if (!m_inNoGoArea)
+			if (!m_inNoGoArea && gsc->currentState == GameStates_v2_0::DEPLOYMENT)
 			{
 				SerializationManager sm;
 
 				//will need to load based on next cat with its cat type when i eventually get it.
 				EntityID NewCatID =  sm.LoadFromFile(("DeploymentTest_Prefab.json"));
 				EntityManager::GetInstance().Get<Transform>(NewCatID).position = m_mousepos;
+				EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;
 
 				m_ScriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(NewCatID);
+				m_catPlaced++;
 			}
 		}
 	}

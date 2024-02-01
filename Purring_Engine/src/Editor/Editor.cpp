@@ -3174,7 +3174,7 @@ namespace PE {
 
 
 										ImGui::Text("Deployment Zone ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##DPZ", &DeploymentAreaID);
-										if (DeploymentAreaID != m_currentSelectedObject) { it->second.DeploymentArea = DeploymentAreaID; }
+										{ it->second.DeploymentArea = DeploymentAreaID; }
 									}
 								}
 							}

@@ -29,6 +29,8 @@ namespace PE {
 		EntityID NoGoArea;
 		EntityID FollowingTextureObject;
 		std::vector<EntityID> AddedCats;
+
+		int keyEventHandlerId;
 	};
 
 	class DeploymentScript : public Script
@@ -90,6 +92,7 @@ namespace PE {
 		Transform m_deploymentZone;
 		EntityID m_currentDeploymentScriptEntityID;
 		bool m_inNoGoArea;
+		int m_catPlaced{};
 	};
 
 

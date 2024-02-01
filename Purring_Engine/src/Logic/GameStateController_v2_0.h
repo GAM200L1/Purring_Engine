@@ -161,10 +161,11 @@ namespace PE
 		void OpenAYS(EntityID);
 		void OpenAYSR(EntityID);
 		void RetryStage(EntityID);
+		void NextStage(int nextStage);
 		void RestartGame(EntityID);
 		void GetMouseCurrentPosition(vec2& Output);
 		void SetPortraitInformation(std::string_view TextureName,int Current, int Max);
-		void LoadSceneFunction(EntityID = 0);
+		void LoadSceneFunction(std::string levelname);
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
@@ -172,7 +173,7 @@ namespace PE
 	private:
 		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
 		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
-		int m_currentLevel{};
+		static int m_currentLevel;
 		EntityID m_currentGameStateControllerID;
 		float m_UIFadeTimer{.5f};
 		float m_timeSinceEnteredState{ 1.f };
@@ -185,7 +186,9 @@ namespace PE
 		bool m_isTransitioning{ false };
 		bool m_isTransitioningIn{ false };
 		bool m_goNextStage{ false };
-		std::string m_currentSceneName{ "CanvasSceneTest5.json" };
+		std::string m_level1SceneName{ "CanvasSceneTest5.json" };
+		std::string m_level2SceneName{ "CanvasSceneTestLevel2wDeploymentArea.json" };
+		std::string m_leveltoLoad{ "CanvasSceneTest5.json" };
 	};
 }
 
