@@ -185,10 +185,10 @@ namespace PE
 		std::string m_currentLevelSepiaBackground;
 		bool m_isTransitioning{ false };
 		bool m_isTransitioningIn{ false };
-		bool m_goNextStage{ false };
 		std::string m_level1SceneName{ "CanvasSceneTest5.json" };
 		std::string m_level2SceneName{ "CanvasSceneTestLevel2wDeploymentArea.json" };
 		std::string m_leveltoLoad{ "CanvasSceneTest5.json" };
+		bool m_splashScreenShown{ false };
 	};
 }
 

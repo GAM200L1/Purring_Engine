@@ -30,7 +30,7 @@ namespace PE {
 		EntityID FollowingTextureObject;
 		std::vector<EntityID> AddedCats;
 
-		int keyEventHandlerId;
+		int mouseClickEventID;
 	};
 
 	class DeploymentScript : public Script

@@ -57,18 +57,34 @@ namespace PE
 		{
 			if(m_currentLevel == 0)
 			{ 
-				prevState = GameStates_v2_0::INACTIVE;
-				currentState = GameStates_v2_0::SPLASHSCREEN;
-				ActiveObject(m_ScriptData[id].SplashScreen);
+				if (!m_splashScreenShown)
+				{
+					prevState = GameStates_v2_0::INACTIVE;
+					currentState = GameStates_v2_0::SPLASHSCREEN;
+					ActiveObject(m_ScriptData[id].SplashScreen);
 
-				m_isTransitioning = false;
+					m_isTransitioning = false;
+					m_splashScreenShown = true;
+				}
+				else
+				{
+					prevState = GameStates_v2_0::INACTIVE;
+					currentState = GameStates_v2_0::PLANNING;
+					m_isTransitioning = true;
+					m_isTransitioningIn = true;
+					m_timeSinceTransitionStarted = 0;
+					m_timeSinceTransitionEnded = m_transitionTimer;
+				}
 			}
 			else
 			{
 				ActiveObject(m_ScriptData[id].HUDCanvas);
 				ActiveObject(m_ScriptData[id].TurnCounterCanvas);
+
 				m_isTransitioning = true;
 				m_isTransitioningIn = true;
+				m_timeSinceTransitionStarted = 0;
+				m_timeSinceTransitionEnded = m_transitionTimer;
 				prevState = GameStates_v2_0::INACTIVE;
 				currentState = GameStates_v2_0::DEPLOYMENT;
 
@@ -90,11 +106,6 @@ namespace PE
 
 		m_currentLevelBackground = ResourceManager::GetInstance().LoadTexture(m_currentLevelBackground);
 		m_currentLevelSepiaBackground = ResourceManager::GetInstance().LoadTexture(m_currentLevelSepiaBackground);
-
-		m_timeSinceTransitionStarted = 0;
-		m_timeSinceTransitionEnded = m_transitionTimer;
-
-		m_goNextStage = false;
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
@@ -247,6 +258,7 @@ namespace PE
 		{
 			REMOVE_KEY_EVENT_LISTENER(m_ScriptData[id].keyEventHandlerId);
 			REMOVE_WINDOW_EVENT_LISTENER(m_ScriptData[id].outOfFocusEventHandlerId);
+			REMOVE_MOUSE_EVENT_LISTENER(m_ScriptData[id].mouseClickEventID);
 		}
 
 		currentState = GameStates_v2_0::INACTIVE;
@@ -781,12 +793,18 @@ namespace PE
 			m_isTransitioningIn = true;	
 			LogicSystem::restartingScene = true;
 			LoadSceneFunction(m_leveltoLoad);
+
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
 		}
 		else if(fadeOutSpeed >= 1 && in)
 		{
 			m_isTransitioning = false;
 			m_isTransitioningIn = false;
 			DeactiveObject(m_ScriptData[m_currentGameStateControllerID].TransitionPanel);
+
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
 		}
 	}
 
@@ -828,6 +846,9 @@ namespace PE
 		//rmb to ask brandon for a restart scene function that dont need a filepath
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
+
 
 		m_leveltoLoad = SceneManager::GetInstance().GetActiveScene();
 	}
@@ -836,6 +857,8 @@ namespace PE
 	{
 		m_isTransitioning = true;
 		m_isTransitioningIn = false;
+		m_timeSinceTransitionStarted = 0;
+		m_timeSinceTransitionEnded = m_transitionTimer;
 
 		m_currentLevel = nextStage;
 		m_leveltoLoad = m_level2SceneName;

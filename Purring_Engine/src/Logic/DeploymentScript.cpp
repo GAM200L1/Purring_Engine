@@ -28,7 +28,7 @@ namespace PE
 
 	void PE::DeploymentScript::Init(EntityID id)
 	{
-		m_ScriptData[id].keyEventHandlerId = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
+		m_ScriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
 
 		m_currentDeploymentScriptEntityID = id;
 		m_catPlaced = 0;
@@ -165,7 +165,7 @@ namespace PE
 		auto it = m_ScriptData.find(id);
 		if (it != m_ScriptData.end())
 		{
-			REMOVE_KEY_EVENT_LISTENER(m_ScriptData[id].keyEventHandlerId);
+			REMOVE_MOUSE_EVENT_LISTENER(m_ScriptData[id].mouseClickEventID);
 		}
 	}
 
