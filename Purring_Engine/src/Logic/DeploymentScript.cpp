@@ -46,8 +46,7 @@ namespace PE
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject))
 				EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive = false;
 
-			gsc->currentState = GameStates_v2_0::PLANNING;
-			gsc->prevState = GameStates_v2_0::DEPLOYMENT;
+			gsc->StartGameLoop();
 
 			return;
 		}

@@ -26,6 +26,7 @@
 #include "GUISystem.h"
 #include "GameStateManager.h"
 #include "Input/InputSystem.h"
+#include "PauseManager.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #include "SceneManager/SceneManager.h"

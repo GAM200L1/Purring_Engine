@@ -139,56 +139,88 @@ namespace PE
 
 		// ----- Helper Functions ----- //
 	public:
+		//State Functions
 		void SetPauseStateV2(EntityID = 0);
 		void SetGameState(GameStates_v2_0);
-		void ResumeStateV2(EntityID=0);
-		void ActiveObject(EntityID);
-		void DeactiveObject(EntityID);
-		void FadeAllObject(EntityID Canvas, float const alpha);
-		void DeactiveAllMenu();
-		void NextState(EntityID=0);
+		void ResumeStateV2(EntityID = 0);
+		void NextState(EntityID = 0);
 		void WinGame();
 		void LoseGame();
-		void CloseHTP(EntityID);
-		void OpenHTP(EntityID);
-		void HTPPage2(EntityID);
-		void HTPPage1(EntityID);
+		void RetryStage(EntityID);
+		void NextStage(int nextStage);
+		void StartGameLoop();
+		void RestartGame(EntityID);
+
+
+		//Object Helper Functions
+		void ActiveObject(EntityID);
+		void DeactiveObject(EntityID);
+		void DeactiveAllMenu();
+		void GetMouseCurrentPosition(vec2& Output);
+		void LoadSceneFunction(std::string levelname);
+
+		//HUD/UI functions
+		void FadeAllObject(EntityID Canvas, float const alpha);
 		void PlanningStateHUD(EntityID const id, float deltaTime);
 		void ExecutionStateHUD(EntityID const id, float deltaTime);
 		void ExecuteSplashScreen(EntityID const id, float deltaTime);
 		void ExecuteTransition(EntityID const id, float deltaTime, bool in);
+		void SetPortraitInformation(std::string_view TextureName, int Current, int Max);
+		void UpdateTurnCounter(std::string currentphase);
+
+		//Menu Functions
+		void CloseHTP(EntityID);
+		void OpenHTP(EntityID);
+		void HTPPage2(EntityID);
+		void HTPPage1(EntityID);
 		void ReturnFromAYS(EntityID);
 		void OpenAYS(EntityID);
 		void OpenAYSR(EntityID);
-		void RetryStage(EntityID);
-		void NextStage(int nextStage);
-		void RestartGame(EntityID);
-		void GetMouseCurrentPosition(vec2& Output);
-		void SetPortraitInformation(std::string_view TextureName,int Current, int Max);
-		void LoadSceneFunction(std::string levelname);
+
+
+		//Audio Functions
+		void PlayClickAudio();
+		void PlayPageAudio();
+		void PlayPhaseChangeAudio();
+
+
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
 		int CurrentTurn{1};
 	private:
+		//Script Variables
 		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
-		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
-		static int m_currentLevel;
 		EntityID m_currentGameStateControllerID;
+		SerializationManager serializationManager;
+
+		//Stage Variables
+		int m_currentLevel{};
+		std::string m_level1SceneName{ "Level1Scene.json" };
+		std::string m_level2SceneName{ "Level2Scene.json" };
+		std::string m_leveltoLoad{ "Level1Scene.json" };
+
+		//Texture Keys
+		std::string m_currentLevelBackground;
+		std::string m_currentLevelSepiaBackground;
+		std::string m_defaultPotraitTextureKey;
+
+		//Pause and Win/Lose Variables
+		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
+		bool m_isTransitioning{ false };
+		bool m_isTransitioningIn{ false };
+		bool m_splashScreenShown{ false };
+	
+		//UI Variables
 		float m_UIFadeTimer{.5f};
 		float m_timeSinceEnteredState{ 1.f };
 		float m_timeSinceExitedState{};
 		float m_transitionTimer{ 0.5f };
 		float m_timeSinceTransitionStarted{};
 		float m_timeSinceTransitionEnded{};
-		std::string m_currentLevelBackground;
-		std::string m_currentLevelSepiaBackground;
-		bool m_isTransitioning{ false };
-		bool m_isTransitioningIn{ false };
-		std::string m_level1SceneName{ "CanvasSceneTest5.json" };
-		std::string m_level2SceneName{ "CanvasSceneTestLevel2wDeploymentArea.json" };
-		std::string m_leveltoLoad{ "CanvasSceneTest5.json" };
-		bool m_splashScreenShown{ false };
+
+
+
 	};
 }
 

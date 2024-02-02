@@ -387,7 +387,7 @@ void PE::CoreApplication::Run()
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
-    SceneManager::GetInstance().SetStartScene("GameSceneFINAL.json"); // set game scene here <-
+    SceneManager::GetInstance().SetStartScene("Level1Scene.json"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE
