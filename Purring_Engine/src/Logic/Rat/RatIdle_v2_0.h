@@ -40,6 +40,8 @@ namespace PE
         // Idle Planning specific variables
         RatScript_v2_0_Data* p_data;
         RatType m_type;
+
+        GameStateController_v2_0* gameStateController{ nullptr };
     };
 
 

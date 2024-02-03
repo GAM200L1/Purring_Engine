@@ -12,11 +12,14 @@ namespace PE
 {
     // ---------- RAT IDLE STATE v2.0 ---------- //
 
-    RatIdle_v2_0::RatIdle_v2_0(RatType type) : m_type(type) { }
+    RatIdle_v2_0::RatIdle_v2_0(RatType type)
+        : m_type(type), gameStateController(nullptr), p_data(nullptr)
+    { }
 
     void RatIdle_v2_0::StateEnter(EntityID id)
     {
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
+        gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                   // Get GSM instance
 
         // ----- Reset -----
         if (m_type == RatType::PATROL)
@@ -88,9 +91,6 @@ namespace PE
 
     void RatIdle_v2_0::StateUpdate(EntityID id, float deltaTime)
     {
-        // Access GameStateController_v2_0 instance
-        GameStateController_v2_0* gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
         {
             return;
@@ -115,7 +115,7 @@ namespace PE
 
     void RatIdle_v2_0::PatrolLogic(EntityID id, float deltaTime)
     {
-        if (p_data->patrolPoints.empty()) return; // Ensure there are patrol points defined
+        if (p_data->patrolPoints.empty()) return;
 
         vec3& currentTarget = p_data->patrolPoints[p_data->patrolIndex];
         MoveTowards(id, currentTarget, deltaTime);
@@ -186,6 +186,8 @@ namespace PE
         RatScript_v2_0::ToggleEntity(p_data->redTelegraphEntityID, false);
         RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
         EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(false);
+
+        gameStateController = nullptr;
     }
 
 
