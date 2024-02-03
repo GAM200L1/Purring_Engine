@@ -23,7 +23,7 @@ namespace PE
 {
 	enum class GameStates_v2_0
 	{
-		PLANNING, DEPLOYMENT, EXECUTE, PAUSE, WIN, LOSE, SPLASHSCREEN, INACTIVE
+		PLANNING, DEPLOYMENT, EXECUTE, PAUSE, WIN, LOSE, INACTIVE
 	};
 
 	struct GameStateController_v2_0Data
@@ -41,6 +41,8 @@ namespace PE
 		EntityID HUDCanvas;
 		EntityID ExecuteCanvas;
 		EntityID TurnCounterCanvas;
+
+		EntityID JournalCanvas;
 
 		EntityID CatPortrait,RatPortrait;
 		EntityID Portrait;
@@ -371,7 +373,7 @@ namespace PE
 		float m_timeSinceTransitionStarted{};
 		float m_timeSinceTransitionEnded{};
 
-
+		bool m_journalShowing;
 
 	};
 }
