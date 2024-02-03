@@ -1,23 +1,20 @@
 #include "prpch.h"
-#include "RatIdle_v2_0.h"
+#include "Logic/Rat/RatIdle_v2_0.h"
 
 #include "Logic/Rat/RatScript_v2_0.h"
-
+//
 #include "Physics/CollisionManager.h"
 #include "Animation/Animation.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
-
 namespace PE
 {
     // ---------- RAT IDLE STATE v2.0 ---------- //
 
     RatIdle_v2_0::RatIdle_v2_0(RatType type) : m_type(type) { }
 
-    RatIdle_v2_0::~RatIdle_v2_0() { }
-
-    void RatIdle_v2_0::StateEnter_v2_0(EntityID id)
+    void RatIdle_v2_0::StateEnter(EntityID id)
     {
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
 
@@ -39,8 +36,8 @@ namespace PE
         Transform const& catObject_v2_0 = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
 
         // Calculate and store the absolute scales of the rat and cat (ensuring positive values)
-        vec2 absRatScale_v2_0 = vec2{ abs(ratObject_v2_0.width), abs(ratObject_v2_0.height) };
-        vec2 absCatScale_v2_0 = vec2{ abs(catObject_v2_0.width), abs(catObject_v2_0.height) };
+        PE::vec2 absRatScale_v2_0 = PE::vec2{ abs(ratObject_v2_0.width), abs(ratObject_v2_0.height) };
+        PE::vec2 absCatScale_v2_0 = PE::vec2{ abs(catObject_v2_0.width), abs(catObject_v2_0.height) };
 
         // Calculate the distance from the rat to the cat, adjusting for their sizes
         p_data->ratPlayerDistance = RatScript_v2_0::GetEntityPosition(id).Distance(catObject_v2_0.position) - (absCatScale_v2_0.x * 0.5f) - (absRatScale_v2_0.x * 0.5f);
@@ -74,13 +71,13 @@ namespace PE
             }
 
             // Adjust the rat's scale to ensure it faces the direction of the cat
-            vec2 newScale{ RatScript_v2_0::GetEntityScale(id) };
+            PE::vec2 newScale{ RatScript_v2_0::GetEntityScale(id) };
             newScale.x = std::abs(newScale.x) * (((catObject_v2_0.position - ratObject_v2_0.position).Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f);
             RatScript_v2_0::ScaleEntity(id, newScale.x, newScale.y);
 
             // Position and display the attack indicator at the cat's location
-            RatScript_v2_0::PositionEntity(p_data->attackTelegraphID, catObject_v2_0.position);
-            RatScript_v2_0::ToggleEntity(p_data->attackTelegraphID, true);
+            RatScript_v2_0::PositionEntity(p_data->attackTelegraphEntityID, catObject_v2_0.position);
+            RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, true);
         }
         else
         {
@@ -89,7 +86,7 @@ namespace PE
         }
     }
 
-    void RatIdle_v2_0::StateUpdate_v2_0(EntityID id, float deltaTime)
+    void RatIdle_v2_0::StateUpdate(EntityID id, float deltaTime)
     {
         // Access GameStateController_v2_0 instance
         GameStateController_v2_0* gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
@@ -113,42 +110,68 @@ namespace PE
             break;
         }
 
+
     }
 
     void RatIdle_v2_0::PatrolLogic(EntityID id, float deltaTime)
     {
-        if (p_data->patrolPoints.empty()) return;               // this is to ensure patrol points are defined. Check InitializePatrolPoints function
+        if (p_data->patrolPoints.empty()) return; // Ensure there are patrol points defined
 
         vec3& currentTarget = p_data->patrolPoints[p_data->patrolIndex];
-        MoveTowards(id, currentTarget, deltaTime);              // Move the rat towards the target
+        MoveTowards(id, currentTarget, deltaTime);
 
         if (HasReachedDestination(id, currentTarget))
         {
-            // Update the patrol index to the next point
-            p_data->patrolIndex = (p_data->patrolIndex + 1) % p_data->patrolPoints.size();
+            // Logic to switch patrol points based on current index and patrol points size
+            if (p_data->patrolPoints.size() == 3)
+            {
+                switch (p_data->patrolIndex)
+                {
+                case 0:
+                    p_data->patrolIndex += 1;
+                    break;
+                case 1:
+                    p_data->patrolIndex = (p_data->returnToFirstPoint) ? 0 : 2;
+                    p_data->returnToFirstPoint = !p_data->returnToFirstPoint;
+                    break;
+                case 2:
+                    p_data->patrolIndex -= 1;
+                    p_data->returnToFirstPoint = true;
+                    break;
+                }
+            }
+            else if (p_data->patrolPoints.size() == 2)
+            {
+                // Toggle between the two points
+                p_data->patrolIndex = (p_data->patrolIndex == 0) ? 1 : 0;
+            }
         }
     }
 
     void RatIdle_v2_0::MoveTowards(EntityID id, const vec3& target, float deltaTime)
     {
         Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
-        vec3 direction = (target - ratTransform.position).Normalized();
-        float speed = p_data->movementSpeed;
-        ratTransform.position += direction * speed * deltaTime;
+        PE::vec2 target2D(target.x, target.y);
+        PE::vec2 direction = target2D - ratTransform.position;
+        PE::vec2 normalizedDirection = direction.GetNormalized();
+        ratTransform.position += normalizedDirection * p_data->movementSpeed * deltaTime;
     }
 
     bool RatIdle_v2_0::HasReachedDestination(EntityID id, const vec3& target)
     {
         Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
-        return (ratTransform.position - target).Length() <= 0.1f;  // Adjust threshold as necessary
+        PE::vec2 target2D(target.x, target.y);
+        PE::vec2 diff = ratTransform.position - target2D;
+        return diff.Length() <= 0.1f;
     }
+
 
     void RatIdle_v2_0::InitializePatrolPoints()
     {
-        p_data->patrolPoints.clear();                           // clear existing points.
+        p_data->patrolPoints.clear();                                       // clear existing points.
 
-        p_data->patrolPoints.push_back(vec3(-3, -1.56, 0));     // Patrol Point A
-        p_data->patrolPoints.push_back(vec3(0, 0, 0));          // Patrol Point B
+        p_data->patrolPoints.push_back(vec3(-3.0f, -1.56f, 0.0f));          // Patrol Point A
+        p_data->patrolPoints.push_back(vec3(0.0f, 0.0f, 0.0f));             // Patrol Point B
 
         p_data->patrolIndex = 0;                                // Reset patrol index
 
@@ -156,7 +179,7 @@ namespace PE
         //p_data->returnToFirstPoint = false;
     }
 
-    void RatIdle_v2_0::StateExit_v2_0(EntityID id)
+    void RatIdle_v2_0::StateExit(EntityID id)
     {
         // disables all the UI from showing up
         RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false);
@@ -165,9 +188,5 @@ namespace PE
         EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(false);
     }
 
-    std::string_view RatIdle_v2_0::GetName_v2_0() const
-    {
-        return "Idle_v2_0";
-    }
 
 } // namespace PE

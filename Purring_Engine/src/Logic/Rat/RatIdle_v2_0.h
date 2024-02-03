@@ -3,6 +3,7 @@
 #include "Logic/Rat/RatScript_v2_0.h"
 #include "Logic/LogicSystem.h"
 #include "ECS/Entity.h"
+#include "../StateManager.h"
 
 namespace PE
 {
@@ -22,19 +23,18 @@ namespace PE
         // ----- Destructor ----- //
         virtual ~RatIdle_v2_0() { p_data = nullptr; }
 
-        virtual void StateEnter_v2_0(EntityID id) override;
+        virtual void StateEnter(EntityID id) override;
+        virtual void StateUpdate(EntityID id, float deltaTime) override;
+        virtual void StateExit(EntityID id) override;
 
-        virtual void StateUpdate_v2_0(EntityID id, float deltaTime) override;
-
+        // Logic for Rat idle state
         void PatrolLogic(EntityID id, float deltaTime);
         void MoveTowards(EntityID id, const vec3& target, float deltaTime);
         bool HasReachedDestination(EntityID id, const vec3& target);
         void InitializePatrolPoints();
 
-        virtual void StateExit_v2_0(EntityID id) override;
-
         // Getter for the state name with version
-        virtual std::string_view GetName_v2_0() const override { return "Idle_v2_0"; }
+        virtual std::string_view GetName() { return "Idle_v2_0"; }
 
     private:
         // Idle Planning specific variables

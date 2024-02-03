@@ -43,6 +43,7 @@ namespace PE
 		// reference entities
 		EntityID myID{ 0 };								// id of the rat with this data
 		EntityID ratTelegraphID{ 0 };					// id of an additional invisible object with transform for rotating the arrow telegraph
+		EntityID mainCatID{ 3 };						// needs manual setting
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		StateMachine* p_stateManager;
 
