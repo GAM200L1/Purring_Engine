@@ -130,11 +130,12 @@ namespace PE
 		void PlayGameMM(EntityID);
 		void QuitGameMM(EntityID);
 		void ReturnFromMMAYS(EntityID);
+		void PlayClickAudio();
 	private:
 		//Script Variables
 		std::map<EntityID, MainMenuControllerData> m_scriptData; // Data associated with each instance of the script
 		SerializationManager m_serializationManager;
-		bool m_firstStart{true}, m_inSplashScreen{ false };
+		bool m_firstStart{ true }, m_inSplashScreen{ false }, m_isPausedOnce{ false }, m_isResumedOnce{false};
 		float m_splashTimer{ 2.f }; // Time in seconds that the splashscreen is displayed for
 		float m_timeSinceEnteredState{ 0.f };
 		float m_timeSinceExitedState { 0.f };

@@ -728,84 +728,6 @@
         {
             "Entity": {
                 "components": {
-                    "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
-                    },
-                    "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 16,
-                        "Prefab Type": "Canvas Object",
-                        "children": [
-                            17,
-                            71
-                        ],
-                        "isActive": false,
-                        "name": "SplashScreenCanvas",
-                        "parent": null,
-                        "sceneID": 60
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 17,
-                        "Prefab Type": "SplashScreen",
-                        "children": [],
-                        "isActive": false,
-                        "name": "SplashScreen",
-                        "parent": 16,
-                        "sceneID": 17
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/SplashScreen_1920x1080.png"
-                    },
-                    "Transform": {
-                        "height": 1080.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 1920.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
                     "EntityDescriptor": {
                         "Layer": 0,
                         "Old ID": 14,
@@ -843,7 +765,6 @@
                                 "PauseMenuCanvas": 3,
                                 "Portrait": 47,
                                 "RatPortrait": 53,
-                                "SplashScreen": 17,
                                 "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
@@ -3607,46 +3528,6 @@
                         },
                         "relorientation": 0.0,
                         "width": 1963.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 71,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": false,
-                        "name": "Black",
-                        "parent": 16,
-                        "sceneID": 1
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 0.0,
-                            "g": 0.0,
-                            "r": 0.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "Transform": {
-                        "height": 1083.33349609375,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 1969.5128173828125
                     }
                 },
                 "name": ""

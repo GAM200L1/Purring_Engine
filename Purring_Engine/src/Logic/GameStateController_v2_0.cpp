@@ -56,24 +56,15 @@ namespace PE
 		{
 			if(m_currentLevel == 0)
 			{ 
-				if (!m_splashScreenShown)// splash screen will be removed when we add a main menu eventually, main menu should be level 0 then
-				{
-					prevState = GameStates_v2_0::INACTIVE;
-					currentState = GameStates_v2_0::SPLASHSCREEN;
-					ActiveObject(m_scriptData[id].SplashScreen);
+				ActiveObject(m_scriptData[id].HUDCanvas);
+				ActiveObject(m_scriptData[id].TurnCounterCanvas);
 
-					m_isTransitioning = false;
-					m_splashScreenShown = true;
-				}
-				else // if retrying on first level
-				{
-					prevState = GameStates_v2_0::INACTIVE;
-					currentState = GameStates_v2_0::PLANNING;
-					m_isTransitioning = true;
-					m_isTransitioningIn = true;
-					m_timeSinceTransitionStarted = 0;
-					m_timeSinceTransitionEnded = m_transitionTimer;
-				}
+				prevState = GameStates_v2_0::INACTIVE;
+				currentState = GameStates_v2_0::PLANNING;
+				m_isTransitioning = true;
+				m_isTransitioningIn = true;
+				m_timeSinceTransitionStarted = 0;
+				m_timeSinceTransitionEnded = m_transitionTimer;
 			}
 			else // if not first level
 			{
@@ -118,6 +109,14 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].PauseMenuCanvas).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "Pawsed Text Object")
+			{
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("GamePawsed_Text_1024x256.png"));
+			}
+		}
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
@@ -134,13 +133,13 @@ namespace PE
 				SetPauseStateV2();
 			}
 		}
-		else
-		{
-			if (currentState == GameStates_v2_0::PAUSE)
-			{
-				ResumeStateV2();
-			}
-		}
+		//else
+		//{
+		//	if (currentState == GameStates_v2_0::PAUSE)
+		//	{
+		//		ResumeStateV2();
+		//	}
+		//}
 
 		//if paused, but there are some stuff we want to only run once
 		if (currentState == GameStates_v2_0::PAUSE)
@@ -160,97 +159,88 @@ namespace PE
 			}
 		}
 
-		//if splashscreen, fade it out, prob will be removed when we add a main menu
-		if (currentState == GameStates_v2_0::SPLASHSCREEN)
-		{
-			SplashScreenFade(id, deltaTime);
-			prevState = currentState;
-		}
-		else
-		{
 			//switch statement for the different states
-			switch (currentState)
-			{
-			case GameStates_v2_0::DEPLOYMENT: // deploying cats, need to disable end turn button, but otherwise normal HUD stays
-			{
-				DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
-				DeactiveAllMenu();
-				ActiveObject(m_scriptData[id].HUDCanvas);
-				ActiveObject(m_scriptData[id].TurnCounterCanvas);
+		switch (currentState)
+		{
+		case GameStates_v2_0::DEPLOYMENT: // deploying cats, need to disable end turn button, but otherwise normal HUD stays
+		{
+			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
+			DeactiveAllMenu();
+			ActiveObject(m_scriptData[id].HUDCanvas);
+			ActiveObject(m_scriptData[id].TurnCounterCanvas);
 
-				UpdateTurnCounter("Deployment");
+			UpdateTurnCounter("Deployment");
 
-				for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].HUDCanvas).children)
+			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].HUDCanvas).children)
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndTurnButton")
 				{
-					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndTurnButton")
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
 					{
-						if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
-						{
-							EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
-						}
-						continue;
-					}					
-					
-					if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndPlanningText")
-					{
-						if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
-						{
-							EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
-						}
-						continue;
+						EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
 					}
-
+					continue;
 				}
-				break;
-			}
-			case GameStates_v2_0::PLANNING: // normal planning state, fade in HUD and fade out foliage
-			{
-				DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
-				DeactiveAllMenu();
-				PlanningStateHUD(id, deltaTime);
 
-				if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
-					EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
-
-				UpdateTurnCounter("Plan Movement");
-				prevState = currentState;
-				break;
-			}
-			case GameStates_v2_0::EXECUTE: // execute state, fade out HUD and fade in foliage
-			{
-
-				if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
-					EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelBackground);
-
-				DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
-				DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
-				DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
-				DeactiveAllMenu();
-
-				ExecutionStateHUD(id, deltaTime);
-				UpdateTurnCounter("Executing...");
-				prevState = currentState;
-				break;
-			}
-			case GameStates_v2_0::WIN: // win state, show win canvas
-				if (m_winOnce)
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndPlanningText")
 				{
-					ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
-					ActiveObject(m_scriptData[id].WinCanvas);
-					m_winOnce = false;
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+					}
+					continue;
 				}
-				break;
-			case GameStates_v2_0::LOSE: //lose state, show lose canvas				
-				if (m_loseOnce)
-				{
-					ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
-					ActiveObject(m_scriptData[id].LoseCanvas);
-					m_loseOnce = false;
-				}
-				break;
 
 			}
+			break;
+		}
+		case GameStates_v2_0::PLANNING: // normal planning state, fade in HUD and fade out foliage
+		{
+			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
+			DeactiveAllMenu();
+			PlanningStateHUD(id, deltaTime);
+
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
+
+			UpdateTurnCounter("Plan Movement");
+			prevState = currentState;
+			break;
+		}
+		case GameStates_v2_0::EXECUTE: // execute state, fade out HUD and fade in foliage
+		{
+
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelBackground);
+
+			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
+			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
+			DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
+			DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
+			DeactiveAllMenu();
+
+			ExecutionStateHUD(id, deltaTime);
+			UpdateTurnCounter("Executing...");
+			prevState = currentState;
+			break;
+		}
+		case GameStates_v2_0::WIN: // win state, show win canvas
+			if (m_winOnce)
+			{
+				ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
+				ActiveObject(m_scriptData[id].WinCanvas);
+				m_winOnce = false;
+			}
+			break;
+		case GameStates_v2_0::LOSE: //lose state, show lose canvas				
+			if (m_loseOnce)
+			{
+				ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
+				ActiveObject(m_scriptData[id].LoseCanvas);
+				m_loseOnce = false;
+			}
+			break;
+
 		}
 	}
 
@@ -551,14 +541,6 @@ namespace PE
 			}
 		}
 
-		if (MBPE.button == GLFW_MOUSE_BUTTON_RIGHT)
-		{
-			if (currentState == GameStates_v2_0::SPLASHSCREEN)
-			{
-				m_timeSinceEnteredState = m_scriptData[m_currentGameStateControllerID].SplashTimer;
-
-			}
-		}
 	}
 
 	void GameStateController_v2_0::SetPauseStateV2(EntityID)
@@ -838,36 +820,6 @@ namespace PE
 		}
 	}
 
-	void GameStateController_v2_0::SplashScreenFade(EntityID const id, float deltaTime)
-	{
-		ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value());
-
-		if (prevState == GameStates_v2_0::INACTIVE)
-		{
-			m_timeSinceEnteredState = 0;
-			m_timeSinceExitedState = m_scriptData[id].SplashTimer;
-		}
-
-		m_timeSinceEnteredState += deltaTime;
-		m_timeSinceExitedState -= deltaTime;
-
-		float fadeOutSpeed = std::clamp(m_timeSinceExitedState / m_scriptData[id].SplashTimer, 0.0f, 1.0f);
-		float fadeInSpeed = std::clamp(m_timeSinceEnteredState / m_scriptData[id].SplashTimer, 0.0f, 1.0f);
-
-		FadeAllObject(m_scriptData[id].SplashScreen, fadeOutSpeed);
-
-
-		if (fadeInSpeed >= 1)
-		{
-			DeactiveObject(m_scriptData[id].SplashScreen);
-			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
-			DeactiveAllMenu();
-			ActiveObject(m_scriptData[id].HUDCanvas);
-			EntityManager::GetInstance().Get<EntityDescriptor>(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].SplashScreen).parent.value()).isActive = false;
-			SetGameState(GameStates_v2_0::PLANNING);
-		}
-	}
-
 	void GameStateController_v2_0::TransitionPanelFade(EntityID const id, float deltaTime, bool in)
 	{
 		ActiveObject(m_scriptData[id].TransitionPanel);
@@ -985,7 +937,7 @@ namespace PE
 		Output = GETCAMERAMANAGER()->GetWindowToWorldPosition(Output.x, Output.y);
 	}
 
-	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, int Current, int Max, bool isRat)
+	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, float Current, float Max, bool isRat)
 	{
 		if(isRat)
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].RatPortrait).children)

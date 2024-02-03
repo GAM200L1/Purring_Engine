@@ -3067,7 +3067,6 @@ namespace PE {
 									if (ImGui::CollapsingHeader("GameStateController_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
 										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act", &it->second.GameStateManagerActive);
-										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
 										int PauseBackGroundCanvasID = static_cast<int> (it->second.PauseBackGroundCanvas);
 										int PauseMenuCanvasID = static_cast<int> (it->second.PauseMenuCanvas);
 										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
@@ -3088,9 +3087,6 @@ namespace PE {
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
 										if (PauseBackGroundCanvasID != m_currentSelectedObject) { it->second.PauseBackGroundCanvas = PauseBackGroundCanvasID; }
-
-										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ssc", &SplashScreenID);
-										if (SplashScreenID != m_currentSelectedObject) { it->second.SplashScreen = SplashScreenID; }
 
 										ImGui::Text("PauseMenuCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##pmc", &PauseMenuCanvasID);
 										if (PauseMenuCanvasID != m_currentSelectedObject) { it->second.PauseMenuCanvas = PauseMenuCanvasID; }

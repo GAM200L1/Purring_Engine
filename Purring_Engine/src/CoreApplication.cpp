@@ -209,7 +209,6 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::GameStateController_v2_0Data>("GameStateController_v2_0")
         .property("GameStateManagerActive", &PE::GameStateController_v2_0Data::GameStateManagerActive)
         .property("PauseBackGroundCanvas", &PE::GameStateController_v2_0Data::PauseBackGroundCanvas)
-        .property("SplashScreen", &PE::GameStateController_v2_0Data::SplashScreen)
         .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
         .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)
         .property("AreYouSureRestartCanvas", &PE::GameStateController_v2_0Data::AreYouSureRestartCanvas)
@@ -393,7 +392,7 @@ void PE::CoreApplication::Run()
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
-    SceneManager::GetInstance().SetStartScene("Level1Scene.json"); // set game scene here <-
+    SceneManager::GetInstance().SetStartScene("MainMenu.json"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE

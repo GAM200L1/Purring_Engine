@@ -236,6 +236,10 @@ namespace PE
 
 					msepress = true;
 			}
+			else if (r_event.GetType() == WindowEvents::WindowFocus)
+			{
+					PauseManager::GetInstance().SetPaused(false);
+			}
 #endif
 	}
 

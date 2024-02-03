@@ -30,8 +30,6 @@ namespace PE
 	{
 		bool GameStateManagerActive;
 		EntityID PauseBackGroundCanvas;
-		EntityID SplashScreen;
-		float SplashTimer{ 2.f }; // Time in seconds that the splashscreen is displayed for
 		EntityID PauseMenuCanvas;
 		EntityID AreYouSureCanvas;
 		EntityID AreYouSureRestartCanvas;
@@ -249,13 +247,6 @@ namespace PE
 		*************************************************************************************/
 		void ExecutionStateHUD(EntityID const id, float deltaTime);
 		/*!***********************************************************************************
-		 \brief			Fade the Splashscreen 
-
-		 \param[in]		the current game state manager
-		 \param[in]		the time passed since the last update
-		*************************************************************************************/
-		void SplashScreenFade(EntityID const id, float deltaTime);
-		/*!***********************************************************************************
 		 \brief			Fade the Planning State HUD
 
 		 \param[in]		the current game state manager
@@ -269,7 +260,7 @@ namespace PE
 		 \param[in]		current value of the slider
 		 \param[in]		max value of the slider
 		*************************************************************************************/
-		void SetPortraitInformation(std::string_view TextureName, int Current, int Max, bool isRat);
+		void SetPortraitInformation(std::string_view TextureName, float Current, float Max, bool isRat);
 		/*!***********************************************************************************
 		 \brief			Update the Turn Counter information
 

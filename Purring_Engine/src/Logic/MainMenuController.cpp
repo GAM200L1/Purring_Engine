@@ -21,7 +21,7 @@
 #include "ECS/Entity.h"
 #include "SceneManager/SceneManager.h"
 #include "Graphics/Text.h"
-
+#include "PauseManager.h"
 namespace PE
 {
 	MainMenuController::MainMenuController()
@@ -50,6 +50,35 @@ namespace PE
 	void MainMenuController::Update(EntityID id, float deltaTime)
 	{
 		SplashScreenFade(id, deltaTime);
+
+		if (!m_inSplashScreen)
+		{
+			if (PauseManager::GetInstance().IsPaused())
+			{
+				if (!m_isPausedOnce)
+				{	
+					EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music_Prefab.json");
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+						EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
+					EntityManager::GetInstance().RemoveEntity(bgm);
+					m_isPausedOnce = true;
+					m_isResumedOnce = false;
+				}
+			}
+			else
+			{
+				if (!m_isResumedOnce)
+				{
+					EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music_Prefab.json");
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+						EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
+					EntityManager::GetInstance().RemoveEntity(bgm);
+					m_isResumedOnce = true;
+					m_isPausedOnce = false;
+				}
+
+			}
+		}
 	}
 
 	void MainMenuController::Destroy(EntityID id)
@@ -223,17 +252,28 @@ namespace PE
 	void MainMenuController::PlayGameMM(EntityID)
 	{
 		SceneManager::GetInstance().LoadScene("Level1Scene.json");
+		PlayClickAudio();
 	}
 
 	void MainMenuController::QuitGameMM(EntityID)
 	{
 		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].AreYouSureCanvas);
 		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
+		PlayClickAudio();
 	}
 
 	void MainMenuController::ReturnFromMMAYS(EntityID)
 	{
 		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
 		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].AreYouSureCanvas);
+		PlayClickAudio();
+	}
+
+	void MainMenuController::PlayClickAudio()
+	{
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 }
