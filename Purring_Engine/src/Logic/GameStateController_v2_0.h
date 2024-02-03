@@ -119,70 +119,231 @@ namespace PE
 		// ----- Event Callbacks ----- //
 	public:
 		/*!***********************************************************************************
-		 \brief     Handle window out of focus event.
-		 \param     Event containing window-specific details.
+		 \brief			Handle window out of focus event.
+		 \param[in]     Event containing window-specific details.
 		*************************************************************************************/
 		void OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event);
 
 		/*!***********************************************************************************
-		 \brief     Handle Key Press event.
-		 \param     Event containing window-specific details.
+		 \brief			Handle Key Press event.
+		 \param[in]     Event containing window-specific details.
 		*************************************************************************************/
 		void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 
 		/*!***********************************************************************************
-		 \brief Checks if the mouse cursor is within the bounds of any GUI objects
+		 \brief			Checks if the mouse cursor is within the bounds of any GUI objects
 
-		 \param[in,out] r_ME mouse click event details
+		 \param[in]		r_ME mouse click event details
 		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
-		// ----- Helper Functions ----- //
+		// ----- Game State Helper Functions ----- //
 	public:
-		//State Functions
+		/*!***********************************************************************************
+		 \brief			Set the game state to pause
+
+		 \param[in]		EntityID so that the function can be called by a button
+		*************************************************************************************/
 		void SetPauseStateV2(EntityID = 0);
+		/*!***********************************************************************************
+		 \brief			Set the game state
+
+		 \param[in]		The game state to set
+		*************************************************************************************/
 		void SetGameState(GameStates_v2_0);
+		/*!***********************************************************************************
+		 \brief			Set the game state to previous state saved
+
+		 \param[in]		EntityID so that the function can be called by a button
+		*************************************************************************************/
 		void ResumeStateV2(EntityID = 0);
+		/*!***********************************************************************************
+		 \brief			Swap the state between execution and planning
+
+		 \param[in]		EntityID so that the function can be called by a button
+		*************************************************************************************/
 		void NextState(EntityID = 0);
+		/*!***********************************************************************************
+		 \brief			Set the game state to Win and activate the Win Canvas
+		*************************************************************************************/
 		void WinGame();
+		/*!***********************************************************************************
+		 \brief			Set the game state to Lose and activate the Lose Canvas
+		*************************************************************************************/
 		void LoseGame();
+		/*!***********************************************************************************
+		 \brief			Set the next scene to load to the current scene, and activate transition to restart the scene
+
+		 \param[in]		EntityID so that the function can be called by a button
+		*************************************************************************************/
 		void RetryStage(EntityID);
+		/*!***********************************************************************************
+		 \brief			Go to the next stage, with is 2 for now
+
+		 \param[in]		The Next Stage to load
+		*************************************************************************************/
 		void NextStage(int nextStage);
+		/*!***********************************************************************************
+		 \brief			Move from Deployment to Planning
+		*************************************************************************************/
 		void StartGameLoop();
+		/*!***********************************************************************************
+		 \brief			Restart the game from the first level
+
+		 \param[in]		EntityID so that the function can be called by a button
+		*************************************************************************************/
 		void RestartGame(EntityID);
 
+		// ----- Object Helper Functions ----- //
+	private:
+		/*!***********************************************************************************
+		 \brief			Activate the given object and its childrens
 
-		//Object Helper Functions
+		 \param[in]		The objects to set active
+		*************************************************************************************/		
 		void ActiveObject(EntityID);
+		/*!***********************************************************************************
+		 \brief			Deactivate the given object and its childrens
+
+		 \param[in]		The objects to set deactivate
+		*************************************************************************************/
 		void DeactiveObject(EntityID);
+		/*!***********************************************************************************
+		 \brief			Deactivate all the Pause Menu canvases
+		*************************************************************************************/
 		void DeactiveAllMenu();
+		/*!***********************************************************************************
+		 \brief				Get the current mouse position to screen
+
+		 \param[out]		the vec2 to store the mouse position
+		*************************************************************************************/
 		void GetMouseCurrentPosition(vec2& Output);
+		/*!***********************************************************************************
+		 \brief			Load a specific level with the given name
+
+		 \param[in]		the level to load
+		*************************************************************************************/
 		void LoadSceneFunction(std::string levelname);
 
-		//HUD/UI functions
+		// ----- HUD Helper Functions ----- //
+	private:
+		/*!***********************************************************************************
+		 \brief			Set the alpha of all given objects
+
+		 \param[in]		EntityID the canvas to set alpha
+		 \param[in]		float the alpha to set
+		*************************************************************************************/
 		void FadeAllObject(EntityID Canvas, float const alpha);
+		/*!***********************************************************************************
+		 \brief			Fade the Planning State HUD
+
+		 \param[in]		the current game state manager
+		 \param[in]		the time passed since the last update
+		*************************************************************************************/
 		void PlanningStateHUD(EntityID const id, float deltaTime);
+		/*!***********************************************************************************
+		 \brief			Fade the Execution State HUD
+
+		 \param[in]		the current game state manager
+		 \param[in]		the time passed since the last update
+		*************************************************************************************/
 		void ExecutionStateHUD(EntityID const id, float deltaTime);
-		void ExecuteSplashScreen(EntityID const id, float deltaTime);
-		void ExecuteTransition(EntityID const id, float deltaTime, bool in);
-		void SetPortraitInformation(std::string_view TextureName, int Current, int Max);
+		/*!***********************************************************************************
+		 \brief			Fade the Splashscreen 
+
+		 \param[in]		the current game state manager
+		 \param[in]		the time passed since the last update
+		*************************************************************************************/
+		void SplashScreenFade(EntityID const id, float deltaTime);
+		/*!***********************************************************************************
+		 \brief			Fade the Planning State HUD
+
+		 \param[in]		the current game state manager
+		 \param[in]		the time passed since the last update
+		*************************************************************************************/
+		void TransitionPanelFade(EntityID const id, float deltaTime, bool in);
+		/*!***********************************************************************************
+		 \brief			Set the Information of the Portrait
+
+		 \param[in]		name of the texture to change the potrait to
+		 \param[in]		current value of the slider
+		 \param[in]		max value of the slider
+		*************************************************************************************/
+		void SetPortraitInformation(std::string_view TextureName, int Current, int Max, bool isRat);
+		/*!***********************************************************************************
+		 \brief			Update the Turn Counter information
+
+		 \param[in]		the current phase to set the text to
+		*************************************************************************************/
 		void UpdateTurnCounter(std::string currentphase);
 
-		//Menu Functions
+		// ----- MENU Helper Functions ----- //
+	private:
+		/*!***********************************************************************************
+		 \brief			Close How To Play Canvas
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
 		void CloseHTP(EntityID);
+		/*!***********************************************************************************
+		 \brief			Open How To Play Canvas
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
 		void OpenHTP(EntityID);
+		/*!***********************************************************************************
+		 \brief			Change to How To Play Page 2
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
 		void HTPPage2(EntityID);
+		/*!***********************************************************************************
+		 \brief			Change to How To Play Page 1
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
 		void HTPPage1(EntityID);
+		/*!***********************************************************************************
+		 \brief			Return from the How You Sure Screen
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
 		void ReturnFromAYS(EntityID);
+		/*!***********************************************************************************
+		 \brief			Open the Are You Sure Canvas that quits the game
+
+		 \param[in]		EntityID so that this function can be called by a buttopn
+		*************************************************************************************/
 		void OpenAYS(EntityID);
+		/*!***********************************************************************************
+		 \brief			Open the Are You Sure Canvas that restarts the game
+
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
 		void OpenAYSR(EntityID);
 
-
-		//Audio Functions
+		// ----- Audio Helper Functions ----- //
+	private:
+		/*!***********************************************************************************
+		 \brief			Play a Button Click Audio
+		*************************************************************************************/
 		void PlayClickAudio();
+		/*!***********************************************************************************
+		 \brief			Play a Page Flip Audio
+		*************************************************************************************/
 		void PlayPageAudio();
+		/*!***********************************************************************************
+		 \brief			Play a Phase Change Drum Sound
+		 *************************************************************************************/
 		void PlayPhaseChangeAudio();
-
+		/*!***********************************************************************************
+		 \brief			Pause the BGM
+		*************************************************************************************/
+		void PauseBGM();
+		/*!***********************************************************************************
+		 \brief			Resume the BGM
+		*************************************************************************************/
+		void ResumeBGM();
 
 	public:
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
@@ -190,9 +351,9 @@ namespace PE
 		int CurrentTurn{1};
 	private:
 		//Script Variables
-		std::map<EntityID, GameStateController_v2_0Data> m_ScriptData; // Data associated with each instance of the script
+		std::map<EntityID, GameStateController_v2_0Data> m_scriptData; // Data associated with each instance of the script
 		EntityID m_currentGameStateControllerID;
-		SerializationManager serializationManager;
+		SerializationManager m_serializationManager;
 
 		//Stage Variables
 		int m_currentLevel{};

@@ -81,13 +81,25 @@ namespace PE {
 		/*!***********************************************************************************
 		 \brief Checks if the mouse cursor is within the bounds of any GUI objects
 
-		 \param[in,out] r_ME mouse click event details
+		 \param[in] r_ME mouse click event details
 		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		/*!***********************************************************************************
+		 \brief				Get the current Mouse position on the screen
+
+		 \param[out]		vec2 of the output of the mouse position
+		*************************************************************************************/
 		void GetMouseCurrentPosition(vec2& Output);
+		/*!***********************************************************************************
+		 \brief				Check if mouse is within an area, with a extended width from the texture
+
+		 \param[in]		The area to check
+		 \param[in]		The mouse position
+		 \param[in]		The texture width
+		*************************************************************************************/
 		bool CheckArea(Transform const& area, vec2 const& mousePos, float textureWidth);
 	private:
-		std::map<EntityID, DeploymentScriptData> m_ScriptData;
+		std::map<EntityID, DeploymentScriptData> m_scriptData;
 		vec2 m_mousepos;
 		Transform m_deploymentZone;
 		EntityID m_currentDeploymentScriptEntityID;

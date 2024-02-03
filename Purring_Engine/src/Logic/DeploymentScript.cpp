@@ -28,9 +28,8 @@ namespace PE
 
 	void PE::DeploymentScript::Init(EntityID id)
 	{
-		m_ScriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
+		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
 
-		m_currentDeploymentScriptEntityID = id;
 		m_catPlaced = 0;
 	}
 
@@ -40,11 +39,11 @@ namespace PE
 
 		if (m_catPlaced >= 2 && gsc->currentState == GameStates_v2_0::DEPLOYMENT)
 		{
-			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].DeploymentArea))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].DeploymentArea).SetColor(1, 1, 1, 0);
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].DeploymentArea).SetColor(1, 1, 1, 0);
 
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject))
-				EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive = false;
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].FollowingTextureObject))
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].FollowingTextureObject).isActive = false;
 
 			gsc->StartGameLoop();
 
@@ -53,32 +52,32 @@ namespace PE
 
 		if (gsc->currentState != GameStates_v2_0::DEPLOYMENT)
 		{
-			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].DeploymentArea))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].DeploymentArea).SetColor(1,1, 1, 0);
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].DeploymentArea).SetColor(1,1, 1, 0);
 
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject))
-				EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive = false;
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].FollowingTextureObject))
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].FollowingTextureObject).isActive = false;
 
 			m_inNoGoArea = true;
 
 			return;
 		}
 
-		if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].DeploymentArea))
-			EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].DeploymentArea).SetColor(1,1,1,1);
+		if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
+			EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].DeploymentArea).SetColor(1,1,1,1);
 
-		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject))
-			EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive = true;
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].FollowingTextureObject))
+			EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].FollowingTextureObject).isActive = true;
 
 		GetMouseCurrentPosition(m_mousepos);
 
-		if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].DeploymentArea))
-			m_deploymentZone = EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].DeploymentArea);
+		if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].DeploymentArea))
+			m_deploymentZone = EntityManager::GetInstance().Get<Transform>(m_scriptData[id].DeploymentArea);
 		else
 			return;
 
-		if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].FollowingTextureObject))
-			EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingTextureObject).position = m_mousepos;
+		if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].FollowingTextureObject))
+			EntityManager::GetInstance().Get<Transform>(m_scriptData[id].FollowingTextureObject).position = m_mousepos;
 		else
 			return;
 
@@ -88,14 +87,14 @@ namespace PE
 		
 		CircleCollider cc;
 
-		if (EntityManager::GetInstance().Has<Collider>(m_ScriptData[id].FollowingTextureObject))
-			cc = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(m_ScriptData[id].FollowingTextureObject).colliderVariant);
+		if (EntityManager::GetInstance().Has<Collider>(m_scriptData[id].FollowingTextureObject))
+			cc = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(m_scriptData[id].FollowingTextureObject).colliderVariant);
 		else
 			return;
 
 		if (CheckArea(m_deploymentZone, m_mousepos, cc.radius))
 		{
-			for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].NoGoArea).children)
+			for (auto cid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].NoGoArea).children)
 			{
 
 				AABBCollider aabb;
@@ -114,11 +113,11 @@ namespace PE
 			}
 
 			if(!m_inNoGoArea)
-			for (auto cid : m_ScriptData[id].AddedCats)
+			for (auto cid : m_scriptData[id].AddedCats)
 			{
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(cid))
 				{
-					if (!EntityManager::GetInstance().Get<EntityDescriptor>(m_ScriptData[id].FollowingTextureObject).isActive)
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].FollowingTextureObject).isActive)
 					{
 						continue;
 					}
@@ -147,13 +146,13 @@ namespace PE
 		if(m_inNoGoArea)
 		{ 
 			std::cout << "in no go area" << std::endl;
-			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].FollowingTextureObject))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].FollowingTextureObject).SetColor(1,0,0,.65f);
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetColor(1,0,0,.65f);
 		}
 		else
 		{
-			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].FollowingTextureObject))
-				EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].FollowingTextureObject).SetColor(1, 1, 1, .65f);
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetColor(1, 1, 1, .65f);
 		}
 
 
@@ -161,33 +160,35 @@ namespace PE
 
 	void DeploymentScript::Destroy(EntityID id)
 	{
-		auto it = m_ScriptData.find(id);
-		if (it != m_ScriptData.end())
+		auto it = m_scriptData.find(id);
+		if (it != m_scriptData.end())
 		{
-			REMOVE_MOUSE_EVENT_LISTENER(m_ScriptData[id].mouseClickEventID);
+			REMOVE_MOUSE_EVENT_LISTENER(m_scriptData[id].mouseClickEventID);
 		}
 	}
 
 	void DeploymentScript::OnAttach(EntityID id)
 	{
-		m_ScriptData[id] = DeploymentScriptData();
+		m_scriptData[id] = DeploymentScriptData();
+
+		m_currentDeploymentScriptEntityID = id;
 	}
 
 	void DeploymentScript::OnDetach(EntityID id)
 	{
-		auto it = m_ScriptData.find(id);
-		if (it != m_ScriptData.end())
-			m_ScriptData.erase(id);
+		auto it = m_scriptData.find(id);
+		if (it != m_scriptData.end())
+			m_scriptData.erase(id);
 	}
 
 	std::map<EntityID, DeploymentScriptData>& DeploymentScript::GetScriptData()
 	{
-		return m_ScriptData;
+		return m_scriptData;
 	}
 
 	rttr::instance DeploymentScript::GetScriptData(EntityID id)
 	{
-		return rttr::instance(m_ScriptData.at(id));
+		return rttr::instance(m_scriptData.at(id));
 	}
 
 	DeploymentScript::~DeploymentScript()
@@ -212,7 +213,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Transform>(NewCatID).position = m_mousepos;
 				EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;
 
-				m_ScriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(NewCatID);
+				m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(NewCatID);
 				m_catPlaced++;
 			}
 		}
