@@ -760,6 +760,7 @@
                                 "HowToPlayCanvas": 18,
                                 "HowToPlayPageOne": 19,
                                 "HowToPlayPageTwo": 20,
+                                "Journal": 0,
                                 "LoseCanvas": 37,
                                 "PauseBackGroundCanvas": 13,
                                 "PauseMenuCanvas": 3,
@@ -4535,7 +4536,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Exit Point",
                         "parent": null,
                         "sceneID": 88
                     },
@@ -4787,7 +4788,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject92",
+                        "name": "Collider",
                         "parent": null,
                         "sceneID": 92
                     },
@@ -4850,7 +4851,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject93",
+                        "name": "Collider",
                         "parent": null,
                         "sceneID": 93
                     },
@@ -4913,7 +4914,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject95",
+                        "name": "Collider",
                         "parent": null,
                         "sceneID": 95
                     },

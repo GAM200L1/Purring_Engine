@@ -3083,7 +3083,9 @@ namespace PE {
 										int RatPortID = static_cast<int> (it->second.RatPortrait);
 										int PortID = static_cast<int> (it->second.Portrait);
 										int BackgroundID = static_cast<int> (it->second.Background);
+										int JournalID = static_cast<int> (it->second.Journal);
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
+										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
 									
 										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
 										if (PauseBackGroundCanvasID != m_currentSelectedObject) { it->second.PauseBackGroundCanvas = PauseBackGroundCanvasID; }
@@ -3135,6 +3137,12 @@ namespace PE {
 
 										ImGui::Text("Transition Panel ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tpc", &TransitionPanelID);
 										if (TransitionPanelID != m_currentSelectedObject) { it->second.TransitionPanel = TransitionPanelID; }
+
+										ImGui::Text("Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##jcid", &JournalID);
+										if (JournalID != m_currentSelectedObject) { it->second.TransitionPanel = JournalID; }
+
+										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
+										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }
 
 										for (int i = 0; i < 5; i++)
 										{

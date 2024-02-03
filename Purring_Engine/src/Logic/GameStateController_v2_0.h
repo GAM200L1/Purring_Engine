@@ -42,7 +42,8 @@ namespace PE
 		EntityID ExecuteCanvas;
 		EntityID TurnCounterCanvas;
 
-		EntityID JournalCanvas;
+		EntityID Journal;
+		EntityID PhaseBanner;
 
 		EntityID CatPortrait,RatPortrait;
 		EntityID Portrait;

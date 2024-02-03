@@ -362,9 +362,13 @@ namespace PE
 			{
 				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
 					continue;
+
 				//get the components
 				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
 				GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
+
+				std::string nameOfButton = EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name;
+
 
 				if (gui.disabled)
 					continue;
@@ -382,9 +386,13 @@ namespace PE
 					{
 						gui.OnClick(objectID);
 						gui.m_clickedTimer = .3f;
-						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
+						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) 
+						{
+							if (nameOfButton == EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name)
+							{
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_pressedColor.x, gui.m_pressedColor.y, gui.m_pressedColor.z, gui.m_pressedColor.w);
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_pressedTexture);
+							}
 						}
 						return;
 					}

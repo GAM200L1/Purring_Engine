@@ -98,7 +98,7 @@
                         "isActive": false,
                         "name": "PauseCanvas",
                         "parent": null,
-                        "sceneID": 11
+                        "sceneID": 12
                     },
                     "Transform": {
                         "height": 100.0,
@@ -187,7 +187,7 @@
                             0.5,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_HowToPlay_512x128.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,
@@ -400,7 +400,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 12
+                        "sceneID": 13
                     },
                     "Transform": {
                         "height": 100.0,
@@ -665,7 +665,7 @@
                         "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 10
                     },
                     "Transform": {
                         "height": 100.0,
@@ -764,9 +764,9 @@
                                 "LoseCanvas": 37,
                                 "PauseBackGroundCanvas": 13,
                                 "PauseMenuCanvas": 3,
-                                "Portrait": 47,
+                                "Portrait": 71,
                                 "RatPortrait": 53,
-                                "TransitionPanel": 70,
+                                "TransitionPanel": 0,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
                                 "clicklisttest": [
@@ -822,7 +822,7 @@
                         "isActive": false,
                         "name": "HowToPlayCanvas",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 11
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1161,9 +1161,10 @@
                             29,
                             30,
                             44,
-                            47
+                            47,
+                            71
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 4
@@ -1203,7 +1204,7 @@
                         "isActive": false,
                         "name": "FoliageCanvas",
                         "parent": null,
-                        "sceneID": 7
+                        "sceneID": 8
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1271,7 +1272,7 @@
                         "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "PawOverlay",
                         "parent": 24,
                         "sceneID": 14
@@ -1311,10 +1312,10 @@
                         "Old ID": 29,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "MapOverlay",
                         "parent": 24,
-                        "sceneID": 8
+                        "sceneID": 1
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1351,10 +1352,10 @@
                         "Old ID": 28,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "EndTurnButton",
                         "parent": 24,
-                        "sceneID": 11
+                        "sceneID": 8
                     },
                     "GUI": {
                         "disabled": false,
@@ -1425,7 +1426,7 @@
                         "Old ID": 30,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "EndPlanningText",
                         "parent": 24,
                         "sceneID": 47
@@ -1558,7 +1559,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 16
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2227,7 +2228,7 @@
                         "isActive": false,
                         "name": "TurnCounterCanvas",
                         "parent": null,
-                        "sceneID": 8
+                        "sceneID": 9
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2255,7 +2256,7 @@
                         "Old ID": 44,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "PauseButton",
                         "parent": 24,
                         "sceneID": 43
@@ -2329,10 +2330,10 @@
                         "Old ID": 47,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "UnitPortrait",
                         "parent": 24,
-                        "sceneID": 13
+                        "sceneID": 11
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3209,7 +3210,7 @@
                         "isActive": false,
                         "name": "AreYouSureRestartCanvas",
                         "parent": null,
-                        "sceneID": 13
+                        "sceneID": 14
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3566,7 +3567,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Exit Point",
+                        "name": "Empty Object",
                         "parent": null,
                         "sceneID": 72
                     },
@@ -4159,6 +4160,157 @@
                         },
                         "relorientation": 0.0,
                         "width": 65.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 16,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            17
+                        ],
+                        "isActive": true,
+                        "name": "Journal Canvas",
+                        "parent": null,
+                        "sceneID": 7
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 17,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Journal",
+                        "parent": 16,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/CatJournal_Meowsalot_753x402.png"
+                    },
+                    "Transform": {
+                        "height": 255.54103088378906,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -454.49993896484375,
+                            "y": -237.00003051757813
+                        },
+                        "relativeposition": {
+                            "x": -454.49993896484375,
+                            "y": -237.00003051757813
+                        },
+                        "relorientation": 0.0,
+                        "width": 422.16619873046875
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 71,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "UnitPotraitButton",
+                        "parent": 24,
+                        "sceneID": 13
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            0.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledColor": [
+                            0.501960813999176,
+                            0.501960813999176,
+                            0.501960813999176,
+                            0.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/Resources/UnitPortrait_Default_256px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/Resources/UnitPortrait_Default_256px.png",
+                        "m_onClicked": "",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/Resources/UnitPortrait_Default_256px.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_Default_256px.png"
+                    },
+                    "Transform": {
+                        "height": 256.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -803.7998657226563,
+                            "y": -351.29998779296875
+                        },
+                        "relativeposition": {
+                            "x": -803.7998657226563,
+                            "y": -351.29998779296875
+                        },
+                        "relorientation": 0.0,
+                        "width": 256.0
                     }
                 },
                 "name": ""

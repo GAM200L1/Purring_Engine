@@ -110,12 +110,16 @@ namespace PE
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
+
+
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].PauseMenuCanvas).children)
 		{
 			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "Pawsed Text Object")
 			{
-				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("GamePawsed_Text_1024x256.png"));
+				//std::cout << "texture" << EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).GetTextureKey() << std::endl;
+				//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("GamePawsed_Text_1024x256.png"));
 			}
+
 		}
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
