@@ -52,6 +52,7 @@
 #include "Logic/GameStateController.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/DeploymentScript.h"
+#include "Logic/MainMenuController.h"
 #include "GUISystem.h"
 #include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
@@ -3178,10 +3179,32 @@ namespace PE {
 									}
 								}
 							}
+
+							if (key == "MainMenuController")
+							{
+								MainMenuController* p_script = dynamic_cast<MainMenuController*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("MainMenuController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int AreYouSureID = static_cast<int> (it->second.AreYouSureCanvas);
+										int MainMenuCanvasID = static_cast<int> (it->second.MainMenuCanvas);
+										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
+
+										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCID", &MainMenuCanvasID);
+										if (MainMenuCanvasID != m_currentSelectedObject) { it->second.MainMenuCanvas = MainMenuCanvasID; }
+
+										ImGui::Text("Splash Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##SSMM", &SplashScreenID);
+										if (SplashScreenID != m_currentSelectedObject) { it->second.SplashScreen = SplashScreenID; }
+
+										ImGui::Text("Are You Sure Canvas Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##AYSMMID", &AreYouSureID);
+										if (AreYouSureID != m_currentSelectedObject) it->second.AreYouSureCanvas = AreYouSureID;
+									}
+								}
+							}
 						}
 					}
-
-
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 					ImGui::Separator();

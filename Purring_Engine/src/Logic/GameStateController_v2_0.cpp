@@ -376,8 +376,6 @@ namespace PE
 		MouseButtonPressedEvent MBPE;
 		MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 
-		std::cout << "test number" << std::endl;
-
 		if (MBPE.button == GLFW_MOUSE_BUTTON_LEFT)
 		{
 			if (currentState == GameStates_v2_0::PLANNING)

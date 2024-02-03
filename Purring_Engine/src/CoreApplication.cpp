@@ -93,6 +93,7 @@
 #include "Logic/RatScript.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/DeploymentScript.h"
+#include "Logic/MainMenuController.h"
 
 // Scene Manager
 #include "SceneManager/SceneManager.h"
@@ -250,7 +251,12 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::DeploymentScriptData>("DeploymentScript")
         .property("FollowingTextureObject", &PE::DeploymentScriptData::FollowingTextureObject)
         .property("NoGoArea", &PE::DeploymentScriptData::NoGoArea)
-        .property("DeploymentArea", &PE::DeploymentScriptData::DeploymentArea);
+        .property("DeploymentArea", &PE::DeploymentScriptData::DeploymentArea);   
+    
+    rttr::registration::class_<PE::MainMenuControllerData>("MainMenuController")
+        .property("AreYouSureCanvas", &PE::MainMenuControllerData::AreYouSureCanvas)
+        .property("MainMenuCanvas", &PE::MainMenuControllerData::MainMenuCanvas)
+        .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
