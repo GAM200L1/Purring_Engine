@@ -67,7 +67,7 @@ namespace PE
 		bool finishedExecution{ false }; // Keeps track of whether the execution phase has been completed
 
 		float detectionRadius{};
-		float movementSpeed{};
+		float movementSpeed{ 15.f};
 		
 		// Attack 
 		int skillDamage{};

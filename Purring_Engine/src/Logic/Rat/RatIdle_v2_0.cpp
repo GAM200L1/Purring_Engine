@@ -96,17 +96,20 @@ namespace PE
             return;
         }
 
+        gameStateController->currentState = GameStates_v2_0::EXECUTE;
+
+        m_type = RatType::PATROL;
+
         switch (m_type)
         {
         case RatType::IDLE:
             // Idle logic doing nothing
+
+            std::cout << "Idle";
             break;
         case RatType::PATROL:
-            // Patrol behavior: Execute during the EXECUTE phase
-            if (gameStateController->currentState == GameStates_v2_0::EXECUTE)
-            {
-                PatrolLogic(id, deltaTime);
-            }
+            std::cout << "Patrolling Update\n";
+            PatrolLogic(id, deltaTime);
             break;
         }
 
@@ -144,8 +147,12 @@ namespace PE
             {
                 // Toggle between the two points
                 p_data->patrolIndex = (p_data->patrolIndex == 0) ? 1 : 0;
+
             }
         }
+        // Add debug code to print the rat's position
+        const Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
+        std::cout << "Rat Position: X=" << ratTransform.position.x << ", Y=" << ratTransform.position.y << std::endl;
     }
 
     void RatIdle_v2_0::MoveTowards(EntityID id, const vec3& target, float deltaTime)
@@ -170,13 +177,13 @@ namespace PE
     {
         p_data->patrolPoints.clear();                                       // clear existing points.
 
-        p_data->patrolPoints.push_back(vec3(-3.0f, -1.56f, 0.0f));          // Patrol Point A
+        p_data->patrolPoints.push_back(vec3(-300.0f, -200.56f, 0.0f));          // Patrol Point A
         p_data->patrolPoints.push_back(vec3(0.0f, 0.0f, 0.0f));             // Patrol Point B
 
         p_data->patrolIndex = 0;                                // Reset patrol index
 
         // in the future if more than 2 points can use this.
-        //p_data->returnToFirstPoint = false;
+        p_data->returnToFirstPoint = false;
     }
 
     void RatIdle_v2_0::StateExit(EntityID id)

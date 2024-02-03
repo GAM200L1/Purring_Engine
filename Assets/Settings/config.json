@@ -3,7 +3,7 @@
         "firstLaunch": false,
         "isPrefabMode": false,
         "renderDebug": true,
-        "showAnimationWindow": false,
+        "showAnimationWindow": true,
         "showComponentWindow": true,
         "showConsole": true,
         "showEditor": true,
