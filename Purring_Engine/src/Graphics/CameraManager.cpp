@@ -213,16 +213,17 @@ namespace PE
                 // Get the size of the render window
                 float editorWindowSizeX{}, editorWindowSizeY{};
                 Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
-                float widthRatio{ !CompareFloats(editorWindowSizeX, 0.f) ? m_viewportWidth / editorWindowSizeX : 1.f };
-                float heightRatio{ !CompareFloats(editorWindowSizeY, 0.f) ? m_viewportHeight / editorWindowSizeY : 1.f };
+                float widthRatio{ !CompareFloats(m_viewportWidth, 0.f) ? editorWindowSizeX / m_viewportWidth : 1.f };
+                float heightRatio{ !CompareFloats(m_viewportHeight, 0.f) ? editorWindowSizeY / m_viewportHeight : 1.f };
 
                 // Adjust scale of the position
-                vec2 ret{ r_mainCamera.GetWorldToViewportPosition(x * widthRatio, y * heightRatio) };
-                ret.y += Editor::GetInstance().GetPlayWindowOffset();
+                vec2 ret{ r_mainCamera.GetWorldToViewportPosition(x, y - Editor::GetInstance().GetPlayWindowOffset()) };
+                ret.x *= widthRatio, ret.y *= heightRatio;
 #else
-                float widthRatio{ !CompareFloats(m_windowWidth, 0.f) ? m_viewportWidth / m_windowWidth : 1.f };
-                float heightRatio{ !CompareFloats(m_windowHeight, 0.f) ? m_viewportHeight / m_windowHeight : 1.f };
-                vec2 ret{ r_mainCamera.GetWorldToViewportPosition(x * widthRatio, y * heightRatio) };
+                float widthRatio{ !CompareFloats(m_viewportWidth, 0.f) ? m_windowWidth / m_viewportWidth : 1.f };
+                float heightRatio{ !CompareFloats(m_viewportHeight, 0.f) ? m_windowHeight / m_viewportHeight : 1.f };
+                vec2 ret{ r_mainCamera.GetWorldToViewportPosition(x, y) };
+                ret.x *= widthRatio, ret.y *= heightRatio;
 #endif // !GAMERELEASE
 
                 return ret;
