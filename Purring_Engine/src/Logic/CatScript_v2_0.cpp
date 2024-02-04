@@ -28,5 +28,37 @@
 
 namespace PE
 {
+	CatScript_v2_0::~CatScript_v2_0()
+	{
+		for (auto& [key, value] : m_scriptData)
+		{
+			delete value.p_stateManager;
+		}
+	}
 
+	void CatScript_v2_0::Init(EntityID id)
+	{
+
+	}
+
+	void CatScript_v2_0::Update(EntityID id, float deltaTime)
+	{
+
+	}
+
+	void CatScript_v2_0::OnAttach(EntityID id)
+	{
+
+	}
+
+	void CatScript_v2_0::OnDetach(EntityID id)
+	{
+		if (m_scriptData.find(id) != m_scriptData.end())
+		{
+			delete m_scriptData[id].p_stateManager;
+			m_scriptData.erase(id);
+		}
+	}
+
+	
 }
