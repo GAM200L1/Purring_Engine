@@ -14,7 +14,7 @@
 
 *************************************************************************************/
 #pragma once
-#include "Script.h"
+#include "Logic/Script.h"
 
 namespace PE
 {
