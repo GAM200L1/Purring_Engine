@@ -52,6 +52,8 @@
 #include "Logic/GameStateController.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/UI/HealthBarScript_v2_0.h"
+#include "Logic/DeploymentScript.h"
+#include "Logic/MainMenuController.h"
 #include "GUISystem.h"
 #include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
@@ -3066,10 +3068,10 @@ namespace PE {
 									if (ImGui::CollapsingHeader("GameStateController_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
 										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act", &it->second.GameStateManagerActive);
-										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
-										int BackgroundID = static_cast<int> (it->second.BackGroundCanvas);
+										int PauseBackGroundCanvasID = static_cast<int> (it->second.PauseBackGroundCanvas);
 										int PauseMenuCanvasID = static_cast<int> (it->second.PauseMenuCanvas);
 										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
+										int AreYouSureRestartCanvasID = static_cast<int> (it->second.AreYouSureRestartCanvas);
 										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
 										int LoseCanvasID = static_cast<int> (it->second.LoseCanvas);
 										int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
@@ -3081,18 +3083,22 @@ namespace PE {
 										int CatPortID = static_cast<int> (it->second.CatPortrait);
 										int RatPortID = static_cast<int> (it->second.RatPortrait);
 										int PortID = static_cast<int> (it->second.Portrait);
+										int BackgroundID = static_cast<int> (it->second.Background);
+										int JournalID = static_cast<int> (it->second.Journal);
+										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
+										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
 									
-										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &BackgroundID);
-										if (BackgroundID != m_currentSelectedObject) { it->second.BackGroundCanvas = BackgroundID; }
-
-										ImGui::Text("SplashScreen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ssc", &SplashScreenID);
-										if (SplashScreenID != m_currentSelectedObject) { it->second.SplashScreen = SplashScreenID; }
+										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
+										if (PauseBackGroundCanvasID != m_currentSelectedObject) { it->second.PauseBackGroundCanvas = PauseBackGroundCanvasID; }
 
 										ImGui::Text("PauseMenuCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##pmc", &PauseMenuCanvasID);
 										if (PauseMenuCanvasID != m_currentSelectedObject) { it->second.PauseMenuCanvas = PauseMenuCanvasID; }
 
 										ImGui::Text("AreYouSureCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ays", &AreYouSureCanvasID);
 										if (AreYouSureCanvasID != m_currentSelectedObject) { it->second.AreYouSureCanvas = AreYouSureCanvasID; }
+
+										ImGui::Text("AreYouSureRestartCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##aysr", &AreYouSureRestartCanvasID);
+										if (AreYouSureRestartCanvasID != m_currentSelectedObject) { it->second.AreYouSureRestartCanvas = AreYouSureRestartCanvasID; }
 
 										ImGui::Text("WinCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ws", &WinCanvasID);
 										if (WinCanvasID != m_currentSelectedObject) { it->second.WinCanvas = WinCanvasID; }
@@ -3127,6 +3133,18 @@ namespace PE {
 										ImGui::Text("Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##npt", &PortID);
 										if (PortID != m_currentSelectedObject) { it->second.Portrait = PortID; }
 
+										ImGui::Text("Level Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bg", &BackgroundID);
+										if (BackgroundID != m_currentSelectedObject) { it->second.Background = BackgroundID; }
+
+										ImGui::Text("Transition Panel ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tpc", &TransitionPanelID);
+										if (TransitionPanelID != m_currentSelectedObject) { it->second.TransitionPanel = TransitionPanelID; }
+
+										ImGui::Text("Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##jcid", &JournalID);
+										if (JournalID != m_currentSelectedObject) { it->second.TransitionPanel = JournalID; }
+
+										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
+										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }
+
 										for (int i = 0; i < 5; i++)
 										{
 											if (i != 0)
@@ -3144,39 +3162,86 @@ namespace PE {
 
 							if (key == "HealthBarScript_v2_0")
 							{
-									HealthBarScript_v2_0* p_Script = dynamic_cast<HealthBarScript_v2_0*>(val);
-									auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
-									if (it != p_Script->GetScriptData().end())
+								HealthBarScript_v2_0* p_Script = dynamic_cast<HealthBarScript_v2_0*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("HealthBarScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-											if (ImGui::CollapsingHeader("HealthBarScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-											{
-													int id = static_cast<int> (it->second.followObjectID);
-													ImGui::Text("Follow Object ID: "); ImGui::SameLine(); ImGui::InputInt("##healthbarfollowid", &id);
-													it->second.followObjectID = id;
+										int id = static_cast<int> (it->second.followObjectID);
+										ImGui::Text("Follow Object ID: "); ImGui::SameLine(); ImGui::InputInt("##healthbarfollowid", &id);
+										it->second.followObjectID = id;
 
-													//get and set color variable of the healthbar
-													ImVec4 color;
-													color.x = it->second.fillColor.x;
-													color.y = it->second.fillColor.y;
-													color.z = it->second.fillColor.z;
-													color.w = it->second.fillColor.w;
+										//get and set color variable of the healthbar
+										ImVec4 color;
+										color.x = it->second.fillColor.x;
+										color.y = it->second.fillColor.y;
+										color.z = it->second.fillColor.z;
+										color.w = it->second.fillColor.w;
 
-													ImGui::Text("Health Bar Color: "); ImGui::SameLine();
-													ImGui::ColorEdit4("##healthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+										ImGui::Text("Health Bar Color: "); ImGui::SameLine();
+										ImGui::ColorEdit4("##healthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
 
-													it->second.fillColor.x = color.x;
-													it->second.fillColor.y = color.y;
-													it->second.fillColor.z = color.z;
-													it->second.fillColor.w = color.w;
+										it->second.fillColor.x = color.x;
+										it->second.fillColor.y = color.y;
+										it->second.fillColor.z = color.z;
+										it->second.fillColor.w = color.w;
 
-													ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-											}
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									}
+								}
+							}
+
+							if (key == "DeploymentScript")
+							{
+								DeploymentScript* p_script = dynamic_cast<DeploymentScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("DeploymentScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int FollowingTextureObjectID = static_cast<int> (it->second.FollowingTextureObject);
+										int NoGoAreaID = static_cast<int> (it->second.NoGoArea);
+										int DeploymentAreaID = static_cast<int> (it->second.DeploymentArea);
+
+										ImGui::Text("Following Texture Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##FTO", &FollowingTextureObjectID);
+										 it->second.FollowingTextureObject = FollowingTextureObjectID;
+
+										ImGui::Text("No Go Areas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##NGA", &NoGoAreaID);
+										if (NoGoAreaID != m_currentSelectedObject) { it->second.NoGoArea = NoGoAreaID; }
+
+
+										ImGui::Text("Deployment Zone ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##DPZ", &DeploymentAreaID);
+										{ it->second.DeploymentArea = DeploymentAreaID; }
+									}
+								}
+							}
+
+							if (key == "MainMenuController")
+							{
+								MainMenuController* p_script = dynamic_cast<MainMenuController*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("MainMenuController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int AreYouSureID = static_cast<int> (it->second.AreYouSureCanvas);
+										int MainMenuCanvasID = static_cast<int> (it->second.MainMenuCanvas);
+										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
+
+										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCID", &MainMenuCanvasID);
+										if (MainMenuCanvasID != m_currentSelectedObject) { it->second.MainMenuCanvas = MainMenuCanvasID; }
+
+										ImGui::Text("Splash Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##SSMM", &SplashScreenID);
+										if (SplashScreenID != m_currentSelectedObject) { it->second.SplashScreen = SplashScreenID; }
+
+										ImGui::Text("Are You Sure Canvas Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##AYSMMID", &AreYouSureID);
+										if (AreYouSureID != m_currentSelectedObject) it->second.AreYouSureCanvas = AreYouSureID;
+									}
+								}
 							}
 						}
 					}
-
-
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 					ImGui::Separator();

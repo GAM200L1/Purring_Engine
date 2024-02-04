@@ -93,6 +93,8 @@
 #include "Logic/RatScript.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/UI/HealthBarScript_v2_0.h"
+#include "Logic/DeploymentScript.h"
+#include "Logic/MainMenuController.h"
 
 // Scene Manager
 #include "SceneManager/SceneManager.h"
@@ -207,10 +209,10 @@ RTTR_REGISTRATION
 
     rttr::registration::class_<PE::GameStateController_v2_0Data>("GameStateController_v2_0")
         .property("GameStateManagerActive", &PE::GameStateController_v2_0Data::GameStateManagerActive)
-        .property("BackGroundCanvas", &PE::GameStateController_v2_0Data::BackGroundCanvas)
-        .property("SplashScreen", &PE::GameStateController_v2_0Data::SplashScreen)
+        .property("PauseBackGroundCanvas", &PE::GameStateController_v2_0Data::PauseBackGroundCanvas)
         .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
         .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)
+        .property("AreYouSureRestartCanvas", &PE::GameStateController_v2_0Data::AreYouSureRestartCanvas)
         .property("LoseCanvas", &PE::GameStateController_v2_0Data::LoseCanvas)
         .property("WinCanvas", &PE::GameStateController_v2_0Data::WinCanvas)
         .property("HUDCanvas", &PE::GameStateController_v2_0Data::HUDCanvas)
@@ -222,6 +224,10 @@ RTTR_REGISTRATION
         .property("CatPortrait", &PE::GameStateController_v2_0Data::CatPortrait)
         .property("RatPortrait", &PE::GameStateController_v2_0Data::RatPortrait)
         .property("Portrait", &PE::GameStateController_v2_0Data::Portrait)
+        .property("Background", &PE::GameStateController_v2_0Data::Background)
+        .property("TransitionPanel", &PE::GameStateController_v2_0Data::TransitionPanel)
+        .property("Journal", &PE::GameStateController_v2_0Data::Journal)
+        .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 
     //rttr::registration::class_<PE::GameStateController>("GameStateController")
@@ -243,6 +249,16 @@ RTTR_REGISTRATION
     //    .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
     //    .property("endMovementText", &PE::GameStateControllerData::endMovementText)
     //    .property("endTurnText", &PE::GameStateControllerData::endTurnText);
+
+    rttr::registration::class_<PE::DeploymentScriptData>("DeploymentScript")
+        .property("FollowingTextureObject", &PE::DeploymentScriptData::FollowingTextureObject)
+        .property("NoGoArea", &PE::DeploymentScriptData::NoGoArea)
+        .property("DeploymentArea", &PE::DeploymentScriptData::DeploymentArea);   
+    
+    rttr::registration::class_<PE::MainMenuControllerData>("MainMenuController")
+        .property("AreYouSureCanvas", &PE::MainMenuControllerData::AreYouSureCanvas)
+        .property("MainMenuCanvas", &PE::MainMenuControllerData::MainMenuCanvas)
+        .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
@@ -384,7 +400,7 @@ void PE::CoreApplication::Run()
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
-    SceneManager::GetInstance().SetStartScene("GameSceneFINAL.json"); // set game scene here <-
+    SceneManager::GetInstance().SetStartScene("MainMenu.json"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE

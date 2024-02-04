@@ -129,6 +129,11 @@ namespace PE
 
     }
 
+    void SceneManager::RestartScene()
+    {
+        RestartScene(m_activeScene);
+    }
+
     void SceneManager::DeleteObjects()
     {
         // delete all objects
