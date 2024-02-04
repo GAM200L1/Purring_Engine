@@ -41,9 +41,22 @@ namespace PE
 		}
 
 		// reference entities
-		EntityID myID{ 0 }; // id of the rat with this data
+		EntityID myID{ 0 };								// id of the rat with this data
+		EntityID ratTelegraphID{ 0 };					// id of an additional invisible object with transform for rotating the arrow telegraph
+		EntityID mainCatID{ 3 };						// needs manual setting
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		StateMachine* p_stateManager;
+
+		// Movement Variables
+		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
+
+		// Attack entities and variables
+		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
+		EntityID attackTelegraphEntityID{ 0 };			// id of cross attack telegraph
+		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
+		EntityID redTelegraphEntityID{ 0 };				// id of red detection telegraph
+
+		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
 
 		std::map<std::string, std::string> animationStates;
 
@@ -55,11 +68,16 @@ namespace PE
 		bool finishedExecution{ false }; // Keeps track of whether the execution phase has been completed
 
 		float detectionRadius{};
-		float movementSpeed{};
+		float movementSpeed{ 100.f};
 		
 		// Attack 
 		int skillDamage{};
 		int skillArea{}; // probably dependent on the attack and cannot be stored as a flat var
+
+		// Patrol Points
+		std::vector<vec2> patrolPoints;
+		int patrolIndex{ 0 };							// Index of the current patrol point the rat is moving towards
+		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
 	};
 	
 	class RatScript_v2_0 : public Script
@@ -116,6 +134,48 @@ namespace PE
 		 \param[in,out] id - ID of instance of script to clear
 		*************************************************************************************/
 		virtual void OnDetach(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Helper function to en/disables an entity.
+
+		 \param[in] id EntityID of the entity to en/disable.
+		 \param[in] setToActive Whether this entity should be set to active or inactive.
+		*************************************************************************************/
+		static void ToggleEntity(EntityID id, bool setToActive);
+
+		/*!***********************************************************************************
+		 \brief Adjusts the position of the transform to the value passed in.
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] r_position Position to set the transform to.
+		*************************************************************************************/
+		static void PositionEntity(EntityID const transformId, vec2 const& r_position);
+
+		/*!***********************************************************************************
+		 \brief Adjusts the scale of the transform to the value passed in.
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] width Width to set the transform to.
+		 \param[in] height Height to set the transform to.
+		*************************************************************************************/
+		static void ScaleEntity(EntityID const transformId, float const width, float const height);
+
+
+		// ----- Getters/RTTR ----- //
+
+		/*!***********************************************************************************
+		 \brief Returns the position of the transform of the entity passed in.
+
+		 \param[in] transformId ID of the entity to retrieve the position of.
+		*************************************************************************************/
+		static vec2 GetEntityPosition(EntityID const transformId);
+
+		/*!***********************************************************************************
+		 \brief Returns the scale of the transform of the entity passed in.
+
+		 \param[in] transformId ID of the entity to retrieve the scale of.
+		*************************************************************************************/
+		static vec2 GetEntityScale(EntityID const transformId);
 
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
