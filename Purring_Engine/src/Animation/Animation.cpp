@@ -291,6 +291,10 @@ namespace PE
 			m_animationFrames.push_back(frame);
 		}
 
+		// load sprite sheet for animation
+		if(m_spriteSheetKey != "")
+		ResourceManager::GetInstance().AddTextureKeyToLoad(m_spriteSheetKey);
+
 		return *this;
 	}
 
