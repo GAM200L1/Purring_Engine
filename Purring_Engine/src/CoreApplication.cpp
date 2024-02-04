@@ -350,7 +350,7 @@ RTTR_REGISTRATION
         .method("Height", &PE::Canvas::SetHeight)
         .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
 
-    rttr::registration::class_<PE::HealthBarScript_v2_0_Data>("HealthBarScript")
+    rttr::registration::class_<PE::HealthBarScript_v2_0_Data>("HealthBarScript_v2_0")
         .property("MyID", &PE::HealthBarScript_v2_0_Data::myID)
         .property("FollowObjectID", &PE::HealthBarScript_v2_0_Data::followObjectID)
         .property("FillColor", &PE::HealthBarScript_v2_0_Data::fillColor);

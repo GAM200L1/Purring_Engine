@@ -46,15 +46,15 @@
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
-                        "Old ID": 1,
+                        "Old ID": 3,
                         "Prefab Type": "Canvas Object",
                         "children": [
-                            3
+                            4
                         ],
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 1
+                        "sceneID": 3
                     },
                     "Transform": {
                         "height": 100.0,
@@ -79,15 +79,16 @@
                 "components": {
                     "EntityDescriptor": {
                         "Layer": 0,
-                        "Old ID": 3,
-                        "Prefab Type": "SliderBody",
+                        "Old ID": 4,
+                        "Prefab Type": "WorldHealthBar",
                         "children": [
-                            4
+                            5,
+                            6
                         ],
                         "isActive": true,
-                        "name": "SliderBody",
-                        "parent": 1,
-                        "sceneID": 0
+                        "name": "WorldHealthBar",
+                        "parent": 3,
+                        "sceneID": 4
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -102,33 +103,33 @@
                         "m_Hovered": false,
                         "m_clicked": false,
                         "m_currentValue": 1.0,
-                        "m_currentWidth": 75.0,
-                        "m_currentXpos": 250.0,
+                        "m_currentWidth": 16.0,
+                        "m_currentXpos": 32.0,
                         "m_defaultColor": [
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499,
-                            0.3921568691730499
+                            0.3607843220233917,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
                         ],
                         "m_defaultTexture": "",
                         "m_disabled": false,
                         "m_disabledColor": [
-                            0.0784313753247261,
-                            0.0784313753247261,
-                            0.0784313753247261,
+                            0.9882352948188782,
+                            0.23137255012989044,
+                            0.21176470816135406,
                             1.0
                         ],
                         "m_disabledTexture": "",
-                        "m_endPoint": 250.0,
+                        "m_endPoint": 32.0,
                         "m_hoveredColor": [
-                            0.3529411852359772,
-                            0.3529411852359772,
-                            0.3529411852359772,
+                            0.9254902005195618,
+                            0.9882352948188782,
+                            0.21176470816135406,
                             1.0
                         ],
                         "m_hoveredTexture": "",
                         "m_isHealthBar": true,
-                        "m_knobID": 4,
+                        "m_knobID": 5,
                         "m_maxValue": 1.0,
                         "m_minValue": 0.0,
                         "m_pressedColor": [
@@ -138,15 +139,25 @@
                             1.0
                         ],
                         "m_pressedTexture": "",
-                        "m_startPoint": -250.0
+                        "m_startPoint": -32.0
                     },
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
+                            "data": {
+                                "FillColor": {
+                                    "w": 1.0,
+                                    "x": 0.9882352948188782,
+                                    "y": 0.23137255012989044,
+                                    "z": 0.21176470816135406
+                                },
+                                "FollowObjectID": 1,
+                                "MyID": 4
+                            },
                             "state": 0
                         }
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 16.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -157,7 +168,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 500.0
+                        "width": 64.0
                     }
                 },
                 "name": ""
@@ -168,25 +179,25 @@
                 "components": {
                     "EntityDescriptor": {
                         "Layer": 0,
-                        "Old ID": 4,
+                        "Old ID": 5,
                         "Prefab Type": "SliderKnob",
                         "children": [],
                         "isActive": true,
                         "name": "SliderKnob",
-                        "parent": 3,
+                        "parent": 4,
                         "sceneID": 0
                     },
                     "GUIRenderer": {
                         "Color": {
                             "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
+                            "b": 0.21176470816135406,
+                            "g": 0.9882352948188782,
+                            "r": 0.3607843220233917
                         },
                         "TextureKey": ""
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 16.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -197,7 +208,47 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 500.0
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 6,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "UI Object",
+                        "parent": 4,
+                        "sceneID": 5
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 70.0
                     }
                 },
                 "name": ""
@@ -219,8 +270,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -24.99995994567871,
-                                "y": -134.99998474121094
+                                "x": -636.2999877929688,
+                                "y": 83.99999237060547
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -234,13 +285,15 @@
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
-                        "Old ID": 5,
-                        "Prefab Type": "Player Cat",
-                        "children": [],
+                        "Old ID": 8,
+                        "Prefab Type": "PlayerPrefab",
+                        "children": [
+                            1
+                        ],
                         "isActive": true,
-                        "name": "Player Cat",
+                        "name": "Player",
                         "parent": null,
-                        "sceneID": 5
+                        "sceneID": 8
                     },
                     "Renderer": {
                         "Color": {
@@ -249,7 +302,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                        "TextureKey": ""
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -270,8 +323,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -24.99995994567871,
-                            "y": -134.99998474121094
+                            "x": -636.2999877929688,
+                            "y": 83.99999237060547
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -279,6 +332,37 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 1,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "HealthBarPos",
+                        "parent": 8,
+                        "sceneID": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -636.2999877929688,
+                            "y": 115.99999237060547
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 32.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""
