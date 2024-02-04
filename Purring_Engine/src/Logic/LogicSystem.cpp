@@ -37,6 +37,8 @@
 #include "GameStateController.h"
 #include "RatScript.h"
 
+#include "Layers/LayerManager.h"
+
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -73,29 +75,32 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 #ifndef GAMERELEASE
 	if(Editor::GetInstance().IsRunTime())
 #endif
-	for (EntityID objectID : SceneView<ScriptComponent>())
+	for (const auto& layer : LayerView<ScriptComponent>())
 	{
-		if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
-			continue;
-
-		ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
-		for (auto& [key, state] : sc.m_scriptKeys)
+		for (EntityID objectID : InternalView(layer))
 		{
-			if (m_scriptContainer.find(key) != m_scriptContainer.end())
+			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
+				continue;
+
+			ScriptComponent& sc = EntityManager::GetInstance().Get<ScriptComponent>(objectID);
+			for (auto& [key, state] : sc.m_scriptKeys)
 			{
-				switch (state)
+				if (m_scriptContainer.find(key) != m_scriptContainer.end())
 				{
-				case ScriptState::INIT:
-					m_scriptContainer.find(key)->second->Init(objectID);
-					state = ScriptState::UPDATE;
-					break;
-				case ScriptState::UPDATE:
-					m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
-					break;
-				case ScriptState::EXIT:
-					m_scriptContainer.find(key)->second->Destroy(objectID);
-					state = ScriptState::DEAD;
-					break;
+					switch (state)
+					{
+					case ScriptState::INIT:
+						m_scriptContainer.find(key)->second->Init(objectID);
+						state = ScriptState::UPDATE;
+						break;
+					case ScriptState::UPDATE:
+						m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
+						break;
+					case ScriptState::EXIT:
+						m_scriptContainer.find(key)->second->Destroy(objectID);
+						state = ScriptState::DEAD;
+						break;
+					}
 				}
 			}
 		}

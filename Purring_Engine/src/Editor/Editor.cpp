@@ -3623,10 +3623,13 @@ namespace PE {
 
 
 			// get all the entities with animation component
-			for (EntityID id : SceneView<AnimationComponent>())
+			for (const auto& layer : LayerView<AnimationComponent>())
 			{
-				entities[EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str()] = id;
-				entityList.push_back(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str());
+				for (EntityID id : InternalView(layer))
+				{
+					entities[EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str()] = id;
+					entityList.push_back(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str());
+				}
 			}
 
 			std::vector<std::filesystem::path> animationFilePaths;
@@ -4801,55 +4804,58 @@ namespace PE {
 			static std::set<EntityID> modify;
 			static std::map<EntityID, std::vector<bool>> modComps;
 			int cnt{};
-			for (const auto& id : SceneView())
+			for (const auto& layer : LayerView<>())
 			{
-				if (prefabTP != "" && prefabTP == EntityManager::GetInstance().Get<EntityDescriptor>(id).prefabType)
+				for (const auto& id : InternalView(layer))
 				{
-					bool tmp{ static_cast<bool>(modify.count(id)) };
-					ImGui::Checkbox((std::to_string(id) + ". " + EntityManager::GetInstance().Get<EntityDescriptor>(id).name).c_str(), &tmp);
-					if (tmp && !modify.count(id))
+					if (prefabTP != "" && prefabTP == EntityManager::GetInstance().Get<EntityDescriptor>(id).prefabType)
 					{
-						modify.emplace(id);
-						if (!modComps.count(id))
+						bool tmp{ static_cast<bool>(modify.count(id)) };
+						ImGui::Checkbox((std::to_string(id) + ". " + EntityManager::GetInstance().Get<EntityDescriptor>(id).name).c_str(), &tmp);
+						if (tmp && !modify.count(id))
 						{
-							modComps.emplace(id, std::vector<bool>(prefabCID.size()));
-
-							for (auto b : modComps.at(id))
+							modify.emplace(id);
+							if (!modComps.count(id))
 							{
-								b = true;
+								modComps.emplace(id, std::vector<bool>(prefabCID.size()));
+
+								for (auto b : modComps.at(id))
+								{
+									b = true;
+								}
 							}
 						}
-					}
-					if (!tmp && modify.count(id))
-					{
-						modify.erase(id);
-						modComps.erase(id);
-						
-					}
-
-					ImGui::Separator();
-					if (tmp)
-					{
-						ImGui::Indent();
-							
-						for (size_t i{}; i < modComps[id].size(); ++i)
+						if (!tmp && modify.count(id))
 						{
-							if (prefabCID.at(i) == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
-								continue;
+							modify.erase(id);
+							modComps.erase(id);
 
-							bool tmp2 = modComps[id].at(i);
-							std::string name = EntityManager::GetInstance().m_componentNames.at(prefabCID.at(i)).c_str();
-							name += "##";
-							name += std::to_string(i);
-							name += std::to_string(id);
-							ImGui::Checkbox(name.c_str(), &tmp2);
-							modComps[id].at(i) = tmp2;
 						}
 
-						ImGui::Unindent();
 						ImGui::Separator();
+						if (tmp)
+						{
+							ImGui::Indent();
+
+							for (size_t i{}; i < modComps[id].size(); ++i)
+							{
+								if (prefabCID.at(i) == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+									continue;
+
+								bool tmp2 = modComps[id].at(i);
+								std::string name = EntityManager::GetInstance().m_componentNames.at(prefabCID.at(i)).c_str();
+								name += "##";
+								name += std::to_string(i);
+								name += std::to_string(id);
+								ImGui::Checkbox(name.c_str(), &tmp2);
+								modComps[id].at(i) = tmp2;
+							}
+
+							ImGui::Unindent();
+							ImGui::Separator();
+						}
+						++cnt;
 					}
-					++cnt;
 				}
 			}
 			if (!cnt)
@@ -4974,10 +4980,12 @@ namespace PE {
 	EntityID Editor::CountCanvas()
 	{
 		int count{};
-
-		for (EntityID objectID : SceneView<Canvas>())
+		for (const auto& layer : LayerView<Canvas>())
 		{
-			return objectID;
+			for (EntityID objectID : InternalView(layer))
+			{
+				return objectID;
+			}
 		}
 		return count;
 	}

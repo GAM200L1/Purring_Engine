@@ -312,9 +312,9 @@ namespace PE
 		if (Editor::GetInstance().IsRunTime())
 		{
 #endif		
-			//for (const auto& layer : LayerView<AnimationComponent>())
+			for (const auto& layer : LayerView<AnimationComponent>())
 			{
-				for (EntityID const& id : SceneView<AnimationComponent>())
+				for (EntityID const& id : InternalView(layer))
 				{
 					// update animation and get current frame
 					p_currentFrame = UpdateAnimation(id, deltaTime);

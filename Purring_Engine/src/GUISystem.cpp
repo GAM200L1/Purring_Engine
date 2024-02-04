@@ -30,6 +30,8 @@
 #include "WindowManager.h"
 #include "Hierarchy/HierarchyManager.h"
 
+#include "Layers/LayerManager.h"
+
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
@@ -70,22 +72,25 @@ namespace PE
 
 		// Store the canvas objects
 		m_activeCanvases.clear();
-		for (EntityID canvasId : SceneView<Canvas>())
+		for (const auto& layer : LayerView<Canvas>())
 		{
+			for (EntityID canvasId : InternalView(layer))
+			{
 				EntityManager::GetInstance().Get<Canvas>(canvasId).SetTargetResolution(m_targetResolutionWidth, m_targetResolutionHeight);
-				if(EntityManager::GetInstance().Has<Transform>(canvasId))
-						EntityManager::GetInstance().Get<Transform>(canvasId).position = vec2{ 0.f, 0.f };
+				if (EntityManager::GetInstance().Has<Transform>(canvasId))
+					EntityManager::GetInstance().Get<Transform>(canvasId).position = vec2{ 0.f, 0.f };
 
 				// Check if the canvas object has been enabled
 				if (EntityManager::GetInstance().Get<EntityDescriptor>(canvasId).isActive && Hierarchy::GetInstance().AreParentsActive(canvasId))
 				{
-						// Check if the parent of the canvas object is active
-						auto parentCanvas{ Hierarchy::GetInstance().GetParent(canvasId) };
-						if (!parentCanvas.has_value() || EntityManager::GetInstance().Get<EntityDescriptor>(parentCanvas.value()).isActive)
-						{
-								m_activeCanvases.emplace(canvasId);
-						}
+					// Check if the parent of the canvas object is active
+					auto parentCanvas{ Hierarchy::GetInstance().GetParent(canvasId) };
+					if (!parentCanvas.has_value() || EntityManager::GetInstance().Get<EntityDescriptor>(parentCanvas.value()).isActive)
+					{
+						m_activeCanvases.emplace(canvasId);
+					}
 				}
+			}
 		}
 
 		if (m_activeCanvases.empty()) { return; } // Don't bother with anything else if there are no canvases
@@ -93,21 +98,23 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-			for (EntityID objectID : SceneView<GUIButton>())
+		for (const auto& layer : LayerView<GUIButton>())
+		{
+			for (EntityID objectID : InternalView(layer))
 			{
 				// Check if the object is childed to a canvas object, don't update if not
-				if (!IsChildedToCanvas(objectID)) {  continue; }
+				if (!IsChildedToCanvas(objectID)) { continue; }
 				GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
 				gui.Update();
 				gui.m_clickedTimer -= deltaTime;
 
 				if (gui.disabled)
-				{			
-						if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) 
-						{
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
-						}
+				{
+					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID))
+					{
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_disabledColor.x, gui.m_disabledColor.y, gui.m_disabledColor.z, gui.m_disabledColor.w);
+						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_disabledTexture);
+					}
 					continue;
 				}
 				if (gui.m_Hovered)
@@ -118,8 +125,8 @@ namespace PE
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_hoveredColor.x, gui.m_hoveredColor.y, gui.m_hoveredColor.z, gui.m_hoveredColor.w);
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_hoveredTexture);
 					}
-				}					
-				else if(gui.m_clickedTimer <= 0)
+				}
+				else if (gui.m_clickedTimer <= 0)
 				{
 					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
@@ -127,13 +134,16 @@ namespace PE
 					}
 				}
 			}
+		}
 
 			//check through all sliders, make sure all slider has a knob during editor runtime
-			for (EntityID objectID : SceneView<GUISlider>())
+		for (const auto& layer : LayerView<GUISlider>())
+		{
+			for (EntityID objectID : InternalView(layer))
 			{
 				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
 #ifndef GAMERELEASE
-				if (Editor::GetInstance().IsEditorActive()) 
+				if (Editor::GetInstance().IsEditorActive())
 				{
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
 					{
@@ -267,6 +277,7 @@ namespace PE
 #ifndef GAMERELEASE
 				}
 #endif
+			}
 		}
 
 
@@ -317,7 +328,9 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-			for (EntityID objectID : SceneView<Transform, GUIButton>())
+		for (const auto& layer : LayerView<Transform, GUIButton>())
+		{
+			for (EntityID objectID : InternalView(layer))
 			{
 				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
 					continue;
@@ -349,37 +362,41 @@ namespace PE
 					}
 				}
 			}
+		}
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-		for (EntityID objectID : SceneView<Transform, GUISlider>())
+		for (const auto& layer : LayerView<Transform, GUISlider>())
 		{
-
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
-				continue;
-
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
-				continue;
-			//get the components
-
-
-			GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
-			if (EntityManager::GetInstance().Has<Transform>(slider.m_knobID.value()))
+			for (EntityID objectID : InternalView(layer))
 			{
-				Transform& transform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
 
-				if (slider.m_disabled)
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
 					continue;
 
-				float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
-				InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
-				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
-				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
-
-				if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).children.empty())
 					continue;
+				//get the components
 
-				slider.m_clicked = true;
+
+				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
+				if (EntityManager::GetInstance().Has<Transform>(slider.m_knobID.value()))
+				{
+					Transform& transform = EntityManager::GetInstance().Get<Transform>(slider.m_knobID.value());
+
+					if (slider.m_disabled)
+						continue;
+
+					float mouseX{ static_cast<float>(MBPE.x) }, mouseY{ static_cast<float>(MBPE.y) };
+					InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
+					mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
+					mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
+
+					if (!IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+						continue;
+
+					slider.m_clicked = true;
+				}
 			}
 		}
 	}
@@ -391,10 +408,13 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-		for (EntityID objectID : SceneView<Transform, GUISlider>())
+		for (const auto& layer : LayerView<Transform, GUISlider>())
 		{
-			GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
-			slider.m_clicked = false;
+			for (EntityID objectID : InternalView(layer))
+			{
+				GUISlider& slider = EntityManager::GetInstance().Get <GUISlider>(objectID);
+				slider.m_clicked = false;
+			}
 		}
 	}
 
@@ -417,34 +437,39 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-		for (EntityID objectID : SceneView<Transform, GUIButton>())
+		for (const auto& layer : LayerView<Transform, GUIButton>())
 		{
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
-				continue;
-			//get the components
-			Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
-			GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
-			if (gui.disabled)
-				continue;
-			float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
-			InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
-			mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
-			mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
-			//check mouse coordinate against transform here
-			if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+			for (EntityID objectID : InternalView(layer))
 			{
-				gui.m_Hovered = true;
-			}
-			else
-			{
-				gui.m_Hovered = false;
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive || !IsChildedToCanvas(objectID))
+					continue;
+				//get the components
+				Transform& transform = EntityManager::GetInstance().Get<Transform>(objectID);
+				GUIButton& gui = EntityManager::GetInstance().Get<GUIButton>(objectID);
+				if (gui.disabled)
+					continue;
+				float mouseX{ static_cast<float>(MME.x) }, mouseY{ static_cast<float>(MME.y) };
+				InputSystem::ConvertGLFWToTransform(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
+				mouseX = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).x;
+				mouseY = Graphics::CameraManager::GetUiWindowToScreenPosition(mouseX, mouseY).y;
+				//check mouse coordinate against transform here
+				if (IsInBound(static_cast<int>(mouseX), static_cast<int>(mouseY), transform))
+				{
+					gui.m_Hovered = true;
+				}
+				else
+				{
+					gui.m_Hovered = false;
+				}
 			}
 		}
 
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 #endif
-			for (EntityID objectID : SceneView<Transform, GUISlider>())
+		for (const auto& layer : LayerView<Transform, GUISlider>())
+		{
+			for (EntityID objectID : InternalView(layer))
 			{
 				if (!EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(objectID).isAlive)
 					continue;
@@ -478,6 +503,7 @@ namespace PE
 					}
 				}
 			}
+		}
 	}
 
 	void GUISystem::ButtonFunctionOne(EntityID)

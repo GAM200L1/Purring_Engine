@@ -32,6 +32,8 @@
 #include "Events/EventHandler.h"
 #include "WindowManager.h"
 #include "Graphics/CameraManager.h"
+
+#include "Layers/LayerManager.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -160,12 +162,15 @@ namespace PE
 
 		float xOffset{}, yOffset{};
 
-		for (EntityID objectID : SceneView<Graphics::Camera>())
+		for (const auto& layer : LayerView<Graphics::Camera>())
 		{
-			if (EntityManager::GetInstance().Get<Graphics::Camera>(objectID).GetIsMainCamera()) 
+			for (EntityID objectID : InternalView(layer))
 			{
-				xOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.x;
-				yOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.y;
+				if (EntityManager::GetInstance().Get<Graphics::Camera>(objectID).GetIsMainCamera())
+				{
+					xOffset = EntityManager::GetInstance().Get<Transform>(objectID).position.x;
+					yOffset = EntityManager::GetInstance().Get<Transform>(objectID).position.y;
+				}
 			}
 		}
 

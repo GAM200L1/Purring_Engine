@@ -26,7 +26,7 @@ namespace PE
             //const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
             m_cachedLayers[ALL].UpdateLayers(id);
         }
-        m_layerStates.set(1, false);
+        // m_layerStates.set(1, false);
     }
 
     void LayerManager::RemoveEntity(const EntityID& r_id)

@@ -21,6 +21,7 @@
 #include "HierarchyManager.h"
 #include "Logging/Logger.h"
 #include "Graphics/Text.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -170,15 +171,18 @@ namespace PE
 	{
 		m_parentOrder.clear();
 		m_sceneOrder.clear();
-		for (const EntityID& id : SceneView<EntityDescriptor, Transform>())
+		for (const auto& layer : LayerView<EntityDescriptor, Transform>())
 		{
-			// id 0 is default camera, ignore it
-			if (id == 0)
-				continue;
-			// only if it is base layer
-			if (!HasParent(id))
+			for (const EntityID& id : InternalView(layer))
 			{
-				m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+				// id 0 is default camera, ignore it
+				if (id == 0)
+					continue;
+				// only if it is base layer
+				if (!HasParent(id))
+				{
+					m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+				}
 			}
 		}
 		for (auto [k,v] : m_sceneOrder)

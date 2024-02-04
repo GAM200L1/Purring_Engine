@@ -20,6 +20,7 @@
 #include "RigidBody.h"
 #include "Logging/Logger.h"
 #include "GameStateManager.h"
+#include "Layers/LayerManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -99,15 +100,18 @@ namespace PE
 #ifndef GAMERELEASE
 		if (!Editor::GetInstance().IsRunTime())
 		{
-			for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
+			for (const auto& layer : LayerView<RigidBody, Transform>())
 			{
-				// if the entity is not active, do not update physics
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
+				for (EntityID RigidBodyID : InternalView(layer))
+				{
+					// if the entity is not active, do not update physics
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
 
-				RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
-				rb.ZeroForce();
-				rb.velocity.Zero();
-				rb.rotationVelocity = 0.f;
+					RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
+					rb.ZeroForce();
+					rb.velocity.Zero();
+					rb.rotationVelocity = 0.f;
+				}
 			}
 		}
 #endif
@@ -126,35 +130,38 @@ namespace PE
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
 			return;
 
-		for (EntityID RigidBodyID : SceneView<RigidBody, Transform>())
+		for (const auto& layer : LayerView<RigidBody, Transform>())
 		{
-			// if the entity is not active, do not check for collision
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
-			
-			RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
-			Transform& transform = EntityManager::GetInstance().Get<Transform>(RigidBodyID);
-
-			if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
+			for (EntityID RigidBodyID : InternalView(layer))
 			{
-				// Applies drag force
-				rb.ApplyForce(rb.velocity * rb.GetMass() * rb.GetLinearDrag() * -1.f);
-				
-				// Update Speed based on total forces
-				rb.velocity += rb.force * rb.GetInverseMass() * deltaTime;
-			}
+				// if the entity is not active, do not check for collision
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(RigidBodyID).isActive) { continue; }
 
-			if (rb.GetType() != EnumRigidBodyType::STATIC)
-			{
-				// at negligible velocity, velocity will set to 0.f
-				rb.velocity.x = (rb.velocity.x < m_velocityNegligence && rb.velocity.x > -m_velocityNegligence) ? 0.f : rb.velocity.x;
-				rb.velocity.y = (rb.velocity.y < m_velocityNegligence && rb.velocity.y > -m_velocityNegligence) ? 0.f : rb.velocity.y;
-				rb.prevPosition = transform.position;
-				transform.position += rb.velocity * deltaTime;
-				transform.orientation += rb.rotationVelocity * deltaTime;
-				Wrap(transform.orientation, 0.f, 2.f * PE_PI);
+				RigidBody& rb = EntityManager::GetInstance().Get<RigidBody>(RigidBodyID);
+				Transform& transform = EntityManager::GetInstance().Get<Transform>(RigidBodyID);
+
+				if (rb.GetType() == EnumRigidBodyType::DYNAMIC)
+				{
+					// Applies drag force
+					rb.ApplyForce(rb.velocity * rb.GetMass() * rb.GetLinearDrag() * -1.f);
+
+					// Update Speed based on total forces
+					rb.velocity += rb.force * rb.GetInverseMass() * deltaTime;
+				}
+
+				if (rb.GetType() != EnumRigidBodyType::STATIC)
+				{
+					// at negligible velocity, velocity will set to 0.f
+					rb.velocity.x = (rb.velocity.x < m_velocityNegligence && rb.velocity.x > -m_velocityNegligence) ? 0.f : rb.velocity.x;
+					rb.velocity.y = (rb.velocity.y < m_velocityNegligence && rb.velocity.y > -m_velocityNegligence) ? 0.f : rb.velocity.y;
+					rb.prevPosition = transform.position;
+					transform.position += rb.velocity * deltaTime;
+					transform.orientation += rb.rotationVelocity * deltaTime;
+					Wrap(transform.orientation, 0.f, 2.f * PE_PI);
+				}
+				rb.ZeroForce();
+				rb.rotationVelocity = 0.f;
 			}
-			rb.ZeroForce();
-			rb.rotationVelocity = 0.f;
 		}
 	}
 }
