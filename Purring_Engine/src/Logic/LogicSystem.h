@@ -169,6 +169,14 @@ namespace PE {
 						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
 						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
 					}
+					else if (var.get_type().get_name() == "structPE::vec4")
+					{
+						PE::vec4 val = var.get_value<PE::vec4>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["z"] = val.z;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["w"] = val.w;
+					}
 					else if (var.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
 					{
 						std::vector<PE::vec2> val = var.get_value<std::vector<PE::vec2>>();

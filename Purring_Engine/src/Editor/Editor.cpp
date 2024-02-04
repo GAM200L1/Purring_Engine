@@ -51,6 +51,7 @@
 #include "Logic/CameraManagerScript.h"
 #include "Logic/GameStateController.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "Logic/UI/HealthBarScript_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
 #include "GUISystem.h"
@@ -71,6 +72,8 @@
 #include "System.h"
 #include "Math/MathCustom.h"
 #include "SceneManager/SceneManager.h"
+#include "Logic/Rat/RatScript_v2_0.h"
+#include "Logic/Rat/RatIdle_v2_0.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -1778,6 +1781,8 @@ namespace PE {
 									}
 									ImGui::PopStyleColor(1);
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+
 								}
 							}
 						}
@@ -3159,6 +3164,38 @@ namespace PE {
 								}
 							}
 
+							if (key == "HealthBarScript_v2_0")
+							{
+								HealthBarScript_v2_0* p_Script = dynamic_cast<HealthBarScript_v2_0*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("HealthBarScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int id = static_cast<int> (it->second.followObjectID);
+										ImGui::Text("Follow Object ID: "); ImGui::SameLine(); ImGui::InputInt("##healthbarfollowid", &id);
+										it->second.followObjectID = id;
+
+										//get and set color variable of the healthbar
+										ImVec4 color;
+										color.x = it->second.fillColor.x;
+										color.y = it->second.fillColor.y;
+										color.z = it->second.fillColor.z;
+										color.w = it->second.fillColor.w;
+
+										ImGui::Text("Health Bar Color: "); ImGui::SameLine();
+										ImGui::ColorEdit4("##healthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+										it->second.fillColor.x = color.x;
+										it->second.fillColor.y = color.y;
+										it->second.fillColor.z = color.z;
+										it->second.fillColor.w = color.w;
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+									}
+								}
+							}
+
 							if (key == "DeploymentScript")
 							{
 								DeploymentScript* p_script = dynamic_cast<DeploymentScript*>(val);
@@ -3207,6 +3244,62 @@ namespace PE {
 									}
 								}
 							}
+
+							if (key == "RatScript_v2_0")
+							{
+								RatScript_v2_0* p_Script = dynamic_cast<RatScript_v2_0*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("Rat Settings", ImGuiTreeNodeFlags_DefaultOpen))
+									{
+										ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
+									}
+
+									if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										if (it->second.patrolPoints.empty())
+										{
+											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
+											it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
+										}
+
+										for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
+										{
+											ImGui::PushID(static_cast<int>(i)); // Use i as the ID
+											ImGui::Text("Point %zu:", i + 1); // Display point number
+											ImGui::SameLine();
+											float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
+											ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
+											it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
+											ImGui::PopID();
+										}
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
+										if (ImGui::Button("Add Patrol Point"))
+										{
+											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
+										}
+										ImGui::PopStyleColor(1); // Pop button color style
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
+										if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
+										{
+											it->second.patrolPoints.pop_back();
+										}
+										ImGui::PopStyleColor(1); // Pop button color style
+									}
+								}
+							}
+
+
+
+
 						}
 					}
 
@@ -3290,6 +3383,13 @@ namespace PE {
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
 								else
 									AddErrorLog("ALREADY HAS TEXT");
+							}
+							if (ImGui::Selectable("Add ScriptComponent"))
+							{
+									if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+											EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
+									else
+											AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 							}
 						}
 

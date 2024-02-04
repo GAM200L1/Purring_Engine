@@ -37,26 +37,30 @@ namespace PE
 		if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].followObjectID))
 		{
 			// Update the position of the healthbar
-			vec2 newPosition{ EntityManager::GetInstance().Get<Transform>(m_scriptData[id].followObjectID).position };
-			PositionEntity(id, GETCAMERAMANAGER()->GetWorldToWindowPosition(newPosition.x, newPosition.y));
+			vec2 newPosition{ EntityManager::GetInstance().Get<Transform>(m_scriptData[id].followObjectID).position }; 
+			newPosition = GETCAMERAMANAGER()->GetWorldToWindowPosition(newPosition.x, newPosition.y);
+			newPosition = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(newPosition.x, newPosition.y);
+			PositionEntityRelative(id, newPosition);
+
 		}
 	}
 
 	void HealthBarScript_v2_0::OnAttach(EntityID id)
 	{
-		// Add gui slider component
-		if (!EntityManager::GetInstance().Has<GUISlider>(id))
-		{
-			EntityFactory::GetInstance().Assign(id, {EntityManager::GetInstance().GetComponentID<GUISlider>()});
-			EntityManager::GetInstance().Get<GUISlider>(id).m_isHealthBar = true;
-		}
-		else
-		{
-			EntityManager::GetInstance().Get<GUISlider>(id).m_isHealthBar = true;
-		}
+		//// Add gui slider component
+		//if (!EntityManager::GetInstance().Has<GUISlider>(id))
+		//{
+		//	EntityFactory::GetInstance().Assign(id, {EntityManager::GetInstance().GetComponentID<GUISlider>()});
+		//	EntityManager::GetInstance().Get<GUISlider>(id).m_isHealthBar = true;
+		//}
+		//else
+		//{
+		//	EntityManager::GetInstance().Get<GUISlider>(id).m_isHealthBar = true;
+		//}
 
 		// Create script instance data
 		m_scriptData[id] = HealthBarScript_v2_0_Data();
+		m_scriptData[id].myID = id;
 	}
 
 	void HealthBarScript_v2_0::OnDetach(EntityID id)
