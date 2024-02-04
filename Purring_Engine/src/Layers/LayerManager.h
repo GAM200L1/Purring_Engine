@@ -51,7 +51,8 @@ namespace PE
         void RemoveEntity(const EntityID& r_id);
         void AddEntity(const EntityID& r_id);
         void UpdateEntity(const EntityID& r_id);
-        const InteractionLayers& GetLayers(const ComponentID& r_components);
+		const std::array<Layer, MAX_LAYERS>& GetLayers(const ComponentID& r_components);
+		const LayerState& GetLayerState() { return m_layerStates; }
     private:
         void CreateCached(const ComponentID& r_components);
     private:
@@ -61,4 +62,154 @@ namespace PE
         LayerState m_layerStates;
     };
 
+
+	template<typename... ComponentTypes>
+	struct LayerView
+	{
+		// ----- Public Variables ----- // 
+		// ptr to the entity manager
+		
+		// the components for this scope
+		ComponentID componentsCombined;
+		// flag for toggling whether all components are in scope
+		bool all{ false };
+
+		/*!***********************************************************************************
+		\brief		This iterator struct is a required interface to allow the use of foreach
+					loops.
+
+		*************************************************************************************/
+		struct Iterator
+		{
+			/*!***********************************************************************************
+			\brief Construct a new Iterator object
+
+			\param[in] index 		The index to start from
+			\param[in] components 	The components to scope to
+			\param[in] all 		Whether or not the scope is to all copmonents
+			*************************************************************************************/
+			Iterator(bool index, const ComponentID& r_components, bool all) :
+				all(all)
+			{
+				if (index)
+				{
+					ite = (all) ? LayerManager::GetInstance().GetLayers(ALL).begin() : LayerManager::GetInstance().GetLayers(r_components).begin();
+				}
+				else
+				{
+					ite = (all) ? LayerManager::GetInstance().GetLayers(ALL).end() : LayerManager::GetInstance().GetLayers(r_components).end();
+				}
+
+				end = (all) ? LayerManager::GetInstance().GetLayers(ALL).end() : LayerManager::GetInstance().GetLayers(r_components).end();
+				while (ite != end && !LayerManager::GetInstance().GetLayerState().test(layer))
+				{
+					++ite;
+					++layer;
+				}
+			}
+
+			/*!***********************************************************************************
+			\brief Returns the Entity ID at the current iterator position.
+
+			\return EntityID ID of the entity
+			*************************************************************************************/
+			const Layer& operator* () const
+			{
+				return *ite;
+			}
+
+			/*!***********************************************************************************
+			\brief operator== overload, checks if the two iterators are the same.
+
+			\param[in] rhs the iterator to compare to this iterator
+			\return true 	iterators are the same
+			\return false 	iterators are different
+			*************************************************************************************/
+			bool operator== (const Iterator& r_rhs) const
+			{
+				return (ite == end) || (ite == r_rhs.ite);
+			}
+
+			/*!***********************************************************************************
+			\brief operator!= overload, checks if the two iterators are different
+
+			\param[in] rhs the iterators to comapre to this iterator
+			\return true 	the iterators are different
+			\return false  the iterators are the same
+			*************************************************************************************/
+			bool operator!= (const Iterator& r_rhs) const
+			{
+				return (ite != end) || (ite != r_rhs.ite);
+			}
+
+
+			/*!***********************************************************************************
+			\brief operator++ overload, it increments the iterator until it reaches a valid
+					entity, or it reaches the limits of the iterator
+
+			\return Iterator& reference to this, emulating normal operator++ behaviour
+			*************************************************************************************/
+			Iterator& operator++()
+			{
+				do
+				{
+					++ite;
+					++layer;
+					if (layer < MAX_LAYERS && LayerManager::GetInstance().GetLayerState().test(layer))
+						break;
+				} while (ite != end);
+
+				return *this;
+			}
+
+			// The stored vector of entities for this iterator
+			std::array<Layer, MAX_LAYERS>::const_iterator ite;
+			// end of the vector
+			std::array<Layer, MAX_LAYERS>::const_iterator end;
+			// flag for toggling whether all components are in scope
+			bool all{ false };
+			size_t layer{ 0 };
+		};
+
+		// ----- Constructors ------ //
+
+		/*!***********************************************************************************
+		\brief Construct a new Scene View object
+
+		*************************************************************************************/
+		LayerView()
+		{
+			// checks if the number of components is zero
+			if constexpr (sizeof...(ComponentTypes))
+			{
+				componentsCombined = EntityManager::GetInstance().GetComponentIDs<ComponentTypes ... >();
+			}
+			else // if no components are provided, it assume the user wants to scope to all components
+			{
+				all = true;
+			}
+		}
+		// ----- Public Methods ----- //
+
+
+		/*!***********************************************************************************
+		\brief Generates a begin iterator to the first entity that matches the scope
+
+		\return const Iterator the iterator for the first "legal" entity
+		*************************************************************************************/
+		const Iterator begin() const	// cannot follow coding conventions due to c++ begin() & end() standards
+		{
+			return Iterator(true, componentsCombined, all);
+		}
+
+		/*!***********************************************************************************
+		\brief Generates the last entity
+
+		\return const Iterator the iterator for the last "legal" entity
+		*************************************************************************************/
+		const Iterator end() const		// cannot follow coding conventions due to c++ begin() & end() standards
+		{
+			return Iterator(false, componentsCombined, all);
+		}
+	};
 }

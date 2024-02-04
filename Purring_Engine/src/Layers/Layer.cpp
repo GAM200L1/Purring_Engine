@@ -54,21 +54,34 @@ namespace PE
                 engine_logger.AddLog(true, "Entity had interaction layer larger than the limit!!", __FUNCTION__);
                 throw;
             }
-            auto loc = std::find(layers[desc.interactionLayer].begin(), layers[desc.interactionLayer].end(), r_id);
+
+            std::map<size_t, Layer::const_iterator> toDelete;
+            size_t i = 0;
+            for (const auto& layer : layers)
+            {
+                for (auto ite{ layer.begin() }; ite != layer.end(); ++ite)
+                {
+                    if (*ite == r_id)
+                    {
+                        toDelete.emplace(i, ite);
+                    }
+                }
+                ++i;
+            }
+            for (const auto& [k, v] : toDelete)
+            {
+                layers[k].erase(v);
+            }
+
             if (add)
             {
+                auto loc = std::find(layers[desc.interactionLayer].begin(), layers[desc.interactionLayer].end(), r_id);
                 if (layers[desc.interactionLayer].end() == loc)
                 {
                     layers[desc.interactionLayer].emplace_back(r_id);
                 }
             }
-            else
-            {
-                if (layers[desc.interactionLayer].end() != loc)
-                {
-                    layers[desc.interactionLayer].erase(loc);
-                }
-            }
+            
         }
         catch (...)
         {

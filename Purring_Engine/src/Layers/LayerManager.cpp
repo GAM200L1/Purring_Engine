@@ -26,6 +26,7 @@ namespace PE
             //const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
             m_cachedLayers[ALL].UpdateLayers(id);
         }
+        m_layerStates.set(1, false);
     }
 
     void LayerManager::RemoveEntity(const EntityID& r_id)
@@ -39,10 +40,7 @@ namespace PE
 
         for (auto &[k, layer] : m_cachedLayers)
         {
-            if (k == ALL || (k & components).count() != k.count())
-            {
-                layer.UpdateLayers(r_id, false);
-            }
+            layer.UpdateLayers(r_id, false);
         }
     }
 
@@ -70,27 +68,16 @@ namespace PE
         AddEntity(r_id);
     }
 
-    const InteractionLayers& LayerManager::GetLayers(const ComponentID& r_components) 
+    const std::array<Layer, MAX_LAYERS>& LayerManager::GetLayers(const ComponentID& r_components)
     {
         if (!m_cachedLayers.count(r_components))
             CreateCached(r_components);
-
-        return m_cachedLayers.at(r_components);
+       
+        return m_cachedLayers.at(r_components).GetLayers();
     }
 
     void LayerManager::CreateCached(const ComponentID& r_components)
     {
-        /*for (size_t i{}; i < r_components.size(); ++i)
-        {
-            if (r_components.test(i))
-            {
-
-            }
-        }*/
         m_cachedLayers[r_components] = InteractionLayers(EntityManager::GetInstance().GetEntitiesInPool(r_components));
-        /*for (const auto& id : EntityManager::GetInstance().GetEntitiesInPool(r_components))
-        {
-            m_cachedLayers[r_components].UpdateLayers(id);
-        }*/
     }
 }

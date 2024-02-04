@@ -75,6 +75,9 @@
 //Hierarchy
 #include "Hierarchy/HierarchyManager.h"
 
+// interaction layer manager
+#include "Layers/LayerManager.h"
+
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
 SerializationManager serializationManager;  // Create an instance
@@ -1130,6 +1133,7 @@ namespace PE {
 												ImGui::EndDisabled();
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
 											EntityManager::GetInstance().Get<EntityDescriptor>(entityID).interactionLayer = tmp;
+											LayerManager::GetInstance().UpdateEntity(entityID);
 										}
 									}
 									else if (vp.get_type().get_name() == "unsigned__int64")

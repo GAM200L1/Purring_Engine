@@ -14,7 +14,7 @@
 *************************************************************************************/
 #pragma once
 
-constexpr size_t MAX_LAYERS = 10;
+constexpr size_t MAX_LAYERS = 11;
 constexpr unsigned MAX_COMP = 32;
 
 // Typedefs

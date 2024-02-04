@@ -100,6 +100,16 @@ namespace PE
 		template<typename T>
 		ComponentID GetComponentID() const;
 
+
+		/*!***********************************************************************************
+		 \brief Get the combined Component ID
+
+		 \tparam T 				The multiple components to Get the IDs of
+		 \return ComponentID 	The combined component ids
+		*************************************************************************************/
+		template<typename ... T>
+		ComponentID GetComponentIDs() const;
+
 		/*!***********************************************************************************
 		 \brief Get a pointer to a specific component pool
 
@@ -498,6 +508,20 @@ namespace PE
 		return ComponentID().set(s_componentID);
 	}
 
+	template<typename ... T>
+	ComponentID EntityManager::GetComponentIDs() const
+	{
+		ComponentID ret{};
+		if constexpr (sizeof...(T))
+		{
+			([&]
+				{
+					ret |= GetComponentID<T>();
+				}
+			(), ...);
+		}
+		return ret;
+	}
 
 	template<typename T>
 	ComponentPool* EntityManager::GetComponentPoolPointer()

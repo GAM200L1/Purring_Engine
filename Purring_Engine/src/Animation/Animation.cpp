@@ -24,6 +24,7 @@
 #include "ResourceManager/ResourceManager.h"
 #include "Animation.h"
 #include "GameStateManager.h"
+#include "Layers/LayerManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -310,23 +311,26 @@ namespace PE
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 		{
-#endif
-			for (EntityID const& id : SceneView<AnimationComponent>())
+#endif		
+			//for (const auto& layer : LayerView<AnimationComponent>())
 			{
-				// update animation and get current frame
-				p_currentFrame = UpdateAnimation(id, deltaTime);
-
-				// update entity based on frame data
-				// in the future probably check for bools in animation component, then update data accordingly
-				// check if theres animation
-				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+				for (EntityID const& id : SceneView<AnimationComponent>())
 				{
-					if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
-					{
+					// update animation and get current frame
+					p_currentFrame = UpdateAnimation(id, deltaTime);
 
-						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()));
-						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
-						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+					// update entity based on frame data
+					// in the future probably check for bools in animation component, then update data accordingly
+					// check if theres animation
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+					{
+						if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
+						{
+
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()));
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+						}
 					}
 				}
 			}
