@@ -95,11 +95,6 @@ public:
     void SaveAllEntitiesToFile(std::string const& fileName, bool fp = false);
 
     /*!***********************************************************************************
-     \brief Load all entities from a file with the given filename and deserialize them into the scene.
-    *************************************************************************************/
-    void LoadAllEntitiesFromFile(std::string const& filename, bool fp = false);
-
-    /*!***********************************************************************************
      \brief Serialize the entity with the given ID to a JSON object.
     *************************************************************************************/
     nlohmann::json SerializeEntity(int entityId);
@@ -119,6 +114,12 @@ public:
     *************************************************************************************/
     void SaveToFile(const std::filesystem::path& filepath, int entityId);
 
+    /*!***********************************************************************************
+    \brief Save animation data to file
+
+    \param[in] filepath  The path to the file to save to.
+    \param[in] serializedData  The data to save.
+    *************************************************************************************/
     void SaveAnimationToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
 
     /*!***********************************************************************************
@@ -127,13 +128,12 @@ public:
     size_t LoadFromFile(std::string const& filename, bool fp = false);
 
     /*!***********************************************************************************
-     \brief Load an entity from a serialized file, returning its ID.
+    \brief Load an animation from a serialized file.
+
+    \param[in] filename  The path to the file to load from.
+    \return nlohmann::json  The loaded data.
     *************************************************************************************/
-    void DeleteAllObjectAndLoadAllEntitiesFromFile(const std::filesystem::path& filepath);
-
-
     nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
-
 
     /*!************************************************************************
      \brief Serializes an entity's component to JSON.

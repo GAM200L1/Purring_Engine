@@ -174,7 +174,7 @@ namespace PE
             }
 #else
             int width, height;
-            glfwGetWindowSize(p_glfwWindow, &width, &height);
+            glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
             windowWidth = static_cast<float>(width);
             windowHeight = static_cast<float>(height);
 #endif
@@ -1194,26 +1194,28 @@ namespace PE
                                       EntityManager::GetInstance().Get<Transform>(id).width,
                                       EntityManager::GetInstance().Get<Transform>(id).height };
 
-                    // if component has no font
-                    if (textComponent.GetFont() == nullptr)
-                    {
-                        break;
-                    }
+                // if component has no font key
+                if (textComponent.GetFontKey() == "")
+                {
+                    break;
+                }
 
                     // Store the index of the rendered entity
                     renderedEntities.emplace_back(id);
 
-                    std::vector<std::string> lines{ SplitTextIntoLines(textComponent, textBox) };
-                    float currentY{ 0.f };
-                    float hAlignOffset, vAlignOffset;
+                std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(textComponent.GetFontKey()) };
+
+                std::vector<std::string> lines{ SplitTextIntoLines(textComponent, textBox) };
+                float currentY{ 0.f };
+                float hAlignOffset, vAlignOffset;
 
                     // activate corresponding render state	
                     p_textShader->Use();
                     p_textShader->SetUniform("u_ViewProjection", r_worldToNdc);
                     p_textShader->SetUniform("textColor", textComponent.GetColor());
 
-                    glActiveTexture(GL_TEXTURE0);
-                    glBindVertexArray(textComponent.GetFont()->vertexArrayObject);
+                glActiveTexture(GL_TEXTURE0);
+                glBindVertexArray(p_font->vertexArrayObject);
 
                     // get vertical alignment offset
                     VerticalTextAlignment(textComponent, lines, textBox, vAlignOffset);
@@ -1226,9 +1228,9 @@ namespace PE
 
                         RenderLine(textComponent, line, textBox.position, currentY, hAlignOffset, vAlignOffset);
 
-                        // add line height to current y, need to multiply by line spacing
-                        currentY += textComponent.GetFont()->lineHeight * textComponent.GetLineSpacing();
-                    }
+                    // add line height to current y, need to multiply by line spacing
+                    currentY += p_font->lineHeight * textComponent.GetLineSpacing();
+				}
 
                     glBindTexture(GL_TEXTURE_2D, 0);
                     glBindVertexArray(0);
@@ -1243,11 +1245,13 @@ namespace PE
             // iterate through all characters
             std::string::const_iterator c;
 
+            std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(r_textComponent.GetFontKey()) };
+
             float currentX{ 0.f };
 
             for (c = r_line.begin(); c != r_line.end(); c++)
             {
-                Character ch = r_textComponent.GetFont()->characters.at(*c);
+                Character ch = p_font->characters.at(*c);
 
                 currentX += ch.size.x;
 
@@ -1272,7 +1276,7 @@ namespace PE
                 glBindTexture(GL_TEXTURE_2D, ch.textureID);
 
                 // update content of VBO memory
-                glBindBuffer(GL_ARRAY_BUFFER, r_textComponent.GetFont()->vertexBufferObject);
+                glBindBuffer(GL_ARRAY_BUFFER, p_font->vertexBufferObject);
                 glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
                 glBindBuffer(GL_ARRAY_BUFFER, 0);
 
