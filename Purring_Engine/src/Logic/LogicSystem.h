@@ -30,12 +30,14 @@
 #define REGISTER_SCRIPT(name) 	PE::LogicSystem::m_scriptContainer[#name] = new name()
 #define GETSCRIPTDATA(script,id) &reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData()[id]
 #define GETSCRIPTINSTANCEPOINTER(script) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])
+#define GETSCRIPTNAME(script) #script
 
 namespace PE {
 	class LogicSystem : public System
 	{
 	public:
 		static std::map<std::string, Script*> m_scriptContainer;
+		static bool restartingScene;
 	public:
 		LogicSystem();
 		virtual ~LogicSystem();

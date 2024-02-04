@@ -26,8 +26,10 @@
 #include "GUISystem.h"
 #include "GameStateManager.h"
 #include "Input/InputSystem.h"
+#include "PauseManager.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
+#include "SceneManager/SceneManager.h"
 #endif
 //logger instantiation
 Logger event_logger = Logger("EVENT");
@@ -130,7 +132,8 @@ namespace PE
 	{
 		std::ostringstream titleStream;
 #ifndef GAMERELEASE
-		titleStream << "Purring Engine | FPS: " << static_cast<int>(fps);
+		std::string sceneName = SceneManager::GetInstance().GetActiveScene();
+		titleStream << "Purring Engine | " << sceneName.substr(0, sceneName.find_last_of('.')) << " | FPS: " << static_cast<int>(fps);
 #else
 		titleStream << "March Of The Meows";
 		
@@ -232,6 +235,10 @@ namespace PE
 							glfwIconifyWindow(WindowManager::GetInstance().GetWindow());
 
 					msepress = true;
+			}
+			else if (r_event.GetType() == WindowEvents::WindowFocus)
+			{
+					PauseManager::GetInstance().SetPaused(false);
 			}
 #endif
 	}
