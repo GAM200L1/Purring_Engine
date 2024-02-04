@@ -118,72 +118,95 @@ namespace PE
 
     void RatIdle_v2_0::PatrolLogic(EntityID id, float deltaTime)
     {
-        if (p_data->patrolPoints.empty()) return;
+        if (!p_data->shouldPatrol || p_data->patrolPoints.empty()) return;
 
-        vec3& currentTarget = p_data->patrolPoints[p_data->patrolIndex];
+        const vec2& currentTarget = p_data->patrolPoints[p_data->patrolIndex];
         MoveTowards(id, currentTarget, deltaTime);
 
         if (HasReachedDestination(id, currentTarget))
         {
-            // Logic to switch patrol points based on current index and patrol points size
-            if (p_data->patrolPoints.size() == 3)
+            std::cout << "Reached patrol point index: " << p_data->patrolIndex << std::endl;
+
+            if (p_data->returnToFirstPoint)
             {
-                switch (p_data->patrolIndex)
+                p_data->patrolIndex++;
+                if (p_data->patrolIndex >= p_data->patrolPoints.size())
                 {
-                case 0:
-                    p_data->patrolIndex += 1;
-                    break;
-                case 1:
-                    p_data->patrolIndex = (p_data->returnToFirstPoint) ? 0 : 2;
-                    p_data->returnToFirstPoint = !p_data->returnToFirstPoint;
-                    break;
-                case 2:
-                    p_data->patrolIndex -= 1;
-                    p_data->returnToFirstPoint = true;
-                    break;
+                    p_data->patrolIndex = p_data->patrolPoints.size() - 2;
+                    p_data->returnToFirstPoint = false;
                 }
             }
-            else if (p_data->patrolPoints.size() == 2)
+            else
             {
-                // Toggle between the two points
-                p_data->patrolIndex = (p_data->patrolIndex == 0) ? 1 : 0;
-
+                p_data->patrolIndex--;
+                if (p_data->patrolIndex < 0)
+                {
+                    p_data->patrolIndex = 1;
+                    p_data->returnToFirstPoint = true;
+                }
             }
         }
-        // Add debug code to print the rat's position
+
         const Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
         std::cout << "Rat Position: X=" << ratTransform.position.x << ", Y=" << ratTransform.position.y << std::endl;
     }
 
-    void RatIdle_v2_0::MoveTowards(EntityID id, const vec3& target, float deltaTime)
+    void RatIdle_v2_0::MoveTowards(EntityID id, const vec2& target, float deltaTime)
     {
         Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
-        PE::vec2 target2D(target.x, target.y);
-        PE::vec2 direction = target2D - ratTransform.position;
-        PE::vec2 normalizedDirection = direction.GetNormalized();
-        ratTransform.position += normalizedDirection * p_data->movementSpeed * deltaTime;
+        vec2 direction = target - ratTransform.position;
+        float distanceToMove = p_data->movementSpeed * deltaTime;
+
+        if (direction.LengthSquared() > 0.0f)
+        {
+            vec2 normalizedDirection = direction.GetNormalized();
+            float distanceToTarget = direction.Length();
+
+            if (distanceToMove > distanceToTarget)
+            {
+                ratTransform.position = target;
+            }
+            else {
+                ratTransform.position += normalizedDirection * distanceToMove;
+            }
+        }
+        else
+        {
+            std::cout << "Direction vector is zero, cannot normalize" << std::endl;
+        }
     }
 
-    bool RatIdle_v2_0::HasReachedDestination(EntityID id, const vec3& target)
+    bool RatIdle_v2_0::HasReachedDestination(EntityID id, const vec2& target)
     {
         Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
-        PE::vec2 target2D(target.x, target.y);
-        PE::vec2 diff = ratTransform.position - target2D;
-        return diff.Length() <= 0.1f;
-    }
+        vec2 diff = ratTransform.position - target;
 
+        if (diff.Length() <= 1.0f)
+        {
+            return true;
+        }
+        return false;
+    }
 
     void RatIdle_v2_0::InitializePatrolPoints()
     {
-        p_data->patrolPoints.clear();                                       // clear existing points.
+        if (p_data->patrolPoints.size() < 2)
+        {
+            p_data->patrolPoints.clear();
+            p_data->patrolPoints.push_back(vec2(0.0f, 0.0f));
+            p_data->patrolPoints.push_back(vec2(100.0f, 0.0f));
+        }
+        p_data->patrolIndex = 0;
+    }
 
-        p_data->patrolPoints.push_back(vec3(-300.0f, -200.56f, 0.0f));          // Patrol Point A
-        p_data->patrolPoints.push_back(vec3(0.0f, 0.0f, 0.0f));             // Patrol Point B
-
-        p_data->patrolIndex = 0;                                // Reset patrol index
-
-        // in the future if more than 2 points can use this.
-        p_data->returnToFirstPoint = false;
+    void RatIdle_v2_0::SetPatrolPoints(const std::vector<vec2>& points)
+    {
+        p_data->patrolPoints.clear();
+        for (const auto& point : points)
+        {
+            p_data->patrolPoints.push_back(point);
+        }
+        p_data->patrolIndex = 0;
     }
 
     void RatIdle_v2_0::StateExit(EntityID id)

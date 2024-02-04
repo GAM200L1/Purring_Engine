@@ -29,9 +29,10 @@ namespace PE
 
         // Logic for Rat idle state
         void PatrolLogic(EntityID id, float deltaTime);
-        void MoveTowards(EntityID id, const vec3& target, float deltaTime);
-        bool HasReachedDestination(EntityID id, const vec3& target);
+        void MoveTowards(EntityID id, const vec2& target, float deltaTime);
+        bool HasReachedDestination(EntityID id, const vec2& target);
         void InitializePatrolPoints();
+        void SetPatrolPoints(const std::vector<PE::vec2>& points);
 
         // Getter for the state name with version
         virtual std::string_view GetName() { return "Idle_v2_0"; }

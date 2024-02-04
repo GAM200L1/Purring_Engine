@@ -56,6 +56,7 @@ namespace PE
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
 		EntityID redTelegraphEntityID{ 0 };				// id of red detection telegraph
 
+		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
 
 		std::map<std::string, std::string> animationStates;
 
@@ -67,14 +68,14 @@ namespace PE
 		bool finishedExecution{ false }; // Keeps track of whether the execution phase has been completed
 
 		float detectionRadius{};
-		float movementSpeed{ 15.f};
+		float movementSpeed{ 100.f};
 		
 		// Attack 
 		int skillDamage{};
 		int skillArea{}; // probably dependent on the attack and cannot be stored as a flat var
 
 		// Patrol Points
-		std::vector<vec3> patrolPoints;
+		std::vector<vec2> patrolPoints;
 		int patrolIndex{ 0 };							// Index of the current patrol point the rat is moving towards
 		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
 	};
