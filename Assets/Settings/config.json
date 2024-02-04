@@ -2,11 +2,13 @@
     "Editor": {
         "firstLaunch": false,
         "isPrefabMode": false,
+        "layerSettings": 2045,
         "renderDebug": true,
         "showAnimationWindow": false,
         "showComponentWindow": true,
         "showConsole": false,
         "showEditor": true,
+        "showLayerWindow": true,
         "showLogs": true,
         "showObjectList": true,
         "showPerformanceWindow": false,

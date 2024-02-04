@@ -55,6 +55,9 @@ namespace PE
         void UpdateEntity(const EntityID& r_id);
 		const std::array<Layer, MAX_LAYERS>& GetLayers(const ComponentID& r_components);
 		const LayerState& GetLayerState() { return m_layerStates; }
+		void SetLayerState(const LayerState& lyr) { m_layerStates = lyr; }
+		bool GetLayerState(size_t pos) { return m_layerStates[pos]; }
+		void SetLayerState(size_t pos, bool set) { m_layerStates[pos] = set; }
     private:
         void CreateCached(const ComponentID& r_components);
     private:

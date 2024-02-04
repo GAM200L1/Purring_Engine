@@ -68,6 +68,7 @@
 #include "System.h"
 #include "Math/MathCustom.h"
 #include "SceneManager/SceneManager.h"
+#include "Layers/LayerManager.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -137,6 +138,16 @@ namespace PE {
 			if (configJson["Editor"].contains("renderDebug"))
 				m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
 
+			if (configJson["Editor"].contains("showLayerWindow"))
+				m_showLayerWindow = configJson["Editor"]["showLayerWindow"].get<bool>(); 
+
+			if (configJson["Editor"].contains("layerSettings"))
+			{
+				LayerState layer = configJson["Editor"]["layerSettings"].get<unsigned long long>();
+				LayerManager::GetInstance().SetLayerState(layer);
+			}
+
+
 			// also an e.g of how to make it safe
 			m_isPrefabMode = false;
 		}
@@ -159,6 +170,7 @@ namespace PE {
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = true; // whether to render debug lines
 			m_isPrefabMode = false;
+			m_showLayerWindow = false;
 		}
 
 		configFile.close();
@@ -205,10 +217,13 @@ namespace PE {
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
 		configJson["Editor"]["showAnimationWindow"] = m_showAnimationWindow;
 		configJson["Editor"]["showPhysicsWindow"] = m_showPhysicsWindow;
+		configJson["Editor"]["showLayerWindow"] = m_showLayerWindow;
+
 		//show the entire gui 
 		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
 		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
 		configJson["Editor"]["isPrefabMode"] = m_isPrefabMode;
+		configJson["Editor"]["layerSettings"] = LayerManager::GetInstance().GetLayerState().to_ullong();
 
 
 		std::ofstream outFile(filepath);
@@ -412,6 +427,8 @@ namespace PE {
 			if (m_showGameView) ShowGameView(r_frameBuffer , &m_showGameView);
 
 			if (m_applyPrefab) ShowApplyWindow(&m_applyPrefab);
+
+			if (m_showLayerWindow) ShowLayerWindow(&m_showLayerWindow);
 
 			if (m_isPrefabMode && ImGui::IsKeyPressed(ImGuiKey_Escape))
 			{
@@ -4481,6 +4498,15 @@ namespace PE {
 
 							ImGui::EndMenu();
 						}
+						if (ImGui::BeginMenu("Settings"))
+						{
+							if (ImGui::MenuItem("Layer Settings", ""))
+							{
+								m_showLayerWindow = true;
+							}
+
+							ImGui::EndMenu();
+						}
 					}
 					ImGui::EndMainMenuBar(); // closing of menu begin function
 
@@ -4967,7 +4993,6 @@ namespace PE {
 
 
 		ImGui::End();
-
 	}
 
 	void Editor::ShowApplyWindow(bool* p_active)
@@ -5082,6 +5107,34 @@ namespace PE {
 			// do some apply, set boolean to false
 
 			ImGui::End();
+		}
+	}
+
+	void Editor::ShowLayerWindow(bool* p_active)
+	{
+		
+		if (!ImGui::Begin("Layer Settings", p_active, ImGuiWindowFlags_NoCollapse)) // draw resource list
+		{
+			*p_active = false;
+			ImGui::End(); //imgui close
+		}
+		else
+		{
+			if (IsEditorActive())
+			{
+				for (size_t i{}; i < LayerManager::GetInstance().GetLayerState().size(); ++i)
+				{
+					bool flag = LayerManager::GetInstance().GetLayerState(i);
+					std::string txt = "Layer " + std::to_string(i) + ":  ";
+					ImGui::Text(txt.c_str()); ImGui::SameLine(); ImGui::Checkbox(("##" + txt).c_str(), &flag);
+					LayerManager::GetInstance().SetLayerState(i, flag);
+				}
+			}
+			else
+			{
+				p_active = false;
+			}
+			ImGui::End(); //imgui close
 		}
 	}
 
@@ -5621,5 +5674,6 @@ namespace PE {
 		std::string lowerToFind = ToLower(toFind);
 		return lowerStr.find(lowerToFind) != std::string::npos;
 	}
+
 
 }
