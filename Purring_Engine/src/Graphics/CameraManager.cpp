@@ -276,12 +276,16 @@ namespace PE
                 // Get the size of the render window
             float editorWindowSizeX{}, editorWindowSizeY{};
             Editor::GetInstance().GetWindowSize(editorWindowSizeX, editorWindowSizeY);
+            float widthRatio{ !CompareFloats(editorWindowSizeX, 0.f) ? GetUiCamera().GetViewportWidth() / editorWindowSizeX : 1.f };
+            float heightRatio{ !CompareFloats(editorWindowSizeY, 0.f) ? GetUiCamera().GetViewportHeight() / editorWindowSizeY : 1.f };
 
             // Adjust scale of the position
-            vec2 ret{ x * GetUiCamera().GetViewportWidth() / editorWindowSizeX, y * GetUiCamera().GetViewportHeight() / editorWindowSizeY };
+            vec2 ret{ x * widthRatio, y * heightRatio };
             ret.y += Editor::GetInstance().GetPlayWindowOffset();
 #else
-            vec2 ret{ x * GetUiCamera().GetViewportWidth() / m_windowWidth, y * GetUiCamera().GetViewportHeight() / m_windowHeight};
+            float widthRatio{ !CompareFloats(m_windowWidth, 0.f) ? GetUiCamera().GetViewportWidth() / m_windowWidth : 1.f };
+            float heightRatio{ !CompareFloats(m_windowHeight, 0.f) ? GetUiCamera().GetViewportHeight() / m_windowHeight : 1.f };
+            vec2 ret{ x * widthRatio, y * heightRatio };
 #endif // !GAMERELEASE
 
             return ret;
@@ -391,7 +395,7 @@ namespace PE
                 m_windowWidth = static_cast<float>(event.width);
                 m_windowHeight = static_cast<float>(event.height);
 
-                // Store the ratio of the main camera's viewport to the avtual window size
+                // Store the ratio of the main camera's viewport to the actual window size
                 std::optional<std::reference_wrapper<Camera>> mainCamera{ GetMainCamera() };
                 if (mainCamera) {
                     m_viewportWidth = mainCamera.value().get().GetViewportWidth();
