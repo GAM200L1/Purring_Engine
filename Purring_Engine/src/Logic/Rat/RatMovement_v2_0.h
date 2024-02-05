@@ -26,6 +26,9 @@ namespace PE
 
         void RatHitCat(const Event<CollisionEvents>& r_TE);
 
+        void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
+        void OnTriggerExit(const Event<CollisionEvents>& r_TE);
+
     private:
         void CalculateMovement(EntityID id, float deltaTime);
         bool CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition);
@@ -39,6 +42,6 @@ namespace PE
 
         int m_collisionEventListener{};
         int m_collisionStayEventListener{};
-
+        int m_collisionExitEventListener{};
     };
 }
