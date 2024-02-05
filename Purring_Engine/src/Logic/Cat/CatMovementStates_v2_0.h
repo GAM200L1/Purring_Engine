@@ -19,7 +19,6 @@
 #pragma once
 
 #include "CatScript_v2_0.h"
-#include "CatHelperFunctions.h"
 
 namespace PE
 {

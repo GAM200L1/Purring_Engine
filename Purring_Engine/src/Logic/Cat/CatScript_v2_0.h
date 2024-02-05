@@ -32,12 +32,19 @@
 #include "Animation/Animation.h"
 
 #include "Logic/GameStateController_v2_0.h"
-#include "CatController_v2_0.h"
 #include "GreyCatAttackStates_v2_0.h"
 #include "OrangeCatAttackStates_v2_0.h"
 
 namespace PE
 {
+	enum EnumCatType
+	{
+		MAINCAT,
+		GREYCAT,
+		ORANGECAT,
+		FLUFFYCAT
+	};
+
 	struct CatScript_v2_0Data
 	{
 		// id of cat and its type
