@@ -36,6 +36,7 @@
 #include "CatScript.h"
 #include "GameStateController.h"
 #include "RatScript.h"
+#include "IntroCutsceneController.h"
 
 
 #ifndef GAMERELEASE
@@ -63,6 +64,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(CatScript);
 	REGISTER_SCRIPT(RatScript);
 	REGISTER_SCRIPT(GameStateController);
+	REGISTER_SCRIPT(IntroCutsceneController);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

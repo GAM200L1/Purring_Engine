@@ -91,6 +91,7 @@
 #include "GameStateManager.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
+#include "Logic/IntroCutsceneController.h"
 
 
 // Scene Manager
@@ -307,6 +308,9 @@ RTTR_REGISTRATION
         .property("attackDamage", &PE::RatScriptData::attackDamage)
         .property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScriptData::animationStates);
+
+    rttr::registration::class_<PE::IntroCutsceneController>("IntroCutsceneController")
+        .property("m_rotationSpeed", &PE::IntroCutsceneControllerData::m_rotationSpeed);
 
     rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
         .property_readonly("Width", &PE::Canvas::GetWidth)
