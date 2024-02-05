@@ -80,8 +80,6 @@ namespace PE
 		bool m_mouseClick{ false }; // set to true when mouse is clicked
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 		int m_mouseEventListener; // Stores the handler for the mouse click event
-		//int m_triggerEnterEventListener; // Stores the handler for the collision enter event
-		//int m_triggerStayEventListener; // Stores the handler for the collision stay event
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 

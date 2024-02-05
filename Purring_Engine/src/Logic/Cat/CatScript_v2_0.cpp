@@ -29,7 +29,6 @@
 #include "CatMovementStates_v2_0.h"
 #include "CatHelperFunctions.h"
 
-
 #include "ECS/EntityFactory.h"
 
 namespace PE
@@ -61,12 +60,10 @@ namespace PE
 		{
 		case EnumCatType::FLUFFYCAT:
 		{
-
 			break;
 		}
 		case EnumCatType::ORANGECAT:
 		{
-			
 			break;
 		}
 		default: // main cat or grey cat
