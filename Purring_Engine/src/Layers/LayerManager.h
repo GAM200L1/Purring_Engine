@@ -58,6 +58,7 @@ namespace PE
 		void SetLayerState(const LayerState& lyr) { m_layerStates = lyr; }
 		bool GetLayerState(size_t pos) { return m_layerStates[pos]; }
 		void SetLayerState(size_t pos, bool set) { m_layerStates[pos] = set; }
+		void ResetLayerCache();
     private:
         void CreateCached(const ComponentID& r_components);
     private:
@@ -246,7 +247,15 @@ namespace PE
 			{
 				ite = beg;
 				end = en;
-				while (ite != end && !EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive) ++ite;
+				try
+				{ 
+					while (ite != end && !EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive) ++ite;
+				}
+				catch (...)
+				{
+					ite = end;
+				}
+				
 			}
 
 			/*!***********************************************************************************

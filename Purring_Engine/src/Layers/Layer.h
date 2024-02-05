@@ -37,6 +37,7 @@ namespace PE
         InteractionLayers(const std::vector<EntityID>& r_eid);
         operator const std::array<Layer, MAX_LAYERS>& () const { return layers; }
         const std::array<Layer, MAX_LAYERS>& GetLayers() const { return layers; }
+        void Clear() { for (auto& l : layers) { l.clear(); } }
     public:
         void UpdateLayers(const EntityID& r_id, bool add = true);
         void UpdateLayers(const EntityID& r_id, const int& r_newLayer);

@@ -22,6 +22,7 @@
 #include "Hierarchy/HierarchyManager.h"
 #include "Logic/LogicSystem.h"
 #include "Graphics/CameraManager.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -148,5 +149,6 @@ namespace PE
             }
         }
         Hierarchy::GetInstance().Update();
+        LayerManager::GetInstance().ResetLayerCache();
     }
 }

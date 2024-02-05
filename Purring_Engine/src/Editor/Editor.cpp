@@ -332,6 +332,7 @@ namespace PE {
 			}
 		}
 		Hierarchy::GetInstance().Update();
+		LayerManager::GetInstance().ResetLayerCache();
 	}
 
 	void Editor::Init()

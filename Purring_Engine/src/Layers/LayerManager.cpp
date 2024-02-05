@@ -32,12 +32,6 @@ namespace PE
     void LayerManager::RemoveEntity(const EntityID& r_id)
     {
         //const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(r_id);
-        ComponentID components;
-        for (auto comp : EntityManager::GetInstance().GetComponentIDs(r_id))
-        {
-            components |= comp;
-        }
-
         for (auto &[k, layer] : m_cachedLayers)
         {
             layer.UpdateLayers(r_id, false);
@@ -46,6 +40,8 @@ namespace PE
 
     void LayerManager::AddEntity(const EntityID& r_id)
     {
+        if (!EntityManager::GetInstance().IsEntityValid(r_id))
+            return;
         //const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(r_id);
         ComponentID components;
         for (auto comp : EntityManager::GetInstance().GetComponentIDs(r_id))
@@ -74,6 +70,14 @@ namespace PE
             CreateCached(r_components);
        
         return m_cachedLayers.at(r_components).GetLayers();
+    }
+
+    void LayerManager::ResetLayerCache()
+    {
+        for(auto&[k,l] : m_cachedLayers)
+        {
+            l.Clear();
+        }
     }
 
     void LayerManager::CreateCached(const ComponentID& r_components)

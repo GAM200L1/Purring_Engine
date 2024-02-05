@@ -183,7 +183,7 @@ namespace PE
 			m_removed.emplace(id);
 			
 			UpdateVectors(id, false);
-			LayerManager::GetInstance().RemoveEntity(id);
+			LayerManager::GetInstance().UpdateEntity(id);
 		}
 	}
 
