@@ -95,6 +95,11 @@
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
 
+
+
+
+#include "Logic/Cat/CatController_v2_0.h"
+#include "Logic/Cat/CatScript_v2_0.h"
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
@@ -329,6 +334,30 @@ RTTR_REGISTRATION
         .property("bulletLifeTime", &PE::CatScriptData::bulletLifeTime)
         .property("bulletForce", &PE::CatScriptData::bulletForce)
         .property("animationStates", &PE::CatScriptData::animationStates);
+
+    rttr::registration::class_<PE::CatScript_v2_0Data>("CatScript_v2_0")
+        .property("catID", &PE::CatScript_v2_0Data::catID)
+        .property("catType", &PE::CatScript_v2_0Data::catType)
+        .property("catIsDead", &PE::CatScript_v2_0Data::catIsDead)
+        .property("finishedExecution", &PE::CatScript_v2_0Data::finishedExecution)
+        .property("isMainCat", &PE::CatScript_v2_0Data::isMainCat)
+        .property("catMaxMovementEnergy", &PE::CatScript_v2_0Data::catMaxMovementEnergy)
+        .property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
+        .property("minDistance", &PE::CatScript_v2_0Data::minDistance)
+        .property("maxDistance", &PE::CatScript_v2_0Data::maxDistance)
+        .property("nodeSize", &PE::CatScript_v2_0Data::nodeSize)
+        .property("movementSpeed", &PE::CatScript_v2_0Data::movementSpeed)
+        .property("forgivenessOffset", &PE::CatScript_v2_0Data::forgivenessOffset)
+        .property("currentPositionIndex", &PE::CatScript_v2_0Data::currentPositionIndex)
+        .property("pathPositions", &PE::CatScript_v2_0Data::pathPositions)
+        .property("followCatPositions", &PE::CatScript_v2_0Data::followCatPositions)
+        .property("pathQuads", &PE::CatScript_v2_0Data::pathQuads)
+        .property("shouldChangeState", &PE::CatScript_v2_0Data::shouldChangeState)
+        .property("delaySet", &PE::CatScript_v2_0Data::delaySet)
+        .property("timeBeforeChangingState", &PE::CatScript_v2_0Data::timeBeforeChangingState)
+        .property("startedPlanning", &PE::CatScript_v2_0Data::startedPlanning)
+        .property("animationStates", &PE::CatScript_v2_0Data::animationStates);
+
 
     rttr::registration::class_<PE::RatScriptData>("RatScript")
         .property("mainCatID", &PE::RatScriptData::mainCatID)

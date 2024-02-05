@@ -53,6 +53,7 @@
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
+#include "Logic/Cat/CatScript_v2_0.h"
 #include "GUISystem.h"
 #include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
@@ -3204,6 +3205,20 @@ namespace PE {
 
 										ImGui::Text("Are You Sure Canvas Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##AYSMMID", &AreYouSureID);
 										if (AreYouSureID != m_currentSelectedObject) it->second.AreYouSureCanvas = AreYouSureID;
+									}
+								}
+							}
+
+							if (key == "CatScript_v2_0")
+							{
+								CatScript_v2_0* p_script = dynamic_cast<CatScript_v2_0*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("CatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+
 									}
 								}
 							}

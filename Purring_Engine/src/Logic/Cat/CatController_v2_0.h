@@ -15,7 +15,6 @@
 *************************************************************************************/
 #pragma once
 #include "Logic/Script.h"
-#include "ECS/Entity.h"
 
 namespace PE
 {
@@ -30,14 +29,14 @@ namespace PE
 	struct CatController_v2_0Data
 	{
 		// vector of pairs <catID, catType>
-		std::vector<std::pair<EntityID, EnumCatType>> cacheCats; // vector for when stage is restarted
+
 	};
 
 	class CatController_v2_0 : public Script
 	{
 	public:
 		// ----- Public Variables ----- //
-		static EntityID mainInstance;
+		EntityID mainInstance;
 		
 		std::map<EntityID, CatController_v2_0Data> m_scriptData; // data associated with each instance of the script
 
@@ -68,5 +67,6 @@ namespace PE
 
 	private:
 		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
+		std::vector<std::pair<EntityID, EnumCatType>> m_cacheCats; // vector for when stage is restarted
 	};
 }
