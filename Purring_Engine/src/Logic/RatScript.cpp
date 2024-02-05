@@ -15,7 +15,6 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "RatScript.h"
-#include "GameStateManager.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
 #include "Data/SerializationManager.h"
@@ -41,12 +40,13 @@ namespace PE
 	// ----- Public Functions ----- //
 	void RatScript::Init(EntityID id)
 	{
+		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		m_scriptData[id].ratID = id;
 
 		// create state manager for the entity
 		if (m_scriptData[id].p_stateManager) { return; }
 
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
+		if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 		{
 			m_scriptData[id].p_stateManager = new StateMachine{};
 			m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
@@ -57,8 +57,7 @@ namespace PE
 		 
 	void RatScript::Update(EntityID id, float deltaTime)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN || GameStateManager::GetInstance().GetGameState() == GameStates::LOSE)
+		if (p_gsc->currentState == GameStates_v2_0::WIN || p_gsc->currentState == GameStates_v2_0::LOSE)
 		{
 			ToggleEntity(m_scriptData[id].attackTelegraphID, false);
 			return;
@@ -66,7 +65,7 @@ namespace PE
 
 		if (m_scriptData[id].health <= 0)
 		{
-			GameStateManager::GetInstance().noPause = true;
+			//GameStateManager::GetInstance().noPause = true;
 
 			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
 			{
@@ -83,7 +82,7 @@ namespace PE
 				// death animation example
 				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 				{
-					GameStateManager().GetInstance().SetWinState();
+					p_gsc->WinGame();
 					SerializationManager serializationManager;
 					EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Death SFX_Prefab.json");
 					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
@@ -104,7 +103,7 @@ namespace PE
 			// Make a statemanager and set the starting state
 			if (m_scriptData[id].p_stateManager) { return; }
 
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
+			if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 			{
 				m_scriptData[id].p_stateManager = new StateMachine{};
 				m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
@@ -130,7 +129,7 @@ namespace PE
 					}
 				}
 				// If current gamestate is set to attack planning, change state to CatAttackPLAN
-				if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+				if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
 				{
 					TriggerStateChange(id); // immediate state change
 					if (CheckShouldStateChange(id, deltaTime))
@@ -190,7 +189,7 @@ namespace PE
 
 				}
 				// Check if the state should be changed
-				if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
+				if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 				{
 					TriggerStateChange(id); // immediate state change
 					if (CheckShouldStateChange(id, deltaTime))
@@ -373,7 +372,7 @@ namespace PE
 		p_data = GETSCRIPTDATA(RatScript, id);
 		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		RatScript::PositionEntity(p_data->psudoRatID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
-		RatScript::ToggleEntity(p_data->detectionTelegraphID, true); // show the detection telegraph
+		//RatScript::ToggleEntity(p_data->detectionTelegraphID, true); // show the detection telegraph
 		Transform const& ratObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 		Transform const& catObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
 		vec2 absRatScale = vec2{ abs(ratObject.width),abs(ratObject.height) };
@@ -398,7 +397,7 @@ namespace PE
 				// find rotation to rotate the psuedorat entity so the arrow will be rotated accordingly
 				float rotation = atan2(p_data->directionToTarget.y, p_data->directionToTarget.x);
 				PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->psudoRatID).orientation = rotation;
-				RatScript::ToggleEntity(p_data->arrowTelegraphID, true); // show the arrow of movement
+				//RatScript::ToggleEntity(p_data->arrowTelegraphID, true); // show the arrow of movement
 			}
 			
 			// Ensure the rat is facing the direction of their movement
@@ -408,7 +407,7 @@ namespace PE
 
 			// settings for the attack cross
 			RatScript::PositionEntity(p_data->attackTelegraphID, catObject.position);
-			RatScript::ToggleEntity(p_data->attackTelegraphID, true); // show the arrow of movement
+			//RatScript::ToggleEntity(p_data->attackTelegraphID, true); // show the arrow of movement
 		}
 		else
 		{
