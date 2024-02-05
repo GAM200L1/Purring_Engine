@@ -171,22 +171,48 @@ namespace PE
 	{
 		m_parentOrder.clear();
 		m_sceneOrder.clear();
-		for (const auto& layer : LayerView<EntityDescriptor, Transform>())
+		m_hierarchyOrder.clear();
+		try
 		{
-			for (const EntityID& id : InternalView(layer))
+			for (const auto& layer : LayerView<EntityDescriptor, Transform>(true))
 			{
-				// id 0 is default camera, ignore it
-				if (id == 0)
-					continue;
-				// only if it is base layer
-				if (!HasParent(id))
+				for (const EntityID& id : InternalView(layer))
 				{
-					m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+					// id 0 is default camera, ignore it
+					if (id == 0)
+						continue;
+					// only if it is base layer
+					if (!HasParent(id))
+					{
+						m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+					}
 				}
 			}
+			for (auto [k, v] : m_sceneOrder)
+				m_hierarchyOrder.emplace_back(v);
+
+			m_sceneOrder.clear();
+			for (const auto& layer : LayerView<EntityDescriptor, Transform>())
+			{
+				for (const EntityID& id : InternalView(layer))
+				{
+					// id 0 is default camera, ignore it
+					if (id == 0)
+						continue;
+					// only if it is base layer
+					if (!HasParent(id))
+					{
+						m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+					}
+				}
+			}
+			for (auto [k, v] : m_sceneOrder)
+				m_parentOrder.emplace_back(v);
 		}
-		for (auto [k,v] : m_sceneOrder)
-			m_parentOrder.emplace_back(v);
+		catch (...)
+		{
+			engine_logger.AddLog(false, "Failed to access entities", __FUNCTION__);
+		}
 	}
 
 	void Hierarchy::UpdateTransform()

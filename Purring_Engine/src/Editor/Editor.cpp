@@ -770,7 +770,7 @@ namespace PE {
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
 			{
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
-				for (const EntityID& id : Hierarchy::GetInstance().GetParentOrder())
+				for (const EntityID& id : Hierarchy::GetInstance().GetHierarchyOrder())
 				{
 					// skip camera
 					if (id == Graphics::CameraManager::GetUiCameraId())
@@ -858,7 +858,7 @@ namespace PE {
 								Hierarchy::GetInstance().DetachChild(dragID.value());
 								EntityID order = 1;
 								EntityID largest = 1;
-								for (const auto& id : Hierarchy::GetInstance().GetParentOrder())
+								for (const auto& id : Hierarchy::GetInstance().GetHierarchyOrder())
 								{
 									if (id == dragID.value())
 										continue;
@@ -5467,7 +5467,7 @@ namespace PE {
 	EntityID Editor::CountCanvas()
 	{
 		EntityID FirstCanvasID{};
-		for (auto objectID : LayerView<Canvas>())
+		for (auto layer : LayerView<Canvas>())
 		{
 			for (EntityID objectID : InternalView(layer))
 			{

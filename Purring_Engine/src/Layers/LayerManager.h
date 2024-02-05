@@ -78,6 +78,7 @@ namespace PE
 		ComponentID componentsCombined;
 		// flag for toggling whether all components are in scope
 		bool all{ false };
+		bool ignore{ false };
 
 		/*!***********************************************************************************
 		\brief		This iterator struct is a required interface to allow the use of foreach
@@ -93,8 +94,8 @@ namespace PE
 			\param[in] components 	The components to scope to
 			\param[in] all 		Whether or not the scope is to all copmonents
 			*************************************************************************************/
-			Iterator(bool index, const ComponentID& r_components, bool all) :
-				all(all)
+			Iterator(bool index, const ComponentID& r_components, bool all, bool ignore) :
+				all(all), ignore{ignore}
 			{
 				if (index)
 				{
@@ -106,10 +107,13 @@ namespace PE
 				}
 
 				end = (all) ? LayerManager::GetInstance().GetLayers(ALL).end() : LayerManager::GetInstance().GetLayers(r_components).end();
-				while (ite != end && !LayerManager::GetInstance().GetLayerState().test(layer))
+				if (!ignore)
 				{
-					++ite;
-					++layer;
+					while (ite != end && !LayerManager::GetInstance().GetLayerState().test(layer))
+					{
+						++ite;
+						++layer;
+					}
 				}
 			}
 
@@ -160,7 +164,7 @@ namespace PE
 				{
 					++ite;
 					++layer;
-					if (layer < MAX_LAYERS && LayerManager::GetInstance().GetLayerState().test(layer))
+					if (ignore || (layer < MAX_LAYERS && LayerManager::GetInstance().GetLayerState().test(layer)))
 						break;
 				} while (ite != end);
 
@@ -173,6 +177,7 @@ namespace PE
 			std::array<Layer, MAX_LAYERS>::const_iterator end;
 			// flag for toggling whether all components are in scope
 			bool all{ false };
+			bool ignore{ false };
 			size_t layer{ 0 };
 		};
 
@@ -182,7 +187,7 @@ namespace PE
 		\brief Construct a new Scene View object
 
 		*************************************************************************************/
-		LayerView()
+		LayerView(bool ignore = false) : ignore{ignore}
 		{
 			// checks if the number of components is zero
 			if constexpr (sizeof...(ComponentTypes))
@@ -204,7 +209,7 @@ namespace PE
 		*************************************************************************************/
 		const Iterator begin() const	// cannot follow coding conventions due to c++ begin() & end() standards
 		{
-			return Iterator(true, componentsCombined, all);
+			return Iterator(true, componentsCombined, all, ignore);
 		}
 
 		/*!***********************************************************************************
@@ -214,7 +219,7 @@ namespace PE
 		*************************************************************************************/
 		const Iterator end() const		// cannot follow coding conventions due to c++ begin() & end() standards
 		{
-			return Iterator(false, componentsCombined, all);
+			return Iterator(false, componentsCombined, all, ignore);
 		}
 	};
 

@@ -1,0 +1,142 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "max": {
+                                "x": 50.0,
+                                "y": 50.0
+                            },
+                            "min": {
+                                "x": -50.0,
+                                "y": -50.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 1,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Empty Object",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "max": {
+                                "x": 99.0,
+                                "y": 50.0
+                            },
+                            "min": {
+                                "x": -1.0,
+                                "y": -50.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 2,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Empty Object",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 49.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}
