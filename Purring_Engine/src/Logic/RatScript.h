@@ -19,6 +19,7 @@
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
 #include "Events/EventHandler.h"
+#include "GameStateController_v2_0.h"
 
 namespace PE
 {
@@ -216,6 +217,9 @@ namespace PE
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 
 	private:
+		// ----- Private Variables ----- //
+		GameStateController_v2_0* p_gsc;
+
 		// ----- Private Functions ----- //
 		/*!***********************************************************************************
 		 \brief Create entities for the attack telegraphs for the rat from prefabs. Adjusts 
