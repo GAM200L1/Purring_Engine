@@ -380,7 +380,7 @@ namespace PE
 		float m_timeSinceTransitionEnded{};
 
 		bool m_journalShowing;
-		bool m_finishExecution;
+		bool m_finishExecution{false};
 		bool showingCatPortrait;
 		EntityID currentPortraitCat;
 

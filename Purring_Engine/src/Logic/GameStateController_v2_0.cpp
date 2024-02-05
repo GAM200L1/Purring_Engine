@@ -220,7 +220,6 @@ namespace PE
 				}
 			}
 			prevState = currentState;
-			//turnDelay = false;
 			break;
 		}
 		case GameStates_v2_0::ATTACK:
@@ -254,8 +253,7 @@ namespace PE
 			ExecutionStateHUD(id, deltaTime);
 			UpdateTurnCounter("Executing...");
 
-			ExecutionToMovement();
-
+				ExecutionToMovement();
 			prevState = currentState;
 			break;
 		}
