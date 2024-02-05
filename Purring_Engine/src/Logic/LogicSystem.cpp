@@ -42,6 +42,7 @@
 
 #include "Rat/RatScript_v2_0.h"
 #include "Rat/RatController_v2_0.h"
+#include "Rat/RatDetectionScript_v2_0.h"
 #include "UI/HealthBarScript_v2_0.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
 #ifndef GAMERELEASE
@@ -74,6 +75,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(DeploymentScript);
 	REGISTER_SCRIPT(MainMenuController);
 
+	REGISTER_SCRIPT(RatDetectionScript_v2_0);
 	REGISTER_SCRIPT(RatScript_v2_0);
 	REGISTER_SCRIPT(RatController_v2_0);
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
