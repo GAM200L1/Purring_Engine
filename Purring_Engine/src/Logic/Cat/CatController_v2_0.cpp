@@ -39,9 +39,12 @@ namespace PE
 			{
 				if (scriptname == "CatScript_v2_0")
 				{
-					std::pair<EntityID, EnumCatType> pair{ catID, GREYCAT }; //*GETSCRIPTDATA(CatScript_v2_0, catID).catType };
+					//std::pair<EntityID, EnumCatType> pair{ catID, GREYCAT }; //*GETSCRIPTDATA(CatScript_v2_0, catID).catType };
+					std::pair<EntityID, EnumCatType> pair{ catID, *GETSCRIPTDATA(CatScript_v2_0, catID).catType };	
 					m_cacheCats.push_back(pair);
 					m_currentCats.push_back(pair);
+
+
 				}
 
 			}
