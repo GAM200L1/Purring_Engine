@@ -142,6 +142,15 @@ namespace PE
 				return rttr::instance(m_scriptData.at(id));
 		}
 
+		void RatScript_v2_0::TriggerStateChange(EntityID id, float const stateChangeDelay)
+		{
+			if (m_scriptData[id].delaySet) { return; }
+
+			m_scriptData[id].shouldChangeState = true;
+			m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
+			m_scriptData[id].delaySet = true;
+		}
+
 		void RatScript_v2_0::CreateCheckStateManager(EntityID id)
 		{
 				if (m_scriptData.count(id))

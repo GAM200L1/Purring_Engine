@@ -21,23 +21,19 @@ namespace PE
         virtual void StateUpdate(EntityID id, float deltaTime) override;
         virtual void StateExit(EntityID id) override;
 
-        // Movement logic specific to the RatMovement state
-        void Move(EntityID id, float deltaTime);
-        void DestinationReached(EntityID id);
-
         virtual std::string_view GetName() { return "Movement_v2_0"; }
 
     private:
+        void CalculateMovement(EntityID id, float deltaTime);
+        bool CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition);
+
         GameStateController_v2_0* gameStateController{ nullptr };
 
         // Movement state specific variables and data
         RatScript_v2_0_Data* p_data{ nullptr };
 
-        bool canMove;                                       // Flag to control movement permission
-        bool isMoving;                                      // Flag to indicate if the rat is currently moving
-        bool hasReachedDestination;                         // Flag to indicate if the destination has been reached
+        float minDistanceToTarget{ 1.0f };
 
-        float moveSpeed; // Movement speed of the rat data from main ratscriptv20_data
-        float minDistanceToTarget;
+
     };
 }

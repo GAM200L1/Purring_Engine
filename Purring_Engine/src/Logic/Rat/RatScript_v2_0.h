@@ -68,7 +68,7 @@ namespace PE
 		bool finishedExecution{ false }; // Keeps track of whether the execution phase has been completed
 
 		float detectionRadius{};
-		float movementSpeed{ 100.f};
+		float movementSpeed{200.f};
 		
 		// Attack 
 		int skillDamage{};
@@ -191,6 +191,9 @@ namespace PE
 		 \return rttr::instance Instance of the script to get the data from
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
+
+		void TriggerStateChange(EntityID id, float const stateChangeDelay);
+
 
 		// ----- Private Members ----- //
 	private:
