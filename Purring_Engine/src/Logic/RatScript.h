@@ -50,7 +50,7 @@ namespace PE
 		EntityID attackTelegraphID{ 0 }; // id of cross attack telegraph
 		EntityID detectionTelegraphID{ 0 }; // id of red detection telegraph
 		float detectionRadius{ 4.f }; // radius of the detection UI needs manual setting
-		float attackDiameter{ 64.f * 1.5f }; // radius of the attack
+		float attackDiameter{ 64.f * 2.f }; // radius of the attack
 		float attackDuration{ 0.5f }; // how long the attack is active needs manual setting
 		int collisionDamage{ 1 }; // damage when touching the rat needs manual setting
 		int attackDamage{ 1 }; // damage when properly attacked by the rat needs manual setting

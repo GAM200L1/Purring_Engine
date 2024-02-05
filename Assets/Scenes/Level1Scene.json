@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -809,7 +809,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1152,7 +1152,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1194,7 +1194,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1546,7 +1546,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1814,7 +1814,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2216,7 +2216,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2533,7 +2533,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2613,7 +2613,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2950,11 +2950,11 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
+                        "Layer": 1,
                         "Old ID": 61,
                         "Prefab Type": "OrangeCatPrefab",
                         "children": [],
@@ -3013,11 +3013,11 @@
                             "radius": 50.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
+                        "Layer": 1,
                         "Old ID": 63,
                         "Prefab Type": "GutterRat",
                         "children": [],
@@ -3067,7 +3067,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3335,7 +3335,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4064,11 +4064,11 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
+                        "Layer": 1,
                         "Old ID": 16,
                         "Prefab Type": "PlayerPrefab",
                         "children": [],
@@ -4216,11 +4216,11 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
+                        "Layer": 1,
                         "Old ID": 17,
                         "Prefab Type": "Rat",
                         "children": [],
@@ -4255,7 +4255,7 @@
                                 },
                                 "attackDamage": 1,
                                 "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
+                                "attackDiameter": 96.0,
                                 "attackDuration": 0.5,
                                 "collisionDamage": 1,
                                 "detectionRadius": 4.0,

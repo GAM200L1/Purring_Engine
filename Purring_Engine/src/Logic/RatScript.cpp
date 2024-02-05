@@ -355,7 +355,7 @@ namespace PE
 		data.attackTelegraphID = serializationManager.LoadFromFile("EnemyAttackTelegraph_Prefab.json");
 		ToggleEntity(data.attackTelegraphID, false); // set to inactive, it will only show during planning phase if the cat is in the area
 		ScaleEntity(data.attackTelegraphID, data.attackDiameter, data.attackDiameter);
-		Hierarchy::GetInstance().AttachChild(id, data.attackTelegraphID);
+		//Hierarchy::GetInstance().AttachChild(id, data.attackTelegraphID);
 		EntityManager::GetInstance().Get<Transform>(data.attackTelegraphID).relPosition = vec2{ 0.f,0.f };
 
 		// create the detection radius
@@ -374,7 +374,7 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(RatScript, id);
 		RatScript::PositionEntity(p_data->psudoRatID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
-		RatScript::ToggleEntity(p_data->detectionTelegraphID, true); // show the detection telegraph
+		//RatScript::ToggleEntity(p_data->detectionTelegraphID, true); // show the detection telegraph
 		Transform const& ratObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 		Transform const& catObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
 		vec2 absRatScale = vec2{ abs(ratObject.width),abs(ratObject.height) };
@@ -385,9 +385,9 @@ namespace PE
 
 
 		// if the cat is within the detection radius
-		if (p_data->distanceFromPlayer <= ((RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) - absRatScale.x) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
+		if (p_data->distanceFromPlayer <= ((RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) - absCatScale.x) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
 		{
-			if (p_data->distanceFromPlayer <= (absCatScale.x * 0.5f))
+			if (p_data->distanceFromPlayer <= 0.f)
 			{
 				p_data->distanceFromPlayer = 0.f; // cat and rat are directly next to each other so there is no distance to really cover
 			}
@@ -408,7 +408,7 @@ namespace PE
 			RatScript::ScaleEntity(id, newScale.x, newScale.y);
 
 			// settings for the attack cross
-			RatScript::ToggleEntity(p_data->attackTelegraphID, true); // show the arrow of movement
+			//RatScript::ToggleEntity(p_data->attackTelegraphID, true); // show the arrow of movement
 		}
 		else
 		{
@@ -505,6 +505,7 @@ namespace PE
 		 }
 		 else if (p_data->attacking)
 		 {
+			 RatScript::PositionEntity(p_data->attackTelegraphID, RatScript::GetEntityPosition(id));
 			 RatScript::ToggleEntity(p_data->attackTelegraphID, true);
 			 if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 			 {
