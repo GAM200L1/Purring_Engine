@@ -23,13 +23,18 @@
 #include "Physics/CollisionManager.h"
 #include "GameStateController_v2_0.h"
 #include "LogicSystem.h"
+#include "DemoController.h"
 namespace PE
 {
 
 	void PE::DeploymentScript::Init(EntityID id)
 	{
 		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
+		//will need to load based on next cat with its cat type when i eventually get it.
+		DemoController* demoController = GETSCRIPTINSTANCEPOINTER(DemoController);
+		m_catList = &demoController->m_aliveCatStartScene;
 
+		catCounter = 1;
 		m_catPlaced = 0;
 	}
 
@@ -82,9 +87,13 @@ namespace PE
 			return;
 
 		//for setting texture, check what cat is is rn and set it as texture.
-			/*if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_ScriptData[id].FollowingTextureObject))
-			EntityManager::GetInstance().Get<Graphics::Renderer>(m_ScriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture());*/
-		
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
+			{
+				if(catCounter == 1)
+					EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Meowsalot_512px.png"));
+				if (catCounter ==2)
+					EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Orange_512px.png"));
+			}
 		CircleCollider cc;
 
 		if (EntityManager::GetInstance().Has<Collider>(m_scriptData[id].FollowingTextureObject))
@@ -208,13 +217,28 @@ namespace PE
 			{
 				SerializationManager sm;
 
-				//will need to load based on next cat with its cat type when i eventually get it.
-				EntityID NewCatID =  sm.LoadFromFile(("DeploymentTest_Prefab.json"));
-				EntityManager::GetInstance().Get<Transform>(NewCatID).position = m_mousepos;
-				EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;
+				if (catCounter == 1)
+				{
+					EntityID NewCatID = sm.LoadFromFile(("Player_Prefab.json"));
+					EntityManager::GetInstance().Get<Transform>(NewCatID).position = m_mousepos;
+					EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;
 
-				m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(NewCatID);
-				m_catPlaced++;
+					m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(NewCatID);
+					m_catPlaced++;
+					catCounter++;
+					return;
+				}
+				if (catCounter == 2)
+				{
+					EntityID NewCatID = sm.LoadFromFile(("Orange Cat 2_Prefab.json"));
+					EntityManager::GetInstance().Get<Transform>(NewCatID).position = m_mousepos;
+					EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;
+
+					m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(NewCatID);
+					m_catPlaced++;
+					return;
+				}
+
 			}
 		}
 	}

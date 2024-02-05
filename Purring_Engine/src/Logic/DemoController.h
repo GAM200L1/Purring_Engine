@@ -49,6 +49,7 @@ namespace PE
 		// Container of IDs and rat types of active rats in the scene
 		std::vector<std::pair<EntityID, EnumOldRatType>> m_cachedActiveRats{};
 		std::vector<std::pair<EntityID, EnumCatTypes>> m_cachedActiveCats{};
+		std::vector<std::pair<EntityID, EnumCatTypes>> m_aliveCatStartScene{};
 
 		bool ratsPrinted{ false }; // temp boolean to print the rats when the scene is first played
 		bool catsPrinted{ false }; // temp boolean to print the cats when the scene is first played
@@ -80,6 +81,11 @@ namespace PE
 						active in the scene.
 		*************************************************************************************/
 		std::vector<std::pair<EntityID, EnumCatTypes>> const& GetCats(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Save current cats into a vector
+		*************************************************************************************/
+		void SaveCats();
 				
 		/*!***********************************************************************************
 		 \brief Returns the number of rats active in the scene.

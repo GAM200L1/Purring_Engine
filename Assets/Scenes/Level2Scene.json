@@ -764,6 +764,7 @@
                                 "LoseCanvas": 37,
                                 "PauseBackGroundCanvas": 13,
                                 "PauseMenuCanvas": 3,
+                                "PhaseBanner": 0,
                                 "Portrait": 47,
                                 "RatPortrait": 53,
                                 "TransitionPanel": 70,
@@ -2936,71 +2937,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 270.00006103515625,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 60,
-                        "Prefab Type": "OrangeCatPrefab",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Orange Cat 1",
-                        "parent": null,
-                        "sceneID": 61
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": null,
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 270.00006103515625,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 140.7998046875,
-                                "y": 0.0
+                                "x": 250.79983520507813,
+                                "y": -22.499990463256836
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3041,8 +2979,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 140.7998046875,
-                            "y": 0.0
+                            "x": 250.79983520507813,
+                            "y": -22.499990463256836
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -3069,7 +3007,7 @@
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 50.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -3105,7 +3043,7 @@
                         }
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 64.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 481.9992370605469,
@@ -3116,7 +3054,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 64.0
                     }
                 },
                 "name": ""
@@ -3136,7 +3074,7 @@
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 50.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -3172,7 +3110,7 @@
                         }
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 64.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -3183,7 +3121,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 64.0
                     }
                 },
                 "name": ""
@@ -3598,7 +3536,7 @@
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 50.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -3624,7 +3562,7 @@
                         "TextureKey": "../Assets/Textures/Cat_Grey_512px.png"
                     },
                     "Transform": {
-                        "height": 100.0,
+                        "height": 64.0,
                         "orientation": 0.0,
                         "position": {
                             "x": -460.00006103515625,
@@ -3635,7 +3573,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 64.0
                     }
                 },
                 "name": ""
