@@ -4,6 +4,7 @@
 #include "Logic/LogicSystem.h"
 #include "ECS/Entity.h"
 #include "../StateManager.h"
+#include "Events/EventHandler.h"
 
 namespace PE
 {
@@ -22,14 +23,10 @@ namespace PE
         virtual void StateExit(EntityID id) override;
 
         // Attack logic specific to the RatAttack state
-        void AttackLogic(EntityID id, float deltaTime);
+        void Attack(EntityID id);
 
-        // Collider event handlers from ax unity.
-        void OnTriggerEnter(EntityID colliderId);
-        void OnTriggerStay(EntityID colliderId);
-        void OnTriggerExit(EntityID colliderId);
-
-        // Utility function to check if an entity ID corresponds to a cat
+        void OnTriggerEnter(const Event<CollisionEvents>& event);  // Handle collision enter events
+        void OnTriggerExit(const Event<CollisionEvents>& event);   // Handle collision exit events
         bool IsCat(EntityID id);
 
         // Getter for the state name with version
@@ -41,8 +38,10 @@ namespace PE
         // Attack state specific variables and data
         RatScript_v2_0_Data* p_data;
 
-        bool catInRange{ false };                                   // Flag to indicate if a cat is in attack range
-        bool hasActed{ false };                                     // Flag to indicate if the rat has already acted this turn/cycle
-        EntityID targetCat{ 0 };                                    // Entity ID of the target cat
+        bool hasAttacked{ false };
+        int m_collisionEnterListener; // Listener ID for collision enter events
+        int m_collisionExitListener;  // Listener ID for collision exit events
+
     };
+
 } // namespace PE

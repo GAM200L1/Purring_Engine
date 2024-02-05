@@ -1,21 +1,23 @@
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "Logic/Rat/RatAttack_v2_0.h"
+#include "Events/EventHandler.h"
 
 namespace PE
 {
     // Constructor
-    RatAttack_v2_0::RatAttack_v2_0()
-        : gameStateController(nullptr), p_data(nullptr), catInRange(false), hasActed(false)
-    {
-    }
+    RatAttack_v2_0::RatAttack_v2_0() : gameStateController(nullptr), p_data(nullptr), hasAttacked(false) {}
+
 
     void RatAttack_v2_0::StateEnter(EntityID id)
     {
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);       // Get GSM instance
-        catInRange = false;                                                             // Reset cat in range flag
-        hasActed = false;                                                               // Reset action flag
+        hasAttacked = false;
+
+        m_collisionEnterListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnter, this);
+        m_collisionExitListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
+        std::cout << "RatAttack_v2_0::StateEnter - Rat ID: " << id << " has entered the attack state." << std::endl;
     }
 
     void RatAttack_v2_0::StateUpdate(EntityID id, float deltaTime)
@@ -25,9 +27,12 @@ namespace PE
             return;                                                                     // Pause state, do nothing
         }
 
-        if (gameStateController->currentState == GameStates_v2_0::EXECUTE && catInRange && !hasActed)
+        if (!hasAttacked)
         {
-            AttackLogic(id, deltaTime);                                                 // Execute the attack logic
+            Attack(id);
+            hasAttacked = true;  // Ensure attack logic runs once per state entry
+
+            std::cout << "RatAttack_v2_0::StateUpdate - Rat ID: " << id << " performed an attack." << std::endl;
         }
     }
 
@@ -35,62 +40,50 @@ namespace PE
     {
         // Cleanup attack-specific data here
         gameStateController = nullptr;
-        catInRange = false;                                                             // Reset cat in range flag
-        hasActed = false;                                                               // Reset action flag
+        std::cout << "RatAttack_v2_0::StateExit - Rat ID: " << id << " is exiting the attack state." << std::endl;
+
+        m_collisionEnterListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, &RatAttack_v2_0::OnTriggerEnter, this);
+        m_collisionExitListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, &RatAttack_v2_0::OnTriggerExit, this);
+
     }
 
-    // Attack logic specific to the RatAttack state
-    void RatAttack_v2_0::AttackLogic(EntityID id, float deltaTime)
+    void RatAttack_v2_0::OnTriggerEnter(const Event<CollisionEvents>& event)
     {
-        if (!hasActed)
-        {
-            // Trigger attack animation
-            // p_data->SetAnimatorTrigger("attack");
+        const auto& enterEvent = static_cast<const OnTriggerEnterEvent&>(event);
 
-            hasActed = true; // Mark as having acted this turn
+        EntityID colliderId = enterEvent.OtherEntity;
 
-            // Implement attack logic, such as dealing damage to the cat
-            if (catInRange && targetCat)
-            {
-                // Damage logic here
-                // targetCat->GetComponent<CatScript>()->HurtCat();
-
-                // Play attack sound
-                // AudioManager::PlaySFX("RatAttackSound");
-            }
-        }
-    }
-
-    // Collider event handlers (simulated from Unity's OnTriggerEnter2D, OnTriggerStay2D, OnTriggerExit2D)
-    void RatAttack_v2_0::OnTriggerEnter(EntityID colliderId)
-    {
-        // Check if collider is a cat and if we're in EXECUTION phase
-        if (IsCat(colliderId) && gameStateController->currentState == GameStates_v2_0::EXECUTE)
-        {
-            catInRange = true;
-            targetCat = colliderId; // Assuming you have a way to store the target cat entity ID
-        }
-    }
-
-    void RatAttack_v2_0::OnTriggerStay(EntityID colliderId)
-    {
-        // Similar logic to OnTriggerEnter
-        OnTriggerEnter(colliderId);
-    }
-
-    void RatAttack_v2_0::OnTriggerExit(EntityID colliderId)
-    {
+        // Check if colliderId is a cat and in range
         if (IsCat(colliderId))
         {
-            catInRange = false;
-            targetCat = 0; // Reset target cat entity ID
+            // Perform attack logic here
+            Attack(p_data->myID);
         }
     }
 
-    // Utility function to check if an entity ID corresponds to a cat
-    //bool RatAttack_v2_0::IsCat(EntityID id)
-    //{
-    //    // Implement logic to determine if the entity is a cat
-    //    // Example: Check the entity's tag or component
-    //}
+    void RatAttack_v2_0::OnTriggerExit(const Event<CollisionEvents>& event)
+    {
+        const auto& exitEvent = static_cast<const OnTriggerExitEvent&>(event);
+
+        EntityID colliderId = exitEvent.OtherEntity;
+
+        // Handle cat leaving attack range
+        if (IsCat(colliderId))
+        {
+            // Logic for cat exiting attack range
+        }
+    }
+
+    bool RatAttack_v2_0::IsCat(EntityID id)
+    {
+        // Implement logic to determine if the entity is a cat
+        // Example: Check the entity's tag or component
+        return EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos;
+    }
+
+    void RatAttack_v2_0::Attack(EntityID id)
+    {
+        // Attack logic here
+    }
+
 } // namespace PE
