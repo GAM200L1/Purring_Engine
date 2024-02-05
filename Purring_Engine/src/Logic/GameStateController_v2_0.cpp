@@ -517,6 +517,9 @@ namespace PE
 						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
 
 						// Check if the rat/cat has been clicked
+						if (!EntityManager::GetInstance().Has<Collider>(id))
+							break;
+
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 						if (PointCollision(col, cursorPosition))
 						{

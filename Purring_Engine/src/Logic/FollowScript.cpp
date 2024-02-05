@@ -45,11 +45,11 @@ namespace PE
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index]))
 				{
-					if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
-					{
-						if (gsc->currentState == GameStates_v2_0::EXECUTE)
-							return;
-					}
+					//if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+					//{
+					//	if (gsc->currentState == GameStates_v2_0::EXECUTE)
+					//		return;
+					//}
 
 					Transform& toCheck = PE::EntityManager::GetInstance().Get<PE::Transform>(m_ScriptData[id].ToAttach[index]);
 					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)
