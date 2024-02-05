@@ -180,8 +180,8 @@ namespace PE
 
 	void RatCollision_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
 	{
-		if (p_data) { return; }
-		else if (!p_data->storedParentRat) { return; }
+		if (!p_data) { return; }
+		else if (!(p_data->storedParentRat)) { return; }
 
 		if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
@@ -219,8 +219,8 @@ namespace PE
 
 	void RatCollision_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
 	{
-		if (p_data) { return; }
-		else if (!p_data->storedParentRat) { return; }
+		if (!p_data) { return; }
+		else if (!(p_data->storedParentRat)) { return; }
 
 		OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
 		// check if entity1 is the rat's detection collider and entity2 is cat

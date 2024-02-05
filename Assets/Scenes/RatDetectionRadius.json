@@ -279,7 +279,16 @@
                         "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": null,
+                    "ScriptComponent": {
+                        "PlayerControllerScript": {
+                            "data": {
+                                "HP": 100,
+                                "PlayerState": 0,
+                                "speed": 500.0
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 64.0,
                         "orientation": 0.0,
