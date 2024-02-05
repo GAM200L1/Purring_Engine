@@ -24,6 +24,7 @@
 *************************************************************************************/
 
 #include "prpch.h"
+
 #include "CatScript_v2_0.h"
 #include "CatMovementStates_v2_0.h"
 
@@ -85,7 +86,7 @@ namespace PE
 
 			for (auto quad : m_scriptData[id].pathQuads)
 			{
-				ToggleEntity2(quad, false);
+				CatHelper::ToggleEntity(quad, false);
 			}
 			return;
 		}
@@ -99,7 +100,7 @@ namespace PE
 
 			if (p_catAnimation->GetCurrentFrameIndex() == p_catAnimation->GetAnimationMaxIndex())
 			{
-				ToggleEntity2(id, false);
+				CatHelper::ToggleEntity(id, false);
 				
 				if (m_scriptData[id].isMainCat)
 					p_gsc->LoseGame();

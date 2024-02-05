@@ -48,7 +48,7 @@ namespace PE
 		bool isMainCat{ false };
 
 		// cat attack
-		std::variant<GreyCatAttackVariables, OrangeCatAttackVariables> attackVariables = GreyCatAttackVariables{};
+		std::variant<GreyCatAttackVariables, OrangeCatAttackVariables> attackVariables{ GreyCatAttackVariables{} };
 
 		// movement variables
 		int catMaxMovementEnergy{ 21 };

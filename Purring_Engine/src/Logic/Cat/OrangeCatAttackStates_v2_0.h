@@ -20,8 +20,6 @@
 #include "Events/MouseEvent.h"
 #include "Events/CollisionEvent.h"
 
-#include "CatScript_v2_0.h"
-
 namespace PE
 {
 	struct OrangeCatAttackVariables
@@ -40,7 +38,7 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~OrangeCatAttack_v2_0PLAN();
+		virtual ~OrangeCatAttack_v2_0PLAN() { p_data = nullptr; }
 
 		virtual void StateEnter(EntityID id);
 
@@ -50,23 +48,36 @@ namespace PE
 
 		virtual void StateExit(EntityID id);
 
-		virtual std::string_view GetName();
-
-		virtual void ResetSelection();
+		virtual std::string_view GetName() { return "AttackPLAN"; }
 
 	private:
+		
+		// data
+		OrangeCatAttackVariables* p_data;
 
 		// Telegraph colors
 		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
 		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
 		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
+
+		// checks
+		bool m_mouseClicked{ false }; // Set to true when the mouse is pressed, false otherwise
+		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
+		int m_mouseEventListener; // Stores the handler for the mouse click event
+		//int m_triggerEnterEventListener; // Stores the handler for the collision enter event
+		//int m_triggerStayEventListener; // Stores the handler for the collision stay event
+
+		// ----- Private Functions ----- //
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
+		void ResetSelection();
 	};
 
 	class OrangeCatAttack_v2_0EXECUTE : public State
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~OrangeCatAttack_v2_0EXECUTE();
+		virtual ~OrangeCatAttack_v2_0EXECUTE() { p_data = nullptr; }
 
 		virtual void StateEnter(EntityID id);
 
@@ -76,9 +87,15 @@ namespace PE
 
 		virtual void StateExit(EntityID id);
 
-		virtual std::string_view GetName();
+		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
+		OrangeCatAttackVariables* p_data;
 
+		int m_collisionEventListener;
+
+		void SlamHitCat(const Event<CollisionEvents>& r_CE);
+
+		void SlamHitRat(const Event<CollisionEvents>& r_CE);
 	};
 }

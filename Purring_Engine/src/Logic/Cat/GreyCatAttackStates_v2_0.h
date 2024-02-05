@@ -20,12 +20,10 @@
 #include "Events/MouseEvent.h"
 #include "Events/CollisionEvent.h"
 
-#include "CatScript_v2_0.h"
-
 namespace PE
 {
 	//! Enum denoting cardinal directions for attack
-	enum class EnumCatAttackDirection
+	enum class EnumCatAttackDirection_v2_0 : int
 	{
 		NONE = 0,
 		EAST = 1,
@@ -37,11 +35,11 @@ namespace PE
 	struct GreyCatAttackVariables
 	{
 		// damage of the attack
-		int damage;
+		int damage{ 0 };
 
 		// Telegraph variables
-		EnumCatAttackDirection attackDirection{ EnumCatAttackDirection::NONE }; // Direction of attack chosen
-		std::map<EnumCatAttackDirection, EntityID> telegraphIDs; // IDs of entities used to visualise the directions the player can attack in
+		EnumCatAttackDirection_v2_0 attackDirection{ EnumCatAttackDirection_v2_0::NONE }; // Direction of attack chosen
+		std::map<EnumCatAttackDirection_v2_0, EntityID> telegraphIDs{}; // IDs of entities used to visualise the directions the player can attack in
 		
 		// projectile variables
 		float bulletDelay{ 0.7f };
@@ -54,21 +52,21 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~GreyCatAttack_v2_0PLAN();
+		virtual ~GreyCatAttack_v2_0PLAN() { p_data = nullptr; }
 
-		virtual void StateEnter(EntityID id);
+		virtual void StateEnter(EntityID id) override;
 
-		virtual void StateUpdate(EntityID id, float deltaTime);
+		virtual void StateUpdate(EntityID id, float deltaTime) override;
 
 		virtual void StateCleanUp();
 
-		virtual void StateExit(EntityID id);
+		virtual void StateExit(EntityID id) override;
 
-		virtual std::string_view GetName();
+		virtual std::string_view GetName() { return "AttackPLAN"; }
 		
 	private:
 		
-		GreyCatAttackVariables* p_attackData;
+		GreyCatAttackVariables* p_data;
 
 		bool m_showTelegraphs{ false }; // True if telegraphs are to be displayed
 
@@ -80,15 +78,10 @@ namespace PE
 		bool m_mouseClick{ false }; // set to true when mouse is clicked
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 		int m_mouseEventListener; // Stores the handler for the mouse click event
-		int m_triggerEnterEventListener; // Stores the handler for the collision enter event
-		int m_triggerStayEventListener; // Stores the handler for the collision stay event
+		//int m_triggerEnterEventListener; // Stores the handler for the collision enter event
+		//int m_triggerStayEventListener; // Stores the handler for the collision stay event
 
-		void OnMouseClick(const Event<MouseEvents>& r_ME)
-		{
-			MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-			m_mouseClickedPrevious = m_mouseClick;
-			m_mouseClick = true;
-		}
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
 		void ResetSelection();
 	};
@@ -97,7 +90,7 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~GreyCatAttack_v2_0EXECUTE();
+		virtual ~GreyCatAttack_v2_0EXECUTE() { p_data = nullptr; }
 
 		virtual void StateEnter(EntityID id);
 
@@ -107,7 +100,7 @@ namespace PE
 
 		virtual void StateExit(EntityID id);
 
-		virtual std::string_view GetName();
+		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
 		
@@ -116,8 +109,8 @@ namespace PE
 		float m_attackDuration; // how long attack will last
 		int m_collisionEventListener;
 
-		virtual void AttackHitCat(const Event<CollisionEvents>& r_CE);
+		void ProjectileHitCat(const Event<CollisionEvents>& r_CE);
 
-		virtual void AttackHitRat(const Event<CollisionEvents>& r_CE);
+		void ProjectileHitRat(const Event<CollisionEvents>& r_CE);
 	};
 }
