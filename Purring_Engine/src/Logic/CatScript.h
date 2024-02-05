@@ -32,6 +32,7 @@
 #include "ECS/Components.h"
 #include "ECS/SceneView.h"
 #include "Logic/LogicSystem.h"
+#include "GameStateController_v2_0.h"
 
 namespace PE
 {
@@ -283,7 +284,7 @@ namespace PE
 		 \param[in] catStateName - Name of the cat's state.
 		 \param[in] gameState - Name of the game state to compare with the cat's state.
 		*************************************************************************************/
-		static bool DoesGameStateMatchCatState(std::string const& catStateName, GameStates gameState);
+		static bool DoesGameStateMatchCatState(std::string const& catStateName, GameStates_v2_0 gameState);
 
 		/*!***********************************************************************************
 		 \brief Sets the energy the player has left.
