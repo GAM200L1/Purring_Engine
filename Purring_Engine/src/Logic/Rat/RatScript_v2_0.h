@@ -62,7 +62,7 @@ namespace PE
 		float attackDelay{ 0.f };						// delay before attacking cat, needs manual setting
 		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack
 		bool hitCat{ false };							// a check for whether the rat has hit the player once in the entire execution sequence
-
+		float attackRange{10.f};
 		// Rat Idle
 		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
 
@@ -214,7 +214,8 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
 
-		void TriggerStateChange(EntityID id, float const stateChangeDelay);
+		//void TriggerStateChange(EntityID id, float const stateChangeDelay);
+		void TriggerStateChange(EntityID id, float const stateChangeDelay, State* newState);
 
 		// --- COLLISION DETECTION --- // 
 
@@ -224,7 +225,8 @@ namespace PE
 		 \param[in] id - EntityID of the rat whose detection radius was entered.
 		 \param[in] catID - ID of the cat that entered the radius.
 		*************************************************************************************/
-		void CatEntered(EntityID const id, EntityID const catID);
+		//void CatEntered(EntityID const id, EntityID const catID);
+		void CatEntered(EntityID ratID, EntityID catID);
 
 		/*!***********************************************************************************
 		 \brief Called when a cat exits the rat's detection radius.
@@ -232,7 +234,8 @@ namespace PE
 		 \param[in] id - EntityID of the rat whose detection radius was entered.
 		 \param[in] catID - ID of the cat that exited the radius.
 		*************************************************************************************/
-		void CatExited(EntityID const id, EntityID const catID);
+		//void CatExited(EntityID const id, EntityID const catID);
+		void CatExited(EntityID ratID, EntityID catID);
 
 		// ----- Private Members ----- //
 	private:

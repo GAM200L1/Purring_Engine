@@ -46,15 +46,43 @@ namespace PE
             return;
         }
 
-        CalculateMovement(id, deltaTime);
+        // Check if any cat is within detection range and move towards the nearest one
+        if (!p_data->catsInDetectionRadius.empty())
+        {
+            CalculateMovement(id, deltaTime);
+
+            // After moving, check if the rat is within attack range of any cat
+            for (const auto& catID : p_data->catsInDetectionRadius)
+            {
+                vec2 catPosition = RatScript_v2_0::GetEntityPosition(catID);
+                if (IsWithinAttackRange(id, catPosition))
+                {
+                    std::cout << "RatMovement_v2_0::StateUpdate - Rat ID: " << id << " is within attack range of Cat ID: " << catID << std::endl;
+                    // Transition to attack state
+                    GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->TriggerStateChange(id, 0.f, new RatAttack_v2_0());
+                    return;
+                }
+            }
+        }
+    }
+
+    bool RatMovement_v2_0::IsWithinAttackRange(EntityID ratID, const vec2& catPosition)
+    {
+        vec2 ratPosition = RatScript_v2_0::GetEntityPosition(ratID);
+        float distance = (ratPosition - catPosition).Length();
+        return distance <= p_data->attackRange;
+    }
+
+    void RatMovement_v2_0::StateCleanUp()
+    {
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
     }
 
     void RatMovement_v2_0::StateExit(EntityID id)
     {
         std::cout << "RatMovement_v2_0::StateExit - Rat ID: " << id << " is exiting the movement state." << std::endl;
         p_data->ratPlayerDistance = 0.f;
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
     }
 
     void RatMovement_v2_0::RatHitCat(const Event<CollisionEvents>& r_TE)
@@ -64,27 +92,28 @@ namespace PE
 
     void RatMovement_v2_0::CalculateMovement(EntityID id, float deltaTime)
     {
-        if (p_data->ratPlayerDistance > 0.f)
+        // Only move if not in attack mode and there are cats in the detection radius
+        if (!p_data->attacking && !p_data->catsInDetectionRadius.empty())
         {
             vec2 newPosition = RatScript_v2_0::GetEntityPosition(id) + (p_data->directionFromRatToPlayerCat * p_data->movementSpeed * deltaTime);
             RatScript_v2_0::PositionEntity(id, newPosition);
-            p_data->ratPlayerDistance -= p_data->movementSpeed * deltaTime;
 
             std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
-                << " moved to new position: (" << newPosition.x << ", " << newPosition.y
-                << "), Remaining distance: " << p_data->ratPlayerDistance << std::endl;
+                << " moved to new position: (" << newPosition.x << ", " << newPosition.y << ")\n";
 
-            if (CheckDestinationReached(newPosition, RatScript_v2_0::GetEntityPosition(p_data->mainCatID)))
+            // Check if any cat is still in range after moving
+            if (p_data->catsInDetectionRadius.empty())
             {
-                std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " has reached the destination." << std::endl;
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->TriggerStateChange(id, 0.f);
+                std::cout << "RatMovement_v2_0::CalculateMovement - No cats in range, switching to idle state.\n";
+                //GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->TriggerStateChange(id, 0.f, new RatAttack_v2_0());
             }
         }
         else
         {
-            std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " has no movement or already at destination." << std::endl;
+            std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " is in attack mode or no cats in range.\n";
         }
     }
+
 
     bool RatMovement_v2_0::CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition)
     {

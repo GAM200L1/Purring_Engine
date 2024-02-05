@@ -64,14 +64,19 @@ namespace PE
 
     }
 
+    void RatAttack_v2_0::StateCleanUp()
+    {
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+    }
+
     void RatAttack_v2_0::StateExit(EntityID id)
     {
         // Cleanup attack-specific data here
         gameStateController = nullptr;
         std::cout << "RatAttack_v2_0::StateExit - Rat ID: " << id << " is exiting the attack state." << std::endl;
 
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+
 
         p_data->hitCat = false;
 
