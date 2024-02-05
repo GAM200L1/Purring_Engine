@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -767,13 +767,13 @@
                                 "PhaseBanner": 0,
                                 "Portrait": 47,
                                 "RatPortrait": 53,
-                                "TransitionPanel": 70,
+                                "TransitionPanel": 0,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
                                 "clicklisttest": [
                                     18446744073709551615,
                                     60,
-                                    61,
+                                    16,
                                     18446744073709551615,
                                     18446744073709551615
                                 ]
@@ -806,7 +806,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1149,7 +1149,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1191,7 +1191,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1459,7 +1459,7 @@
                             "y": -402.50006103515625
                         },
                         "relorientation": 0.0,
-                        "width": 374.0
+                        "width": 356.0
                     }
                 },
                 "name": ""
@@ -1543,7 +1543,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1811,7 +1811,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2213,7 +2213,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2530,7 +2530,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2610,7 +2610,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2933,23 +2933,6 @@
         {
             "Entity": {
                 "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
                     "EntityDescriptor": {
                         "Layer": 0,
                         "Old ID": 60,
@@ -2979,70 +2962,7 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 140.7998046875,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 61,
-                        "Prefab Type": "OrangeCatPrefab",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Orange Cat 2",
-                        "parent": null,
-                        "sceneID": 62
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": null,
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 140.7998046875,
+                            "x": -54.99999237060547,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -3194,7 +3114,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3462,7 +3382,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4108,25 +4028,19 @@
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
-                            "max": {
-                                "x": -390.00030517578125,
-                                "y": 408.999755859375
-                            },
-                            "min": {
-                                "x": -650.0003051757813,
-                                "y": 295.999755859375
+                            "center": {
+                                "x": -520.0003051757813,
+                                "y": 352.499755859375
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "scaleOffset": {
-                                "x": 4.0,
-                                "y": 1.0
-                            }
+                            "radius": 56.5,
+                            "scaleOffset": 1.0
                         },
                         "isTrigger": false,
-                        "type": "AABBCollider"
+                        "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -4160,6 +4074,157 @@
                         },
                         "relorientation": 0.0,
                         "width": 65.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": -284.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 16,
+                        "Prefab Type": "Player Cat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Player Cat",
+                        "parent": null,
+                        "sceneID": 16
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                                },
+                                "attackDamage": 1,
+                                "bulletDelay": 0.699999988079071,
+                                "bulletForce": 1000.0,
+                                "bulletLifeTime": 0.10000000149011612,
+                                "bulletRange": 3.0,
+                                "catHealth": 1,
+                                "catID": 0,
+                                "catMaxEnergy": 20,
+                                "isMainCat": true,
+                                "movementSpeed": 300.0,
+                                "projectileID": 0,
+                                "requiredAttackPoints": 0
+                            },
+                            "state": 0
+                        },
+                        "FollowScript": {
+                            "data": {
+                                "CurrentPosition": {
+                                    "x": 0.0,
+                                    "y": 0.0
+                                },
+                                "FollowingObject": [
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "IsAttaching": true,
+                                "LookTowardsMovement": false,
+                                "NextPosition": {
+                                    "0": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "1": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "2": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "3": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    },
+                                    "4": {
+                                        "x": 0.0,
+                                        "y": 0.0
+                                    }
+                                },
+                                "NumberOfAttacher": 2,
+                                "NumberOfFollower": 1,
+                                "Size": 65,
+                                "SoundID": 0,
+                                "Speed": 100.0,
+                                "ToAttach": [
+                                    18446744073709551615,
+                                    60,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615,
+                                    18446744073709551615
+                                ],
+                                "rotation": 0.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -284.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""
