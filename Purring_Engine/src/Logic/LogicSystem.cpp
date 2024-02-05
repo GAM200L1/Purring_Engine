@@ -41,6 +41,7 @@
 #include "MainMenuController.h"
 #include "IntroCutsceneController.h"
 
+#include "DemoController.h"
 #include "Rat/RatScript_v2_0.h"
 #include "Rat/RatController_v2_0.h"
 #include "UI/HealthBarScript_v2_0.h"
@@ -70,6 +71,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(CameraManagerScript);
 	REGISTER_SCRIPT(CatScript);
 	REGISTER_SCRIPT(RatScript);
+	REGISTER_SCRIPT(DemoController);
 	//REGISTER_SCRIPT(GameStateController);
 	REGISTER_SCRIPT(GameStateController_v2_0);
 	REGISTER_SCRIPT(DeploymentScript);
