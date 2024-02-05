@@ -27,15 +27,6 @@ namespace PE
 		FLUFFYCAT
 	};
 
-	//enum EnumCatState
-	//{
-	//	PLANMOVEMENT,
-	//	PLANATTACK,
-	//	EXECUTEMOVEMENT,
-	//	FOLLOWING,
-	//	DEAD
-	//};
-
 	struct CatController_v2_0Data
 	{
 		// vector of pairs <catID, catType>

@@ -23,11 +23,6 @@
 
 namespace PE
 {
-	struct CatAttackVariables_Base
-	{
-		int damage;
-	};
-
 	class CatAttack_v2_0PLAN_Base : public State
 	{
 	public:
@@ -45,7 +40,7 @@ namespace PE
 		virtual std::string_view GetName() = 0;
 
 	private:
-		CatAttackVariables_Base* p_attackVariables{ nullptr };
+		CatScript_v2_0* p_data;
 		
 		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
 		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
@@ -85,25 +80,13 @@ namespace PE
 		virtual std::string_view GetName() = 0;
 
 	private:
-		CatAttackVariables_Base* p_attackVariables{ nullptr };
+		CatScript_v2_0* p_data;
 		
 		float m_attackDuration; // how long attack will last
 		int m_collisionEventListener;
 
-		void AttackHitCat(const Event<CollisionEvents>& r_CE)
-		{
-			if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
-			{
-				OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
-			}
-		}
+		virtual void AttackHitCat(const Event<CollisionEvents>& r_CE) = 0;
 
 		virtual void AttackHitRat(const Event<CollisionEvents>& r_CE) = 0;
-	};
-
-	struct CatAttackStates
-	{
-		CatAttack_v2_0PLAN_Base* attackPlan = nullptr;
-		CatAttack_v2_0EXECUTE_Base* attackExecute = nullptr;
 	};
 }

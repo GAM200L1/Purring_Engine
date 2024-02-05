@@ -26,6 +26,8 @@
 #include "prpch.h"
 #include "CatScript_v2_0.h"
 #include "CatMovementStates_v2_0.h"
+#include "GreyCatAttackStates_v2_0.h"
+#include "OrangeCatAttackStates_v2_0.h"
 
 #include "ECS/EntityFactory.h"
 
@@ -52,6 +54,19 @@ namespace PE
 		catch (...)
 		{
 			// error
+		}
+
+		switch (m_scriptData[id].catType)
+		{
+		case EnumCatType::GREYCAT:
+		{
+			
+			break;
+		}
+		default:
+		{
+			break; 
+		}
 		}
 
 		MakeStateManager(id);
@@ -82,6 +97,7 @@ namespace PE
 		{
 			// plays death animation
 			PlayAnimation(id, "Death");
+			// TODO: play death audio
 
 			if (p_catAnimation->GetCurrentFrameIndex() == p_catAnimation->GetAnimationMaxIndex())
 			{
@@ -102,13 +118,32 @@ namespace PE
 		}
 
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
-
-		/*switch (p_gsc->currentState)
+		
+		switch (m_scriptData[id].catType)
 		{
-			case
-		default:
+		case EnumCatType::FLUFFYCAT:
+		{
+			/*if (p_gsc->currentState == GameStates_v2_0::PLANNING)
+				PlanningStatesHandler<GreyCatAttack_v2_0PLAN>(id, deltaTime);
+			else if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
+				ExecuteStatesHandler<GreyCatAttack_v2_0EXECUTE>(id, deltaTime);*/
 			break;
-		}*/
+		}
+		case EnumCatType::ORANGECAT:
+		{
+			if (p_gsc->currentState == GameStates_v2_0::PLANNING)
+				PlanningStatesHandler<OrangeCatAttack_v2_0PLAN>(id, deltaTime);
+			else if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
+				ExecuteStatesHandler<OrangeCatAttack_v2_0EXECUTE>(id, deltaTime);
+			break;
+		}
+		default: // main cat or grey cat
+			if (p_gsc->currentState == GameStates_v2_0::PLANNING)
+				PlanningStatesHandler<GreyCatAttack_v2_0PLAN>(id, deltaTime);
+			else if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
+				ExecuteStatesHandler<GreyCatAttack_v2_0EXECUTE>(id, deltaTime);
+			break;
+		}
 	}
 
 	void CatScript_v2_0::OnAttach(EntityID id)
@@ -202,29 +237,6 @@ namespace PE
 		return false;
 	}
 
-	//bool CatScript_v2_0::DoesGameStateMatchCatState(std::string const& catStateName, GameStates_v2_0 gameState)
-	//{
-	//	// Cat states: "MovementPLAN" "AttackPLAN" "MovementEXECUTE" "AttackEXECUTE"
-	//	switch (gameState) {
-	//	case GameStates_v2_0::MOVEMENT:
-	//	{
-	//		return catStateName == "MovementPLAN";
-	//	}
-	//	case GameStates_v2_0::ATTACK:
-	//	{
-	//		return catStateName == "AttackPLAN";
-	//	}
-	//	case GameStates_v2_0::EXECUTE:
-	//	{
-	//		return catStateName == "MovementEXECUTE" || catStateName == "AttackEXECUTE";
-	//	}
-	//	default: // PAUSE, WIN, LOSE, INACTIVE or SPLASHSCREEN states
-	//	{
-	//		return false;
-	//	}
-	//	}
-	//}
-
 	void CatScript_v2_0::CreatePathNode(EntityID id)
 	{
 		// create the entity
@@ -239,6 +251,60 @@ namespace PE
 		EntityManager::GetInstance().Get<EntityDescriptor>(nodeId).toSave = false;
 
 		m_scriptData[id].pathQuads.emplace_back(nodeId);
+	}
+
+	template<typename AttackPLAN>
+	void CatScript_v2_0::PlanningStatesHandler(EntityID id, float deltaTime)
+	{
+		std::string const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
+
+		// plays idle animation
+		PlayAnimation(id, "Idle");
+
+		if (m_mouseClick && m_mouseClickPrevious) // if mouse is holding, player is given opportunity to move
+		{
+			if (r_stateName == GETSCRIPTNAME(AttackPLAN)) // if state was not previously movement
+			{
+				TriggerStateChange(id);
+				if (CheckShouldStateChange(id, deltaTime))
+				{
+					m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0PLAN{}, id);
+				}
+			}
+		}
+		else if (m_mouseClick && !m_mouseClickPrevious)
+		{
+			if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0PLAN)) // if state was not previously movement
+			{
+				TriggerStateChange(id);
+				if (CheckShouldStateChange(id, deltaTime))
+				{
+					m_scriptData[id].p_stateManager->ChangeState(new AttackPLAN{}, id);
+				}
+			}
+		}
+	}
+
+	template<typename AttackEXECUTE>
+	void CatScript_v2_0::ExecuteStatesHandler(EntityID id, float deltaTime)
+	{
+		std::string const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
+
+		if (r_stateName != GETSCRIPTNAME(CatMovement_v2_0EXECUTE) && r_stateName != GETSCRIPTNAME(AttackEXECUTE))
+		{
+			TriggerStateChange(id);
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+				m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
+			}
+		}
+		else if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0EXECUTE))
+		{
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+				m_scriptData[id].p_stateManager->ChangeState(new AttackPLAN{}, id);
+			}
+		}
 	}
 
 	void CatScript_v2_0::PlayAnimation(EntityID id, std::string const& r_animationState)

@@ -46,7 +46,7 @@ namespace PE
 		bool isMainCat{ false };
 
 		// cat attack
-		CatAttackStates catAttack;
+		//CatAttackStates catAttack;
 		CatAttackVariables_Base* p_catAttackVariables = nullptr;
 
 		// movement variables
@@ -68,6 +68,7 @@ namespace PE
 		bool shouldChangeState{};  // Flags that the state should change when [timeBeforeChangingState] is zero
 		bool delaySet{ false }; // Whether the state change has been flagged
 		float timeBeforeChangingState{ 0.f }; // Delay before state should change
+		bool startedPlanning{ false };
 
 		// animation
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
@@ -157,6 +158,12 @@ namespace PE
 		 \return false - False if the state should NOT change.
 		*************************************************************************************/
 		bool CheckShouldStateChange(EntityID id, float const deltaTime);
+
+		template <typename AttackPLAN>
+		void PlanningStatesHandler(EntityID id, float deltaTime);
+
+		template <typename AttackEXECUTE>
+		void ExecuteStatesHandler(EntityID id, float deltaTime);
 
 		void PlayAnimation(EntityID id, std::string const& r_animationState);
 
