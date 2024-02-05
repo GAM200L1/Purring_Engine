@@ -67,8 +67,17 @@ namespace PE
 		float timeBeforeChangingState{ 0.f }; // Delay before state should change
 		bool finishedExecution{ false }; // Keeps track of whether the execution phase has been completed
 
-		float detectionRadius{};
-		float movementSpeed{200.f};
+		// Detection and movement
+		EntityID detectionRadiusId{};
+		float detectionRadius{ 200.f };
+		std::set<EntityID> catsInDetectionRadius;
+		std::set<EntityID> catsExitedDetectionRadius;
+
+		float movementSpeed{ 200.f };
+
+		// Hunting and returning
+		int maxHuntTurns{ 2 }; // Number of turn the rat will hunt before returning to their original position
+		vec2 originalPosition{ 0.f, 0.f }; // Position to return to
 		
 		// Attack 
 		int skillDamage{};
@@ -82,12 +91,12 @@ namespace PE
 	
 	class RatScript_v2_0 : public Script
 	{
-		// If you wish to have persistent data, store it in the script class
 
 		// ----- Public Members ----- //
 	public:
 		std::map<EntityID, RatScript_v2_0_Data> m_scriptData;
 
+		static const inline int detectionColliderLayer{ 5 };
 
 		// ----- Constructors ----- //
 	public:
@@ -194,8 +203,30 @@ namespace PE
 
 		void TriggerStateChange(EntityID id, float const stateChangeDelay);
 
+		// --- COLLISION DETECTION --- // 
+
+		/*!***********************************************************************************
+		 \brief Called when a cat is within the rat's detection radius.
+
+		 \param[in] id - EntityID of the rat whose detection radius was entered.
+		 \param[in] catID - ID of the cat that entered the radius.
+		*************************************************************************************/
+		void CatEntered(EntityID const id, EntityID const catID);
+
+		/*!***********************************************************************************
+		 \brief Called when a cat exits the rat's detection radius.
+
+		 \param[in] id - EntityID of the rat whose detection radius was entered.
+		 \param[in] catID - ID of the cat that exited the radius.
+		*************************************************************************************/
+		void CatExited(EntityID const id, EntityID const catID);
 
 		// ----- Private Members ----- //
+	private:
+			// Event listener IDs 
+			int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+
+		// ----- Private Methods ----- // 
 	private:
 		// --- STATE CHANGE --- //
 
@@ -205,5 +236,7 @@ namespace PE
 		 \param[in] id EntityID of the entity to create the state manager for.
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
+
+		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
 	}; // end of class 
 }

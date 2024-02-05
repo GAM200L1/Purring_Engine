@@ -26,6 +26,7 @@
 #include "GUISystem.h"
 #include "GameStateManager.h"
 #include "Input/InputSystem.h"
+#include "PauseManager.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #include "SceneManager/SceneManager.h"
@@ -234,6 +235,10 @@ namespace PE
 							glfwIconifyWindow(WindowManager::GetInstance().GetWindow());
 
 					msepress = true;
+			}
+			else if (r_event.GetType() == WindowEvents::WindowFocus)
+			{
+					PauseManager::GetInstance().SetPaused(false);
 			}
 #endif
 	}

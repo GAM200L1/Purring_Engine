@@ -1,0 +1,48 @@
+{
+    "Entity": {
+        "components": {
+            "Collider": {
+                "collisionLayerIndex": 5,
+                "data": {
+                    "center": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "positionOffset": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "radius": 200.0,
+                    "scaleOffset": 200.0
+                },
+                "isTrigger": true,
+                "type": "CircleCollider"
+            },
+            "EntityDescriptor": {
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "RatDetectionRadius",
+                "children": [],
+                "isActive": true,
+                "name": "RatDetectionRadius",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "Transform": {
+                "height": 2.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 2.0
+            }
+        },
+        "name": ""
+    }
+}

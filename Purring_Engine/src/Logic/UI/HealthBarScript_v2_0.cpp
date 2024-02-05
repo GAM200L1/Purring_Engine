@@ -37,8 +37,10 @@ namespace PE
 		if (EntityManager::GetInstance().Has<Transform>(m_scriptData[id].followObjectID))
 		{
 			// Update the position of the healthbar
-			vec2 newPosition{ EntityManager::GetInstance().Get<Transform>(m_scriptData[id].followObjectID).position };
-			PositionEntityRelative(id, GETCAMERAMANAGER()->GetWorldToWindowPosition(newPosition.x, newPosition.y));
+			vec2 newPosition{ EntityManager::GetInstance().Get<Transform>(m_scriptData[id].followObjectID).position }; 
+			newPosition = GETCAMERAMANAGER()->GetWorldToWindowPosition(newPosition.x, newPosition.y);
+			newPosition = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(newPosition.x, newPosition.y);
+			PositionEntityRelative(id, newPosition);
 		}
 	}
 

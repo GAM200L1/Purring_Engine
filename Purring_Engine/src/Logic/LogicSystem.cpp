@@ -37,9 +37,12 @@
 //#include "GameStateController.h"
 #include "RatScript.h"
 #include "GameStateController_v2_0.h"
+#include "DeploymentScript.h"
+#include "MainMenuController.h"
 
 #include "Rat/RatScript_v2_0.h"
 #include "Rat/RatController_v2_0.h"
+#include "Rat/RatDetectionScript_v2_0.h"
 #include "UI/HealthBarScript_v2_0.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
 #ifndef GAMERELEASE
@@ -47,6 +50,7 @@
 #endif // !GAMERELEASE
 
 std::map<std::string, PE::Script*> PE::LogicSystem::m_scriptContainer;
+bool PE::LogicSystem::restartingScene = false;
 
 PE::LogicSystem::LogicSystem()
 {
@@ -68,7 +72,10 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(RatScript);
 	//REGISTER_SCRIPT(GameStateController);
 	REGISTER_SCRIPT(GameStateController_v2_0);
+	REGISTER_SCRIPT(DeploymentScript);
+	REGISTER_SCRIPT(MainMenuController);
 
+	REGISTER_SCRIPT(RatDetectionScript_v2_0);
 	REGISTER_SCRIPT(RatScript_v2_0);
 	REGISTER_SCRIPT(RatController_v2_0);
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
@@ -101,6 +108,11 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 					break;
 				case ScriptState::UPDATE:
 					m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
+					if (restartingScene)
+					{
+						restartingScene = false;
+						return;
+					}
 					break;
 				case ScriptState::EXIT:
 					m_scriptContainer.find(key)->second->Destroy(objectID);
