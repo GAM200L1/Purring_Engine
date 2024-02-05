@@ -55,29 +55,32 @@ namespace PE
 					if ((curT.position.x <= toCheck.position.x + toCheck.width / 2 && curT.position.x >= toCheck.position.x - toCheck.width / 2)
 						&& (curT.position.y <= toCheck.position.y + toCheck.height / 2 && curT.position.y >= toCheck.position.y - toCheck.height / 2))
 					{
-						// Have the cat follow behind
-							EntityID followIndex{ m_ScriptData[id].ToAttach[index] };
-						m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = followIndex;
-						m_ScriptData[id].ToAttach.erase(m_ScriptData[id].ToAttach.begin() + index);
-						++m_ScriptData[id].NumberOfFollower;
-						--m_ScriptData[id].NumberOfAttachers;
-
-						if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+						if (gsc->currentState == GameStates_v2_0::EXECUTE)
 						{
-							CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
-							CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
+							// Have the cat follow behind
+							EntityID followIndex{ m_ScriptData[id].ToAttach[index] };
+							m_ScriptData[id].FollowingObject[m_ScriptData[id].NumberOfFollower] = followIndex;
+							m_ScriptData[id].ToAttach.erase(m_ScriptData[id].ToAttach.begin() + index);
+							++m_ScriptData[id].NumberOfFollower;
+							--m_ScriptData[id].NumberOfAttachers;
 
-							SerializationManager serializationManager;
-							EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX_Prefab.json");
-							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-							EntityManager::GetInstance().RemoveEntity(sound);
-							cd->catHealth = m_ScriptData[id].NumberOfFollower;
+							if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
+							{
+								CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
+								CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
+
+								SerializationManager serializationManager;
+								EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX_Prefab.json");
+								if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+									EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+								EntityManager::GetInstance().RemoveEntity(sound);
+								cd->catHealth = m_ScriptData[id].NumberOfFollower;
 
 
-							// Flag the cat if so it knows it has been attached 
-							CatScriptData* catData{ GETSCRIPTDATA(CatScript, followIndex) };
-							catData->isFollowing = true;
+								// Flag the cat if so it knows it has been attached 
+								CatScriptData* catData{ GETSCRIPTDATA(CatScript, followIndex) };
+								catData->isFollowing = true;
+							}
 						}
 					}
 				}

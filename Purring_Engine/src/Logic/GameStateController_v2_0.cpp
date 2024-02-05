@@ -389,7 +389,7 @@ namespace PE
 
 		if (MBPE.button == GLFW_MOUSE_BUTTON_LEFT)
 		{
-			if (currentState == GameStates_v2_0::PLANNING)
+			if (currentState == GameStates_v2_0::PLANNING || currentState == GameStates_v2_0::ATTACK)
 			{
 				RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
 

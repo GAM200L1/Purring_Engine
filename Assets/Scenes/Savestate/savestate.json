@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -772,8 +772,8 @@
                                 "WinCanvas": 32,
                                 "clicklisttest": [
                                     18446744073709551615,
-                                    60,
                                     16,
+                                    61,
                                     18446744073709551615,
                                     18446744073709551615
                                 ]
@@ -806,7 +806,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1149,7 +1149,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1191,7 +1191,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1459,7 +1459,7 @@
                             "y": -402.50006103515625
                         },
                         "relorientation": 0.0,
-                        "width": 356.0
+                        "width": 374.0
                     }
                 },
                 "name": ""
@@ -1543,7 +1543,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1811,7 +1811,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2213,7 +2213,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2530,7 +2530,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2610,7 +2610,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2933,15 +2933,32 @@
         {
             "Entity": {
                 "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 140.7998046875,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": true,
+                        "type": "CircleCollider"
+                    },
                     "EntityDescriptor": {
                         "Layer": 0,
-                        "Old ID": 60,
+                        "Old ID": 61,
                         "Prefab Type": "OrangeCatPrefab",
                         "children": [],
                         "isActive": true,
-                        "name": "Orange Cat 1",
+                        "name": "Orange Cat 2",
                         "parent": null,
-                        "sceneID": 69
+                        "sceneID": 62
                     },
                     "Renderer": {
                         "Color": {
@@ -2962,7 +2979,7 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -54.99999237060547,
+                            "x": 140.7998046875,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -3114,7 +3131,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3382,7 +3399,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4028,19 +4045,25 @@
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
-                            "center": {
-                                "x": -520.0003051757813,
-                                "y": 352.499755859375
+                            "max": {
+                                "x": -390.00030517578125,
+                                "y": 408.999755859375
+                            },
+                            "min": {
+                                "x": -650.0003051757813,
+                                "y": 295.999755859375
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 56.5,
-                            "scaleOffset": 1.0
+                            "scaleOffset": {
+                                "x": 4.0,
+                                "y": 1.0
+                            }
                         },
                         "isTrigger": false,
-                        "type": "CircleCollider"
+                        "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
                         "Layer": 0,
@@ -4095,8 +4118,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -284.0,
-                                "y": 0.0
+                                "x": -473.99993896484375,
+                                "y": -45.9999885559082
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4111,10 +4134,10 @@
                     "EntityDescriptor": {
                         "Layer": 0,
                         "Old ID": 16,
-                        "Prefab Type": "Player Cat",
+                        "Prefab Type": "PlayerPrefab",
                         "children": [],
                         "isActive": true,
-                        "name": "Player Cat",
+                        "name": "Player",
                         "parent": null,
                         "sceneID": 16
                     },
@@ -4141,14 +4164,14 @@
                                     "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
                                     "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
                                 },
-                                "attackDamage": 1,
+                                "attackDamage": 0,
                                 "bulletDelay": 0.699999988079071,
                                 "bulletForce": 1000.0,
                                 "bulletLifeTime": 0.10000000149011612,
                                 "bulletRange": 3.0,
-                                "catHealth": 1,
+                                "catHealth": 20,
                                 "catID": 0,
-                                "catMaxEnergy": 20,
+                                "catMaxEnergy": 21,
                                 "isMainCat": true,
                                 "movementSpeed": 300.0,
                                 "projectileID": 0,
@@ -4201,7 +4224,7 @@
                                 "Speed": 100.0,
                                 "ToAttach": [
                                     18446744073709551615,
-                                    60,
+                                    61,
                                     18446744073709551615,
                                     18446744073709551615,
                                     18446744073709551615,
@@ -4216,8 +4239,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -284.0,
-                            "y": 0.0
+                            "x": -473.99993896484375,
+                            "y": -45.9999885559082
                         },
                         "relativeposition": {
                             "x": 0.0,
