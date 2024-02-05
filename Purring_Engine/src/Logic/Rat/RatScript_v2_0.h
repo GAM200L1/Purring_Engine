@@ -56,6 +56,14 @@ namespace PE
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
 		EntityID redTelegraphEntityID{ 0 };				// id of red detection telegraph
 
+		int collisionDamage{ 1 };						// damage when touching the rat needs manual setting
+		int attackDamage{ 1 };							// damage when properly attacked by the rat needs manual setting
+
+		float attackDelay{ 0.f };						// delay before attacking cat, needs manual setting
+		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack
+		bool hitCat{ false };							// a check for whether the rat has hit the player once in the entire execution sequence
+
+		// Rat Idle
 		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
 
 		std::map<std::string, std::string> animationStates;
@@ -169,6 +177,11 @@ namespace PE
 		*************************************************************************************/
 		static void ScaleEntity(EntityID const transformId, float const width, float const height);
 
+
+		// ----- Rat stuff ----- //
+		void RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE);
+
+		void CheckFollowOrMain(EntityID mainCat, EntityID collidedCat, EntityID damagingID, EntityID rat);
 
 		// ----- Getters/RTTR ----- //
 

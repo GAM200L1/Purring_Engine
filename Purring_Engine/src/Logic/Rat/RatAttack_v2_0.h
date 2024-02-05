@@ -22,12 +22,7 @@ namespace PE
         virtual void StateUpdate(EntityID id, float deltaTime) override;
         virtual void StateExit(EntityID id) override;
 
-        // Attack logic specific to the RatAttack state
-        void Attack(EntityID id);
-
-        void OnTriggerEnter(const Event<CollisionEvents>& event);  // Handle collision enter events
-        void OnTriggerExit(const Event<CollisionEvents>& event);   // Handle collision exit events
-        bool IsCat(EntityID id);
+        void RatHitCat(const Event<CollisionEvents>& r_TE);
 
         // Getter for the state name with version
         virtual std::string_view GetName() { return "Attack_v2_0"; }
@@ -37,10 +32,11 @@ namespace PE
 
         // Attack state specific variables and data
         RatScript_v2_0_Data* p_data;
+        int m_collisionEventListener{};
+        int m_collisionStayEventListener{};
+        float m_delay{};
 
-        bool hasAttacked{ false };
-        int m_collisionEnterListener; // Listener ID for collision enter events
-        int m_collisionExitListener;  // Listener ID for collision exit events
+        bool attacksoundonce{};
 
     };
 
