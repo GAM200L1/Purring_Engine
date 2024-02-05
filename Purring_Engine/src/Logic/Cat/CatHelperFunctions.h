@@ -17,6 +17,8 @@
 #include "ECS/Entity.h"
 #include "Graphics/CameraManager.h"
 
+#define GETANIMATIONCOMPONENT(id) EntityManager::GetInstance().Get<AnimationComponent>
+
 namespace PE
 {
 	/*!***********************************************************************************

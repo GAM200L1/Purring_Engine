@@ -28,7 +28,9 @@
 #include "Logic/Script.h"
 #include "Logic/LogicSystem.h"
 #include "Logic/StateManager.h"
+#include "Animation/Animation.h"
 
+#include "Logic/GameStateController_v2_0.h"
 #include "CatController_v2_0.h"
 #include "CatAttackBase_v2_0.h"
 
@@ -39,7 +41,8 @@ namespace PE
 		// id of cat and its type
 		EntityID catID{ 0 };
 		EnumCatType catType{ EnumCatType::GREYCAT };
-		EnumCatState currentCatState{};
+		bool catIsDead{ false };
+		bool finishedExecution{ false };
 		bool isMainCat{ false };
 
 		// cat attack
@@ -61,9 +64,10 @@ namespace PE
 		std::vector<EntityID> pathQuads{}; // IDs of entities to visualise the path nodes
 
 		// state manager
-		StateMachine* p_stateManager{ nullptr };
-		bool shouldChangeState{ false };
-		float timeBeforeChangingState{ 0.f };
+		StateMachine* p_stateManager{ nullptr }; // Cat state manager. Deleted in destructor.
+		bool shouldChangeState{};  // Flags that the state should change when [timeBeforeChangingState] is zero
+		bool delaySet{ false }; // Whether the state change has been flagged
+		float timeBeforeChangingState{ 0.f }; // Delay before state should change
 
 		// animation
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
@@ -92,6 +96,8 @@ namespace PE
 
 		// ----- Getters/Setters/RTTR ----- //
 
+		void SetDead(EntityID id, bool isDead) { m_scriptData[id].catIsDead = isDead; }
+
 		/*!***********************************************************************************
 		 \brief Sets the flag for the state to be changed after the delay passed in.
 
@@ -108,6 +114,20 @@ namespace PE
 
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 		
+	private:
+		// ----- Private Variables ----- //
+		GameStateController_v2_0* p_gsc = nullptr;
+		AnimationComponent* p_catAnimation = nullptr;
+
+		// Event Listeners
+		int m_mouseClickEventListener{};
+		int m_mouseReleaseEventListener{};
+		int m_collisionEventListener{};
+
+		// mouse click
+		bool m_mouseClick{ false };
+		bool m_mouseClickPrevious{ false };
+
 	private:
 		// ----- Private Functions ----- //
 
@@ -137,6 +157,16 @@ namespace PE
 		 \return false - False if the state should NOT change.
 		*************************************************************************************/
 		bool CheckShouldStateChange(EntityID id, float const deltaTime);
+
+		void PlayAnimation(EntityID id, std::string const& r_animationState);
+
+		///*!***********************************************************************************
+		// \brief Identifies if the cat state passed in matches the game state passed in.
+
+		// \param[in] catStateName - Name of the cat's state.
+		// \param[in] gameState - Name of the game state to compare with the cat's state.
+		//*************************************************************************************/
+		//static bool DoesGameStateMatchCatState(std::string const& catStateName, GameStates_v2_0 gameState);
 
 	};
 }

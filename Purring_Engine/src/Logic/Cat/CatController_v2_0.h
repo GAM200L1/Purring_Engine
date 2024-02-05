@@ -15,6 +15,7 @@
 *************************************************************************************/
 #pragma once
 #include "Logic/Script.h"
+#include "ECS/Entity.h"
 
 namespace PE
 {
@@ -26,30 +27,32 @@ namespace PE
 		FLUFFYCAT
 	};
 
-	enum EnumCatState
-	{
-		PLANMOVEMENT,
-		PLANATTACK,
-		EXECUTEMOVEMENT,
-		FOLLOWING,
-		DEAD
-	};
+	//enum EnumCatState
+	//{
+	//	PLANMOVEMENT,
+	//	PLANATTACK,
+	//	EXECUTEMOVEMENT,
+	//	FOLLOWING,
+	//	DEAD
+	//};
 
-	struct CatControllerScript_v2_0Data
+	struct CatController_v2_0Data
 	{
 		// vector of pairs <catID, catType>
-		std::vector<std::pair<EntityID, EnumCatType>> cats;
+		std::vector<std::pair<EntityID, EnumCatType>> cacheCats; // vector for when stage is restarted
 	};
 
-	class CatControllerScript_v2_0 : public Script
+	class CatController_v2_0 : public Script
 	{
 	public:
 		// ----- Public Variables ----- //
-		std::map<EntityID, CatControllerScript_v2_0Data> m_scriptData; // data associated with each instance of the script
+		static EntityID mainInstance;
+		
+		std::map<EntityID, CatController_v2_0Data> m_scriptData; // data associated with each instance of the script
 
 	public:
 		// ----- Public Functions ----- //
-		virtual ~CatControllerScript_v2_0();
+		virtual ~CatController_v2_0();
 
 		virtual void Init(EntityID id);
 
@@ -61,10 +64,18 @@ namespace PE
 
 		virtual void OnDetach(EntityID id);
 
+		void CacheCurrentCats();
+
 		// getters
 		int GetCurrentMovementEnergy(EntityID id);
 		int GetMaxMovementEnergy(EntityID id);
-		std::vector<std::pair<EntityID, EnumCatType>> GetCatVector(EntityID id);
-		EnumCatState GetCatState(EntityID id);
+		std::vector<std::pair<EntityID, EnumCatType>> GetCurrentCats(EntityID id);
+		std::vector<std::pair<EntityID, EnumCatType>> GetCachedCats(EntityID id);
+
+		std::map<EntityID, CatController_v2_0Data>& GetScriptData() { return m_scriptData; }
+		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
+
+	private:
+		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
 	};
 }
