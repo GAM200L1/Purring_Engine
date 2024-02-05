@@ -14,6 +14,13 @@
 
 *************************************************************************************/
 #pragma once
+#include "Logic/LogicSystem.h"
+#include "Logic/StateManager.h"
+
+#include "Events/MouseEvent.h"
+#include "Events/CollisionEvent.h"
+
+#include "CatScript_v2_0.h"
 
 namespace PE
 {
