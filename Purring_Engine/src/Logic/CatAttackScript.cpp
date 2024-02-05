@@ -61,7 +61,7 @@ namespace PE
 	
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
 	{
-		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0,id);
+		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
 		// Skip this if it's the pause state
 		if (gsc->currentState == GameStates_v2_0::PAUSE) { return; }
@@ -85,7 +85,7 @@ namespace PE
 		}
 		
 		// if in attack planning phase, allow player to select a cat and plan that cats attacks
-		if (gsc->currentState == GameStates_v2_0::PAUSE)
+		if (gsc->currentState == GameStates_v2_0::ATTACK)
 		{
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 
@@ -331,7 +331,8 @@ namespace PE
 
 	void CatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
+		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		if (gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 		if (p_data->attackDirection != EnumCatAttackDirection::NONE && !m_projectileFired)
 		{
 			// Ensure the rat is facing the direction of their attack
@@ -410,7 +411,7 @@ namespace PE
 				{
 					try
 					{
-						int damage = (GameStateManager::GetInstance().godMode) ? (p_data->attackDamage * 2) : p_data->attackDamage;
+						int damage = /*(GameStateManager::GetInstance().godMode) ? (p_data->attackDamage * 2) : */p_data->attackDamage;
 						GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(collidedEntities.second, damage);
 					}catch(...){}
 					EntityManager::GetInstance().Get<EntityDescriptor>(p_data->projectileID).isActive = false;

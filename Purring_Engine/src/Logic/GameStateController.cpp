@@ -31,7 +31,7 @@
 #include "ECS/Prefabs.h"
 #include "ECS/SceneView.h"
 #include "LogicSystem.h"
-#include "GameStateManager.h"
+//#include "GameStateManager.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Text.h"
 #include "CatScript.h"
@@ -45,14 +45,14 @@ namespace PE
 	{
 		if (m_ScriptData[id].GameStateManagerActive)
 		{
-				GameStateManager::GetInstance().SetGameState(GameStates::SPLASHSCREEN);
+				//GameStateManager::GetInstance().SetGameState(GameStates::SPLASHSCREEN);
 
 				// Enable the planning HUD and splashscreen UI by default
 				TogglePlanningHUD(id, true);
 				ToggleExecutionHUD(id, false);
 				ToggleSplashscreen(id, true);
 
-				UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
+				//UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
 				UpdateEnergyHUD(id, CatScript::GetMaximumEnergyLevel() - 1, CatScript::GetMaximumEnergyLevel() - 1);
 		}
 
@@ -68,105 +68,105 @@ namespace PE
 			EntityManager::GetInstance().Get<EntityDescriptor>(bgm).toSave = false;
 		}
 
-		m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+		//m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
 	}
 	void GameStateController::Update(EntityID id, float deltaTime)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN)
-		{
-			m_ScriptData[id].SplashTimer -= deltaTime;
-			FadeSplashscreen(id, std::clamp(m_ScriptData[id].SplashTimer, 0.f, 1.f));
+		//if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN)
+		//{
+		//	m_ScriptData[id].SplashTimer -= deltaTime;
+		//	FadeSplashscreen(id, std::clamp(m_ScriptData[id].SplashTimer, 0.f, 1.f));
 
-			// Fade the splashscreen in
-			if (m_ScriptData[id].SplashTimer <= 0)
-			{
-				ToggleSplashscreen(id, false);
-				GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);	
-				m_ScriptData[id].prevState = GameStates::SPLASHSCREEN;
+		//	// Fade the splashscreen in
+		//	if (m_ScriptData[id].SplashTimer <= 0)
+		//	{
+		//		ToggleSplashscreen(id, false);
+		//		GameStateManager::GetInstance().SetGameState(GameStates::MOVEMENT);	
+		//		m_ScriptData[id].prevState = GameStates::SPLASHSCREEN;
 
-				m_ScriptData[id].timeSinceEnteredState = 1.f;
-				m_ScriptData[id].timeSinceExitedState = 0.f;
+		//		m_ScriptData[id].timeSinceEnteredState = 1.f;
+		//		m_ScriptData[id].timeSinceExitedState = 0.f;
 
-				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
-			}
+		//		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+		//			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
+		//	}
 
-			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
-		} 
-		else
-		{ 
-			// Show the gameplay UI
-		  switch(GameStateManager::GetInstance().GetGameState())
-			{
-			case GameStates::MOVEMENT:
-			{
-					MovementStateHUD(id, deltaTime);
-					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
-					break;
-			}
-			case GameStates::ATTACK:
-			{
-					AttackStateHUD(id);
-					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
-					break;
-			}
-			case GameStates::EXECUTE:
-			{
-					ExecutionStateHUD(id, deltaTime);
-					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
-					// Update animations and player actions
-					ExecutionToMovement();
-					break;
-			}
-			case GameStates::WIN:
-			case GameStates::LOSE:
-			{
-					TogglePlanningHUD(id, false);
-					ToggleExecutionHUD(id, false);
-					EndPhaseButton(id, false);
-					ToggleEntity(m_ScriptData[id].endTurnText, false);
-					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
-					break;
-			}				
-			case GameStates::PAUSE:
-			{
-					if (GameStateManager::GetInstance().GetHowToPlayActive())
-					{
-							ToggleAllText(id, false);
-					}
-					else
-					{
-							switch (GameStateManager::GetInstance().GetPreviousGameState()) 
-							{
-							case GameStates::MOVEMENT:
-							{
-									MovementStateHUD(id, 0.f);
-									break;
-							}
-							case GameStates::ATTACK:
-							{
-									AttackStateHUD(id);
-									break;
-							}
-							case GameStates::EXECUTE:
-							{
-									ExecutionStateHUD(id, 0.f);
-									ToggleEntity(m_ScriptData[id].executingStatement, false);
-									break;
-							}
-							default: { break; }
-							}
-					}
-					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
-					break;
-			}
-			default: 
-			{
-					m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState(); 
-					break; 
-			}
-			}
-		}
+		//	m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+		//} 
+		//else
+		//{ 
+		//	// Show the gameplay UI
+		//  switch(GameStateManager::GetInstance().GetGameState())
+		//	{
+		//	case GameStates::MOVEMENT:
+		//	{
+		//			MovementStateHUD(id, deltaTime);
+		//			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+		//			break;
+		//	}
+		//	case GameStates::ATTACK:
+		//	{
+		//			AttackStateHUD(id);
+		//			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+		//			break;
+		//	}
+		//	case GameStates::EXECUTE:
+		//	{
+		//			ExecutionStateHUD(id, deltaTime);
+		//			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+		//			// Update animations and player actions
+		//			ExecutionToMovement();
+		//			break;
+		//	}
+		//	case GameStates::WIN:
+		//	case GameStates::LOSE:
+		//	{
+		//			TogglePlanningHUD(id, false);
+		//			ToggleExecutionHUD(id, false);
+		//			EndPhaseButton(id, false);
+		//			ToggleEntity(m_ScriptData[id].endTurnText, false);
+		//			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+		//			break;
+		//	}				
+		//	case GameStates::PAUSE:
+		//	{
+		//			if (GameStateManager::GetInstance().GetHowToPlayActive())
+		//			{
+		//					ToggleAllText(id, false);
+		//			}
+		//			else
+		//			{
+		//					switch (GameStateManager::GetInstance().GetPreviousGameState()) 
+		//					{
+		//					case GameStates::MOVEMENT:
+		//					{
+		//							MovementStateHUD(id, 0.f);
+		//							break;
+		//					}
+		//					case GameStates::ATTACK:
+		//					{
+		//							AttackStateHUD(id);
+		//							break;
+		//					}
+		//					case GameStates::EXECUTE:
+		//					{
+		//							ExecutionStateHUD(id, 0.f);
+		//							ToggleEntity(m_ScriptData[id].executingStatement, false);
+		//							break;
+		//					}
+		//					default: { break; }
+		//					}
+		//			}
+		//			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState();
+		//			break;
+		//	}
+		//	default: 
+		//	{
+		//			m_ScriptData[id].prevState = GameStateManager::GetInstance().GetGameState(); 
+		//			break; 
+		//	}
+		//	}
+		//}
 	}
 	void GameStateController::Destroy(EntityID id)
 	{
@@ -191,7 +191,7 @@ namespace PE
 		ToggleExecutionHUD(id, false);
 		ToggleSplashscreen(id, true);
 
-		UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
+		//UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
 		UpdateEnergyHUD(id, CatScript::GetMaximumEnergyLevel() - 1, CatScript::GetMaximumEnergyLevel() - 1);
 	}
 
@@ -215,15 +215,15 @@ namespace PE
 	void GameStateController::MovementStateHUD(EntityID const id, float deltaTime)
 	{
 			// Enable all HUD elements and begin fading in/out
-			if (m_ScriptData[id].prevState == GameStates::EXECUTE)
+			/*if (m_ScriptData[id].prevState == GameStates::EXECUTE)
 			{
 					m_ScriptData[id].timeSinceEnteredState = 0;
 					m_ScriptData[id].timeSinceExitedState = m_ScriptData[id].maxFadeTime;
-			}
+			}*/
 
 			TogglePlanningHUD(id, true);
 			EndPhaseButton(id, true);
-			UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
+			//UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), true);
 
 			// Fade the HUD elements in
 			m_ScriptData[id].timeSinceExitedState -= deltaTime;
@@ -256,17 +256,17 @@ namespace PE
 			TogglePlanningHUD(id, true);
 			ToggleExecutionHUD(id, false);
 			EndPhaseButton(id, false);
-			UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), false);
+			//UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), false);
 	}
 
 	void GameStateController::ExecutionStateHUD(EntityID const id, float deltaTime)
 	{
 			// Start fading HUD elements in/out if changing from planning phase
-			if (m_ScriptData[id].prevState == GameStates::ATTACK)
+			/*if (m_ScriptData[id].prevState == GameStates::ATTACK)
 			{
 					m_ScriptData[id].timeSinceEnteredState = 0;
 					m_ScriptData[id].timeSinceExitedState = m_ScriptData[id].maxFadeTime;
-			}
+			}*/
 
 			ToggleExecutionHUD(id, true);
 
@@ -467,10 +467,10 @@ namespace PE
 
 	void GameStateController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)
 	{
-		if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE && GameStateManager::GetInstance().GetGameState() != GameStates::WIN && GameStateManager::GetInstance().GetGameState() != GameStates::LOSE)
-		{
-			GameStateManager::GetInstance().SetPauseState();
-		}
+		//if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE && GameStateManager::GetInstance().GetGameState() != GameStates::WIN && GameStateManager::GetInstance().GetGameState() != GameStates::LOSE)
+		//{
+		//	GameStateManager::GetInstance().SetPauseState();
+		//}
 	}
 
 	void GameStateController::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
@@ -484,35 +484,35 @@ namespace PE
 
 			if (KTE.keycode == GLFW_KEY_ESCAPE)
 			{
-				if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN || GameStateManager::GetInstance().GetGameState() == GameStates::LOSE)
-				{
-					return;
-				}
+				//if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN || GameStateManager::GetInstance().GetGameState() == GameStates::LOSE)
+				//{
+				//	return;
+				//}
 
-				if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
-				{
-					GameStateManager::GetInstance().ResumeState();
-				}
-				else if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE)
-				{
-					GameStateManager::GetInstance().SetPauseState();
-				}
+				//if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+				//{
+				//	GameStateManager::GetInstance().ResumeState();
+				//}
+				//else if (GameStateManager::GetInstance().GetGameState() != GameStates::INACTIVE)
+				//{
+				//	GameStateManager::GetInstance().SetPauseState();
+				//}
 			}
 
 
 			if (KTE.keycode == GLFW_KEY_F1)
 			{
-				GameStateManager::GetInstance().SetWinState();
+				//GameStateManager::GetInstance().SetWinState();
 			}
 
 			if (KTE.keycode == GLFW_KEY_F2)
 			{
-				GameStateManager::GetInstance().SetLoseState();
+				//GameStateManager::GetInstance().SetLoseState();
 			}
 
 			if (KTE.keycode == GLFW_KEY_F3)
 			{
-				GameStateManager::GetInstance().godMode = !GameStateManager::GetInstance().godMode;
+				/*GameStateManager::GetInstance().godMode = !GameStateManager::GetInstance().godMode;
 				SerializationManager serializationManager;
 
 				if (GameStateManager::GetInstance().godMode)
@@ -525,13 +525,13 @@ namespace PE
 				{
 					if (EntityManager::GetInstance().Has<EntityDescriptor>(godModeText))
 						EntityManager::GetInstance().RemoveEntity(godModeText);
-				}
+				}*/
 
 			}
 
 			if (KTE.keycode == GLFW_KEY_F10)
 			{
-				GameStateManager::GetInstance().RestartGame(static_cast<EntityID>(-1));
+			//	GameStateManager::GetInstance().RestartGame(static_cast<EntityID>(-1));
 			}
 		}
 	}
@@ -573,7 +573,7 @@ namespace PE
 		}
 		else
 		{
-			GameStateManager::GetInstance().IncrementGameState();
+			//GameStateManager::GetInstance().IncrementGameState();
 			m_finishExecution = false;
 		}
 	}

@@ -31,6 +31,7 @@
 #include "Graphics/CameraManager.h"
 #include "Hierarchy/HierarchyManager.h"
 
+
 namespace PE
 {
 	int CatScript::m_catEnergy{};  // Current energy level of the cat
@@ -82,8 +83,9 @@ namespace PE
 
 	void CatScript::Update(EntityID id, float deltaTime)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::WIN || GameStateManager::GetInstance().GetGameState() == GameStates::LOSE)
+		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		//if (GameStateManager::GetInstance().GetGameState() == GameStates::SPLASHSCREEN) { return; } // don't allow cat script to update during splashscreen gamestate
+		if (gsc->currentState == GameStates_v2_0::WIN || gsc->currentState == GameStates_v2_0::LOSE)
 		{
 			for (auto [direction, telegraph] : m_scriptData[id].telegraphIDs)
 			{
@@ -100,7 +102,7 @@ namespace PE
 		// Check if the player has died
 		if (m_scriptData[id].catHealth <= 0 && m_scriptData[id].isMainCat)
 		{
-			GameStateManager::GetInstance().noPause = true;
+			//GameStateManager::GetInstance().noPause = true;
 
 			for (auto quad : m_scriptData[id].pathQuads)
 			{
@@ -128,7 +130,7 @@ namespace PE
 				}
 			}
 
-			GameStateManager::GetInstance().SetLoseState();
+			gsc->LoseGame();
 			ToggleEntity(id, false);
 			return;
 		}
@@ -162,7 +164,7 @@ namespace PE
 				}
 			}
 			// If current gamestate is set to attack planning, change state to CatAttackPLAN
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
+			if (gsc->currentState == GameStates_v2_0::ATTACK)
 			{
 				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime))
@@ -187,7 +189,7 @@ namespace PE
 				}
 			}
 			// Check if the state should be changed
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::EXECUTE)
+			if (gsc->currentState == GameStates_v2_0::PAUSE)
 			{
 				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime)) 
@@ -256,7 +258,7 @@ namespace PE
 					}
 				}
 			}
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::MOVEMENT)
+			if (gsc->currentState == GameStates_v2_0::PLANNING)
 			{
 				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime))
@@ -315,7 +317,7 @@ namespace PE
 		
 	void CatScript::LoseHP(EntityID id, int damageTaken)
 	{
-		if (!GameStateManager::GetInstance().godMode)
+		//if (!GameStateManager::GetInstance().godMode)
 			m_scriptData[id].catHealth -= damageTaken;
 		std::cout << "Cat HP: " << m_scriptData[id].catHealth << '\n';
 	}
@@ -447,19 +449,19 @@ namespace PE
 	}
 
 
-	bool CatScript::DoesGameStateMatchCatState(std::string const& catStateName, GameStates gameState)
+	bool CatScript::DoesGameStateMatchCatState(std::string const& catStateName, GameStates_v2_0 gameState)
 	{ 
 			// Cat states: "MovementPLAN" "AttackPLAN" "MovementEXECUTE" "AttackEXECUTE"
 			switch (gameState) {
-			case GameStates::MOVEMENT: 
+			case GameStates_v2_0::PLANNING:
 			{
 					return catStateName == "MovementPLAN";
 			}
-			case GameStates::ATTACK:
+			case GameStates_v2_0::ATTACK:
 			{
 					return catStateName == "AttackPLAN";
 			}
-			case GameStates::EXECUTE:
+			case GameStates_v2_0::EXECUTE:
 			{
 					return catStateName == "MovementEXECUTE" || catStateName == "AttackEXECUTE";
 			}

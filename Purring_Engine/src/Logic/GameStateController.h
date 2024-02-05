@@ -39,7 +39,7 @@ namespace PE
 		float executingFadeSpeed{ 3.f }; // Time in seconds that it takes the executing text to fade in and out
 		float timeSinceEnteredState; //Time in seconds since the state has first been entered
 		float timeSinceExitedState; //Time in seconds since the state has first been exited
-		GameStates prevState; //Previous game state
+		//GameStates prevState; //Previous game state
 
 		// Turn counter
 		int turnCounter{};

@@ -24,6 +24,7 @@
 #include "AudioManager/AudioComponent.h"
 #include "LogicSystem.h"
 #include "CatScript.h"
+#include "GameStateController_v2_0.h"
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
@@ -40,12 +41,13 @@ namespace PE
 		{
 			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
+				GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index]))
 				{
 					if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 					{
-						if (GameStateManager::GetInstance().GetGameState() != GameStates::EXECUTE)
+						if (gsc->currentState == GameStates_v2_0::EXECUTE)
 							return;
 					}
 

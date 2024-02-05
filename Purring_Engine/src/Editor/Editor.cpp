@@ -62,7 +62,7 @@
 #include <rttr/type.h>
 #include "Graphics/CameraManager.h"
 #include "Graphics/Text.h"
-#include "GameStateManager.h"
+//#include "GameStateManager.h"
 #include "Data/json.hpp"
 #include "Input/InputSystem.h"
 #include "Layers/CollisionLayer.h"
@@ -5186,7 +5186,7 @@ namespace PE {
 		ImGui::SameLine();
 		if (ImGui::Button("Stop")) 
 		{
-			GameStateManager::GetInstance().ResetDefaultState();
+			//GameStateManager::GetInstance().ResetDefaultState();
 			m_showEditor = true;
 			toDisable = true;
 			if (m_isRunTime)

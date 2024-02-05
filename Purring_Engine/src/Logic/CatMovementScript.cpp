@@ -20,6 +20,8 @@
 #include "Physics/CollisionManager.h"
 #include "FollowScript.h"
 #include "Graphics/CameraManager.h"
+#include "GameStateController_v2_0.h"
+
 namespace PE
 {
 		// ----- Movement Plan Functions ----- //
@@ -45,11 +47,13 @@ namespace PE
 
 		void CatMovementPLAN::StateUpdate(EntityID id, float deltaTime)
 		{
+			GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+
 			// Return if this cat is not the main cat
 			if (!p_data->isMainCat) { return; }
 
 			// Check if pause state
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) 
+			if (gsc->currentState == GameStates_v2_0::PAUSE)
 			{
 					EndPathDrawing(id);
 					return;
@@ -329,11 +333,12 @@ namespace PE
 
 		void CatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)  
 		{
+			GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 			// Return if this cat is not the main cat
 			if (!p_data->isMainCat) { return; }
 
 			// Check if pause state 
-			if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+			if (gsc->currentState == GameStates_v2_0::PAUSE)
 			{
 				return;
 			}

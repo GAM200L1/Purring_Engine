@@ -88,7 +88,7 @@
 #include "Logic/CameraManagerScript.h"
 #include "Logic/CatScript.h"
 #include "Logic/GameStateController.h"
-#include "GameStateManager.h"
+//#include "GameStateManager.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
 #include "Logic/GameStateController_v2_0.h"
@@ -575,5 +575,5 @@ void PE::CoreApplication::InitializeSystems()
     AddSystem(p_rendererManager);
     //AddSystem(p_audioManager);
 
-    GameStateManager::GetInstance().RegisterButtonFunctions();
+   // GameStateManager::GetInstance().RegisterButtonFunctions();
 }
