@@ -26,8 +26,6 @@
 #include "prpch.h"
 #include "CatScript_v2_0.h"
 #include "CatMovementStates_v2_0.h"
-#include "GreyCatAttackStates_v2_0.h"
-#include "OrangeCatAttackStates_v2_0.h"
 
 #include "ECS/EntityFactory.h"
 
@@ -166,12 +164,12 @@ namespace PE
 
 		if (m_scriptData.find(id) == m_scriptData.end())
 		{
-			m_scriptData[id] = CatScript_v2_0Data{};
+			m_scriptData[id] = CatScript_v2_0Data{ GreyCatAttackVariables{} };
 		}
 		else
 		{
 			delete m_scriptData[id].p_stateManager;
-			m_scriptData[id] = CatScript_v2_0Data{};
+			m_scriptData[id] = CatScript_v2_0Data{ GreyCatAttackVariables{} };
 		}
 
 		// Reset values
@@ -256,7 +254,7 @@ namespace PE
 	template<typename AttackPLAN>
 	void CatScript_v2_0::PlanningStatesHandler(EntityID id, float deltaTime)
 	{
-		std::string const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
+		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
 
 		// plays idle animation
 		PlayAnimation(id, "Idle");
@@ -288,7 +286,7 @@ namespace PE
 	template<typename AttackEXECUTE>
 	void CatScript_v2_0::ExecuteStatesHandler(EntityID id, float deltaTime)
 	{
-		std::string const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
+		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
 
 		if (r_stateName != GETSCRIPTNAME(CatMovement_v2_0EXECUTE) && r_stateName != GETSCRIPTNAME(AttackEXECUTE))
 		{
@@ -302,7 +300,7 @@ namespace PE
 		{
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				m_scriptData[id].p_stateManager->ChangeState(new AttackPLAN{}, id);
+				m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
 			}
 		}
 	}

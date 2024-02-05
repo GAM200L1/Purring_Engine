@@ -43,6 +43,7 @@ namespace PE
 					m_cacheCats.push_back(pair);
 					m_currentCats.push_back(pair);
 				}
+
 			}
 		}
 	}
