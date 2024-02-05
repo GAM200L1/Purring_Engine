@@ -271,6 +271,11 @@ namespace PE
 		*************************************************************************************/
 		void UpdateTurnCounter(std::string currentphase);
 
+		/*!***********************************************************************************
+		 \brief			check all execution done and go to movement
+		*************************************************************************************/
+		void ExecutionToMovement();
+
 		// ----- MENU Helper Functions ----- //
 	private:
 		/*!***********************************************************************************
@@ -375,6 +380,7 @@ namespace PE
 		float m_timeSinceTransitionEnded{};
 
 		bool m_journalShowing;
+		bool m_finishExecution;
 
 	};
 }

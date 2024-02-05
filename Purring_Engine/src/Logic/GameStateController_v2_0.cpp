@@ -31,6 +31,9 @@
 #include <Physics/CollisionManager.h>
 #include "ResourceManager/ResourceManager.h"
 #include "Rat/RatController_v2_0.h"
+
+#include "RatScript.h"
+#include "CatScript.h"
 namespace PE
 {
 
@@ -242,6 +245,7 @@ namespace PE
 
 			ExecutionStateHUD(id, deltaTime);
 			UpdateTurnCounter("Executing...");
+			ExecutionToMovement();
 			prevState = currentState;
 			break;
 		}
@@ -1083,6 +1087,46 @@ namespace PE
 		}
 	}
 
-
+	void GameStateController_v2_0::ExecutionToMovement()
+	{
+		if (!m_finishExecution)
+		{
+			for (EntityID scriptID : SceneView<ScriptComponent>())
+			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(scriptID).isActive) { continue; }
+				if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+				{
+					RatScriptData* p_ratScript = GETSCRIPTDATA(RatScript, scriptID);
+					if (!p_ratScript->finishedExecution)
+					{
+						m_finishExecution = false;
+						break;
+					}
+					else
+					{
+						m_finishExecution = true;
+					}
+				}
+				else if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+				{
+					CatScriptData* p_catScript = GETSCRIPTDATA(CatScript, scriptID);
+					if (!p_catScript->finishedExecution)
+					{
+						m_finishExecution = false;
+						break;
+					}
+					else
+					{
+						m_finishExecution = true;
+					}
+				}
+			}
+		}
+		else
+		{
+			NextState();
+			m_finishExecution = false;
+		}
+	}
 
 }
