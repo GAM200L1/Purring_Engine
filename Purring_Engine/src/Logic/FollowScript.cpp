@@ -66,7 +66,7 @@ namespace PE
 
 							if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 							{
-								CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
+								//CatScript::SetMaximumEnergyLevel(CatScript::GetMaximumEnergyLevel() + 2);
 								CatScriptData* cd = GETSCRIPTDATA(CatScript, id);
 
 								SerializationManager serializationManager;

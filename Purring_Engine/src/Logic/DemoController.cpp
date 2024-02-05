@@ -34,6 +34,7 @@ namespace PE
 						try
 						{
 								// Check that the entity is active and rat is alive
+							if (EntityManager::GetInstance().Has<EntityDescriptor>(ratId))
 								if (EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive)
 								{
 										m_cachedActiveRats.emplace_back(std::make_pair(ratId, EnumOldRatType::GUTTER));
@@ -48,13 +49,14 @@ namespace PE
 		std::vector<std::pair<EntityID, EnumCatTypes>> const& DemoController::GetCats(EntityID id)
 		{
 				m_cachedActiveCats.clear();
-				if (!(m_scriptData[id].p_ratsMap)) { return m_cachedActiveCats; } // null check
+				if (!(m_scriptData[id].p_catsMap)) { return m_cachedActiveCats; } // null check
 
 				for (auto const& [catId, data] : *m_scriptData[id].p_catsMap)
 				{
 						try
 						{
 								// Check that the entity is active and rat is alive
+								if(EntityManager::GetInstance().Has<EntityDescriptor>(catId))
 								if (EntityManager::GetInstance().Get<EntityDescriptor>(catId).isActive)
 								{
 										m_cachedActiveCats.emplace_back(std::make_pair(catId, EnumCatTypes::MEOWSALOT));

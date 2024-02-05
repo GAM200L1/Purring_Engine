@@ -381,6 +381,8 @@ namespace PE
 
 		bool m_journalShowing;
 		bool m_finishExecution;
+		bool showingCatPortrait;
+		EntityID currentPortraitCat;
 
 	};
 }

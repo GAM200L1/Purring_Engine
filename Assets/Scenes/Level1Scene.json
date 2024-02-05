@@ -748,6 +748,9 @@
                         "TextureKey": ""
                     },
                     "ScriptComponent": {
+                        "DemoController": {
+                            "state": 0
+                        },
                         "GameStateController_v2_0": {
                             "data": {
                                 "AreYouSureCanvas": 8,
