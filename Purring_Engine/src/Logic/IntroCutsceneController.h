@@ -93,7 +93,8 @@ namespace PE
 		SerializationManager m_serializationManager;
 		float m_sceneTimer{ 22.3f };
 		float m_elapsedTime{ 0 };
-		bool endCutscene{ false };
+		bool m_endCutscene{ false };
+		bool m_startCutscene{ true };
 	};
 
 

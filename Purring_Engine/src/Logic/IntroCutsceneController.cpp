@@ -34,16 +34,22 @@ namespace PE
 {
 	void IntroCutsceneController::Init(EntityID id)
 	{
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
-		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
-		EntityManager::GetInstance().RemoveEntity(bgm);
+
 	}
 	void IntroCutsceneController::Update(EntityID id, float deltaTime)
 	{
 		m_elapsedTime += deltaTime;
 
-		if (m_elapsedTime >= m_sceneTimer && !endCutscene)
+		if (m_startCutscene)
+		{
+			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+				EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(bgm);
+			m_startCutscene = false;
+		}
+
+		if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 		{
 			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
@@ -61,7 +67,7 @@ namespace PE
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(14))
 				EntityManager::GetInstance().Get<EntityDescriptor>(14).isActive = true;
 
-			endCutscene = true;
+			m_endCutscene = true;
 		}
 
 	}
@@ -76,6 +82,9 @@ namespace PE
 	void IntroCutsceneController::OnAttach(EntityID id)
 	{
 		m_ScriptData[id] = IntroCutsceneControllerData();
+		m_elapsedTime = 0;
+		m_endCutscene = false;
+		m_startCutscene = true;
 	}
 
 	void IntroCutsceneController::OnDetach(EntityID id)
@@ -97,7 +106,7 @@ namespace PE
 
 	void IntroCutsceneController::ContinueToLevel(EntityID id)
 	{
-		SceneManager::GetInstance().LoadScene("GameSceneFINAL.json");
+		SceneManager::GetInstance().LoadScene("Level1Scene.json");
 
 	}
 
