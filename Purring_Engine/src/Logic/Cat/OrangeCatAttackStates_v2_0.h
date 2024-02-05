@@ -55,6 +55,11 @@ namespace PE
 		virtual void ResetSelection();
 
 	private:
+
+		// Telegraph colors
+		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
+		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
+		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
 	};
 
 	class OrangeCatAttack_v2_0EXECUTE : public State

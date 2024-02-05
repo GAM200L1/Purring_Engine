@@ -23,6 +23,7 @@
 
 *************************************************************************************/
 #pragma once
+#include <variant>
 #include "ECS/Entity.h"
 
 #include "Logic/Script.h"

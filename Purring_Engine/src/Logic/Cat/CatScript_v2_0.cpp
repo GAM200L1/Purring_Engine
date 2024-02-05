@@ -164,14 +164,12 @@ namespace PE
 
 		if (m_scriptData.find(id) == m_scriptData.end())
 		{
-			m_scriptData.erase(id);
-			m_scriptData.emplace(id, CatScript_v2_0Data{});
+			m_scriptData[id] = CatScript_v2_0Data{};
 		}
 		else
 		{
 			delete m_scriptData[id].p_stateManager;
-			m_scriptData.erase(id);
-			m_scriptData.emplace(id, CatScript_v2_0Data{});
+			m_scriptData[id] = CatScript_v2_0Data{};
 		}
 
 		// Reset values

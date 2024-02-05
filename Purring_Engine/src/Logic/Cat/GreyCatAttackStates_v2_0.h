@@ -43,11 +43,6 @@ namespace PE
 		EnumCatAttackDirection attackDirection{ EnumCatAttackDirection::NONE }; // Direction of attack chosen
 		std::map<EnumCatAttackDirection, EntityID> telegraphIDs; // IDs of entities used to visualise the directions the player can attack in
 		
-		// Telegraph colors
-		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
-		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
-		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
-
 		// projectile variables
 		float bulletDelay{ 0.7f };
 		float bulletRange{ 3.f };
@@ -76,6 +71,11 @@ namespace PE
 		GreyCatAttackVariables* p_attackData;
 
 		bool m_showTelegraphs{ false }; // True if telegraphs are to be displayed
+
+		// Telegraph colors
+		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
+		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
+		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
 
 		bool m_mouseClick{ false }; // set to true when mouse is clicked
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
