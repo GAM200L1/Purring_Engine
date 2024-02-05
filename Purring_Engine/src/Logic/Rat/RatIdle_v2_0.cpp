@@ -96,9 +96,9 @@ namespace PE
             return;
         }
 
-        gameStateController->currentState = GameStates_v2_0::EXECUTE;
+        //gameStateController->currentState = GameStates_v2_0::EXECUTE;
 
-        m_type = RatType::PATROL;
+        //m_type = RatType::PATROL;
 
         switch (m_type)
         {

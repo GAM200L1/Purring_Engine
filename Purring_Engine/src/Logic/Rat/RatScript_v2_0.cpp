@@ -16,10 +16,13 @@
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "RatTempSTATE_v2_0.h"
-#include "../Rat/RatIdle_v2_0.h"
 
 #include "../Physics/RigidBody.h"
 #include "../Physics/Colliders.h"
+
+#include "../Rat/RatIdle_v2_0.h"
+#include "../Rat/RatMovement_v2_0.h"
+
 
 namespace PE
 {
@@ -147,7 +150,8 @@ namespace PE
 								return;
 
 						m_scriptData[id].p_stateManager = new StateMachine{};
-						m_scriptData[id].p_stateManager->ChangeState(new RatIdle_v2_0(RatType::PATROL), id);
+						//m_scriptData[id].p_stateManager->ChangeState(new RatIdle_v2_0(RatType::PATROL), id);
+						m_scriptData[id].p_stateManager->ChangeState(new RatMovement_v2_0(), id);
 
 				}
 		}

@@ -38,5 +38,6 @@ namespace PE
         bool hasReachedDestination;                         // Flag to indicate if the destination has been reached
 
         float moveSpeed; // Movement speed of the rat data from main ratscriptv20_data
+        float minDistanceToTarget;
     };
 }
