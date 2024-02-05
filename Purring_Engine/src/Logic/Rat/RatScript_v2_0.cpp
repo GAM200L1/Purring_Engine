@@ -57,6 +57,22 @@ namespace PE
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
+			// Check if state change is requested and the delay has passed
+			if (it->second.shouldChangeState && it->second.timeBeforeChangingState <= 0.f) {
+				// Perform the state change
+				if (it->second.p_stateManager->GetCurrentState()->GetName() == "Movement_v2_0") {
+					it->second.p_stateManager->ChangeState(new RatAttack_v2_0(), id);
+					std::cout << "Transitioned to Attack State for Rat ID: " << id << std::endl;
+				}
+				// Reset state change flags
+				it->second.shouldChangeState = false;
+				it->second.delaySet = false;
+			}
+			else if (it->second.shouldChangeState) {
+				// Countdown the delay before state change
+				it->second.timeBeforeChangingState -= deltaTime;
+			}
+
 			// Clear cat exited container
 			it->second.catsExitedDetectionRadius.clear();
 		}

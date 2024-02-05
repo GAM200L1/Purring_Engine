@@ -20,7 +20,6 @@ namespace PE
         m_attackStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerStayForAttack, this);
 
         m_delay = p_data->attackDelay;
-        std::cout << "RatAttack_v2_0::StateEnter - Rat ID: " << id << " has successfully entered the Attack state.\n";
 
         std::cout << "RatAttack_v2_0::StateEnter - Rat ID: " << id << " has entered the attack state." << std::endl;
     }
