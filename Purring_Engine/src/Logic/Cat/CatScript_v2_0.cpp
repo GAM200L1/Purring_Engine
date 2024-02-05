@@ -50,7 +50,7 @@ namespace PE
 		
 		try
 		{
-			p_catAnimation = &EntityManager::GetInstance().Get<AnimationComponent>(id);
+			//p_catAnimation = &EntityManager::GetInstance().Get<AnimationComponent>(id);
 		}
 		catch (...)
 		{
@@ -100,6 +100,7 @@ namespace PE
 			PlayAnimation(id, "Death");
 			// TODO: play death audio
 
+			if(!p_catAnimation)
 			if (p_catAnimation->GetCurrentFrameIndex() == p_catAnimation->GetAnimationMaxIndex())
 			{
 				CatHelperFunctions::GetInstance().ToggleEntity2(id, false);

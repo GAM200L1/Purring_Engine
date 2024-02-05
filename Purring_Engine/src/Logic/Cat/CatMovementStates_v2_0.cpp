@@ -38,7 +38,7 @@ namespace PE
 	{
 		//std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
-		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
+		//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 
 		// Return if this cat is not the main cat
 		//if (!p_data->isMainCat) { return; }
