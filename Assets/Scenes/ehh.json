@@ -73,14 +73,14 @@
             "Entity": {
                 "components": {
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 1,
                         "data": {
                             "max": {
-                                "x": 99.0,
+                                "x": 129.00003051757813,
                                 "y": 50.0
                             },
                             "min": {
-                                "x": -1.0,
+                                "x": 29.000030517578125,
                                 "y": -50.0
                             },
                             "positionOffset": {
@@ -124,7 +124,45 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 49.0,
+                            "x": 79.00003051757813,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": true,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 4,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 3
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relativeposition": {
