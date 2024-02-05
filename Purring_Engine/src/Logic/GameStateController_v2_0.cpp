@@ -111,16 +111,6 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
 
-
-		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].PauseMenuCanvas).children)
-		{
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "Pawsed Text Object")
-			{
-				//std::cout << "texture" << EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).GetTextureKey() << std::endl;
-				//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("GamePawsed_Text_1024x256.png"));
-			}
-
-		}
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
@@ -208,12 +198,34 @@ namespace PE
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
 			UpdateTurnCounter("Plan Movement");
+			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].HUDCanvas).children)
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndPlanningText")
+				{
+					if (EntityManager::GetInstance().Has<TextComponent>(id2))
+					{
+						EntityManager::GetInstance().Get<TextComponent>(id2).SetText("End Movement");
+					}
+					continue;
+				}
+			}
 			prevState = currentState;
 			break;
 		}
 		case GameStates_v2_0::ATTACK:
 		{
 			UpdateTurnCounter("Plan Attack");
+			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].HUDCanvas).children)
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndPlanningText")
+				{
+					if (EntityManager::GetInstance().Has<TextComponent>(id2))
+					{
+						EntityManager::GetInstance().Get<TextComponent>(id2).SetText("End Attack");
+					}
+					continue;
+				}
+			}
 			break;
 		}
 		case GameStates_v2_0::EXECUTE: // execute state, fade out HUD and fade in foliage
