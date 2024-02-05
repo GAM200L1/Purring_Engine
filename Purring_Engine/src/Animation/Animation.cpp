@@ -25,6 +25,7 @@
 #include "Animation.h"
 #include "GameStateManager.h"
 #include "Layers/LayerManager.h"
+#include "PauseManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -56,7 +57,7 @@ namespace PE
 
 	void Animation::UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+		if (PauseManager::GetInstance().IsPaused())
 			return;
 
 		r_currentFrameTime += deltaTime;

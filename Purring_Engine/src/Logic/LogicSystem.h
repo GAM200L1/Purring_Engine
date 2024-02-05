@@ -30,12 +30,14 @@
 #define REGISTER_SCRIPT(name) 	PE::LogicSystem::m_scriptContainer[#name] = new name()
 #define GETSCRIPTDATA(script,id) &reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])->GetScriptData()[id]
 #define GETSCRIPTINSTANCEPOINTER(script) reinterpret_cast<script*>(LogicSystem::m_scriptContainer[#script])
+#define GETSCRIPTNAME(script) #script
 
 namespace PE {
 	class LogicSystem : public System
 	{
 	public:
 		static std::map<std::string, Script*> m_scriptContainer;
+		static bool restartingScene;
 	public:
 		LogicSystem();
 		virtual ~LogicSystem();
@@ -166,6 +168,14 @@ namespace PE {
 						PE::vec2 val = var.get_value<PE::vec2>();
 						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
 						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
+					}
+					else if (var.get_type().get_name() == "structPE::vec4")
+					{
+						PE::vec4 val = var.get_value<PE::vec4>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["z"] = val.z;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["w"] = val.w;
 					}
 					else if (var.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
 					{

@@ -121,11 +121,6 @@ namespace PE {
 				//trying to erase a specific element in a vector by iterator
 				listeners.erase(std::remove_if(listeners.begin(), listeners.end(), [=](auto& fc)
 					{
-						if ((*(long*)(char*)&fc == listenerInfo.second)) 
-						{
-							//std::cout<< "found" << std::endl;
-						}
-
 						return (*(long*)(char*)&fc == listenerInfo.second);
 					}
 				), listeners.end());

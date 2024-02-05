@@ -739,6 +739,9 @@ namespace PE
             // Draw a rectangle for every canvas component
             for (auto const& id : GUISystem::GetActiveCanvases())
             {
+                if (!EntityManager::GetInstance().Has<Canvas>(id))
+                    continue;
+
                 Canvas& canvasComponent{ EntityManager::GetInstance().Get<Canvas>(id) };
                 glm::vec2 position{ 0.f, 0.f };
                 if (EntityManager::GetInstance().Has<Transform>(id))

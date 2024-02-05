@@ -654,7 +654,16 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                         {
                             PE::vec2 val;
                             val.x = data[prop.get_name().to_string().c_str()]["x"].get<float>();
-                            val.y = data[prop.get_name().to_string().c_str()]["x"].get<float>();
+                            val.y = data[prop.get_name().to_string().c_str()]["y"].get<float>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "structPE::vec4")
+                        {
+                            PE::vec4 val;
+                            val.x = data[prop.get_name().to_string().c_str()]["x"].get<float>();
+                            val.y = data[prop.get_name().to_string().c_str()]["y"].get<float>();
+                            val.z = data[prop.get_name().to_string().c_str()]["z"].get<float>();
+                            val.w = data[prop.get_name().to_string().c_str()]["w"].get<float>();
                             prop.set_value(inst, val);
                         }
                         else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
@@ -758,6 +767,10 @@ bool SerializationManager::LoadGUISlider(const EntityID& r_id, const nlohmann::j
                 slider.m_knobID = sliderJson["m_knobID"].get<EntityID>();
             }
         }
+
+        if (sliderJson.contains("m_isHealthBar")) slider.m_isHealthBar = sliderJson["m_isHealthBar"].get<bool>();
+        if (sliderJson.contains("m_currentXpos")) slider.m_currentXpos = sliderJson["m_currentXpos"].get<float>();
+        if (sliderJson.contains("m_currentWidth")) slider.m_currentWidth = sliderJson["m_currentWidth"].get<float>();
 
         PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUISlider>(), static_cast<void*>(&slider));
         return true;

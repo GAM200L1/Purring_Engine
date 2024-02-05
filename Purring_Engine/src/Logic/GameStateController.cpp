@@ -213,7 +213,6 @@ namespace PE
 		return rttr::instance(m_ScriptData.at(id));
 	}
 
-
 	void GameStateController::MovementStateHUD(EntityID const id, float deltaTime)
 	{
 			// Enable all HUD elements and begin fading in/out
@@ -252,7 +251,6 @@ namespace PE
 			UpdateEnergyHUD(id, CatScript::GetCurrentEnergyLevel(), CatScript::GetMaximumEnergyLevel() - 1);
 	}
 
-
 	void GameStateController::AttackStateHUD(EntityID const id)
 	{
 			// Enable planning HUD, disable execution HUD
@@ -261,7 +259,6 @@ namespace PE
 			EndPhaseButton(id, false);
 			UpdateTurnHUD(id, GameStateManager::GetInstance().GetTurnNumber(), false);
 	}
-
 
 	void GameStateController::ExecutionStateHUD(EntityID const id, float deltaTime)
 	{
@@ -468,7 +465,6 @@ namespace PE
 
 			return false;
 	}
-
 
 	void GameStateController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)
 	{

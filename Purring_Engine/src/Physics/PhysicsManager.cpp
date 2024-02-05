@@ -19,7 +19,7 @@
 #include "Math/Transform.h"
 #include "RigidBody.h"
 #include "Logging/Logger.h"
-#include "GameStateManager.h"
+#include "PauseManager.h"
 #include "Layers/LayerManager.h"
 
 #ifndef GAMERELEASE
@@ -127,7 +127,7 @@ namespace PE
 
 	void PhysicsManager::UpdateDynamics(float deltaTime)
 	{
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
+		if (PauseManager::GetInstance().IsPaused())
 			return;
 
 		for (const auto& layer : LayerView<RigidBody, Transform>())

@@ -1,0 +1,40 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "Journal",
+                "children": [],
+                "isActive": true,
+                "name": "Journal",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "GUIRenderer": {
+                "Color": {
+                    "a": 1.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "TextureKey": "../Assets/Textures/CatJournal_Meowsalot_753x402.png"
+            },
+            "Transform": {
+                "height": 255.54103088378906,
+                "orientation": 0.0,
+                "position": {
+                    "x": -454.49993896484375,
+                    "y": -237.00003051757813
+                },
+                "relativeposition": {
+                    "x": -454.49993896484375,
+                    "y": -237.00003051757813
+                },
+                "relorientation": 0.0,
+                "width": 422.16619873046875
+            }
+        },
+        "name": ""
+    }
+}
