@@ -85,7 +85,7 @@ namespace PE
 
 			for (auto quad : m_scriptData[id].pathQuads)
 			{
-				ToggleEntity(quad, false);
+				ToggleEntity2(quad, false);
 			}
 			return;
 		}
@@ -99,7 +99,7 @@ namespace PE
 
 			if (p_catAnimation->GetCurrentFrameIndex() == p_catAnimation->GetAnimationMaxIndex())
 			{
-				ToggleEntity(id, false);
+				ToggleEntity2(id, false);
 				
 				if (m_scriptData[id].isMainCat)
 					p_gsc->LoseGame();
