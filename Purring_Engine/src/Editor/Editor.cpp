@@ -3949,8 +3949,9 @@ namespace PE {
 						// if theres a spritesheet texture
 						if (texture)
 							ImGui::Image((void*)(intptr_t)texture->GetTextureID(), ImVec2{ 100, 100 }, minUV, maxUV);
-						ImGui::EndChild();
 					}
+					ImGui::EndChild();
+					
 
 					// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
 					if (ImGui::IsItemHovered())
@@ -4105,8 +4106,6 @@ namespace PE {
 				ImGui::Text("No entity selected");
 				
 			}
-
-
 
 			ImGui::End(); //imgui close
 		}
@@ -4486,6 +4485,7 @@ namespace PE {
 					if (ToSavePopup)
 					{
 						float size = ImGui::CalcTextSize("Do You Want To Save Your Current Scene?").x + style.FramePadding.x * 2.0f;
+						m_currentSelectedObject = -1;
 						ImGui::SetNextWindowSize(ImVec2(size, 70));
 						ImGui::OpenPopup("To Save");
 					}
