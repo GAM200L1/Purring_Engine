@@ -709,6 +709,7 @@ namespace PE {
 					continue;
 				std::string name2;
 
+
 				name2 += EntityManager::GetInstance().Get<EntityDescriptor>(v).name;
 
 				if (usedNames.count(name2))
@@ -718,7 +719,7 @@ namespace PE {
 
 				r_selected = (m_currentSelectedObject == static_cast<int>(v));
 
-				if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
+				if ((name2.length()) ? ImGui::Selectable(name2.c_str(), r_selected) : ImGui::Selectable(("##" + name2).c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
 					m_currentSelectedObject = static_cast<int>(v);
 
 
