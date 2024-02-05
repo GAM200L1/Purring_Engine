@@ -1503,23 +1503,26 @@ namespace PE {
 
 									//create a combo box of texture ids
 									ImGui::SetNextItemWidth(200.0f);
+
+									// Displays the current texture set on the object
+									if (ImGui::BeginChild("currentTexture", ImVec2{ 116,116 }, true))
+									{
+										if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
+										{
+											ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2{ 100,100 }, { 0,1 }, { 1,0 });
+										}
+									}
+									ImGui::EndChild();
+
+									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("Renderer", static_cast<int>(entityID));
+									}
+
 									if (!loadedTextureKeys.empty())
 									{
-										// Displays the current texture set on the object
-										if (ImGui::BeginChild("currentTexture", ImVec2{ 116,116 }, true))
-										{
-											if (EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey() != "")
-											{
-												ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::Renderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2{ 100,100 }, { 0,1 }, { 1,0 });
-											}
-										}
-										ImGui::EndChild();
 
-										// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
-										if (ImGui::IsItemHovered())
-										{
-											m_entityToModify = std::make_pair<std::string, int>("Renderer", static_cast<int>(entityID));
-										}
 
 										// Shows a drop down of selectable textures
 										ImGui::Text("Textures: "); ImGui::SameLine();
@@ -1614,27 +1617,26 @@ namespace PE {
 										loadedTextureKeys.emplace_back(r_filepath.stem().string());
 									}
 
+									// Displays the current texture set on the object
+									if (ImGui::BeginChild("GUICurrentTexture", ImVec2{ 116,116 }, true))
+									{
+										if (EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey() != "")
+										{
+											ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2{ 100,100 }, { 0,1 }, { 1,0 });
+										}
+									}
+									ImGui::EndChild();
+
+									// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
+									if (ImGui::IsItemHovered())
+									{
+										m_entityToModify = std::make_pair<std::string, int>("GUIRenderer", static_cast<int>(entityID));
+									}
 
 									//create a combo box of texture ids
 									ImGui::SetNextItemWidth(200.0f);
 									if (!loadedTextureKeys.empty())
 									{
-										// Displays the current texture set on the object
-										if (ImGui::BeginChild("GUICurrentTexture", ImVec2{ 116,116 }, true))
-										{
-											if (EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey() != "")
-											{
-												ImGui::Image((void*)(intptr_t)ResourceManager::GetInstance().GetTexture(EntityManager::GetInstance().Get<Graphics::GUIRenderer>(entityID).GetTextureKey())->GetTextureID(), ImVec2{ 100,100 }, { 0,1 }, { 1,0 });
-											}
-										}
-										ImGui::EndChild();
-
-										// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
-										if (ImGui::IsItemHovered())
-										{
-											m_entityToModify = std::make_pair<std::string, int>("GUIRenderer", static_cast<int>(entityID));
-										}
-
 										// Shows a drop down of selectable textures
 										ImGui::Text("Textures: "); ImGui::SameLine();
 										ImGui::SetNextItemWidth(200.0f);
@@ -3566,6 +3568,15 @@ namespace PE {
 								}
 							}
 
+							if (m_animationToModify.second != "")
+							{
+								if (m_animationToModify.first == "Animation")
+								{
+									ResourceManager::GetInstance().LoadTextureFromFile(m_files[draggedItemIndex].string(), m_files[draggedItemIndex].string());
+									ResourceManager::GetInstance().GetAnimation(m_animationToModify.second)->SetSpriteSheetKey(m_files[draggedItemIndex].string());
+								}
+							}
+
 							if (m_mouseInScene || m_mouseInObjectWindow)
 							{
 								if (m_files[draggedItemIndex].extension() == ".json")
@@ -3581,6 +3592,7 @@ namespace PE {
 						}
 					}
 					m_entityToModify = std::make_pair<std::string>("", -1);
+					m_animationToModify = std::make_pair<std::string>("", "");
 				}
 
 
@@ -3680,15 +3692,10 @@ namespace PE {
 		}
 		else
 		{
-			ImGui::SeparatorText("Rendering settings");
-			std::map<const char*, EntityID> entities;
-			std::vector<const char*> entityList;
 			std::vector<const char*> animationList;
 
-			static std::optional<EntityID> currentEntityID;
 			static std::string currentAnimationID;
 
-			int entityIndex{};
 			int animationIndex{};
 
 			// animation data
@@ -3709,16 +3716,9 @@ namespace PE {
 
 			static bool playAnimation{ false };
 
-
-			// get all the entities with animation component
-			for (EntityID id : SceneView<AnimationComponent>())
-			{
-				entities[EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str()] = id;
-				entityList.push_back(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str());
-			}
-
 			std::vector<std::filesystem::path> animationFilePaths;
 			std::vector<std::string> loadedAnimationKeys;
+
 			// get all animations from resource manager
 			for (std::map<std::string, std::shared_ptr<Animation>>::iterator it = ResourceManager::GetInstance().Animations.begin(); it != ResourceManager::GetInstance().Animations.end(); ++it)
 			{
@@ -3743,350 +3743,369 @@ namespace PE {
 				++animationIndex;
 			}
 
-			// get index of current entity for combo box
-			for (std::string str : entityList)
-			{
-				if (currentEntityID.has_value())
-				{
-					if(EntityManager::GetInstance().Has<EntityDescriptor>(currentEntityID.value()))
-					if (str == EntityManager::GetInstance().Get<EntityDescriptor>(currentEntityID.value()).name)
-					break;
-				}
-				++entityIndex;
-			}
-
 			ImGui::SetNextItemWidth(300.f);
-			if (ImGui::Combo("Entity", &entityIndex, entityList.data(), static_cast<int>(entityList.size())))
-			{
-				currentEntityID = entities[entityList[entityIndex]];
-			}
 
-			ImGui::SetNextItemWidth(300.f);
-			if (ImGui::Combo("Animation", &animationIndex, animationList.data(), static_cast<int>(animationList.size())))
-			{
-				currentAnimationID = animationFilePaths[animationIndex].string();
-			}
+			// show current selected entity if there it has a animation component
 
-			if (ImGui::Button("Create Animation"))
-			{
-				// Get the file path using the file explorer
-				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
 
-				// Check if filePath is not empty
-				if (!filePath.empty())
+			if (m_currentSelectedObject != -1)
+			{
+				ImGui::SetNextItemWidth(300.f);
+				if (ImGui::Combo("Animation", &animationIndex, animationList.data(), static_cast<int>(animationList.size())))
 				{
-					// format filepath to be relative to the Assets folder
-					std::replace(filePath.begin(), filePath.end(), '\\', '/');
-					filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + "_Anim.json";
-
-					// Create a new animation
-					currentAnimationID = AnimationManager::CreateAnimation(filePath);
-
-					// Serialize the current animation data to JSON
-					nlohmann::json serializedAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID)->ToJson();
-
-					serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
-					std::cout << "Animation created successfully at " << filePath << std::endl;
+					currentAnimationID = animationFilePaths[animationIndex].string();
 				}
-				else
+
+				if (ImGui::Button("Create Animation"))
 				{
-					std::cerr << "No file path was selected for saving." << std::endl;
-				}
-			}
-
-			ImGui::Dummy(ImVec2(0, 5));
-			ImGui::SeparatorText("Sprite Sheet");
-
-			// if there's animation to preview
-			if (currentAnimationID != "")
-			{
-				currentAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID);
-
-				// get max frames
-				frameCount = currentAnimation->GetFrameCount() ? currentAnimation->GetFrameCount() - 1 : 0;
-				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
-				frameRate = currentAnimation->GetFrameRate();
-				animationDuration = currentAnimation->GetAnimationDuration();
-
-				// if animation has spritesheet, get the texture
-				if (currentAnimation->GetSpriteSheetKey() != "")
-				{
-					texture = ResourceManager::GetInstance().GetTexture(currentAnimation->GetSpriteSheetKey());
-
-					minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
-							  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
-					maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
-							  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
-				}
-			}
-			else
-			{
-				// reset preview animation
-				previewCurrentFrameTime = 0.f;
-				previewCurrentFrameIndex = 0;
-			}
-
-			// spritesheet selection for animation
-			// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
-			std::vector<std::filesystem::path> filepaths;
-			int textureIndex{ 0 };
-			for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
-			{
-				filepaths.emplace_back(it->first);
-			}
-
-			// Vector of the names of textures that have already been loaded
-			std::vector<std::string> loadedTextureKeys;
-			std::vector<const char*> textureList;
-
-			// get the keys of textures already loaded by the resource manager
-			for (auto const& r_filepath : filepaths)
-			{
-				loadedTextureKeys.push_back(r_filepath.stem().string());
-			}
-
-			for (auto const& r_filepath : filepaths)
-			{
-				if (currentAnimation)
-					if (r_filepath.string() == currentAnimation->GetSpriteSheetKey())
-						break;
-				++textureIndex;
-			}
-
-			for (auto const& r_str : loadedTextureKeys)
-			{
-				textureList.push_back(r_str.c_str());
-			}
-
-			// Displays the current spritesheet set on the animation
-			if (ImGui::BeginChild("currentTexture", ImVec2{ 116,116 }, true))
-			{
-				// if theres a spritesheet texture
-				if (texture)
-					ImGui::Image((void*)(intptr_t)texture->GetTextureID(), ImVec2{ 100, 100 }, minUV, maxUV);
-				ImGui::EndChild();
-			}
-
-			ImGui::SetNextItemWidth(300.f);
-			if (ImGui::Combo("Spritesheet", &textureIndex, textureList.data(), static_cast<int>(textureList.size())))
-			{
-				if(currentAnimation)
-					currentAnimation->SetSpriteSheetKey(filepaths[textureIndex].string());
-			}
-
-			// Load texture through file explorer
-			if (ImGui::Button("Load Spritesheet"))
-			{
-				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
-
-				// Check if filePath is not empty
-				if (!filePath.empty())
-				{
-					std::replace(filePath.begin(), filePath.end(), '\\', '/');
-					filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".png";
-
-					ResourceManager::GetInstance().LoadTextureFromFile(filePath, filePath);
-				}
-				else
-				{
-					std::cerr << "No file path was selected for loading." << std::endl;
-				}
-			}
-
-
-			if (ImGui::Button("Play"))
-			{
-				playAnimation = true;
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button("Stop"))
-			{
-				playAnimation = false;
-			}
-
-			// slider
-			ImGui::SameLine();
-			int frame{ static_cast<int>(previewCurrentFrameIndex)};
-			ImGui::SetNextItemWidth(300);
-
-			if (ImGui::SliderInt("##FrameSlider", &frame, 0, frameCount))
-			{
-				previewCurrentFrameIndex = static_cast<unsigned>(frame);
-			}
-
-			ImGui::SameLine();
-			ImGui::Text("%d:%.f", static_cast<int>(animationDuration), (animationDuration - static_cast<int>(animationDuration)) * 100.f);
-
-			if (currentAnimation)
-			{
-				// update preview animation
-				if (playAnimation)
-					currentAnimation->UpdateAnimationFrame(TimeManager::GetInstance().GetDeltaTime(), previewCurrentFrameTime, previewCurrentFrameIndex);
-
-				// update frame display parameters
-				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
-				minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
-						  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
-				maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
-						  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
-			}
-
-			if (ImGui::Button("Add Animation"))
-			{
-				if (currentEntityID.has_value())
-				{
-					EntityManager::GetInstance().Get<AnimationComponent>(currentEntityID.value()).AddAnimationToComponent(currentAnimationID);
-				}
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button("Remove Animation"))
-			{
-				if (currentEntityID.has_value())
-				{
-					EntityManager::GetInstance().Get<AnimationComponent>(currentEntityID.value()).RemoveAnimationFromComponent(currentAnimationID);
-				}
-			}
-
-			ImGui::SameLine();
-			if (ImGui::Button("Save"))
-			{
-				if (currentAnimation)
-				{
-					std::string filePath = currentAnimation->GetAnimationID();
-
-					// Serialize the current animation data to JSON
-					nlohmann::json serializedAnimation = currentAnimation->ToJson();
+					// Get the file path using the file explorer
+					std::string filePath = serializationManager.OpenFileExplorerRequestPath();
 
 					// Check if filePath is not empty
 					if (!filePath.empty())
 					{
+						// format filepath to be relative to the Assets folder
+						std::replace(filePath.begin(), filePath.end(), '\\', '/');
+						filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + "_Anim.json";
+
+						// Create a new animation
+						currentAnimationID = AnimationManager::CreateAnimation(filePath);
+
+						// Serialize the current animation data to JSON
+						nlohmann::json serializedAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID)->ToJson();
+
 						serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
-						std::cout << "Animation saved successfully to " << filePath << std::endl;
+						std::cout << "Animation created successfully at " << filePath << std::endl;
+
+						// Add animation component to entity
+						if (!EntityManager::GetInstance().Has(m_currentSelectedObject, EntityManager::GetInstance().GetComponentID<AnimationComponent>()))
+							EntityFactory::GetInstance().Assign(m_currentSelectedObject, { EntityManager::GetInstance().GetComponentID<AnimationComponent>() });
 					}
 					else
 					{
 						std::cerr << "No file path was selected for saving." << std::endl;
 					}
 				}
-			}
 
-			ImGui::SameLine();
-			if (ImGui::Button("Load"))
-			{
-				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
-
-				// Check if filePath is not empty
-				if (!filePath.empty())
+				// if current selected object has animation component, show rest of animation editor
+				if (EntityManager::GetInstance().Has<AnimationComponent>(m_currentSelectedObject))
 				{
-					nlohmann::json loadedAnimationData = serializationManager.LoadAnimationFromFile(filePath);
-
-					if (!loadedAnimationData.is_null())
+					if (currentAnimationID != "")
 					{
-						// create animation to load into
-						currentAnimationID = AnimationManager::CreateAnimation(loadedAnimationData["animationID"].get<std::string>());
-
 						currentAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID);
-						currentAnimation->Deserialize(loadedAnimationData);
+					}
 
-						// Update texture for preview
+					// Save animation
+					ImGui::SameLine();
+					if (ImGui::Button("Save"))
+					{
+						if (currentAnimation)
+						{
+							std::string filePath = currentAnimation->GetAnimationID();
+
+							// Serialize the current animation data to JSON
+							nlohmann::json serializedAnimation = currentAnimation->ToJson();
+
+							// Check if filePath is not empty
+							if (!filePath.empty())
+							{
+								serializationManager.SaveAnimationToFile(filePath, serializedAnimation);
+								std::cout << "Animation saved successfully to " << filePath << std::endl;
+							}
+							else
+							{
+								std::cerr << "No file path was selected for saving." << std::endl;
+							}
+						}
+					}
+
+					// Load animation
+					ImGui::SameLine();
+					if (ImGui::Button("Load"))
+					{
+						std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+						// Check if filePath is not empty
+						if (!filePath.empty())
+						{
+							nlohmann::json loadedAnimationData = serializationManager.LoadAnimationFromFile(filePath);
+
+							if (!loadedAnimationData.is_null())
+							{
+								// create animation to load into
+								currentAnimationID = AnimationManager::CreateAnimation(loadedAnimationData["animationID"].get<std::string>());
+
+								currentAnimation = ResourceManager::GetInstance().GetAnimation(currentAnimationID);
+								currentAnimation->Deserialize(loadedAnimationData);
+
+								// Update texture for preview
+								if (currentAnimation->GetSpriteSheetKey() != "")
+								{
+									texture = ResourceManager::GetInstance().GetTexture(currentAnimation->GetSpriteSheetKey());
+								}
+
+								// Set preview frame data to first frame of the loaded animation
+								previewCurrentFrameIndex = 0; // Reset to first frame
+								frameCount = currentAnimation->GetFrameCount();
+								frameRate = currentAnimation->GetFrameRate();
+								animationDuration = currentAnimation->GetAnimationDuration();
+								frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+								minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+										  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
+								maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+										  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+							}
+							else
+							{
+								std::cerr << "Failed to load animation data from file." << std::endl;
+							}
+						}
+						else
+						{
+							std::cerr << "No file path was selected for loading." << std::endl;
+						}
+					}
+
+					if (currentAnimation)
+					{
+						// Add animation to entity
+						if (ImGui::Button("Add Animation to object"))
+						{
+							EntityManager::GetInstance().Get<AnimationComponent>(m_currentSelectedObject).AddAnimationToComponent(currentAnimationID);
+						}
+
+						ImGui::SameLine();
+						if (ImGui::Button("Remove Animation from object"))
+						{
+							EntityManager::GetInstance().Get<AnimationComponent>(m_currentSelectedObject).RemoveAnimationFromComponent(currentAnimationID);
+						}
+					}
+
+					ImGui::Dummy(ImVec2(0, 5));
+					ImGui::SeparatorText("Sprite Sheet");
+
+					// if there's animation to preview
+					if (currentAnimation)
+					{
+						// get max frames
+						frameCount = currentAnimation->GetFrameCount() ? currentAnimation->GetFrameCount() - 1 : 0;
+						frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+						frameRate = currentAnimation->GetFrameRate();
+						animationDuration = currentAnimation->GetAnimationDuration();
+
+						// if animation has spritesheet, get the texture
 						if (currentAnimation->GetSpriteSheetKey() != "")
 						{
 							texture = ResourceManager::GetInstance().GetTexture(currentAnimation->GetSpriteSheetKey());
+
+							minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+									  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+							maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+									  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
 						}
-
-						// Set preview frame data to first frame of the loaded animation
-						previewCurrentFrameIndex = 0; // Reset to first frame
-						frameCount = currentAnimation->GetFrameCount();
-						frameRate = currentAnimation->GetFrameRate();
-						animationDuration = currentAnimation->GetAnimationDuration();
-						frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
-						minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
-								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
-						maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
-								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
-
-						//// debugging code- hans
-						//std::cout << "Loaded Animation Data:\n" << loadedAnimationData.dump(4) << std::endl;
 					}
 					else
 					{
-						std::cerr << "Failed to load animation data from file." << std::endl;
+						// reset preview animation
+						previewCurrentFrameTime = 0.f;
+						previewCurrentFrameIndex = 0;
 					}
+
+					// spritesheet selection for animation
+					// Vector of filepaths that have already been loaded - used to refer to later when needing to change the object's texture
+					std::vector<std::filesystem::path> filepaths;
+					int textureIndex{ 0 };
+					for (auto it = ResourceManager::GetInstance().Textures.begin(); it != ResourceManager::GetInstance().Textures.end(); ++it)
+					{
+						filepaths.emplace_back(it->first);
+					}
+
+					// Vector of the names of textures that have already been loaded
+					std::vector<std::string> loadedTextureKeys;
+					std::vector<const char*> textureList;
+
+					// get the keys of textures already loaded by the resource manager
+					for (auto const& r_filepath : filepaths)
+					{
+						loadedTextureKeys.push_back(r_filepath.stem().string());
+					}
+
+					for (auto const& r_filepath : filepaths)
+					{
+						if (currentAnimation)
+							if (r_filepath.string() == currentAnimation->GetSpriteSheetKey())
+								break;
+						++textureIndex;
+					}
+
+					for (auto const& r_str : loadedTextureKeys)
+					{
+						textureList.push_back(r_str.c_str());
+					}
+
+					// Displays the current spritesheet set on the animation
+					if (ImGui::BeginChild("currentTexture", ImVec2{ 116,116 }, true))
+					{
+						// if theres a spritesheet texture
+						if (texture)
+							ImGui::Image((void*)(intptr_t)texture->GetTextureID(), ImVec2{ 100, 100 }, minUV, maxUV);
+					}
+					ImGui::EndChild();
+					
+
+					// checks if mouse if hovering the texture preview - to use for asset browser drag n drop
+					if (ImGui::IsItemHovered())
+					{
+						m_animationToModify = std::make_pair<std::string, std::string const&>("Animation", currentAnimationID);
+					}
+
+					ImGui::SetNextItemWidth(300.f);
+					if (ImGui::Combo("Spritesheet", &textureIndex, textureList.data(), static_cast<int>(textureList.size())))
+					{
+						if (currentAnimation)
+							currentAnimation->SetSpriteSheetKey(filepaths[textureIndex].string());
+					}
+
+					// deprecated
+					//// Load texture through file explorer
+					//if (ImGui::Button("Load Spritesheet"))
+					//{
+					//	std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+
+					//	// Check if filePath is not empty
+					//	if (!filePath.empty())
+					//	{
+					//		std::replace(filePath.begin(), filePath.end(), '\\', '/');
+					//		filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".png";
+
+					//		ResourceManager::GetInstance().LoadTextureFromFile(filePath, filePath);
+					//	}
+					//	else
+					//	{
+					//		std::cerr << "No file path was selected for loading." << std::endl;
+					//	}
+					//}
+
+
+					if (ImGui::Button("Play"))
+					{
+						playAnimation = true;
+					}
+
+					ImGui::SameLine();
+					if (ImGui::Button("Stop"))
+					{
+						playAnimation = false;
+					}
+
+					// slider
+					ImGui::SameLine();
+					int frame{ static_cast<int>(previewCurrentFrameIndex) };
+					ImGui::SetNextItemWidth(300);
+
+					if (ImGui::SliderInt("##FrameSlider", &frame, 0, frameCount))
+					{
+						previewCurrentFrameIndex = static_cast<unsigned>(frame);
+					}
+
+					ImGui::SameLine();
+					ImGui::Text("%d:%.f", static_cast<int>(animationDuration), (animationDuration - static_cast<int>(animationDuration)) * 100.f);
+
+					if (currentAnimation)
+					{
+						// update preview animation
+						if (playAnimation)
+							currentAnimation->UpdateAnimationFrame(TimeManager::GetInstance().GetDeltaTime(), previewCurrentFrameTime, previewCurrentFrameIndex);
+
+						// update frame display parameters
+						frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+						minUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.x,
+								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.y };
+						maxUV = { currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_maxUV.x,
+								  currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_minUV.y };
+					}
+
+					ImGui::Dummy(ImVec2(0, 5));
+					ImGui::SeparatorText("Animation Properties");
+					ImGui::Columns(2, "TwoSections", true);
+					//ImGui::Text("Name");
+					//ImGui::Dummy(ImVec2(0, 5));
+					//ImGui::Text("looped");
+					//ImGui::Dummy(ImVec2(0, 5));
+					ImGui::Text("Total Sprites");
+					ImGui::Dummy(ImVec2(0, 5));
+					ImGui::Text("Frame Rate");
+					ImGui::Dummy(ImVec2(0, 5));
+					ImGui::Text("Frames Held");
+					ImGui::Dummy(ImVec2(0, 5));
+
+					ImGui::NextColumn();/*
+					static std::string text{};
+					ImGui::InputText("##name", &text);
+					static bool looped{};
+					ImGui::Checkbox("##looped", &looped);*/
+
+
+
+					if (currentAnimation)
+					{
+						totalSprites = currentAnimation->GetFrameCount();
+						animationDuration = currentAnimation->GetAnimationDuration();
+						frameRate = currentAnimation->GetFrameRate();
+					}
+
+					// edit total sprites in an animation
+					if (ImGui::InputInt("##totalSprites", &totalSprites))
+					{
+						totalSprites = totalSprites < 0 ? 0 : totalSprites;
+
+						playAnimation = false;
+						if (currentAnimation)
+							currentAnimation->CreateAnimationFrames(totalSprites);
+
+						// update frame duration
+						if (currentAnimation)
+						frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
+
+						// check if index is same size as total sprites
+						if (previewCurrentFrameIndex == static_cast<unsigned>(totalSprites))
+						{
+							// set index to last sprite if not zero
+							previewCurrentFrameIndex = totalSprites ? totalSprites - 1 : 0;
+						}
+					}
+
+					if (ImGui::InputInt("##frameRate", &frameRate))
+					{
+						if(currentAnimation)
+						currentAnimation->SetCurrentAnimationFrameRate(frameRate);
+					}
+
+					// get frames held
+					framesHeld = static_cast<int>(static_cast<float>(frameRate) * frameTime);
+
+					ImGui::InputInt("##framesHeld", &framesHeld);
+
+					// update animation frame data
+					if (currentAnimation)
+					{
+						currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, static_cast<unsigned>(framesHeld));
+					}
+
+					// save animation here
+
 				}
 				else
 				{
-					std::cerr << "No file path was selected for loading." << std::endl;
+					// if no animation component, show message
+					ImGui::Text("To begin animating Entity, create an animation");
 				}
 			}
-
-			ImGui::Dummy(ImVec2(0, 5));
-			ImGui::SeparatorText("Animation Properties");
-			ImGui::Columns(2, "TwoSections", true);
-			//ImGui::Text("Name");
-			//ImGui::Dummy(ImVec2(0, 5));
-			//ImGui::Text("looped");
-			//ImGui::Dummy(ImVec2(0, 5));
-			ImGui::Text("Total Sprites");
-			ImGui::Dummy(ImVec2(0, 5));
-			ImGui::Text("Frame Rate");
-			ImGui::Dummy(ImVec2(0, 5));
-			ImGui::Text("Frames Held");
-			ImGui::Dummy(ImVec2(0, 5));
-
-			ImGui::NextColumn();/*
-			static std::string text{};
-			ImGui::InputText("##name", &text);
-			static bool looped{};
-			ImGui::Checkbox("##looped", &looped);*/
-
-
-
-			if (currentAnimation)
+			else
 			{
-				totalSprites = currentAnimation->GetFrameCount();
-				animationDuration = currentAnimation->GetAnimationDuration();
-				frameRate = currentAnimation->GetFrameRate();
+				ImGui::Text("No entity selected");
+				
 			}
-
-			// edit total sprites in an animation
-			if (ImGui::InputInt("##totalSprites", &totalSprites))
-			{
-				totalSprites = totalSprites < 0 ? 0 : totalSprites;
-
-				playAnimation = false;
-				if(currentAnimation)
-					currentAnimation->CreateAnimationFrames(totalSprites);
-
-				// update frame duration
-				frameTime = currentAnimation->GetCurrentAnimationFrame(previewCurrentFrameIndex).m_duration;
-
-				// check if index is same size as total sprites
-				if (previewCurrentFrameIndex == static_cast<unsigned>(totalSprites))
-				{
-					// set index to last sprite if not zero
-					previewCurrentFrameIndex = totalSprites ? totalSprites - 1 : 0;
-				}
-			}
-
-			if (ImGui::InputInt("##frameRate", &frameRate))
-			{
-				currentAnimation->SetCurrentAnimationFrameRate(frameRate);
-			}
-
-			// get frames held
-			framesHeld = static_cast<int>(static_cast<float>(frameRate) * frameTime);
-
-			ImGui::InputInt("##framesHeld", &framesHeld);
-
-			// update animation frame data
-			if (currentAnimation)
-			{
-				currentAnimation->SetCurrentAnimationFrameData(previewCurrentFrameIndex, static_cast<unsigned>(framesHeld));
-			}
-
-			// save animation here
 
 			ImGui::End(); //imgui close
 		}
@@ -4466,6 +4485,7 @@ namespace PE {
 					if (ToSavePopup)
 					{
 						float size = ImGui::CalcTextSize("Do You Want To Save Your Current Scene?").x + style.FramePadding.x * 2.0f;
+						m_currentSelectedObject = -1;
 						ImGui::SetNextWindowSize(ImVec2(size, 70));
 						ImGui::OpenPopup("To Save");
 					}

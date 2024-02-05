@@ -53,6 +53,11 @@ namespace PE
 		m_animationFrames.emplace_back(AnimationFrame{ r_minUV, r_maxUV, duration });
 	}
 
+	void Animation::AddFrame(std::string textureKey, float duration)
+	{
+		m_animationFrames.emplace_back(AnimationFrame{ vec2{0.f, 0.f}, vec2{1.f, 1.f}, duration, textureKey });
+	}
+
 	void Animation::UpdateAnimationFrame(float deltaTime, float& r_currentFrameTime, unsigned& r_currentFrameIndex)
 	{
 		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE)
@@ -137,6 +142,18 @@ namespace PE
 		{
 			m_animationFrames.at(currentFrameIndex).m_minUV = r_minUV;
 			m_animationFrames.at(currentFrameIndex).m_maxUV = r_maxUV;
+		}
+		catch (std::out_of_range const&)
+		{
+			return;
+		}
+	}
+
+	void Animation::SetCurrentAnimationFrameData(unsigned currentFrameIndex, std::string textureKey)
+	{
+		try
+		{
+			m_animationFrames.at(currentFrameIndex).m_textureKey = textureKey;
 		}
 		catch (std::out_of_range const&)
 		{
@@ -233,6 +250,7 @@ namespace PE
 		j["minUV"] = { m_minUV.x, m_minUV.y };
 		j["maxUV"] = { m_maxUV.x, m_maxUV.y };
 		j["duration"] = m_duration;
+		j["textureKey"] = m_textureKey;
 		return j;
 	}
 
@@ -244,6 +262,7 @@ namespace PE
 		j["spriteSheetKey"] = m_spriteSheetKey;
 		j["totalSprites"] = m_totalSprites;
 		j["frameRate"] = m_frameRate;
+		j["isSpriteSheet"] = m_isSpriteSheet;
 
 		// Serialize the animation frames
 		for (const auto& frame : m_animationFrames)
@@ -279,6 +298,9 @@ namespace PE
 		m_totalSprites = r_j["totalSprites"].get<unsigned>();
 		m_frameRate = r_j["frameRate"].get<unsigned>();
 
+		if(r_j.contains("isSpriteSheet"))
+		m_isSpriteSheet = r_j["isSpriteSheet"].get<bool>();
+
 		if(r_j.contains("animationFrames"))
 		for (const auto& frameJson : r_j["animationFrames"])
 		{
@@ -288,8 +310,19 @@ namespace PE
 			frame.m_maxUV.x = frameJson["maxUV"][0].get<float>(); // Assign x
 			frame.m_maxUV.y = frameJson["maxUV"][1].get<float>(); // Assign y
 			frame.m_duration = frameJson["duration"].get<float>();
+
+			if (frameJson.contains("textureKey"))
+			{
+				frame.m_textureKey = frameJson["textureKey"].get<std::string>();
+				ResourceManager::GetInstance().AddTextureKeyToLoad(frame.m_textureKey);
+			}
+
 			m_animationFrames.push_back(frame);
 		}
+
+		// load sprite sheet for animation
+		if(m_spriteSheetKey != "")
+		ResourceManager::GetInstance().AddTextureKeyToLoad(m_spriteSheetKey);
 
 		return *this;
 	}
@@ -316,6 +349,8 @@ namespace PE
 				// update animation and get current frame
 				p_currentFrame = UpdateAnimation(id, deltaTime);
 
+				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
 				// update entity based on frame data
 				// in the future probably check for bools in animation component, then update data accordingly
 				// check if theres animation
@@ -323,10 +358,17 @@ namespace PE
 				{
 					if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
 					{
-
-						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(GetAnimationSpriteSheetKey(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()));
-						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
-						EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+						// spritesheet animation
+						if (p_animation->IsSpriteSheet())
+						{
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+						}
+						else // texture key animation
+						{
+							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
+						}
 					}
 				}
 			}

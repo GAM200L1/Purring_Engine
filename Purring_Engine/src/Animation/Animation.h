@@ -156,11 +156,12 @@ namespace PE
 	*************************************************************************************/
 	struct AnimationFrame
 	{
-		// un-comment if not using spritesheet
-		//std::string textureKey;
 		vec2 m_minUV{ 0, 0 };
 		vec2 m_maxUV{ 1, 1 };
 		float m_duration{ 0.f };
+
+		// un-comment if not using spritesheet
+		std::string m_textureKey;
 
 		/*!***********************************************************************************
 		 \brief Serializes the data attached to this frame.
@@ -204,6 +205,14 @@ namespace PE
 		 \param[in] duration Duration this frame will be displayed in seconds.
 		*************************************************************************************/
 		void AddFrame(vec2 const& r_minUV, vec2 const& r_maxUV,  float duration);
+
+		/*!***********************************************************************************
+		 \brief Add a new frame to the animation sequence.
+
+		 \param[in] textureKey Identifier for the texture to display in this frame.
+		 \param[in] duration Duration this frame will be displayed in seconds.
+		*************************************************************************************/
+		void AddFrame(std::string textureKey, float duration);
 
 		/*!***********************************************************************************
 		 \brief Update the animation based on elapsed time.
@@ -253,6 +262,14 @@ namespace PE
 		 \param[in] r_maxUV maxUV coords for the texture to display in this frame.
 		*************************************************************************************/
 		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, vec2 const& r_minUV, vec2 const& r_maxUV);
+
+		/*!***********************************************************************************
+		 \brief Set the texture key of the animation for the current frame.
+
+		 \param[in] currentFrameIndex Index of the current frame.
+		 \param[in] textureKey Identifier for the texture to display in this frame.
+		*************************************************************************************/
+		void SetCurrentAnimationFrameData(unsigned currentFrameIndex, std::string textureKey);
 
 		/*!***********************************************************************************
 		 \brief Set the frame rate of the animation
@@ -311,6 +328,13 @@ namespace PE
 		float GetAnimationFrameTime();
 
 		/*!***********************************************************************************
+		 \brief Check if animation is using spritesheet.
+
+		 \return float
+		*************************************************************************************/
+		inline bool IsSpriteSheet() const { return m_isSpriteSheet; }
+
+		/*!***********************************************************************************
 		 \brief Load animation from file.
 
 		 \param[in] r_filePath File path of animation.
@@ -339,9 +363,10 @@ namespace PE
 	private:
 		std::string m_animationID;
 		std::vector<AnimationFrame> m_animationFrames;
-		std::string m_spriteSheetKey;
+		std::string m_spriteSheetKey; // if using spritesheet
 		unsigned m_totalSprites;
 		unsigned m_frameRate;
+		bool m_isSpriteSheet{ true };
 
 		AnimationFrame m_emptyFrame{};
 	};

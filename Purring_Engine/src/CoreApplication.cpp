@@ -356,6 +356,9 @@ void PE::CoreApplication::Run()
 
     SerializationManager serializationManager;
 
+    // Load default assets
+    ResourceManager::GetInstance().LoadDefaultAssets();
+
     // Set start scene
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
