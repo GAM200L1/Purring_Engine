@@ -205,8 +205,8 @@ namespace PE
 
 				m_scriptData[id].p_stateManager = new StateMachine{};
 				//m_scriptData[id].p_stateManager->ChangeState(new RatIdle_v2_0(RatType::PATROL), id);]
-				//m_scriptData[id].p_stateManager->ChangeState(new RatMovement_v2_0(), id);
-				m_scriptData[id].p_stateManager->ChangeState(new RatAttack_v2_0(), id);
+				m_scriptData[id].p_stateManager->ChangeState(new RatMovement_v2_0(), id);
+				//m_scriptData[id].p_stateManager->ChangeState(new RatAttack_v2_0(), id);
 
 			}
 		}

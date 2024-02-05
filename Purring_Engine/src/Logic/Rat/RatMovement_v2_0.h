@@ -23,6 +23,8 @@ namespace PE
 
         virtual std::string_view GetName() { return "Movement_v2_0"; }
 
+        void RatHitCat(const Event<CollisionEvents>& r_TE);
+
     private:
         void CalculateMovement(EntityID id, float deltaTime);
         bool CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition);
@@ -34,6 +36,8 @@ namespace PE
 
         float minDistanceToTarget{ 1.0f };
 
+        int m_collisionEventListener{};
+        int m_collisionStayEventListener{};
 
     };
 }

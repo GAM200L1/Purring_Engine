@@ -1,6 +1,11 @@
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "Logic/Rat/RatMovement_v2_0.h"
+#include "Logic/Rat/RatAttack_v2_0.h"
+
+
+#include "Events/EventHandler.h"
+
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
 
@@ -25,6 +30,10 @@ namespace PE
             << ", Initial directionFromRatToPlayerCat: "
             << p_data->directionFromRatToPlayerCat.x << ", "
             << p_data->directionFromRatToPlayerCat.y << std::endl;
+
+        m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovement_v2_0::RatHitCat, this);
+        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovement_v2_0::RatHitCat, this);
+        p_data->attacking = (p_data->ratPlayerDistance > 0.f) ? true : false;
     }
 
     void RatMovement_v2_0::StateUpdate(EntityID id, float deltaTime)
@@ -44,6 +53,13 @@ namespace PE
     {
         std::cout << "RatMovement_v2_0::StateExit - Rat ID: " << id << " is exiting the movement state." << std::endl;
         p_data->ratPlayerDistance = 0.f;
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+    }
+
+    void RatMovement_v2_0::RatHitCat(const Event<CollisionEvents>& r_TE)
+    {
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->RatHitCat(p_data->myID, r_TE);
     }
 
     void RatMovement_v2_0::CalculateMovement(EntityID id, float deltaTime)

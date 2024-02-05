@@ -20,10 +20,6 @@ namespace PE
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::RatHitCat, this);
         m_delay = p_data->attackDelay;
 
-        //hasAttacked = false;
-
-        //m_collisionEnterListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnter, this);
-        //m_collisionExitListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
         std::cout << "RatAttack_v2_0::StateEnter - Rat ID: " << id << " has entered the attack state." << std::endl;
     }
 
@@ -44,11 +40,11 @@ namespace PE
         else if (p_data->attacking)
         {
             RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, true);
-            if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
-            {
-                RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
-                p_data->finishedExecution = true;
-            }
+            //if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
+            //{
+            //    RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
+            //    p_data->finishedExecution = true;
+            //}
 
             if (!attacksoundonce)
             {
@@ -77,8 +73,6 @@ namespace PE
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
 
-        //RatScript::ToggleEntity(p_data->attackTelegraphEntityID, false);
-        //EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(true);
         p_data->hitCat = false;
 
     }
