@@ -25,6 +25,9 @@ namespace PE
 
         void RatHitCat(const Event<CollisionEvents>& r_TE);
 
+        void OnTriggerEnterForAttack(const Event<CollisionEvents>& r_TE);
+        void OnTriggerStayForAttack(const Event<CollisionEvents>& r_TE);
+
         // Getter for the state name with version
         virtual std::string_view GetName() { return "Attack_v2_0"; }
 
@@ -33,8 +36,8 @@ namespace PE
 
         // Attack state specific variables and data
         RatScript_v2_0_Data* p_data;
-        int m_collisionEventListener{};
-        int m_collisionStayEventListener{};
+        int m_attackEventListener{};
+        int m_attackStayEventListener{};
         float m_delay{};
 
         bool attacksoundonce{};

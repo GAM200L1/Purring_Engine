@@ -170,8 +170,9 @@ namespace PE
 			m_scriptData[id].shouldChangeState = true;
 			m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
 			m_scriptData[id].delaySet = true;
-		}
 
+			std::cout << "State change requested for Rat ID: " << id << " with delay: " << stateChangeDelay << " seconds." << std::endl;
+		}
 
 		void RatScript_v2_0::CatEntered(EntityID const id, EntityID const catID)
 		{
