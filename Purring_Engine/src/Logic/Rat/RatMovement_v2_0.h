@@ -19,11 +19,9 @@ namespace PE
         // Override State class functions
         virtual void StateEnter(EntityID id) override;
         virtual void StateUpdate(EntityID id, float deltaTime) override;
-        virtual void StateCleanUp();
         virtual void StateExit(EntityID id) override;
 
         virtual std::string_view GetName() { return "Movement_v2_0"; }
-        bool IsWithinAttackRange(EntityID ratID, const vec2& catPosition);
 
         void RatHitCat(const Event<CollisionEvents>& r_TE);
 

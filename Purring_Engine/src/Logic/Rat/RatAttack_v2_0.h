@@ -20,7 +20,6 @@ namespace PE
 
         virtual void StateEnter(EntityID id) override;
         virtual void StateUpdate(EntityID id, float deltaTime) override;
-        virtual void StateCleanUp();
         virtual void StateExit(EntityID id) override;
 
         void RatHitCat(const Event<CollisionEvents>& r_TE);

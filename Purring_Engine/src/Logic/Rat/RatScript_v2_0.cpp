@@ -51,24 +51,15 @@ namespace PE
 
 		void RatScript_v2_0::Update(EntityID id, float deltaTime)
 		{
-			auto& ratData = m_scriptData[id];
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-			// Update the rat's state machine
-			ratData.p_stateManager->Update(id, deltaTime);
+			CreateCheckStateManager(id);
+			it->second.p_stateManager->Update(id, deltaTime);
 
-			// Clean up any cats that have exited the detection radius
-			for (auto catID : ratData.catsExitedDetectionRadius) {
-				ratData.catsInDetectionRadius.erase(catID);
-			}
-			ratData.catsExitedDetectionRadius.clear();
-
-			// If no cats are in the detection radius, ensure the rat is not in attack mode
-			if (ratData.catsInDetectionRadius.empty() && ratData.attacking) {
-				ratData.attacking = false;
-				ratData.p_stateManager->ChangeState(new RatMovement_v2_0(), id);
-			}
+			// Clear cat exited container
+			it->second.catsExitedDetectionRadius.clear();
 		}
-
 
 
 		void RatScript_v2_0::OnAttach(EntityID id)
@@ -172,41 +163,38 @@ namespace PE
 			return rttr::instance(m_scriptData.at(id));
 		}
 
-		void RatScript_v2_0::TriggerStateChange(EntityID id, float const stateChangeDelay, State* newState)
+		void RatScript_v2_0::TriggerStateChange(EntityID id, float const stateChangeDelay)
 		{
 			if (m_scriptData[id].delaySet) { return; }
 
 			m_scriptData[id].shouldChangeState = true;
 			m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
 			m_scriptData[id].delaySet = true;
-			if (newState != nullptr) {
-				m_scriptData[id].p_stateManager->ChangeState(newState, id);
-			}
 		}
 
-		void RatScript_v2_0::CatEntered(EntityID ratID, EntityID catID)
+
+		void RatScript_v2_0::CatEntered(EntityID const id, EntityID const catID)
 		{
-			auto& ratData = m_scriptData[ratID];
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-			// If the cat is within detection radius and rat is not already attacking
-			if (!ratData.attacking) {
-				ratData.catsInDetectionRadius.insert(catID); // Add the cat to the set of detected cats
-				ratData.attacking = true; // Set the rat to attack mode
-				ratData.p_stateManager->ChangeState(new RatAttack_v2_0(), ratID); // Change to attack state
-			}
+			// Store the cat in the container
+			it->second.catsInDetectionRadius.emplace(catID);
 		}
 
-		void RatScript_v2_0::CatExited(EntityID ratID, EntityID catID)
+
+		void RatScript_v2_0::CatExited(EntityID const id, EntityID const catID)
 		{
-			auto& ratData = m_scriptData[ratID];
-			ratData.catsExitedDetectionRadius.insert(catID); // Add the cat to the set of cats that exited
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
 
-			// If no more cats are within the detection radius
-			if (ratData.catsInDetectionRadius.empty()) {
-				ratData.attacking = false; // Set the rat out of attack mode
-				ratData.p_stateManager->ChangeState(new RatMovement_v2_0(), ratID); // Change back to movement/idle state
-			}
+			// Store the cat in the container
+			it->second.catsExitedDetectionRadius.emplace(catID);
+
+			// Remove the cats in the exit container from the enter container
+			it->second.catsInDetectionRadius.erase(catID);
 		}
+
 
 		void RatScript_v2_0::CreateCheckStateManager(EntityID id)
 		{
