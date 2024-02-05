@@ -25,7 +25,7 @@
 #pragma once
 #include "Script.h"
 #include "StateManager.h"
-#include "GameStateManager.h"
+//#include "GameStateManager.h"
 #include "Events/EventHandler.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"

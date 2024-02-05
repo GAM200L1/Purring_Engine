@@ -23,7 +23,7 @@ namespace PE
 {
 	enum class GameStates_v2_0
 	{
-		PLANNING, DEPLOYMENT, EXECUTE, PAUSE, WIN, LOSE, INACTIVE
+		PLANNING, ATTACK, DEPLOYMENT, EXECUTE, PAUSE, WIN, LOSE, INACTIVE
 	};
 
 	struct GameStateController_v2_0Data

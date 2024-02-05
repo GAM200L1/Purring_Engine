@@ -28,7 +28,7 @@
 #include "CatAttackScript.h"
 #include "CatMovementScript.h"
 #include "RatScript.h"
-
+#include "GameStateController_v2_0.h"
 namespace PE
 {
 	// ----- CAT ATTACK PLAN STATE ----- //
@@ -61,8 +61,10 @@ namespace PE
 	
 	void CatAttackPLAN::StateUpdate(EntityID id, float deltaTime)
 	{
+		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0,id);
+
 		// Skip this if it's the pause state
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::PAUSE) { return; }
+		if (gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 		
 	  // Don't bother if not the main cat and not following the main cat
 		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
@@ -83,7 +85,7 @@ namespace PE
 		}
 		
 		// if in attack planning phase, allow player to select a cat and plan that cats attacks
-		if (GameStateManager::GetInstance().GetGameState() == GameStates::ATTACK)
+		if (gsc->currentState == GameStates_v2_0::PAUSE)
 		{
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 

@@ -211,6 +211,11 @@ namespace PE
 			prevState = currentState;
 			break;
 		}
+		case GameStates_v2_0::ATTACK:
+		{
+			UpdateTurnCounter("Plan Attack");
+			break;
+		}
 		case GameStates_v2_0::EXECUTE: // execute state, fade out HUD and fade in foliage
 		{
 
@@ -684,6 +689,12 @@ namespace PE
 	{
 		if (currentState == GameStates_v2_0::PLANNING)
 		{
+			SetGameState(GameStates_v2_0::ATTACK);
+			PlayClickAudio();
+			PlayPhaseChangeAudio();
+		}
+		else if (currentState == GameStates_v2_0::ATTACK)
+		{
 			SetGameState(GameStates_v2_0::EXECUTE);
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
@@ -803,7 +814,7 @@ namespace PE
 	{
 		ActiveObject(m_scriptData[id].ExecuteCanvas);
 
-		if (prevState == GameStates_v2_0::PLANNING)
+		if (prevState == GameStates_v2_0::PLANNING || prevState == GameStates_v2_0::ATTACK)
 		{
 			m_timeSinceEnteredState = 0;
 			m_timeSinceExitedState = m_UIFadeTimer;

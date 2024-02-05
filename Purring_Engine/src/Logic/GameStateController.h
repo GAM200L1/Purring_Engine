@@ -26,7 +26,7 @@
 #pragma once
 #include "Script.h"
 #include "Data/SerializationManager.h"
-#include "GameStateManager.h"
+//#include "GameStateManager.h"
 
 namespace PE
 {
