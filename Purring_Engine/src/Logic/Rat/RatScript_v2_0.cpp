@@ -16,13 +16,16 @@
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "RatTempSTATE_v2_0.h"
-#include "../Rat/RatIdle_v2_0.h"
-#include "../Rat/RatDetectionScript_v2_0.h"
 
 #include "../Physics/RigidBody.h"
 #include "../Physics/Colliders.h"
 #include "../Data/SerializationManager.h"
 #include "../Hierarchy/HierarchyManager.h"
+
+#include "../Rat/RatIdle_v2_0.h"
+#include "../Rat/RatMovement_v2_0.h"
+#include "../Rat/RatDetectionScript_v2_0.h"
+
 
 namespace PE
 {
@@ -157,6 +160,15 @@ namespace PE
 		rttr::instance RatScript_v2_0::GetScriptData(EntityID id)
 		{
 			return rttr::instance(m_scriptData.at(id));
+		}
+
+		void RatScript_v2_0::TriggerStateChange(EntityID id, float const stateChangeDelay)
+		{
+			if (m_scriptData[id].delaySet) { return; }
+
+			m_scriptData[id].shouldChangeState = true;
+			m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
+			m_scriptData[id].delaySet = true;
 		}
 
 

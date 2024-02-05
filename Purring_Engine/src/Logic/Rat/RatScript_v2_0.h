@@ -73,7 +73,7 @@ namespace PE
 		std::set<EntityID> catsInDetectionRadius;
 		std::set<EntityID> catsExitedDetectionRadius;
 
-		float movementSpeed{ 100.f };
+		float movementSpeed{ 200.f };
 
 		// Hunting and returning
 		int maxHuntTurns{ 2 }; // Number of turn the rat will hunt before returning to their original position
@@ -200,6 +200,8 @@ namespace PE
 		 \return rttr::instance Instance of the script to get the data from
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
+
+		void TriggerStateChange(EntityID id, float const stateChangeDelay);
 
 		// --- COLLISION DETECTION --- // 
 
