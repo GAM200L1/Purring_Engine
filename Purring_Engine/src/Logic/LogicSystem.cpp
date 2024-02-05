@@ -44,6 +44,9 @@
 #include "Rat/RatController_v2_0.h"
 #include "UI/HealthBarScript_v2_0.h"
 
+#include "Cat/CatScript_v2_0.h"
+#include "Cat/CatController_v2_0.h"
+
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
@@ -77,6 +80,9 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(RatScript_v2_0);
 	REGISTER_SCRIPT(RatController_v2_0);
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
+
+	REGISTER_SCRIPT(CatScript_v2_0);
+	REGISTER_SCRIPT(CatController_v2_0);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

@@ -24,15 +24,9 @@
 
 namespace PE
 {
-	EntityID CatController_v2_0::mainInstance{};
 
 	CatController_v2_0::~CatController_v2_0()
 	{
-		for (auto& [key, value] : m_scriptData)
-		{
-			value.cacheCats.clear();
-		}
-		m_currentCats.clear();
 	}
 
 	void CatController_v2_0::Init(EntityID id)
@@ -40,18 +34,26 @@ namespace PE
 		for (EntityID catID : SceneView<ScriptComponent>())
 		{
 			auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
-			if (IsCat(catID))
+			//if (IsCat(catID))
+			for (auto &[scriptname,state] : r_scripts)
 			{
-				std::pair<EntityID, EnumCatType> pair{ catID, *GETSCRIPTDATA(CatScript_v2_0, catID).catType };
-				m_scriptData[mainInstance].cacheCats.push_back(pair);
-				m_currentCats.push_back(pair);
+				if (scriptname == "CatScript_v2_0")
+				{
+					//std::pair<EntityID, EnumCatType> pair{ catID, GREYCAT }; //*GETSCRIPTDATA(CatScript_v2_0, catID).catType };
+					std::pair<EntityID, EnumCatType> pair{ catID, *GETSCRIPTDATA(CatScript_v2_0, catID).catType };	
+					m_cacheCats.push_back(pair);
+					m_currentCats.push_back(pair);
+
+
+				}
+
 			}
 		}
 	}
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
 	{
-		for (auto a : m_scriptData[mainInstance].cacheCats)
+		for (auto a : m_cacheCats)
 			std::cout << a.first << '\n';
 	}
 
@@ -76,7 +78,7 @@ namespace PE
 	// getters
 	void CatController_v2_0::CacheCurrentCats()
 	{
-		m_scriptData[mainInstance].cacheCats = m_currentCats;
+		m_cacheCats = m_currentCats;
 	}
 
 	int CatController_v2_0::GetCurrentMovementEnergy(EntityID catID)
@@ -91,7 +93,7 @@ namespace PE
 	
 	std::vector<std::pair<EntityID, EnumCatType>> CatController_v2_0::GetCachedCats(EntityID id)
 	{
-		return m_scriptData[mainInstance].cacheCats;
+		return m_cacheCats;
 	}
 	
 	std::vector<std::pair<EntityID, EnumCatType>> CatController_v2_0::GetCurrentCats(EntityID id)
