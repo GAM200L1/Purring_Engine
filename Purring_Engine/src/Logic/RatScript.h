@@ -23,6 +23,14 @@
 
 namespace PE
 {
+	enum class EnumOldRatType
+	{
+		GUTTER,
+		BRAWLER,
+		SNIPER,
+		HERALD
+	};
+
 	struct RatScriptData
 	{
 		// reference entities
@@ -59,6 +67,8 @@ namespace PE
 		bool finishedExecution{ false }; // bool to check if rat has finished its movemen and attack executions
 
 		std::map<std::string, std::string> animationStates;
+
+		EnumOldRatType ratType{ EnumOldRatType::GUTTER };
 	};
 
 	class RatScript : public Script

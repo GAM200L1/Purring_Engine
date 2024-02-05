@@ -24,7 +24,6 @@
 #include "Physics/PhysicsManager.h"
 #include "Graphics/RendererManager.h"
 #include "GUISystem.h"
-#include "GameStateManager.h"
 #include "Input/InputSystem.h"
 #include "PauseManager.h"
 #ifndef GAMERELEASE
