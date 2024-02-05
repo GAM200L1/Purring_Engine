@@ -31,6 +31,10 @@
 #include <Physics/CollisionManager.h>
 #include "ResourceManager/ResourceManager.h"
 #include "Rat/RatController_v2_0.h"
+
+#include "RatScript.h"
+#include "CatScript.h"
+#include "DemoController.h"
 namespace PE
 {
 
@@ -111,19 +115,15 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
 
-
-		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].PauseMenuCanvas).children)
-		{
-			if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "Pawsed Text Object")
-			{
-				//std::cout << "texture" << EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).GetTextureKey() << std::endl;
-				//EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("GamePawsed_Text_1024x256.png"));
-			}
-
-		}
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
+		if (showingCatPortrait)
+		{
+			CatScript* cat = GETSCRIPTINSTANCEPOINTER(CatScript);
+			SetPortraitInformation("UnitPortrait_CatNameFrame_Meowsalot_239x82.png", cat->GetCurrentEnergyLevel(), cat->GetMaximumEnergyLevel(), 0);
+		}
+
 		if (m_isTransitioning) // if running the transitioning bgm, this is detached from states so it can happen anytime
 		{
 			TransitionPanelFade(id, deltaTime, m_isTransitioningIn);
@@ -208,12 +208,34 @@ namespace PE
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
 
 			UpdateTurnCounter("Plan Movement");
+			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].HUDCanvas).children)
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndPlanningText")
+				{
+					if (EntityManager::GetInstance().Has<TextComponent>(id2))
+					{
+						EntityManager::GetInstance().Get<TextComponent>(id2).SetText("End Movement");
+					}
+					continue;
+				}
+			}
 			prevState = currentState;
 			break;
 		}
 		case GameStates_v2_0::ATTACK:
 		{
 			UpdateTurnCounter("Plan Attack");
+			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].HUDCanvas).children)
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "EndPlanningText")
+				{
+					if (EntityManager::GetInstance().Has<TextComponent>(id2))
+					{
+						EntityManager::GetInstance().Get<TextComponent>(id2).SetText("End Attack");
+					}
+					continue;
+				}
+			}
 			break;
 		}
 		case GameStates_v2_0::EXECUTE: // execute state, fade out HUD and fade in foliage
@@ -230,6 +252,8 @@ namespace PE
 
 			ExecutionStateHUD(id, deltaTime);
 			UpdateTurnCounter("Executing...");
+
+				ExecutionToMovement();
 			prevState = currentState;
 			break;
 		}
@@ -377,12 +401,12 @@ namespace PE
 
 		if (MBPE.button == GLFW_MOUSE_BUTTON_LEFT)
 		{
-			if (currentState == GameStates_v2_0::PLANNING)
+			if (currentState == GameStates_v2_0::PLANNING || currentState == GameStates_v2_0::ATTACK)
 			{
-				RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
+				DemoController* demoController = GETSCRIPTINSTANCEPOINTER(DemoController);
+				demoController->GetRats(demoController->mainInstance);
 
-				//for rats
-				for (auto[RatID,RatType] : RatManager->GetRats(RatManager->mainInstance))
+				for (auto [RatID, RatType] : demoController->GetRats(demoController->mainInstance))
 				{
 					if (EntityManager::GetInstance().Has<Transform>(RatID) && EntityManager::GetInstance().Has<Collider>(RatID))
 					{
@@ -403,26 +427,26 @@ namespace PE
 							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
 							//add a switch statement here
 							//need specific texture
-							
+
 							//set rat portrait active
 							ActiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
 							switch (RatType)
 							{
-							case 0: //GUTTER
+							case PE::EnumOldRatType::GUTTER: //GUTTER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
-								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png",0,3,1);
+								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", 0, 3, 1);
 
 								break;
-							case 1: //BRAWLER
+							case PE::EnumOldRatType::BRAWLER: //BRAWLER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Brawler_256px.png"));
-								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png",0,3,1);
+								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", 0, 3, 1);
 								break;
-							case 2: //SNIPER
+							case PE::EnumOldRatType::SNIPER: //SNIPER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Sniper_256px.png"));
 								break;
-							//case 3: //HERALD
-								//break;
+								//case 3: //HERALD
+									//break;
 							}
 							return;
 						}
@@ -447,94 +471,47 @@ namespace PE
 				}
 
 				//repeat for cats
-				//for (auto [CatID, CatType] : CatManager->GetCats(CatManager->mainInstance))
-				//{
-				//	if (EntityManager::GetInstance().Has<Transform>(CatID) && EntityManager::GetInstance().Has<Collider>(CatID))
-				//	{
-				//		//get mouse position
-				//		vec2 cursorPosition{};
-				//		GetMouseCurrentPosition(cursorPosition);
-				//		//Get collider of the rat
-				//		CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(CatID).colliderVariant);
-				//		//debug
-				//		std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
-				//		// Check if the rat/cat has been clicked
-				//		if (PointCollision(col, cursorPosition))
-				//		{
-				//			//debug
-				//			std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
-				//			//add a switch statement here
-				//			//need specific texture
-				//			//set cat portrait active
-				//			ActiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
-				//			DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
-				//			switch (CatType)
-				//			{
-				//			}
-				//			return;
-				//		}
-				//		else
-				//		{
-				//			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
-				//			//set other portrait stuff inactive
-				//			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
-				//			{
-				//				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPotraitName")
-				//				{
-				//					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
-				//					{
-				//						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_NameFrame_Cat_239x82.png"));
-				//					}
-				//					break;
-				//				}
-				//			}
-				//			DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
-				//		}
-				//	}
-				//}
-
-				//for cats
-				for (auto id : m_scriptData[m_currentGameStateControllerID].clicklisttest)
+				for (auto [CatID, CatType] : demoController->GetCats(demoController->mainInstance))
 				{
-					if (EntityManager::GetInstance().Has<Transform>(id) && EntityManager::GetInstance().Has<Collider>(id))
+					if (EntityManager::GetInstance().Has<Transform>(CatID) && EntityManager::GetInstance().Has<Collider>(CatID))
 					{
+						//get mouse position
 						vec2 cursorPosition{};
-						InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().p_currWindow, cursorPosition.x, cursorPosition.y);
-						cursorPosition = GETCAMERAMANAGER()->GetWindowToWorldPosition(cursorPosition.x, cursorPosition.y);
-
+						GetMouseCurrentPosition(cursorPosition);
+						//Get collider of the rat
+						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(CatID).colliderVariant);
+						//debug
 						std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
-
 						// Check if the rat/cat has been clicked
-						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 						if (PointCollision(col, cursorPosition))
 						{
-
-							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(id).name << std::endl;
+							//debug
+							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
 							//add a switch statement here
 							//need specific texture
-							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
-							//set other prtrait stuff active and set right texture
+							//set cat portrait active
 							ActiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
-							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
+							DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
+							showingCatPortrait = true;
+							currentPortraitCat = CatID;
+							switch (CatType)
 							{
-								if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPortraitName")
-								{
-									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
-									{
-										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_CatNameFrame_OrangeCat_239x82.png"));
-									}
-									break;
-								}
+							case PE::EnumCatTypes::MEOWSALOT: //GUTTER
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
+								CatScript* cat = GETSCRIPTINSTANCEPOINTER(CatScript);
+								SetPortraitInformation("UnitPortrait_CatNameFrame_Meowsalot_239x82.png",cat->GetCurrentEnergyLevel(), cat->GetMaximumEnergyLevel(), 0);
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
 							}
 							return;
 						}
 						else
 						{
+							showingCatPortrait = false;
 							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
 							//set other portrait stuff inactive
 							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
 							{
-								if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPortraitName")
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPotraitName")
 								{
 									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
 									{
@@ -547,6 +524,64 @@ namespace PE
 						}
 					}
 				}
+
+				////for cats
+				//for (auto id : m_scriptData[m_currentGameStateControllerID].clicklisttest)
+				//{
+				//	if (EntityManager::GetInstance().Has<Transform>(id) && EntityManager::GetInstance().Has<Collider>(id))
+				//	{
+				//		vec2 cursorPosition{};
+				//		InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().p_currWindow, cursorPosition.x, cursorPosition.y);
+				//		cursorPosition = GETCAMERAMANAGER()->GetWindowToWorldPosition(cursorPosition.x, cursorPosition.y);
+				//
+				//		std::cout << cursorPosition.x << " " << cursorPosition.y << std::endl;
+				//
+				//		// Check if the rat/cat has been clicked
+				//		if (!EntityManager::GetInstance().Has<Collider>(id))
+				//			break;
+				//
+				//		CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+				//		if (PointCollision(col, cursorPosition))
+				//		{
+				//
+				//			std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(id).name << std::endl;
+				//			//add a switch statement here
+				//			//need specific texture
+				//			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
+				//			//set other prtrait stuff active and set right texture
+				//			ActiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
+				//			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
+				//			{
+				//				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPortraitName")
+				//				{
+				//					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+				//					{
+				//						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_CatNameFrame_OrangeCat_239x82.png"));
+				//					}
+				//					break;
+				//				}
+				//			}
+				//			return;
+				//		}
+				//		else
+				//		{
+				//			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
+				//			//set other portrait stuff inactive
+				//			for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
+				//			{
+				//				if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPortraitName")
+				//				{
+				//					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+				//					{
+				//						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_NameFrame_Cat_239x82.png"));
+				//					}
+				//					break;
+				//				}
+				//			}
+				//			DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
+				//		}
+				//	}
+				//}
 			}
 		}
 
@@ -976,27 +1011,28 @@ namespace PE
 				}
 			}
 		}
-		//else
-		//for (autio catid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
-		//	if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPortraitName")
-		//	{
-		//		if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
-		//		{
-		//			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture(TextureName.data()));
-		//		}
-		//		break;
-		//	}
+		else
+		for (auto catid : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
+		{
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "CatPortraitName")
+			{
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(catid))
+				{
+					EntityManager::GetInstance().Get<Graphics::GUIRenderer>(catid).SetTextureKey(ResourceManager::GetInstance().LoadTexture(TextureName.data()));
+				}
+				break;
+			}
 
-		//	if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatEnergyBar")
-		//	{
-		//		if (EntityManager::GetInstance().Has<GUISlider>(id2))
-		//		{
-		//			//get value from specific rat
-		//			EntityManager::GetInstance().Get<GUISlider>(id2).m_maxValue = Max;
-		//			EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = Current;
-		//		}
-		//	}
-		//}
+			if (EntityManager::GetInstance().Get<EntityDescriptor>(catid).name == "CatEnergyBar")
+			{
+				if (EntityManager::GetInstance().Has<GUISlider>(catid))
+				{
+					//get value from specific rat
+					EntityManager::GetInstance().Get<GUISlider>(catid).m_maxValue = Max;
+					EntityManager::GetInstance().Get<GUISlider>(catid).m_currentValue = Current;
+				}
+			}
+		}
 	}
 
 	void GameStateController_v2_0::LoadSceneFunction(std::string levelname)
@@ -1068,6 +1104,46 @@ namespace PE
 		}
 	}
 
-
+	void GameStateController_v2_0::ExecutionToMovement()
+	{
+		if (!m_finishExecution)
+		{
+			for (EntityID scriptID : SceneView<ScriptComponent>())
+			{
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(scriptID).isActive) { continue; }
+				if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+				{
+					RatScriptData* p_ratScript = GETSCRIPTDATA(RatScript, scriptID);
+					if (!p_ratScript->finishedExecution)
+					{
+						m_finishExecution = false;
+						break;
+					}
+					else
+					{
+						m_finishExecution = true;
+					}
+				}
+				else if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+				{
+					CatScriptData* p_catScript = GETSCRIPTDATA(CatScript, scriptID);
+					if (!p_catScript->finishedExecution)
+					{
+						m_finishExecution = false;
+						break;
+					}
+					else
+					{
+						m_finishExecution = true;
+					}
+				}
+			}
+		}
+		else
+		{
+			NextState();
+			m_finishExecution = false;
+		}
+	}
 
 }
