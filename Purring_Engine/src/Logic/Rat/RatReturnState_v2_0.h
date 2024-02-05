@@ -56,5 +56,17 @@ namespace PE
 
 	private:
 	  RatScript_v2_0_Data* p_data; // pointer to script instance data
+		GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
+		GameStates_v2_0 previousGameState; // The game state in the previous frame
+
+	private:
+		/*!***********************************************************************************
+			\brief Returns true if the current game state is different from the game state
+							in the previous frame, false otherwise.
+		*************************************************************************************/
+		inline bool StateJustChanged() const
+		{
+				return previousGameState != gameStateController->currentState;
+		}
 	};
 } // End of namespace PE

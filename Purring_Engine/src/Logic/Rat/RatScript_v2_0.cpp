@@ -24,7 +24,8 @@
 
 #include "../Rat/RatIdle_v2_0.h"
 #include "../Rat/RatMovement_v2_0.h"
-#include "../Rat/RatDetectionScript_v2_0.h"
+#include "../Rat/RatHuntState_v2_0.h"
+#include "../Rat/RatReturnState_v2_0.h"
 
 
 namespace PE
@@ -34,6 +35,9 @@ namespace PE
 
 		void RatScript_v2_0::Init(EntityID id)
 		{
+			gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+			previousGameState = gameStateController->currentState;
+
 			CreateCheckStateManager(id);
 
 			auto it = m_scriptData.find(id);
@@ -53,11 +57,22 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 
+			if(gameStateController->currentState == GameStates_v2_0::PAUSE){
+					previousGameState = gameStateController->currentState;
+					return;
+			}
+
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
-			// Clear cat exited container
-			it->second.catsExitedDetectionRadius.clear();
+			if (StateJustChanged() && gameStateController->currentState == GameStates_v2_0::EXECUTE)
+			{
+				// Clear cat collision containers
+				it->second.catsInDetectionRadius.clear();
+				it->second.catsExitedDetectionRadius.clear();
+			}
+
+			previousGameState = gameStateController->currentState;
 		}
 
 
@@ -172,6 +187,9 @@ namespace PE
 		}
 
 
+
+		// ------------ CAT DETECTION ------------ // 
+
 		void RatScript_v2_0::CatEntered(EntityID const id, EntityID const catID)
 		{
 			auto it = m_scriptData.find(id);
@@ -179,6 +197,9 @@ namespace PE
 
 			// Store the cat in the container
 			it->second.catsInDetectionRadius.emplace(catID);
+
+			// Remove the cats in the enter container from the exit container
+			it->second.catsExitedDetectionRadius.erase(catID);
 		}
 
 
@@ -192,6 +213,127 @@ namespace PE
 
 			// Remove the cats in the exit container from the enter container
 			it->second.catsInDetectionRadius.erase(catID);
+		}
+
+
+
+
+		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
+
+
+		// Loops through all the targets in the container passed in and returns the ID of the target closest to the position passed in
+		// Tie breaking: whichever comes last in the container
+		// Returns zero if the container passed in is empty
+		EntityID RatScript_v2_0::GetCloserTarget(vec2 position, std::set<EntityID> const& potentialTargets)
+		{
+				if (potentialTargets.empty()) { return 0; }
+
+				bool first{ true };
+				EntityID closestTarget{ }; float squaredDistance{ };
+
+				// Compare the distances of all the targets from the postion passed in
+				for (EntityID const& id : potentialTargets)
+				{
+						float currentSquaredDistance{ (position - GetEntityPosition(id)).LengthSquared() };
+
+						if (first || currentSquaredDistance < squaredDistance)
+						{
+								first = false;
+								closestTarget = id;
+								squaredDistance = currentSquaredDistance;
+						}
+				}
+
+				return closestTarget;
+		}
+
+
+		// Loops through all the targets in the container passed in and returns the closest position passed in
+		// Tie breaking: whichever comes last in the container
+		// Returns zero if the container passed in is empty
+		vec2 RatScript_v2_0::GetCloserTarget(vec2 position, std::vector<vec2> const& potentialTargets)
+		{
+				if (potentialTargets.empty()) { return position; }
+
+				bool first{ true };
+				vec2 closestTarget{ }; float squaredDistance{ };
+
+				// Compare the distances of all the targets from the postion passed in
+				for (vec2 const& targetPosition : potentialTargets)
+				{
+						float currentSquaredDistance{ (position - targetPosition).LengthSquared() };
+
+						if (first || currentSquaredDistance < squaredDistance)
+						{
+								first = false;
+								closestTarget = targetPosition;
+								squaredDistance = currentSquaredDistance;
+						}
+				}
+
+				return closestTarget;
+		}
+
+
+
+		void RatScript_v2_0::SetTarget(EntityID id, EntityID targetId)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				it->second.targetedCat = targetId;
+				vec2 targetPosition = RatScript_v2_0::GetEntityPosition(it->second.targetedCat);
+				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
+
+				// Calculate the distance and direction from the rat to the player cat
+				it->second.ratPlayerDistance = (targetPosition - ratPosition).Length();
+				it->second.directionFromRatToPlayerCat = (targetPosition - ratPosition).GetNormalized();
+		}
+
+
+		void RatScript_v2_0::SetTarget(EntityID id, vec2 const& r_targetPosition)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
+
+				// Calculate the distance and direction from the rat to the player cat
+				it->second.ratPlayerDistance = (r_targetPosition - ratPosition).Length();
+				it->second.directionFromRatToPlayerCat = (r_targetPosition - ratPosition).GetNormalized();
+		}
+
+
+		bool RatScript_v2_0::CalculateMovement(EntityID id, float deltaTime)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return false; }
+
+				if (it->second.ratPlayerDistance > 0.f)
+				{
+						vec2 newPosition = RatScript_v2_0::GetEntityPosition(id) + (it->second.directionFromRatToPlayerCat * it->second.movementSpeed * deltaTime);
+						RatScript_v2_0::PositionEntity(id, newPosition);
+						it->second.ratPlayerDistance -= it->second.movementSpeed * deltaTime;
+
+						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
+						//		<< " moved to new position: (" << newPosition.x << ", " << newPosition.y
+						//		<< "), Remaining distance: " << it->second.ratPlayerDistance << std::endl;
+
+						return CheckDestinationReached(it->second.minDistanceToTarget, newPosition, RatScript_v2_0::GetEntityPosition(it->second.mainCatID));
+				}
+				else
+				{
+						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " has no movement or already at destination." << std::endl;
+						return false;
+				}
+		}
+
+
+		bool RatScript_v2_0::CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition)
+		{
+				bool reached = (newPosition - targetPosition).Length() <= minDistanceToTarget;
+				//std::cout << "RatMovement_v2_0::CheckDestinationReached - Destination " << (reached ? "reached." : "not reached.") << std::endl;
+				return reached;
 		}
 
 

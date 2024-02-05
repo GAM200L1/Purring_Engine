@@ -72,8 +72,11 @@ namespace PE
 		float detectionRadius{ 200.f };
 		std::set<EntityID> catsInDetectionRadius;
 		std::set<EntityID> catsExitedDetectionRadius;
+		EntityID targetedCat{}; // Cat to move towards in the hunting phase
 
 		float movementSpeed{ 200.f };
+		float maxMovementRange{ 300.f }; // Total distance that the rat will move in one execution phase
+		float minDistanceToTarget{ 1.f }; // Amount that the rat can be offset from their target before being considered "close enough"
 
 		// Hunting and returning
 		int maxHuntTurns{ 2 }; // Number of turn the rat will hunt before returning to their original position
@@ -221,10 +224,25 @@ namespace PE
 		*************************************************************************************/
 		void CatExited(EntityID const id, EntityID const catID);
 
+
+		// ------------ MOVEMENT HELPER FUNCTIONS ------------ //
+
+		static EntityID GetCloserTarget(vec2 position, std::set<EntityID> const& potentialTargets);
+		static vec2 GetCloserTarget(vec2 position, std::vector<vec2> const& potentialTargets);
+
+		void SetTarget(EntityID id, EntityID targetId);
+		void SetTarget(EntityID id, vec2 const& r_targetPosition);
+
+		// Returns true if the target has been reached, false otherwise
+		bool CalculateMovement(EntityID id, float deltaTime);
+		bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
+
 		// ----- Private Members ----- //
 	private:
 			// Event listener IDs 
 			int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+			GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
+			GameStates_v2_0 previousGameState; // The game state in the previous frame
 
 		// ----- Private Methods ----- // 
 	private:
@@ -238,5 +256,15 @@ namespace PE
 		void CreateCheckStateManager(EntityID id);
 
 		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
+
+		/*!***********************************************************************************
+			\brief Returns true if the current game state is different from the game state
+							in the previous frame, false otherwise.
+		*************************************************************************************/
+		inline bool StateJustChanged() const
+		{
+				return previousGameState != gameStateController->currentState;
+		}
+
 	}; // end of class 
 }
