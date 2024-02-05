@@ -49,12 +49,16 @@ namespace PE
         CalculateMovement(id, deltaTime);
     }
 
+    void RatMovement_v2_0::StateCleanUp()
+    {
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+    }
+
     void RatMovement_v2_0::StateExit(EntityID id)
     {
         std::cout << "RatMovement_v2_0::StateExit - Rat ID: " << id << " is exiting the movement state." << std::endl;
         p_data->ratPlayerDistance = 0.f;
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
-        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
     }
 
     void RatMovement_v2_0::RatHitCat(const Event<CollisionEvents>& r_TE)
