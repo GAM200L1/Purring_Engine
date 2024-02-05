@@ -2,5 +2,57 @@
     "Gridsize": {
         "x": 5000.0,
         "y": 5000.0
-    }
+    },
+    "collisionLayers": [
+        {
+            "collisionLayerIndex": 0,
+            "collisionLayerName": "Layer 0",
+            "collisionLayerSignature": "1111111101"
+        },
+        {
+            "collisionLayerIndex": 1,
+            "collisionLayerName": "Layer 1",
+            "collisionLayerSignature": "1101111110"
+        },
+        {
+            "collisionLayerIndex": 2,
+            "collisionLayerName": "Layer 2",
+            "collisionLayerSignature": "1101101111"
+        },
+        {
+            "collisionLayerIndex": 3,
+            "collisionLayerName": "Layer 3",
+            "collisionLayerSignature": "1101111111"
+        },
+        {
+            "collisionLayerIndex": 4,
+            "collisionLayerName": "Layer 4",
+            "collisionLayerSignature": "1111111011"
+        },
+        {
+            "collisionLayerIndex": 5,
+            "collisionLayerName": "Layer 5",
+            "collisionLayerSignature": "1111111111"
+        },
+        {
+            "collisionLayerIndex": 6,
+            "collisionLayerName": "Layer 6",
+            "collisionLayerSignature": "1011111111"
+        },
+        {
+            "collisionLayerIndex": 7,
+            "collisionLayerName": "Layer 7",
+            "collisionLayerSignature": "1111110001"
+        },
+        {
+            "collisionLayerIndex": 8,
+            "collisionLayerName": "Layer 8",
+            "collisionLayerSignature": "1110111111"
+        },
+        {
+            "collisionLayerIndex": 9,
+            "collisionLayerName": "Layer 9",
+            "collisionLayerSignature": "1111111111"
+        }
+    ]
 }

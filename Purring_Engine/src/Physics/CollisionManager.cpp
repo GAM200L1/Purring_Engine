@@ -48,6 +48,16 @@ namespace PE
 				gridSize.x = cfgJson["Gridsize"]["x"].get<float>();
 				gridSize.y = cfgJson["Gridsize"]["y"].get<float>();
 			}
+			if (cfgJson.contains("collisionLayers"))
+			{
+				for (auto const& layerJson : cfgJson["collisionLayers"])
+				{
+					std::shared_ptr<CollisionLayer> p_layer{ CollisionLayerManager::GetInstance().GetCollisionLayer(layerJson["collisionLayerIndex"].get<unsigned>())};
+
+					p_layer->SetCollisionLayerName(layerJson["collisionLayerName"].get<std::string>());
+					p_layer->GetCollisionLayerSignature() = std::bitset<TOTAL_COLLISION_LAYERS>(layerJson["collisionLayerSignature"].get<std::string>());
+				}
+			}
 		}
 
 		// initilize collision layer manager
@@ -58,15 +68,17 @@ namespace PE
 	CollisionManager::~CollisionManager()
 	{
 		const char* filepath = "../Assets/Settings/collidercfg.json";
-		std::ifstream cfgFile(filepath);
 		nlohmann::json cfgjson;
-		if (cfgFile.is_open())
-		{
-			cfgFile >> cfgjson;
-			cfgFile.close();
-		}
+
 		cfgjson["Gridsize"]["x"] = gridSize.x;
 		cfgjson["Gridsize"]["y"] = gridSize.y;
+		
+		for (auto const& layer : CollisionLayerManager::GetInstance().GetCollisionLayers())
+		{
+			CollisionLayer const& r_layer = *layer;
+
+			cfgjson["collisionLayers"].push_back(r_layer.ToJson());
+		}
 
 		std::ofstream outfile(filepath);
 		if (outfile.is_open())
