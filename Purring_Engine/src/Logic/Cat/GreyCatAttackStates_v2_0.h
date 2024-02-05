@@ -63,6 +63,8 @@ namespace PE
 		virtual void StateExit(EntityID id) override;
 
 		virtual std::string_view GetName() { return "AttackPLAN"; }
+
+		static void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
 		
 	private:
 		

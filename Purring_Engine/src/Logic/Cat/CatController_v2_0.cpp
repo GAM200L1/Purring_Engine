@@ -18,8 +18,8 @@
 #include "ECS/SceneView.h"
 #include "Logic/LogicSystem.h"
 
-#include "CatController_v2_0.h"
 #include "CatScript_v2_0.h"
+#include "CatController_v2_0.h"
 #include "CatHelperFunctions.h"
 
 namespace PE

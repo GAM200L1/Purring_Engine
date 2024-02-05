@@ -49,6 +49,7 @@ namespace PE
 
 		// cat attack
 		std::variant<GreyCatAttackVariables, OrangeCatAttackVariables> attackVariables{ GreyCatAttackVariables{} };
+		bool attackSelected{ false };
 
 		// movement variables
 		int catMaxMovementEnergy{ 21 };
@@ -120,6 +121,9 @@ namespace PE
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
 		AnimationComponent* p_catAnimation = nullptr;
+
+		// animation
+		bool m_executionAnimationFinished{ false };
 
 		// Event Listeners
 		int m_mouseClickEventListener{};

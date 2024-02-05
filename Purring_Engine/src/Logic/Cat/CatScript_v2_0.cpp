@@ -57,13 +57,20 @@ namespace PE
 
 		switch (m_scriptData[id].catType)
 		{
-		case EnumCatType::GREYCAT:
+		case EnumCatType::FLUFFYCAT:
+		{
+
+			break;
+		}
+		case EnumCatType::ORANGECAT:
 		{
 			
 			break;
 		}
-		default:
+		default: // main cat or grey cat
 		{
+			GreyCatAttackVariables& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
+			GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(id, vars.bulletRange, vars.telegraphIDs);
 			break; 
 		}
 		}
@@ -116,8 +123,10 @@ namespace PE
 			MakeStateManager(id);
 		}
 
+		// updates state
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
 		
+		// changes states depending on cat type
 		switch (m_scriptData[id].catType)
 		{
 		case EnumCatType::FLUFFYCAT:
@@ -260,7 +269,19 @@ namespace PE
 		// plays idle animation
 		PlayAnimation(id, "Idle");
 
-		if (m_mouseClick && m_mouseClickPrevious) // if mouse is holding, player is given opportunity to move
+		// checks if the current state is any of the planning states, if not then set to movement planning
+		if (r_stateName != GETSCRIPTNAME(AttackPLAN) || r_stateName != GETSCRIPTNAME(CatMovement_v2_0PLAN))
+		{
+			TriggerStateChange(id);
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+				m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0PLAN{}, id);
+				p_catAnimation->SetCurrentFrameIndex(0);
+			}
+		}
+
+		// if mouse is holding, player is given opportunity to move
+		if (m_mouseClick && m_mouseClickPrevious)
 		{
 			if (r_stateName == GETSCRIPTNAME(AttackPLAN)) // if state was not previously movement
 			{
@@ -271,6 +292,7 @@ namespace PE
 				}
 			}
 		}
+		// if mouse was triggered, set as attack
 		else if (m_mouseClick && !m_mouseClickPrevious)
 		{
 			if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0PLAN)) // if state was not previously movement
@@ -289,20 +311,39 @@ namespace PE
 	{
 		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
 
+		// when execution phase is activated, sets the state to movement
 		if (r_stateName != GETSCRIPTNAME(CatMovement_v2_0EXECUTE) && r_stateName != GETSCRIPTNAME(AttackEXECUTE))
 		{
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
+				p_catAnimation->SetCurrentFrameIndex(0);
 			}
 		}
+		// executes movement and plays movement animation
 		else if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0EXECUTE))
 		{
+			PlayAnimation(id, "Walk");
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
 			}
+		}
+		// executes attack and plays attack animation, plays idle animation if attack is finished early
+		else if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0EXECUTE))
+		{
+			if (m_scriptData[id].attackSelected && !m_scriptData[id].finishedExecution)
+			{
+				PlayAnimation(id, "Attack");
+				if (p_catAnimation->GetCurrentFrameIndex() == p_catAnimation->GetAnimationMaxIndex())
+				{
+					p_catAnimation->SetCurrentFrameIndex(0);
+					m_scriptData[id].finishedExecution = true;
+				}
+			}
+			else
+				PlayAnimation(id, "Idle");
 		}
 	}
 
