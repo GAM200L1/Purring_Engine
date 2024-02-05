@@ -32,12 +32,25 @@
 
 #include "Logic/GameStateController_v2_0.h"
 #include "CatController_v2_0.h"
-#include "CatAttackBase_v2_0.h"
+#include "GreyCatAttackStates_v2_0.h"
+#include "OrangeCatAttackStates_v2_0.h"
 
 namespace PE
 {
 	struct CatScript_v2_0Data
 	{
+		CatScript_v2_0Data() = delete;
+
+		CatScript_v2_0Data(GreyCatAttackVariables variables) : attackVariables(variables)
+		{}
+		CatScript_v2_0Data(OrangeCatAttackVariables variables) : attackVariables(variables)
+		{}
+
+		CatScript_v2_0Data& operator=(CatScript_v2_0Data const& r_cpy)
+		{
+			//catID = r_cpy.catID; catType = r_cpy.catType, catIsDead = r_cpy.catIsDead, finishedExecution = r_cpy.finishedExecution, isMainCat = r_cpy.isMainCat;
+		}
+
 		// id of cat and its type
 		EntityID catID{ 0 };
 		EnumCatType catType{ EnumCatType::GREYCAT };
@@ -46,8 +59,7 @@ namespace PE
 		bool isMainCat{ false };
 
 		// cat attack
-		//CatAttackStates catAttack;
-		CatAttackVariables_Base* p_catAttackVariables = nullptr;
+		std::variant<GreyCatAttackVariables, OrangeCatAttackVariables> attackVariables;
 
 		// movement variables
 		int catMaxMovementEnergy{ 21 };

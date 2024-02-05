@@ -14,11 +14,22 @@
 
 *************************************************************************************/
 #pragma once
-#include "CatAttackBase_v2_0.h"
 
 namespace PE
 {
-	class OrangeCatAttack_v2_0PLAN : public CatAttack_v2_0PLAN_Base
+	struct OrangeCatAttackVariables
+	{
+		int damage;
+
+		EntityID telegraphID; // id of the UI
+
+		// projectile variables
+		float stompRadius{ 20.f };
+		float stompLifeTime{ 1.f };
+		float stomopForce{ 1000.f };
+	};
+
+	class OrangeCatAttack_v2_0PLAN : public State
 	{
 	public:
 		// ----- Destructor ----- //
@@ -39,7 +50,7 @@ namespace PE
 	private:
 	};
 
-	class OrangeCatAttack_v2_0EXECUTE : public CatAttack_v2_0EXECUTE_Base
+	class OrangeCatAttack_v2_0EXECUTE : public State
 	{
 	public:
 		// ----- Destructor ----- //
@@ -57,15 +68,5 @@ namespace PE
 
 	private:
 
-	};
-
-	struct OrangeCatAttackVariables : CatAttackVariables_Base
-	{
-		EntityID telegraphID; // id of the UI
-
-		// projectile variables
-		float stompRadius{ 20.f };
-		float stompLifeTime{ 1.f };
-		float stomopForce{ 1000.f };
 	};
 }

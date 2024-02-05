@@ -42,7 +42,7 @@ namespace PE
 			auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
 			if (IsCat(catID))
 			{
-				std::pair<EntityID, EnumCatType> pair{ catID, GREYCAT }; //*GETSCRIPTDATA(CatScript_v2_0, catID).catType };
+				std::pair<EntityID, EnumCatType> pair{ catID, *GETSCRIPTDATA(CatScript_v2_0, catID).catType };
 				m_scriptData[mainInstance].cacheCats.push_back(pair);
 				m_currentCats.push_back(pair);
 			}

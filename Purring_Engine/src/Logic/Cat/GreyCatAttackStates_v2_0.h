@@ -2,7 +2,7 @@
  \project  Purring Engine
  \module   CSD2401-A
  \file     GreyCatAttackStates_v2_0.h
- \date     21-11-2023
+ \date     3-2-2024
 
  \author:              LIEW Yeni
  \par      email:      yeni.l@digipen.edu
@@ -14,7 +14,13 @@
 
 *************************************************************************************/
 #pragma once
-#include "CatAttackBase_v2_0.h"
+#include "Logic/LogicSystem.h"
+#include "Logic/StateManager.h"
+
+#include "Events/MouseEvent.h"
+#include "Events/CollisionEvent.h"
+
+#include "CatScript_v2_0.h"
 
 namespace PE
 {
@@ -28,12 +34,28 @@ namespace PE
 		SOUTH = 4
 	};
 
-	struct GreyCatAttack_v2_0Data
+	struct GreyCatAttackVariables
 	{
+		// damage of the attack
 		int damage;
+
+		// Telegraph variables
+		EnumCatAttackDirection attackDirection{ EnumCatAttackDirection::NONE }; // Direction of attack chosen
+		std::map<EnumCatAttackDirection, EntityID> telegraphIDs; // IDs of entities used to visualise the directions the player can attack in
+		
+		// Telegraph colors
+		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
+		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
+		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
+
+		// projectile variables
+		float bulletDelay{ 0.7f };
+		float bulletRange{ 3.f };
+		float bulletLifeTime{ 1.f };
+		float bulletForce{ 1000.f };
 	};
 
-	class GreyCatAttack_v2_0PLAN : public CatAttack_v2_0PLAN_Base
+	class GreyCatAttack_v2_0PLAN : public State
 	{
 	public:
 		// ----- Destructor ----- //
@@ -48,13 +70,30 @@ namespace PE
 		virtual void StateExit(EntityID id);
 
 		virtual std::string_view GetName();
-
-		virtual void ResetSelection();
 		
 	private:
+		
+		GreyCatAttackVariables* p_attackData;
+
+		bool m_showTelegraphs{ false }; // True if telegraphs are to be displayed
+
+		bool m_mouseClick{ false }; // set to true when mouse is clicked
+		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
+		int m_mouseEventListener; // Stores the handler for the mouse click event
+		int m_triggerEnterEventListener; // Stores the handler for the collision enter event
+		int m_triggerStayEventListener; // Stores the handler for the collision stay event
+
+		void OnMouseClick(const Event<MouseEvents>& r_ME)
+		{
+			MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+			m_mouseClickedPrevious = m_mouseClick;
+			m_mouseClick = true;
+		}
+
+		void ResetSelection();
 	};
 
-	class GreyCatAttack_v2_0EXECUTE : public CatAttack_v2_0EXECUTE_Base
+	class GreyCatAttack_v2_0EXECUTE : public State
 	{
 	public:
 		// ----- Destructor ----- //
@@ -71,19 +110,14 @@ namespace PE
 		virtual std::string_view GetName();
 
 	private:
-
-	};
-
-	struct GreyCatAttackVariables : CatAttackVariables_Base
-	{
-		// Telegraph variables
-		EnumCatAttackDirection attackDirection{ EnumCatAttackDirection::NONE }; // Direction of attack chosen
-		std::map<EnumCatAttackDirection, EntityID> telegraphIDs; // IDs of entities used to visualise the directions the player can attack in
 		
-		// projectile variables
-		float bulletDelay{ 0.7f };
-		float bulletRange{ 3.f };
-		float bulletLifeTime{ 1.f };
-		float bulletForce{ 1000.f };
+		GreyCatAttackVariables* p_data;
+
+		float m_attackDuration; // how long attack will last
+		int m_collisionEventListener;
+
+		virtual void AttackHitCat(const Event<CollisionEvents>& r_CE);
+
+		virtual void AttackHitRat(const Event<CollisionEvents>& r_CE);
 	};
 }
