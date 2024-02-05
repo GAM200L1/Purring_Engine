@@ -26,6 +26,8 @@
 #include "prpch.h"
 #include "CatScript_v2_0.h"
 
+#include "ECS/EntityFactory.h"
+
 namespace PE
 {
 	CatScript_v2_0::~CatScript_v2_0()
@@ -38,7 +40,9 @@ namespace PE
 
 	void CatScript_v2_0::Init(EntityID id)
 	{
+		//m_scriptData[id].catID = id;
 
+		MakeStateManager(id);
 	}
 
 	void CatScript_v2_0::Update(EntityID id, float deltaTime)
@@ -48,7 +52,38 @@ namespace PE
 
 	void CatScript_v2_0::OnAttach(EntityID id)
 	{
+		// check if the given entity has transform, rigidbody, and collider. if it does not, assign it one
+		if (!EntityManager::GetInstance().Has<Transform>(id))
+		{
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Transform>() });
+		}
+		if (!EntityManager::GetInstance().Has<RigidBody>(id))
+		{
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
+			EntityManager::GetInstance().Get<RigidBody>(id).SetType(EnumRigidBodyType::DYNAMIC);
+		}
+		if (!EntityManager::GetInstance().Has<Collider>(id))
+		{
+			EntityFactory::GetInstance().Assign(id, { EntityManager::GetInstance().GetComponentID<Collider>() });
+			EntityManager::GetInstance().Get<Collider>(id).colliderVariant = CircleCollider(); // cat default colliders is circle
+		}
 
+		if (m_scriptData.find(id) == m_scriptData.end())
+		{
+			m_scriptData[id] = CatScript_v2_0Data{};
+		}
+		else
+		{
+			delete m_scriptData[id].p_stateManager;
+			m_scriptData[id] = CatScript_v2_0Data{};
+		}
+
+		// Reset values
+		m_scriptData[id].shouldChangeState = false;
+		m_scriptData[id].timeBeforeChangingState = 0.f;
+
+		// Set the cat max energy to the value set in the editor
+		//m_catBaseMaxEnergy = m_catMaxEnergy = m_scriptData[id].catMaxEnergy;
 	}
 
 	void CatScript_v2_0::OnDetach(EntityID id)
@@ -60,5 +95,5 @@ namespace PE
 		}
 	}
 
-	
+
 }

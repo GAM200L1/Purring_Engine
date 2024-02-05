@@ -142,6 +142,5 @@ namespace PE
 		 \param[in] r_CE - Collision event data
 		*************************************************************************************/
 		void ProjectileHitRat(const Event<CollisionEvents>& r_CE);
-
 	};
 }

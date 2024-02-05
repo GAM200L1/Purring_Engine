@@ -23,11 +23,14 @@
 
 *************************************************************************************/
 #pragma once
-#include "Script.h"
 #include "ECS/Entity.h"
+
+#include "Logic/Script.h"
 #include "Logic/LogicSystem.h"
 #include "Logic/StateManager.h"
+
 #include "CatController_v2_0.h"
+#include "CatAttackBase_v2_0.h"
 
 namespace PE
 {
@@ -37,9 +40,11 @@ namespace PE
 		EntityID catID{ 0 };
 		EnumCatType catType{ EnumCatType::GREYCAT };
 		EnumCatState currentCatState{};
+		bool isMainCat{ false };
 
 		// cat attack
-		Script* p_catAttack = nullptr;
+		CatAttackStates catAttack;
+		CatAttackVariables_Base* p_catAttackVariables = nullptr;
 
 		// movement variables
 		int catMaxMovementEnergy{ 21 };
@@ -57,6 +62,8 @@ namespace PE
 
 		// state manager
 		StateMachine* p_stateManager{ nullptr };
+		bool shouldChangeState{ false };
+		float timeBeforeChangingState{ 0.f };
 
 		// animation
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
@@ -83,29 +90,17 @@ namespace PE
 		virtual void OnDetach(EntityID id);
 
 
-		// ----- Getters/RTTR ----- //
+		// ----- Getters/Setters/RTTR ----- //
 
 		/*!***********************************************************************************
-		 \brief Returns the position of the transform of the entity passed in.
+		 \brief Sets the flag for the state to be changed after the delay passed in.
 
-		 \param[in] transformId - ID of the entity to retrieve the position of.
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
 		*************************************************************************************/
-		static vec2 GetEntityPosition(EntityID const transformId);
-
-		/*!***********************************************************************************
-		 \brief Returns the scale of the transform of the entity passed in.
-
-		 \param[in] transformId - ID of the entity to retrieve the scale of.
-		*************************************************************************************/
-		static vec2 GetEntityScale(EntityID const transformId);
-
-		/*!***********************************************************************************
-		 \brief Returns the position of the cursor in the world.
-
-		 \return vec2 - Returns the position of the cursor in the world.
-		*************************************************************************************/
-		static vec2 GetCursorPositionInWorld();
-
+		void TriggerStateChange(EntityID id, float const stateChangeDelay = 0.f);
+		
 		/*!***********************************************************************************
 		 \brief Returns the container of script data.
 		*************************************************************************************/
@@ -133,15 +128,6 @@ namespace PE
 		void MakeStateManager(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief Sets the flag for the state to be changed after the delay passed in.
-
-		 \param[in] id - EntityID of the entity to change the state of.
-		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
-										Set to zero by default.
-		*************************************************************************************/
-		void TriggerStateChange(EntityID id, float const stateChangeDelay = 0.f);
-
-		/*!***********************************************************************************
 		 \brief Changes the state if the flag has been set and the delay is zero and below.
 
 		 \param[in] id - EntityID of the entity to change the state of.
@@ -151,31 +137,6 @@ namespace PE
 		 \return false - False if the state should NOT change.
 		*************************************************************************************/
 		bool CheckShouldStateChange(EntityID id, float const deltaTime);
-
-		/*!***********************************************************************************
-		 \brief Helper function to en/disables an entity.
-
-		 \param[in] id - EntityID of the entity to en/disable.
-		 \param[in] setToActive - Whether this entity should be set to active or inactive.
-		*************************************************************************************/
-		static void ToggleEntity(EntityID id, bool setToActive);
-
-		/*!***********************************************************************************
-		 \brief Adjusts the position of the transform to the value passed in.
-
-		 \param[in] transformId - ID of the entity to update the transform of.
-		 \param[in] r_position - Position to set the transform to.
-		*************************************************************************************/
-		static void PositionEntity(EntityID const transformId, vec2 const& r_position);
-
-		/*!***********************************************************************************
-		 \brief Adjusts the scale of the transform to the value passed in.
-
-		 \param[in] transformId - ID of the entity to update the transform of.
-		 \param[in] width - Width to set the transform to.
-		 \param[in] height - Height to set the transform to.
-		*************************************************************************************/
-		static void ScaleEntity(EntityID const transformId, float const width, float const height);
 
 	};
 }

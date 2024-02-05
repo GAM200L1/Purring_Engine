@@ -31,7 +31,6 @@ namespace PE
 		PLANMOVEMENT,
 		PLANATTACK,
 		EXECUTEMOVEMENT,
-		EXECUTEMOVEMENT,
 		FOLLOWING,
 		DEAD
 	};
@@ -67,14 +66,5 @@ namespace PE
 		int GetMaxMovementEnergy(EntityID id);
 		std::vector<std::pair<EntityID, EnumCatType>> GetCatVector(EntityID id);
 		EnumCatState GetCatState(EntityID id);
-	};
-
-	// ----- Cat Attack Base Class ----- //
-	class CatAttackBaseScript : public Script
-	{
-	public:
-		// additional functions
-		virtual void ToggleAttackTelegraphs() = 0;
-		virtual void ExecuteCatAttack() = 0;
 	};
 }
