@@ -15,16 +15,10 @@
 *************************************************************************************/
 #pragma once
 #include "Logic/Script.h"
+#include "CatScript_v2_0.h"
 
 namespace PE
 {
-	enum EnumCatType
-	{
-		MAINCAT,
-		GREYCAT,
-		ORANGECAT,
-		FLUFFYCAT
-	};
 
 	struct CatController_v2_0Data
 	{

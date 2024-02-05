@@ -27,6 +27,8 @@
 
 #include "CatScript_v2_0.h"
 #include "CatMovementStates_v2_0.h"
+#include "CatHelperFunctions.h"
+
 
 #include "ECS/EntityFactory.h"
 
@@ -86,7 +88,7 @@ namespace PE
 
 			for (auto quad : m_scriptData[id].pathQuads)
 			{
-				CatHelper::ToggleEntity(quad, false);
+				CatHelperFunctions::GetInstance().ToggleEntity2(quad, false);
 			}
 			return;
 		}
@@ -100,7 +102,7 @@ namespace PE
 
 			if (p_catAnimation->GetCurrentFrameIndex() == p_catAnimation->GetAnimationMaxIndex())
 			{
-				CatHelper::ToggleEntity(id, false);
+				CatHelperFunctions::GetInstance().ToggleEntity2(id, false);
 				
 				if (m_scriptData[id].isMainCat)
 					p_gsc->LoseGame();
