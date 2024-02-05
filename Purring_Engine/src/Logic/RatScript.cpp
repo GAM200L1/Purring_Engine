@@ -335,20 +335,21 @@ namespace PE
 	void RatScript::CreateAttackTelegraphs(EntityID id)
 	{
 		vec2 const& ratScale = GetEntityScale(m_scriptData[id].ratID);
-		RatScriptData & data = m_scriptData[id];
+		RatScriptData& data = m_scriptData[id];
 
 		SerializationManager serializationManager;
 
 		data.psudoRatID = EntityFactory::GetInstance().CreateEntity<Transform>();
-		EntityManager::GetInstance().Get<Transform>(data.psudoRatID).position = GetEntityScale(id);
+		Hierarchy::GetInstance().AttachChild(id, data.psudoRatID);
+		EntityManager::GetInstance().Get<Transform>(data.psudoRatID).relPosition = vec2{ 0.f, 0.f };
 
 		// create the arrow telegraph
-		data.arrowTelegraphID = serializationManager.LoadFromFile("EnemyArrowTelegraph_Prefab.json");
+		data.arrowTelegraphID = serializationManager.LoadFromFile("PawPrints_Prefab.json");
 		ToggleEntity(data.arrowTelegraphID, false); // set to inactive, it will only show during planning phase
-		ScaleEntity(data.arrowTelegraphID, ratScale.x, ratScale.y);
+		ScaleEntity(data.arrowTelegraphID, ratScale.x * 0.5f, ratScale.y * 0.5f);
 		Hierarchy::GetInstance().AttachChild(data.psudoRatID, data.arrowTelegraphID); // attach child to parent
 		EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.Zero();	  // zero out the position (attach calculates to stay in the same position in the world)
-		EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.x = ratScale.x * data.detectionRadius * 0.5f;
+		EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.x = ratScale.x * 0.7f;
 		
 		// create cross attack telegraph
 		data.attackTelegraphID = serializationManager.LoadFromFile("EnemyAttackTelegraph_Prefab.json");
@@ -384,25 +385,25 @@ namespace PE
 
 		// if the cat is within the detection radius
 		if (p_data->distanceFromPlayer <= ((RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f)) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
-		{			
+		{
 			if (p_data->distanceFromPlayer <= (absCatScale.x * 0.5f))
 			{
 				p_data->distanceFromPlayer = 0.f; // cat and rat are directly next to each other so there is no distance to really cover
 			}
 			else
 			{
-				// settings for the arrow
-				EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).relPosition.x = catObject.position.Distance(ratObject.position) * 0.5f;
-				EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).width = p_data->distanceFromPlayer;
+				// settings for the move telegraph
+				//EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).relPosition.x = catObject.position.Distance(ratObject.position) * 0.5f;
+				//EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).width = p_data->distanceFromPlayer;
 				// find rotation to rotate the psuedorat entity so the arrow will be rotated accordingly
 				float rotation = atan2(p_data->directionToTarget.y, p_data->directionToTarget.x);
-				PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->psudoRatID).orientation = rotation;
-				//RatScript::ToggleEntity(p_data->arrowTelegraphID, true); // show the arrow of movement
+				PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->psudoRatID).relOrientation = rotation;
+				RatScript::ToggleEntity(p_data->arrowTelegraphID, true); // show the arrow of movement
 			}
-			
+
 			// Ensure the rat is facing the direction of their movement
 			vec2 newScale{ RatScript::GetEntityScale(id) };
-			newScale.x = std::abs(newScale.x) * (((catObject.position - ratObject.position).Dot(vec2{1.f, 0.f}) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
+			newScale.x = std::abs(newScale.x) * (((catObject.position - ratObject.position).Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
 			RatScript::ScaleEntity(id, newScale.x, newScale.y);
 
 			// settings for the attack cross
@@ -417,7 +418,48 @@ namespace PE
 	
 	void RatIDLE::StateUpdate(EntityID id, float deltaTime)
 	{
-		
+		RatScript::PositionEntity(p_data->psudoRatID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
+		//RatScript::ToggleEntity(p_data->detectionTelegraphID, true); // show the detection telegraph
+		Transform const& ratObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+		Transform const& catObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
+		vec2 absRatScale = vec2{ abs(ratObject.width),abs(ratObject.height) };
+		vec2 absCatScale = vec2{ abs(catObject.width),abs(catObject.height) };
+		p_data->distanceFromPlayer = RatScript::GetEntityPosition(id).Distance(catObject.position) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f);
+		p_data->directionToTarget = RatScript::GetEntityPosition(p_data->mainCatID) - RatScript::GetEntityPosition(id);
+		p_data->directionToTarget.Normalize();
+
+
+		// if the cat is within the detection radius
+		if (p_data->distanceFromPlayer <= ((RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f)) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)
+		{
+			if (p_data->distanceFromPlayer <= (absCatScale.x * 0.5f))
+			{
+				p_data->distanceFromPlayer = 0.f; // cat and rat are directly next to each other so there is no distance to really cover
+			}
+			else
+			{
+				// settings for the move telegraph
+				//EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).relPosition.x = catObject.position.Distance(ratObject.position) * 0.5f;
+				//EntityManager::GetInstance().Get<Transform>(p_data->arrowTelegraphID).width = p_data->distanceFromPlayer;
+				// find rotation to rotate the psuedorat entity so the arrow will be rotated accordingly
+				float rotation = atan2(p_data->directionToTarget.y, p_data->directionToTarget.x);
+				PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->psudoRatID).relOrientation = rotation;
+				RatScript::ToggleEntity(p_data->arrowTelegraphID, true); // show the arrow of movement
+			}
+
+			// Ensure the rat is facing the direction of their movement
+			vec2 newScale{ RatScript::GetEntityScale(id) };
+			newScale.x = std::abs(newScale.x) * (((catObject.position - ratObject.position).Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
+			RatScript::ScaleEntity(id, newScale.x, newScale.y);
+
+			// settings for the attack cross
+			RatScript::PositionEntity(p_data->attackTelegraphID, catObject.position);
+			//RatScript::ToggleEntity(p_data->attackTelegraphID, true); // show the arrow of movement
+		}
+		else
+		{
+			p_data->distanceFromPlayer = 0.f;
+		}
 	}
 	
 	void RatIDLE::StateCleanUp()

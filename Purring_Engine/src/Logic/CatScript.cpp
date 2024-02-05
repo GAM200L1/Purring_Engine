@@ -189,7 +189,7 @@ namespace PE
 				}
 			}
 			// Check if the state should be changed
-			if (gsc->currentState == GameStates_v2_0::PAUSE)
+			if (gsc->currentState == GameStates_v2_0::EXECUTE)
 			{
 				TriggerStateChange(id); // immediate state change
 				if (CheckShouldStateChange(id, deltaTime)) 
