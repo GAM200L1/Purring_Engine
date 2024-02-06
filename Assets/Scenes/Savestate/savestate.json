@@ -2968,7 +2968,7 @@
                         "Prefab Type": "OrangeCatPrefab",
                         "children": [],
                         "isActive": true,
-                        "name": "Orange Cat 2",
+                        "name": "Cat",
                         "parent": null,
                         "sceneID": 62
                     },
@@ -4082,7 +4082,7 @@
                         "Prefab Type": "PlayerPrefab",
                         "children": [],
                         "isActive": true,
-                        "name": "Player",
+                        "name": "Cat",
                         "parent": null,
                         "sceneID": 16
                     },
@@ -4114,7 +4114,7 @@
                                 "bulletForce": 1000.0,
                                 "bulletLifeTime": 0.10000000149011612,
                                 "bulletRange": 3.0,
-                                "catHealth": 20,
+                                "catHealth": 1,
                                 "catID": 0,
                                 "catMaxEnergy": 21,
                                 "isMainCat": true,

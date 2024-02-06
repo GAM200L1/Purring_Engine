@@ -318,7 +318,7 @@ namespace PE
 	void CatScript::LoseHP(EntityID id, int damageTaken)
 	{
 		//if (!GameStateManager::GetInstance().godMode)
-			m_scriptData[id].catHealth -= damageTaken;
+		m_scriptData[id].catHealth -= damageTaken;
 		std::cout << "Cat HP: " << m_scriptData[id].catHealth << '\n';
 	}
 		
