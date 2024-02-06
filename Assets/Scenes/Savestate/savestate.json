@@ -4194,7 +4194,7 @@
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
-                        "mass": 10.0,
+                        "mass": 20.0,
                         "type": 1
                     },
                     "ScriptComponent": {
@@ -4256,8 +4256,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -300.0,
-                                "y": 161.0
+                                "x": -272.99993896484375,
+                                "y": 58.00004196166992
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4290,7 +4290,7 @@
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
-                        "mass": 10.0,
+                        "mass": 20.0,
                         "type": 1
                     },
                     "ScriptComponent": {
@@ -4315,8 +4315,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -300.0,
-                            "y": 161.0
+                            "x": -272.99993896484375,
+                            "y": 58.00004196166992
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4364,7 +4364,7 @@
                         "Prefab Type": "OrangeCatPrefab",
                         "children": [],
                         "isActive": true,
-                        "name": "Cat",
+                        "name": "Orange Cat 2",
                         "parent": null,
                         "sceneID": 62
                     },

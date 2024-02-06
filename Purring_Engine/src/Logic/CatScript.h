@@ -100,6 +100,7 @@ namespace PE
 		bool delaySet{ false }; // Whether the state change has been flagged
 		float timeBeforeChangingState{0.f}; // Delay before state should change
 		bool finishedExecution{ false }; // Keeps track of whether the execution phase has been completed
+		bool finishMovement{ false };
 
 		std::map<std::string, std::string> animationStates; // Animation states the cat should have. <name, animation file>
 

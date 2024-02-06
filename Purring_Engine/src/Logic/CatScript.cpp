@@ -219,7 +219,7 @@ namespace PE
 			if (gsc->currentState == GameStates_v2_0::EXECUTE)
 			{
 				TriggerStateChange(id); // immediate state change
-				if (CheckShouldStateChange(id, deltaTime)) 
+				if (CheckShouldStateChange(id, deltaTime))
 				{
 					m_scriptData[id].finishedExecution = false;
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovementEXECUTE{}, id);
@@ -241,12 +241,12 @@ namespace PE
 			}			
 
 			// If this is not the main cat, check if the state should be changed
-			if(id != CatScript::GetMainCat() && m_scriptData[CatScript::GetMainCat()].p_stateManager->GetStateName() != "MovementEXECUTE")
+			/*if(id != CatScript::GetMainCat() && m_scriptData[CatScript::GetMainCat()].p_stateManager->GetStateName() != "MovementEXECUTE")
 			{
 					m_scriptData[id].p_stateManager->ChangeState(new CatAttackEXECUTE{}, id);
-			}
+			}*/
 
-			if (id == CatScript::GetMainCat() && CheckShouldStateChange(id, deltaTime))
+			if (CheckShouldStateChange(id, deltaTime))	//id == CatScript::GetMainCat()&&
 			{
 				// trigger state change called in MovementEXECUTE state update
 				m_scriptData[id].finishedExecution = false;
