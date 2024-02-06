@@ -236,6 +236,7 @@ namespace PE
 					continue;
 				}
 			}
+			prevState = currentState;
 			break;
 		}
 		case GameStates_v2_0::EXECUTE: // execute state, fade out HUD and fade in foliage
@@ -955,6 +956,9 @@ namespace PE
 
 		m_currentLevel = nextStage;
 		m_leveltoLoad = m_level2SceneName;
+
+		DemoController* demoController = GETSCRIPTINSTANCEPOINTER(DemoController);
+		demoController->SaveCats();
 	}
 
 	void GameStateController_v2_0::StartGameLoop()
