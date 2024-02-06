@@ -236,6 +236,7 @@ namespace PE
 					continue;
 				}
 			}
+			prevState = currentState;
 			break;
 		}
 		case GameStates_v2_0::EXECUTE: // execute state, fade out HUD and fade in foliage
