@@ -82,7 +82,7 @@ namespace PE
 				// death animation example
 				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 				{
-					p_gsc->WinGame();
+					//p_gsc->WinGame();
 					SerializationManager serializationManager;
 					EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Death SFX_Prefab.json");
 					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
