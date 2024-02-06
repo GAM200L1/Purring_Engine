@@ -3647,7 +3647,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 77
                     },
@@ -3710,7 +3710,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 79
                     },
@@ -3773,7 +3773,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 80
                     },
@@ -3836,7 +3836,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 81
                     },
@@ -3899,7 +3899,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 82
                     },
@@ -3962,7 +3962,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 83
                     },
@@ -4025,7 +4025,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 84
                     },
@@ -4088,7 +4088,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 85
                     },
@@ -4151,7 +4151,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 86
                     },
@@ -4214,7 +4214,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 87
                     },
@@ -4340,7 +4340,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 89
                     },
@@ -4403,7 +4403,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 90
                     },
@@ -4466,7 +4466,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 91
                     },
@@ -4529,7 +4529,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 92
                     },
@@ -4592,7 +4592,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 93
                     },
@@ -4655,7 +4655,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 95
                     },
