@@ -248,8 +248,9 @@ namespace PE
 
 	void CatAttackPLAN::CatInTelegraph(const Event<CollisionEvents>& r_TE)
 	{
+		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		// only needs to check this once, and once it has been checked don't check again
-		if (m_checkedIgnored) { return; }
+		if (m_checkedIgnored || gsc->GetCurrentLevel() == 0) { return; }
 
 		// Add any telegraphs overlapping with any cats to the m_ignoresTelegraphs map
 

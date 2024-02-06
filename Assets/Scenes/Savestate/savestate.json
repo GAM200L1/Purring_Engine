@@ -4123,61 +4123,6 @@
                                 "requiredAttackPoints": 0
                             },
                             "state": 0
-                        },
-                        "FollowScript": {
-                            "data": {
-                                "CurrentPosition": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "FollowingObject": [
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615
-                                ],
-                                "IsAttaching": true,
-                                "LookTowardsMovement": false,
-                                "NextPosition": {
-                                    "0": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    },
-                                    "1": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    },
-                                    "2": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    },
-                                    "3": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    },
-                                    "4": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    }
-                                },
-                                "NumberOfAttacher": 2,
-                                "NumberOfFollower": 1,
-                                "Size": 65,
-                                "SoundID": 0,
-                                "Speed": 100.0,
-                                "ToAttach": [
-                                    18446744073709551615,
-                                    0,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615
-                                ],
-                                "rotation": 0.0
-                            },
-                            "state": 0
                         }
                     },
                     "Transform": {
@@ -4311,7 +4256,7 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -229.9999542236328,
+                                "x": -300.0,
                                 "y": 161.0
                             },
                             "positionOffset": {
@@ -4370,7 +4315,7 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -229.9999542236328,
+                            "x": -300.0,
                             "y": 161.0
                         },
                         "relativeposition": {
