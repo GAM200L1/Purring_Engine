@@ -68,6 +68,11 @@ namespace PE
 				return m_cachedActiveCats;
 		}
 
+		void DemoController::SaveCats()
+		{
+			m_aliveCatStartScene = GetCats(mainInstance);
+		}
+
 		
 		unsigned int DemoController::RatCount(EntityID id)
 		{

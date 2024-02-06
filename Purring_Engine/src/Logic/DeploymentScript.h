@@ -20,6 +20,7 @@
 #include "Events/EventHandler.h"
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
+#include "DemoController.h"
 
 namespace PE {
 
@@ -100,9 +101,11 @@ namespace PE {
 		bool CheckArea(Transform const& area, vec2 const& mousePos, float textureWidth);
 	private:
 		std::map<EntityID, DeploymentScriptData> m_scriptData;
+		std::vector<std::pair<EntityID, EnumCatTypes>>* m_catList;
 		vec2 m_mousepos;
 		Transform m_deploymentZone;
 		EntityID m_currentDeploymentScriptEntityID;
+		int catCounter{ 1 };
 		bool m_inNoGoArea;
 		int m_catPlaced{};
 	};
