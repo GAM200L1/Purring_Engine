@@ -365,10 +365,12 @@ namespace PE
 			// Disable the projectile
 			if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 			{
+				EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ZeroForce();
+				CatScript::ToggleEntity(p_data->projectileID, false);
 				p_data->finishedExecution = true;
 				m_bulletCollided = false;
 				m_projectileFired = false;
-				CatScript::ToggleEntity(p_data->projectileID, false);
+				
 			}
 		}
 	}

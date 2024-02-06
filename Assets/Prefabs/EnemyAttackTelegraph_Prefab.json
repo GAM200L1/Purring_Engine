@@ -19,6 +19,8 @@
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
                 "Prefab Type": "RatUI",
                 "children": [],
                 "isActive": true,

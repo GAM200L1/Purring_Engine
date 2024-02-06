@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -809,7 +809,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1152,7 +1152,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1194,7 +1194,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1546,7 +1546,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1814,7 +1814,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2216,7 +2216,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2533,7 +2533,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2613,7 +2613,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2940,28 +2940,28 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -163.000244140625,
-                                "y": 102.99998474121094
+                                "x": 140.7998046875,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 50.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
-                        "Old ID": 62,
-                        "Prefab Type": "GutterRat",
+                        "Layer": 1,
+                        "Old ID": 61,
+                        "Prefab Type": "OrangeCatPrefab",
                         "children": [],
                         "isActive": true,
-                        "name": "GutterRat",
+                        "name": "Orange Cat 2",
                         "parent": null,
-                        "sceneID": 63
+                        "sceneID": 62
                     },
                     "Renderer": {
                         "Color": {
@@ -2970,31 +2970,27 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
                         "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": {
-                        "RatScript_v2_0": {
-                            "state": 0
-                        }
-                    },
+                    "ScriptComponent": null,
                     "Transform": {
-                        "height": 100.0,
+                        "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -163.000244140625,
-                            "y": 102.99998474121094
+                            "x": 140.7998046875,
+                            "y": 0.0
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 100.0
+                        "width": 64.0
                     }
                 },
                 "name": ""
@@ -3017,11 +3013,11 @@
                             "radius": 50.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
+                        "Layer": 1,
                         "Old ID": 63,
                         "Prefab Type": "GutterRat",
                         "children": [],
@@ -3071,7 +3067,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3339,7 +3335,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4068,11 +4064,11 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
+                        "Layer": 1,
                         "Old ID": 16,
                         "Prefab Type": "PlayerPrefab",
                         "children": [],
@@ -4198,19 +4194,20 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationOrange_Attack_Anim.json",
-                            "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                            "../Assets/Animation/AnimationOrange_Idle_Anim.json",
-                            "../Assets/Animation/AnimationOrange_walk_Anim.json"
+                            "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                            "../Assets/Animation/AnimationRat_Death_Anim.json",
+                            "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                            "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                            "../Assets/Animation/AnimationRat_walk_Anim.json"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle_Anim.json"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle_Anim.json"
                     },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -184.0,
+                                "y": 91.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4223,12 +4220,12 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "Layer": 0,
+                        "Layer": 1,
                         "Old ID": 17,
-                        "Prefab Type": "OrangeCatPrefab",
+                        "Prefab Type": "Rat",
                         "children": [],
                         "isActive": true,
-                        "name": "Orange Cat",
+                        "name": "Rat",
                         "parent": null,
                         "sceneID": 17
                     },
@@ -4239,7 +4236,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -4247,81 +4244,24 @@
                         "type": 1
                     },
                     "ScriptComponent": {
-                        "CatScript": {
+                        "RatScript": {
                             "data": {
                                 "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationOrange_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationOrange_walk_Anim.json"
+                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
+                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
                                 },
-                                "attackDamage": 0,
-                                "bulletDelay": 0.699999988079071,
-                                "bulletForce": 1000.0,
-                                "bulletLifeTime": 0.10000000149011612,
-                                "bulletRange": 3.0,
-                                "catHealth": 20,
-                                "catID": 0,
-                                "catMaxEnergy": 21,
-                                "isMainCat": false,
-                                "movementSpeed": 300.0,
-                                "projectileID": 0,
-                                "requiredAttackPoints": 0
-                            },
-                            "state": 0
-                        },
-                        "FollowScript": {
-                            "data": {
-                                "CurrentPosition": {
-                                    "x": 0.0,
-                                    "y": 0.0
-                                },
-                                "FollowingObject": [
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615
-                                ],
-                                "IsAttaching": true,
-                                "LookTowardsMovement": false,
-                                "NextPosition": {
-                                    "0": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    },
-                                    "1": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    },
-                                    "2": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    },
-                                    "3": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    },
-                                    "4": {
-                                        "x": 0.0,
-                                        "y": 0.0
-                                    }
-                                },
-                                "NumberOfAttacher": 2,
-                                "NumberOfFollower": 1,
-                                "Size": 65,
-                                "SoundID": 0,
-                                "Speed": 100.0,
-                                "ToAttach": [
-                                    18446744073709551615,
-                                    7,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615,
-                                    18446744073709551615
-                                ],
-                                "rotation": 0.0
+                                "attackDamage": 1,
+                                "attackDelay": 0.0,
+                                "attackDiameter": 96.0,
+                                "attackDuration": 0.5,
+                                "collisionDamage": 1,
+                                "detectionRadius": 4.0,
+                                "health": 1,
+                                "mainCatID": 16,
+                                "movementSpeed": 200.0
                             },
                             "state": 0
                         }
@@ -4330,8 +4270,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": -184.0,
+                            "y": 91.0
                         },
                         "relativeposition": {
                             "x": 0.0,
