@@ -32,7 +32,7 @@ namespace PE
 			EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 
 			// Return if this cat is not the main cat
-			if (!p_data->isMainCat) { return; }
+			//if (!p_data->isMainCat) { return; }
 
 			// Subscribe to events
 			m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, CatMovementPLAN::OnMouseClick, this);
@@ -50,7 +50,7 @@ namespace PE
 			GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
 			// Return if this cat is not the main cat
-			if (!p_data->isMainCat) { return; }
+			//if (!p_data->isMainCat) { return; }
 
 			// Check if pause state
 			if (gsc->currentState == GameStates_v2_0::PAUSE)
@@ -112,7 +112,7 @@ namespace PE
 		void CatMovementPLAN::StateCleanUp()
 		{
 			// Return if this cat is not the main cat
-			if (!p_data->isMainCat) { return; }
+			//if (!p_data->isMainCat) { return; }
 			REMOVE_MOUSE_EVENT_LISTENER(m_clickEventListener);
 			REMOVE_MOUSE_EVENT_LISTENER(m_releaseEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
@@ -121,7 +121,7 @@ namespace PE
 		void CatMovementPLAN::StateExit(EntityID id)
 		{
 			// Return if this cat is not the main cat
-			if (!p_data->isMainCat) { return; }
+			//if (!p_data->isMainCat) { return; }
 
 			EndPathDrawing(id);
 		}
@@ -324,7 +324,7 @@ namespace PE
 			m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovementEXECUTE::OnCollisionEnter, this);
 
 			// Return if this cat is not the main cat
-			if (!p_data->isMainCat) { return; }
+			//if (!p_data->isMainCat) { return; }
 
 			CatScript::PositionEntity(id, p_data->pathPositions.front());
 			p_data->currentPositionIndex = 0;
@@ -335,7 +335,7 @@ namespace PE
 		{
 			GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 			// Return if this cat is not the main cat
-			if (!p_data->isMainCat) { return; }
+			//if (!p_data->isMainCat) { return; }
 
 			// Check if pause state 
 			if (gsc->currentState == GameStates_v2_0::PAUSE)

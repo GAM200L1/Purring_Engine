@@ -583,43 +583,49 @@ namespace PE
 
 	 void RatScript::RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE)
 	 {
+		 
 		// if cat has been checked before check the next event
-			if (m_scriptData[id].hitCat) { return; }
-		 if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
-		 {
-			 OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
-			 // check if entity1 is rat or rat's attack and entity2 is cat
-			 if ((OTEE.Entity1 == m_scriptData[id].ratID || OTEE.Entity1 == m_scriptData[id].attackTelegraphID) && 
-			 		EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
-			 {
-				 GETSCRIPTINSTANCEPOINTER(RatScript)->CheckFollowOrMain(m_scriptData[id].mainCatID, OTEE.Entity2, OTEE.Entity1, id);
-			 }
-			 // check if entity2 is rat or rat's attack and entity1 is cat
-			 else if ((OTEE.Entity2 == m_scriptData[id].ratID || OTEE.Entity2 == m_scriptData[id].attackTelegraphID) && 
-			 			EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
-			 {
-				 // save the id of the cat that has been checked so that it wont be checked again
-				 GETSCRIPTINSTANCEPOINTER(RatScript)->CheckFollowOrMain(m_scriptData[id].mainCatID, OTEE.Entity1, OTEE.Entity2, id);
-			 }
-		 }
-		 else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
-		 {
-			 OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
-			 // check if entity1 is rat or rat's attack and entity2 is cat
-			 if ((OTSE.Entity1 == m_scriptData[id].ratID || OTSE.Entity1 == m_scriptData[id].attackTelegraphID) && 
-			 		EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
-			 {
-				 // save the id of the cat that has been checked so that it wont be checked again
-				 GETSCRIPTINSTANCEPOINTER(RatScript)->CheckFollowOrMain(m_scriptData[id].mainCatID, OTSE.Entity2, OTSE.Entity1, id);
-			 }
-			 // check if entity2 is rat or rat's attack and entity1 is cat
-			 else if ((OTSE.Entity2 == m_scriptData[id].ratID || OTSE.Entity2 == m_scriptData[id].attackTelegraphID) && 
-			 			EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
-			 {
-				 // save the id of the cat that has been checked so that it wont be checked again
-				 GETSCRIPTINSTANCEPOINTER(RatScript)->CheckFollowOrMain(m_scriptData[id].mainCatID, OTSE.Entity1, OTSE.Entity2, id);
-			 }
-		 }
+		if (m_scriptData[id].hitCat) { return; }
+		if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
+		{
+			OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
+			// check if entity1 is rat or rat's attack and entity2 is cat
+			if ((OTEE.Entity1 == m_scriptData[id].ratID || OTEE.Entity1 == m_scriptData[id].attackTelegraphID) && CatScript::IsCat(OTEE.Entity2))
+			{
+				if (p_gsc->GetCurrentLevel() == 0)
+					GETSCRIPTINSTANCEPOINTER(RatScript)->CheckFollowOrMain(m_scriptData[id].mainCatID, OTEE.Entity2, OTEE.Entity1, id);
+				else if (p_gsc->GetCurrentLevel() == 1)
+					GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(OTEE.Entity2, 1); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+			}
+			// check if entity2 is rat or rat's attack and entity1 is cat
+			else if ((OTEE.Entity2 == m_scriptData[id].ratID || OTEE.Entity2 == m_scriptData[id].attackTelegraphID) && CatScript::IsCat(OTEE.Entity1))
+			{
+				if (p_gsc->GetCurrentLevel() == 0) // save the id of the cat that has been checked so that it wont be checked again
+					GETSCRIPTINSTANCEPOINTER(RatScript)->CheckFollowOrMain(m_scriptData[id].mainCatID, OTEE.Entity1, OTEE.Entity2, id);
+				else if (p_gsc->GetCurrentLevel() == 1)
+					GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(OTEE.Entity1, 1); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+			}
+		}
+		else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
+		{
+			OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
+			// check if entity1 is rat or rat's attack and entity2 is cat
+			if ((OTSE.Entity1 == m_scriptData[id].ratID || OTSE.Entity1 == m_scriptData[id].attackTelegraphID) && CatScript::IsCat(OTSE.Entity2))
+			{
+				if (p_gsc->GetCurrentLevel() == 0) // save the id of the cat that has been checked so that it wont be checked again
+					GETSCRIPTINSTANCEPOINTER(RatScript)->CheckFollowOrMain(m_scriptData[id].mainCatID, OTSE.Entity2, OTSE.Entity1, id);
+				else if (p_gsc->GetCurrentLevel() == 1)
+					GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(OTSE.Entity2, 1); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+			}
+			// check if entity2 is rat or rat's attack and entity1 is cat
+			else if ((OTSE.Entity2 == m_scriptData[id].ratID || OTSE.Entity2 == m_scriptData[id].attackTelegraphID) && CatScript::IsCat(OTSE.Entity1))
+			{
+				if (p_gsc->GetCurrentLevel() == 0)// save the id of the cat that has been checked so that it wont be checked again
+					GETSCRIPTINSTANCEPOINTER(RatScript)->CheckFollowOrMain(m_scriptData[id].mainCatID, OTSE.Entity1, OTSE.Entity2, id);
+				else if (p_gsc->GetCurrentLevel() == 1)
+					GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(OTSE.Entity1, 1); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+			}
+		}
 	 }
 
 	 void RatScript::CheckFollowOrMain(EntityID mainCat, EntityID collidedCat, EntityID damagingID, EntityID rat)

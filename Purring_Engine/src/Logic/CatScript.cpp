@@ -70,7 +70,7 @@ namespace PE
 		
 		// Create as many entities to visualise the player path nodes  
 		// such that there is one node per energy level
-		if (m_scriptData[id].isMainCat)
+		//if (m_scriptData[id].isMainCat)
 		{
 			m_scriptData[id].pathPositions.reserve(CatScript::GetMaximumEnergyLevel());
 			m_scriptData[id].pathQuads.reserve(CatScript::GetMaximumEnergyLevel());
@@ -127,12 +127,39 @@ namespace PE
 				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 				{
 					ToggleEntity(id, false);
+					gsc->LoseGame();
 				}
 			}
 
-			gsc->LoseGame();
-			ToggleEntity(id, false);
 			return;
+		}
+		else if (m_scriptData[id].catHealth <= 0)
+		{
+			for (auto quad : m_scriptData[id].pathQuads)
+			{
+				CatScript::ToggleEntity(quad, false);
+			}
+
+			// Set game state to lose when player HP is 0
+			// probably some DT stuff to let the animation run
+			if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+			{
+				try
+				{
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Death"))
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+				}
+				catch (...)
+				{
+					// error
+				}
+
+				// death animation example
+				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
+				{
+					ToggleEntity(id, false);
+				}
+			}
 		}
 
 		// Ensure that the state manager exists
