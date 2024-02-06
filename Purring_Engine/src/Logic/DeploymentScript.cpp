@@ -238,7 +238,7 @@ namespace PE
 					m_catPlaced++;
 					return;
 				}
-
+				 
 			}
 		}
 	}
