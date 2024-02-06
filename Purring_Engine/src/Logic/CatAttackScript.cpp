@@ -43,7 +43,7 @@ namespace PE
 		m_ignoresTelegraphs.clear();
 
 		// Don't bother if not the main cat and not following the main cat
-		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
+		//if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
 
 		// Check if colliding with cats
 		for (auto const& [attackDirection, boxID] : p_data->telegraphIDs)
@@ -67,7 +67,7 @@ namespace PE
 		if (gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 		
 	  // Don't bother if not the main cat and not following the main cat
-		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
+		//if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
 		
 		// get the mouse cursor position
 		vec2 cursorPosition{ CatScript::GetCursorPositionInWorld() };
@@ -209,7 +209,7 @@ namespace PE
 	void CatAttackPLAN::StateCleanUp()
 	{
 	  // Don't bother if not the main cat and not following the main cat
-		if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
+		//if (p_data->catID != CatScript::GetMainCat() && !p_data->isFollowing) { return; }
 		
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerEnterEventListener);
 		REMOVE_KEY_COLLISION_LISTENER(m_triggerStayEventListener);
@@ -326,6 +326,7 @@ namespace PE
 			EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).velocity.Zero();
 			m_bulletImpulse = direction * p_data->bulletForce;
 			m_bulletDelay = p_data->bulletDelay;
+			EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->projectileID).SetEnabled(true);
 		}
 	}
 
@@ -367,6 +368,7 @@ namespace PE
 			{
 				EntityManager::GetInstance().Get<RigidBody>(p_data->projectileID).ZeroForce();
 				CatScript::ToggleEntity(p_data->projectileID, false);
+				EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->projectileID).SetEnabled(false);
 				p_data->finishedExecution = true;
 				m_bulletCollided = false;
 				m_projectileFired = false;

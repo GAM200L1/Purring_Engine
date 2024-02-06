@@ -573,6 +573,7 @@ namespace PE
 	 void RatAttackEXECUTE::StateExit(EntityID id)
 	 {
 		 RatScript::ToggleEntity(p_data->attackTelegraphID, false);
+		 EntityManager::GetInstance().Get<RigidBody>(id).ZeroForce();
 		 p_data->hitCat = false;
 	 }
 
@@ -583,7 +584,6 @@ namespace PE
 
 	 void RatScript::RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE)
 	 {
-		 
 		// if cat has been checked before check the next event
 		if (m_scriptData[id].hitCat) { return; }
 		if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
