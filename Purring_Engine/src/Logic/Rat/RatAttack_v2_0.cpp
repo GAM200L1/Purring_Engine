@@ -174,13 +174,13 @@ namespace PE
             if ((OTEE.Entity1 == p_data->attackRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
                 EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
             {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity2);
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEnteredAttackRadius(p_data->myID, OTEE.Entity2);
             }
             // check if entity2 is the rat's detection collider and entity1 is cat
             else if ((OTEE.Entity2 == p_data->attackRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
                 EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
             {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEnteredAttackRadius(p_data->myID, OTEE.Entity1);
             }
         }
         else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
@@ -190,13 +190,13 @@ namespace PE
             if ((OTSE.Entity1 == p_data->attackRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity2) &&
                 EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
             {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEnteredAttackRadius(p_data->myID, OTSE.Entity2);
             }
             // check if entity2 is the rat's detection collider and entity1 is cat
             else if ((OTSE.Entity2 == p_data->attackRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity1) &&
                 EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
             {
-                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEnteredAttackRadius(p_data->myID, OTSE.Entity1);
             }
         }
     }
@@ -210,13 +210,13 @@ namespace PE
         if ((OTEE.Entity1 == p_data->attackRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
             EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
         {
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExitedAttackRadius(p_data->myID, OTEE.Entity2);
         }
         // check if entity2 is the rat's detection collider and entity1 is cat
         else if ((OTEE.Entity2 == p_data->attackRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
             EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
         {
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExitedAttackRadius(p_data->myID, OTEE.Entity1);
         }
     }
 

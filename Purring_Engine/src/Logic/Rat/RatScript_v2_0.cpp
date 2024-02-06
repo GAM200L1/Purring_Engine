@@ -46,6 +46,8 @@ namespace PE
 
 			// Create a detection radius and configure
 			it->second.detectionRadiusId = CreateDetectionRadius(it->second);
+			it->second.attackRadiusId = CreateAttackRangeRadius(it->second);
+
 		}
 
 
@@ -199,7 +201,6 @@ namespace PE
 			it->second.catsInDetectionRadius.emplace(catID);
 		}
 
-
 		void RatScript_v2_0::CatExited(EntityID const id, EntityID const catID)
 		{
 			auto it = m_scriptData.find(id);
@@ -212,6 +213,28 @@ namespace PE
 			it->second.catsInDetectionRadius.erase(catID);
 		}
 
+		void RatScript_v2_0::CatEnteredAttackRadius(EntityID const id, EntityID const catID)
+		{
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
+
+			it->second.attackRangeInDetectionRadius.emplace(catID);
+
+			// Remove the cats in the exit container from the enter container
+			it->second.attackRangeExitedDetectionRadius.erase(catID);
+		}
+
+		void RatScript_v2_0::CatExitedAttackRadius(EntityID const id, EntityID const catID)
+		{
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
+
+			// Store the cat in the container
+			it->second.attackRangeExitedDetectionRadius.emplace(catID);
+
+			// Remove the cats in the exit container from the enter container
+			it->second.attackRangeInDetectionRadius.erase(catID);
+		}
 
 		void RatScript_v2_0::CreateCheckStateManager(EntityID id)
 		{
@@ -278,5 +301,57 @@ namespace PE
 
 			return radiusId;
 		}
+
+		EntityID RatScript_v2_0::CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data)
+		{
+			SerializationManager serializationManager;
+			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius_Prefab.json") };
+			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
+
+			// Print parent child relationships
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(radiusId))
+			{
+				EntityDescriptor& radiusIdDesc{ EntityManager::GetInstance().Get<EntityDescriptor>(radiusId) };
+				EntityDescriptor& myDesc{ EntityManager::GetInstance().Get<EntityDescriptor>(r_data.myID) };
+				//std::cout << "RatScript_v2_0::CreateDetectionRadius(): parent: " << (radiusIdDesc.parent.has_value() ? radiusIdDesc.parent.value() : 2567) << ", " << *myDesc.children.cbegin() << "\n";
+			}
+
+			//	//GETSCRIPTINSTANCEPOINTER(RatDetectionScript_v2_0)->SetParentRat(radiusId, r_data.myID);
+			//	//GETSCRIPTINSTANCEPOINTER(RatDetectionScript_v2_0)->SetDetectionRadius(radiusId, r_data.detectionRadius);
+
+			  // Add dynamic rigidbody
+			if (!EntityManager::GetInstance().Has<RigidBody>(radiusId))
+			{
+				EntityFactory::GetInstance().Assign(radiusId, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
+			}
+
+			// Configure rigidbody
+			if (EntityManager::GetInstance().Has<RigidBody>(radiusId))
+			{
+				RigidBody& detectionRigidbody{ EntityManager::GetInstance().Get<RigidBody>(radiusId) };
+				detectionRigidbody.SetType(EnumRigidBodyType::DYNAMIC);
+			}
+
+			// Add circle collider
+			if (!EntityManager::GetInstance().Has<Collider>(radiusId))
+			{
+				EntityFactory::GetInstance().Assign(radiusId, { EntityManager::GetInstance().GetComponentID<Collider>() });
+			}
+
+			// Configure collider
+			if (EntityManager::GetInstance().Has<Collider>(radiusId))
+			{
+				Collider& detectionCollider{ EntityManager::GetInstance().Get<Collider>(radiusId) };
+				detectionCollider.colliderVariant = CircleCollider();
+				detectionCollider.isTrigger = true;
+				detectionCollider.collisionLayerIndex = detectionColliderLayer; // @TODO To configure the collision matrix of the game scene
+
+				CircleCollider& circleCollider{ std::get<CircleCollider>(detectionCollider.colliderVariant) };
+				circleCollider.scaleOffset = r_data.attackRadiusId;
+			}
+
+			return radiusId;
+		}
+
 
 } // End of namespace PE

@@ -78,10 +78,12 @@ namespace PE
 		// Detection and movement
 		EntityID detectionRadiusId{};
 		float detectionRadius{ 1000.f };
-		EntityID attackRadiusId{};
-		float attackRadius{100.f};
 		std::set<EntityID> catsInDetectionRadius;
 		std::set<EntityID> catsExitedDetectionRadius;
+		EntityID attackRadiusId{};
+		float attackRadius{100.f};
+		std::set<EntityID> attackRangeInDetectionRadius;
+		std::set<EntityID> attackRangeExitedDetectionRadius;
 
 		float movementSpeed{ 200.f };
 
@@ -236,6 +238,11 @@ namespace PE
 		*************************************************************************************/
 		void CatExited(EntityID const id, EntityID const catID);
 
+		void CatEnteredAttackRadius(EntityID const id, EntityID const catID);
+
+		void CatExitedAttackRadius(EntityID const id, EntityID const catID);
+
+
 		// ----- Private Members ----- //
 	private:
 			// Event listener IDs 
@@ -253,5 +260,6 @@ namespace PE
 		void CreateCheckStateManager(EntityID id);
 
 		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
+		EntityID CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data);
 	}; // end of class 
 }
