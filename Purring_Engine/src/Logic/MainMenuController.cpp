@@ -251,7 +251,7 @@ namespace PE
 
 	void MainMenuController::PlayGameMM(EntityID)
 	{
-		SceneManager::GetInstance().LoadScene("IntroCutsceneScene.json");
+		SceneManager::GetInstance().LoadScene("Level1Scene.json");
 		PlayClickAudio();
 	}
 
