@@ -42,6 +42,8 @@ namespace PE
 			for (int index = 1; index < m_ScriptData[id].NumberOfAttachers; ++index)
 			{
 				GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+				if (gsc->currentState == GameStates_v2_0::PLANNING || gsc->currentState == GameStates_v2_0::ATTACK)
+					return;
 				Transform& curT = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
 				if (EntityManager::GetInstance().Has<Transform>(m_ScriptData[id].ToAttach[index]))
 				{

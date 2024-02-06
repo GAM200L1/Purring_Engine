@@ -2986,32 +2986,7 @@
                         "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": {
-                        "CatScript": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationOrange_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                                    "Hurt": "",
-                                    "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationOrange_walk_Anim.json"
-                                },
-                                "attackDamage": 1,
-                                "bulletDelay": 0.699999988079071,
-                                "bulletForce": 1000.0,
-                                "bulletLifeTime": 1.0,
-                                "bulletRange": 3.0,
-                                "catHealth": 1,
-                                "catID": 0,
-                                "catMaxEnergy": 21,
-                                "isMainCat": false,
-                                "movementSpeed": 300.0,
-                                "projectileID": 0,
-                                "requiredAttackPoints": 0
-                            },
-                            "state": 0
-                        }
-                    },
+                    "ScriptComponent": null,
                     "Transform": {
                         "height": 64.0,
                         "orientation": 0.0,
@@ -3537,7 +3512,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject73",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 73
                     },
@@ -3600,7 +3575,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject74",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 74
                     },
@@ -3663,7 +3638,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject75",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 75
                     },
@@ -3726,7 +3701,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject76",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 76
                     },
@@ -3789,7 +3764,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject77",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 77
                     },
@@ -3852,7 +3827,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject78",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 78
                     },
@@ -3915,7 +3890,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject79",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 79
                     },
@@ -3978,7 +3953,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject80",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 80
                     },
@@ -4041,7 +4016,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "GameObject81",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 81
                     },
@@ -4194,7 +4169,7 @@
                                 "Speed": 100.0,
                                 "ToAttach": [
                                     18446744073709551615,
-                                    17,
+                                    61,
                                     18446744073709551615,
                                     18446744073709551615,
                                     18446744073709551615,
