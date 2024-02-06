@@ -52,6 +52,15 @@ namespace PE
 			m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
 		}
 
+		m_scriptData[id].targetCats.clear();
+		for (const auto& target : SceneView<ScriptComponent>())
+		{
+			if (EntityManager::GetInstance().Get<ScriptComponent>(target).m_scriptKeys.count("CatScript"))
+			{
+				m_scriptData[id].targetCats.emplace_back(target);
+			}
+		}
+
 		CreateAttackTelegraphs(id);
 	}
 		 
@@ -376,13 +385,36 @@ namespace PE
 		RatScript::PositionEntity(p_data->psudoRatID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
 		//RatScript::ToggleEntity(p_data->detectionTelegraphID, true); // show the detection telegraph
 		Transform const& ratObject = PE::EntityManager::GetInstance().Get<PE::Transform>(id);
+
+		// to replace with tagging code when PR'ed
+		p_data->targetCats.clear();
+		for (const auto& target : SceneView<ScriptComponent>())
+		{
+			if (EntityManager::GetInstance().Get<ScriptComponent>(target).m_scriptKeys.count("CatScript"))
+			{
+				p_data->targetCats.emplace_back(target);
+			}
+		}
+
+		size_t dist{MAXSIZE_T};
+		for (const auto& tgt : p_data->targetCats)
+		{
+			Transform const& currTarget = PE::EntityManager::GetInstance().Get<PE::Transform>(tgt);
+			vec2 absRatScale = vec2{ abs(ratObject.width),abs(ratObject.height) };
+			vec2 absCatScale = vec2{ abs(currTarget.width),abs(currTarget.height) };
+			size_t newDist = RatScript::GetEntityPosition(id).Distance(currTarget.position) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f);
+			dist = (newDist < dist) ? newDist : dist;
+			p_data->mainCatID = (dist == newDist) ? tgt : p_data->mainCatID;
+		}
+
+		
 		Transform const& catObject = PE::EntityManager::GetInstance().Get<PE::Transform>(p_data->mainCatID);
 		vec2 absRatScale = vec2{ abs(ratObject.width),abs(ratObject.height) };
 		vec2 absCatScale = vec2{ abs(catObject.width),abs(catObject.height) };
 		p_data->distanceFromPlayer = RatScript::GetEntityPosition(id).Distance(catObject.position) - (absCatScale.x * 0.5f) - (absRatScale.x * 0.5f);
 		p_data->directionToTarget = RatScript::GetEntityPosition(p_data->mainCatID) - RatScript::GetEntityPosition(id);
 		p_data->directionToTarget.Normalize();
-
+		
 
 		// if the cat is within the detection radius
 		if (p_data->distanceFromPlayer <= ((RatScript::GetEntityScale(p_data->detectionTelegraphID).x * 0.5f) - absCatScale.x) && EntityManager::GetInstance().Get<EntityDescriptor>(p_data->mainCatID).isActive)

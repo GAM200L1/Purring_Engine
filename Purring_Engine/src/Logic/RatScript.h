@@ -68,6 +68,8 @@ namespace PE
 
 		std::map<std::string, std::string> animationStates;
 
+		std::vector<EntityID> targetCats;
+
 		EnumOldRatType ratType{ EnumOldRatType::GUTTER };
 	};
 

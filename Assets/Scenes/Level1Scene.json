@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -809,7 +809,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1152,7 +1152,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1194,7 +1194,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1546,7 +1546,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1814,7 +1814,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2216,7 +2216,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2533,7 +2533,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2613,7 +2613,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2936,6 +2936,15 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationOrange_Attack_Anim.json",
+                            "../Assets/Animation/AnimationOrange_Death_Anim.json",
+                            "../Assets/Animation/AnimationOrange_Idle_Anim.json",
+                            "../Assets/Animation/AnimationOrange_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": ""
+                    },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -2977,7 +2986,32 @@
                         "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": null,
+                    "ScriptComponent": {
+                        "CatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationOrange_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationOrange_Death_Anim.json",
+                                    "Hurt": "",
+                                    "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationOrange_walk_Anim.json"
+                                },
+                                "attackDamage": 1,
+                                "bulletDelay": 0.699999988079071,
+                                "bulletForce": 1000.0,
+                                "bulletLifeTime": 1.0,
+                                "bulletRange": 3.0,
+                                "catHealth": 1,
+                                "catID": 0,
+                                "catMaxEnergy": 21,
+                                "isMainCat": false,
+                                "movementSpeed": 300.0,
+                                "projectileID": 0,
+                                "requiredAttackPoints": 0
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 64.0,
                         "orientation": 0.0,
@@ -3067,7 +3101,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3335,7 +3369,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4261,7 +4295,8 @@
                                 "detectionRadius": 4.0,
                                 "health": 1,
                                 "mainCatID": 16,
-                                "movementSpeed": 200.0
+                                "movementSpeed": 200.0,
+                                "targetCats": []
                             },
                             "state": 0
                         }

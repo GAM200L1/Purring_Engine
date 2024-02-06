@@ -342,7 +342,8 @@ RTTR_REGISTRATION
         .property("collisionDamage", &PE::RatScriptData::collisionDamage)
         .property("attackDamage", &PE::RatScriptData::attackDamage)
         .property("attackDelay", &PE::RatScriptData::attackDelay)
-        .property("animationStates", &PE::RatScriptData::animationStates);
+        .property("animationStates", &PE::RatScriptData::animationStates)
+        .property("targetCats", &PE::RatScriptData::targetCats);
 
     rttr::registration::class_<PE::IntroCutsceneController>("IntroCutsceneController")
         .property("m_rotationSpeed", &PE::IntroCutsceneControllerData::m_rotationSpeed);
