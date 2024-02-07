@@ -41,7 +41,7 @@ namespace PE
         float m_delay{};
 
         bool attacksoundonce{};
-
+        bool telegraphEnabled{ false };
     };
 
 } // namespace PE

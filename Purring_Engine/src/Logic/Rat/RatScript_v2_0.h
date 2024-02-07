@@ -77,11 +77,11 @@ namespace PE
 
 		// Detection and movement
 		EntityID detectionRadiusId{};
-		float detectionRadius{ 1000.f };
+		float detectionRadius{ 500.f };
 		std::set<EntityID> catsInDetectionRadius;
 		std::set<EntityID> catsExitedDetectionRadius;
 		EntityID attackRadiusId{};
-		float attackRadius{100.f};
+		float attackRadius{101.f};
 		std::set<EntityID> attackRangeInDetectionRadius;
 		std::set<EntityID> attackRangeExitedDetectionRadius;
 
