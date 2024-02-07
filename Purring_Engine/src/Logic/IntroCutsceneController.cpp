@@ -35,7 +35,6 @@ namespace PE
 {
 	void IntroCutsceneController::Init(EntityID id)
 	{
-		m_ScriptData[id] = IntroCutsceneControllerData();
 		m_elapsedTime = 0;
 		m_endCutscene = false;
 		m_startCutscene = true;
@@ -70,17 +69,20 @@ namespace PE
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
 
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
-				EntityManager::GetInstance().Get<EntityDescriptor>(1).isActive = false;
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].CutsceneObject))
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].CutsceneObject).isActive = false;
 
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(4))
-				EntityManager::GetInstance().Get<EntityDescriptor>(4).isActive = true;
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_scriptData[id].FinalScene))
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].FinalScene).isActive = true;
 
-			if (EntityManager::GetInstance().Has<TextComponent>(14))
-				EntityManager::GetInstance().Get<TextComponent>(14).SetText("Continue");
+			if (EntityManager::GetInstance().Has<TextComponent>(m_scriptData[id].Text))
+				EntityManager::GetInstance().Get<TextComponent>(m_scriptData[id].Text).SetText("Continue");
 
 			m_endCutscene = true;
 		}
+
+		if (m_isTransitioning)
+			TransitionPanelFade(id,deltaTime);
 
 	}
 	void IntroCutsceneController::Destroy(EntityID id)
@@ -89,33 +91,39 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		m_elapsedTime = 0;
+		m_endCutscene = false;
+		m_startCutscene = true;
+		m_transitionElapsedTime = 0;
+		m_isTransitioning = false;
 	}
 
 	void IntroCutsceneController::OnAttach(EntityID id)
 	{
-
+		m_scriptData[id] = IntroCutsceneControllerData();
 	}
 
 	void IntroCutsceneController::OnDetach(EntityID id)
 	{
-		auto it = m_ScriptData.find(id);
-		if (it != m_ScriptData.end())
-			m_ScriptData.erase(id);
+		auto it = m_scriptData.find(id);
+		if (it != m_scriptData.end())
+			m_scriptData.erase(id);
 	}
 
 	std::map<EntityID, IntroCutsceneControllerData>& IntroCutsceneController::GetScriptData()
 	{
-		return m_ScriptData;
+		return m_scriptData;
 	}
 
 	rttr::instance IntroCutsceneController::GetScriptData(EntityID id)
 	{
-		return rttr::instance();
+		return rttr::instance(m_scriptData.at(id));
 	}
 
 	void IntroCutsceneController::ContinueToLevel(EntityID id)
 	{
-		SceneManager::GetInstance().LoadScene("Level1Scene.json");
+		m_isTransitioning = true;
 		PlayClickAudio();
 	}
 
@@ -130,5 +138,41 @@ namespace PE
 	IntroCutsceneController::IntroCutsceneController()
 	{
 		REGISTER_UI_FUNCTION(ContinueToLevel, PE::IntroCutsceneController);
+	}
+
+	void IntroCutsceneController::TransitionPanelFade(EntityID const id, float deltaTime)
+	{
+		m_transitionElapsedTime += deltaTime;
+
+		float fadeInSpeed = std::clamp(m_transitionElapsedTime / m_transitionTimer, 0.0f, 1.0f);
+
+		FadeAllObject(m_scriptData[id].TransitionScreen, fadeInSpeed);
+
+		if (fadeInSpeed >= 1)
+		{
+			SceneManager::GetInstance().LoadScene("Level1Scene.json");
+		}
+	}
+
+	void IntroCutsceneController::FadeAllObject(EntityID id, float const alpha)
+	{
+		//fade all the children objects first
+		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+		{
+			if (EntityManager::GetInstance().Has<TextComponent>(id2))
+			{
+				EntityManager::GetInstance().Get<TextComponent>(id2).SetAlpha(alpha);
+			}
+			else if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+			{
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetAlpha(alpha);
+			}
+		}
+
+		if (!EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id))
+			return;
+
+		//fade the current object
+		EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id).SetAlpha(alpha);
 	}
 }

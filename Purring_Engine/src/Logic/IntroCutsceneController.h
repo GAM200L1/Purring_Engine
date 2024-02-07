@@ -21,7 +21,10 @@ namespace PE
 {
 	struct IntroCutsceneControllerData
 	{
-
+		EntityID TransitionScreen;
+		EntityID Text;
+		EntityID CutsceneObject;
+		EntityID FinalScene;
 	};
 
 	class IntroCutsceneController : public Script
@@ -103,13 +106,33 @@ namespace PE
 		*************************************************************************************/
 		IntroCutsceneController();
 
+		/*!***********************************************************************************
+		 \brief			Fade the Planning State HUD
+
+		 \param[in]		the current game state manager
+		 \param[in]		the time passed since the last update
+		*************************************************************************************/
+		void TransitionPanelFade(EntityID const id, float deltaTime);
+
+		/*!***********************************************************************************
+		 \brief			Set the alpha of all given objects
+
+		 \param[in]		EntityID the canvas to set alpha
+		 \param[in]		float the alpha to set
+		*************************************************************************************/
+		void FadeAllObject(EntityID id, float const alpha);
+
 	private:
-		std::map<EntityID, IntroCutsceneControllerData> m_ScriptData;
+		std::map<EntityID, IntroCutsceneControllerData> m_scriptData;
 		SerializationManager m_serializationManager;
 		float m_sceneTimer{ 22.3f };
 		float m_elapsedTime{ 0 };
 		bool m_endCutscene{ false };
 		bool m_startCutscene{ true };
+
+		float m_transitionTimer{ 1.f };
+		float m_transitionElapsedTime{ 0 };
+		bool m_isTransitioning{ false };
 	};
 
 

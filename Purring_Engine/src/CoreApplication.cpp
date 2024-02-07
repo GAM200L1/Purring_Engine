@@ -262,7 +262,13 @@ RTTR_REGISTRATION
         .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
-        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
+        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);    
+    
+    rttr::registration::class_<PE::IntroCutsceneControllerData>("IntroCutsceneController")
+        .property("CutsceneObject", &PE::IntroCutsceneControllerData::CutsceneObject)
+        .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
+        .property("Text", &PE::IntroCutsceneControllerData::Text)
+        .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
