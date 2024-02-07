@@ -109,6 +109,8 @@ namespace PE
             std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
                 << " is within attack radius of Cat ID: " << closestCat << ". Initiating attack.\n";
             //GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->TriggerStateChange(id, 0.f);
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(id, 0.f);
+
         }
     }
 

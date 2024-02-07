@@ -319,6 +319,9 @@ namespace PE
 		*************************************************************************************/
 		void ChangeStateToIdle(EntityID const id, float const stateChangeDelay = 0.f);
 
+		void ChangeStateToMovement(EntityID const id, float const stateChangeDelay = 0.f);
+
+
 		/*!***********************************************************************************
 		 \brief Sets the flag for the state to be changed to the attack state 
 						after the delay passed in.

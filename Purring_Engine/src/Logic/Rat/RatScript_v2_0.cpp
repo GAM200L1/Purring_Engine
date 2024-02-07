@@ -284,6 +284,11 @@ namespace PE
 				TriggerStateChange(id, new RatIdle_v2_0{ idleBehaviour }, stateChangeDelay);
 		}
 
+		void RatScript_v2_0::ChangeStateToMovement(EntityID const id, float const stateChangeDelay)
+		{
+			TriggerStateChange(id, new RatMovement_v2_0, stateChangeDelay);
+		}
+
 
 		void RatScript_v2_0::ChangeStateToAttack(EntityID const id, float const stateChangeDelay)
 		{
@@ -487,7 +492,9 @@ namespace PE
 						return;
 
 				m_scriptData[id].p_stateManager = new StateMachine{};
-				ChangeStateToIdle(id);
+				//ChangeStateToIdle(id);
+				ChangeStateToMovement(id);
+
 			}
 		}
 
