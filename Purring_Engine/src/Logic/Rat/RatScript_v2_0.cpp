@@ -158,6 +158,16 @@ namespace PE
 			catch (...) { return; }
 		}
 
+		void RatScript_v2_0::PositionEntityRelative(EntityID const transformId, vec2 const& r_position)
+		{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.relPosition = r_position;
+			}
+			catch (...) { return; }
+		}
+
 		void RatScript_v2_0::ScaleEntity(EntityID const transformId, float const width, float const height)
 		{
 			try
@@ -202,6 +212,8 @@ namespace PE
 
 		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
 		{
+			std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << p_nextState->GetName() << ", " << stateChangeDelay << ")\n";
+
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 			else if (m_scriptData[id].delaySet) { return; }
@@ -212,7 +224,7 @@ namespace PE
 
 			// Set the state that is queued up
 			it->second.SetQueuedState(p_nextState, false);
-			std::cout << "State change requested for Rat ID: " << id << " with delay: " << stateChangeDelay << " seconds." << std::endl;
+			std::cout << "State change requested for Rat ID: " << id << " to state " << p_nextState->GetName() << " with delay: " << stateChangeDelay << " seconds." << std::endl;
 		}
 
 
@@ -482,6 +494,7 @@ namespace PE
 
 		void RatScript_v2_0::ChangeRatState(EntityID id)
 		{
+				std::cout << "RatScript_v2_0::ChangeRatState(" << id << ")";
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 
@@ -503,17 +516,8 @@ namespace PE
 			SerializationManager serializationManager;
 			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius_Prefab.json") };
 			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
-
-			// Print parent child relationships
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(radiusId))
-			{
-					EntityDescriptor& radiusIdDesc{ EntityManager::GetInstance().Get<EntityDescriptor>(radiusId) };
-					EntityDescriptor& myDesc{ EntityManager::GetInstance().Get<EntityDescriptor>(r_data.myID) };
-					std::cout << "RatScript_v2_0::CreateDetectionRadius(): parent: " << (radiusIdDesc.parent.has_value() ? radiusIdDesc.parent.value() : 2567) << ", " << *myDesc.children.cbegin() << "\n";
-			}
-
-		//	//GETSCRIPTINSTANCEPOINTER(RatDetectionScript_v2_0)->SetParentRat(radiusId, r_data.myID);
-		//	//GETSCRIPTINSTANCEPOINTER(RatDetectionScript_v2_0)->SetDetectionRadius(radiusId, r_data.detectionRadius);
+			PositionEntity(radiusId, GetEntityPosition(r_data.myID));
+			PositionEntityRelative(radiusId, vec2{ 0.f, 0.f });
 
 		  // Add dynamic rigidbody
 			if (!EntityManager::GetInstance().Has<RigidBody>(radiusId))
@@ -554,19 +558,10 @@ namespace PE
 			SerializationManager serializationManager;
 			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius_Prefab.json") };
 			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
+			PositionEntity(radiusId, GetEntityPosition(r_data.myID));
+			PositionEntityRelative(radiusId, vec2{0.f, 0.f});
 
-			// Print parent child relationships
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(radiusId))
-			{
-				EntityDescriptor& radiusIdDesc{ EntityManager::GetInstance().Get<EntityDescriptor>(radiusId) };
-				EntityDescriptor& myDesc{ EntityManager::GetInstance().Get<EntityDescriptor>(r_data.myID) };
-				//std::cout << "RatScript_v2_0::CreateDetectionRadius(): parent: " << (radiusIdDesc.parent.has_value() ? radiusIdDesc.parent.value() : 2567) << ", " << *myDesc.children.cbegin() << "\n";
-			}
-
-			//	//GETSCRIPTINSTANCEPOINTER(RatDetectionScript_v2_0)->SetParentRat(radiusId, r_data.myID);
-			//	//GETSCRIPTINSTANCEPOINTER(RatDetectionScript_v2_0)->SetDetectionRadius(radiusId, r_data.detectionRadius);
-
-			  // Add dynamic rigidbody
+			 // Add dynamic rigidbody
 			if (!EntityManager::GetInstance().Has<RigidBody>(radiusId))
 			{
 				EntityFactory::GetInstance().Assign(radiusId, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
