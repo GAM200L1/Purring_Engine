@@ -3284,6 +3284,15 @@ namespace PE {
 								{
 									if (ImGui::CollapsingHeader("CatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+										int index = static_cast<int>(it->second.catType);
+										const char* types[] = { "MAINCAT","GREYCAT","ORANGECAT","FLUFFYCAT"};
+										ImGui::Text("Cat Type: "); ImGui::SameLine();
+										ImGui::SetNextItemWidth(200.0f);
+										//set combo box for the different collider types
+										if (ImGui::Combo("##cat Types", &index, types, IM_ARRAYSIZE(types)))
+										{
+											it->second.catType = static_cast<EnumCatType>(index);
+										}
 
 									}
 								}

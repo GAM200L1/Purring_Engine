@@ -401,6 +401,8 @@ namespace PE
 		//portrait
 		bool m_isPotraitShowing{};
 		bool m_isRat{};
+		EntityID m_lastSelectedEntity{};
+
 		//journal object testing
 		bool m_journalShowing;
 
