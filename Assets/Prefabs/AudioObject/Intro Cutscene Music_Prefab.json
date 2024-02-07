@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/MOTM_M4_Cutscene_AudioOnly.mp3",
+                "loop": true
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Background Music",
+                "children": [],
+                "isActive": true,
+                "name": "Background Music",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

@@ -95,6 +95,7 @@
 #include "Logic/UI/HealthBarScript_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
+#include "Logic/IntroCutsceneController.h"
 
 // Scene Manager
 #include "SceneManager/SceneManager.h"
@@ -343,6 +344,9 @@ RTTR_REGISTRATION
         .property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScriptData::animationStates);
 
+    rttr::registration::class_<PE::IntroCutsceneController>("IntroCutsceneController")
+        .property("m_rotationSpeed", &PE::IntroCutsceneControllerData::m_rotationSpeed);
+
     rttr::registration::class_<PE::Canvas>(PE::EntityManager::GetInstance().GetComponentID<PE::Canvas>().to_string().c_str())
         .property_readonly("Width", &PE::Canvas::GetWidth)
         .property_readonly("Height", &PE::Canvas::GetHeight)
@@ -395,6 +399,9 @@ void PE::CoreApplication::Run()
     TimeManager::GetInstance().EngineStart();
 
     SerializationManager serializationManager;
+
+    // Load default assets
+    ResourceManager::GetInstance().LoadDefaultAssets();
 
     // Set start scene
 #ifndef GAMERELEASE
