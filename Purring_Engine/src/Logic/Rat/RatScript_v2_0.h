@@ -37,6 +37,7 @@ namespace PE
 	{
 		~RatScript_v2_0_Data()
 		{
+			delete p_queuedState;
 			delete p_stateManager;
 		}
 
@@ -103,6 +104,38 @@ namespace PE
 		std::vector<vec2> patrolPoints;
 		int patrolIndex{ 0 };							// Index of the current patrol point the rat is moving towards
 		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
+
+	private:
+		State* p_queuedState{ nullptr }; // State to load
+
+	public:
+
+		/*!***********************************************************************************
+		\brief Setter for the pointer to the state the rat should be set to. 
+						Deletes any states currently being pointed to.
+
+		\param p_newState - Pointer to the state the rat should be set to.
+		\param bypassDeletion - Set to true to not delete the existing data being pointed at,
+								false to delete any data being pointed at if setting a new state.
+		*************************************************************************************/
+		void SetQueuedState(State* p_newState, bool bypassDeletion)
+		{
+			if (!bypassDeletion && p_queuedState)
+			{
+				delete p_queuedState;
+			}
+
+			p_queuedState = p_newState;
+		}
+
+		/*!***********************************************************************************
+		 \brief Getter for the pointer to the state the rat should be set to.
+		*************************************************************************************/
+		State* GetQueuedState()
+		{
+			return p_queuedState;
+		}
+
 	};
 	
 	class RatScript_v2_0 : public Script
@@ -222,9 +255,80 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
 
-		void TriggerStateChange(EntityID id, float const stateChangeDelay);
+
+		// --- RAT STATE CHANGE DETECTION --- // 
+
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed after the delay passed in.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] p_nextState - Pointer to the state to change to. Can be set to nullptr
+										to cancel the previous state change request, if any.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay = 0.f);
+
+		/*!***********************************************************************************
+		 \brief Changes the state if the flag has been set and the delay is zero and below.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] deltaTime - Time in seconds that have passed since the last frame.
+
+		 \return true - True if the state should change.
+		 \return false - False if the state should NOT change.
+		*************************************************************************************/
+		bool CheckShouldStateChange(EntityID id, float const deltaTime);
+
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed to the hunting state
+						after the delay passed in.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void ChangeStateToHunt(EntityID const id, float const stateChangeDelay = 0.f);
+
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed to the returning state
+						after the delay passed in.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void ChangeStateToReturn(EntityID const id, float const stateChangeDelay = 0.f);
+
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed to the idle state
+						after the delay passed in.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void ChangeStateToIdle(EntityID const id, float const stateChangeDelay = 0.f);
+
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed to the attack state 
+						after the delay passed in.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void ChangeStateToAttack(EntityID const id, float const stateChangeDelay = 0.f);
+
 
 		// --- COLLISION DETECTION --- // 
+
+		/*!***********************************************************************************
+		 \brief Clears the containers used to store the cats being collided with.
+
+		 \param[in] id - EntityID of the rat whose detection radius was entered.
+		*************************************************************************************/
+		void ClearCollisionContainers(EntityID const id);
 
 		/*!***********************************************************************************
 		 \brief Called when a cat is within the rat's detection radius.
@@ -277,13 +381,20 @@ namespace PE
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Change the state of the rat to the state queued up.
+
+		 \param[in] id - EntityID of the entity to change the state of.
+		*************************************************************************************/
+		void ChangeRatState(EntityID id);
+
 		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
 
 		/*!***********************************************************************************
 			\brief Returns true if the current game state is different from the game state
 							in the previous frame, false otherwise.
 		*************************************************************************************/
-		inline bool StateJustChanged() const
+		inline bool GameStateJustChanged() const
 		{
 				return previousGameState != gameStateController->currentState;
 		}

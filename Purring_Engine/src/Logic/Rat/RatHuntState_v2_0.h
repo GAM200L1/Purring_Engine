@@ -23,12 +23,15 @@ namespace PE
 	{
 		// ----- Constructors ----- //
 	public:
+
+		RatHunt_v2_0(EntityID const _targetId) : targetId{ _targetId } { /* Empty by design */ }
+
 		virtual ~RatHunt_v2_0() override { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
 	public:
 		/*!***********************************************************************************
-			\brief Play the idle animation and start the timer
+			\brief Set up the state and subscribe to the collision events
 
 			\param[in,out] id - ID of instance of script
 		*************************************************************************************/

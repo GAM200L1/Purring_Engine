@@ -45,8 +45,7 @@ namespace PE
 			if (it == m_scriptData.end()) { return; }
 
 			// Clear collision containers
-			it->second.catsInDetectionRadius.clear();
-			it->second.catsExitedDetectionRadius.clear();
+			ClearCollisionContainers(id);
 
 			// Create a detection radius and configure
 			it->second.detectionRadiusId = CreateDetectionRadius(it->second);
@@ -68,11 +67,17 @@ namespace PE
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
-			if (StateJustChanged() && gameStateController->currentState == GameStates_v2_0::EXECUTE)
+			if (GameStateJustChanged() && gameStateController->currentState == GameStates_v2_0::EXECUTE)
 			{
-				// Clear cat collision containers
-				it->second.catsInDetectionRadius.clear();
-				it->second.catsExitedDetectionRadius.clear();
+					// Clear cat collision containers
+					ClearCollisionContainers(id);
+					// NOTE: I'm still not too sure about whether it's a good idea to clear this here. 
+					// I'm making the assumption that all decisions the rat makes occurs during the planning pgase 
+			}
+
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+					ChangeRatState(id);
 			}
 
 			previousGameState = gameStateController->currentState;
@@ -195,24 +200,106 @@ namespace PE
 			return rttr::instance(m_scriptData.at(id));
 		}
 
-		void RatScript_v2_0::TriggerStateChange(EntityID id, float const stateChangeDelay)
+		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
 		{
-			if (m_scriptData[id].delaySet) { return; }
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return; }
+			else if (m_scriptData[id].delaySet) { return; }
 
-			m_scriptData[id].shouldChangeState = true;
-			m_scriptData[id].timeBeforeChangingState = stateChangeDelay;
-			m_scriptData[id].delaySet = true;
+			it->second.shouldChangeState = true;
+			it->second.timeBeforeChangingState = stateChangeDelay;
+			it->second.delaySet = true;
 
+			// Set the state that is queued up
+			it->second.SetQueuedState(p_nextState, false);
 			std::cout << "State change requested for Rat ID: " << id << " with delay: " << stateChangeDelay << " seconds." << std::endl;
+		}
+
+
+		
+		bool RatScript_v2_0::CheckShouldStateChange(EntityID id, float const deltaTime)
+		{
+			auto it = m_scriptData.find(id);
+			if (it == m_scriptData.end()) { return false; }
+			else if (!it->second.GetQueuedState()) { return false; } // Return if no states have been queued
+
+			// Waits for [timeBeforeChangingState] to pass before changing the state
+			if (it->second.shouldChangeState)
+			{
+				if (it->second.timeBeforeChangingState > 0.f)
+				{
+					it->second.timeBeforeChangingState -= deltaTime;
+					return false;
+				}
+				else
+				{
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+
+		void RatScript_v2_0::ChangeStateToHunt(EntityID const id, EntityID const targetId, float const stateChangeDelay)
+		{
+				TriggerStateChange(id, new RatHunt_v2_0{ targetId }, stateChangeDelay);
+		}
+
+
+		void RatScript_v2_0::ChangeStateToReturn(EntityID const id, float const stateChangeDelay)
+		{
+				TriggerStateChange(id, new RatReturn_v2_0, stateChangeDelay);
+		}
+
+
+		void RatScript_v2_0::ChangeStateToIdle(EntityID const id, float const stateChangeDelay)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				// Check the type of idle behaviour based on the type of rat
+				RatType idleBehaviour{ RatType::IDLE };
+				switch (it->second.ratType)
+				{
+				case EnumRatType::GUTTER:
+				case EnumRatType::BRAWLER:
+				{
+						idleBehaviour = RatType::PATROL;
+				}
+				}
+
+				TriggerStateChange(id, new RatIdle_v2_0{ idleBehaviour }, stateChangeDelay);
+		}
+
+
+		void RatScript_v2_0::ChangeStateToAttack(EntityID const id, float const stateChangeDelay)
+		{
+				TriggerStateChange(id, new RatAttack_v2_0, stateChangeDelay);
 		}
 
 
 		// ------------ CAT DETECTION ------------ // 
 
+		void RatScript_v2_0::ClearCollisionContainers(EntityID const id) 
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				it->second.catsInDetectionRadius.clear();
+				it->second.catsExitedDetectionRadius.clear();
+
+				it->second.attackRangeInDetectionRadius.clear();
+				it->second.attackRangeExitedDetectionRadius.clear();
+		}
+
 		void RatScript_v2_0::CatEntered(EntityID const id, EntityID const catID)
 		{
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
+
+			// Check if the cat is alive
+			// -- no function exists ---
 
 			// Store the cat in the container
 			it->second.catsInDetectionRadius.emplace(catID);
@@ -225,6 +312,9 @@ namespace PE
 		{
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
+
+			// Check if the cat is alive
+			// -- no function exists ---
 
 			// Store the cat in the container
 			it->second.catsExitedDetectionRadius.emplace(catID);
@@ -385,11 +475,27 @@ namespace PE
 						return;
 
 				m_scriptData[id].p_stateManager = new StateMachine{};
-				//m_scriptData[id].p_stateManager->ChangeState(new RatIdle_v2_0(RatType::PATROL), id);]
-				m_scriptData[id].p_stateManager->ChangeState(new RatMovement_v2_0(), id);
-				//m_scriptData[id].p_stateManager->ChangeState(new RatAttack_v2_0(), id);
-
+				ChangeStateToIdle(id);
 			}
+		}
+
+
+		void RatScript_v2_0::ChangeRatState(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				// Change the state
+				if (it->second.p_stateManager)
+				{
+						it->second.p_stateManager->ChangeState(it->second.GetQueuedState(), id);
+				}
+
+				// Reset all the values
+				it->second.shouldChangeState = false;
+				it->second.timeBeforeChangingState = 0.f;
+				it->second.delaySet = false;
+				it->second.SetQueuedState(nullptr, true);
 		}
 
 		EntityID RatScript_v2_0::CreateDetectionRadius(RatScript_v2_0_Data const& r_data)
@@ -488,7 +594,7 @@ namespace PE
 				detectionCollider.collisionLayerIndex = detectionColliderLayer; // @TODO To configure the collision matrix of the game scene
 
 				CircleCollider& circleCollider{ std::get<CircleCollider>(detectionCollider.colliderVariant) };
-				circleCollider.scaleOffset = r_data.attackRadiusId;
+				circleCollider.scaleOffset = r_data.attackRadius;
 			}
 
 			return radiusId;
