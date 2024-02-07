@@ -18,11 +18,13 @@
 
 #include <variant>
 #include <set>
+#include <optional>
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
 #include "ECS/Components.h"
 #include "RigidBody.h"
 #include "Layers/CollisionLayer.h"
+
 
 namespace PE
 {
@@ -325,4 +327,19 @@ namespace PE
 		*************************************************************************************/
 		void ResolvePosition();
 	};
+
+	struct LSColResult
+	{
+		vec2 contactPoint{};
+		size_t contactedEntity{ 0ULL };
+		float angle{ 0.f };
+	};
+
+	std::optional<LSColResult> DoRayCast(const LineSegment& ls, const size_t& tgt);
+
+	std::optional<LSColResult> CheckLineCollision(const LineSegment& ls, const Collider& tgt);
+	
+	// std::visit helper functions
+	std::optional<LSColResult> CheckLSCollision(const LineSegment& ls, const CircleCollider& tgt);
+	std::optional<LSColResult> CheckLSCollision(const LineSegment& ls, const AABBCollider& tgt);
 }
