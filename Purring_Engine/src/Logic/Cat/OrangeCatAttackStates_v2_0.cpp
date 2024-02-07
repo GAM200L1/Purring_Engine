@@ -47,7 +47,7 @@ namespace PE
 
 	}
 
-	void OrangeCatAttack_v2_0PLAN::ResetSelection()
+	void OrangeCatAttack_v2_0PLAN::ResetSelection(EntityID id)
 	{
 
 	}

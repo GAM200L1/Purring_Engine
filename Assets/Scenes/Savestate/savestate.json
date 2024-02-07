@@ -2996,7 +2996,6 @@
                                 "nodeSize": 10.0,
                                 "pathQuads": [],
                                 "shouldChangeState": false,
-                                "startedPlanning": false,
                                 "timeBeforeChangingState": 0.0
                             },
                             "state": 0

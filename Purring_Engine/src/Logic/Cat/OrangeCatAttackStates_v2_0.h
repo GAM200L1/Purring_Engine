@@ -49,6 +49,8 @@ namespace PE
 
 		virtual void Exit(EntityID id);
 
+		virtual void ResetSelection(EntityID id);
+
 	private:
 		
 		// data
@@ -69,7 +71,6 @@ namespace PE
 		// ----- Private Functions ----- //
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
-		void ResetSelection();
 	};
 
 	class OrangeCatAttack_v2_0EXECUTE : public State

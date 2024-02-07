@@ -77,7 +77,7 @@ namespace PE
 		bool shouldChangeState{};  // Flags that the state should change when [timeBeforeChangingState] is zero
 		bool delaySet{ false }; // Whether the state change has been flagged
 		float timeBeforeChangingState{ 0.f }; // Delay before state should change
-		bool startedPlanning{ false };
+		bool planningAttack{ false };
 
 		// animation
 		AnimationComponent* p_catAnimation = nullptr;

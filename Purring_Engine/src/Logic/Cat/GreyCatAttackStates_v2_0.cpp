@@ -40,36 +40,36 @@ namespace PE
 		p_attackData->attackDirection = std::pair(EnumCatAttackDirection_v2_0::NONE, id);
 		
 		// subscribe to mouse click event for selecting attack telegraphs
-		m_mouseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GreyCatAttack_v2_0PLAN::OnMouseClick, this);
+		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, GreyCatAttack_v2_0PLAN::OnMouseClick, this);
+		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, GreyCatAttack_v2_0PLAN::OnMouseRelease, this);
 	}
 
 	void GreyCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
-		std::cout << "Attack\n";
+		
 		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
 		try
 		{
-			CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 			
-			if (!m_showTelegraphs) // if telegraphs not showing, enable when the cat is selected
-			{
-				if (m_mouseClick && PointCollision(r_catCollider, cursorPosition))
-				{
-					m_showTelegraphs = true;
-					// shows all telegraphs
-					ToggleAll(true, true);
-				}
-			}
-			else
+			//if (!m_showTelegraphs) // if telegraphs not showing, enable when the cat is selected
+			//{
+			//	if (m_mouseClick && PointCollision(r_catCollider, cursorPosition))
+			//	{
+			//		m_showTelegraphs = true;
+			//		// shows all telegraphs
+					ToggleAll(true, false);
+				//}
+			//}
+			//else
 			{
 				for (auto const& r_telegraph : p_attackData->telegraphIDs) // for every telegraph
 				{
 					AABBCollider const& r_telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(r_telegraph.second).colliderVariant);
 
 					bool collidedWithTelegraph = PointCollision(r_telegraphCollider, cursorPosition);
-
+					if (r_telegraph == p_attackData->attackDirection) { continue; }
 					// check if the mouse is hovering any of the boxes, if yes, boxes should change color
 					if (collidedWithTelegraph)
 					{
@@ -80,6 +80,7 @@ namespace PE
 							p_attackData->attackDirection = r_telegraph;
 							(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
 							CatHelperFunctions::SetColor(r_telegraph.second, m_selectColor);
+							break;
 						}
 					}
 					else // if not hovering any telegraphs, set to default color
@@ -89,34 +90,41 @@ namespace PE
 						// disables telegraphs if anywhere but the telegraphs are clicked
 						if (m_mouseClick) 
 						{
-							m_showTelegraphs = false;
+							(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 							ToggleAll(false, true);
 						}
 					}
 				}
 			}
+			std::cout << m_rightMouseClick << ' ';
 			// if right click and attack has been selected, deselect the attack
 			if (m_rightMouseClick && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
 			{
-				m_showTelegraphs = false;
-				p_attackData->attackDirection = std::pair(EnumCatAttackDirection_v2_0::NONE, id);
-				(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = false;
+				ResetSelection(id);
 			}
 		}
 		catch (...) {} // colliders are not correct
 
-		m_mouseClick = false; // reset mouse
+		m_mouseClickedPrevious = m_mouseClick;
 	}
 
 	void GreyCatAttack_v2_0PLAN::CleanUp()
 	{
-		REMOVE_MOUSE_EVENT_LISTENER(m_mouseEventListener);
+		REMOVE_MOUSE_EVENT_LISTENER(m_mouseClickEventListener);
+		REMOVE_MOUSE_EVENT_LISTENER(m_mouseReleaseEventListener);
 	}
 
 	void GreyCatAttack_v2_0PLAN::Exit(EntityID id)
 	{
 		// toggles all telegraphs except the selected one to false
 		ToggleAll(false, false);
+	}
+
+	void GreyCatAttack_v2_0PLAN::ResetSelection(EntityID id)
+	{
+		m_showTelegraphs = false;
+		p_attackData->attackDirection = std::pair(EnumCatAttackDirection_v2_0::NONE, id);
+		(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = false;
 	}
 
 	void GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs)
@@ -178,14 +186,18 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		if (MBPE.button == 1)
-		{
-			m_mouseClickedPrevious = m_mouseClick;
-			m_mouseClick = true;
-		}
-		if (MBPE.button == 2)
-		{
 			m_rightMouseClick = true;
-		}
+		else
+			m_mouseClick = true;
+	}
+
+	void GreyCatAttack_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
+	{
+		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
+		if (MBRE.button == 1)
+			m_rightMouseClick = false;
+		else
+			m_mouseClick = false;
 	}
 
 	void GreyCatAttack_v2_0PLAN::ToggleAll(bool setToggle, bool ignoreSelected)

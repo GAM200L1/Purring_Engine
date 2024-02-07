@@ -48,6 +48,8 @@ namespace PE
 		//m_scriptData[id].catID = id;
 		
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+
+		m_scriptData[id].catID = id;
 		
 		try
 		{
@@ -283,7 +285,7 @@ namespace PE
 		PlayAnimation(id, "Idle");
 
 		// checks if the current state is any of the planning states, if not then set to movement planning
-		if (r_stateName != GETSCRIPTNAME(Cat_v2_0PLAN))
+		if (r_stateName != "PLANNING")
 		{
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
@@ -300,7 +302,7 @@ namespace PE
 		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
 
 		// when execution phase is activated, sets the state to movement
-		if (r_stateName != GETSCRIPTNAME(CatMovement_v2_0EXECUTE) && r_stateName != GETSCRIPTNAME(AttackEXECUTE))
+		if (r_stateName != "MovementEXECUTE" && r_stateName != GETSCRIPTNAME(AttackEXECUTE))
 		{
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
@@ -311,7 +313,7 @@ namespace PE
 			}
 		}
 		// executes movement and plays movement animation
-		else if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0EXECUTE) && !m_scriptData[id].attackSelected)
+		else if (r_stateName == "MovementEXECUTE")// && !m_scriptData[id].attackSelected
 		{
 			PlayAnimation(id, "Walk");
 			if (CheckShouldStateChange(id, deltaTime))
@@ -321,7 +323,7 @@ namespace PE
 			}
 		}
 		// executes attack and plays attack animation, plays idle animation if attack is finished early
-		else if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0EXECUTE))
+		else if (r_stateName == "AttackEXECUTE")
 		{
 			if (m_scriptData[id].attackSelected && !m_scriptData[id].finishedExecution)
 			{

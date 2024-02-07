@@ -355,7 +355,6 @@ RTTR_REGISTRATION
         .property("shouldChangeState", &PE::CatScript_v2_0Data::shouldChangeState)
         .property("delaySet", &PE::CatScript_v2_0Data::delaySet)
         .property("timeBeforeChangingState", &PE::CatScript_v2_0Data::timeBeforeChangingState)
-        .property("startedPlanning", &PE::CatScript_v2_0Data::startedPlanning)
         .property("animationStates", &PE::CatScript_v2_0Data::animationStates);
 
 

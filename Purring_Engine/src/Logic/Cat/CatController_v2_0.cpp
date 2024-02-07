@@ -50,7 +50,7 @@ namespace PE
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
 	{
-		int countCat{ 0 };
+		size_t countCat{ 0 };
 		// gets the cats of the current frame
 		for (EntityID catID : SceneView<ScriptComponent>())
 		{

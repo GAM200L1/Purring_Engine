@@ -57,13 +57,15 @@ namespace PE
 		// ----- Destructor ----- //
 		~GreyCatAttack_v2_0PLAN() {}
 
-		void Enter(EntityID id);
+		virtual void Enter(EntityID id);
 
-		void Update(EntityID id, float deltaTime);
+		virtual void Update(EntityID id, float deltaTime);
 
-		void CleanUp();
+		virtual void CleanUp();
 
-		void Exit(EntityID id);
+		virtual void Exit(EntityID id);
+
+		virtual void ResetSelection(EntityID id);
 
 		static void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
 		
@@ -82,9 +84,11 @@ namespace PE
 		bool m_rightMouseClick{ false }; // set to true when mouse is right clicked
 		bool m_mouseClick{ false }; // set to true when mouse is clicked
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
-		int m_mouseEventListener; // Stores the handler for the mouse click event
+		int m_mouseClickEventListener; // Stores the handler for the mouse click event
+		int m_mouseReleaseEventListener; // Stores the handler for the mouse release event
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 		void ToggleAll(bool setToggle, bool ignoreSelected);
 	};
 

@@ -32,7 +32,7 @@ namespace PE
 		// ----- Destructor ----- //
 		Cat_v2_0PLAN() = delete;
 
-		Cat_v2_0PLAN(CatAttackBase_v2_0* p_catAttackTypePLAN, CatMovement_v2_0PLAN* p_catMovementPLAN) : p_catAttack{ p_catAttackTypePLAN }, p_catMovement{ p_catMovementPLAN } {}
+		Cat_v2_0PLAN(CatAttackBase_v2_0* p_catAttackTypePLAN, CatMovement_v2_0PLAN* p_catMovementPLAN) : p_catAttack{ p_catAttackTypePLAN }, p_catMovement{ p_catMovementPLAN }, p_data{ nullptr } {}
 
 		virtual ~Cat_v2_0PLAN() {}
 
@@ -47,18 +47,25 @@ namespace PE
 		virtual std::string_view GetName() { return "PLANNING"; }
 
 	private:
-		CatAttackBase_v2_0* p_catAttack;
-		CatMovement_v2_0PLAN* p_catMovement;
+		CatAttackBase_v2_0* p_catAttack{ nullptr };
+		CatMovement_v2_0PLAN* p_catMovement{ nullptr };
+		CatScript_v2_0Data* p_data{ nullptr };
 
 		int m_mouseClickEventListener{};
-		int m_mouseHoldEventListener{};
+		int m_mouseReleaseEventListener{};
 
-		bool m_mouseHold{ false };
+		bool m_mouseRelease{ false };
 		bool m_mouseClicked{ false };
+		bool m_mouseClickPrevious{ false };
+		bool m_rightMouseClicked{ false };
 
 		bool m_planningAttack{ false };
 
+		int m_doubleClick{ 0 };
+		
+		vec2 m_prevCursorPosition{ 0.f, 0.f };
+
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
-		void OnMouseHeld(const Event<MouseEvents>& r_ME);
+		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 	};
 }

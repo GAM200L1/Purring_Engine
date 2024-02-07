@@ -48,17 +48,17 @@ namespace PE
 		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovement_v2_0PLAN::OnPathCollision, this);
 
-		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState != GameStates_v2_0::DEPLOYMENT)
-		{
+	/*	if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState != GameStates_v2_0::DEPLOYMENT)
+		{*/
 			FollowScriptData* follow_data = GETSCRIPTDATA(FollowScript, p_data->catID);
 			p_data->followCatPositions = follow_data->NextPosition;
-		}
+		/*}*/
 
-		if (!p_data->startedPlanning)
-		{
+		/*if (!p_data->startedPlanning)
+		{*/
 			ResetDrawnPath();
-			p_data->startedPlanning;
-		}
+			// p_data->startedPlanning;
+		//}
 	}
 
 	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime)
@@ -92,7 +92,7 @@ namespace PE
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 			if (PointCollision(catCollider, cursorPosition))
 			{
-				//std::cout << "Start drawing path\n";
+				std::cout << "Start drawing path\n";
 				// Start drawing a path
 				m_pathBeingDrawn = true;
 			}
@@ -433,7 +433,6 @@ namespace PE
 	{
 		StopMoving(id);
 		p_data->pathPositions.clear();
-		p_data->startedPlanning = false;
 	}
 
 

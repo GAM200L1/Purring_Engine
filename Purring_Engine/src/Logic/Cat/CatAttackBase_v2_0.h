@@ -29,5 +29,7 @@ namespace PE
 		virtual void CleanUp() = 0;
 
 		virtual void Exit(EntityID id) = 0;
+
+		virtual void ResetSelection(EntityID id) = 0;
 	};
 }

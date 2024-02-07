@@ -27,6 +27,7 @@ namespace PE
 {
 	void Cat_v2_0PLAN::StateEnter(EntityID id)
 	{
+		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		// initializes the cat movement planning sub state
 		p_catMovement->Enter(id);
 
@@ -34,40 +35,65 @@ namespace PE
 		p_catAttack->Enter(id);
 
 		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, Cat_v2_0PLAN::OnMouseClick, this);
-		m_mouseHoldEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonHold, Cat_v2_0PLAN::OnMouseHeld, this);
+		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, Cat_v2_0PLAN::OnMouseRelease, this);
 		
 	}
 
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
 	{
-		/*CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
+		static float timer{ 0.f };
 
-		if (m_mouseClicked && PointCollision(r_catCollider, CatHelperFunctions::GetCursorPositionInWorld()))
+		if (timer < 1.f)
 		{
-			std::cout << "set\n";
-			m_planningAttack = true;
-		}
-
-		if (m_planningAttack)
-		{
-			p_catAttack->Update(id, deltatime);
+			if (PointCollision(r_catCollider, r_cursorPosition) && m_mouseClicked && !m_mouseClickPrevious)
+				m_doubleClick++;
 		}
 		else
 		{
-			p_catMovement->Update(id, deltatime);
-		}*/
-		p_catMovement->Update(id, deltatime);
-		//p_catAttack->Update(id, deltatime);
+			m_doubleClick = 0;
+			timer = 0.f;
+		}
 
-		m_mouseClicked = false;
+		if (m_doubleClick >= 2)
+			p_data->planningAttack = true;
+
+		if (p_data->planningAttack)
+		{
+			p_catAttack->Update(id, deltatime);
+		}
+
+		if (PointCollision(r_catCollider, r_cursorPosition) && !p_data->planningAttack)
+		{
+			if (r_cursorPosition != m_prevCursorPosition && m_mouseClicked && !p_data->attackSelected) // if current and prev cursor position are not the same, update movement
+			{
+				p_catMovement->Update(id, deltatime);
+			}
+		}
+
+		if (m_rightMouseClicked && p_data->attackSelected)
+		{
+			p_catAttack->ResetSelection(id);
+		}
+		else if (m_rightMouseClicked)
+		{
+			p_catMovement->ResetDrawnPath();
+		}
+
+		timer += deltatime;
+		m_prevCursorPosition = r_cursorPosition;
+		m_mouseClickPrevious = m_mouseClicked;
 	}
 
 	void Cat_v2_0PLAN::StateCleanUp()
 	{
 		p_catMovement->CleanUp();
 		p_catAttack->CleanUp();
+		delete p_catMovement;
+		//delete p_catAttack;
 		REMOVE_MOUSE_EVENT_LISTENER(m_mouseClickEventListener);
-		REMOVE_MOUSE_EVENT_LISTENER(m_mouseHoldEventListener);
+		REMOVE_MOUSE_EVENT_LISTENER(m_mouseReleaseEventListener);
 	}
 
 	void Cat_v2_0PLAN::StateExit(EntityID id)
@@ -79,16 +105,18 @@ namespace PE
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		m_mouseClicked = true;
+		if (MBPE.button == 1)
+			m_rightMouseClicked = true;
+		else
+			m_mouseClicked = true;
 	}
 	
-	void Cat_v2_0PLAN::OnMouseHeld(const Event<MouseEvents>& r_ME)
+	void Cat_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
 	{
-		MouseButtonHoldEvent MBHE = dynamic_cast<const MouseButtonHoldEvent&>(r_ME);
-		m_mouseHold = true;
-		if (MBHE.button != 1 && MBHE.button != 2 && MBHE.button != 3)
-		{
-			m_mouseHold = false;
-		}
+		MouseButtonReleaseEvent MBHE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
+		m_mouseClicked = false;
+		m_rightMouseClicked = false;
 	}
+
+	// add mouse released
 }
