@@ -7,8 +7,19 @@
  \author               FOONG Jun Wei
  \par      email:      f.junwei@digipen.edu
 
- \brief	   This file contains the implementation a collision layer system that provides
-           the functionalities to control collision between layers.
+ \brief	   This file contains the implementation of a Layering system manager.
+		   It is able to group entities together.
+		   With caches for different component combinations.
+
+		   It is a overall replacement for the functionality of SceneView, adding 
+		   support for the enabling and disabling of entire layers at once.
+		   If a layer is disabled, all instances that use the LayerView will not 
+		   see it when iterating through the containers (so those entities) should
+		   not be updated in those systems.
+		   
+		   Note: To temporarily disable this behaviour for the LayerView, add true
+		   to the paranthesis of the LayerView call e.g.
+		   for (auto id : LayerView<>(true)) { ... }
 
  All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
@@ -39,32 +50,102 @@ namespace PE
         }
     };
 
+	/*!***********************************************************************************
+	 \brief 
+	 
+	*************************************************************************************/
     class LayerManager : public Singleton<LayerManager>
     {
     public:
         friend class Singleton<LayerManager>;
-
-        class LayerView
-        {};
         
     public:
+		/*!***********************************************************************************
+		\brief Construct a new Layer Manager object
+				Constructs the default ALL components into cached vectors as well.
+		*************************************************************************************/
         LayerManager();
     public:
+		/*!***********************************************************************************
+		\brief 		Removes an entity from all cached vectors it was contained in
+		
+		\param[in] r_id 	The id of the entity to remove
+		*************************************************************************************/
         void RemoveEntity(const EntityID& r_id);
+
+		/*!***********************************************************************************
+		 \brief 	Adds an entity to all currently cached vectors (if it meets/contains all 
+		 			the components of the cache)
+		 
+		 \param[in] r_id 	The id of the entity to add
+		*************************************************************************************/
         void AddEntity(const EntityID& r_id);
+
+		/*!***********************************************************************************
+		 \brief 	Updates the cached layers according to the state of the input entity
+		 
+		 \param[in] r_id 	The entity to update in the cached vectors
+		*************************************************************************************/
         void UpdateEntity(const EntityID& r_id);
+
+		/*!***********************************************************************************
+		 \brief Get the Layers object
+		 
+		 \param[in,out] r_components 
+		 \return const std::array<Layer, MAX_LAYERS>& 
+		*************************************************************************************/
 		const std::array<Layer, MAX_LAYERS>& GetLayers(const ComponentID& r_components);
+
+		/*!***********************************************************************************
+		 \brief Get the Layer State object
+		 
+		 \return const LayerState& 
+		*************************************************************************************/
 		const LayerState& GetLayerState() { return m_layerStates; }
-		void SetLayerState(const LayerState& lyr) { m_layerStates = lyr; }
+
+		/*!***********************************************************************************
+		 \brief Set the Layer State object to the input LayerState object
+		 
+		 \param[in] lyr 	Copy the layer object
+		*************************************************************************************/
+		void SetLayerState(const LayerState& r_lyr) { m_layerStates = r_lyr; }
+
+		/*!***********************************************************************************
+		 \brief Get the state of that specific layer
+		 
+		 \param[in] pos 	The position to get
+		 \return true 		The layer is enabled
+		 \return false 		The layer is disabled
+		*************************************************************************************/
 		bool GetLayerState(size_t pos) { return m_layerStates[pos]; }
+
+		/*!***********************************************************************************
+		 \brief Set the Layer State 
+		 		
+		 \param[in] pos 	The layer to affect
+		 \param[in] set 	The state to set the layer to
+		*************************************************************************************/
 		void SetLayerState(size_t pos, bool set) { m_layerStates[pos] = set; }
+
+		/*!***********************************************************************************
+		 \brief Resets the layer caches (will skip entityID 0 as that is the UI camera)
+		 
+		*************************************************************************************/
 		void ResetLayerCache();
     private:
+		/*!***********************************************************************************
+		 \brief Create a Cached object
+		 
+		 \param[in,out] r_components 
+		*************************************************************************************/
         void CreateCached(const ComponentID& r_components);
     private:
 
     private:
+		// map to contained cached interactions layers
         std::map<ComponentID, InteractionLayers, Comparer2> m_cachedLayers;
+
+		// stores the states (enabled/disabled) 
         LayerState m_layerStates;
     };
 
