@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     CatPlanningState_v2_0.cpp
+ \file     CatPlanningState_v2_0.h
  \date     3-2-2024
 
  \author:              LIEW Yeni
@@ -13,17 +13,21 @@
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
 *************************************************************************************/
-#include "prpch.h"
-
+#pragma once
 #include "ECS/Entity.h"
-
-#include "CatPlanningState_v2_0.h"
-#include "GreyCatAttackStates_v2_0.h"
 
 namespace PE
 {
-	void Cat_v2_0PLAN::StateEnter(EntityID id)
+	struct CatAttackBase_v2_0
 	{
-		
-	}
+		~CatAttackBase_v2_0() {}
+
+		virtual void Enter(EntityID id) = 0;
+
+		virtual void Update(EntityID id, float deltaTime) = 0;
+
+		virtual void CleanUp() = 0;
+
+		virtual void Exit(EntityID id) = 0;
+	};
 }

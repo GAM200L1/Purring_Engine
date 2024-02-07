@@ -27,6 +27,8 @@
 
 #include "CatScript_v2_0.h"
 #include "CatMovementStates_v2_0.h"
+#include "GreyCatAttackStates_v2_0.h"
+#include "CatPlanningState_v2_0.h"
 #include "CatHelperFunctions.h"
 
 #include "ECS/EntityFactory.h"
@@ -218,7 +220,7 @@ namespace PE
 		}
 
 		m_scriptData[id].p_stateManager = new StateMachine{};
-		m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0PLAN{}, id);
+		m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{}, id);
 	}
 
 
@@ -281,39 +283,40 @@ namespace PE
 		PlayAnimation(id, "Idle");
 
 		// checks if the current state is any of the planning states, if not then set to movement planning
-		if (r_stateName != GETSCRIPTNAME(AttackPLAN) || r_stateName != GETSCRIPTNAME(CatMovement_v2_0PLAN))
+		if (r_stateName != GETSCRIPTNAME(Cat_v2_0PLAN))
 		{
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0PLAN{}, id);
+				m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{}, id);
 				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0); // resets animation to 0
 			}
 		}
-		// if mouse is holding, player is given opportunity to move
-		else if (m_mouseClick && m_mouseClickPrevious)
-		{
-			if (r_stateName == GETSCRIPTNAME(AttackPLAN)) // if state was not previously movement
-			{
-				TriggerStateChange(id);
-				if (CheckShouldStateChange(id, deltaTime))
-				{
-					m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0PLAN{}, id);
-				}
-			}
-		}
-		// if mouse was triggered, set as attack
-		else if (m_mouseClick && !m_mouseClickPrevious)
-		{
-			if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0PLAN)) // if state was not previously movement
-			{
-				TriggerStateChange(id);
-				if (CheckShouldStateChange(id, deltaTime))
-				{
-					m_scriptData[id].p_stateManager->ChangeState(new AttackPLAN{}, id);
-				}
-			}
-		}
+
+		//// if mouse is holding, player is given opportunity to move
+		//else if (m_mouseClick && m_mouseClickPrevious)
+		//{
+		//	if (r_stateName == GETSCRIPTNAME(AttackPLAN)) // if state was not previously movement
+		//	{
+		//		TriggerStateChange(id);
+		//		if (CheckShouldStateChange(id, deltaTime))
+		//		{
+		//			m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0PLAN{}, id);
+		//		}
+		//	}
+		//}
+		//// if mouse was triggered, set as attack
+		//else if (m_mouseClick && !m_mouseClickPrevious)
+		//{
+		//	if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0PLAN)) // if state was not previously movement
+		//	{
+		//		TriggerStateChange(id);
+		//		if (CheckShouldStateChange(id, deltaTime))
+		//		{
+		//			m_scriptData[id].p_stateManager->ChangeState(new AttackPLAN{}, id);
+		//		}
+		//	}
+		//}
 	}
 
 	template<typename AttackEXECUTE>

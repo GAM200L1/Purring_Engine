@@ -21,6 +21,7 @@
 #include "Events/CollisionEvent.h"
 
 #include "Logic/GameStateController_v2_0.h"
+#include "CatAttackBase_v2_0.h"
 
 namespace PE
 {
@@ -50,11 +51,11 @@ namespace PE
 		float bulletForce{ 1000.f };
 	};
 
-	class GreyCatAttack_v2_0PLAN
+	class GreyCatAttack_v2_0PLAN : public CatAttackBase_v2_0
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~GreyCatAttack_v2_0PLAN() {}
+		~GreyCatAttack_v2_0PLAN() {}
 
 		void Enter(EntityID id);
 
@@ -64,7 +65,7 @@ namespace PE
 
 		void Exit(EntityID id);
 
-		void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
+		static void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
 		
 	private:
 		

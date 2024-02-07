@@ -34,7 +34,7 @@
 namespace PE
 {
 	// ----- Movement Plan Functions ----- //
-	void CatMovement_v2_0PLAN::StateEnter(EntityID id)
+	void CatMovement_v2_0PLAN::Enter(EntityID id)
 	{
 		//std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
@@ -61,7 +61,7 @@ namespace PE
 		}
 	}
 
-	void CatMovement_v2_0PLAN::StateUpdate(EntityID id, float deltaTime)
+	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
 		// Return if this cat is not the main cat
 		//if (!p_data->isMainCat) { return; }
@@ -125,7 +125,7 @@ namespace PE
 		m_mouseClickPrevious = m_mouseClick;
 	}
 
-	void CatMovement_v2_0PLAN::StateCleanUp()
+	void CatMovement_v2_0PLAN::CleanUp()
 	{
 		// Return if this cat is not the main cat
 		//if (!p_data->isMainCat) { return; }
@@ -134,7 +134,7 @@ namespace PE
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 	}
 
-	void CatMovement_v2_0PLAN::StateExit(EntityID id)
+	void CatMovement_v2_0PLAN::Exit(EntityID id)
 	{
 		// Return if this cat is not the main cat
 		//if (!p_data->isMainCat) { return; }

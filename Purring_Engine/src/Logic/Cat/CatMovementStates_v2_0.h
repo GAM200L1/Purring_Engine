@@ -23,11 +23,11 @@
 namespace PE
 {
 	// ----- CAT MOVEMENT PLAN STATE ----- //
-	class CatMovement_v2_0PLAN : public State
+	class CatMovement_v2_0PLAN
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~CatMovement_v2_0PLAN() override { p_data = nullptr; }
+		~CatMovement_v2_0PLAN() { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
 		/*!***********************************************************************************
@@ -35,7 +35,7 @@ namespace PE
 
 		 \param[in] id - EntityID of the entity this instance of the script is attached to.
 		*************************************************************************************/
-		virtual void StateEnter(EntityID id) override;
+		void Enter(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Attempts to draw paths following the player's cursor position.
@@ -43,19 +43,19 @@ namespace PE
 		 \param[in] id - EntityID of the entity this instance of the script is attached to.
 		 \param[in] deltaTime - Time in seconds since the last frame.
 		*************************************************************************************/
-		virtual void StateUpdate(EntityID id, float deltaTime) override;
+		void Update(EntityID id, float deltaTime);
 
 		/*!***********************************************************************************
 		 \brief Unsubscribe from all the event listeners.
 		*************************************************************************************/
-		virtual void StateCleanUp();
+		void CleanUp();
 
 		/*!***********************************************************************************
 		 \brief Forces the end of drawing and moves the player to the end of their path.
 
 		 \param[in] id - EntityID of the entity this instance of the script is attached to.
 		*************************************************************************************/
-		virtual void StateExit(EntityID id) override;
+		void Exit(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Checks if the position is far away enough from the previous node to add a new
@@ -130,8 +130,6 @@ namespace PE
 		*************************************************************************************/
 		void ResetDrawnPath();
 
-		// ----- Getter ----- //
-		virtual std::string_view GetName() override { return "MovementPLAN"; }
 
 	private:
 		// ----- Private Variables ----- //

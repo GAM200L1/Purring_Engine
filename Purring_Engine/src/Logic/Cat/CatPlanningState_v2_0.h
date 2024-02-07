@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     CatPlanningState.h
+ \file     CatPlanningState_v2_0.h
  \date     3-2-2024
 
  \author:              LIEW Yeni
@@ -20,6 +20,9 @@
 #include "Events/MouseEvent.h"
 #include "Events/CollisionEvent.h"
 
+#include "CatAttackBase_v2_0.h"
+#include "CatMovementStates_v2_0.h"
+
 
 namespace PE
 {
@@ -27,6 +30,8 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
+		Cat_v2_0PLAN(CatAttackBase_v2_0* p_catTypePLAN, CatMovement_v2_0PLAN* p_catMovementPLAN) : p_catPlanning{ p_catTypePLAN }, p_catMovement{ p_catMovementPLAN } {}
+
 		virtual ~Cat_v2_0PLAN() {}
 
 		virtual void StateEnter(EntityID id) override;
@@ -39,6 +44,8 @@ namespace PE
 
 		virtual std::string_view GetName() { return "PLANNING"; }
 
-
+	private:
+		CatAttackBase_v2_0* p_catPlanning;
+		CatMovement_v2_0PLAN* p_catMovement;
 	};
 }
