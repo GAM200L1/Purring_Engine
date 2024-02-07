@@ -422,6 +422,7 @@ namespace PE {
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
 		std::pair<std::string, int> m_entityToModify;
+		std::pair<std::string, std::string> m_animationToModify;
 		static bool m_fileDragged;
 
 		// variables for prefab editor

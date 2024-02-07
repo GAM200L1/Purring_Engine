@@ -34,6 +34,8 @@
 #include "ECS/SceneView.h"
 #include "Text.h"
 
+#pragma once
+
 namespace PE
 {
     namespace Graphics
