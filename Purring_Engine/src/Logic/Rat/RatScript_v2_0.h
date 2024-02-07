@@ -56,6 +56,14 @@ namespace PE
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
 		EntityID redTelegraphEntityID{ 0 };				// id of red detection telegraph
 
+		int collisionDamage{ 1 };						// damage when touching the rat needs manual setting
+		int attackDamage{ 1 };							// damage when properly attacked by the rat needs manual setting
+
+		float attackDelay{ 0.f };						// delay before attacking cat, needs manual setting
+		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack
+		bool hitCat{ false };							// a check for whether the rat has hit the player once in the entire execution sequence
+
+		// Rat Idle
 		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
 
 		std::map<std::string, std::string> animationStates;
@@ -69,10 +77,15 @@ namespace PE
 
 		// Detection and movement
 		EntityID detectionRadiusId{};
-		float detectionRadius{ 200.f };
+		float detectionRadius{ 1000.f };
 		std::set<EntityID> catsInDetectionRadius;
 		std::set<EntityID> catsExitedDetectionRadius;
 		EntityID targetedCat{}; // Cat to move towards in the hunting phase
+		
+		EntityID attackRadiusId{};
+		float attackRadius{100.f};
+		std::set<EntityID> attackRangeInDetectionRadius;
+		std::set<EntityID> attackRangeExitedDetectionRadius;
 
 		float movementSpeed{ 200.f };
 		float maxMovementRange{ 300.f }; // Total distance that the rat will move in one execution phase
@@ -173,6 +186,11 @@ namespace PE
 		static void ScaleEntity(EntityID const transformId, float const width, float const height);
 
 
+		// ----- Rat stuff ----- //
+		void RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE);
+
+		void CheckFollowOrMain(EntityID mainCat, EntityID collidedCat, EntityID damagingID, EntityID rat);
+
 		// ----- Getters/RTTR ----- //
 
 		/*!***********************************************************************************
@@ -236,6 +254,10 @@ namespace PE
 		// Returns true if the target has been reached, false otherwise
 		bool CalculateMovement(EntityID id, float deltaTime);
 		bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
+		
+		void CatEnteredAttackRadius(EntityID const id, EntityID const catID);
+		void CatExitedAttackRadius(EntityID const id, EntityID const catID);
+
 
 		// ----- Private Members ----- //
 	private:
@@ -266,5 +288,6 @@ namespace PE
 				return previousGameState != gameStateController->currentState;
 		}
 
+		EntityID CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data);
 	}; // end of class 
 }

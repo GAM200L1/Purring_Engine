@@ -19,9 +19,15 @@ namespace PE
         // Override State class functions
         virtual void StateEnter(EntityID id) override;
         virtual void StateUpdate(EntityID id, float deltaTime) override;
+        virtual void StateCleanUp();
         virtual void StateExit(EntityID id) override;
 
         virtual std::string_view GetName() { return "Movement_v2_0"; }
+
+        void RatHitCat(const Event<CollisionEvents>& r_TE);
+
+        void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
+        void OnTriggerExit(const Event<CollisionEvents>& r_TE);
 
     private:
         void CalculateMovement(EntityID id, float deltaTime);
@@ -34,6 +40,8 @@ namespace PE
 
         float minDistanceToTarget{ 1.0f };
 
-
+        int m_collisionEventListener{};
+        int m_collisionStayEventListener{};
+        int m_collisionExitEventListener{};
     };
 }
