@@ -42,7 +42,7 @@ namespace PE
 
 		virtual void Update(EntityID id, float deltaTime);
 
-		virtual void Destroy(EntityID id) {}
+		virtual void Destroy(EntityID id);
 
 		virtual void OnAttach(EntityID id);
 

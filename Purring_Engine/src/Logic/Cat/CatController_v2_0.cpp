@@ -50,8 +50,37 @@ namespace PE
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
 	{
-		for (auto a : m_cacheCats)
-			std::cout << a.first << '\n';
+		int countCat{ 0 };
+		// gets the cats of the current frame
+		for (EntityID catID : SceneView<ScriptComponent>())
+		{
+			auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
+			//if (IsCat(catID))
+			for (auto& [scriptname, state] : r_scripts)
+			{
+				countCat += r_scripts.count("CatScript_v2_0");
+			}
+		}
+
+		if (countCat != m_currentCats.size())
+		{
+			m_currentCats.clear();
+			for (EntityID catID : SceneView<ScriptComponent>())
+			{
+				auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
+				//if (IsCat(catID))
+				for (auto& [scriptname, state] : r_scripts)
+				{
+					if (scriptname == "CatScript_v2_0")
+					{
+						//std::pair<EntityID, EnumCatType> pair{ catID, GREYCAT }; //*GETSCRIPTDATA(CatScript_v2_0, catID).catType };
+						std::pair<EntityID, EnumCatType> pair{ catID, *GETSCRIPTDATA(CatScript_v2_0, catID).catType };
+						m_currentCats.push_back(pair);
+					}
+
+				}
+			}
+		}
 	}
 
 	void CatController_v2_0::OnAttach(EntityID id)
@@ -70,6 +99,11 @@ namespace PE
 		if (id == mainInstance) { mainInstance = 0; }
 
 		m_currentCats.clear();
+	}
+
+	void CatController_v2_0::Destroy(EntityID id)
+	{
+		CacheCurrentCats();
 	}
 
 	// getters
