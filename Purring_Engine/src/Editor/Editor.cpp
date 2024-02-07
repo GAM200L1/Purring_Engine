@@ -793,8 +793,15 @@ namespace PE {
 
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 					{
-						
-						
+						if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !LayerManager::GetInstance().GetLayerState(EntityManager::GetInstance().Get<EntityDescriptor>(id).layer))
+						{
+							ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(128, 128, 128, 255));
+						}
+						else
+						{
+							ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 255));
+						}
+
 						if ((name.length())? ImGui::Selectable(name.c_str(), is_selected) : ImGui::Selectable(("##" + name).c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 							m_currentSelectedObject = static_cast<int>(id);
 
@@ -819,7 +826,7 @@ namespace PE {
 							ImGui::OpenPopup("popup");
 						}
 						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName, usedNames);
-
+						ImGui::PopStyleColor();
 					}
 					
 
