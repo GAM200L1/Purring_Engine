@@ -51,18 +51,62 @@ namespace PE
 		virtual void StateExit(EntityID id) override;
 
 		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+		*************************************************************************************/
+		virtual void StateCleanUp();
+
+		/*!***********************************************************************************
 			\brief Get the name of the state
 
 			\return std::string_view name of state
 		*************************************************************************************/
 		virtual std::string_view GetName() override { return "RatHuntState_v2_0"; }
 
+		/*!***********************************************************************************
+			\brief Sets the target and resets the number of hunting turns.
+
+			\param targetId - ID of the entity to target.
+		*************************************************************************************/
+		void SetNewTarget(EntityID const targetId);
+
+		// --- COLLISION DETECTION --- // 
+
+		/*!***********************************************************************************
+		\brief Returns true if there are cats in the detection range, false otherwise.
+
+		\return bool - Returns true if there are cats in the detection range, false otherwise.
+		*************************************************************************************/
+		bool CheckCatsInDetectionRange();
+
+		/*!***********************************************************************************
+		 \brief Called when a trigger enter or stay event has occured. If an event has
+			occurred between this script's rat's detection collider and a cat, the parent rat
+			is notified.
+
+		 \param[in,out] r_TE - Trigger event data.
+		*************************************************************************************/
+		void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
+
+		/*!***********************************************************************************
+		 \brief Called when a trigger exit event has occured. If an event has occurred
+			between this script's rat's detection collider and a cat, the parent rat
+			is notified.
+
+		 \param[in,out] r_TE - Trigger event data.
+		*************************************************************************************/
+		void OnTriggerExit(const Event<CollisionEvents>& r_TE);
+
 	private:
-	  RatScript_v2_0_Data* p_data; // pointer to script instance data
+		RatScript_v2_0_Data* p_data{ nullptr }; // pointer to script instance data
 		GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
-		GameStates_v2_0 previousGameState; // The game state in the previous frame
+		GameStates_v2_0 previousGameState{ GameStates_v2_0::PLANNING }; // The game state in the previous frame
+
+		EntityID targetId{}; // ID of the cat to target
 
 		int huntingTurnsLeft{}; // Number of turns left for the rat to spend hunting
+
+		// Event listener IDs 
+		int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 
 		// Waypoints for level 1, starting from the left of the scene
 		std::vector<vec2> waypointsLevel1{
