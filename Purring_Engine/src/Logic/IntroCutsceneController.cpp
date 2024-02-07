@@ -35,7 +35,10 @@ namespace PE
 {
 	void IntroCutsceneController::Init(EntityID id)
 	{
-
+		m_ScriptData[id] = IntroCutsceneControllerData();
+		m_elapsedTime = 0;
+		m_endCutscene = false;
+		m_startCutscene = true;
 	}
 	void IntroCutsceneController::Update(EntityID id, float deltaTime)
 	{
@@ -43,7 +46,12 @@ namespace PE
 
 		if (m_startCutscene)
 		{
-			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
+				EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
+
+			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music_Prefab.json");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -52,7 +60,12 @@ namespace PE
 
 		if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 		{
-			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
+				EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).StopSound();
+			EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
+
+			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music_Prefab.json");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -80,10 +93,7 @@ namespace PE
 
 	void IntroCutsceneController::OnAttach(EntityID id)
 	{
-		m_ScriptData[id] = IntroCutsceneControllerData();
-		m_elapsedTime = 0;
-		m_endCutscene = false;
-		m_startCutscene = true;
+
 	}
 
 	void IntroCutsceneController::OnDetach(EntityID id)
@@ -100,7 +110,7 @@ namespace PE
 
 	rttr::instance IntroCutsceneController::GetScriptData(EntityID id)
 	{
-		return rttr::instance(m_ScriptData.at(id));
+		return rttr::instance();
 	}
 
 	void IntroCutsceneController::ContinueToLevel(EntityID id)

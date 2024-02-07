@@ -42,11 +42,16 @@ namespace PE
         void SetActiveScene(std::string const& r_sceneName);
 
         /*!***********************************************************************************
+        \brief Loads sceneToLoad.
+        *************************************************************************************/
+        void LoadSceneToLoad();
+
+        /*!***********************************************************************************
         \brief Loads a scene.
 
         \param[in] r_sceneName Name of the scene to be loaded.
         *************************************************************************************/
-        void LoadSceneToLoad();
+        void LoadSceneToLoad(std::string const& r_scenePath);
 
         /*!***********************************************************************************
         \brief Loads a scene from a absolute path.

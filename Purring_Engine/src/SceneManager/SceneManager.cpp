@@ -67,6 +67,12 @@ namespace PE
         m_loadingScene = false;
 	}
 
+    void SceneManager::LoadSceneToLoad(std::string const& r_scenePath)
+    {
+        m_sceneToLoad = r_scenePath;
+        LoadSceneToLoad();
+    }
+
     void SceneManager::LoadSceneFromPath(std::string const& r_scenePath)
     {
         // delete all objects

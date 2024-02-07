@@ -3296,18 +3296,6 @@ namespace PE {
 									}
 								}
 							}
-
-							if (key == "IntroCutsceneController")
-							{
-								IntroCutsceneController* p_Script = dynamic_cast<IntroCutsceneController*>(val);
-								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
-								if (it != p_Script->GetScriptData().end())
-									if (ImGui::CollapsingHeader("IntroCutsceneControllerData", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-									{
-										ImGui::Text("rot speed: "); ImGui::SameLine(); ImGui::InputFloat("##rspeed", &it->second.m_rotationSpeed, 1.0f, 100.f, "%.3f");
-									}
-							}
-
 						}
 					}
 
@@ -4630,7 +4618,7 @@ namespace PE {
 										m_currentSelectedObject = -1;
 
 										// load scene from filepath
-										SceneManager::GetInstance().LoadScene(filePath.substr(filePath.find_last_of('\\') + 1));
+										SceneManager::GetInstance().LoadSceneToLoad(filePath.substr(filePath.find_last_of('\\') + 1));
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 									}
 									else
@@ -5448,7 +5436,7 @@ namespace PE {
 		else
 		{
 			// else need to reload assets for the scene
-			SceneManager::GetInstance().LoadScene("Savestate/savestate.json");
+			SceneManager::GetInstance().LoadSceneToLoad("Savestate/savestate.json");
 		}
 		SceneManager::GetInstance().SetActiveScene(m_savedScene);
 	}
@@ -5708,7 +5696,7 @@ namespace PE {
 
 		// deselect object
 		m_currentSelectedObject = -1;
-		SceneManager::GetInstance().LoadScene(path);
+		SceneManager::GetInstance().LoadSceneToLoad(path);
 
 	}
 

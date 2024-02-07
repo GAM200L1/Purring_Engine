@@ -21,7 +21,7 @@ namespace PE
 {
 	struct IntroCutsceneControllerData
 	{
-		float m_rotationSpeed{ 10 };
+
 	};
 
 	class IntroCutsceneController : public Script
