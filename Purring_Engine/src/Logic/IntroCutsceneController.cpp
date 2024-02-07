@@ -3,13 +3,14 @@
  \project  Purring Engine 
  \module   CSD2401-A 
  \file     IntroCutsceneController.cpp 
- \date     03-11-2023
+ \date     7-2-2023
 
- \author               Jarran Tan Yan Zhi
- \par      email:      jarranyanzhi.tan@digipen.edu
+ \author               Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho\@digipen.edu
 
 
- \brief  This file contains the definitions of testScript
+ \brief  This file contains the declarations of IntroCutsceneController that controls
+		 the cutscene for the introduction of the game.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved. 
 
@@ -34,7 +35,10 @@ namespace PE
 {
 	void IntroCutsceneController::Init(EntityID id)
 	{
-
+		m_ScriptData[id] = IntroCutsceneControllerData();
+		m_elapsedTime = 0;
+		m_endCutscene = false;
+		m_startCutscene = true;
 	}
 	void IntroCutsceneController::Update(EntityID id, float deltaTime)
 	{
@@ -42,7 +46,12 @@ namespace PE
 
 		if (m_startCutscene)
 		{
-			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
+				EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
+
+			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music_Prefab.json");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -51,7 +60,12 @@ namespace PE
 
 		if (m_elapsedTime >= m_sceneTimer && !m_endCutscene)
 		{
-			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			EntityID cutsceneSounds = m_serializationManager.LoadFromFile("AudioObject/Intro Cutscene Music_Prefab.json");
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(cutsceneSounds))
+				EntityManager::GetInstance().Get<AudioComponent>(cutsceneSounds).StopSound();
+			EntityManager::GetInstance().RemoveEntity(cutsceneSounds);
+
+			EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Menu Background Music_Prefab.json");
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 				EntityManager::GetInstance().Get<AudioComponent>(bgm).StopSound();
 			EntityManager::GetInstance().RemoveEntity(bgm);
@@ -62,10 +76,8 @@ namespace PE
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(4))
 				EntityManager::GetInstance().Get<EntityDescriptor>(4).isActive = true;
 
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(12))
-				EntityManager::GetInstance().Get<EntityDescriptor>(12).isActive = true;
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(14))
-				EntityManager::GetInstance().Get<EntityDescriptor>(14).isActive = true;
+			if (EntityManager::GetInstance().Has<TextComponent>(14))
+				EntityManager::GetInstance().Get<TextComponent>(14).SetText("Continue");
 
 			m_endCutscene = true;
 		}
@@ -81,10 +93,7 @@ namespace PE
 
 	void IntroCutsceneController::OnAttach(EntityID id)
 	{
-		m_ScriptData[id] = IntroCutsceneControllerData();
-		m_elapsedTime = 0;
-		m_endCutscene = false;
-		m_startCutscene = true;
+
 	}
 
 	void IntroCutsceneController::OnDetach(EntityID id)
@@ -101,13 +110,13 @@ namespace PE
 
 	rttr::instance IntroCutsceneController::GetScriptData(EntityID id)
 	{
-		return rttr::instance(m_ScriptData.at(id));
+		return rttr::instance();
 	}
 
 	void IntroCutsceneController::ContinueToLevel(EntityID id)
 	{
 		SceneManager::GetInstance().LoadScene("Level1Scene.json");
-
+		PlayClickAudio();
 	}
 
 	void IntroCutsceneController::PlayClickAudio()

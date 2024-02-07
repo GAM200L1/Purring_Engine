@@ -283,7 +283,7 @@
                         "children": [
                             14
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "GUIButton",
                         "parent": 6,
                         "sceneID": 0
@@ -357,7 +357,7 @@
                         "Old ID": 14,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Text",
                         "parent": 12,
                         "sceneID": 1
@@ -370,11 +370,11 @@
                             "z": 0.0
                         },
                         "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
-                        "HAlignment": 0,
+                        "HAlignment": 4,
                         "HOverflow": 0,
                         "LineSpacing": 1.0,
                         "Size": 1.0,
-                        "Text": "Continue",
+                        "Text": "Skip",
                         "VAlignment": 2,
                         "VOverflow": 2
                     },
@@ -382,11 +382,11 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 799.4999389648438,
+                            "x": 784.2249145507813,
                             "y": -449.99993896484375
                         },
                         "relativeposition": {
-                            "x": 12.5001220703125,
+                            "x": -2.77490234375,
                             "y": -12.500030517578125
                         },
                         "relorientation": 0.0,
