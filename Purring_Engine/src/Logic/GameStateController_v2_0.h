@@ -263,6 +263,17 @@ namespace PE
 		 \param[in]		the time passed since the last update
 		*************************************************************************************/
 		void TransitionPanelFade(EntityID const id, float deltaTime, bool in);
+
+		/*!***********************************************************************************
+		 \brief			Fade the phase banner
+
+		 \param[in]		the current game state manager
+		 \param[in]		the time passed since the last update
+		*************************************************************************************/
+		void PhaseBannerTransition(EntityID const id, float deltaTime);
+
+		void ResetPhaseBanner(bool SetPhaseBannerTransitionOn);
+
 		/*!***********************************************************************************
 		 \brief			Set the Information of the Portrait
 
@@ -366,6 +377,8 @@ namespace PE
 		std::string m_currentLevelBackground;
 		std::string m_currentLevelSepiaBackground;
 		std::string m_defaultPotraitTextureKey;
+		std::string m_deploymentPhaseBanner, m_planningPhaseBanner, m_exexcutePhaseBanner;
+
 
 		//Pause and Win/Lose Variables
 		bool m_pauseMenuOpenOnce{ false }, m_winOnce{}, m_loseOnce{};
@@ -377,12 +390,20 @@ namespace PE
 		float m_UIFadeTimer{.5f};
 		float m_timeSinceEnteredState{ 1.f };
 		float m_timeSinceExitedState{};
-		float m_transitionTimer{ 0.5f };
+		float m_transitionTimer{ .5f };
 		float m_timeSinceTransitionStarted{};
 		float m_timeSinceTransitionEnded{};
 
+		//journal object testing
 		bool m_journalShowing;
 
+		//phase banner
+		const float m_phaseBannerTransitionTimer{ .2f };
+		const float m_phaseBannerStayTimer{ 1.f };
+		float m_phaseBannerEnter{};
+		float m_phaseBannerExit{m_phaseBannerTransitionTimer};
+		float m_phaseBannerStay{};
+		bool m_isPhaseBannerTransition{true};
 	};
 }
 

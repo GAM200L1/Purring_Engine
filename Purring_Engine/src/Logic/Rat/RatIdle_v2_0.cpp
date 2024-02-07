@@ -26,7 +26,7 @@ namespace PE
         {
             InitializePatrolPoints();                                                               // Initialize patrol points if the rat type is PATROL
         }
-        EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);           // Reset Rat animaition to first frame.
+       // EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);           // Reset Rat animaition to first frame.
 
         // Position the ratTelegraph entity where the said rat is.
         RatScript_v2_0::PositionEntity(p_data->ratTelegraphID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
@@ -96,7 +96,7 @@ namespace PE
             return;
         }
 
-        gameStateController->currentState = GameStates_v2_0::EXECUTE;
+        //gameStateController->currentState = GameStates_v2_0::EXECUTE;
 
         m_type = RatType::PATROL;
 
