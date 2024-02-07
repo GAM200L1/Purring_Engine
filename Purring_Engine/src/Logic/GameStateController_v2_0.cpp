@@ -970,6 +970,11 @@ namespace PE
 
 			//play transition sound
 			PlayPhaseChangeAudio();
+			ResetPhaseBanner(true);
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
+			{
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);
+			}
 		}
 	}
 
