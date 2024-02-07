@@ -83,10 +83,24 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Function for UI button to continue to level
+
+		 \param[in] id - The unique EntityID.
+		*************************************************************************************/
 		void ContinueToLevel(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Function to play click audio.
+		*************************************************************************************/
 		void PlayClickAudio();
 
+		/*!***********************************************************************************
+		 \brief Get the script data instance for a specific entity (RTTR)
+
+		 \param[in] id - The unique EntityID to retrieve the script data for
+		 \return rttr::instance - The script data instance for the specified entity
+		*************************************************************************************/
 		IntroCutsceneController();
 
 	private:

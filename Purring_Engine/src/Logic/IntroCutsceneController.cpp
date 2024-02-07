@@ -108,7 +108,6 @@ namespace PE
 	void IntroCutsceneController::ContinueToLevel(EntityID id)
 	{
 		SceneManager::GetInstance().LoadScene("Level1Scene.json");
-
 	}
 
 	void IntroCutsceneController::PlayClickAudio()
