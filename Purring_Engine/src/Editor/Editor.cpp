@@ -719,10 +719,19 @@ namespace PE {
 
 				r_selected = (m_currentSelectedObject == static_cast<int>(v));
 
+				if (!LayerManager::GetInstance().GetLayerState(EntityManager::GetInstance().Get<EntityDescriptor>(v).interactionLayer) || !EntityManager::GetInstance().Get<EntityDescriptor>(v).isActive)
+				{
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(128, 128, 128, 255));
+				}
+				else
+				{
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 255));
+				}
+
 				if ((name2.length()) ? ImGui::Selectable(name2.c_str(), r_selected) : ImGui::Selectable(("##" + name2).c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
 					m_currentSelectedObject = static_cast<int>(v);
 
-
+				ImGui::PopStyleColor();
 
 				if (ImGui::IsItemHovered()) 
 				{
@@ -793,7 +802,7 @@ namespace PE {
 
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 					{
-						if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !LayerManager::GetInstance().GetLayerState(EntityManager::GetInstance().Get<EntityDescriptor>(id).layer))
+						if (!LayerManager::GetInstance().GetLayerState(EntityManager::GetInstance().Get<EntityDescriptor>(id).interactionLayer) || !EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive)
 						{
 							ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(128, 128, 128, 255));
 						}
@@ -805,6 +814,7 @@ namespace PE {
 						if ((name.length())? ImGui::Selectable(name.c_str(), is_selected) : ImGui::Selectable(("##" + name).c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 							m_currentSelectedObject = static_cast<int>(id);
 
+						ImGui::PopStyleColor();
 
 						if (ImGui::IsItemHovered()) {
 							isHoveringObject = true;
@@ -826,7 +836,7 @@ namespace PE {
 							ImGui::OpenPopup("popup");
 						}
 						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName, usedNames);
-						ImGui::PopStyleColor();
+						
 					}
 					
 
@@ -1163,13 +1173,13 @@ namespace PE {
 										{
 											int tmp = vp.get_value<int>();
 											std::string str = "##" + prop.get_name().to_string();
-											if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
-												ImGui::BeginDisabled();
+											/*if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+												ImGui::BeginDisabled();*/
 
 											ImGui::SameLine(); ImGui::SliderInt(str.c_str(), &tmp, 0, 10);
 
-											if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
-												ImGui::EndDisabled();
+											/*if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+												ImGui::EndDisabled();*/
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
 											EntityManager::GetInstance().Get<EntityDescriptor>(entityID).interactionLayer = tmp;
 											LayerManager::GetInstance().UpdateEntity(entityID);
