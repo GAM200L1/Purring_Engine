@@ -387,13 +387,16 @@ namespace PE
 		bool m_splashScreenShown{ false };
 	
 		//UI Variables
-		float m_UIFadeTimer{.5f};
+		const float m_UIFadeTimer{.5f};
 		float m_timeSinceEnteredState{ 1.f };
 		float m_timeSinceExitedState{};
-		float m_transitionTimer{ .5f };
+		const float m_transitionTimer{ .5f };
 		float m_timeSinceTransitionStarted{};
 		float m_timeSinceTransitionEnded{};
 
+		//portrait
+		bool m_isPotraitShowing{};
+		bool m_isRat{};
 		//journal object testing
 		bool m_journalShowing;
 

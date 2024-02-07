@@ -393,6 +393,8 @@ namespace PE
 						// Check if the rat/cat has been clicked
 						if (PointCollision(col, cursorPosition))
 						{
+							m_isRat = true;
+							m_isPotraitShowing = true;
 							//debug
 							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(RatID).name << std::endl;
 							//add a switch statement here
@@ -436,6 +438,7 @@ namespace PE
 								}
 							}
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
+							m_isPotraitShowing = false;
 						}
 					}
 				}
@@ -502,7 +505,8 @@ namespace PE
 						CircleCollider const& col = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 						if (PointCollision(col, cursorPosition))
 						{
-
+							m_isRat = false;
+							m_isPotraitShowing = true;
 							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(id).name << std::endl;
 							//add a switch statement here
 							//need specific texture
@@ -538,6 +542,8 @@ namespace PE
 								}
 							}
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
+							if(!m_isRat)
+							m_isPotraitShowing = false;
 						}
 					}
 				}
@@ -786,6 +792,9 @@ namespace PE
 	{
 		ActiveObject(m_scriptData[id].HUDCanvas);
 		ActiveObject(m_scriptData[id].TurnCounterCanvas);
+
+		if (!m_isPotraitShowing)
+			DeactiveObject(m_scriptData.at(id).Portrait);
 
 		if (prevState == GameStates_v2_0::EXECUTE)
 		{
