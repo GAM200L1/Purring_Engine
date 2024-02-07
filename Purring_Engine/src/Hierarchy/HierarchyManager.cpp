@@ -333,8 +333,6 @@ namespace PE
 			{
 				if (GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
 					m_renderOrderUI.emplace_back(v);
-				else
-					m_renderOrder.emplace_back(v);
 			}
 		}
 		//std::cout << "-- Scene Hierarchy --" << std::endl;

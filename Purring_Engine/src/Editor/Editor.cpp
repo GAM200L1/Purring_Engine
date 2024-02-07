@@ -1145,7 +1145,7 @@ namespace PE {
 									}
 									else if (vp.get_type().get_name() == "int")
 									{
-										if (prop.get_name().to_string() == "Layer")
+										if (prop.get_name().to_string() == "Render Layer")
 										{
 											int tmp = vp.get_value<int>();
 											std::string str = "##" + prop.get_name().to_string();

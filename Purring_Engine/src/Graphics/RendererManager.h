@@ -351,6 +351,14 @@ namespace PE
             void RenderText(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
+             \brief Renders text from r_text parameter. Retrieves glyph information from map
+                   and renders a quad with the data.
+
+             \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
+            *************************************************************************************/
+            void RenderText(const EntityID& r_id, glm::mat4 const& r_worldToNdc);
+
+            /*!***********************************************************************************
              \brief Renders a line of text from r_line parameter. Retrieves glyph information from
                     map and renders a quad with the data.
 
