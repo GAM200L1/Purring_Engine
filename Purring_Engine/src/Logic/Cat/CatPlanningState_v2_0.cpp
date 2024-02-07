@@ -43,28 +43,33 @@ namespace PE
 	{
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
-		static float timer{ 0.f };
-
-		if (timer < 1.f)
-		{
-			if (PointCollision(r_catCollider, r_cursorPosition) && m_mouseClicked && !m_mouseClickPrevious)
-				m_doubleClick++;
-		}
-		else
-		{
-			m_doubleClick = 0;
-			timer = 0.f;
-		}
-
-		if (m_doubleClick >= 2)
-			p_data->planningAttack = true;
 
 		if (p_data->planningAttack)
 		{
+			p_catAttack->ToggleTelegraphs(true, false);
 			p_catAttack->Update(id, deltatime);
 		}
+		else
+		{
+			if (m_timer >= 1.f) // resets double click when 1 second has passed
+			{
+				m_doubleClick = 0;
+				m_timer = 0.f;
+			}
+			else
+			{
+				if (PointCollision(r_catCollider, r_cursorPosition) && m_mouseClicked && !m_mouseClickPrevious)
+					m_doubleClick++;
+			}
 
-		if (PointCollision(r_catCollider, r_cursorPosition) && !p_data->planningAttack)
+			if (m_doubleClick >= 2)
+			{
+				p_data->planningAttack = true;
+				// @TODO: Add open attack sound here
+			}
+		}
+
+		if (PointCollision(r_catCollider, r_cursorPosition))
 		{
 			if (r_cursorPosition != m_prevCursorPosition && m_mouseClicked && !p_data->attackSelected) // if current and prev cursor position are not the same, update movement
 			{
@@ -72,16 +77,7 @@ namespace PE
 			}
 		}
 
-		if (m_rightMouseClicked && p_data->attackSelected)
-		{
-			p_catAttack->ResetSelection(id);
-		}
-		else if (m_rightMouseClicked)
-		{
-			p_catMovement->ResetDrawnPath();
-		}
-
-		timer += deltatime;
+		m_timer += deltatime;
 		m_prevCursorPosition = r_cursorPosition;
 		m_mouseClickPrevious = m_mouseClicked;
 	}
@@ -90,8 +86,7 @@ namespace PE
 	{
 		p_catMovement->CleanUp();
 		p_catAttack->CleanUp();
-		delete p_catMovement;
-		//delete p_catAttack;
+
 		REMOVE_MOUSE_EVENT_LISTENER(m_mouseClickEventListener);
 		REMOVE_MOUSE_EVENT_LISTENER(m_mouseReleaseEventListener);
 	}
@@ -105,17 +100,27 @@ namespace PE
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		if (MBPE.button == 1)
-			m_rightMouseClicked = true;
-		else
-			m_mouseClicked = true;
+		//if (p_data->catID == 60) // @TODO: Change to selected cat ID
+		{
+			if (MBPE.button == 1 && p_data->attackSelected)
+			{
+				if (!p_data->planningAttack) // if not currently planning attack, 
+					p_catAttack->ToggleTelegraphs(false, false);
+				p_catAttack->ResetSelection(p_data->catID);
+			}
+			else if (MBPE.button == 1 && !p_data->pathPositions.empty())
+			{
+				p_catMovement->ResetDrawnPath();
+			}
+			else
+				m_mouseClicked = true;
+		}
 	}
 	
 	void Cat_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
 	{
-		MouseButtonReleaseEvent MBHE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
+		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
 		m_mouseClicked = false;
-		m_rightMouseClicked = false;
 	}
 
 	// add mouse released

@@ -37,11 +37,14 @@ namespace PE
 
 	struct GreyCatAttackVariables
 	{
+		// id of the projectile
+		EntityID projectileID{};
+
 		// damage of the attack
 		int damage{ 0 };
 
 		// Telegraph variables
-		std::pair<EnumCatAttackDirection_v2_0, EntityID> attackDirection{ EnumCatAttackDirection_v2_0::NONE, 0 }; // Direction of attack chosen
+		EnumCatAttackDirection_v2_0 attackDirection{ EnumCatAttackDirection_v2_0::NONE }; // Direction of attack chosen
 		std::map<EnumCatAttackDirection_v2_0, EntityID> telegraphIDs{}; // IDs of entities used to visualise the directions the player can attack in
 		
 		// projectile variables
@@ -55,7 +58,7 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
-		~GreyCatAttack_v2_0PLAN() {}
+		~GreyCatAttack_v2_0PLAN() { p_attackData = nullptr; }
 
 		virtual void Enter(EntityID id);
 
@@ -68,6 +71,8 @@ namespace PE
 		virtual void ResetSelection(EntityID id);
 
 		static void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
+
+		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
 		
 	private:
 		
@@ -89,14 +94,13 @@ namespace PE
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 		void OnMouseRelease(const Event<MouseEvents>& r_ME);
-		void ToggleAll(bool setToggle, bool ignoreSelected);
 	};
 
 	class GreyCatAttack_v2_0EXECUTE : public State
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~GreyCatAttack_v2_0EXECUTE() { p_data = nullptr; }
+		virtual ~GreyCatAttack_v2_0EXECUTE() { p_attackData = nullptr; }
 
 		virtual void StateEnter(EntityID id);
 
@@ -110,10 +114,15 @@ namespace PE
 
 	private:
 		
-		GreyCatAttackVariables* p_data;
+		GreyCatAttackVariables* p_attackData;
 
+		vec2 m_bulletImpulse;
+		float m_bulletDelay;
 		float m_attackDuration; // how long attack will last
-		int m_collisionEventListener;
+		int m_collisionEventListener{};
+
+		
+		void ProjectileCollided(const Event<CollisionEvents>& r_CE);
 
 		void ProjectileHitCat(const Event<CollisionEvents>& r_CE);
 
