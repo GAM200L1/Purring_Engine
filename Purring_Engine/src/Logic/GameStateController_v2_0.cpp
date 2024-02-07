@@ -161,6 +161,9 @@ namespace PE
 		{
 		case GameStates_v2_0::DEPLOYMENT: // deploying cats, need to disable end turn button, but otherwise normal HUD stays
 		{
+			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background))
+				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).SetTextureKey(m_currentLevelSepiaBackground);
+
 			DeactiveObject(m_scriptData[m_currentGameStateControllerID].PauseBackGroundCanvas);
 			DeactiveAllMenu();
 			ActiveObject(m_scriptData[id].HUDCanvas);
