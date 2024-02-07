@@ -46,6 +46,10 @@
 #include "Rat/RatController_v2_0.h"
 #include "UI/HealthBarScript_v2_0.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
+
+#include "Cat/CatScript_v2_0.h"
+#include "Cat/CatController_v2_0.h"
+
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
@@ -69,7 +73,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(EnemyTestScript);
 	REGISTER_SCRIPT(FollowScript);
 	REGISTER_SCRIPT(CameraManagerScript);
-	REGISTER_SCRIPT(CatScript);
+	//REGISTER_SCRIPT(CatScript);
 	REGISTER_SCRIPT(RatScript);
 	//REGISTER_SCRIPT(GameStateController);
 	REGISTER_SCRIPT(GameStateController_v2_0);
@@ -82,6 +86,9 @@ void PE::LogicSystem::InitializeSystem()
 	//REGISTER_SCRIPT(RatIdle_v2_0);
 	REGISTER_SCRIPT(IntroCutsceneController);
 	REGISTER_SCRIPT(FpsScript);
+
+	REGISTER_SCRIPT(CatScript_v2_0);
+	REGISTER_SCRIPT(CatController_v2_0);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

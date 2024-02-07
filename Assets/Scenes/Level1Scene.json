@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -806,7 +806,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1149,7 +1149,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1191,7 +1191,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1543,7 +1543,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1811,7 +1811,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2213,7 +2213,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2530,7 +2530,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2610,7 +2610,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2933,6 +2933,10 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [],
+                        "CurrentAnimationID": ""
+                    },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -2974,7 +2978,30 @@
                         "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": null,
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {},
+                                "catCurrentEnergy": 21,
+                                "catID": 0,
+                                "catIsDead": false,
+                                "catMaxMovementEnergy": 21,
+                                "delaySet": false,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "isMainCat": false,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "pathQuads": [],
+                                "shouldChangeState": false,
+                                "startedPlanning": false,
+                                "timeBeforeChangingState": 0.0
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 64.0,
                         "orientation": 0.0,
@@ -3194,7 +3221,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3462,7 +3489,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
