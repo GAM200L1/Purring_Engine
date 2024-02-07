@@ -85,7 +85,7 @@ namespace PE
 		int m_mouseEventListener; // Stores the handler for the mouse click event
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
-		void ToggleAll(bool setToggle);
+		void ToggleAll(bool setToggle, bool ignoreSelected);
 	};
 
 	class GreyCatAttack_v2_0EXECUTE : public State

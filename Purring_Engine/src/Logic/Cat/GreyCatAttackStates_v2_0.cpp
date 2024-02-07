@@ -59,7 +59,7 @@ namespace PE
 				{
 					m_showTelegraphs = true;
 					// shows all telegraphs
-					ToggleAll(true);
+					ToggleAll(true, true);
 				}
 			}
 			else
@@ -90,7 +90,7 @@ namespace PE
 						if (m_mouseClick) 
 						{
 							m_showTelegraphs = false;
-							ToggleAll(false);
+							ToggleAll(false, true);
 						}
 					}
 				}
@@ -116,7 +116,7 @@ namespace PE
 	void GreyCatAttack_v2_0PLAN::Exit(EntityID id)
 	{
 		// toggles all telegraphs except the selected one to false
-		ToggleAll(false);
+		ToggleAll(false, false);
 	}
 
 	void GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs)
@@ -188,11 +188,11 @@ namespace PE
 		}
 	}
 
-	void GreyCatAttack_v2_0PLAN::ToggleAll(bool setToggle)
+	void GreyCatAttack_v2_0PLAN::ToggleAll(bool setToggle, bool ignoreSelected)
 	{
 		for (auto const& r_telegraph : p_attackData->telegraphIDs)
 		{
-			if (r_telegraph == p_attackData->attackDirection) { continue; } // don't disable attack that has been selected
+			if (r_telegraph == p_attackData->attackDirection && ignoreSelected) { continue; } // don't disable attack that has been selected
 			CatHelperFunctions::ToggleEntity(r_telegraph.second, setToggle);
 		}
 	}

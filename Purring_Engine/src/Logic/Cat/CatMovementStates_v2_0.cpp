@@ -67,7 +67,7 @@ namespace PE
 		//if (!p_data->isMainCat) { return; }
 
 		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		std::cout << "Moving\n";
+		
 		// Check if pause state
 		if (gsc->currentState == GameStates_v2_0::PAUSE)
 		{
@@ -101,6 +101,7 @@ namespace PE
 		// If the mouse is being pressed
 		if (m_mouseClick && m_pathBeingDrawn)
 		{
+			std::cout << "Moving\n";
 			if (p_data->catCurrentEnergy && !m_invalidPath) // Check if the player has sufficient energy
 			{
 				// Get the mouse position

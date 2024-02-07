@@ -30,7 +30,9 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
-		Cat_v2_0PLAN(CatAttackBase_v2_0* p_catTypePLAN, CatMovement_v2_0PLAN* p_catMovementPLAN) : p_catPlanning{ p_catTypePLAN }, p_catMovement{ p_catMovementPLAN } {}
+		Cat_v2_0PLAN() = delete;
+
+		Cat_v2_0PLAN(CatAttackBase_v2_0* p_catAttackTypePLAN, CatMovement_v2_0PLAN* p_catMovementPLAN) : p_catAttack{ p_catAttackTypePLAN }, p_catMovement{ p_catMovementPLAN } {}
 
 		virtual ~Cat_v2_0PLAN() {}
 
@@ -45,7 +47,18 @@ namespace PE
 		virtual std::string_view GetName() { return "PLANNING"; }
 
 	private:
-		CatAttackBase_v2_0* p_catPlanning;
+		CatAttackBase_v2_0* p_catAttack;
 		CatMovement_v2_0PLAN* p_catMovement;
+
+		int m_mouseClickEventListener{};
+		int m_mouseHoldEventListener{};
+
+		bool m_mouseHold{ false };
+		bool m_mouseClicked{ false };
+
+		bool m_planningAttack{ false };
+
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		void OnMouseHeld(const Event<MouseEvents>& r_ME);
 	};
 }

@@ -220,7 +220,7 @@ namespace PE
 		}
 
 		m_scriptData[id].p_stateManager = new StateMachine{};
-		m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{}, id);
+		ChangeToPlanningState(id);
 	}
 
 
@@ -288,35 +288,10 @@ namespace PE
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{}, id);
+				ChangeToPlanningState(id);
 				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0); // resets animation to 0
 			}
 		}
-
-		//// if mouse is holding, player is given opportunity to move
-		//else if (m_mouseClick && m_mouseClickPrevious)
-		//{
-		//	if (r_stateName == GETSCRIPTNAME(AttackPLAN)) // if state was not previously movement
-		//	{
-		//		TriggerStateChange(id);
-		//		if (CheckShouldStateChange(id, deltaTime))
-		//		{
-		//			m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0PLAN{}, id);
-		//		}
-		//	}
-		//}
-		//// if mouse was triggered, set as attack
-		//else if (m_mouseClick && !m_mouseClickPrevious)
-		//{
-		//	if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0PLAN)) // if state was not previously movement
-		//	{
-		//		TriggerStateChange(id);
-		//		if (CheckShouldStateChange(id, deltaTime))
-		//		{
-		//			m_scriptData[id].p_stateManager->ChangeState(new AttackPLAN{}, id);
-		//		}
-		//	}
-		//}
 	}
 
 	template<typename AttackEXECUTE>
@@ -375,6 +350,25 @@ namespace PE
 			{
 				// error
 			}
+		}
+	}
+
+	void CatScript_v2_0::ChangeToPlanningState(EntityID id)
+	{
+		switch (m_scriptData[id].catType)
+		{
+		case EnumCatType::ORANGECAT:
+		{
+			m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{ new OrangeCatAttack_v2_0PLAN, new CatMovement_v2_0PLAN }, id);
+			break;
+		}
+		case EnumCatType::FLUFFYCAT:
+		{
+			break;
+		}
+		default: // grey cat or main cat
+			m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{new GreyCatAttack_v2_0PLAN, new CatMovement_v2_0PLAN}, id);
+			break;
 		}
 	}
 

@@ -180,6 +180,8 @@ namespace PE
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
+		inline void ChangeToPlanningState(EntityID id);
+
 		///*!***********************************************************************************
 		// \brief Identifies if the cat state passed in matches the game state passed in.
 

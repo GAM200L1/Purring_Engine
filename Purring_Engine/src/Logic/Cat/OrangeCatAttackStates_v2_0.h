@@ -19,6 +19,7 @@
 
 #include "Events/MouseEvent.h"
 #include "Events/CollisionEvent.h"
+#include "CatAttackBase_v2_0.h"
 
 namespace PE
 {
@@ -34,21 +35,19 @@ namespace PE
 		float stomopForce{ 1000.f };
 	};
 
-	class OrangeCatAttack_v2_0PLAN : public State
+	class OrangeCatAttack_v2_0PLAN : public CatAttackBase_v2_0
 	{
 	public:
 		// ----- Destructor ----- //
 		virtual ~OrangeCatAttack_v2_0PLAN() { p_data = nullptr; }
 
-		virtual void StateEnter(EntityID id);
+		virtual void Enter(EntityID id);
 
-		virtual void StateUpdate(EntityID id, float deltaTime);
+		virtual void Update(EntityID id, float deltaTime);
 
-		virtual void StateCleanUp();
+		virtual void CleanUp();
 
-		virtual void StateExit(EntityID id);
-
-		virtual std::string_view GetName() { return "AttackPLAN"; }
+		virtual void Exit(EntityID id);
 
 	private:
 		

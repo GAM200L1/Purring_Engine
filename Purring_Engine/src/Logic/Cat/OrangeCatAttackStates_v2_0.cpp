@@ -22,22 +22,22 @@ namespace PE
 
 	// ----- ATTACK PLAN ----- //
 
-	void OrangeCatAttack_v2_0PLAN::StateEnter(EntityID id)
+	void OrangeCatAttack_v2_0PLAN::Enter(EntityID id)
 	{
 
 	}
 
-	void OrangeCatAttack_v2_0PLAN::StateUpdate(EntityID id, float deltaTime)
+	void OrangeCatAttack_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
 
 	}
 
-	void OrangeCatAttack_v2_0PLAN::StateCleanUp()
+	void OrangeCatAttack_v2_0PLAN::CleanUp()
 	{
 
 	}
 
-	void OrangeCatAttack_v2_0PLAN::StateExit(EntityID id)
+	void OrangeCatAttack_v2_0PLAN::Exit(EntityID id)
 	{
 
 	}
