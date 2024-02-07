@@ -17,6 +17,8 @@
 *************************************************************************************/
 #pragma once
 #include "Script.h"
+#include "Events/EventHandler.h"
+
 namespace PE
 {
 	class FpsScript : public Script
@@ -71,8 +73,16 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
 
+		/*!***********************************************************************************
+		\brief      Handle keyboard-specific events.
+
+		\param[in]  r_event Event containing keyboard-specific details.
+		*************************************************************************************/
+		void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 	private:
 		float m_elapsedTime;
+		EntityID m_currentEntityID;
+		int m_keyPressedKey;
 	};
 
 

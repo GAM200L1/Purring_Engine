@@ -29,7 +29,7 @@ namespace PE
 {
 	void FpsScript::Init(EntityID id)
 	{
-
+		m_keyPressedKey = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, FpsScript::OnKeyEvent, this)
 	}
 
 	void FpsScript::Update(EntityID id, float deltaTime)
@@ -48,21 +48,37 @@ namespace PE
 	}
 	void FpsScript::Destroy(EntityID id)
 	{
-		
+		REMOVE_KEY_EVENT_LISTENER(m_keyPressedKey);
 	}
 
 	void FpsScript::OnAttach(EntityID id)
 	{
-
+		m_currentEntityID = id;
 	}
 
 	void FpsScript::OnDetach(EntityID id)
 	{
-
 	}
 
 	rttr::instance FpsScript::GetScriptData(EntityID id)
 	{
 		return rttr::instance();
 	}
+
+	void FpsScript::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
+	{
+		PE::KeyTriggeredEvent KTE;
+
+		//dynamic cast
+		KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
+
+		if (KTE.keycode == GLFW_KEY_P)
+		{
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(m_currentEntityID))
+			{
+				EntityManager::GetInstance().Get<EntityDescriptor>(m_currentEntityID).isActive = !EntityManager::GetInstance().Get<EntityDescriptor>(m_currentEntityID).isActive;
+			}
+		}
+	}
+
 }

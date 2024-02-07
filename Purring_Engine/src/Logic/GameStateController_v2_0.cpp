@@ -311,9 +311,7 @@ namespace PE
 		PE::KeyTriggeredEvent KTE;
 
 		//dynamic cast
-		if (r_event.GetType() == PE::KeyEvents::KeyTriggered)
-		{
-			KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
+		KTE = dynamic_cast<const PE::KeyTriggeredEvent&>(r_event);
 
 			if (KTE.keycode == GLFW_KEY_ESCAPE)
 			{
@@ -361,7 +359,7 @@ namespace PE
 			{
 				m_currentLevel--;
 			}
-		}
+
 	}
 
 	void GameStateController_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)
