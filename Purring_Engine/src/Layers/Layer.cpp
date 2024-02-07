@@ -44,8 +44,6 @@ namespace PE
 
     void InteractionLayers::UpdateLayers(const EntityID& r_id, bool add)
     {
-        if (!r_id)
-            return;
         try
         {
             const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(r_id);

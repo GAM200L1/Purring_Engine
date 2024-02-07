@@ -21,7 +21,8 @@ namespace PE
     LayerManager::LayerManager()
     {
         m_layerStates.flip();
-        for (const auto& id : SceneView<>())
+        m_cachedLayers[ALL];
+        for (const auto& id : EntityManager::GetInstance().GetEntitiesInPool(ALL))
         {
             //const EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
             m_cachedLayers[ALL].UpdateLayers(id);
@@ -78,6 +79,7 @@ namespace PE
         {
             l.Clear();
         }
+        UpdateEntity(0);
     }
 
     void LayerManager::CreateCached(const ComponentID& r_components)
