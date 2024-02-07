@@ -63,10 +63,8 @@ namespace PE
 			if (EntityManager::GetInstance().Has<EntityDescriptor>(4))
 				EntityManager::GetInstance().Get<EntityDescriptor>(4).isActive = true;
 
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(12))
-				EntityManager::GetInstance().Get<EntityDescriptor>(12).isActive = true;
-			if (EntityManager::GetInstance().Has<EntityDescriptor>(14))
-				EntityManager::GetInstance().Get<EntityDescriptor>(14).isActive = true;
+			if (EntityManager::GetInstance().Has<TextComponent>(14))
+				EntityManager::GetInstance().Get<TextComponent>(14).SetText("Continue");
 
 			m_endCutscene = true;
 		}
@@ -108,6 +106,7 @@ namespace PE
 	void IntroCutsceneController::ContinueToLevel(EntityID id)
 	{
 		SceneManager::GetInstance().LoadScene("Level1Scene.json");
+		PlayClickAudio();
 	}
 
 	void IntroCutsceneController::PlayClickAudio()

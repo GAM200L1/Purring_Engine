@@ -450,9 +450,7 @@ namespace PE {
 						}
 						m_isPrefabMode = false;
 						
-						// deselect object
-						m_currentSelectedObject = -1;
-						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+						StopAndLoadScene();
 
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
@@ -464,8 +462,7 @@ namespace PE {
 						m_isPrefabMode = false;
 
 						// deselect object
-						m_currentSelectedObject = -1;
-						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+						StopAndLoadScene();
 
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
@@ -3734,9 +3731,7 @@ namespace PE {
 									{
 										m_isPrefabMode = true;
 										engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-										// This will save all entities to a file
-
-										serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+										SaveAndPlayScene();
 										engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 
 									}
@@ -4423,9 +4418,7 @@ namespace PE {
 						m_showEditor = false;
 						m_showGameView = true;
 						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-						// This will save all entities to a file
-						serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
-						UndoStack::GetInstance().ClearStack();
+						SaveAndPlayScene();
 						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 					}
 					ImGui::SameLine();
@@ -4435,9 +4428,7 @@ namespace PE {
 
 						if (m_isRunTime)
 						{
-							// deselect object
-							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							StopAndLoadScene();
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
@@ -4501,9 +4492,7 @@ namespace PE {
 								}
 							}
 							m_isPrefabMode = false;
-							// deselect object
-							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							StopAndLoadScene();
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 							m_applyPrefab = true;
@@ -4513,9 +4502,7 @@ namespace PE {
 						if (ImGui::Selectable("No"))
 						{
 							m_isPrefabMode = false;
-							// deselect object
-							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							StopAndLoadScene();
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
@@ -5191,9 +5178,7 @@ namespace PE {
 			toDisable = true;
 			if (m_isRunTime)
 			{
-				// deselect object
-				m_currentSelectedObject = -1;
-				SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+				StopAndLoadScene();
 
 				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}
@@ -5440,6 +5425,32 @@ namespace PE {
 		}
 
 		return NextCanvasID;
+	}
+
+	void Editor::SaveAndPlayScene()
+	{
+		// save active scene name
+		m_savedScene = SceneManager::GetInstance().GetActiveScene();
+		serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+		UndoStack::GetInstance().ClearStack();
+	}
+
+	void Editor::StopAndLoadScene()
+	{
+		m_currentSelectedObject = -1;
+
+		// check if saved scene is same as the active scene
+		if (m_savedScene == SceneManager::GetInstance().GetActiveScene())
+		{
+			// if active sccene is the same as active scene, restart scene
+			SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+		}
+		else
+		{
+			// else need to reload assets for the scene
+			SceneManager::GetInstance().LoadScene("Savestate/savestate.json");
+		}
+		SceneManager::GetInstance().SetActiveScene(m_savedScene);
 	}
 
 	void Editor::SetImGUIStyle_Dark()

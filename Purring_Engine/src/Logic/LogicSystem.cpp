@@ -110,11 +110,6 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 					break;
 				case ScriptState::UPDATE:
 					m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
-					if (restartingScene)
-					{
-						restartingScene = false;
-						return;
-					}
 					break;
 				case ScriptState::EXIT:
 					m_scriptContainer.find(key)->second->Destroy(objectID);

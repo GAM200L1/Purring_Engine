@@ -451,11 +451,14 @@ void PE::CoreApplication::Run()
         TimeManager::GetInstance().StartAccumulator();
         while (TimeManager::GetInstance().UpdateAccumulator())
         { 
-            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            if (!skipFrame)
             {
-                TimeManager::GetInstance().SystemStartFrame(systemID);
-                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
-                TimeManager::GetInstance().SystemEndFrame(systemID);
+                for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+                {
+                    TimeManager::GetInstance().SystemStartFrame(systemID);
+                    m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                    TimeManager::GetInstance().SystemEndFrame(systemID);
+                }
             }
             TimeManager::GetInstance().EndAccumulator();
         }
@@ -463,9 +466,24 @@ void PE::CoreApplication::Run()
         Hierarchy::GetInstance().Update();
 
         // Update Graphics with variable timestep
+
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
         m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
         TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
+
+        skipFrame = false;
+
+        // if the scene is being loaded, skip the rest of the frame
+        if (SceneManager::GetInstance().IsLoadingScene())
+        {
+            SceneManager::GetInstance().LoadSceneToLoad();
+            skipFrame = true;
+        }
+        else if (SceneManager::GetInstance().IsRestartingScene())
+        {
+            SceneManager::GetInstance().RestartScene(SceneManager::GetInstance().GetActiveScene());
+            skipFrame = true;
+        }
 
         // Flush log entries
         engine_logger.FlushLog();
