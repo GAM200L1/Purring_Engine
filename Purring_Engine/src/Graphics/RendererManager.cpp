@@ -266,7 +266,7 @@ namespace PE
             DrawQuadsInstanced<GUIRenderer>(r_cameraManager.GetUiViewToNdcMatrix(), Hierarchy::GetInstance().GetRenderOrderUI());
 
             // Render Text
-            RenderText(r_cameraManager.GetUiViewToNdcMatrix());
+            //RenderText(r_cameraManager.GetUiViewToNdcMatrix());
 #endif // !GAMERELEASE
 
 #ifndef GAMERELEASE
