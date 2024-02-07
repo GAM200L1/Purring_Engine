@@ -135,6 +135,14 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
+	void IntroCutsceneController::PlaySceneTransitionAudio()
+	{
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
 	IntroCutsceneController::IntroCutsceneController()
 	{
 		REGISTER_UI_FUNCTION(ContinueToLevel, PE::IntroCutsceneController);
@@ -150,6 +158,7 @@ namespace PE
 
 		if (fadeInSpeed >= 1)
 		{
+			PlaySceneTransitionAudio();
 			SceneManager::GetInstance().LoadScene("Level1Scene.json");
 		}
 	}

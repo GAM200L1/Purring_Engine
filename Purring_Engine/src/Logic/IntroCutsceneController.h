@@ -99,6 +99,11 @@ namespace PE
 		void PlayClickAudio();
 
 		/*!***********************************************************************************
+		 \brief Function to play click audio.
+		*************************************************************************************/
+		void PlaySceneTransitionAudio();
+
+		/*!***********************************************************************************
 		 \brief Get the script data instance for a specific entity (RTTR)
 
 		 \param[in] id - The unique EntityID to retrieve the script data for
