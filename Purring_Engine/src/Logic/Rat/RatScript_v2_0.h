@@ -78,7 +78,7 @@ namespace PE
 
 		// Detection and movement
 		EntityID detectionRadiusId{};
-		float detectionRadius{ 1000.f };
+		float detectionRadius{ 200.f };
 		std::set<EntityID> catsInDetectionRadius;
 		std::set<EntityID> catsExitedDetectionRadius;
 		EntityID targetedCat{}; // Cat to move towards in the hunting phase
@@ -208,6 +208,14 @@ namespace PE
 		 \param[in] r_position Position to set the transform to.
 		*************************************************************************************/
 		static void PositionEntity(EntityID const transformId, vec2 const& r_position);
+		
+		/*!***********************************************************************************
+		 \brief Adjusts the relative position of the transform to the value passed in.
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] r_position Position to set the transform to.
+		*************************************************************************************/
+		static void PositionEntityRelative(EntityID const transformId, vec2 const& r_position);
 
 		/*!***********************************************************************************
 		 \brief Adjusts the scale of the transform to the value passed in.
@@ -285,10 +293,11 @@ namespace PE
 						after the delay passed in.
 
 		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] targetId - EntityID of the entity to target.
 		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
 										Set to zero by default.
 		*************************************************************************************/
-		void ChangeStateToHunt(EntityID const id, float const stateChangeDelay = 0.f);
+		void ChangeStateToHunt(EntityID const id, EntityID const targetId, float const stateChangeDelay = 0.f);
 
 		/*!***********************************************************************************
 		 \brief Sets the flag for the state to be changed to the returning state
