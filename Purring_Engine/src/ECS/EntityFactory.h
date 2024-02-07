@@ -26,6 +26,7 @@
 #include "Physics/RigidBody.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Camera.h"
+#include "Graphics/Text.h"
 #include "Prefabs.h"
 #include "Singleton.h"
 #include "Animation/Animation.h"

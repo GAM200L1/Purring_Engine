@@ -40,6 +40,7 @@
 #include "DeploymentScript.h"
 #include "MainMenuController.h"
 #include "IntroCutsceneController.h"
+#include "FpsScript.h"
 
 #include "Rat/RatScript_v2_0.h"
 #include "Rat/RatController_v2_0.h"
@@ -80,6 +81,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
 	//REGISTER_SCRIPT(RatIdle_v2_0);
 	REGISTER_SCRIPT(IntroCutsceneController);
+	REGISTER_SCRIPT(FpsScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
