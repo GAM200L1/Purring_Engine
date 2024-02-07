@@ -958,6 +958,7 @@ namespace PE
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
 		PlayClickAudio();
+		PlaySceneTransition();
 
 		m_leveltoLoad = SceneManager::GetInstance().GetActiveScene();
 	}
@@ -969,6 +970,7 @@ namespace PE
 		m_timeSinceTransitionStarted = 0;
 		m_timeSinceTransitionEnded = m_transitionTimer;
 
+		PlaySceneTransition();
 		m_currentLevel = nextStage;
 		m_leveltoLoad = m_level2SceneName;
 	}
@@ -1000,6 +1002,7 @@ namespace PE
 		m_leveltoLoad = m_level1SceneName;
 
 		PlayClickAudio();
+		PlaySceneTransition();
 	}
 
 	int GameStateController_v2_0::GetCurrentLevel()
@@ -1076,6 +1079,14 @@ namespace PE
 	void GameStateController_v2_0::PlayPageAudio()
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Menu Transition SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
+	void GameStateController_v2_0::PlaySceneTransition()
+	{
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Scene Transition SFX_Prefab.json");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
