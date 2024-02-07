@@ -80,6 +80,7 @@ namespace PE
 		bool startedPlanning{ false };
 
 		// animation
+		AnimationComponent* p_catAnimation = nullptr;
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
 	};
 
@@ -127,7 +128,6 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
-		AnimationComponent* p_catAnimation = nullptr;
 
 		// animation
 		bool m_executionAnimationFinished{ false };
@@ -135,7 +135,6 @@ namespace PE
 		// Event Listeners
 		int m_mouseClickEventListener{};
 		int m_mouseReleaseEventListener{};
-		int m_collisionEventListener{};
 
 		// mouse click
 		bool m_mouseClick{ false };
@@ -178,6 +177,8 @@ namespace PE
 		void ExecuteStatesHandler(EntityID id, float deltaTime);
 
 		void PlayAnimation(EntityID id, std::string const& r_animationState);
+
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
 		///*!***********************************************************************************
 		// \brief Identifies if the cat state passed in matches the game state passed in.

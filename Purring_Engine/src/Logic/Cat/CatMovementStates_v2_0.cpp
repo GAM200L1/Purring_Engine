@@ -67,7 +67,7 @@ namespace PE
 		//if (!p_data->isMainCat) { return; }
 
 		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-
+		std::cout << "Moving\n";
 		// Check if pause state
 		if (gsc->currentState == GameStates_v2_0::PAUSE)
 		{
@@ -86,7 +86,7 @@ namespace PE
 		if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && p_data->catCurrentEnergy)
 		{
 			// Get the position of the cat
-			vec2 cursorPosition{ CatHelperFunctions::GetInstance().GetCursorPositionInWorld2() };
+			vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
 			// Check if the cat has been clicked
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
@@ -104,11 +104,11 @@ namespace PE
 			if (p_data->catCurrentEnergy && !m_invalidPath) // Check if the player has sufficient energy
 			{
 				// Get the mouse position
-				vec2 cursorPosition{ CatHelperFunctions::GetInstance().GetCursorPositionInWorld2() };
+				vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
 				// Attempt to create a node at the position of the cursor
 				// and position the cat where the node is
-				CatHelperFunctions::GetInstance().PositionEntity2(id, AttemptToDrawPath(cursorPosition));
+				CatHelperFunctions::PositionEntity(id, AttemptToDrawPath(cursorPosition));
 			}
 			else // Path is being drawn but the player has run out of energy
 			{
@@ -209,8 +209,8 @@ namespace PE
 
 		// Change the position of the node
 		EntityID nodeId{ p_data->pathQuads[p_data->pathPositions.size()] };
-		CatHelperFunctions::GetInstance().PositionEntity2(nodeId, r_nodePosition);
-		CatHelperFunctions::GetInstance().ToggleEntity2(nodeId, true);
+		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
+		CatHelperFunctions::ToggleEntity(nodeId, true);
 
 		// Add the position to the path positions list
 		p_data->pathPositions.emplace_back(r_nodePosition);
@@ -229,7 +229,7 @@ namespace PE
 
 		// Position the cat at the end of the path
 		if (!p_data->pathPositions.empty())
-			CatHelperFunctions::GetInstance().PositionEntity2(id, p_data->pathPositions.back());
+			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.back());
 	}
 
 
@@ -252,7 +252,7 @@ namespace PE
 		// Clear all the path data
 		if (!p_data->pathPositions.empty())
 		{
-			CatHelperFunctions::GetInstance().PositionEntity2(p_data->catID, p_data->pathPositions.front());
+			CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions.front());
 			follow_data->CurrentPosition = p_data->pathPositions.front();
 		}
 		p_data->pathPositions.clear();
@@ -273,7 +273,7 @@ namespace PE
 		// Disable all the path nodes
 		for (EntityID& nodeId : p_data->pathQuads)
 		{
-			CatHelperFunctions::GetInstance().ToggleEntity2(nodeId, false);
+			CatHelperFunctions::ToggleEntity(nodeId, false);
 			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeId).SetColor(); // Reset to white
 		}
 
@@ -323,8 +323,8 @@ namespace PE
 		{
 			OnTriggerStayEvent OCEE = dynamic_cast<const OnTriggerStayEvent&>(r_CE);
 			// Check if the cat is colliding with an obstacle
-			if ((OCEE.Entity1 == p_data->catID && CatHelperFunctions::GetInstance().IsObstacle2(OCEE.Entity2))
-				|| (OCEE.Entity2 == p_data->catID && CatHelperFunctions::GetInstance().IsObstacle2(OCEE.Entity1)))
+			if ((OCEE.Entity1 == p_data->catID && CatHelperFunctions::IsObstacle(OCEE.Entity2))
+				|| (OCEE.Entity2 == p_data->catID && CatHelperFunctions::IsObstacle(OCEE.Entity1)))
 			{
 				// The entity is colliding with is an obstacle
 				SetPathColor(1.f, 0.f, 0.f, 1.f); // Set the color of the path nodes to red
@@ -344,7 +344,7 @@ namespace PE
 		// Return if this cat is not the main cat
 		//if (!p_data->isMainCat) { return; }
 
-		CatHelperFunctions::GetInstance().PositionEntity2(id, p_data->pathPositions.front());
+		CatHelperFunctions::PositionEntity(id, p_data->pathPositions.front());
 		p_data->currentPositionIndex = 0;
 		m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 	}
@@ -382,7 +382,7 @@ namespace PE
 			if (distanceFromNode <= p_data->forgivenessOffset)
 			{
 				// Deactivate this node
-				CatHelperFunctions::GetInstance().ToggleEntity2(p_data->pathQuads[p_data->currentPositionIndex], false);
+				CatHelperFunctions::ToggleEntity(p_data->pathQuads[p_data->currentPositionIndex], false);
 
 				if (p_data->currentPositionIndex >= (p_data->pathPositions.size() - 1))
 				{
@@ -408,12 +408,12 @@ namespace PE
 				directionToMove *= ((distanceFromNode > amtToMove) ? amtToMove : distanceFromNode);
 
 				// Update the position of the cat
-				CatHelperFunctions::GetInstance().PositionEntity2(id, currentCatPosition + directionToMove);
+				CatHelperFunctions::PositionEntity(id, currentCatPosition + directionToMove);
 
 				// Ensure the cat is facing the direction of their movement
-				vec2 newScale{ CatHelperFunctions::GetInstance().GetEntityScale2(id) };
+				vec2 newScale{ CatHelperFunctions::GetEntityScale(id) };
 				newScale.x = std::abs(newScale.x) * ((directionToMove.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the cat is facing left
-				CatHelperFunctions::GetInstance().ScaleEntity2(id, newScale.x, newScale.y);
+				CatHelperFunctions::ScaleEntity(id, newScale.x, newScale.y);
 			}
 		}
 		else
@@ -442,7 +442,7 @@ namespace PE
 
 		// Position the player at the end of the path
 		if (p_data->pathPositions.size())
-			CatHelperFunctions::GetInstance().PositionEntity2(id, p_data->pathPositions.back());
+			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.back());
 	}
 
 
@@ -451,8 +451,8 @@ namespace PE
 		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEvent) };
 
 		// Check if the rat is colliding with the cat
-		if ((CatHelperFunctions::GetInstance().IsEnemy2(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
-			|| (CatHelperFunctions::GetInstance().IsEnemy2(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
+		if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
+			|| (CatHelperFunctions::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
 		{
 			m_collidedWithRat = true;
 		}

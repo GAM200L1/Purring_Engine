@@ -20,6 +20,8 @@
 #include "Events/MouseEvent.h"
 #include "Events/CollisionEvent.h"
 
+#include "Logic/GameStateController_v2_0.h"
+
 namespace PE
 {
 	//! Enum denoting cardinal directions for attack
@@ -38,7 +40,7 @@ namespace PE
 		int damage{ 0 };
 
 		// Telegraph variables
-		EnumCatAttackDirection_v2_0 attackDirection{ EnumCatAttackDirection_v2_0::NONE }; // Direction of attack chosen
+		std::pair<EnumCatAttackDirection_v2_0, EntityID> attackDirection{ EnumCatAttackDirection_v2_0::NONE, 0 }; // Direction of attack chosen
 		std::map<EnumCatAttackDirection_v2_0, EntityID> telegraphIDs{}; // IDs of entities used to visualise the directions the player can attack in
 		
 		// projectile variables
@@ -48,42 +50,41 @@ namespace PE
 		float bulletForce{ 1000.f };
 	};
 
-	class GreyCatAttack_v2_0PLAN : public State
+	class GreyCatAttack_v2_0PLAN
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~GreyCatAttack_v2_0PLAN() { p_data = nullptr; }
+		virtual ~GreyCatAttack_v2_0PLAN() {}
 
-		virtual void StateEnter(EntityID id) override;
+		void Enter(EntityID id);
 
-		virtual void StateUpdate(EntityID id, float deltaTime) override;
+		void Update(EntityID id, float deltaTime);
 
-		virtual void StateCleanUp();
+		void CleanUp();
 
-		virtual void StateExit(EntityID id) override;
+		void Exit(EntityID id);
 
-		virtual std::string_view GetName() { return "AttackPLAN"; }
-
-		static void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
+		void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
 		
 	private:
 		
-		GreyCatAttackVariables* p_data;
+		GameStateController_v2_0* p_gsc; // pointer to the game state controller
+		GreyCatAttackVariables* p_attackData; // attack data for the cat
 
 		bool m_showTelegraphs{ false }; // True if telegraphs are to be displayed
 
 		// Telegraph colors
-		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
-		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
-		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
+		vec4 const m_defaultColor{ 0.545f, 1.f, 0.576f, 1.f };
+		vec4 const m_hoverColor{ 1.f, 0.859f, 0.278f, 1.f };
+		vec4 const m_selectColor{ 1.f, 0.784f, 0.f, 1.f };
 
+		bool m_rightMouseClick{ false }; // set to true when mouse is right clicked
 		bool m_mouseClick{ false }; // set to true when mouse is clicked
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 		int m_mouseEventListener; // Stores the handler for the mouse click event
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
-
-		void ResetSelection();
+		void ToggleAll(bool setToggle);
 	};
 
 	class GreyCatAttack_v2_0EXECUTE : public State

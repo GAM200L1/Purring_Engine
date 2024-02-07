@@ -22,16 +22,14 @@
 namespace PE
 {
 
-		class CatHelperFunctions : public Singleton<CatHelperFunctions>
+		struct CatHelperFunctions
 		{
-			friend class Singleton<CatHelperFunctions>;
-		public:
 			/*!***********************************************************************************
 			\brief Returns the position of the transform of the entity passed in.
 
 			\param[in] transformId - ID of the entity to retrieve the position of.
 			*************************************************************************************/
-			vec2 GetEntityPosition2(EntityID const id)
+			static vec2 GetEntityPosition(EntityID const id)
 			{
 				try
 				{
@@ -46,7 +44,7 @@ namespace PE
 
 			 \param[in] transformId - ID of the entity to retrieve the scale of.
 			*************************************************************************************/
-			vec2 GetEntityScale2(EntityID const id)
+			static vec2 GetEntityScale(EntityID const id)
 			{
 				try
 				{
@@ -61,7 +59,7 @@ namespace PE
 
 			 \return vec2 - Returns the position of the cursor in the world.
 			*************************************************************************************/
-			vec2 GetCursorPositionInWorld2()
+			static vec2 GetCursorPositionInWorld()
 			{
 				float mouseX{}, mouseY{};
 				InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
@@ -74,7 +72,7 @@ namespace PE
 			\param[in] id - EntityID of the entity to en/disable.
 			\param[in] setToActive - Whether this entity should be set to active or inactive.
 			*************************************************************************************/
-			void ToggleEntity2(EntityID id, bool setToActive)
+			static void ToggleEntity(EntityID id, bool setToActive)
 			{
 				// Exit if the entity is not valid
 				if (!EntityManager::GetInstance().IsEntityValid(id)) { return; }
@@ -89,7 +87,7 @@ namespace PE
 			 \param[in] idd - ID of the entity to update the transform of.
 			 \param[in] r_position - Position to set the transform to.
 			*************************************************************************************/
-			void PositionEntity2(EntityID const id, vec2 const& r_position)
+			static void PositionEntity(EntityID const id, vec2 const& r_position)
 			{
 				try
 				{
@@ -106,7 +104,7 @@ namespace PE
 			 \param[in] width - Width to set the transform to.
 			 \param[in] height - Height to set the transform to.
 			*************************************************************************************/
-			void ScaleEntity2(EntityID const id, float const width, float const height)
+			static void ScaleEntity(EntityID const id, float const width, float const height)
 			{
 				try
 				{
@@ -117,13 +115,22 @@ namespace PE
 				catch (...) { return; }
 			}
 
+			static void SetColor(EntityID const id, vec4 const& color)
+			{
+				try
+				{
+					EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetColor(color.x, color.y, color.z, color.w);
+				}
+				catch (...) { return; }
+			}
+
 			/*!***********************************************************************************
 			\brief Identifies if the entity passed in is a cat. Assumes that cats have
 						the keyword "Cat" somewhere in their name in entityDescriptor.
 
 			\param[in] id - ID of the entity to check.
 			*************************************************************************************/
-			bool IsCat2(EntityID const id)
+			static bool IsCat(EntityID const id)
 			{
 				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos);
 			}
@@ -134,7 +141,7 @@ namespace PE
 
 			 \param[in] id - ID of the entity to check.
 			*************************************************************************************/
-			bool IsEnemy2(EntityID const id)
+			static bool IsEnemy(EntityID const id)
 			{
 				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Rat") != std::string::npos);
 			}
@@ -145,7 +152,7 @@ namespace PE
 
 			 \param[in] id - ID of the entity to check.
 			*************************************************************************************/
-			bool IsObstacle2(EntityID const id)
+			static bool IsObstacle(EntityID const id)
 			{
 				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
 			}

@@ -49,7 +49,7 @@ namespace PE
 		
 		try
 		{
-			//p_catAnimation = &EntityManager::GetInstance().Get<AnimationComponent>(id);
+			m_scriptData[id].p_catAnimation = &EntityManager::GetInstance().Get<AnimationComponent>(id);
 		}
 		catch (...)
 		{
@@ -69,7 +69,9 @@ namespace PE
 		default: // main cat or grey cat
 		{
 			GreyCatAttackVariables& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
+			// create telegraphs
 			GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(id, vars.bulletRange, vars.telegraphIDs);
+			vars.attackDirection = std::pair(EnumCatAttackDirection_v2_0::NONE, id);
 			break; 
 		}
 		}
@@ -92,7 +94,7 @@ namespace PE
 
 			for (auto quad : m_scriptData[id].pathQuads)
 			{
-				CatHelperFunctions::GetInstance().ToggleEntity2(quad, false);
+				CatHelperFunctions::ToggleEntity(quad, false);
 			}
 			return;
 		}
@@ -104,11 +106,11 @@ namespace PE
 			PlayAnimation(id, "Death");
 			// TODO: play death audio
 
-			if(!p_catAnimation)
-			if (p_catAnimation->GetCurrentFrameIndex() == p_catAnimation->GetAnimationMaxIndex())
+			
+			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
-				CatHelperFunctions::GetInstance().ToggleEntity2(id, false);
-				
+				CatHelperFunctions::ToggleEntity(id, false);
+
 				if (m_scriptData[id].isMainCat)
 					p_gsc->LoseGame();
 			}
@@ -142,16 +144,25 @@ namespace PE
 			if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 				PlanningStatesHandler<OrangeCatAttack_v2_0PLAN>(id, deltaTime);
 			else if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
+			{
+				// disable showing telegraphs
 				ExecuteStatesHandler<OrangeCatAttack_v2_0EXECUTE>(id, deltaTime);
+			}
 			break;
 		}
 		default: // main cat or grey cat
 			if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 				PlanningStatesHandler<GreyCatAttack_v2_0PLAN>(id, deltaTime);
 			else if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
+			{
+				GreyCatAttackVariables const& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
+				CatHelperFunctions::ToggleEntity(vars.attackDirection.second, false);
 				ExecuteStatesHandler<GreyCatAttack_v2_0EXECUTE>(id, deltaTime);
+			}
 			break;
 		}
+
+		m_mouseClick = false; // reset mouse
 	}
 
 	void CatScript_v2_0::OnAttach(EntityID id)
@@ -276,12 +287,11 @@ namespace PE
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0PLAN{}, id);
-				p_catAnimation->SetCurrentFrameIndex(0);
+				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0); // resets animation to 0
 			}
 		}
-
 		// if mouse is holding, player is given opportunity to move
-		if (m_mouseClick && m_mouseClickPrevious)
+		else if (m_mouseClick && m_mouseClickPrevious)
 		{
 			if (r_stateName == GETSCRIPTNAME(AttackPLAN)) // if state was not previously movement
 			{
@@ -318,16 +328,18 @@ namespace PE
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
-				p_catAnimation->SetCurrentFrameIndex(0);
+				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+				PlayAnimation(id, "Walk");
 			}
 		}
 		// executes movement and plays movement animation
-		else if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0EXECUTE))
+		else if (r_stateName == GETSCRIPTNAME(CatMovement_v2_0EXECUTE) && !m_scriptData[id].attackSelected)
 		{
 			PlayAnimation(id, "Walk");
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
+				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
 			}
 		}
 		// executes attack and plays attack animation, plays idle animation if attack is finished early
@@ -336,9 +348,9 @@ namespace PE
 			if (m_scriptData[id].attackSelected && !m_scriptData[id].finishedExecution)
 			{
 				PlayAnimation(id, "Attack");
-				if (p_catAnimation->GetCurrentFrameIndex() == p_catAnimation->GetAnimationMaxIndex())
+				if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 				{
-					p_catAnimation->SetCurrentFrameIndex(0);
+					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
 					m_scriptData[id].finishedExecution = true;
 				}
 			}
@@ -349,17 +361,24 @@ namespace PE
 
 	void CatScript_v2_0::PlayAnimation(EntityID id, std::string const& r_animationState)
 	{
-		if (p_catAnimation != nullptr)
+		if (m_scriptData[id].p_catAnimation != nullptr)
 		{
 			try
 			{
-				if (p_catAnimation->GetAnimationID() != m_scriptData[id].animationStates.at(r_animationState))
-					p_catAnimation->SetCurrentAnimationID(m_scriptData[id].animationStates.at(r_animationState));
+				if (m_scriptData[id].p_catAnimation->GetAnimationID() != m_scriptData[id].animationStates.at(r_animationState))
+					m_scriptData[id].p_catAnimation->SetCurrentAnimationID(m_scriptData[id].animationStates.at(r_animationState));
 			}
 			catch (...)
 			{
 				// error
 			}
 		}
+	}
+
+	void CatScript_v2_0::OnMouseClick(const Event<MouseEvents>& r_ME)
+	{
+		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
+		m_mouseClickPrevious = m_mouseClick;
+		m_mouseClick = true;
 	}
 }
