@@ -29,7 +29,7 @@ namespace PE
 			if (p_gamestateController->currentState == GameStates_v2_0::EXECUTE)
 			for (const auto& flw : m_ScriptData[id].ToAttach)
 			{
-				if (m_ScriptData[id].followers.size() == 5)
+				if (m_ScriptData[id].followers.size() == 4)
 					continue;
 
 				if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript_v2_0") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
@@ -158,7 +158,7 @@ namespace PE
 	{
 		m_ScriptData[id] = FollowScriptData_v2_0();
 		//hardcoded based on unity demo
-		m_ScriptData[id].NextPosition.resize(5);
+		m_ScriptData[id].NextPosition.resize(10);
 		//m_ScriptData[id].FollowingObject.resize(6);
 		// emplace a dummy object
 		//m_ScriptData[id].folowers.push(MAXSIZE_T);
