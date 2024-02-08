@@ -29,6 +29,7 @@ namespace PE
 {
 	void FpsScript::Init(EntityID id)
 	{
+		m_currentEntityID = id;
 		m_keyPressedKey = ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, FpsScript::OnKeyEvent, this)
 	}
 
