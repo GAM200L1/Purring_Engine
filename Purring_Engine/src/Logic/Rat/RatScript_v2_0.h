@@ -84,7 +84,7 @@ namespace PE
 		EntityID targetedCat{}; // Cat to move towards in the hunting phase
 		
 		EntityID attackRadiusId{};
-		float attackRadius{100.f};
+		float attackRadius{101.f};
 		std::set<EntityID> attackRangeInDetectionRadius;
 		std::set<EntityID> attackRangeExitedDetectionRadius;
 
@@ -318,6 +318,9 @@ namespace PE
 										Set to zero by default.
 		*************************************************************************************/
 		void ChangeStateToIdle(EntityID const id, float const stateChangeDelay = 0.f);
+
+		void ChangeStateToMovement(EntityID const id, float const stateChangeDelay = 0.f);
+
 
 		/*!***********************************************************************************
 		 \brief Sets the flag for the state to be changed to the attack state 
