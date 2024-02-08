@@ -114,7 +114,7 @@ namespace PE
 			// TODO: play death audio
 
 			
-			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
+			//if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
 				CatHelperFunctions::ToggleEntity(id, false);
 				m_scriptData[id].toggleDeathAnimation = false;

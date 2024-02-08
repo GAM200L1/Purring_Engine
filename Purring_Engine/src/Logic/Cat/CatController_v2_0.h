@@ -50,7 +50,7 @@ namespace PE
 
 		void CacheCurrentCats();
 
-		static inline void KillCat(EntityID id);
+		static void KillCat(EntityID id);
 
 		bool IsCatAndIsAlive(EntityID id);
 		

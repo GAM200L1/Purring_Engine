@@ -61,7 +61,7 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
-		~GreyCatAttack_v2_0PLAN() { p_attackData = nullptr; }
+		~GreyCatAttack_v2_0PLAN() { p_attackData = nullptr; p_gsc = nullptr; }
 
 		virtual void Enter(EntityID id);
 
@@ -118,6 +118,8 @@ namespace PE
 	private:
 		
 		GreyCatAttackVariables* p_attackData;
+
+		EntityID m_catID;
 
 		vec2 m_bulletImpulse;
 		float m_bulletDelay;
