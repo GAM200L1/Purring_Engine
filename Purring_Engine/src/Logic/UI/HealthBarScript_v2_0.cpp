@@ -20,7 +20,7 @@
 #include "../ECS/Entity.h"
 #include "../ECS/EntityFactory.h"
 #include "../Graphics/CameraManager.h"
-
+#include "../Rat/RatScript_v2_0.h"
 namespace PE
 {
 	// ---------- FUNCTION DEFINITIONS ---------- //
@@ -39,8 +39,17 @@ namespace PE
 			// Update the position of the healthbar
 			vec2 newPosition{ EntityManager::GetInstance().Get<Transform>(m_scriptData[id].followObjectID).position }; 
 			newPosition = GETCAMERAMANAGER()->GetWorldToWindowPosition(newPosition.x, newPosition.y);
-			newPosition = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(newPosition.x, newPosition.y);
+			newPosition = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(newPosition.x, newPosition.y + 32);
 			PositionEntityRelative(id, newPosition);
+		}
+
+		if (EntityManager::GetInstance().Has<GUISlider>(id))
+		{
+			if (EntityManager::GetInstance().Has<ScriptComponent>(m_scriptData[id].followObjectID))
+			{
+				EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue = *GETSCRIPTDATA(RatScript_v2_0, m_scriptData[id].followObjectID).ratHealth;
+				EntityManager::GetInstance().Get<GUISlider>(id).m_maxValue = 3;
+			}
 		}
 	}
 
