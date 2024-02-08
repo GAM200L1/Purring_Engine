@@ -353,6 +353,7 @@ RTTR_REGISTRATION
         .property("catType", &PE::CatScript_v2_0Data::catType)
         .property("toggleDeathAnimation", &PE::CatScript_v2_0Data::toggleDeathAnimation)
         .property("finishedExecution", &PE::CatScript_v2_0Data::finishedExecution)
+        .property("isCaged", &PE::CatScript_v2_0Data::isCaged)
         .property("catMaxMovementEnergy", &PE::CatScript_v2_0Data::catMaxMovementEnergy)
         .property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
         .property("minDistance", &PE::CatScript_v2_0Data::minDistance)
