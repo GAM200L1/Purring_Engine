@@ -142,7 +142,12 @@
                     "ScriptComponent": {
                         "CatScript_v2_0": {
                             "data": {
-                                "animationStates": {},
+                                "animationStates": {
+                                    "NewState": "",
+                                    "NewState\u0001": "",
+                                    "NewState\u0001\u0001": "",
+                                    "NewState\u0001\u0001\u0001": ""
+                                },
                                 "attackVariants": {
                                     "OrangeCatAttackVariables": {
                                         "damage": 5,
