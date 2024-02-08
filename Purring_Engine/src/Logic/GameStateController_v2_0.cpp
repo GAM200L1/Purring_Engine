@@ -988,6 +988,16 @@ namespace PE
 		return m_currentLevel;
 	}
 
+	bool GameStateController_v2_0::GetSelectedCat(EntityID& catID)
+	{
+		if (!m_isRat && m_isPotraitShowing)
+		{
+			catID = m_lastSelectedEntity;
+			return true;
+		}
+		return false;
+	}
+
 	void GameStateController_v2_0::GetMouseCurrentPosition(vec2& Output)
 	{
 		InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().p_currWindow, Output.x, Output.y);
