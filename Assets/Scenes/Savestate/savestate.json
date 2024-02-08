@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -809,7 +809,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1152,7 +1152,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1194,7 +1194,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1546,7 +1546,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1814,7 +1814,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2216,7 +2216,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2533,7 +2533,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2613,7 +2613,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3106,6 +3106,12 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/RatMovingTest_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/RatMovingTest_Anim.json"
+                    },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -3149,6 +3155,11 @@
                     },
                     "ScriptComponent": {
                         "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Walk": "../Assets/Animation/RatMovingTest_Anim.json"
+                                }
+                            },
                             "state": 0
                         }
                     },
@@ -3173,6 +3184,10 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [],
+                        "CurrentAnimationID": ""
+                    },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -3216,6 +3231,9 @@
                     },
                     "ScriptComponent": {
                         "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {}
+                            },
                             "state": 0
                         }
                     },
@@ -3241,7 +3259,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3509,7 +3527,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {

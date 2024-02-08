@@ -3295,6 +3295,80 @@ namespace PE {
 										}
 										ImGui::PopStyleColor(1); // Pop button color style
 									}
+									ImGui::Separator();
+									int num{};
+									ImGui::Text("Add Animation state"); ImGui::SameLine();
+									bool worked{ false };
+									if (ImGui::Button("+"))
+									{
+										std::string str = "NewState";
+										while (!worked)
+										{
+											if (it->second.animationStates.count(str))
+											{
+												str += 1;
+											}
+											else
+											{
+												it->second.animationStates.emplace(str, "");
+												worked = true;
+											}
+										}
+									}
+									static std::pair<std::string, std::string> whoToRemove;
+									static bool rmFlag{ false };
+									for (auto& [k, v] : it->second.animationStates)
+									{
+										ImGui::Text("State: "); ImGui::SameLine();
+										std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
+										bool changed = ImGui::InputText(std::string("##" + k + std::to_string(++num)).c_str(), &curr);
+										if (!changed)
+										{
+											if (whoToRemove.first == k)
+											{
+												if (!ImGui::IsItemActivated())
+												{
+													rmFlag = true;
+												}
+											}
+										}
+										else
+										{
+											if (k != curr)
+											{
+												whoToRemove.first = k;
+												whoToRemove.second = curr;
+												rmFlag = false;
+											}
+
+										}
+
+
+										ImGui::Text("Animation: "); ImGui::SameLine();
+										bool bl = ImGui::BeginCombo(std::string("##Animation" + k + std::to_string(num)).c_str(), v.c_str());
+										if (bl)
+										{
+											if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+											{
+												for (const auto& name : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+												{
+													if (ImGui::Selectable(name.c_str()))
+														v = name;
+												}
+											}
+											ImGui::EndCombo();
+										}
+										ImGui::Separator();
+									}
+									if (rmFlag)
+									{
+										it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
+										it->second.animationStates.erase(whoToRemove.first);
+										whoToRemove.first = "";
+										whoToRemove.second = "";
+										rmFlag = false;
+									}
+								
 								}
 							}
 							if (key == "CatScript_v2_0")

@@ -30,7 +30,7 @@ namespace PE
         void OnTriggerExit(const Event<CollisionEvents>& r_TE);
 
     private:
-        void CalculateMovement(EntityID id, float deltaTime);
+        bool CalculateMovement(EntityID id, float deltaTime);
         bool CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition);
 
         GameStateController_v2_0* gameStateController{ nullptr };
