@@ -58,6 +58,20 @@ namespace PE
 		void Exit(EntityID id);
 
 		/*!***********************************************************************************
+		 \brief Sets variable path being drawn
+
+		 \param[in] toggle - true if path being drawn, false if otherwise
+		*************************************************************************************/
+		inline void SetPathBeingDrawn(bool toggle) { m_pathBeingDrawn = toggle; }
+
+		/*!***********************************************************************************
+		 \brief Gets variable path being drawn
+
+		 \param[out] bool - true if path being drawn, false if otherwise
+		*************************************************************************************/
+		inline bool GetPathBeingDrawn() { return m_pathBeingDrawn; }
+
+		/*!***********************************************************************************
 		 \brief Checks if the position is far away enough from the previous node to add a new
 						node. If the proposed position is too far away, points are added in a straight
 						line until the proposed position is reached or the cat runs out of energy.

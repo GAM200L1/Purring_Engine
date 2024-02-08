@@ -77,6 +77,7 @@ namespace PE
 
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
 		
+		virtual void ForceZeroMouse() { m_mouseClick = false; }
 	private:
 		
 		GameStateController_v2_0* p_gsc; // pointer to the game state controller

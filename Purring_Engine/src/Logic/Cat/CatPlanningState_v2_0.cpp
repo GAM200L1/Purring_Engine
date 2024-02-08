@@ -51,7 +51,7 @@ namespace PE
 		}
 		else
 		{
-			if (m_timer >= 1.f) // resets double click when 1 second has passed
+			if (m_timer >= 2.f) // resets double click when 1 second has passed
 			{
 				m_doubleClick = 0;
 				m_timer = 0.f;
@@ -65,17 +65,22 @@ namespace PE
 			if (m_doubleClick >= 2)
 			{
 				p_data->planningAttack = true;
+				m_doubleClick = 0;
+				p_catAttack->ForceZeroMouse();
 				// @TODO: Add open attack sound here
+			}
+			
+			if (PointCollision(r_catCollider, r_cursorPosition))
+			{
+				if (r_cursorPosition != m_prevCursorPosition && m_mouseClicked && !p_data->attackSelected) // if current and prev cursor position are not the same, update movement
+				{
+					m_moving = true;
+				}
 			}
 		}
 
-		if (PointCollision(r_catCollider, r_cursorPosition))
-		{
-			if (r_cursorPosition != m_prevCursorPosition && m_mouseClicked && !p_data->attackSelected) // if current and prev cursor position are not the same, update movement
-			{
-				p_catMovement->Update(id, deltatime);
-			}
-		}
+		if (m_moving && !p_data->planningAttack)
+			p_catMovement->Update(id, deltatime);
 
 		m_timer += deltatime;
 		m_prevCursorPosition = r_cursorPosition;
@@ -107,10 +112,14 @@ namespace PE
 				if (!p_data->planningAttack) // if not currently planning attack, 
 					p_catAttack->ToggleTelegraphs(false, false);
 				p_catAttack->ResetSelection(p_data->catID);
+				m_doubleClick = 0;
 			}
-			else if (MBPE.button == 1 && !p_data->pathPositions.empty())
+			else if (MBPE.button == 1)
 			{
 				p_catMovement->ResetDrawnPath();
+				p_catAttack->ToggleTelegraphs(false, false);
+				p_data->planningAttack = false;
+				m_doubleClick = 0;
 			}
 			else
 				m_mouseClicked = true;
@@ -121,6 +130,7 @@ namespace PE
 	{
 		MouseButtonReleaseEvent MBRE = dynamic_cast<const MouseButtonReleaseEvent&>(r_ME);
 		m_mouseClicked = false;
+		m_moving = false;
 	}
 
 	// add mouse released

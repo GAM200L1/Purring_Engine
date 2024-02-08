@@ -53,7 +53,6 @@ namespace PE
 			FollowScriptData* follow_data = GETSCRIPTDATA(FollowScript, p_data->catID);
 			p_data->followCatPositions = follow_data->NextPosition;
 		/*}*/
-
 		/*if (!p_data->startedPlanning)
 		{*/
 			ResetDrawnPath();
@@ -83,7 +82,7 @@ namespace PE
 		}
 
 		// Check if the mouse has just been clicked
-		if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && p_data->catCurrentEnergy)
+		if (m_mouseClick && !m_pathBeingDrawn && p_data->catCurrentEnergy)
 		{
 			// Get the position of the cat
 			vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
@@ -96,7 +95,7 @@ namespace PE
 				m_pathBeingDrawn = true;
 			}
 		}
-
+		
 		// If the mouse is being pressed
 		if (m_mouseClick && m_pathBeingDrawn)
 		{

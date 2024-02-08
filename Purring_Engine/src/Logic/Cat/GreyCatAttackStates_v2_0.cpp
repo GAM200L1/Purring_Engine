@@ -21,6 +21,7 @@
 #include "CatHelperFunctions.h"
 #include "CatController_v2_0.h"
 #include "Logic/Rat/RatController_v2_0.h"
+#include "CatPlanningState_v2_0.h"
 
 #include "Hierarchy/HierarchyManager.h"
 #include "Physics/CollisionManager.h"
@@ -81,7 +82,7 @@ namespace PE
 			}
 
 			// disables telegraphs if anywhere but the telegraphs are clicked
-			if (m_mouseClick && !collidingWithAnyTelegraph)
+			if (m_mouseClick && !m_mouseClickedPrevious && !collidingWithAnyTelegraph)
 			{
 				(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 				ToggleTelegraphs(false, true);
@@ -106,7 +107,6 @@ namespace PE
 
 	void GreyCatAttack_v2_0PLAN::ResetSelection(EntityID id)
 	{
-		m_showTelegraphs = false;
 		for (auto const& r_telegraphs : p_attackData->telegraphIDs)
 		{
 			CatHelperFunctions::SetColor(r_telegraphs.second, m_defaultColor);

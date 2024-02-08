@@ -31,6 +31,9 @@ namespace PE
 		virtual void Exit(EntityID id) = 0;
 
 		virtual void ResetSelection(EntityID id) = 0;
+		
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected) = 0;
+		
+		virtual void ForceZeroMouse() = 0;
 	};
 }
