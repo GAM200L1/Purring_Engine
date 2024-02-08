@@ -503,8 +503,8 @@ namespace PE
 						return;
 
 				m_scriptData[id].p_stateManager = new StateMachine{};
-				//ChangeStateToIdle(id);
-				ChangeStateToMovement(id);
+				ChangeStateToIdle(id);
+				//ChangeStateToMovement(id);
 
 			}
 		}
