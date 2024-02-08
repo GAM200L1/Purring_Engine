@@ -48,10 +48,13 @@ namespace PE
 		std::map<EnumCatAttackDirection_v2_0, EntityID> telegraphIDs{}; // IDs of entities used to visualise the directions the player can attack in
 		
 		// projectile variables
-		float bulletDelay{ 0.7f };
+		float bulletDelay{ 0.f }; // for after the bullet fire frame if slight 
 		float bulletRange{ 3.f };
 		float bulletLifeTime{ 1.f };
 		float bulletForce{ 1000.f };
+
+		// for syncing
+		unsigned int bulletFireAnimationIndex{ 4 };
 	};
 
 	class GreyCatAttack_v2_0PLAN : public CatAttackBase_v2_0
@@ -118,9 +121,10 @@ namespace PE
 
 		vec2 m_bulletImpulse;
 		float m_bulletDelay;
-		float m_attackDuration; // how long attack will last
+		float m_bulletLifetime; // how long the bullet will persist
 		int m_collisionEventListener{};
 
+		bool m_projectileFired{ false };
 		
 		void ProjectileCollided(const Event<CollisionEvents>& r_CE);
 

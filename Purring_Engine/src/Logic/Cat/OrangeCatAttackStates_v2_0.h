@@ -25,6 +25,7 @@ namespace PE
 {
 	struct OrangeCatAttackVariables
 	{
+		EntityID seismicID; // id of the seismic attack
 		EntityID telegraphID; // id of the UI
 
 		int damage;

@@ -202,9 +202,8 @@ namespace PE
 
 		// Set the start values of the attack projectile
 		m_bulletImpulse = vec2{ 0.f, 0.f };
-		if (p_attackData->attackDirection != EnumCatAttackDirection_v2_0::NONE)
+		if (GETSCRIPTDATA(CatScript_v2_0, id).attackSelected)
 		{
-			m_attackDuration = p_attackData->bulletLifeTime;
 			vec2 direction{ 0.f, 0.f };
 			switch (p_attackData->attackDirection)
 			{
@@ -234,12 +233,47 @@ namespace PE
 			EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
 			m_bulletImpulse = direction * p_attackData->bulletForce;
 			m_bulletDelay = p_attackData->bulletDelay;
+			m_bulletLifetime = p_attackData->bulletLifeTime;
+
+			vec2 newScale{ CatHelperFunctions::GetEntityScale(id) };
+			newScale.x = std::abs(newScale.x) * (((CatHelperFunctions::GetEntityPosition(p_attackData->telegraphIDs[p_attackData->attackDirection]) - 
+												   CatHelperFunctions::GetEntityPosition(id)).Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the rat is facing left
+			CatHelperFunctions::ScaleEntity(id, newScale.x, newScale.y);			
 		}
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
+		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 
+		// when the frame is attack frame, shoot the projectile after delay passes
+		if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
+		{
+			if (m_bulletDelay <= 0.f) // extra delay after the frame in case of slight inaccuracy
+			{
+				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, true);
+				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ApplyLinearImpulse(m_bulletImpulse);
+				m_projectileFired = true;
+				// @TODO: play attack audio here
+				
+			}
+			else
+				m_bulletDelay -= deltaTime;
+		}
+		// if projectile has been fired, keep reducing lifetime and disable bullet
+
+		if (m_projectileFired)
+		{
+			if (m_bulletLifetime <= 0.f)
+			{
+				(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = true;
+				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
+				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
+				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
+			}
+			m_bulletLifetime -= deltaTime;
+		}
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::StateCleanUp()
