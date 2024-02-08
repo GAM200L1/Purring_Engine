@@ -987,7 +987,7 @@ namespace PE
 		Output = GETCAMERAMANAGER()->GetWindowToWorldPosition(Output.x, Output.y);
 	}
 
-	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, float Current, float Max, bool isRat)
+	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, int Current, int Max, bool isRat)
 	{
 		if(isRat)
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].RatPortrait).children)

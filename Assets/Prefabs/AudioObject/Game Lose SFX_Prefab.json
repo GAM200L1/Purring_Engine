@@ -1,15 +1,15 @@
 {
     "Entity": {
         "components": {
-            "AudioComponent": {
-                "audioKey": "../Assets/Audio/sfx_CatMovement_GrassShuffle3.wav",
-                "loop": false
-            },
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/sfx_Info_DefeatThud.wav",
+            "loop": false
+          },
             "EntityDescriptor": {
-                "Prefab Type": "Cat Movement SFX 3",
+                "Prefab Type": "Button Click SFX",
                 "children": [],
                 "isActive": true,
-                "name": "Cat Movement SFX 3",
+                "name": "Button Click SFX",
                 "parent": null,
                 "sceneID": 18446744073709551615
             }

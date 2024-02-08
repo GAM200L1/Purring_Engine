@@ -1,15 +1,15 @@
 {
     "Entity": {
         "components": {
-            "AudioComponent": {
-                "audioKey": "../Assets/Audio/sfx_CatMovement_GrassShuffle3.wav",
-                "loop": false
-            },
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/vo_Cat_DeathWilhelm.wav",
+            "loop": false
+          },
             "EntityDescriptor": {
-                "Prefab Type": "Cat Movement SFX 3",
+                "Prefab Type": "Audio Object",
                 "children": [],
                 "isActive": true,
-                "name": "Cat Movement SFX 3",
+                "name": "Audio Object",
                 "parent": null,
                 "sceneID": 18446744073709551615
             }

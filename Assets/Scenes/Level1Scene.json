@@ -83,8 +83,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -391,8 +391,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -664,8 +664,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -785,7 +785,7 @@
                                 "PhaseBanner": 17,
                                 "Portrait": 47,
                                 "RatPortrait": 53,
-                                "TransitionPanel": 0,
+                                "TransitionPanel": 70,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
                                 "clicklisttest": [
@@ -824,8 +824,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1173,8 +1173,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1216,8 +1216,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1575,8 +1575,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1848,8 +1848,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2258,8 +2258,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2581,8 +2581,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2663,8 +2663,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3302,8 +3302,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3575,8 +3575,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4294,8 +4294,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4373,8 +4373,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
