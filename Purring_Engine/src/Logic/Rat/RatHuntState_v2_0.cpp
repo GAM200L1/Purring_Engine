@@ -67,7 +67,8 @@ namespace PE
 				case EnumRatType::BRAWLER:
 				{
 						// Move towards the target position until we've reached or we've run out of turns
-						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime);
+						if (!(p_data->finishedExecution))
+								p_data->finishedExecution = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime);
 						break;
 				}
 				default: break;
