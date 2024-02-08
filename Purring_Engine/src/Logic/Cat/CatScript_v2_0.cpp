@@ -107,7 +107,7 @@ namespace PE
 		}
 
 		// cat dies
-		if (m_scriptData[id].catIsDead)
+		if (m_scriptData[id].toggleDeathAnimation)
 		{
 			// plays death animation
 			PlayAnimation(id, "Death");
@@ -117,8 +117,8 @@ namespace PE
 			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
 				CatHelperFunctions::ToggleEntity(id, false);
-
-				if (m_scriptData[id].isMainCat)
+				m_scriptData[id].toggleDeathAnimation = false;
+				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
 					p_gsc->LoseGame();
 			}
 			return;
