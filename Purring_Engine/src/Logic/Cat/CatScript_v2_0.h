@@ -51,6 +51,7 @@ namespace PE
 		EntityID catID{ 0 };
 		EnumCatType catType{ EnumCatType::GREYCAT };
 		bool finishedExecution{ false };
+		bool toggleDeathAnimation{ false };
 
 		// cat attack
 		std::variant<GreyCatAttackVariables, OrangeCatAttackVariables> attackVariables{ GreyCatAttackVariables{} };
@@ -104,8 +105,6 @@ namespace PE
 
 
 		// ----- Getters/Setters/RTTR ----- //
-
-		void SetDead(EntityID id, bool isDead);// { m_scriptData[id].catIsDead = isDead; }
 
 		/*!***********************************************************************************
 		 \brief Sets the flag for the state to be changed after the delay passed in.

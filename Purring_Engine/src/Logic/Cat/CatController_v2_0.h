@@ -50,9 +50,9 @@ namespace PE
 
 		void CacheCurrentCats();
 		
-		void KillCat(EntityID id);
+		static inline void KillCat(EntityID id);
 
-		bool IsActiveCat(EntityID id);
+		bool IsCatAndIsAlive(EntityID id);
 		
 		// getters
 		int GetCurrentMovementEnergy(EntityID id);

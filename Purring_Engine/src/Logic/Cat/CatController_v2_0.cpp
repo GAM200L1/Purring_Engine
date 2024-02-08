@@ -116,13 +116,21 @@ namespace PE
 
 	void CatController_v2_0::KillCat(EntityID id)
 	{
-		// sets cat to inactive to kill it
-		CatHelperFunctions::ToggleEntity(id, false);
+		(GETSCRIPTDATA(CatScript_v2_0, id))->toggleDeathAnimation = true;
 	}
 
-	bool CatController_v2_0::IsActiveCat(EntityID id)
+	bool CatController_v2_0::IsCatAndIsAlive(EntityID id)
 	{
-		return false;
+		for (auto const& [type, catID] : m_currentCats)
+		{
+			if (catID == id) // cat is in vector
+			{
+				if (EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive)
+					return true; // cat is alive
+				else
+					return false; // cat is dead
+			}
+		}
 	}
 
 	int CatController_v2_0::GetCurrentMovementEnergy(EntityID catID)
