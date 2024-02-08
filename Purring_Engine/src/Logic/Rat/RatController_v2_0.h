@@ -115,6 +115,7 @@ namespace PE
 
 		void ApplyDamageToRat(EntityID ratID, int damage);
 
+		bool IsRatAndIsAlive(EntityID id);
 
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
@@ -141,8 +142,6 @@ namespace PE
 		 \param[in] setToActive - Whether this entity should be set to active or inactive.
 		*************************************************************************************/
 		static void ToggleEntity(EntityID id, bool setToActive);
-
-		bool IsRatAndIsAlive(EntityID id);
 
 	}; // end of class 
 

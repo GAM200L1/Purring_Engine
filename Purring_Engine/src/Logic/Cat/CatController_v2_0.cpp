@@ -148,7 +148,7 @@ namespace PE
 		{
 			m_scriptData.erase(id);
 		}
-		if (id == mainInstance) { mainInstance = 0; }
+		//if (id == mainInstance) { mainInstance = 0; }
 
 		m_currentCats.clear();
 	}
@@ -180,6 +180,7 @@ namespace PE
 	{
 		EnumCatType const& r_catType = (GETSCRIPTDATA(CatScript_v2_0, id))->catType;
 		m_currentCats.erase(std::find(m_currentCats.begin(), m_currentCats.end(), std::pair{id, r_catType}));
+		CatHelperFunctions::ToggleEntity(id, false);
 	}
 
 	int CatController_v2_0::GetCurrentMovementEnergy(EntityID catID)

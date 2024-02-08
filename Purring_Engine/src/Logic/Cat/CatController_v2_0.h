@@ -77,7 +77,7 @@ namespace PE
 		*************************************************************************************/
 		inline bool IsCat(EntityID id)
 		{
-			for (auto const& [type, catID] : m_currentCats)
+			for (auto const& [catID, type] : m_currentCats)
 			{
 				if (catID == id) // cat is in vector
 					return true;
