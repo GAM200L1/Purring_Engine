@@ -155,14 +155,14 @@ namespace PE
 
 	void CatController_v2_0::Destroy(EntityID id)
 	{
-
+		m_cachedCats = m_currentCats;
 	}
 
 	// getters
 	std::vector<EnumCatType> CatController_v2_0::GetDeployableCats()
 	{
 		std::vector<EnumCatType> deployableCats{};
-		for (auto const& [catID, type] : m_currentCats)
+		for (auto const& [catID, type] : m_cachedCats)
 		{
 			// if cat is alive when caching
 			if (!(GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)

@@ -107,5 +107,6 @@ namespace PE
 
 	private:
 		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
+		std::vector<std::pair<EntityID, EnumCatType>> m_cachedCats;
 	};
 }
