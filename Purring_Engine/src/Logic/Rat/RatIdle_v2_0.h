@@ -77,6 +77,7 @@ namespace PE
 
         GameStateController_v2_0* gameStateController{ nullptr };
         GameStates_v2_0 m_previousGameState; // The game state in the previous frame
+        bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
 
         // Event listener IDs 
         int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};

@@ -68,7 +68,7 @@ namespace PE
 			CreateCheckStateManager(id);
 			it->second.p_stateManager->Update(id, deltaTime);
 
-			if (GameStateJustChanged() && gameStateController->currentState == GameStates_v2_0::EXECUTE)
+			if (GameStateJustChanged() && previousGameState != GameStates_v2_0::PAUSE && gameStateController->currentState == GameStates_v2_0::EXECUTE)
 			{
 					// Clear cat collision containers
 					ClearCollisionContainers(id);
@@ -82,6 +82,7 @@ namespace PE
 			}
 
 			previousGameState = gameStateController->currentState;
+			it->second.hasRatStateChanged = false;
 			// // Check if state change is requested and the delay has passed
 			// if (it->second.shouldChangeState && it->second.timeBeforeChangingState <= 0.f) {
 			// 	// Perform the state change
@@ -186,6 +187,16 @@ namespace PE
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.orientation = orientation;
+			}
+			catch (...) { return; }
+		}
+
+		void RatScript_v2_0::RotateEntityRelative(EntityID const transformId, float const orientation)
+		{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.relOrientation = orientation;
 			}
 			catch (...) { return; }
 		}
@@ -327,10 +338,10 @@ namespace PE
 			if (it == m_scriptData.end()) { return; }
 
 			// Check if the cat is alive
-			// -- no function exists ---
+			// -- no function exists --- @TODO
 
 			// Store the cat in the container
-			it->second.catsInDetectionRadius.emplace(catID);
+			it->second.catsInDetectionRadius.insert(catID);
 
 			// Remove the cats in the enter container from the exit container
 			it->second.catsExitedDetectionRadius.erase(catID);
@@ -342,10 +353,10 @@ namespace PE
 			if (it == m_scriptData.end()) { return; }
 
 			// Check if the cat is alive
-			// -- no function exists ---
+			// -- no function exists --- @TODO
 
 			// Store the cat in the container
-			it->second.catsExitedDetectionRadius.emplace(catID);
+			it->second.catsExitedDetectionRadius.insert(catID);
 
 			// Remove the cats in the exit container from the enter container
 			it->second.catsInDetectionRadius.erase(catID);
@@ -489,7 +500,7 @@ namespace PE
 
 		bool RatScript_v2_0::CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition)
 		{
-				bool reached = (newPosition - targetPosition).Length() <= minDistanceToTarget;
+				bool reached = (newPosition - targetPosition).LengthSquared() <= (minDistanceToTarget * minDistanceToTarget);
 				//std::cout << "RatMovement_v2_0::CheckDestinationReached - Destination " << (reached ? "reached." : "not reached.") << std::endl;
 				return reached;
 		}
@@ -503,22 +514,21 @@ namespace PE
 						return;
 
 				m_scriptData[id].p_stateManager = new StateMachine{};
-				//ChangeStateToIdle(id);
-				ChangeStateToMovement(id);
-
+				ChangeStateToIdle(id);
+				//ChangeStateToMovement(id);
 			}
 		}
 
 
 		void RatScript_v2_0::ChangeRatState(EntityID id)
 		{
-				std::cout << "RatScript_v2_0::ChangeRatState(" << id << ")";
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 
 				// Change the state
 				if (it->second.p_stateManager)
 				{
+						std::cout << "RatScript_v2_0::ChangeRatState(" << id << ", " << it->second.GetQueuedState()->GetName() << ")\n";
 						it->second.p_stateManager->ChangeState(it->second.GetQueuedState(), id);
 				}
 
@@ -527,6 +537,7 @@ namespace PE
 				it->second.timeBeforeChangingState = 0.f;
 				it->second.delaySet = false;
 				it->second.SetQueuedState(nullptr, true);
+				it->second.hasRatStateChanged = true;
 		}
 
 		EntityID RatScript_v2_0::CreateDetectionRadius(RatScript_v2_0_Data const& r_data)
@@ -628,40 +639,6 @@ namespace PE
 				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent
 				EntityManager::GetInstance().Get<Transform>(r_data.telegraphArrowEntityID).relPosition.Zero();	  // zero out the position (attach calculates to stay in the same position in the world)
 				EntityManager::GetInstance().Get<Transform>(r_data.telegraphArrowEntityID).relPosition.x = ratScale.x * 0.7f;
-
-				/* OLD RAT SCRIPT
-				
-				vec2 const& ratScale = GetEntityScale(m_scriptData[id].ratID);
-				RatScriptData& data = m_scriptData[id];
-
-				SerializationManager serializationManager;
-
-				data.psudoRatID = EntityFactory::GetInstance().CreateEntity<Transform>();
-				Hierarchy::GetInstance().AttachChild(id, data.psudoRatID);
-				EntityManager::GetInstance().Get<Transform>(data.psudoRatID).relPosition = vec2{ 0.f, 0.f };
-
-				// create the arrow telegraph
-				data.arrowTelegraphID = serializationManager.LoadFromFile("PawPrints_Prefab.json");
-				ToggleEntity(data.arrowTelegraphID, false); // set to inactive, it will only show during planning phase
-				ScaleEntity(data.arrowTelegraphID, ratScale.x * 0.5f, ratScale.y * 0.5f);
-				Hierarchy::GetInstance().AttachChild(data.psudoRatID, data.arrowTelegraphID); // attach child to parent
-				EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.Zero();	  // zero out the position (attach calculates to stay in the same position in the world)
-				EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.x = ratScale.x * 0.7f;
-		
-				// create cross attack telegraph
-				data.attackTelegraphID = serializationManager.LoadFromFile("EnemyAttackTelegraph_Prefab.json");
-				ToggleEntity(data.attackTelegraphID, false); // set to inactive, it will only show during planning phase if the cat is in the area
-				ScaleEntity(data.attackTelegraphID, data.attackDiameter, data.attackDiameter);
-				//Hierarchy::GetInstance().AttachChild(id, data.attackTelegraphID);
-				EntityManager::GetInstance().Get<Transform>(data.attackTelegraphID).relPosition = vec2{ 0.f,0.f };
-
-				// create the detection radius
-				data.detectionTelegraphID = serializationManager.LoadFromFile("EnemyDetectionTelegraph_Prefab.json");
-				ToggleEntity(data.detectionTelegraphID, false); // set to inactive it will only show during planning phase
-				ScaleEntity(data.detectionTelegraphID, ratScale.x * 2.f * data.detectionRadius, ratScale.y * 2.f * data.detectionRadius);
-				Hierarchy::GetInstance().AttachChild(id, data.detectionTelegraphID);
-				EntityManager::GetInstance().Get<Transform>(data.detectionTelegraphID).relPosition = vec2{ 0.f,0.f }; // detection UI will always show
-				*/
 		}
 
 } // End of namespace PE
