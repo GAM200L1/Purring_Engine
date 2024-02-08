@@ -119,7 +119,86 @@ namespace PE {
 		 \param[in,out] id - ID of script to get the data of
 		 \return nlohmann::json - JSON object with data from script
 		*************************************************************************************/
-		nlohmann::json ToJson(EntityID id) const;
+		nlohmann::json ToJson(EntityID id) const
+		{
+			nlohmann::json ret;
+			
+			for (auto [k, v] : m_scriptKeys)
+			{
+				ret[k.c_str()]["state"] = v;
+				rttr::type scriptDataType = rttr::type::get_by_name(k.c_str());
+				for (auto& prop : scriptDataType.get_properties())
+				{
+					rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(k.c_str())->GetScriptData(id);
+					
+					if (!inst.is_valid()) // if no data for this script type, just break out of this loop
+						break;
+					rttr::variant var = prop.get_value(inst);
+					if (var.get_type().get_name() == "float")
+					{
+						float val = var.get_value<float>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "enumPE::PlayerState")
+					{
+						PlayerState val = var.get_value<PlayerState>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "int")
+					{
+						int val = var.get_value<int>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "unsigned__int64")
+					{
+						size_t val = var.get_value<size_t>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "bool")
+					{
+						bool val = var.get_value<bool>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
+					{
+						std::vector<EntityID> val = var.get_value<std::vector<EntityID>>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+					}
+					else if (var.get_type().get_name() == "structPE::vec2")
+					{
+						PE::vec2 val = var.get_value<PE::vec2>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
+					}
+					else if (var.get_type().get_name() == "structPE::vec4")
+					{
+						PE::vec4 val = var.get_value<PE::vec4>();
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["z"] = val.z;
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["w"] = val.w;
+					}
+					else if (var.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+					{
+						std::vector<PE::vec2> val = var.get_value<std::vector<PE::vec2>>();
+						size_t cnt{};
+						for (const auto& vec : val)
+						{
+							ret[k.c_str()]["data"][prop.get_name().to_string().c_str()][std::to_string(cnt)]["x"] = vec.x;
+							ret[k.c_str()]["data"][prop.get_name().to_string().c_str()][std::to_string(cnt)]["y"] = vec.y;
+							++cnt;
+						}
+					}
+					else if (var.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
+					{
+						ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = var.get_value<std::map<std::string, std::string>>();
+					}
+					else
+					{
+						std::cout << var.get_type().get_name() << std::endl;
+					}
+				}
+			}
 		
 
 		/*!***********************************************************************************

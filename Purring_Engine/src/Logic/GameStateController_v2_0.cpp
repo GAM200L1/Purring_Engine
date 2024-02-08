@@ -937,6 +937,11 @@ namespace PE
 		PlayClickAudio();
 	}
 
+	int GameStateController_v2_0::GetCurrentLevel()
+	{
+		return m_currentLevel;
+	}
+
 	void GameStateController_v2_0::GetMouseCurrentPosition(vec2& Output)
 	{
 		InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().p_currWindow, Output.x, Output.y);

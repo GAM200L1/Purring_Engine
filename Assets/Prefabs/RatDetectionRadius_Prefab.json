@@ -2,18 +2,18 @@
     "Entity": {
         "components": {
             "Collider": {
-                "collisionLayerIndex": 0,
+                "collisionLayerIndex": 5,
                 "data": {
                     "center": {
-                        "x": -86.9000015258789,
-                        "y": -158.40000915527344
+                        "x": 0.0,
+                        "y": 0.0
                     },
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "radius": 55.0,
-                    "scaleOffset": 1.100000023841858
+                    "radius": 200.0,
+                    "scaleOffset": 200.0
                 },
                 "isTrigger": true,
                 "type": "CircleCollider"
@@ -21,35 +21,26 @@
             "EntityDescriptor": {
                 "Layer": 0,
                 "Old ID": 18446744073709551615,
-                "Prefab Type": "RatUI",
+                "Prefab Type": "RatDetectionRadius",
                 "children": [],
                 "isActive": true,
-                "name": "EnemyAttackTelegraph",
+                "name": "RatDetectionRadius",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
-            "Renderer": {
-                "Color": {
-                    "a": 1.0,
-                    "b": 0.2862745225429535,
-                    "g": 0.3333333432674408,
-                    "r": 0.8156862854957581
-                },
-                "TextureKey": "../Assets/Textures/Telegraphs/Telegraph_Attack_512px.png"
-            },
             "Transform": {
-                "height": 100.0,
+                "height": 2.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": -86.9000015258789,
-                    "y": -158.40000915527344
+                    "x": 0.0,
+                    "y": 0.0
                 },
                 "relativeposition": {
                     "x": 0.0,
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 100.0
+                "width": 2.0
             }
         },
         "name": ""
