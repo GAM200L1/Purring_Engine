@@ -82,6 +82,11 @@ namespace PE
         // ----- Get/Load Resource/Asset Functions ----- //
         
         /*!***********************************************************************************
+            \brief Loads default assets for use.
+        *************************************************************************************/
+        void LoadDefaultAssets();
+
+        /*!***********************************************************************************
             \brief Loads shaders from file, compile them and inserts into ShaderProgram map
                    container.
 

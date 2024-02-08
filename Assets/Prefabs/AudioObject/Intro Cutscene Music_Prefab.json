@@ -2,14 +2,14 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "../Assets/Audio/vo_Cat_Selected4.wav",
-                "loop": false
+                "audioKey": "../Assets/Audio/MOTM_M4_Cutscene_AudioOnly.mp3",
+                "loop": true
             },
             "EntityDescriptor": {
-                "Prefab Type": "Cat Selection SFX",
+                "Prefab Type": "Background Music",
                 "children": [],
                 "isActive": true,
-                "name": "Cat Selection SFX",
+                "name": "Background Music",
                 "parent": null,
                 "sceneID": 18446744073709551615
             }

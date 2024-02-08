@@ -39,12 +39,18 @@
 #include "GameStateController_v2_0.h"
 #include "DeploymentScript.h"
 #include "MainMenuController.h"
+#include "IntroCutsceneController.h"
+#include "FpsScript.h"
 
 #include "Rat/RatScript_v2_0.h"
 #include "Rat/RatController_v2_0.h"
 #include "Rat/RatDetectionScript_v2_0.h"
 #include "UI/HealthBarScript_v2_0.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
+
+#include "Layers/LayerManager.h"
+
+
 
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/CatController_v2_0.h"
@@ -87,6 +93,8 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(RatController_v2_0);
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
 	//REGISTER_SCRIPT(RatIdle_v2_0);
+	REGISTER_SCRIPT(IntroCutsceneController);
+	REGISTER_SCRIPT(FpsScript);
 
 	REGISTER_SCRIPT(CatScript_v2_0);
 	REGISTER_SCRIPT(CatController_v2_0);
@@ -119,11 +127,6 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 					break;
 				case ScriptState::UPDATE:
 					m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
-					if (restartingScene)
-					{
-						restartingScene = false;
-						return;
-					}
 					break;
 				case ScriptState::EXIT:
 					m_scriptContainer.find(key)->second->Destroy(objectID);

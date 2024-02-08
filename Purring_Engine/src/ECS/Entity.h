@@ -100,6 +100,16 @@ namespace PE
 		template<typename T>
 		ComponentID GetComponentID() const;
 
+
+		/*!***********************************************************************************
+		 \brief Get the combined Component ID
+
+		 \tparam T 				The multiple components to Get the IDs of
+		 \return ComponentID 	The combined component ids
+		*************************************************************************************/
+		template<typename ... T>
+		ComponentID GetComponentIDs() const;
+
 		/*!***********************************************************************************
 		 \brief Get a pointer to a specific component pool
 
@@ -429,6 +439,20 @@ namespace PE
 				}
 			}
 		}
+		/*!***********************************************************************************
+		\brief helper function to prevent circular includes of layermanager
+		
+		\param[in] r_id 
+		*************************************************************************************/
+		void AddHelper(const EntityID& r_id);
+
+		/*!***********************************************************************************
+		 \brief helper function to prevent circular includes of layermanager
+		 
+		 \param[in] r_id 
+		*************************************************************************************/
+		void RemoveHelper(const EntityID& r_id);
+
 			// ----- Private Variables ----- //
 	private:
 		// set of entities picked over vector to increase the speed of searches for specific entites
@@ -484,6 +508,20 @@ namespace PE
 		return ComponentID().set(s_componentID);
 	}
 
+	template<typename ... T>
+	ComponentID EntityManager::GetComponentIDs() const
+	{
+		ComponentID ret{};
+		if constexpr (sizeof...(T))
+		{
+			([&]
+				{
+					ret |= GetComponentID<T>();
+				}
+			(), ...);
+		}
+		return ret;
+	}
 
 	template<typename T>
 	ComponentPool* EntityManager::GetComponentPoolPointer()
@@ -523,7 +561,7 @@ namespace PE
 		T* p_comp = GetPointer<T>(id);
 		if (!p_comp)
 		{
-			throw;	// to add error
+			throw 1;	// to add error
 		}
 		return *p_comp;
 	}
@@ -576,6 +614,7 @@ namespace PE
 		}
 		--(m_componentPools[componentID]->size);
 		UpdateVectors(id, false, componentID);
+		RemoveHelper(id);
 	}
 
 	/*!***********************************************************************************
@@ -609,6 +648,7 @@ namespace PE
 		bool toSave{ true };    // used for whether the entity should be saved or not
 
 		int layer = 0;
+		int interactionLayer = 0;
 
 		inline bool SaveEntity() { return toSave && isAlive; }
 

@@ -34,6 +34,17 @@ namespace PE
         m_collisionLayerName = collisionLayerName;
     }
 
+    nlohmann::json CollisionLayer::ToJson() const
+    {
+        nlohmann::json j;
+
+        j["collisionLayerIndex"] = m_collisionLayerIndex;
+        j["collisionLayerName"] = m_collisionLayerName;
+        j["collisionLayerSignature"] = m_collisionLayerSignature.to_string();
+
+        return j;
+    }
+
     //-------------Collision Manager-----------------//
     CollisionLayerManager::CollisionLayerManager()
 	{

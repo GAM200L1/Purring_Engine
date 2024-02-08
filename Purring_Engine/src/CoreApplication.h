@@ -119,6 +119,8 @@ namespace PE
 		WindowManager m_windowManager;						// Manages the application window
 		GLFWwindow* m_window;								// Pointer to the GLFW window object
 		float m_time;										// Placeholder for time value
+
+		bool skipFrame{ false };										// Flag to skip a frame
 	};
 
 	// Function to create an instance of CoreApplication, defined by the client

@@ -17,6 +17,7 @@
 #include "prpch.h"
 #include "CameraManager.h"
 #include "ECS/SceneView.h"
+#include "Layers/LayerManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -339,33 +340,36 @@ namespace PE
             bool setNewMainCamera{ !EntityManager::GetInstance().Has(m_mainCameraId, EntityManager::GetInstance().GetComponentID<Graphics::Camera>()) };
 
             // Loop through all runtime cameras
-            for (const EntityID& id : SceneView<Camera, Transform>())
+            for (const auto& layer : LayerView<Camera, Transform>())
             {
-                // Recompute the matrices of all the cameras
-                Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
-                Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
-
-                // If this camera has been set as the main camera in the last frame
-                // or this camera is the first valid runtime camera available 
-                if ((r_camera.GetMainCameraStatusChanged() && r_camera.GetIsMainCamera()) 
-                    || (setNewMainCamera && (id != m_uiCameraId)))
+                for (const EntityID& id : InternalView(layer))
                 {
-                    SetMainCamera(id);
-                    setNewMainCamera = false;
-                }
+                    // Recompute the matrices of all the cameras
+                    Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(id) };
+                    Camera& r_camera{ EntityManager::GetInstance().Get<Camera>(id) };
 
-                r_camera.UpdateCamera(r_transform, m_mainCameraId == id);
-
-                // Update the cached viewport dimensions
-                if(m_mainCameraId == id) { 
-                    if (m_viewportWidth != r_camera.GetViewportWidth()) 
+                    // If this camera has been set as the main camera in the last frame
+                    // or this camera is the first valid runtime camera available 
+                    if ((r_camera.GetMainCameraStatusChanged() && r_camera.GetIsMainCamera())
+                        || (setNewMainCamera && (id != m_uiCameraId)))
                     {
-                        m_viewportWidth = r_camera.GetViewportWidth();
+                        SetMainCamera(id);
+                        setNewMainCamera = false;
                     }
 
-                    if(m_viewportHeight != r_camera.GetViewportHeight()) 
-                    {
-                        m_viewportHeight = r_camera.GetViewportHeight();
+                    r_camera.UpdateCamera(r_transform, m_mainCameraId == id);
+
+                    // Update the cached viewport dimensions
+                    if (m_mainCameraId == id) {
+                        if (m_viewportWidth != r_camera.GetViewportWidth())
+                        {
+                            m_viewportWidth = r_camera.GetViewportWidth();
+                        }
+
+                        if (m_viewportHeight != r_camera.GetViewportHeight())
+                        {
+                            m_viewportHeight = r_camera.GetViewportHeight();
+                        }
                     }
                 }
             }

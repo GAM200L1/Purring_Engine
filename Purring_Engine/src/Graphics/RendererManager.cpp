@@ -60,6 +60,11 @@
 // GUI
 #include "GUI/Canvas.h"
 
+// layering
+#include "Layers/LayerManager.h"
+
+#include "Text.h"
+
 extern Logger engine_logger;
 
 namespace PE
@@ -99,6 +104,16 @@ namespace PE
             Editor::GetInstance().Init();
 #endif // !GAMERELEASE
         }
+
+
+        void RendererManager::SetBackgroundColor(float const r, float const g, float const b, float const a)
+        {
+            m_backgroundColor.r = r;
+            m_backgroundColor.g = g;
+            m_backgroundColor.b = b;
+            m_backgroundColor.a = a;
+        }
+
         
         void RendererManager::InitializeSystem()
         {
@@ -237,7 +252,7 @@ namespace PE
 #endif // !GAMERELEASE
 
             // Clear the texture object
-            m_renderFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
+            m_renderFrameBuffer.Clear(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
 
 #ifndef GAMERELEASE            
             // Get the world to NDC matrix of the editor cam or the main runtime camera
@@ -255,13 +270,13 @@ namespace PE
                 Hierarchy::GetInstance().GetRenderOrderUI());
 
             // Render Text
-            RenderText(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix());
+            //RenderText(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix());
 #else
             // Draw UI objects in the scene
             DrawQuadsInstanced<GUIRenderer>(r_cameraManager.GetUiViewToNdcMatrix(), Hierarchy::GetInstance().GetRenderOrderUI());
 
             // Render Text
-            RenderText(r_cameraManager.GetUiViewToNdcMatrix());
+            //RenderText(r_cameraManager.GetUiViewToNdcMatrix());
 #endif // !GAMERELEASE
 
 #ifndef GAMERELEASE
@@ -556,8 +571,31 @@ namespace PE
             // Make draw call for each game object with a renderer component
             for (EntityID const& id : r_rendererIdContainer)
             {
+
+                // break the instanced render
+                if (EntityManager::GetInstance().Has<PE::TextComponent>(id))
+                {
+                    DrawInstanced(count, meshIndex, GL_TRIANGLES);
+                    currentTexture.clear();
+                    count = 0;
+                    RenderText(id, r_worldToNdc);
+                    // continue from the next one after it
+                    auto ite = ++(std::find(r_rendererIdContainer.begin(), r_rendererIdContainer.end(), id));
+                    std::vector<size_t> cont;
+                    while (ite != r_rendererIdContainer.end())
+                    {
+                        cont.emplace_back(*ite);
+                        ++ite;
+                    }
+                    DrawQuadsInstanced<T>(r_worldToNdc, cont);
+                    return;
+                }
+
                 // Skip this object if it has no renderer
-                if(!EntityManager::GetInstance().Has<T>(id)) { continue; }
+                if(!EntityManager::GetInstance().Has<T>(id)) 
+                { 
+                    return;
+                }
 
                 T& renderer{ EntityManager::GetInstance().Get<T>(id) };
 
@@ -670,56 +708,65 @@ namespace PE
             glPointSize(10.f);
 
             // Draw each of the colliders
-            for (const EntityID& id : SceneView<Collider>())
+            for (const auto& layer : LayerView<Collider>())
             {
-                // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
+                for (const EntityID& id : InternalView(layer))
+                {
+                    // Don't draw anything if the entity is inactive
+                    if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
-                Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
+                    Collider& collider{ EntityManager::GetInstance().Get<Collider>(id) };
 
-                std::visit([&](auto& col)
-                    {
-                        DrawCollider(col, r_worldToNdc, 
+                    std::visit([&](auto& col)
+                        {
+                            DrawCollider(col, r_worldToNdc,
                             *(shaderProgramIterator->second));
-                    }, collider.colliderVariant);
+                        }, collider.colliderVariant);
+                }
             }
 
             // Draw a point and line for each rigidbody representing the position and velocity
-            for (const EntityID& id : SceneView<RigidBody>())
+            for (const auto& layer : LayerView<RigidBody>())
             {
-                // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
+                for (const EntityID& id : InternalView(layer))
+                {
+                    // Don't draw anything if the entity is inactive
+                    if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
-                RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
-                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+                    RigidBody& rigidbody{ EntityManager::GetInstance().Get<RigidBody>(id) };
+                    Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-                glm::vec2 glmPosition{ transform.position.x, transform.position.y };
+                    glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
-                // Draw a line that represents the velocity
-                DrawDebugLine(glm::vec2{ rigidbody.velocity.x, rigidbody.velocity.y }, 
-                    glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
+                    // Draw a line that represents the velocity
+                    DrawDebugLine(glm::vec2{ rigidbody.velocity.x, rigidbody.velocity.y },
+                        glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
 
-                // Draw a point at the center of the object
-                DrawDebugPoint(glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
+                    // Draw a point at the center of the object
+                    DrawDebugPoint(glmPosition, r_worldToNdc, *(shaderProgramIterator->second));
+                }
             }
 
             // Draw a "+" for every camera component
-            for (const EntityID& id : SceneView<Camera, Transform>())
+            for (const auto& layer : LayerView<Camera, Transform>())
             {
-                // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
+                for (const EntityID& id : InternalView(layer))
+                {
+                    // Don't draw anything if the entity is inactive
+                    if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive/* || !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
-                // Don't draw a cross for the UI camera
-                if (id == r_cameraManager.GetUiCameraId()) { continue; }
+                    // Don't draw a cross for the UI camera
+                    if (id == r_cameraManager.GetUiCameraId()) { continue; }
 
-                Camera& camera{ EntityManager::GetInstance().Get<Camera>(id) };
-                Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
+                    Camera& camera{ EntityManager::GetInstance().Get<Camera>(id) };
+                    Transform& transform{ EntityManager::GetInstance().Get<Transform>(id) };
 
-                glm::vec2 glmPosition{ transform.position.x, transform.position.y };
+                    glm::vec2 glmPosition{ transform.position.x, transform.position.y };
 
-                // Draw a cross to represent the orientation and position of the camera
-                DrawDebugCross(glmPosition, camera.GetUpVector(transform.orientation) * 100.f,
-                    camera.GetRightVector(transform.orientation) * 100.f, r_worldToNdc, *(shaderProgramIterator->second));
+                    // Draw a cross to represent the orientation and position of the camera
+                    DrawDebugCross(glmPosition, camera.GetUpVector(transform.orientation) * 100.f,
+                        camera.GetRightVector(transform.orientation) * 100.f, r_worldToNdc, *(shaderProgramIterator->second));
+                }
             }
 
             glLineWidth(2.f);
@@ -746,19 +793,22 @@ namespace PE
             }
 
             // Draw a rectangle for all the text component bounds
-            for (auto const& id : SceneView<TextComponent, Transform>())
+            for (const auto& layer : LayerView<TextComponent, Transform>())
             {
-                // Don't draw anything if the entity is inactive
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id)) { continue; }
+                for (auto const& id : InternalView(layer))
+                {
+                    // Don't draw anything if the entity is inactive
+                    if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id)) { continue; }
 
-                Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
+                    Transform& transformComponent{ EntityManager::GetInstance().Get<Transform>(id) };
 
-                // Draw a cross to represent the orientation and position of the text bounds
-                DrawDebugRectangle(transformComponent.width, transformComponent.height,
-                    transformComponent.orientation, 
-                    transformComponent.position.x, transformComponent.position.y, 
-                    r_worldToNdc, *(shaderProgramIterator->second),
-                    glm::vec4{0.3f, 0.3f, 1.f, 1.f});
+                    // Draw a cross to represent the orientation and position of the text bounds
+                    DrawDebugRectangle(transformComponent.width, transformComponent.height,
+                        transformComponent.orientation,
+                        transformComponent.position.x, transformComponent.position.y,
+                        r_worldToNdc, *(shaderProgramIterator->second),
+                        glm::vec4{ 0.3f, 0.3f, 1.f, 1.f });
+                }
             }
 
             glPointSize(1.f);
@@ -1170,16 +1220,17 @@ namespace PE
             if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
 
             std::shared_ptr<ShaderProgram> p_textShader{ ResourceManager::GetInstance().ShaderPrograms[m_textShaderProgramKey] };
-
-            for (const EntityID& id : SceneView<TextComponent, Transform>())
+            for (const auto& layer : LayerView<TextComponent, Transform>())
             {
-                // Don't draw anything if the entity is inactive or is not childed to a canvas
-                if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id) /*|| !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
+                for (const EntityID& id : InternalView(layer))
+                {
+                    // Don't draw anything if the entity is inactive or is not childed to a canvas
+                    if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(id) /*|| !Hierarchy::GetInstance().AreParentsActive(id)*/) { continue; }
 
-                TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
-                TextBox textBox { EntityManager::GetInstance().Get<Transform>(id).position,
-                                  EntityManager::GetInstance().Get<Transform>(id).width,
-                                  EntityManager::GetInstance().Get<Transform>(id).height };
+                    TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(id) };
+                    TextBox textBox{ EntityManager::GetInstance().Get<Transform>(id).position,
+                                      EntityManager::GetInstance().Get<Transform>(id).width,
+                                      EntityManager::GetInstance().Get<Transform>(id).height };
 
                 // if component has no font key
                 if (textComponent.GetFontKey() == "")
@@ -1187,8 +1238,8 @@ namespace PE
                     break;
                 }
 
-                // Store the index of the rendered entity
-                renderedEntities.emplace_back(id);
+                    // Store the index of the rendered entity
+                    renderedEntities.emplace_back(id);
 
                 std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(textComponent.GetFontKey()) };
 
@@ -1196,34 +1247,94 @@ namespace PE
                 float currentY{ 0.f };
                 float hAlignOffset, vAlignOffset;
 
-                // activate corresponding render state	
-                p_textShader->Use();
-                p_textShader->SetUniform("u_ViewProjection", r_worldToNdc);
-                p_textShader->SetUniform("textColor", textComponent.GetColor());
+                    // activate corresponding render state	
+                    p_textShader->Use();
+                    p_textShader->SetUniform("u_ViewProjection", r_worldToNdc);
+                    p_textShader->SetUniform("textColor", textComponent.GetColor());
 
                 glActiveTexture(GL_TEXTURE0);
                 glBindVertexArray(p_font->vertexArrayObject);
 
-                // get vertical alignment offset
-                VerticalTextAlignment(textComponent, lines, textBox, vAlignOffset);
+                    // get vertical alignment offset
+                    VerticalTextAlignment(textComponent, lines, textBox, vAlignOffset);
 
-                // render line
-                for (std::string const& line : lines)
-                {
-                    // get horizontal alignment offset
-                    HorizontalTextAlignment(textComponent, line, textBox, hAlignOffset);
+                    // render line
+                    for (std::string const& line : lines)
+                    {
+                        // get horizontal alignment offset
+                        HorizontalTextAlignment(textComponent, line, textBox, hAlignOffset);
 
-					RenderLine(textComponent, line, textBox.position, currentY, hAlignOffset, vAlignOffset);
+                        RenderLine(textComponent, line, textBox.position, currentY, hAlignOffset, vAlignOffset);
 
                     // add line height to current y, need to multiply by line spacing
                     currentY += p_font->lineHeight * textComponent.GetLineSpacing();
 				}
 
-                glBindTexture(GL_TEXTURE_2D, 0);
-                glBindVertexArray(0);
+                    glBindTexture(GL_TEXTURE_2D, 0);
+                    glBindVertexArray(0);
 
-                p_textShader->UnUse();
+                    p_textShader->UnUse();
+                }
             }
+        }
+
+        void RendererManager::RenderText(const EntityID& r_id, glm::mat4 const& r_worldToNdc)
+        {
+            // Don't bother if there are no active canvases
+            if (!GETGUISYSTEM()->AreThereActiveCanvases()) { return; }
+
+            std::shared_ptr<ShaderProgram> p_textShader{ ResourceManager::GetInstance().ShaderPrograms[m_textShaderProgramKey] };
+
+            // Don't draw anything if the entity is inactive or is not childed to a canvas
+            if (!EntityManager::GetInstance().Get<EntityDescriptor>(r_id).isActive || !GETGUISYSTEM()->IsChildedToCanvas(r_id) /*|| !Hierarchy::GetInstance().AreParentsActive(id)*/) { return; }
+
+            TextComponent const& textComponent{ EntityManager::GetInstance().Get<TextComponent>(r_id) };
+            TextBox textBox{ EntityManager::GetInstance().Get<Transform>(r_id).position,
+                              EntityManager::GetInstance().Get<Transform>(r_id).width,
+                              EntityManager::GetInstance().Get<Transform>(r_id).height };
+
+            // if component has no font key
+            if (textComponent.GetFontKey() == "")
+            {
+                return;
+            }
+
+            // Store the index of the rendered entity
+            renderedEntities.emplace_back(r_id);
+
+            std::shared_ptr<Font> p_font{ ResourceManager::GetInstance().GetFont(textComponent.GetFontKey()) };
+
+            std::vector<std::string> lines{ SplitTextIntoLines(textComponent, textBox) };
+            float currentY{ 0.f };
+            float hAlignOffset, vAlignOffset;
+
+            // activate corresponding render state	
+            p_textShader->Use();
+            p_textShader->SetUniform("u_ViewProjection", r_worldToNdc);
+            p_textShader->SetUniform("textColor", textComponent.GetColor());
+
+            glActiveTexture(GL_TEXTURE0);
+            glBindVertexArray(p_font->vertexArrayObject);
+
+            // get vertical alignment offset
+            VerticalTextAlignment(textComponent, lines, textBox, vAlignOffset);
+
+            // render line
+            for (std::string const& line : lines)
+            {
+                // get horizontal alignment offset
+                HorizontalTextAlignment(textComponent, line, textBox, hAlignOffset);
+
+                RenderLine(textComponent, line, textBox.position, currentY, hAlignOffset, vAlignOffset);
+
+                // add line height to current y, need to multiply by line spacing
+                currentY += p_font->lineHeight * textComponent.GetLineSpacing();
+            }
+
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindVertexArray(0);
+
+            p_textShader->UnUse();
         }
 
         void RendererManager::RenderLine(TextComponent const& r_textComponent, std::string const& r_line, vec2 position, float currentY, float hAlignOffset, float vAlignOffset)
