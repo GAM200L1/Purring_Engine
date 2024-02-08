@@ -95,7 +95,13 @@
 #include "Logic/UI/HealthBarScript_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
+#include "Logic/IntroCutsceneController.h"
 
+
+
+
+#include "Logic/Cat/CatController_v2_0.h"
+#include "Logic/Cat/CatScript_v2_0.h"
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
@@ -264,7 +270,13 @@ RTTR_REGISTRATION
         .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
-        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
+        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);    
+    
+    rttr::registration::class_<PE::IntroCutsceneControllerData>("IntroCutsceneController")
+        .property("CutsceneObject", &PE::IntroCutsceneControllerData::CutsceneObject)
+        .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
+        .property("Text", &PE::IntroCutsceneControllerData::Text)
+        .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
@@ -333,6 +345,29 @@ RTTR_REGISTRATION
         .property("bulletLifeTime", &PE::CatScriptData::bulletLifeTime)
         .property("bulletForce", &PE::CatScriptData::bulletForce)
         .property("animationStates", &PE::CatScriptData::animationStates);
+
+    rttr::registration::class_<PE::CatScript_v2_0Data>("CatScript_v2_0")
+        .property("catID", &PE::CatScript_v2_0Data::catID)
+        .property("catType", &PE::CatScript_v2_0Data::catType)
+        .property("catIsDead", &PE::CatScript_v2_0Data::catIsDead)
+        .property("finishedExecution", &PE::CatScript_v2_0Data::finishedExecution)
+        .property("isMainCat", &PE::CatScript_v2_0Data::isMainCat)
+        .property("catMaxMovementEnergy", &PE::CatScript_v2_0Data::catMaxMovementEnergy)
+        .property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
+        .property("minDistance", &PE::CatScript_v2_0Data::minDistance)
+        .property("maxDistance", &PE::CatScript_v2_0Data::maxDistance)
+        .property("nodeSize", &PE::CatScript_v2_0Data::nodeSize)
+        .property("movementSpeed", &PE::CatScript_v2_0Data::movementSpeed)
+        .property("forgivenessOffset", &PE::CatScript_v2_0Data::forgivenessOffset)
+        .property("currentPositionIndex", &PE::CatScript_v2_0Data::currentPositionIndex)
+        .property("pathPositions", &PE::CatScript_v2_0Data::pathPositions)
+        .property("followCatPositions", &PE::CatScript_v2_0Data::followCatPositions)
+        .property("pathQuads", &PE::CatScript_v2_0Data::pathQuads)
+        .property("shouldChangeState", &PE::CatScript_v2_0Data::shouldChangeState)
+        .property("delaySet", &PE::CatScript_v2_0Data::delaySet)
+        .property("timeBeforeChangingState", &PE::CatScript_v2_0Data::timeBeforeChangingState)
+        .property("animationStates", &PE::CatScript_v2_0Data::animationStates);
+
 
     rttr::registration::class_<PE::RatScriptData>("RatScript")
         .property("mainCatID", &PE::RatScriptData::mainCatID)
@@ -450,11 +485,14 @@ void PE::CoreApplication::Run()
         TimeManager::GetInstance().StartAccumulator();
         while (TimeManager::GetInstance().UpdateAccumulator())
         { 
-            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            if (!skipFrame)
             {
-                TimeManager::GetInstance().SystemStartFrame(systemID);
-                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
-                TimeManager::GetInstance().SystemEndFrame(systemID);
+                for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+                {
+                    TimeManager::GetInstance().SystemStartFrame(systemID);
+                    m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                    TimeManager::GetInstance().SystemEndFrame(systemID);
+                }
             }
             TimeManager::GetInstance().EndAccumulator();
         }
@@ -465,9 +503,24 @@ void PE::CoreApplication::Run()
         //std::cout << Graphics::CameraManager::GetUiCameraId() << std::endl;
 
         // Update Graphics with variable timestep
+
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
         m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
         TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
+
+        skipFrame = false;
+
+        // if the scene is being loaded, skip the rest of the frame
+        if (SceneManager::GetInstance().IsLoadingScene())
+        {
+            SceneManager::GetInstance().LoadSceneToLoad();
+            skipFrame = true;
+        }
+        else if (SceneManager::GetInstance().IsRestartingScene())
+        {
+            SceneManager::GetInstance().RestartScene(SceneManager::GetInstance().GetActiveScene());
+            skipFrame = true;
+        }
 
         // Flush log entries
         engine_logger.FlushLog();

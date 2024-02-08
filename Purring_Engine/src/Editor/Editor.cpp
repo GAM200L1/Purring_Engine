@@ -54,6 +54,8 @@
 #include "Logic/UI/HealthBarScript_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
+#include "Logic/Cat/CatScript_v2_0.h"
+#include "Logic/IntroCutsceneController.h"
 #include "GUISystem.h"
 #include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
@@ -75,6 +77,7 @@
 #include "Logic/Rat/RatScript_v2_0.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
 #include "Layers/LayerManager.h"
+#include "Logic/IntroCutsceneController.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -470,9 +473,7 @@ namespace PE {
 						}
 						m_isPrefabMode = false;
 						
-						// deselect object
-						m_currentSelectedObject = -1;
-						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+						StopAndLoadScene();
 
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
@@ -484,8 +485,7 @@ namespace PE {
 						m_isPrefabMode = false;
 
 						// deselect object
-						m_currentSelectedObject = -1;
-						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+						StopAndLoadScene();
 
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
@@ -3200,7 +3200,7 @@ namespace PE {
 										if (TransitionPanelID != m_currentSelectedObject) { it->second.TransitionPanel = TransitionPanelID; }
 
 										ImGui::Text("Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##jcid", &JournalID);
-										if (JournalID != m_currentSelectedObject) { it->second.TransitionPanel = JournalID; }
+										if (JournalID != m_currentSelectedObject) { it->second.Journal = JournalID; }
 
 										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
 										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }
@@ -3277,6 +3277,34 @@ namespace PE {
 								}
 							}
 
+							if (key == "IntroCutsceneController")
+							{
+								IntroCutsceneController* p_script = dynamic_cast<IntroCutsceneController*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("IntroCutsceneController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int CutsceneObjectID = static_cast<int> (it->second.CutsceneObject);
+										int FinalSceneID = static_cast<int> (it->second.FinalScene);
+										int TextID = static_cast<int> (it->second.Text);
+										int TransitionScreenID = static_cast<int> (it->second.TransitionScreen);
+
+										ImGui::Text("CutScene Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##csoi", &CutsceneObjectID);
+										it->second.CutsceneObject = CutsceneObjectID;
+
+										ImGui::Text("Final Frame Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##fsidd", &FinalSceneID);
+										{ it->second.FinalScene = FinalSceneID; }
+
+										ImGui::Text("Text Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tttid", &TextID);
+										{ it->second.Text = TextID; }
+
+										ImGui::Text("Transition Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tssid", &TransitionScreenID);
+										{ it->second.TransitionScreen = TransitionScreenID; }
+									}
+								}
+							}
+
 							if (key == "MainMenuController")
 							{
 								MainMenuController* p_script = dynamic_cast<MainMenuController*>(val);
@@ -3297,6 +3325,29 @@ namespace PE {
 
 										ImGui::Text("Are You Sure Canvas Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##AYSMMID", &AreYouSureID);
 										if (AreYouSureID != m_currentSelectedObject) it->second.AreYouSureCanvas = AreYouSureID;
+									}
+								}
+							}
+
+							if (key == "CatScript_v2_0")
+							{
+								CatScript_v2_0* p_script = dynamic_cast<CatScript_v2_0*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("CatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int index = static_cast<int>(it->second.catType);
+										const char* types[] = { "MAINCAT","GREYCAT","ORANGECAT","FLUFFYCAT"};
+										ImGui::Text("Cat Type: "); ImGui::SameLine();
+										ImGui::SetNextItemWidth(200.0f);
+										//set combo box for the different collider types
+										if (ImGui::Combo("##cat Types", &index, types, IM_ARRAYSIZE(types)))
+										{
+											it->second.catType = static_cast<EnumCatType>(index);
+										}
+
 									}
 								}
 							}
@@ -3352,10 +3403,6 @@ namespace PE {
 									}
 								}
 							}
-
-
-
-
 						}
 					}
 
@@ -3779,9 +3826,7 @@ namespace PE {
 									{
 										m_isPrefabMode = true;
 										engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-										// This will save all entities to a file
-
-										serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+										SaveAndPlayScene();
 										engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 
 									}
@@ -4479,9 +4524,7 @@ namespace PE {
 						m_showEditor = false;
 						m_showGameView = true;
 						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
-						// This will save all entities to a file
-						serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
-						UndoStack::GetInstance().ClearStack();
+						SaveAndPlayScene();
 						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 					}
 					ImGui::SameLine();
@@ -4491,9 +4534,7 @@ namespace PE {
 
 						if (m_isRunTime)
 						{
-							// deselect object
-							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							StopAndLoadScene();
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
@@ -4557,9 +4598,7 @@ namespace PE {
 								}
 							}
 							m_isPrefabMode = false;
-							// deselect object
-							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							StopAndLoadScene();
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 							m_applyPrefab = true;
@@ -4569,9 +4608,7 @@ namespace PE {
 						if (ImGui::Selectable("No"))
 						{
 							m_isPrefabMode = false;
-							// deselect object
-							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							StopAndLoadScene();
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
@@ -4699,7 +4736,7 @@ namespace PE {
 										m_currentSelectedObject = -1;
 
 										// load scene from filepath
-										SceneManager::GetInstance().LoadScene(filePath.substr(filePath.find_last_of('\\') + 1));
+										SceneManager::GetInstance().LoadSceneToLoad(filePath.substr(filePath.find_last_of('\\') + 1));
 										engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 									}
 									else
@@ -5256,9 +5293,7 @@ namespace PE {
 			toDisable = true;
 			if (m_isRunTime)
 			{
-				// deselect object
-				m_currentSelectedObject = -1;
-				SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+				StopAndLoadScene();
 
 				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}
@@ -5541,6 +5576,32 @@ namespace PE {
 		return NextCanvasID;
 	}
 
+	void Editor::SaveAndPlayScene()
+	{
+		// save active scene name
+		m_savedScene = SceneManager::GetInstance().GetActiveScene();
+		serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+		UndoStack::GetInstance().ClearStack();
+	}
+
+	void Editor::StopAndLoadScene()
+	{
+		m_currentSelectedObject = -1;
+
+		// check if saved scene is same as the active scene
+		if (m_savedScene == SceneManager::GetInstance().GetActiveScene())
+		{
+			// if active sccene is the same as active scene, restart scene
+			SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+		}
+		else
+		{
+			// else need to reload assets for the scene
+			SceneManager::GetInstance().LoadSceneToLoad("Savestate/savestate.json");
+		}
+		SceneManager::GetInstance().SetActiveScene(m_savedScene);
+	}
+
 	void Editor::SetImGUIStyle_Dark()
 	{
 		ImGuiStyle* style = &ImGui::GetStyle();
@@ -5796,7 +5857,7 @@ namespace PE {
 
 		// deselect object
 		m_currentSelectedObject = -1;
-		SceneManager::GetInstance().LoadScene(path);
+		SceneManager::GetInstance().LoadSceneToLoad(path);
 
 	}
 

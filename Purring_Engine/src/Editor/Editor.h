@@ -351,6 +351,10 @@ namespace PE {
 		*************************************************************************************/
 		EntityID CheckCanvas();
 
+		void SaveAndPlayScene();
+
+		void StopAndLoadScene();
+
 	private:
 		enum class GuiStyle
 		{
@@ -429,6 +433,9 @@ namespace PE {
 		std::string prefabFP;
 		std::string prefabTP;
 		std::vector<ComponentID> prefabCID;
+
+		// variable for scene loading
+		std::string m_savedScene;
 	};
 }
 

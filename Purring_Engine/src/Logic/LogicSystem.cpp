@@ -39,6 +39,8 @@
 #include "GameStateController_v2_0.h"
 #include "DeploymentScript.h"
 #include "MainMenuController.h"
+#include "IntroCutsceneController.h"
+#include "FpsScript.h"
 
 #include "Rat/RatScript_v2_0.h"
 #include "Rat/RatController_v2_0.h"
@@ -47,6 +49,10 @@
 
 #include "Layers/LayerManager.h"
 
+
+
+#include "Cat/CatScript_v2_0.h"
+#include "Cat/CatController_v2_0.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -71,7 +77,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(EnemyTestScript);
 	REGISTER_SCRIPT(FollowScript);
 	REGISTER_SCRIPT(CameraManagerScript);
-	REGISTER_SCRIPT(CatScript);
+	//REGISTER_SCRIPT(CatScript);
 	REGISTER_SCRIPT(RatScript);
 	//REGISTER_SCRIPT(GameStateController);
 	REGISTER_SCRIPT(GameStateController_v2_0);
@@ -82,6 +88,11 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(RatController_v2_0);
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
 	//REGISTER_SCRIPT(RatIdle_v2_0);
+	REGISTER_SCRIPT(IntroCutsceneController);
+	REGISTER_SCRIPT(FpsScript);
+
+	REGISTER_SCRIPT(CatScript_v2_0);
+	REGISTER_SCRIPT(CatController_v2_0);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
@@ -110,11 +121,6 @@ void PE::LogicSystem::UpdateSystem(float deltaTime)
 					break;
 				case ScriptState::UPDATE:
 					m_scriptContainer.find(key)->second->Update(objectID, deltaTime);
-					if (restartingScene)
-					{
-						restartingScene = false;
-						return;
-					}
 					break;
 				case ScriptState::EXIT:
 					m_scriptContainer.find(key)->second->Destroy(objectID);

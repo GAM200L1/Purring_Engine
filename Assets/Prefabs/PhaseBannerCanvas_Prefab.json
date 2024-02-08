@@ -1,0 +1,35 @@
+{
+    "Entity": {
+        "components": {
+            "Canvas": {
+                "Height": 881.0,
+                "Width": 1604.0
+            },
+            "EntityDescriptor": {
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "Canvas Object",
+                "children": [],
+                "isActive": true,
+                "name": "PhaseBannerCanvas",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "Transform": {
+                "height": 100.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 100.0
+            }
+        },
+        "name": ""
+    }
+}
