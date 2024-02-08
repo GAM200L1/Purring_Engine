@@ -21,11 +21,6 @@
 
 namespace PE
 {
-	struct FpsScriptData
-	{
-
-	};
-
 	class FpsScript : public Script
 	{
 	public:
@@ -85,7 +80,6 @@ namespace PE
 		*************************************************************************************/
 		void OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event);
 	private:
-		std::map<EntityID, FpsScriptData> m_scriptData;
 		float m_elapsedTime;
 		EntityID m_currentEntityID;
 		int m_keyPressedKey;
