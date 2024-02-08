@@ -3005,6 +3005,7 @@
                                 "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
+                                "isCaged": false,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,

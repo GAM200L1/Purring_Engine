@@ -3297,11 +3297,6 @@ namespace PE {
 									}
 								}
 							}
-
-
-
-
-
 							if (key == "CatScript_v2_0")
 							{
 								CatScript_v2_0* p_script = dynamic_cast<CatScript_v2_0*>(val);

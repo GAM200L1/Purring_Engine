@@ -22,27 +22,27 @@ namespace PE
         m_delay = p_data->attackDelay;
         p_data->attacking = true;  // Set the attacking flag to true
         attacksoundonce = false;
-        std::cout << "[DEBUG] RatAttack_v2_0::StateEnter - Rat ID: " << id << " transitioning to Attack state." << std::endl;
+        //std::cout << "[DEBUG] RatAttack_v2_0::StateEnter - Rat ID: " << id << " transitioning to Attack state." << std::endl;
     }
 
     void RatAttack_v2_0::StateUpdate(EntityID id, float deltaTime)
     {
-        std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Rat ID: " << id << " is updating with attacking status: " << p_data->attacking << std::endl;
+        //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Rat ID: " << id << " is updating with attacking status: " << p_data->attacking << std::endl;
 
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
         {
-            std::cout << "[DEBUG] RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
+            //std::cout << "[DEBUG] RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
             return;
         }
 
         if (m_delay > 0.f && p_data->attacking)
         {
             m_delay -= deltaTime;
-            std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Delay countdown: " << m_delay << std::endl;
+            //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Delay countdown: " << m_delay << std::endl;
         }
         else if (p_data->attacking)
         {
-            std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack initiated, enabling telegraph." << std::endl;
+            //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack initiated, enabling telegraph." << std::endl;
             RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, true);
             //if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
             //{
@@ -52,7 +52,7 @@ namespace PE
 
             if (!attacksoundonce)
             {
-                std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Playing attack sound." << std::endl;
+                //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Playing attack sound." << std::endl;
                 SerializationManager serializationManager;
                 EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Attack SFX_Prefab.json");
                 if (EntityManager::GetInstance().Has<AudioComponent>(sound))
@@ -64,7 +64,7 @@ namespace PE
         }
         else
         {
-            std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack finished, setting finishedExecution to true." << std::endl;
+           // std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack finished, setting finishedExecution to true." << std::endl;
             p_data->finishedExecution = true;
         }
 
@@ -80,7 +80,7 @@ namespace PE
     {
         // Cleanup attack-specific data here
         gameStateController = nullptr;
-        std::cout << "[DEBUG] RatAttack_v2_0::StateExit - Rat ID: " << id << " exiting Attack state." << std::endl;
+        //std::cout << "[DEBUG] RatAttack_v2_0::StateExit - Rat ID: " << id << " exiting Attack state." << std::endl;
         p_data->hitCat = false;
 
     }

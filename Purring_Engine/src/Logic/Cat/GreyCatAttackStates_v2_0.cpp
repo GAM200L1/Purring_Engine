@@ -276,7 +276,7 @@ namespace PE
 			else
 				m_bulletDelay -= deltaTime;
 		}
-		//std::cout << (GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution << ' ';
+		std::cout << (GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution << ' ';
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::StateCleanUp()
