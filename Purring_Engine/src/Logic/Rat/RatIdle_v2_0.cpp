@@ -280,6 +280,8 @@ namespace PE
             // Change to hunting state
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToHunt(p_data->myID, closestCat);
         }
+
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
     }
 
 

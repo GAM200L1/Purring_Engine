@@ -242,6 +242,8 @@ namespace PE
 					// the cat we're chasing is dead, return to the original position
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
 			}
+
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 	}
 
 

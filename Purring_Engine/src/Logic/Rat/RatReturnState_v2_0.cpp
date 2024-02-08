@@ -131,7 +131,7 @@ namespace PE
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToHunt(p_data->myID, closestCat);
 			}
 			// Check if we're close enough to our original position
-			else if (RatScript_v2_0::GetEntityPosition(p_data->myID).DistanceSquared(p_data->originalPosition) > 
+			else if (RatScript_v2_0::GetEntityPosition(p_data->myID).DistanceSquared(p_data->originalPosition) < 
 					(p_data->minDistanceToTarget * p_data->minDistanceToTarget))
 			{
 					std::cout << "RatIdle_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat reached\n";
@@ -141,6 +141,8 @@ namespace PE
 					// a cat just passed by us, hunt it down
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToIdle(p_data->myID);
 			}
+
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 	}
 
 	void RatReturn_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
