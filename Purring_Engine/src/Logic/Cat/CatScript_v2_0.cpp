@@ -107,22 +107,22 @@ namespace PE
 		}
 
 		// cat dies
-		if (m_scriptData[id].catIsDead)
-		{
-			// plays death animation
-			PlayAnimation(id, "Death");
-			// TODO: play death audio
+		//if (m_scriptData[id].catIsDead)
+		//{
+		//	// plays death animation
+		//	PlayAnimation(id, "Death");
+		//	// TODO: play death audio
 
-			
-			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
-			{
-				CatHelperFunctions::ToggleEntity(id, false);
+		//	
+		//	if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
+		//	{
+		//		CatHelperFunctions::ToggleEntity(id, false);
 
-				if (m_scriptData[id].isMainCat)
-					p_gsc->LoseGame();
-			}
-			return;
-		}
+		//		if (m_scriptData[id].isMainCat)
+		//			p_gsc->LoseGame();
+		//	}
+		//	return;
+		//}
 
 		// check that state manager is still working
 		if (!m_scriptData[id].p_stateManager)

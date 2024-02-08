@@ -3216,9 +3216,80 @@ namespace PE {
 
 								if (it != p_script->GetScriptData().end())
 								{
+									//std::cout << "CatData_______________________________" << std::endl;
 									if (ImGui::CollapsingHeader("CatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+										rttr::type type = rttr::type::get_by_name("CatScript_v2_0");
+										rttr::instance inst = rttr::instance(it->second);
+										for (auto props : type.get_properties())
+										{
+											if (props.get_type().get_name() == "float")
+											{
+												float val = props.get_value(inst).get_value<float>();
+												ImGui::Text(props.get_name().to_string().c_str()); 
+												ImGui::SameLine();
+												ImGui::SetNextItemWidth(100.0f);
+												ImGui::InputFloat(("##" + props.get_name().to_string()).c_str(), &val);
+												props.set_value(inst, val);
+											}
+											else if (props.get_type().get_name() == "int")
+											{
+												int val = props.get_value(inst).get_value<int>();
+												ImGui::Text(props.get_name().to_string().c_str());
+												ImGui::SameLine();
+												ImGui::SetNextItemWidth(100.0f);
+												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
+												props.set_value(inst, val);
+											}
+							 				else if (props.get_type().get_name() == "bool")
+											{
+												bool val = props.get_value(inst).get_value<bool>();
+												ImGui::Text(props.get_name().to_string().c_str());
+												ImGui::SameLine();
+												ImGui::Checkbox(("##" + props.get_name().to_string()).c_str(), &val);
+												props.set_value(inst, val);
+											}
+											else if (props.get_type().get_name() == "unsigned__int64")
+											{
+												EntityID val = props.get_value(inst).get_value<EntityID>();
+												ImGui::Text(props.get_name().to_string().c_str());
+												ImGui::SameLine();
+												ImGui::SetNextItemWidth(100.0f);
+												int tmp = static_cast<int>(val);
+												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &tmp);
+												val = static_cast<EntityID>(tmp);
+												props.set_value(inst, val);
+											}
+											else if (props.get_type().get_name() == "enumPE::EnumCatType")
+											{
+												int val = props.get_value(inst).get_value<int>();
+												ImGui::Text(props.get_name().to_string().c_str());
+												ImGui::SameLine();
+												ImGui::SetNextItemWidth(100.0f);
+												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
+												props.set_value(inst, val);
+											}
+											else if (props.get_type().get_name() == "unsignedint")
+											{
+											}
+											else if (props.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+											{
+											}
+											else if (props.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
+											{
+											}
+											else if (props.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
+											{
+											}
+											else if (props.get_type().get_name() == "classstd::variant<structPE::GreyCatAttackVariables,structPE::OrangeCatAttackVariables>")
+											{
 
+											}
+											else
+											{
+												std::cout << props.get_type().get_name() << std::endl;
+											}
+										}
 									}
 								}
 							}

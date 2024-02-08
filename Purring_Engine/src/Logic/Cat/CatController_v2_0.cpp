@@ -122,7 +122,7 @@ namespace PE
 
 	bool CatController_v2_0::IsActiveCat(EntityID id)
 	{
-
+		return false;
 	}
 
 	int CatController_v2_0::GetCurrentMovementEnergy(EntityID catID)

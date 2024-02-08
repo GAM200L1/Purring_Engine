@@ -105,7 +105,7 @@ namespace PE
 
 		// ----- Getters/Setters/RTTR ----- //
 
-		void SetDead(EntityID id, bool isDead) { m_scriptData[id].catIsDead = isDead; }
+		void SetDead(EntityID id, bool isDead);// { m_scriptData[id].catIsDead = isDead; }
 
 		/*!***********************************************************************************
 		 \brief Sets the flag for the state to be changed after the delay passed in.
