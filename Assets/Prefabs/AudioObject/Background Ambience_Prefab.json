@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+          "AudioComponent": {
+            "audioKey": "../Assets/Audio/mus_BackgroundAmbience_Loop.wav",
+            "loop": true
+          },
+            "EntityDescriptor": {
+                "Prefab Type": "Background Music",
+                "children": [],
+                "isActive": true,
+                "name": "Background Music",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

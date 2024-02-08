@@ -122,6 +122,12 @@ namespace PE
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
+		//start the background ambience
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
+			EntityManager::GetInstance().Get<AudioComponent>(bga).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(bga);
+
 		ResetPhaseBanner(true);
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
@@ -1095,6 +1101,11 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
+			EntityManager::GetInstance().Get<AudioComponent>(bga).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bga);
 	}
 
 	void GameStateController_v2_0::ResumeBGM()
@@ -1103,6 +1114,11 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
+			EntityManager::GetInstance().Get<AudioComponent>(bga).ResumeSound();
+		EntityManager::GetInstance().RemoveEntity(bga);
 	}
 
 	void GameStateController_v2_0::UpdateTurnCounter(std::string currentphase)
