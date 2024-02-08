@@ -2,14 +2,14 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "../Assets/Audio/sfx_CatMovement_GrassShuffle3.wav",
+                "audioKey": "../Assets/Audio/vo_Cat_Selected3.wav",
                 "loop": false
             },
             "EntityDescriptor": {
-                "Prefab Type": "Cat Movement SFX 3",
+                "Prefab Type": "Cat Selection SFX",
                 "children": [],
                 "isActive": true,
-                "name": "Cat Movement SFX 3",
+                "name": "Cat Selection SFX",
                 "parent": null,
                 "sceneID": 18446744073709551615
             }

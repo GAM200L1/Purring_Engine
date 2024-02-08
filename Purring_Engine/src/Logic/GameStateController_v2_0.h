@@ -281,7 +281,7 @@ namespace PE
 		 \param[in]		current value of the slider
 		 \param[in]		max value of the slider
 		*************************************************************************************/
-		void SetPortraitInformation(std::string_view TextureName, float Current, float Max, bool isRat);
+		void SetPortraitInformation(std::string_view TextureName, int Current, int Max, bool isRat);
 		/*!***********************************************************************************
 		 \brief			Update the Turn Counter information
 

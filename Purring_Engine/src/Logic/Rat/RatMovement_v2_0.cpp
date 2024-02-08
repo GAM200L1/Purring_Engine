@@ -46,13 +46,43 @@ namespace PE
             return;
         }
 
+        // Assume rat is idle by default
+        bool isRatMoving = false;
+
         if (!p_data->catsInDetectionRadius.empty())
         {
-            CalculateMovement(id, deltaTime);
+            isRatMoving = CalculateMovement(id, deltaTime);
+            if (isRatMoving)
+            {
+                // Set to "Walk" animation only if movement occurred
+                try
+                {
+                    EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(p_data->animationStates.at("Walk"));
+                }
+                catch (const std::exception& e)
+                {
+                    std::cerr << "Exception setting Walk animation: " << e.what() << std::endl;
+                }
+            }
         }
+
+        // Clear any cats that exited during this frame
         p_data->catsExitedDetectionRadius.clear();
 
+        if (!isRatMoving)
+        {
+            // Set to "Idle" animation if the rat didn't move
+            try
+            {
+                EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(p_data->animationStates.at("Idle"));
+            }
+            catch (const std::exception& e)
+            {
+                std::cerr << "Exception setting Idle animation: " << e.what() << std::endl;
+            }
+        }
     }
+
 
     void RatMovement_v2_0::StateCleanUp()
     {
@@ -71,10 +101,12 @@ namespace PE
         GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->RatHitCat(p_data->myID, r_TE);
     }
 
-    void RatMovement_v2_0::CalculateMovement(EntityID id, float deltaTime)
+    bool RatMovement_v2_0::CalculateMovement(EntityID id, float deltaTime)
     {
+        bool hasMoved = false;
+
         // If there are no cats detected within the detection radius, exit early.
-        if (p_data->catsInDetectionRadius.empty()) return;
+        if (p_data->catsInDetectionRadius.empty()) return false;
 
         vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
 
@@ -84,7 +116,7 @@ namespace PE
         for (auto& catID : p_data->catsInDetectionRadius)
         {
             vec2 catPosition = RatScript_v2_0::GetEntityPosition(catID);
-            float distance = (catPosition - ratPosition).Length();
+            float distance = (catPosition - RatScript_v2_0::GetEntityPosition(id)).Length();
             if (distance < minDistance)
             {
                 minDistance = distance;
@@ -95,23 +127,25 @@ namespace PE
         // Move towards the closest cat if it's not within the attack radius.
         if (minDistance > p_data->attackRadius)
         {
-            vec2 directionToCat = (RatScript_v2_0::GetEntityPosition(closestCat) - ratPosition).GetNormalized();
-            vec2 newPosition = ratPosition + directionToCat * p_data->movementSpeed * deltaTime;
+            vec2 oldPosition = RatScript_v2_0::GetEntityPosition(id);
+            vec2 directionToCat = (RatScript_v2_0::GetEntityPosition(closestCat) - oldPosition).GetNormalized();
+            vec2 newPosition = oldPosition + directionToCat * p_data->movementSpeed * deltaTime;
             RatScript_v2_0::PositionEntity(id, newPosition);
 
-            std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
-                << " moved towards Cat ID: " << closestCat
-                << " New Position: (" << newPosition.x << ", " << newPosition.y << ")\n";
+            // Determine if the rat has moved by comparing the old and new positions
+            if (newPosition != oldPosition)
+            {
+                hasMoved = true;
+            }
         }
         else
         {
-            // Transition to attack state if the closest cat is within attack radius.
-            std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
-                << " is within attack radius of Cat ID: " << closestCat << ". Initiating attack.\n";
-            //GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->TriggerStateChange(id, 0.f);
+            // If the closest cat is within the attack radius, the rat may initiate an attack
+            // but doesn't move, so hasMoved remains false
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(id, 0.f);
-
         }
+
+        return hasMoved;
     }
 
 

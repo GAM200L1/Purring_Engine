@@ -353,6 +353,7 @@ RTTR_REGISTRATION
         .property("catType", &PE::CatScript_v2_0Data::catType)
         .property("toggleDeathAnimation", &PE::CatScript_v2_0Data::toggleDeathAnimation)
         .property("finishedExecution", &PE::CatScript_v2_0Data::finishedExecution)
+        .property("isCaged", &PE::CatScript_v2_0Data::isCaged)
         .property("catMaxMovementEnergy", &PE::CatScript_v2_0Data::catMaxMovementEnergy)
         .property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
         .property("minDistance", &PE::CatScript_v2_0Data::minDistance)
@@ -400,6 +401,19 @@ RTTR_REGISTRATION
         .property("MainRatID", &PE::RatDetectionScript_v2_0_Data::mainRatID)
         .property("StoredParentRat", &PE::RatDetectionScript_v2_0_Data::storedParentRat)
         .property("DetectionRadius", &PE::RatDetectionScript_v2_0_Data::detectionRadius);
+
+    rttr::registration::class_<PE::RatScript_v2_0_Data>("RatScript_v2_0")
+        //.property("mainCatID", &PE::RatScriptData::mainCatID)
+        //.property("health", &PE::RatScriptData::health)
+        //.property("movementSpeed", &PE::RatScriptData::movementSpeed)
+        //.property("detectionRadius", &PE::RatScriptData::detectionRadius)
+        //.property("attackDiameter", &PE::RatScriptData::attackDiameter)
+        //.property("attackDuration", &PE::RatScriptData::attackDuration)
+        //.property("collisionDamage", &PE::RatScriptData::collisionDamage)
+        //.property("attackDamage", &PE::RatScriptData::attackDamage)
+        //.property("attackDelay", &PE::RatScriptData::attackDelay)
+        .property("animationStates", &PE::RatScript_v2_0_Data::animationStates);
+
 }
 
 PE::CoreApplication::CoreApplication()

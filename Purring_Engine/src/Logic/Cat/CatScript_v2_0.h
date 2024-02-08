@@ -52,6 +52,7 @@ namespace PE
 		EnumCatType catType{ EnumCatType::GREYCAT };
 		bool finishedExecution{ false };
 		bool toggleDeathAnimation{ false };
+		bool isCaged{ false };
 
 		// cat attack
 		std::variant<GreyCatAttackVariables, OrangeCatAttackVariables> attackVariables{ GreyCatAttackVariables{} };

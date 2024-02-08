@@ -490,28 +490,28 @@ namespace PE
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
 								break;
 							}
+							return;
 						}
-						return;
-					}
-					else
-					{
-						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
-						//set other portrait stuff inactive
-						for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
+						else
 						{
-							if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPotraitName")
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(m_defaultPotraitTextureKey);
+							//set other portrait stuff inactive
+							for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].CatPortrait).children)
 							{
-								if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(id2).name == "CatPotraitName")
 								{
-									EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_NameFrame_Cat_239x82.png"));
+									if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id2))
+									{
+										EntityManager::GetInstance().Get<Graphics::GUIRenderer>(id2).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_NameFrame_Cat_239x82.png"));
+									}
+									break;
 								}
-								break;
 							}
-						}
-						DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
+							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
 
-						if (!m_isRat)
-							m_isPotraitShowing = false;
+							if (!m_isRat)
+								m_isPotraitShowing = false;
+						}
 					}
 				}
 			}
@@ -847,6 +847,7 @@ namespace PE
 	{
 		if (m_isPhaseBannerTransition)
 		{
+			if(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].PhaseBanner).parent.has_value())
 			ActiveObject(EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].PhaseBanner).parent.value());
 
 			float fadeInSpeed = std::clamp(m_phaseBannerEnter / m_phaseBannerTransitionTimer, 0.0f, 1.0f);
@@ -986,7 +987,7 @@ namespace PE
 		Output = GETCAMERAMANAGER()->GetWindowToWorldPosition(Output.x, Output.y);
 	}
 
-	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, float Current, float Max, bool isRat)
+	void GameStateController_v2_0::SetPortraitInformation(const std::string_view TextureName, int Current, int Max, bool isRat)
 	{
 		if(isRat)
 		for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[m_currentGameStateControllerID].RatPortrait).children)

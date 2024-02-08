@@ -113,6 +113,9 @@ namespace PE
 		*************************************************************************************/
 		virtual void OnDetach(EntityID id);
 
+		void ApplyDamageToRat(EntityID ratID, int damage);
+
+
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
 
