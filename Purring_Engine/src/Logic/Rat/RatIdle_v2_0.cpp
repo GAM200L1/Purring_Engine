@@ -267,7 +267,7 @@ namespace PE
         {
             std::cout << "RatIdle_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat in range\n";
             // Change to aggressive state
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
         }
         // Check if any cats exited the radius during execution
         else if (!(p_data->catsExitedDetectionRadius.empty()))
