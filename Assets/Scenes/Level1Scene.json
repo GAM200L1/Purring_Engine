@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -809,7 +809,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1152,7 +1152,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1194,7 +1194,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1546,7 +1546,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1814,7 +1814,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2216,7 +2216,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2533,7 +2533,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2613,7 +2613,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2944,7 +2944,7 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 0.0,
+                                "x": -83.99990844726563,
                                 "y": 0.0
                             },
                             "positionOffset": {
@@ -2984,7 +2984,9 @@
                     "ScriptComponent": {
                         "CatScript_v2_0": {
                             "data": {
-                                "animationStates": {},
+                                "animationStates": {
+                                    
+                                },
                                 "attackVariants": {
                                     "GreyCatAttackVariables": {
                                         "attacKDirection": 0,
@@ -3000,7 +3002,7 @@
                                 "catCurrentEnergy": 21,
                                 "catID": 0,
                                 "catMaxMovementEnergy": 21,
-                                "catType": 1,
+                                "catType": 0,
                                 "currentPositionIndex": 0,
                                 "delaySet": false,
                                 "finishedExecution": false,
@@ -3016,13 +3018,16 @@
                                 "toggleDeathAnimation": false
                             },
                             "state": 0
+                        },
+                        "FollowScript_v2_0": {
+                            "state": 0
                         }
                     },
                     "Transform": {
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": -83.99990844726563,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -3057,7 +3062,7 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
@@ -3087,7 +3092,9 @@
                     "ScriptComponent": {
                         "CatScript_v2_0": {
                             "data": {
-                                "animationStates": {},
+                                "animationStates": {
+                                    
+                                },
                                 "attackVariants": {
                                     "GreyCatAttackVariables": {
                                         "attacKDirection": 0,
@@ -3108,7 +3115,7 @@
                                 "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isCaged": false,
+                                "isCaged": true,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
@@ -3283,7 +3290,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3551,7 +3558,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {

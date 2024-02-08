@@ -1,16 +1,19 @@
 
 #pragma once
 #include <vector>
+#include <stack>
 #include "../Script.h"
 #include "Math/MathCustom.h"
+#include "../GameStateController_v2_0.h"
+#include "Events/CollisionEvent.h"
 
 namespace PE
 {
 	struct FollowScriptData_v2_0 
 	{
-		int Size{ 100 }; // fixed size of each object
+		int Size{ 64 }; // fixed size of each object
 		float Speed{ 100 };
-		int NumberOfFollower{ 1 };
+		int NumberOfSlots{ 5 };
 		std::vector<EntityID> FollowingObject;
 		float Rotation;
 		vec2 CurrentPosition;
@@ -18,11 +21,16 @@ namespace PE
 
 		//for attaching through code
 		bool IsAttaching{ false };
-		int NumberOfAttachers{ 1 };
+		//int NumberOfAttachers{ 0 };
 		std::vector<EntityID> ToAttach{};
 
 		//look towards movement
-		bool LookTowardsMovement{ true };
+		bool LookTowardsMovement{ false };
+
+		// new followers stack
+		std::vector<EntityID> followers;
+		
+		
 
 		//sound
 		EntityID SoundID;
@@ -55,6 +63,11 @@ namespace PE
 		 \brief Clears the script data
 		*************************************************************************************/
 		virtual void OnDetach(EntityID) override;
+
+
+		void Adopt(EntityID owner, EntityID adopt);
+		void CollisionCheck(const Event<CollisionEvents>& r_event);
+
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
 
@@ -75,5 +88,7 @@ namespace PE
 	private:
 		std::map<EntityID, FollowScriptData_v2_0> m_ScriptData;
 		GameStateController_v2_0* p_gamestateController;
+		// Event keys
+		int m_collisionEventListener{};
 	};
 }
