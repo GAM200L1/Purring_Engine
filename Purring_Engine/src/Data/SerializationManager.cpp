@@ -657,7 +657,16 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                         {
                             PE::vec2 val;
                             val.x = data[prop.get_name().to_string().c_str()]["x"].get<float>();
-                            val.y = data[prop.get_name().to_string().c_str()]["x"].get<float>();
+                            val.y = data[prop.get_name().to_string().c_str()]["y"].get<float>();
+                            prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "structPE::vec4")
+                        {
+                            PE::vec4 val;
+                            val.x = data[prop.get_name().to_string().c_str()]["x"].get<float>();
+                            val.y = data[prop.get_name().to_string().c_str()]["y"].get<float>();
+                            val.z = data[prop.get_name().to_string().c_str()]["z"].get<float>();
+                            val.w = data[prop.get_name().to_string().c_str()]["w"].get<float>();
                             prop.set_value(inst, val);
                         }
                         else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")

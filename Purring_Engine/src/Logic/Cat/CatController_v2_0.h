@@ -23,7 +23,7 @@ namespace PE
 	struct CatController_v2_0Data
 	{
 		// vector of pairs <catID, catType>
-
+		EntityID mainCatID;
 	};
 
 	class CatController_v2_0 : public Script
@@ -49,8 +49,8 @@ namespace PE
 		virtual void OnDetach(EntityID id);
 
 		void CacheCurrentCats();
-		
-		static inline void KillCat(EntityID id);
+
+		static void KillCat(EntityID id);
 
 		bool IsCatAndIsAlive(EntityID id);
 		

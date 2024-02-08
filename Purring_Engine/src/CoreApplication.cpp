@@ -92,6 +92,9 @@
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "Logic/UI/HealthBarScript_v2_0.h"
+#include "Logic/Rat/RatDetectionScript_v2_0.h"
+#include "Logic/Rat/RatScript_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
 
@@ -376,6 +379,17 @@ RTTR_REGISTRATION
         .method("Width", &PE::Canvas::SetWidth)
         .method("Height", &PE::Canvas::SetHeight)
         .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
+
+    rttr::registration::class_<PE::HealthBarScript_v2_0_Data>("HealthBarScript_v2_0")
+        .property("MyID", &PE::HealthBarScript_v2_0_Data::myID)
+        .property("FollowObjectID", &PE::HealthBarScript_v2_0_Data::followObjectID)
+        .property("FillColor", &PE::HealthBarScript_v2_0_Data::fillColor);
+
+    rttr::registration::class_<PE::RatDetectionScript_v2_0_Data>("RatDetectionScript_v2_0")
+        .property("MyID", &PE::RatDetectionScript_v2_0_Data::myID)
+        .property("MainRatID", &PE::RatDetectionScript_v2_0_Data::mainRatID)
+        .property("StoredParentRat", &PE::RatDetectionScript_v2_0_Data::storedParentRat)
+        .property("DetectionRadius", &PE::RatDetectionScript_v2_0_Data::detectionRadius);
 }
 
 PE::CoreApplication::CoreApplication()

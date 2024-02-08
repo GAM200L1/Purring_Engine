@@ -168,10 +168,10 @@ namespace PE
 				yOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.y;
 			}
 		}
+		m_currentMousePos = GETCAMERAMANAGER()->GetWindowToWorldPosition(static_cast<float>(MBPE.transX), static_cast<float>(MBPE.transY));
 
-
-		m_currentMousePos.x = static_cast<float>(MBPE.transX) + xOffset;
-		m_currentMousePos.y = static_cast<float>(MBPE.transY) + yOffset;
+		m_currentMousePos.x += xOffset;
+		m_currentMousePos.y += yOffset;
 
 		m_mouseClicked = true;
 	}

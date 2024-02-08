@@ -909,6 +909,8 @@ namespace PE
 
 		m_currentLevel = nextStage;
 		m_leveltoLoad = m_level2SceneName;
+
+		
 	}
 
 	void GameStateController_v2_0::StartGameLoop()
@@ -933,6 +935,11 @@ namespace PE
 		m_leveltoLoad = m_level1SceneName;
 
 		PlayClickAudio();
+	}
+
+	int GameStateController_v2_0::GetCurrentLevel()
+	{
+		return m_currentLevel;
 	}
 
 	void GameStateController_v2_0::GetMouseCurrentPosition(vec2& Output)

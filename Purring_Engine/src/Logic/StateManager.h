@@ -105,6 +105,11 @@ namespace PE
 			if(p_state)
 			DoStateUpdate(id, deltaTime);
 		}
+
+		// New method to get the current state
+		State* GetCurrentState() const {
+			return p_state;
+		}
 		/*!***********************************************************************************
 		 \brief						to get the name of the state for use
 		 \return std::string_view	the name of the state

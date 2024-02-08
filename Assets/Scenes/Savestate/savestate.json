@@ -856,7 +856,7 @@
                         "parent": 18,
                         "sceneID": 8
                     },
-                    "GUIRenderer": {
+                    "Renderer": {
                         "Color": {
                             "a": 1.0,
                             "b": 1.0,
@@ -865,8 +865,18 @@
                         },
                         "TextureKey": "../Assets/Textures/HowToPlay_Page1_1920x1080.png"
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "state": 0
+                        }
+                    },
                     "Transform": {
-                        "height": 1080.0,
+                        "height": 100.0,
                         "orientation": 0.0,
                         "position": {
                             "x": 0.0,
@@ -877,7 +887,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 1920.0
+                        "width": 100.0
                     }
                 },
                 "name": ""
@@ -1568,10 +1578,6 @@
                             "x": 0.0,
                             "y": 0.0
                         },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
                         "relorientation": 0.0,
                         "width": 100.0
                     }
@@ -1592,12 +1598,19 @@
                         "parent": 32,
                         "sceneID": 33
                     },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": -380.00018310546875,
+                                "y": -173.00006103515625
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
                         },
                         "TextureKey": "../Assets/Textures/YouWin_Text_1024x256.png"
                     },
@@ -1833,8 +1846,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": -380.00018310546875,
+                            "y": -173.00006103515625
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -2982,21 +2995,34 @@
                         "CatScript_v2_0": {
                             "data": {
                                 "animationStates": {},
+                                "attackVariants": {
+                                    "GreyCatAttackVariables": {
+                                        "attacKDirection": 0,
+                                        "bulletDelay": 0.0,
+                                        "bulletForce": 1000.0,
+                                        "bulletLifeTime": 1.0,
+                                        "bulletRange": 3.0,
+                                        "damage": 0,
+                                        "projectileID": 0,
+                                        "teleGraphIDs": []
+                                    }
+                                },
                                 "catCurrentEnergy": 21,
                                 "catID": 0,
-                                "catIsDead": false,
                                 "catMaxMovementEnergy": 21,
+                                "catType": 1,
+                                "currentPositionIndex": 0,
                                 "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isMainCat": false,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
                                 "nodeSize": 10.0,
                                 "pathQuads": [],
                                 "shouldChangeState": false,
-                                "timeBeforeChangingState": 0.0
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
                             },
                             "state": 0
                         }
@@ -3071,21 +3097,34 @@
                         "CatScript_v2_0": {
                             "data": {
                                 "animationStates": {},
+                                "attackVariants": {
+                                    "GreyCatAttackVariables": {
+                                        "attacKDirection": 0,
+                                        "bulletDelay": 0.0,
+                                        "bulletForce": 1000.0,
+                                        "bulletLifeTime": 1.0,
+                                        "bulletRange": 3.0,
+                                        "damage": 0,
+                                        "projectileID": 0,
+                                        "teleGraphIDs": []
+                                    }
+                                },
                                 "catCurrentEnergy": 21,
                                 "catID": 0,
-                                "catIsDead": false,
                                 "catMaxMovementEnergy": 21,
+                                "catType": 1,
+                                "currentPositionIndex": 0,
                                 "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isMainCat": false,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
                                 "nodeSize": 10.0,
                                 "pathQuads": [],
                                 "shouldChangeState": false,
-                                "timeBeforeChangingState": 0.0
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
                             },
                             "state": 0
                         }
