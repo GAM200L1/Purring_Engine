@@ -71,7 +71,8 @@
                                 "nodeSize": 10.0,
                                 "pathQuads": [],
                                 "shouldChangeState": false,
-                                "timeBeforeChangingState": 0.0
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
                             },
                             "state": 0
                         }
@@ -143,15 +144,13 @@
                             "data": {
                                 "animationStates": {},
                                 "attackVariants": {
-                                    "GreyCatAttackVariables": {
-                                        "attacKDirection": 0,
-                                        "bulletDelay": 0.0,
-                                        "bulletForce": 1000.0,
-                                        "bulletLifeTime": 1.0,
-                                        "bulletRange": 3.0,
+                                    "OrangeCatAttackVariables": {
                                         "damage": 0,
-                                        "projectileID": 0,
-                                        "teleGraphIDs": []
+                                        "seismicID": 0,
+                                        "stompForce": 1000.0,
+                                        "stompLifetime": 1.0,
+                                        "stompRadius": 20.0,
+                                        "telegraphID": 0
                                     }
                                 },
                                 "catCurrentEnergy": 21,
@@ -168,7 +167,8 @@
                                 "nodeSize": 10.0,
                                 "pathQuads": [],
                                 "shouldChangeState": false,
-                                "timeBeforeChangingState": 0.0
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
                             },
                             "state": 0
                         }

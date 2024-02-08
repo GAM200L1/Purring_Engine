@@ -3241,14 +3241,6 @@ namespace PE {
 												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
 												props.set_value(inst, val);
 											}
-							 				else if (props.get_type().get_name() == "bool")
-											{
-												bool val = props.get_value(inst).get_value<bool>();
-												ImGui::Text(props.get_name().to_string().c_str());
-												ImGui::SameLine();
-												ImGui::Checkbox(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
-											}
 											else if (props.get_type().get_name() == "unsigned__int64")
 											{
 												EntityID val = props.get_value(inst).get_value<EntityID>();
@@ -3271,19 +3263,133 @@ namespace PE {
 											}
 											else if (props.get_type().get_name() == "unsignedint")
 											{
+												int val = props.get_value(inst).get_value<int>();
+												ImGui::Text(props.get_name().to_string().c_str());
+												ImGui::SameLine();
+												ImGui::SetNextItemWidth(100.0f);
+												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
+												props.set_value(inst, val);
 											}
-											else if (props.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+											/*else if (props.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
 											{
 											}
 											else if (props.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
 											{
-											}
+											}*/
 											else if (props.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
 											{
+												ImGui::Separator();
+												int num{};
+												ImGui::Text("Add Animation state"); ImGui::SameLine();
+												bool worked{ false };
+												if (ImGui::Button("+"))
+												{
+													std::string str = "NewState";
+													while (!worked)
+													{
+														if (it->second.animationStates.count(str))
+														{
+															str += 1;
+														}
+														else
+														{
+															it->second.animationStates.emplace(str, "");
+															worked = true;
+														}
+													}
+												}
+												static std::pair<std::string, std::string> whoToRemove;
+												static bool rmFlag{ false };
+												for (auto& [k, v] : it->second.animationStates)
+												{
+													ImGui::Text("State: "); ImGui::SameLine();
+													std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
+													bool changed = ImGui::InputText(std::string("##" + k + std::to_string(++num)).c_str(), &curr);
+													if (!changed)
+													{
+														if (whoToRemove.first == k)
+														{
+															if (!ImGui::IsItemActivated())
+															{
+																rmFlag = true;
+															}
+														}
+													}
+													else
+													{
+														if (k != curr)
+														{
+															whoToRemove.first = k;
+															whoToRemove.second = curr;
+															rmFlag = false;
+														}
+
+													}
+
+
+													ImGui::Text("Animation: "); ImGui::SameLine();
+													bool bl = ImGui::BeginCombo(std::string("##Animation" + k + std::to_string(num)).c_str(), v.c_str());
+													if (bl)
+													{
+														if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+														{
+															for (const auto& name : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+															{
+																if (ImGui::Selectable(name.c_str()))
+																	v = name;
+															}
+														}
+														ImGui::EndCombo();
+													}
+													ImGui::Separator();
+												}
+												if (rmFlag)
+												{
+													it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
+													it->second.animationStates.erase(whoToRemove.first);
+													whoToRemove.first = "";
+													whoToRemove.second = "";
+													rmFlag = false;
+												}
 											}
 											else if (props.get_type().get_name() == "classstd::variant<structPE::GreyCatAttackVariables,structPE::OrangeCatAttackVariables>")
 											{
+												// display option to swap the types
+												ImGui::Separator();
 
+												std::vector<std::string> types{ "GreyCat", "OrangeCat" };
+												std::vector < std::variant < GreyCatAttackVariables, OrangeCatAttackVariables>> variants{ GreyCatAttackVariables(), OrangeCatAttackVariables() };
+
+												if (ImGui::BeginCombo(("##" + types[it->second.attackVariables.index()]).c_str(), types[it->second.attackVariables.index()].c_str()))
+												{
+													int cnt{ 0 };
+													bool selected{ false };
+													for (const auto& str : types)
+													{
+														if (ImGui::Selectable(str.c_str(), &selected))
+														{
+															if (cnt != it->second.attackVariables.index())
+															{
+																it->second.attackVariables = variants.at(cnt);
+																break;
+															}
+														}
+														++cnt;
+													}
+													ImGui::EndCombo();
+												}
+
+
+												if (!it->second.attackVariables.index())
+												{ 
+													GreyCatAttackVariables& var = std::get<GreyCatAttackVariables>(it->second.attackVariables);
+													
+												}
+												else
+												{
+													OrangeCatAttackVariables& var = std::get<OrangeCatAttackVariables>(it->second.attackVariables);
+
+												}
 											}
 											else
 											{
