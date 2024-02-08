@@ -39,6 +39,7 @@ namespace PE
 
 	void PlayerControllerScript::Init(EntityID)
 	{
+		std::srand(std::time(nullptr));
 		m_mouseClicked = false;
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, PlayerControllerScript::OnMouseClick, this)
 	}
@@ -94,6 +95,11 @@ namespace PE
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,1.f } * m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			m_mouseClicked = false;
+			footstepTimer -= deltaTime;
+			if (footstepTimer <= 0)
+			{
+				PlayFootstepAudio();
+			}
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_A))
 		{
@@ -101,6 +107,11 @@ namespace PE
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ -1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			m_mouseClicked = false;
+			footstepTimer -= deltaTime;
+			if (footstepTimer <= 0)
+			{
+				PlayFootstepAudio();
+			}
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_S))
 		{
@@ -108,6 +119,11 @@ namespace PE
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 0.f,-1.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			m_mouseClicked = false;
+			footstepTimer -= deltaTime;
+			if (footstepTimer <= 0)
+			{
+				PlayFootstepAudio();
+			}
 		}
 		if (InputSystem::IsKeyHeld(GLFW_KEY_D))
 		{
@@ -115,6 +131,11 @@ namespace PE
 			EntityManager::GetInstance().Get<Transform>(id).position += vec2{ 1.f,0.f } *m_ScriptData[id].speed * deltaTime;
 			m_ScriptData[id].currentPlayerState = PlayerState::MOVING;
 			m_mouseClicked = false;
+			footstepTimer -= deltaTime;
+			if (footstepTimer <= 0)
+			{
+				PlayFootstepAudio();
+			}
 		}
 		if(!hasMoved)
 			m_ScriptData[id].currentPlayerState = PlayerState::IDLE;
@@ -198,5 +219,39 @@ namespace PE
 		}
 
 
+	}
+	void PlayerControllerScript::PlayFootstepAudio()
+	{
+		int randNum = (std::rand() % 3) + 1;
+
+		switch (randNum)
+		{
+		case 1:
+		{
+			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 1_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(buttonpress);
+			break;
+		}
+		case 2:
+		{
+			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 2_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(buttonpress);
+			break;
+		}
+		case 3:
+		{
+			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 3_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(buttonpress);
+			break;
+		}
+		}
+
+		footstepTimer = footstepDelay;
 	}
 }
