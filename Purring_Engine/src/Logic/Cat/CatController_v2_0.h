@@ -48,23 +48,64 @@ namespace PE
 
 		virtual void OnDetach(EntityID id);
 
-		void CacheCurrentCats();
+		/*!***********************************************************************************
+		 \brief Gets Cats that have been collected and are deployable
 
+		 \param[out] std::vector<EnumCatType> - Vector of Deployable Cats
+		*************************************************************************************/
+		std::vector<EnumCatType> GetDeployableCats();
+
+		/*!***********************************************************************************
+		 \brief Sets cat to play death animation, effectively removing it from scene
+
+		 \param[in] id - ID of cat to remove
+		*************************************************************************************/
 		static void KillCat(EntityID id);
 
-		bool IsCatAndIsAlive(EntityID id);
+		void RemoveCatFromVector(EntityID id);
+
+		inline void SetCurrentCats(std::vector<std::pair<EntityID, EnumCatType>> const& r_vectorOfNewCats)
+		{
+			m_currentCats = r_vectorOfNewCats;
+		}
+
+		/*!***********************************************************************************
+		 \brief Checks if entity is a cat
+
+		 \param[in] id - ID to check
+		 \param[out] bool - true if is cat, false if not
+		*************************************************************************************/
+		inline bool IsCat(EntityID id)
+		{
+			for (auto const& [type, catID] : m_currentCats)
+			{
+				if (catID == id) // cat is in vector
+					return true;
+			}
+			return false; // is not cat
+		}
+
+		/*!***********************************************************************************
+		 \brief Checks if cat is caged. Throws if not a cat
+
+		 \param[in] id - catID to check
+		 \param[out] bool - true if cat is caged, false if not
+		*************************************************************************************/
+		inline bool IsCatCaged(EntityID id)
+		{
+			if (!IsCat(id)) { throw; }
+			return (GETSCRIPTDATA(CatScript_v2_0, id))->isCaged;
+		}
 		
 		// getters
 		int GetCurrentMovementEnergy(EntityID id);
 		int GetMaxMovementEnergy(EntityID id);
 		std::vector<std::pair<EntityID, EnumCatType>> GetCurrentCats(EntityID id);
-		std::vector<std::pair<EntityID, EnumCatType>> GetCachedCats(EntityID id);
 
 		std::map<EntityID, CatController_v2_0Data>& GetScriptData() { return m_scriptData; }
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 
 	private:
 		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
-		std::vector<std::pair<EntityID, EnumCatType>> m_cacheCats; // vector for when stage is restarted
 	};
 }

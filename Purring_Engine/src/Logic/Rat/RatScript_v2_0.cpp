@@ -223,7 +223,7 @@ namespace PE
 
 		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
 		{
-			std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << p_nextState->GetName() << ", " << stateChangeDelay << ")\n";
+			//std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << p_nextState->GetName() << ", " << stateChangeDelay << ")\n";
 
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
@@ -235,7 +235,7 @@ namespace PE
 
 			// Set the state that is queued up
 			it->second.SetQueuedState(p_nextState, false);
-			std::cout << "State change requested for Rat ID: " << id << " to state " << p_nextState->GetName() << " with delay: " << stateChangeDelay << " seconds." << std::endl;
+			//std::cout << "State change requested for Rat ID: " << id << " to state " << p_nextState->GetName() << " with delay: " << stateChangeDelay << " seconds." << std::endl;
 		}
 
 
@@ -512,7 +512,7 @@ namespace PE
 
 		void RatScript_v2_0::ChangeRatState(EntityID id)
 		{
-				std::cout << "RatScript_v2_0::ChangeRatState(" << id << ")";
+				//std::cout << "RatScript_v2_0::ChangeRatState(" << id << ")";
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 
