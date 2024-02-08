@@ -83,7 +83,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -391,7 +391,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -664,7 +664,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -824,7 +824,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1173,7 +1173,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1216,7 +1216,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1575,7 +1575,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1848,7 +1848,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2258,7 +2258,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2581,7 +2581,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2663,7 +2663,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2994,7 +2994,12 @@
             "Entity": {
                 "components": {
                     "AnimationComponent": {
-                        "AnimationIDs": [],
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGrey_Attack_Anim.json\u0000_Anim.json",
+                            "../Assets/Animation/AnimationGrey_Death_Anim.json\u0000_Anim.json",
+                            "../Assets/Animation/AnimationGrey_Idle_Anim.json\u0000_Anim.json",
+                            "../Assets/Animation/AnimationGrey_Walk_Anim.json\u0000_Anim.json"
+                        ],
                         "CurrentAnimationID": ""
                     },
                     "Collider": {
@@ -3021,7 +3026,7 @@
                         "Prefab Type": "OrangeCatPrefab",
                         "children": [],
                         "isActive": true,
-                        "name": "Orange Cat 1",
+                        "name": "Grey Cat",
                         "parent": null,
                         "sceneID": 69
                     },
@@ -3032,7 +3037,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
                     },
                     "RigidBody": {
                         "linearDrag": 2.0,
@@ -3042,7 +3047,12 @@
                     "ScriptComponent": {
                         "CatScript_v2_0": {
                             "data": {
-                                "animationStates": {},
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationGrey_Attack_Anim.json\u0000_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationGrey_Death_Anim.json\u0000_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationGrey_Idle_Anim.json\u0000_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationGrey_Walk_Anim.json\u0000_Anim.json"
+                                },
                                 "attackVariants": {
                                     "GreyCatAttackVariables": {
                                         "attacKDirection": 0,
@@ -3347,7 +3357,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3620,7 +3630,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4339,7 +4349,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4418,7 +4428,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {

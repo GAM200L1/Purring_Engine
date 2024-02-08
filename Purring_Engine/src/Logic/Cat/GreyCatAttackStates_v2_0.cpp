@@ -80,7 +80,7 @@ namespace PE
 					CatHelperFunctions::SetColor(r_telegraph.second, m_defaultColor);
 				}
 			}
-
+			std::cout << (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected << ' ';
 			// disables telegraphs if anywhere but the telegraphs are clicked
 			if (m_mouseClick && !m_mouseClickedPrevious && !collidingWithAnyTelegraph)
 			{
@@ -258,8 +258,8 @@ namespace PE
 			}
 			m_bulletLifetime -= deltaTime;
 		}
-		// when the frame is attack frame, shoot the projectile after delay passes											//@TODO UNCOMMENT
-		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)// && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
+		// when the frame is attack frame, shoot the projectile after delay passes											
+		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
 		{
 			if (m_bulletDelay <= 0.f) // extra delay after the frame in case of slight inaccuracy
 			{

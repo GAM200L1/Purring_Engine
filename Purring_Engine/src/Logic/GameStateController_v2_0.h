@@ -208,7 +208,7 @@ namespace PE
 
 		 \return	true or false if cat selected
 		*************************************************************************************/
-		bool GetSelectedCat(EntityID& catID);
+		bool GetSelectedCat(EntityID catID);
 
 		// ----- Object Helper Functions ----- //
 	private:

@@ -40,6 +40,7 @@ namespace PE
 
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
 	{
+		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id)) { return; }
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 

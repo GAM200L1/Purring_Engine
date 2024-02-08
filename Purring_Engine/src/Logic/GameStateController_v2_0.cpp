@@ -988,11 +988,11 @@ namespace PE
 		return m_currentLevel;
 	}
 
-	bool GameStateController_v2_0::GetSelectedCat(EntityID& catID)
+	bool GameStateController_v2_0::GetSelectedCat(EntityID catID)
 	{
 		if (!m_isRat && m_isPotraitShowing)
 		{
-			catID = m_lastSelectedEntity;
+			if (m_lastSelectedEntity == catID)
 			return true;
 		}
 		return false;

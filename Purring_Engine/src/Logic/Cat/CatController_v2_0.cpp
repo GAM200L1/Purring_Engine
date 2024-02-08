@@ -44,19 +44,6 @@ namespace PE
 				{
 					EnumCatType const& r_catType = *GETSCRIPTDATA(CatScript_v2_0, catID).catType;
 					m_currentCats.emplace_back(std::pair{ catID, r_catType }); // saves all cats, including the caged ones
-					//if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0 && r_catType == EnumCatType::MAINCAT) // if in the first level, only take main cat
-					//{
-					//	m_cacheCats.emplace_back(std::pair{ catID, r_catType });
-					//	m_currentCats.emplace_back(std::pair{ catID, r_catType });
-					//	//m_scriptData[id].mainCatID = catID;
-					//	return;
-					//}
-					//else
-					//{
-					//	std::pair<EntityID, EnumCatType> pair{ catID, r_catType };
-					//	m_cacheCats.push_back(pair);
-					//	m_currentCats.push_back(pair);
-					//}
 				}
 			}
 		}
@@ -64,76 +51,6 @@ namespace PE
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
 	{
-		//GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		//// if at cat chain level
-		//if (p_gsc->GetCurrentLevel() == 0)
-		//{
-		//	/*FollowScriptData const& r_mainCatFollowScript = *GETSCRIPTDATA(FollowScript, m_scriptData[id].mainCatID);
-		//	for (EntityID followingCatID : r_mainCatFollowScript.FollowingObject)
-		//	{
-		//		bool alreadySaved{ false };
-		//		for (auto const& [catID, type] : m_currentCats)
-		//		{
-		//			if (followingCatID == catID)
-		//			{
-		//				alreadySaved = true;
-		//				break;
-		//			}
-		//		}
-		//		if (!alreadySaved)
-		//			m_currentCats.emplace_back(std::pair{ followingCatID, *GETSCRIPTDATA(CatScript_v2_0, followingCatID).catType });
-		//	}*/
-		//}
-		//else if (p_gsc->GetCurrentLevel() == 1)
-		//{
-		//	//m_currentCats.clear();
-		//	//for (EntityID catID : SceneView<ScriptComponent>())
-		//	//{
-		//	//	auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
-		//	//	//if (IsCat(catID))
-		//	//	for (auto& [scriptname, state] : r_scripts)
-		//	//	{
-		//	//		if (scriptname == "CatScript_v2_0")
-		//	//		{
-		//	//			EnumCatType const& r_catType = *GETSCRIPTDATA(CatScript_v2_0, catID).catType;
-		//	//			std::pair<EntityID, EnumCatType> pair{ catID, r_catType };
-		//	//			m_currentCats.push_back(pair);
-		//	//		}
-		//	//	}
-		//	//}
-		//}
-		//	//size_t countCat{ 0 };
-		//	//// gets the cats of the current frame
-		//	//for (EntityID catID : SceneView<ScriptComponent>())
-		//	//{
-		//	//	auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
-		//	//	//if (IsCat(catID))
-		//	//	for (auto& [scriptname, state] : r_scripts)
-		//	//	{
-		//	//		countCat += r_scripts.count("CatScript_v2_0");
-		//	//	}
-		//	//}
-
-		//	//if (countCat != m_currentCats.size())
-		//	//{
-		//	//	m_currentCats.clear();
-		//	//	for (EntityID catID : SceneView<ScriptComponent>())
-		//	//	{
-		//	//		auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
-		//	//		//if (IsCat(catID))
-		//	//		for (auto& [scriptname, state] : r_scripts)
-		//	//		{
-		//	//			if (scriptname == "CatScript_v2_0")
-		//	//			{
-		//	//				//std::pair<EntityID, EnumCatType> pair{ catID, GREYCAT }; //*GETSCRIPTDATA(CatScript_v2_0, catID).catType };
-		//	//				std::pair<EntityID, EnumCatType> pair{ catID, *GETSCRIPTDATA(CatScript_v2_0, catID).catType };
-		//	//				m_currentCats.push_back(pair);
-		//	//			}
-
-		//	//		}
-		//	//	}
-		//	//}
-		//	p_gsc = nullptr;
 	}
 
 	void CatController_v2_0::OnAttach(EntityID id)
