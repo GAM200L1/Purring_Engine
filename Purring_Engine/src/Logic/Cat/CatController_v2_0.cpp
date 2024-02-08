@@ -42,14 +42,14 @@ namespace PE
 				if (scriptname == "CatScript_v2_0")
 				{
 					EnumCatType const& r_catType = *GETSCRIPTDATA(CatScript_v2_0, catID).catType;
-					//if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0 && r_catType == EnumCatType::MAINCAT) // if in the first level, only take main cat
-					//{
-					//	m_cacheCats.emplace_back(std::pair{ catID, r_catType });
-					//	m_currentCats.emplace_back(std::pair{ catID, r_catType });
-					//	m_scriptData[id].mainCatID = catID;
-					//	return;
-					//}
-					//else
+					if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0 && r_catType == EnumCatType::MAINCAT) // if in the first level, only take main cat
+					{
+						m_cacheCats.emplace_back(std::pair{ catID, r_catType });
+						m_currentCats.emplace_back(std::pair{ catID, r_catType });
+						//m_scriptData[id].mainCatID = catID;
+						return;
+					}
+					else
 					{
 						std::pair<EntityID, EnumCatType> pair{ catID, r_catType };
 						m_cacheCats.push_back(pair);
@@ -64,11 +64,6 @@ namespace PE
 	{
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		// if at cat chain level
-		for (auto const& print : m_currentCats)
-		{
-			std::cout << print.first << '\n';
-		}
-		std::cout << "------\n";
 		if (p_gsc->GetCurrentLevel() == 0)
 		{
 			/*FollowScriptData const& r_mainCatFollowScript = *GETSCRIPTDATA(FollowScript, m_scriptData[id].mainCatID);

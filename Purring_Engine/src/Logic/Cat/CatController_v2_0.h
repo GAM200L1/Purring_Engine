@@ -23,7 +23,7 @@ namespace PE
 	struct CatController_v2_0Data
 	{
 		// vector of pairs <catID, catType>
-		EntityID mainCatID;
+		//EntityID mainCatID{ 0 };
 	};
 
 	class CatController_v2_0 : public Script

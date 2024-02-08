@@ -169,31 +169,31 @@ namespace PE
     {
         if (!p_data)
         {
-            std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - No data available." << std::endl;
+            //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - No data available." << std::endl;
             return;
         }
 
         if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
         {
             OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
-            std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Collision detected. Entity1: " << OTEE.Entity1 << ", Entity2: " << OTEE.Entity2 << std::endl;
+            //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Collision detected. Entity1: " << OTEE.Entity1 << ", Entity2: " << OTEE.Entity2 << std::endl;
 
             // Directly check if one of the entities is the Cat
             if (EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos ||
                 EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
             {
                 EntityID catID = (EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos) ? OTEE.Entity2 : OTEE.Entity1;
-                std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Rat attack collides with Cat ID: " << catID << ", applying damage." << std::endl;
+                //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Rat attack collides with Cat ID: " << catID << ", applying damage." << std::endl;
 
                 // Trigger the attack logic directly without checking attackRadiusId
-                GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(catID, p_data->attackDamage);
+                //GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(catID, p_data->attackDamage);
 
                 // Optionally set a flag to prevent multiple attacks if necessary
                 p_data->attacking = false; // This prevents continuous attack, reset this flag when conditions are met for another attack
             }
             else
             {
-                std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - No collision with Cat detected." << std::endl;
+                //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - No collision with Cat detected." << std::endl;
             }
         }
     }

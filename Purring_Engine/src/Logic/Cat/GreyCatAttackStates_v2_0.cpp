@@ -244,6 +244,20 @@ namespace PE
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 
+		// if projectile has been fired, keep reducing lifetime and disable bullet
+
+		if (m_projectileFired)
+		{
+			if (m_bulletLifetime <= 0.f)
+			{
+				(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = true;
+				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
+				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
+				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
+			}
+			m_bulletLifetime -= deltaTime;
+		}
+
 		// when the frame is attack frame, shoot the projectile after delay passes
 		if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)// && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
 		{
@@ -262,19 +276,7 @@ namespace PE
 			else
 				m_bulletDelay -= deltaTime;
 		}
-		// if projectile has been fired, keep reducing lifetime and disable bullet
-
-		if (m_projectileFired)
-		{
-			if (m_bulletLifetime <= 0.f)
-			{
-				(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = true;
-				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
-				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
-				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
-			}
-			m_bulletLifetime -= deltaTime;
-		}
+		std::cout << (GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution << ' ';
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::StateCleanUp()

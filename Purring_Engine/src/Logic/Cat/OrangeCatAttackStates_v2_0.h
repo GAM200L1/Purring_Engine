@@ -25,10 +25,10 @@ namespace PE
 {
 	struct OrangeCatAttackVariables
 	{
-		EntityID seismicID; // id of the seismic attack
-		EntityID telegraphID; // id of the UI
+		EntityID seismicID{ 0 }; // id of the seismic attack
+		EntityID telegraphID{ 0 }; // id of the UI
 
-		int damage;
+		int damage{ 0 };
 
 		// projectile variables
 		float stompRadius{ 20.f };

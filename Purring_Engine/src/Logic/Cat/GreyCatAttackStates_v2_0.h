@@ -38,7 +38,7 @@ namespace PE
 	struct GreyCatAttackVariables
 	{
 		// id of the projectile
-		EntityID projectileID{};
+		EntityID projectileID{ 0 };
 
 		// damage of the attack
 		int damage{ 0 };
@@ -119,7 +119,7 @@ namespace PE
 		
 		GreyCatAttackVariables* p_attackData;
 
-		EntityID m_catID;
+		EntityID m_catID{ 0 };
 
 		vec2 m_bulletImpulse;
 		float m_bulletDelay;
