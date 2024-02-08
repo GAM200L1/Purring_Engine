@@ -153,6 +153,11 @@ namespace PE
 		*************************************************************************************/
 		static void AddFunction(std::string_view, const std::function<void(EntityID)>& func);
 
+		/*!***********************************************************************************
+		 \brief returns the map of functionss
+		*************************************************************************************/
+		static std::map<std::string_view, std::function<void(EntityID)>> GetButtonFunctions();
+
 	public:
 			static std::map<std::string_view, std::function<void(EntityID)>> m_uiFunc;
 
@@ -251,9 +256,14 @@ namespace PE
 		void Destroy();
 
 		/*!***********************************************************************************
-		 \brief Calculate the current value of the slider based on given min and max values.
+		 \brief Calculate the current value of the knob based on given min and max values.
 		*************************************************************************************/
-		float CalculateValue(float currentX);
+		float CalculateKnobValue(float currentX);
+
+		/*!***********************************************************************************
+		 \brief Calculate the current position of the knob based on given min and max values.
+		*************************************************************************************/
+		float CalculateKnobCenter(float currentX);
 
 		/*!***********************************************************************************
 		 \brief Destructor
@@ -267,6 +277,8 @@ namespace PE
 		//if knob is clicked to be changed by events
 		bool m_clicked{ false };
 
+		//if knob is a healthbar
+		bool m_isHealthBar{ false };
 
 		//texture for knob
 		vec4 m_defaultColor{ HEX(100),HEX(100) ,HEX(100),HEX(100) };
@@ -283,6 +295,10 @@ namespace PE
 		//calculated on update
 		float m_startPoint, m_endPoint;
 		float m_currentValue;
+		float m_currentXpos;
+
+		//default 75 but to be changed on editor
+		float m_currentWidth{75};
 
 		//set on editor
 		float m_minValue{ 0 }, m_maxValue{100};

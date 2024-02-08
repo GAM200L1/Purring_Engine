@@ -16,7 +16,6 @@
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-
 #include "Graphics/GLHeaders.h"
 #include <glm/glm.hpp>
 

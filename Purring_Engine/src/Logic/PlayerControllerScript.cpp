@@ -32,6 +32,8 @@
 #include "Events/EventHandler.h"
 #include "WindowManager.h"
 #include "Graphics/CameraManager.h"
+
+#include "Layers/LayerManager.h"
 # define M_PI           3.14159265358979323846 
 
 namespace PE 
@@ -160,18 +162,21 @@ namespace PE
 
 		float xOffset{}, yOffset{};
 
-		for (EntityID objectID : SceneView<Graphics::Camera>())
+		for (const auto& layer : LayerView<Graphics::Camera>())
 		{
-			if (EntityManager::GetInstance().Get<Graphics::Camera>(objectID).GetIsMainCamera()) 
+			for (EntityID objectID : InternalView(layer))
 			{
-				xOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.x;
-				yOffset= EntityManager::GetInstance().Get<Transform>(objectID).position.y;
+				if (EntityManager::GetInstance().Get<Graphics::Camera>(objectID).GetIsMainCamera())
+				{
+					xOffset = EntityManager::GetInstance().Get<Transform>(objectID).position.x;
+					yOffset = EntityManager::GetInstance().Get<Transform>(objectID).position.y;
+				}
 			}
 		}
+		m_currentMousePos = GETCAMERAMANAGER()->GetWindowToWorldPosition(static_cast<float>(MBPE.transX), static_cast<float>(MBPE.transY));
 
-
-		m_currentMousePos.x = static_cast<float>(MBPE.transX) + xOffset;
-		m_currentMousePos.y = static_cast<float>(MBPE.transY) + yOffset;
+		m_currentMousePos.x += xOffset;
+		m_currentMousePos.y += yOffset;
 
 		m_mouseClicked = true;
 	}
