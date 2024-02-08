@@ -20,6 +20,8 @@
 
 #include "HierarchyManager.h"
 #include "Logging/Logger.h"
+#include "Graphics/Text.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -169,19 +171,48 @@ namespace PE
 	{
 		m_parentOrder.clear();
 		m_sceneOrder.clear();
-		for (const EntityID& id : SceneView<EntityDescriptor, Transform>())
+		m_hierarchyOrder.clear();
+		try
 		{
-			// id 0 is default camera, ignore it
-			if (id == 0)
-				continue;
-			// only if it is base layer
-			if (!HasParent(id))
+			for (const auto& layer : LayerView<EntityDescriptor, Transform>(true))
 			{
-				m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+				for (const EntityID& id : InternalView(layer))
+				{
+					// id 0 is default camera, ignore it
+					if (id == 0)
+						continue;
+					// only if it is base layer
+					if (!HasParent(id))
+					{
+						m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+					}
+				}
 			}
+			for (auto [k, v] : m_sceneOrder)
+				m_hierarchyOrder.emplace_back(v);
+
+			m_sceneOrder.clear();
+			for (const auto& layer : LayerView<EntityDescriptor, Transform>())
+			{
+				for (const EntityID& id : InternalView(layer))
+				{
+					// id 0 is default camera, ignore it
+					if (id == 0)
+						continue;
+					// only if it is base layer
+					if (!HasParent(id))
+					{
+						m_sceneOrder[EntityManager::GetInstance().Get<EntityDescriptor>(id).sceneID] = id;
+					}
+				}
+			}
+			for (auto [k, v] : m_sceneOrder)
+				m_parentOrder.emplace_back(v);
 		}
-		for (auto [k,v] : m_sceneOrder)
-			m_parentOrder.emplace_back(v);
+		catch (...)
+		{
+			engine_logger.AddLog(false, "Failed to access entities", __FUNCTION__);
+		}
 	}
 
 	void Hierarchy::UpdateTransform()
@@ -298,7 +329,11 @@ namespace PE
 				if(GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
 					m_renderOrderUI.emplace_back(v);
 			}
-			
+			else if (EntityManager::GetInstance().Has<PE::TextComponent>(v))
+			{
+				if (GETGUISYSTEM()->IsChildedToCanvas(v)) // Check if it's childed to a canvas
+					m_renderOrderUI.emplace_back(v);
+			}
 		}
 		//std::cout << "-- Scene Hierarchy --" << std::endl;
 		//for (auto[k,v] : sceneHierarchy)

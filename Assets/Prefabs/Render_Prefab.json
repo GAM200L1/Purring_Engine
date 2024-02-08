@@ -2,9 +2,7 @@
     "Entity": {
         "components": {
             "EntityDescriptor": {
-                "Prefab Type": "GameObject",
                 "children": [],
-                "isActive": true,
                 "name": "GameObject",
                 "parent": null,
                 "sceneID": 18446744073709551615
@@ -25,11 +23,6 @@
                     "x": -320.0,
                     "y": -320.0
                 },
-                "relativeposition": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "relorientation": 0.0,
                 "width": 10.0
             }
         },

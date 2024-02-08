@@ -98,7 +98,7 @@
                         "isActive": false,
                         "name": "PauseCanvas",
                         "parent": null,
-                        "sceneID": 11
+                        "sceneID": 12
                     },
                     "Transform": {
                         "height": 100.0,
@@ -400,7 +400,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 12
+                        "sceneID": 13
                     },
                     "Transform": {
                         "height": 100.0,
@@ -665,7 +665,7 @@
                         "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
-                        "sceneID": 9
+                        "sceneID": 10
                     },
                     "Transform": {
                         "height": 100.0,
@@ -764,6 +764,7 @@
                                 "LoseCanvas": 37,
                                 "PauseBackGroundCanvas": 13,
                                 "PauseMenuCanvas": 3,
+                                "PhaseBanner": 17,
                                 "Portrait": 47,
                                 "RatPortrait": 53,
                                 "TransitionPanel": 70,
@@ -822,7 +823,7 @@
                         "isActive": false,
                         "name": "HowToPlayCanvas",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 11
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1558,7 +1559,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 16
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3209,7 +3210,7 @@
                         "isActive": false,
                         "name": "AreYouSureRestartCanvas",
                         "parent": null,
-                        "sceneID": 13
+                        "sceneID": 14
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3503,16 +3504,16 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
-                        "name": "UI Object",
+                        "name": "Transition Panel",
                         "parent": 69,
                         "sceneID": 0
                     },
                     "GUIRenderer": {
                         "Color": {
                             "a": 0.9960784316062927,
-                            "b": 0.35686275362968445,
-                            "g": 0.35686275362968445,
-                            "r": 0.35686275362968445
+                            "b": 0.0,
+                            "g": 0.0,
+                            "r": 0.0
                         },
                         "TextureKey": ""
                     },
@@ -3908,7 +3909,7 @@
                         "isActive": true,
                         "name": "Collider",
                         "parent": null,
-                        "sceneID": 77
+                        "sceneID": 94
                     },
                     "Renderer": {
                         "Color": {
@@ -4940,6 +4941,207 @@
                         },
                         "relorientation": 0.0,
                         "width": 123.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 16,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            17
+                        ],
+                        "isActive": true,
+                        "name": "PhaseBannerCanvas",
+                        "parent": null,
+                        "sceneID": 9
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 17,
+                        "Prefab Type": "PhaseBanner",
+                        "children": [],
+                        "isActive": true,
+                        "name": "PhaseBanner",
+                        "parent": 16,
+                        "sceneID": 17
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_1429x415.png"
+                    },
+                    "Transform": {
+                        "height": 400.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 273.00006103515625
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 273.00006103515625
+                        },
+                        "relorientation": 0.0,
+                        "width": 1200.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 71,
+                        "Prefab Type": "Canvas Object",
+                        "children": [],
+                        "isActive": true,
+                        "name": "PhaseBannerCanvas",
+                        "parent": null,
+                        "sceneID": 71
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 94,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            96
+                        ],
+                        "isActive": true,
+                        "name": "Canvas Object",
+                        "parent": null,
+                        "sceneID": 77
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 96,
+                        "Prefab Type": "Text",
+                        "children": [],
+                        "isActive": true,
+                        "name": "FPSTextObject",
+                        "parent": 94,
+                        "sceneID": 96
+                    },
+                    "ScriptComponent": {
+                        "FpsScript": {
+                            "state": 0
+                        }
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                        "HAlignment": 0,
+                        "HOverflow": 0,
+                        "LineSpacing": 1.0,
+                        "Size": 1.2999999523162842,
+                        "Text": "FPS: 100",
+                        "VAlignment": 2,
+                        "VOverflow": 2
+                    },
+                    "Transform": {
+                        "height": 127.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -777.4993896484375,
+                            "y": 472.49993896484375
+                        },
+                        "relativeposition": {
+                            "x": -777.4993896484375,
+                            "y": 472.49993896484375
+                        },
+                        "relorientation": 0.0,
+                        "width": 322.0
                     }
                 },
                 "name": ""
