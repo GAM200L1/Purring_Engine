@@ -94,6 +94,39 @@ namespace PE
 						}
 						ratsPrinted = true;
 				}
+				else
+				{
+					// If rats have already been printed, refresh the m_cachedActiveRats without printing
+					GetRats(id);
+				}
+
+				// Iterate through the cached active rats to check if they are still active
+				for (auto it = m_cachedActiveRats.begin(); it != m_cachedActiveRats.end(); )
+				{
+					EntityID ratId = it->first;
+					bool isActive = false;
+
+					try
+					{
+						// Check if the rat entity is still active
+						isActive = EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive;
+					}
+					catch (...)
+					{
+						std::cout << "rat entity active got error";
+					}
+
+					if (!isActive)
+					{
+						// If the rat is no longer active, erase it from the vector
+						it = m_cachedActiveRats.erase(it);
+					}
+					else
+					{
+						// If the rat is still active, move to the next one
+						++it;
+					}
+				}
 		}
 
 
