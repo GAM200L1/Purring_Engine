@@ -41,9 +41,14 @@ namespace PE
 
 	void PlayerControllerScript::Init(EntityID)
 	{
-		std::srand(std::time(nullptr));
+		std::srand(static_cast<unsigned int>(std::time(nullptr)));
 		m_mouseClicked = false;
 		ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, PlayerControllerScript::OnMouseClick, this)
+
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 	void PlayerControllerScript::Update(EntityID id, float deltaTime)
 	{
@@ -67,6 +72,11 @@ namespace PE
 	void PlayerControllerScript::Destroy(EntityID id)
 	{
 		id;
+
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).StopSound();
+		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
 	void PlayerControllerScript::OnAttach(EntityID id)
