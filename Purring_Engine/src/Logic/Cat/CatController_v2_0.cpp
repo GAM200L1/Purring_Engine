@@ -33,6 +33,7 @@ namespace PE
 
 	void CatController_v2_0::Init(EntityID id)
 	{
+
 		for (EntityID catID : SceneView<ScriptComponent>())
 		{
 			auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
