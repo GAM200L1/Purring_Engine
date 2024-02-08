@@ -26,6 +26,7 @@
 #include "Script.h"
 #include "Events/EventHandler.h"
 #include "Math/MathCustom.h"
+#include "Data/SerializationManager.h"
 
 namespace PE
 {
@@ -139,10 +140,16 @@ namespace PE
 		 \param[in] deltaTime the difference between the current and last frame
 		*************************************************************************************/
 		void MoveTowardsClicked(EntityID id, float deltaTime);
+
+		void PlayFootstepAudio();
 	private:
 		std::map<EntityID, PlayerControllerScriptData> m_ScriptData;
 		vec2 m_currentMousePos;
 		bool m_mouseClicked;
+		SerializationManager m_serializationManager;
+
+		float footstepDelay{0.45f};
+		float footstepTimer{footstepDelay};
 	};
 
 }

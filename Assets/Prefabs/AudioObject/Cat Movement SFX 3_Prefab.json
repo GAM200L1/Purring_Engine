@@ -1,0 +1,19 @@
+{
+    "Entity": {
+        "components": {
+            "AudioComponent": {
+                "audioKey": "../Assets/Audio/sfx_CatMovement_GrassShuffle1.wav",
+                "loop": false
+            },
+            "EntityDescriptor": {
+                "Prefab Type": "Cat Movement SFX 1",
+                "children": [],
+                "isActive": true,
+                "name": "Cat Movement SFX 1",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            }
+        },
+        "name": ""
+    }
+}

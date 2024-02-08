@@ -392,6 +392,7 @@ RTTR_REGISTRATION
         .property("MyID", &PE::HealthBarScript_v2_0_Data::myID)
         .property("FollowObjectID", &PE::HealthBarScript_v2_0_Data::followObjectID)
         .property("FillColor", &PE::HealthBarScript_v2_0_Data::fillColor);
+
 }
 
 PE::CoreApplication::CoreApplication()
@@ -420,6 +421,8 @@ PE::CoreApplication::CoreApplication()
     EntityID uiCameraId{ serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
+
+    
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -441,6 +444,7 @@ void PE::CoreApplication::Run()
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
+    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0,0,0);
     SceneManager::GetInstance().SetStartScene("MainMenu.json"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
@@ -631,4 +635,6 @@ void PE::CoreApplication::InitializeSystems()
     //AddSystem(p_audioManager);
 
     GameStateManager::GetInstance().RegisterButtonFunctions();
+
+
 }
