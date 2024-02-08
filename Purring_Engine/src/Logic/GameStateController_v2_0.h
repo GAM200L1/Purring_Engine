@@ -194,6 +194,12 @@ namespace PE
 		 \param[in]		EntityID so that the function can be called by a button
 		*************************************************************************************/
 		void RestartGame(EntityID);
+		/*!***********************************************************************************
+		 \brief			Gets the current level player is at in the game
+
+		 \param[in]		Current level in the game
+		*************************************************************************************/
+		int GetCurrentLevel() { return m_currentLevel; }
 
 		// ----- Object Helper Functions ----- //
 	private:
