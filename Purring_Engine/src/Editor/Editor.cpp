@@ -3219,6 +3219,9 @@ namespace PE {
 									//std::cout << "CatData_______________________________" << std::endl;
 									if (ImGui::CollapsingHeader("CatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
+										std::vector<std::string> types{ "Grey Cat", "Orange Cat" };
+										std::vector < std::variant < GreyCatAttackVariables, OrangeCatAttackVariables>> variants{ GreyCatAttackVariables(), OrangeCatAttackVariables() };
+
 										rttr::type type = rttr::type::get_by_name("CatScript_v2_0");
 										rttr::instance inst = rttr::instance(it->second);
 										for (auto props : type.get_properties())
@@ -3254,11 +3257,11 @@ namespace PE {
 											}
 											else if (props.get_type().get_name() == "enumPE::EnumCatType")
 											{
-												int val = props.get_value(inst).get_value<int>();
+												int val = it->second.attackVariables.index();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
+												ImGui::Text(types.at(val).c_str());
 												props.set_value(inst, val);
 											}
 											else if (props.get_type().get_name() == "unsignedint")
@@ -3270,14 +3273,9 @@ namespace PE {
 												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
 												props.set_value(inst, val);
 											}
-											/*else if (props.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
-											{
-											}
-											else if (props.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
-											{
-											}*/
 											else if (props.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
 											{
+												
 												ImGui::Separator();
 												int num{};
 												ImGui::Text("Add Animation state"); ImGui::SameLine();
@@ -3357,9 +3355,7 @@ namespace PE {
 												// display option to swap the types
 												ImGui::Separator();
 
-												std::vector<std::string> types{ "GreyCat", "OrangeCat" };
-												std::vector < std::variant < GreyCatAttackVariables, OrangeCatAttackVariables>> variants{ GreyCatAttackVariables(), OrangeCatAttackVariables() };
-
+												
 												if (ImGui::BeginCombo(("##" + types[it->second.attackVariables.index()]).c_str(), types[it->second.attackVariables.index()].c_str()))
 												{
 													int cnt{ 0 };
@@ -3383,18 +3379,25 @@ namespace PE {
 												if (!it->second.attackVariables.index())
 												{ 
 													GreyCatAttackVariables& var = std::get<GreyCatAttackVariables>(it->second.attackVariables);
-													
+													ImGui::Text("Damage:"); ImGui::SameLine(); ImGui::InputInt("##GCAdamage", &(var.damage));
+													ImGui::Text("Bullet Delay:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.bulletDelay));
+													ImGui::Text("Bullet Range:"); ImGui::SameLine(); ImGui::InputFloat("##GCArange", &(var.bulletRange));
+													ImGui::Text("Bullet lifetime:"); ImGui::SameLine(); ImGui::InputFloat("##GCAlife", &(var.bulletLifeTime));
+													ImGui::Text("Bullet force:"); ImGui::SameLine(); ImGui::InputFloat("##GCAforce", &(var.bulletForce));
+													ImGui::Text("Bullet Anim Index:"); ImGui::SameLine(); ImGui::InputInt("##GCAindex", reinterpret_cast<int*>(&(var.bulletFireAnimationIndex)));
+
 												}
 												else
 												{
 													OrangeCatAttackVariables& var = std::get<OrangeCatAttackVariables>(it->second.attackVariables);
+													ImGui::Text("Damage:"); ImGui::SameLine(); ImGui::InputInt("##OCAdamage", &(var.damage));
+													ImGui::Text("Stomp Radius:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stompRadius));
+													ImGui::Text("Stomp Lifetime:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stompLifeTime));
+													ImGui::Text("Stomp Force:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stomopForce));
 
 												}
 											}
-											else
-											{
-												std::cout << props.get_type().get_name() << std::endl;
-											}
+										
 										}
 									}
 								}

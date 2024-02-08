@@ -145,7 +145,7 @@
                                 "animationStates": {},
                                 "attackVariants": {
                                     "OrangeCatAttackVariables": {
-                                        "damage": 0,
+                                        "damage": 5,
                                         "seismicID": 0,
                                         "stompForce": 1000.0,
                                         "stompLifetime": 1.0,
