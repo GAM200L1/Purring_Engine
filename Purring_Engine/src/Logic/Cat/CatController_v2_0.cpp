@@ -16,6 +16,8 @@
 #include "prpch.h"
 
 #include "CatController_v2_0.h"
+#include "CatHelperFunctions.h"
+
 #include "ECS/SceneView.h"
 #include "Logic/LogicSystem.h"
 
@@ -62,25 +64,25 @@ namespace PE
 			}
 		}
 
-		if (countCat != m_currentCats.size())
-		{
-			m_currentCats.clear();
-			for (EntityID catID : SceneView<ScriptComponent>())
-			{
-				auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
-				//if (IsCat(catID))
-				for (auto& [scriptname, state] : r_scripts)
-				{
-					if (scriptname == "CatScript_v2_0")
-					{
-						//std::pair<EntityID, EnumCatType> pair{ catID, GREYCAT }; //*GETSCRIPTDATA(CatScript_v2_0, catID).catType };
-						std::pair<EntityID, EnumCatType> pair{ catID, *GETSCRIPTDATA(CatScript_v2_0, catID).catType };
-						m_currentCats.push_back(pair);
-					}
+		//if (countCat != m_currentCats.size())
+		//{
+		//	m_currentCats.clear();
+		//	for (EntityID catID : SceneView<ScriptComponent>())
+		//	{
+		//		auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
+		//		//if (IsCat(catID))
+		//		for (auto& [scriptname, state] : r_scripts)
+		//		{
+		//			if (scriptname == "CatScript_v2_0")
+		//			{
+		//				//std::pair<EntityID, EnumCatType> pair{ catID, GREYCAT }; //*GETSCRIPTDATA(CatScript_v2_0, catID).catType };
+		//				std::pair<EntityID, EnumCatType> pair{ catID, *GETSCRIPTDATA(CatScript_v2_0, catID).catType };
+		//				m_currentCats.push_back(pair);
+		//			}
 
-				}
-			}
-		}
+		//		}
+		//	}
+		//}
 	}
 
 	void CatController_v2_0::OnAttach(EntityID id)
@@ -110,6 +112,17 @@ namespace PE
 	void CatController_v2_0::CacheCurrentCats()
 	{
 		m_cacheCats = m_currentCats;
+	}
+
+	void CatController_v2_0::KillCat(EntityID id)
+	{
+		// sets cat to inactive to kill it
+		CatHelperFunctions::ToggleEntity(id, false);
+	}
+
+	bool CatController_v2_0::IsActiveCat(EntityID id)
+	{
+
 	}
 
 	int CatController_v2_0::GetCurrentMovementEnergy(EntityID catID)

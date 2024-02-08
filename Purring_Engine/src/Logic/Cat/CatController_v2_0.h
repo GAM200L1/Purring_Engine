@@ -49,7 +49,11 @@ namespace PE
 		virtual void OnDetach(EntityID id);
 
 		void CacheCurrentCats();
+		
+		void KillCat(EntityID id);
 
+		bool IsActiveCat(EntityID id);
+		
 		// getters
 		int GetCurrentMovementEnergy(EntityID id);
 		int GetMaxMovementEnergy(EntityID id);
