@@ -97,6 +97,7 @@
 #include "Logic/Rat/RatScript_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
+#include "Logic/IntroCutsceneController.h"
 
 
 
@@ -107,6 +108,8 @@
 #include "SceneManager/SceneManager.h"
 
 #include "Hierarchy/HierarchyManager.h"
+
+#include "Layers/LayerManager.h"
 
 // Testing
 Logger engine_logger = Logger("ENGINE");
@@ -145,7 +148,8 @@ RTTR_REGISTRATION
         .property_readonly("Entity ID", &PE::EntityDescriptor::oldID)
         .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
-        .property("Layer", &PE::EntityDescriptor::layer)
+        .property("Render Layer", &PE::EntityDescriptor::layer)
+        .property("Interaction Layer", &PE::EntityDescriptor::interactionLayer)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
         .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 
@@ -268,7 +272,13 @@ RTTR_REGISTRATION
         .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
-        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
+        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);    
+    
+    rttr::registration::class_<PE::IntroCutsceneControllerData>("IntroCutsceneController")
+        .property("CutsceneObject", &PE::IntroCutsceneControllerData::CutsceneObject)
+        .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
+        .property("Text", &PE::IntroCutsceneControllerData::Text)
+        .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
@@ -343,6 +353,7 @@ RTTR_REGISTRATION
         .property("catType", &PE::CatScript_v2_0Data::catType)
         .property("toggleDeathAnimation", &PE::CatScript_v2_0Data::toggleDeathAnimation)
         .property("finishedExecution", &PE::CatScript_v2_0Data::finishedExecution)
+        .property("isCaged", &PE::CatScript_v2_0Data::isCaged)
         .property("catMaxMovementEnergy", &PE::CatScript_v2_0Data::catMaxMovementEnergy)
         .property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
         .property("minDistance", &PE::CatScript_v2_0Data::minDistance)
@@ -431,6 +442,8 @@ PE::CoreApplication::CoreApplication()
     EntityID uiCameraId{ serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
+
+    
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -445,10 +458,14 @@ void PE::CoreApplication::Run()
 
     SerializationManager serializationManager;
 
+    // Load default assets
+    ResourceManager::GetInstance().LoadDefaultAssets();
+
     // Set start scene
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
+    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0,0,0);
     SceneManager::GetInstance().SetStartScene("MainMenu.json"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
@@ -493,21 +510,42 @@ void PE::CoreApplication::Run()
         TimeManager::GetInstance().StartAccumulator();
         while (TimeManager::GetInstance().UpdateAccumulator())
         { 
-            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            if (!skipFrame)
             {
-                TimeManager::GetInstance().SystemStartFrame(systemID);
-                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
-                TimeManager::GetInstance().SystemEndFrame(systemID);
+                for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+                {
+                    TimeManager::GetInstance().SystemStartFrame(systemID);
+                    m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                    TimeManager::GetInstance().SystemEndFrame(systemID);
+                }
             }
             TimeManager::GetInstance().EndAccumulator();
         }
 
         Hierarchy::GetInstance().Update();
+        
+        
+        //std::cout << Graphics::CameraManager::GetUiCameraId() << std::endl;
 
         // Update Graphics with variable timestep
+
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
         m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
         TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
+
+        skipFrame = false;
+
+        // if the scene is being loaded, skip the rest of the frame
+        if (SceneManager::GetInstance().IsLoadingScene())
+        {
+            SceneManager::GetInstance().LoadSceneToLoad();
+            skipFrame = true;
+        }
+        else if (SceneManager::GetInstance().IsRestartingScene())
+        {
+            SceneManager::GetInstance().RestartScene(SceneManager::GetInstance().GetActiveScene());
+            skipFrame = true;
+        }
 
         // Flush log entries
         engine_logger.FlushLog();
@@ -618,4 +656,6 @@ void PE::CoreApplication::InitializeSystems()
     //AddSystem(p_audioManager);
 
     GameStateManager::GetInstance().RegisterButtonFunctions();
+
+
 }

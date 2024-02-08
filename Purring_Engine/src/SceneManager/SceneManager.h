@@ -42,11 +42,16 @@ namespace PE
         void SetActiveScene(std::string const& r_sceneName);
 
         /*!***********************************************************************************
+        \brief Loads sceneToLoad.
+        *************************************************************************************/
+        void LoadSceneToLoad();
+
+        /*!***********************************************************************************
         \brief Loads a scene.
 
         \param[in] r_sceneName Name of the scene to be loaded.
         *************************************************************************************/
-        void LoadScene(std::string const& r_sceneName);
+        void LoadSceneToLoad(std::string const& r_scenePath);
 
         /*!***********************************************************************************
         \brief Loads a scene from a absolute path.
@@ -56,6 +61,13 @@ namespace PE
         void LoadSceneFromPath(std::string const& r_scenePath);
 
         /*!***********************************************************************************
+        \brief Sets the scene to be loaded.
+
+        \param[in] r_scenePath Path of the scene to be loaded.
+        *************************************************************************************/
+        void LoadScene(std::string const& r_scenePath);
+
+        /*!***********************************************************************************
         \brief Restarts the scene with reloading resources.
 
         \param[in] r_scenePath Path of the scene to be loaded.
@@ -63,7 +75,7 @@ namespace PE
         void RestartScene(std::string const& r_scenePath);
 
         /*!***********************************************************************************
-        \brief Over load of Restart Scene without a filepath
+        \brief Sets restarting scene boolean to true.
         *************************************************************************************/
         void RestartScene();
 
@@ -87,6 +99,21 @@ namespace PE
         *************************************************************************************/
         inline std::string const& GetActiveScene() const { return m_activeScene; }
 
+        /*!***********************************************************************************
+        \brief Gets the name of the scene to load.
+        *************************************************************************************/
+        inline std::string const& GetSceneToLoad() const { return m_sceneToLoad; }
+
+        /*!***********************************************************************************
+        \brief Check if there is a scene to be loaded
+        *************************************************************************************/
+        inline bool IsLoadingScene() const { return m_loadingScene; }
+
+        /*!***********************************************************************************
+        \brief Check if the scene is restarting.
+        *************************************************************************************/
+        inline bool IsRestartingScene() const { return m_restartingScene; }
+
     private:
         /*!***********************************************************************************
         \brief Default constructor.
@@ -96,5 +123,8 @@ namespace PE
         std::string m_sceneDirectory;
         std::string m_startScene;
         std::string m_activeScene{ "DefaultScene.json" };
+        std::string m_sceneToLoad;
+        bool m_loadingScene{ false };
+        bool m_restartingScene{ false };
     };
 }

@@ -22,6 +22,7 @@
 #include "Hierarchy/HierarchyManager.h"
 #include "Logic/LogicSystem.h"
 #include "Graphics/CameraManager.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -49,21 +50,29 @@ namespace PE
 		m_activeScene = r_sceneName;
     }
 
-    void SceneManager::LoadScene(std::string const& r_sceneName)
+    void SceneManager::LoadSceneToLoad()
     {
         // check if scene is already loaded
-        if (r_sceneName == m_activeScene)
+        if (m_sceneToLoad == m_activeScene)
         {
 			RestartScene(m_activeScene);
+            m_loadingScene = false;
 			return;
 		}
 
         // set active scene
-        SetActiveScene(r_sceneName);
+        SetActiveScene(m_sceneToLoad);
 
 		// load scene from path
-		LoadSceneFromPath(m_sceneDirectory + r_sceneName);
+		LoadSceneFromPath(m_sceneDirectory + m_sceneToLoad);
+        m_loadingScene = false;
 	}
+
+    void SceneManager::LoadSceneToLoad(std::string const& r_scenePath)
+    {
+        m_sceneToLoad = r_scenePath;
+        LoadSceneToLoad();
+    }
 
     void SceneManager::LoadSceneFromPath(std::string const& r_scenePath)
     {
@@ -99,6 +108,12 @@ namespace PE
         ResourceManager::GetInstance().LoadAllResources();
     }
 
+    void SceneManager::LoadScene(std::string const& r_scenePath)
+    {
+		m_sceneToLoad = r_scenePath;
+		m_loadingScene = true;
+	}
+
     void SceneManager::RestartScene(std::string const& r_scenePath)
     {
         // delete all objects
@@ -127,11 +142,12 @@ namespace PE
             std::cerr << "Could not open the file for reading: " << filepath << std::endl;
         }
 
+        m_restartingScene = false;
     }
 
     void SceneManager::RestartScene()
     {
-        RestartScene(m_activeScene);
+        m_restartingScene = true;
     }
 
     void SceneManager::DeleteObjects()
@@ -147,6 +163,8 @@ namespace PE
                 EntityManager::GetInstance().RemoveEntity(n);
             }
         }
+
         Hierarchy::GetInstance().Update();
+        //LayerManager::GetInstance().ResetLayerCache();
     }
 }

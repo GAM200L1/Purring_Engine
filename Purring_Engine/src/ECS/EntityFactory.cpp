@@ -22,6 +22,7 @@
 #include "AudioManager/AudioComponent.h"
 #include "Hierarchy/HierarchyManager.h"
 #include "GUI/Canvas.h"
+#include "Layers/LayerManager.h"
 extern Logger engine_logger;
 
 
@@ -363,5 +364,6 @@ namespace PE
 			}
 		}
 		p_entityManager->UpdateVectors(id);
+		LayerManager::GetInstance().UpdateEntity(id);
 	}
 }

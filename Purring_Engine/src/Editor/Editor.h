@@ -245,6 +245,8 @@ namespace PE {
 		*************************************************************************************/
 		void ShowApplyWindow(bool*p_active);
 
+		void ShowLayerWindow(bool* p_active);
+
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
@@ -265,6 +267,7 @@ namespace PE {
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Blue();
+
 
 		std::string ToLower(const std::string& str);
 		bool CaseInsensitiveFind(const std::string& str, const std::string& toFind);
@@ -348,6 +351,10 @@ namespace PE {
 		*************************************************************************************/
 		EntityID CheckCanvas();
 
+		void SaveAndPlayScene();
+
+		void StopAndLoadScene();
+
 	private:
 		enum class GuiStyle
 		{
@@ -386,6 +393,7 @@ namespace PE {
 		bool m_firstLaunch;
 		bool m_showGameView;
 		bool m_showAnimationWindow;
+		bool m_showLayerWindow;
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;
@@ -418,12 +426,16 @@ namespace PE {
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
 		std::pair<std::string, int> m_entityToModify;
+		std::pair<std::string, std::string> m_animationToModify;
 		static bool m_fileDragged;
 
 		// variables for prefab editor
 		std::string prefabFP;
 		std::string prefabTP;
 		std::vector<ComponentID> prefabCID;
+
+		// variable for scene loading
+		std::string m_savedScene;
 	};
 }
 

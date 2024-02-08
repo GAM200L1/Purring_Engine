@@ -30,6 +30,7 @@
 #include "GreyCatAttackStates_v2_0.h"
 #include "CatPlanningState_v2_0.h"
 #include "CatHelperFunctions.h"
+#include "CatController_v2_0.h"
 
 #include "ECS/EntityFactory.h"
 
@@ -113,10 +114,10 @@ namespace PE
 			PlayAnimation(id, "Death");
 			// TODO: play death audio
 
-			
+			// @TODO: UNCOMMENT
 			//if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
-				CatHelperFunctions::ToggleEntity(id, false);
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->RemoveCatFromVector(id);
 				m_scriptData[id].toggleDeathAnimation = false;
 				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
 					p_gsc->LoseGame();

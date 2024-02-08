@@ -26,6 +26,7 @@
 #include "Physics/RigidBody.h"
 #include "Graphics/Renderer.h"
 #include "Graphics/Camera.h"
+#include "Graphics/Text.h"
 #include "Prefabs.h"
 #include "Singleton.h"
 #include "Animation/Animation.h"
@@ -367,6 +368,7 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(ret);
+		p_entityManager->AddHelper(ret);
 		return ret;
 	}
 
@@ -384,6 +386,7 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(ret);
+		p_entityManager->AddHelper(ret);
 		return ret;
 	}
 
@@ -406,6 +409,8 @@ namespace PE
 			(), ...);
 		}
 		p_entityManager->UpdateVectors(id);
+		p_entityManager->RemoveHelper(ret);
+		p_entityManager->AddHelper(ret);
 	}
 
 }

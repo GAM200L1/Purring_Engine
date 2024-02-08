@@ -20,6 +20,7 @@
 #include "Events/EventHandler.h"
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
+#include "Cat/CatController_v2_0.h"
 
 namespace PE {
 
@@ -28,7 +29,7 @@ namespace PE {
 		EntityID DeploymentArea;
 		EntityID NoGoArea;
 		EntityID FollowingTextureObject;
-		std::vector<EntityID> AddedCats;
+		std::vector<std::pair<EntityID,EnumCatType>> AddedCats;
 
 		int mouseClickEventID;
 	};
@@ -105,6 +106,8 @@ namespace PE {
 		EntityID m_currentDeploymentScriptEntityID;
 		bool m_inNoGoArea;
 		int m_catPlaced{};
+		CatController_v2_0* m_catController;
+		GameStateController_v2_0* m_gameStateController;
 	};
 
 

@@ -85,20 +85,20 @@ namespace PE
 
 		void RatController_v2_0::Update(EntityID id, float deltaTime)
 		{
-				if (!ratsPrinted)
-				{
-						auto const& myVec{ GetRats(id) };
-						for (auto const& [ratId, rat] : myVec)
-						{
-								std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
-						}
-						ratsPrinted = true;
-				}
-				else
-				{
-					// If rats have already been printed, refresh the m_cachedActiveRats without printing
-					GetRats(id);
-				}
+				///*if (!ratsPrinted)
+				//{
+				//		auto const& myVec{ GetRats(id) };
+				//		for (auto const& [ratId, rat] : myVec)
+				//		{
+				//				std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
+				//		}
+				//		ratsPrinted = true;
+				//}
+				//else
+				//{
+				//	 If rats have already been printed, refresh the m_cachedActiveRats without printing
+				//	GetRats(id);
+				//}
 
 				// Iterate through the cached active rats to check if they are still active
 				for (auto it = m_cachedActiveRats.begin(); it != m_cachedActiveRats.end(); )
