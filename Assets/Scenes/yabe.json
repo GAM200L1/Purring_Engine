@@ -59,21 +59,20 @@
                                 },
                                 "catCurrentEnergy": 21,
                                 "catID": 0,
-                                "catIsDead": false,
                                 "catMaxMovementEnergy": 21,
                                 "catType": 1,
                                 "currentPositionIndex": 0,
                                 "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isMainCat": false,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
                                 "nodeSize": 10.0,
                                 "pathQuads": [],
                                 "shouldChangeState": false,
-                                "timeBeforeChangingState": 0.0
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
                             },
                             "state": 0
                         }
@@ -99,6 +98,23 @@
         {
             "Entity": {
                 "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
                     "EntityDescriptor": {
                         "Layer": 0,
                         "Old ID": 1,
@@ -117,6 +133,50 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "NewState": "",
+                                    "NewState\u0001": "",
+                                    "NewState\u0001\u0001": "",
+                                    "NewState\u0001\u0001\u0001": ""
+                                },
+                                "attackVariants": {
+                                    "OrangeCatAttackVariables": {
+                                        "damage": 5,
+                                        "seismicID": 0,
+                                        "stompForce": 1000.0,
+                                        "stompLifetime": 1.0,
+                                        "stompRadius": 20.0,
+                                        "telegraphID": 0
+                                    }
+                                },
+                                "catCurrentEnergy": 21,
+                                "catID": 0,
+                                "catMaxMovementEnergy": 21,
+                                "catType": 1,
+                                "currentPositionIndex": 0,
+                                "delaySet": false,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "pathQuads": [],
+                                "shouldChangeState": false,
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
+                            },
+                            "state": 0
+                        }
                     },
                     "Transform": {
                         "height": 100.0,
