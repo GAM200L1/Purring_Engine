@@ -245,6 +245,8 @@ namespace PE {
 		*************************************************************************************/
 		void ShowApplyWindow(bool*p_active);
 
+		void ShowLayerWindow(bool* p_active);
+
 		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
@@ -265,6 +267,7 @@ namespace PE {
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Blue();
+
 
 		std::string ToLower(const std::string& str);
 		bool CaseInsensitiveFind(const std::string& str, const std::string& toFind);
@@ -390,6 +393,7 @@ namespace PE {
 		bool m_firstLaunch;
 		bool m_showGameView;
 		bool m_showAnimationWindow;
+		bool m_showLayerWindow;
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;

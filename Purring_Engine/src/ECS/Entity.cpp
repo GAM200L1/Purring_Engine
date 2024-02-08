@@ -21,6 +21,7 @@
 #include "Logging/Logger.h"
 #include "EntityFactory.h"
 #include "Hierarchy/HierarchyManager.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -125,6 +126,7 @@ namespace PE
 		// if you new at an existing region of allocated memory, and you specify where, like in this case
 		// it will call the constructor at this position instead  of allocating more memory
 		++(m_componentPools[r_componentID]->size);
+		LayerManager::GetInstance().AddEntity(r_id);
 	}
 
 	const ComponentPool* EntityManager::GetComponentPoolPointer(const ComponentID& r_component) const
@@ -173,6 +175,7 @@ namespace PE
 				
 			}
 			Hierarchy::GetInstance().DetachChild(id);
+			LayerManager::GetInstance().RemoveEntity(id);
 			for (const ComponentID& r_pool : GetComponentIDs(id))
 			{
 				m_componentPools[r_pool]->Remove(id);
@@ -204,6 +207,16 @@ namespace PE
 		}
 	}
 
+	void EntityManager::AddHelper(const EntityID& r_id)
+	{
+		LayerManager::GetInstance().AddEntity(r_id);
+	}
+
+	void EntityManager::RemoveHelper(const EntityID& r_id)
+	{
+		LayerManager::GetInstance().RemoveEntity(r_id);
+	}
+
 	nlohmann::json EntityDescriptor::ToJson(size_t id) const
 	{
 		UNREFERENCED_PARAMETER(id);
@@ -226,6 +239,7 @@ namespace PE
 
 		j["Prefab Type"] = prefabType;
 		j["Layer"] = layer;
+		j["InteractionLayer"] = interactionLayer;
 		j["Old ID"] = oldID;
 
 		return j;
@@ -265,6 +279,10 @@ namespace PE
 		if (j.contains("Layer"))
 		{
 			desc.layer = j["Layer"].get<int>();
+		}
+		if (j.contains("InteractionLayer"))
+		{
+			desc.interactionLayer = j["InteractionLayer"].get<int>();
 		}
 
 		if (j.contains("Old ID"))

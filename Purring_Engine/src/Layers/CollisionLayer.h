@@ -16,6 +16,7 @@
 #include "Singleton.h"
 #include <bitset>
 #include  <string>
+#include "Data/json.hpp"
 
 namespace PE
 {
@@ -74,6 +75,8 @@ namespace PE
          \param[in] collisionLayerName Name of the collision layer to set.
         *************************************************************************************/
         void SetCollisionLayerName(std::string collisionLayerName);
+
+        nlohmann::json ToJson() const;
 
         unsigned m_collisionLayerIndex;
         std::string m_collisionLayerName;

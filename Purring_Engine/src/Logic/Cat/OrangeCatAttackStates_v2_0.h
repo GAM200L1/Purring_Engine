@@ -25,9 +25,10 @@ namespace PE
 {
 	struct OrangeCatAttackVariables
 	{
-		int damage;
+		EntityID seismicID{ 0 }; // id of the seismic attack
+		EntityID telegraphID{ 0 }; // id of the UI
 
-		EntityID telegraphID; // id of the UI
+		int damage{ 0 };
 
 		// projectile variables
 		float stompRadius{ 20.f };
@@ -39,7 +40,7 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~OrangeCatAttack_v2_0PLAN() { p_data = nullptr; }
+		virtual ~OrangeCatAttack_v2_0PLAN() { p_attackData = nullptr; }
 
 		virtual void Enter(EntityID id);
 
@@ -51,10 +52,12 @@ namespace PE
 
 		virtual void ResetSelection(EntityID id);
 
+		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
+
 	private:
 		
 		// data
-		OrangeCatAttackVariables* p_data;
+		OrangeCatAttackVariables* p_attackData;
 
 		// Telegraph colors
 		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
@@ -77,7 +80,7 @@ namespace PE
 	{
 	public:
 		// ----- Destructor ----- //
-		virtual ~OrangeCatAttack_v2_0EXECUTE() { p_data = nullptr; }
+		virtual ~OrangeCatAttack_v2_0EXECUTE() { p_attackData = nullptr; }
 
 		virtual void StateEnter(EntityID id);
 
@@ -90,7 +93,7 @@ namespace PE
 		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
-		OrangeCatAttackVariables* p_data;
+		OrangeCatAttackVariables* p_attackData;
 
 		int m_collisionEventListener;
 

@@ -1,52 +1,33 @@
 {
     "Entity": {
-        "components": {
-            "EntityDescriptor": {
-                "Layer": 0,
-                "Old ID": 18446744073709551615,
-                "Prefab Type": "Text",
-                "children": [],
-                "isActive": true,
-                "name": "Text",
-                "parent": null,
-                "sceneID": 18446744073709551615
-            },
-            "ScriptComponent": {
-                "FpsScript": {
-                    "state": 0
-                }
-            },
-            "TextComponent": {
-                "Color": {
-                    "w": 1.0,
-                    "x": 0.0,
-                    "y": 0.0,
-                    "z": 0.0
+                "components": {
+		    "EntityDescriptor": {
+                        "children": [],
+                        "name": "Text",
+                        "parent": null,
+                        "sceneID": 18446744073709551615
+                    },
+                    "TextComponent": {
+                        "Color": {
+                            "w": 1.0,
+                            "x": 0.0,
+                            "y": 0.0,
+                            "z": 0.0
+                        },
+                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
+                        "Size": 1.0,
+                        "Text": "Text here"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "width": 100.0
+                    }
                 },
-                "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
-                "HAlignment": 0,
-                "HOverflow": 0,
-                "LineSpacing": 1.0,
-                "Size": 1.2999999523162842,
-                "Text": "FPS: 100",
-                "VAlignment": 2,
-                "VOverflow": 2
-            },
-            "Transform": {
-                "height": 127.0,
-                "orientation": 0.0,
-                "position": {
-                    "x": -777.4993896484375,
-                    "y": 472.49993896484375
-                },
-                "relativeposition": {
-                    "x": -777.4993896484375,
-                    "y": 472.49993896484375
-                },
-                "relorientation": 0.0,
-                "width": 322.0
+                "name": ""
             }
-        },
-        "name": ""
-    }
 }

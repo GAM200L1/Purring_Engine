@@ -23,6 +23,8 @@
 #include "Graphics/Renderer.h"
 #include "ResourceManager/ResourceManager.h"
 #include "Animation.h"
+#include "GameStateManager.h"
+#include "Layers/LayerManager.h"
 #include "PauseManager.h"
 
 #ifndef GAMERELEASE
@@ -340,41 +342,47 @@ namespace PE
 	{
 		AnimationFrame p_currentFrame;
 
+
 #ifndef GAMERELEASE
 		if (Editor::GetInstance().IsRunTime())
 		{
-#endif
-			for (EntityID const& id : SceneView<AnimationComponent>())
+#endif		
+
+			for (const auto& layer : LayerView<AnimationComponent>())
 			{
-				// update animation and get current frame
-				p_currentFrame = UpdateAnimation(id, deltaTime);
-
-				std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
-
-				// update entity based on frame data
-				// in the future probably check for bools in animation component, then update data accordingly
-				// check if theres animation
-				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
+				for (EntityID const& id : InternalView(layer))
 				{
-					if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
+					// update animation and get current frame
+					p_currentFrame = UpdateAnimation(id, deltaTime);
+
+					std::shared_ptr<Animation> p_animation{ ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID()) };
+
+					// update entity based on frame data
+					// in the future probably check for bools in animation component, then update data accordingly
+					// check if theres animation
+					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != "")
 					{
-						// spritesheet animation
-						if (p_animation->IsSpriteSheet())
+						if (EntityManager::GetInstance().Has<Graphics::Renderer>(id))
 						{
-							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
-							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
-							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
-						}
-						else // texture key animation
-						{
-							EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
+							// spritesheet animation
+							if (p_animation->IsSpriteSheet())
+							{
+								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_animation->GetSpriteSheetKey());
+								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMin(p_currentFrame.m_minUV);
+								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetUVCoordinatesMax(p_currentFrame.m_maxUV);
+							}
+							else // texture key animation
+							{
+								EntityManager::GetInstance().Get<Graphics::Renderer>(id).SetTextureKey(p_currentFrame.m_textureKey);
+							}
 						}
 					}
 				}
-			}
+
 #ifndef GAMERELEASE
-		}
+			}
 #endif
+		}
 	}
 
 	void AnimationManager::DestroySystem()

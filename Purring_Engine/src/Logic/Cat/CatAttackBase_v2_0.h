@@ -20,7 +20,7 @@ namespace PE
 {
 	struct CatAttackBase_v2_0
 	{
-		~CatAttackBase_v2_0() {}
+		virtual ~CatAttackBase_v2_0() {}
 
 		virtual void Enter(EntityID id) = 0;
 
@@ -31,5 +31,6 @@ namespace PE
 		virtual void Exit(EntityID id) = 0;
 
 		virtual void ResetSelection(EntityID id) = 0;
+		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected) = 0;
 	};
 }

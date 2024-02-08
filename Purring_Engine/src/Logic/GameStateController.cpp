@@ -36,6 +36,7 @@
 #include "Graphics/Text.h"
 #include "CatScript.h"
 #include "RatScript.h"
+#include "Layers/LayerManager.h"
 
 # define M_PI           3.14159265358979323846 
 
@@ -540,33 +541,36 @@ namespace PE
 	{
 		if (!m_finishExecution)
 		{
-			for (EntityID scriptID : SceneView<ScriptComponent>())
+			for (const auto& layer : LayerView<ScriptComponent>())
 			{
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(scriptID).isActive) { continue; }
-				if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
+				for (EntityID scriptID : InternalView(layer))
 				{
-					RatScriptData* p_ratScript = GETSCRIPTDATA(RatScript, scriptID);
-					if (!p_ratScript->finishedExecution)
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(scriptID).isActive) { continue; }
+					if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("RatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
 					{
-						m_finishExecution = false;
-						break;
+						RatScriptData* p_ratScript = GETSCRIPTDATA(RatScript, scriptID);
+						if (!p_ratScript->finishedExecution)
+						{
+							m_finishExecution = false;
+							break;
+						}
+						else
+						{
+							m_finishExecution = true;
+						}
 					}
-					else
+					else if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
 					{
-						m_finishExecution = true;
-					}
-				}
-				else if (EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.find("CatScript") != EntityManager::GetInstance().Get<ScriptComponent>(scriptID).m_scriptKeys.end())
-				{
-					CatScriptData* p_catScript = GETSCRIPTDATA(CatScript, scriptID);
-					if (!p_catScript->finishedExecution)
-					{
-						m_finishExecution = false;
-						break;
-					}
-					else
-					{
-						m_finishExecution = true;
+						CatScriptData* p_catScript = GETSCRIPTDATA(CatScript, scriptID);
+						if (!p_catScript->finishedExecution)
+						{
+							m_finishExecution = false;
+							break;
+						}
+						else
+						{
+							m_finishExecution = true;
+						}
 					}
 				}
 			}

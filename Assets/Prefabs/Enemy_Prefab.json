@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AnimationComponent": {
-                "CurrentAnimationID": "ratAttack"
+                "CurrentAnimationIndex": "ratAttack"
             },
             "EntityDescriptor": {
                 "children": [],

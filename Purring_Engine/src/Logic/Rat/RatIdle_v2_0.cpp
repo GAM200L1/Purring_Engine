@@ -21,12 +21,21 @@ namespace PE
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                   // Get GSM instance
 
+
+        m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatIdle_v2_0::OnTriggerEnterAndStay, this);
+        m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatIdle_v2_0::OnTriggerEnterAndStay, this);
+        m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatIdle_v2_0::OnTriggerExit, this);
+
         // ----- Reset -----
         if (m_type == RatType::PATROL)
         {
             InitializePatrolPoints();                                                               // Initialize patrol points if the rat type is PATROL
         }
-       // EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);           // Reset Rat animaition to first frame.
+
+        if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+        {
+            EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);           // Reset Rat animaition to first frame.
+        }
 
         // Position the ratTelegraph entity where the said rat is.
         RatScript_v2_0::PositionEntity(p_data->ratTelegraphID, EntityManager::GetInstance().Get<PE::Transform>(id).position);
@@ -98,22 +107,38 @@ namespace PE
 
         //gameStateController->currentState = GameStates_v2_0::EXECUTE;
 
-        m_type = RatType::PATROL;
-
-        switch (m_type)
+        if (gameStateController->currentState == GameStates_v2_0::EXECUTE)
         {
-        case RatType::IDLE:
-            // Idle logic doing nothing
+            switch (m_type)
+            {
+            case RatType::IDLE:
+                // Idle logic doing nothing
 
-            std::cout << "Idle";
-            break;
-        case RatType::PATROL:
-            std::cout << "Patrolling Update\n";
-            PatrolLogic(id, deltaTime);
-            break;
+                //std::cout << "Idle";
+                break;
+            case RatType::PATROL:
+                //std::cout << "Patrolling Update\n";
+                PatrolLogic(id, deltaTime);
+                break;
+            default: break;
+            }
         }
-
-
+        else if(gameStateController->currentState == GameStates_v2_0::PLANNING)
+        {
+            switch (m_type)
+            {
+            case RatType::IDLE:
+            case RatType::PATROL:
+                // Check if any cats have entered or exited
+                // the rat's detection range and change state accordingly
+                if (StateJustChanged()) 
+                { 
+                    CheckIfShouldChangeStates(); 
+                }
+                break;
+            default: break;
+            }
+        }
     }
 
     void RatIdle_v2_0::PatrolLogic(EntityID id, float deltaTime)
@@ -125,14 +150,14 @@ namespace PE
 
         if (HasReachedDestination(id, currentTarget))
         {
-            std::cout << "Reached patrol point index: " << p_data->patrolIndex << std::endl;
+            //std::cout << "Reached patrol point index: " << p_data->patrolIndex << std::endl;
 
             if (p_data->returnToFirstPoint)
             {
                 p_data->patrolIndex++;
                 if (p_data->patrolIndex >= p_data->patrolPoints.size())
                 {
-                    p_data->patrolIndex = p_data->patrolPoints.size() - 2;
+                    p_data->patrolIndex = static_cast<int>(p_data->patrolPoints.size()) - 2;
                     p_data->returnToFirstPoint = false;
                 }
             }
@@ -147,9 +172,19 @@ namespace PE
             }
         }
 
-        const Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
-        std::cout << "Rat Position: X=" << ratTransform.position.x << ", Y=" << ratTransform.position.y << std::endl;
+        //const Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
+        //std::cout << "Rat Position: X=" << ratTransform.position.x << ", Y=" << ratTransform.position.y << std::endl;
     }
+
+
+    void RatIdle_v2_0::StateCleanUp()
+    {
+        // Unsubscribe from events
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
+    }
+
 
     void RatIdle_v2_0::MoveTowards(EntityID id, const vec2& target, float deltaTime)
     {
@@ -215,10 +250,90 @@ namespace PE
         RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false);
         RatScript_v2_0::ToggleEntity(p_data->redTelegraphEntityID, false);
         RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
-        EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(false);
+
+        if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+            EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(false);
 
         gameStateController = nullptr;
     }
 
+
+    void RatIdle_v2_0::CheckIfShouldChangeStates()
+    {
+        // Check if there are any cats in the detection range
+        if (!(p_data->catsInDetectionRadius.empty()))
+        {
+            // Change to aggressive state
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
+        }
+        // Check if any cats exited the radius during execution
+        else if (!(p_data->catsExitedDetectionRadius.empty()))
+        {
+            // Check for the closest cat
+            EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) };
+
+            // Change to hunting state
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToHunt(p_data->myID, closestCat);
+        }
+    }
+
+
+    void RatIdle_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
+    {
+        if (!p_data) { return; }
+
+        if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
+        {
+            OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
+            // check if entity1 is the rat's detection collider and entity2 is cat
+            if ((OTEE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
+                EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
+            {
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity2);
+            }
+            // check if entity2 is the rat's detection collider and entity1 is cat
+            else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
+                EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
+            {
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
+            }
+        }
+        else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
+        {
+            OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
+            // check if entity1 is the rat's detection collider and entity2 is cat
+            if ((OTSE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity2) &&
+                EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
+            {
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
+            }
+            // check if entity2 is the rat's detection collider and entity1 is cat
+            else if ((OTSE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity1) &&
+                EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
+            {
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
+            }
+        }
+    }
+
+
+    void RatIdle_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
+    {
+        if (!p_data) { return; }
+
+        OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
+        // check if entity1 is the rat's detection collider and entity2 is cat
+        if ((OTEE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
+            EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
+        {
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
+        }
+        // check if entity2 is the rat's detection collider and entity1 is cat
+        else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
+            EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
+        {
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
+        }
+    }
 
 } // namespace PE

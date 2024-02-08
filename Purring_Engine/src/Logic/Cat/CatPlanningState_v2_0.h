@@ -34,7 +34,11 @@ namespace PE
 
 		Cat_v2_0PLAN(CatAttackBase_v2_0* p_catAttackTypePLAN, CatMovement_v2_0PLAN* p_catMovementPLAN) : p_catAttack{ p_catAttackTypePLAN }, p_catMovement{ p_catMovementPLAN }, p_data{ nullptr } {}
 
-		virtual ~Cat_v2_0PLAN() {}
+		virtual ~Cat_v2_0PLAN() 
+		{
+			delete p_catMovement;
+			delete p_catAttack;
+		}
 
 		virtual void StateEnter(EntityID id) override;
 
@@ -57,12 +61,13 @@ namespace PE
 		bool m_mouseRelease{ false };
 		bool m_mouseClicked{ false };
 		bool m_mouseClickPrevious{ false };
-		bool m_rightMouseClicked{ false };
+		//bool m_rightMouseClicked{ false };
 
 		bool m_planningAttack{ false };
 
 		int m_doubleClick{ 0 };
-		
+		float m_timer{ 0.f };
+
 		vec2 m_prevCursorPosition{ 0.f, 0.f };
 
 		void OnMouseClick(const Event<MouseEvents>& r_ME);

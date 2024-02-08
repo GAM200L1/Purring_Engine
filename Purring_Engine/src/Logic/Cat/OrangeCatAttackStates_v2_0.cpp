@@ -52,6 +52,11 @@ namespace PE
 
 	}
 
+	void OrangeCatAttack_v2_0PLAN::ToggleTelegraphs(bool setToggle, bool ignoreSelected)
+	{
+
+	}
+
 	// ----- ATTACK EXECUTE ----- //
 
 	void OrangeCatAttack_v2_0EXECUTE::StateEnter(EntityID id)

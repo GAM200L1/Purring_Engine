@@ -92,7 +92,6 @@ namespace PE
 			CircleCollider const& catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 			if (PointCollision(catCollider, cursorPosition))
 			{
-				std::cout << "Start drawing path\n";
 				// Start drawing a path
 				m_pathBeingDrawn = true;
 			}
@@ -101,7 +100,6 @@ namespace PE
 		// If the mouse is being pressed
 		if (m_mouseClick && m_pathBeingDrawn)
 		{
-			std::cout << "Moving\n";
 			if (p_data->catCurrentEnergy && !m_invalidPath) // Check if the player has sufficient energy
 			{
 				// Get the mouse position
@@ -212,6 +210,8 @@ namespace PE
 		EntityID nodeId{ p_data->pathQuads[p_data->pathPositions.size()] };
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
 		CatHelperFunctions::ToggleEntity(nodeId, true);
+		
+		// @TODO: Add place path audio here
 
 		// Add the position to the path positions list
 		p_data->pathPositions.emplace_back(r_nodePosition);
@@ -248,6 +248,7 @@ namespace PE
 	{
 		// reset to max energy
 		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
+		
 		FollowScriptData* follow_data = GETSCRIPTDATA(FollowScript, p_data->catID);
 
 		// Clear all the path data
@@ -301,11 +302,7 @@ namespace PE
 		{
 			// Reset the path on pressing right click
 			MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
-			if (MBPE.button == 1 && !p_data->pathPositions.empty())
-			{
-				ResetDrawnPath();
-			}
-			else
+			if (MBPE.button != 1)
 				m_mouseClick = true; // Flag that the mouse has been clicked
 		}
 	}
@@ -339,7 +336,7 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
-		EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
+		//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovement_v2_0EXECUTE::OnCollisionEnter, this);
 
 		// Return if this cat is not the main cat
