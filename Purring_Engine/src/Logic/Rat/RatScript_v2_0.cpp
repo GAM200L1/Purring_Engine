@@ -50,6 +50,7 @@ namespace PE
 			// Create a detection radius and configure
 			it->second.detectionRadiusId = CreateDetectionRadius(it->second);
 			it->second.attackRadiusId = CreateAttackRangeRadius(it->second);
+			CreateRatPathTelegraph(it->second);
 
 		}
 
@@ -175,6 +176,16 @@ namespace PE
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.width = width;
 				r_transform.height = height;
+			}
+			catch (...) { return; }
+		}
+
+		void RatScript_v2_0::RotateEntity(EntityID const transformId, float const orientation)
+		{
+			try
+			{
+				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
+				r_transform.orientation = orientation;
 			}
 			catch (...) { return; }
 		}
@@ -602,5 +613,55 @@ namespace PE
 			return radiusId;
 		}
 
+
+		void RatScript_v2_0::CreateRatPathTelegraph(RatScript_v2_0_Data& r_data)
+		{
+				SerializationManager serializationManager;
+				r_data.pivotEntityID = EntityFactory::GetInstance().CreateEntity<Transform>();
+				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.pivotEntityID);
+				EntityManager::GetInstance().Get<Transform>(r_data.pivotEntityID).relPosition = vec2{ 0.f, 0.f };
+
+				vec2 ratScale{ GetEntityScale(r_data.myID) };
+				r_data.telegraphArrowEntityID = serializationManager.LoadFromFile("PawPrints_Prefab.json");
+				ToggleEntity(r_data.telegraphArrowEntityID, false); // set to inactive, it will only show during planning phase
+				ScaleEntity(r_data.telegraphArrowEntityID, ratScale.x * 0.5f, ratScale.y * 0.5f);
+				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent
+				EntityManager::GetInstance().Get<Transform>(r_data.telegraphArrowEntityID).relPosition.Zero();	  // zero out the position (attach calculates to stay in the same position in the world)
+				EntityManager::GetInstance().Get<Transform>(r_data.telegraphArrowEntityID).relPosition.x = ratScale.x * 0.7f;
+
+				/* OLD RAT SCRIPT
+				
+				vec2 const& ratScale = GetEntityScale(m_scriptData[id].ratID);
+				RatScriptData& data = m_scriptData[id];
+
+				SerializationManager serializationManager;
+
+				data.psudoRatID = EntityFactory::GetInstance().CreateEntity<Transform>();
+				Hierarchy::GetInstance().AttachChild(id, data.psudoRatID);
+				EntityManager::GetInstance().Get<Transform>(data.psudoRatID).relPosition = vec2{ 0.f, 0.f };
+
+				// create the arrow telegraph
+				data.arrowTelegraphID = serializationManager.LoadFromFile("PawPrints_Prefab.json");
+				ToggleEntity(data.arrowTelegraphID, false); // set to inactive, it will only show during planning phase
+				ScaleEntity(data.arrowTelegraphID, ratScale.x * 0.5f, ratScale.y * 0.5f);
+				Hierarchy::GetInstance().AttachChild(data.psudoRatID, data.arrowTelegraphID); // attach child to parent
+				EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.Zero();	  // zero out the position (attach calculates to stay in the same position in the world)
+				EntityManager::GetInstance().Get<Transform>(data.arrowTelegraphID).relPosition.x = ratScale.x * 0.7f;
+		
+				// create cross attack telegraph
+				data.attackTelegraphID = serializationManager.LoadFromFile("EnemyAttackTelegraph_Prefab.json");
+				ToggleEntity(data.attackTelegraphID, false); // set to inactive, it will only show during planning phase if the cat is in the area
+				ScaleEntity(data.attackTelegraphID, data.attackDiameter, data.attackDiameter);
+				//Hierarchy::GetInstance().AttachChild(id, data.attackTelegraphID);
+				EntityManager::GetInstance().Get<Transform>(data.attackTelegraphID).relPosition = vec2{ 0.f,0.f };
+
+				// create the detection radius
+				data.detectionTelegraphID = serializationManager.LoadFromFile("EnemyDetectionTelegraph_Prefab.json");
+				ToggleEntity(data.detectionTelegraphID, false); // set to inactive it will only show during planning phase
+				ScaleEntity(data.detectionTelegraphID, ratScale.x * 2.f * data.detectionRadius, ratScale.y * 2.f * data.detectionRadius);
+				Hierarchy::GetInstance().AttachChild(id, data.detectionTelegraphID);
+				EntityManager::GetInstance().Get<Transform>(data.detectionTelegraphID).relPosition = vec2{ 0.f,0.f }; // detection UI will always show
+				*/
+		}
 
 } // End of namespace PE

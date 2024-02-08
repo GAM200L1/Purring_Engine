@@ -52,6 +52,7 @@ namespace PE
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
 
 		// Attack entities and variables
+		EntityID pivotEntityID{ 0 };			// id of parent obj to rotate to adjust the orientation of the telegraphs
 		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
 		EntityID attackTelegraphEntityID{ 0 };			// id of cross attack telegraph
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
@@ -225,6 +226,15 @@ namespace PE
 		 \param[in] height Height to set the transform to.
 		*************************************************************************************/
 		static void ScaleEntity(EntityID const transformId, float const width, float const height);
+
+		/*!***********************************************************************************
+		 \brief Rotates the entity about the pivot point passed in. 
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] orientation Angle in radians about the z-axis starting from 
+						the positive x axis.
+		*************************************************************************************/
+		static void RotateEntity(EntityID const transformId, float const orientation);
 
 
 		// ----- Rat stuff ----- //
@@ -400,8 +410,6 @@ namespace PE
 		*************************************************************************************/
 		void ChangeRatState(EntityID id);
 
-		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
-
 		/*!***********************************************************************************
 			\brief Returns true if the current game state is different from the game state
 							in the previous frame, false otherwise.
@@ -411,6 +419,12 @@ namespace PE
 				return previousGameState != gameStateController->currentState;
 		}
 
+		// --- OBJECT CREATION --- //
+
+		EntityID CreateDetectionRadius(RatScript_v2_0_Data const& r_data);
+
 		EntityID CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data);
+
+		void CreateRatPathTelegraph(RatScript_v2_0_Data& r_data);
 	}; // end of class 
 }
