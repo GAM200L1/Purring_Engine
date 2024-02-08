@@ -47,8 +47,8 @@
                                 "animationStates": {},
                                 "attackVariants": {
                                     "GreyCatAttackVariables": {
-                                        "attacKDirection": 0,
-                                        "bulletDelay": 0.0,
+                                        "attacKDirection": 1,
+                                        "bulletDelay": 0.5,
                                         "bulletForce": 1000.0,
                                         "bulletLifeTime": 1.0,
                                         "bulletRange": 3.0,

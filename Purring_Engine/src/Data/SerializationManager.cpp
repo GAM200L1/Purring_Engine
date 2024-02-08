@@ -704,6 +704,7 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                     val.bulletRange = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletRange"].get<float>();
                                     val.bulletLifeTime = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletLifeTime"].get<float>();
                                     val.bulletForce = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletForce"].get<float>();
+                                    vari = val;
                                 }
                                 else if (data[prop.get_name().to_string().c_str()].contains("OrangeCatAttackVariables"))
                                 {
@@ -714,6 +715,7 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                     val.stompRadius = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompRadius"].get<float>();
                                     val.stompLifeTime = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompLifetime"].get<float>();
                                     val.stomopForce = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompForce"].get<float>();
+                                    vari = val;
                                 }
                                 
                                 prop.set_value(inst, vari);
