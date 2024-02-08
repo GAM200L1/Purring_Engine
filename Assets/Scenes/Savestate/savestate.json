@@ -3142,6 +3142,8 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
+                            "../Assets/Animation/AnimationRat_Attack_Anim_Anim.json",
+                            "../Assets/Animation/AnimationRat_Idle_Anim_Anim.json",
                             "../Assets/Animation/RatMovingTest_Anim.json"
                         ],
                         "CurrentAnimationID": "../Assets/Animation/RatMovingTest_Anim.json"
@@ -3191,6 +3193,8 @@
                         "RatScript_v2_0": {
                             "data": {
                                 "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim_Anim.json",
                                     "Walk": "../Assets/Animation/RatMovingTest_Anim.json"
                                 }
                             },
@@ -3226,8 +3230,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 0.0,
-                                "y": 106.0
+                                "x": 4.0,
+                                "y": 177.99998474121094
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -3275,8 +3279,8 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 106.0
+                            "x": 4.0,
+                            "y": 177.99998474121094
                         },
                         "relativeposition": {
                             "x": 0.0,

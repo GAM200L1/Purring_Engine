@@ -50,6 +50,16 @@ namespace PE
             //    p_data->finishedExecution = true;
             //}
 
+                // Set the attack animation
+            try
+            {
+                EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(p_data->animationStates.at("Attack"));
+            }
+            catch (const std::exception& e)
+            {
+                std::cerr << "Exception setting Attack animation: " << e.what() << std::endl;
+            }
+
             if (!attacksoundonce)
             {
                 std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Playing attack sound." << std::endl;

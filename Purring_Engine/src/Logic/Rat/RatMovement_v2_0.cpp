@@ -142,6 +142,7 @@ namespace PE
         {
             // If the closest cat is within the attack radius, the rat may initiate an attack
             // but doesn't move, so hasMoved remains false
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(id, 0.f);
         }
 
         return hasMoved;
