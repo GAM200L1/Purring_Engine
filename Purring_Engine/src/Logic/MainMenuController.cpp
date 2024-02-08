@@ -252,14 +252,14 @@ namespace PE
 	void MainMenuController::PlayGameMM(EntityID)
 	{
 		SceneManager::GetInstance().LoadScene("IntroCutsceneScene.json");
-		PlayClickAudio();
+		PlayPositiveFeedback();
 	}
 
 	void MainMenuController::QuitGameMM(EntityID)
 	{
 		ActiveObject(m_scriptData[m_currentMainMenuControllerEntityID].AreYouSureCanvas);
 		DeactiveObject(m_scriptData[m_currentMainMenuControllerEntityID].MainMenuCanvas);
-		PlayClickAudio();
+		PlayNegativeFeedback();
 	}
 
 	void MainMenuController::ReturnFromMMAYS(EntityID)
@@ -272,6 +272,20 @@ namespace PE
 	void MainMenuController::PlayClickAudio()
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(buttonpress);
+	}
+	void MainMenuController::PlayPositiveFeedback()
+	{
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Positive Feedback_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(buttonpress);
+	}
+	void MainMenuController::PlayNegativeFeedback()
+	{
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback_Prefab.json");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(buttonpress);

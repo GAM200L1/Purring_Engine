@@ -917,7 +917,7 @@ namespace PE
 	{
 		DeactiveAllMenu();
 		ActiveObject(m_scriptData[m_currentGameStateControllerID].AreYouSureCanvas);
-		PlayClickAudio();
+		PlayNegativeFeedback();
 	}
 
 	void GameStateController_v2_0::OpenAYSR(EntityID)
@@ -1050,6 +1050,14 @@ namespace PE
 	void GameStateController_v2_0::PlayClickAudio()
 	{
 		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Button Click SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(buttonpress);
+	}
+
+	void GameStateController_v2_0::PlayNegativeFeedback()
+	{
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback_Prefab.json");
 		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
 			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(buttonpress);

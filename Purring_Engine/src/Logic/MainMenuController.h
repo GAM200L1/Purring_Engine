@@ -149,6 +149,14 @@ namespace PE
 		 \brief			Click Audio Sound
 		*************************************************************************************/
 		void PlayClickAudio();
+		/*!***********************************************************************************
+		 \brief			Click Positive Feedback Sound
+		*************************************************************************************/
+		void PlayPositiveFeedback();
+		/*!***********************************************************************************
+		 \brief			Click Negative Feedback Sound
+		*************************************************************************************/
+		void PlayNegativeFeedback();
 	private:
 		//Script Variables
 		std::map<EntityID, MainMenuControllerData> m_scriptData; // Data associated with each instance of the script
