@@ -99,6 +99,16 @@ namespace PE
             Editor::GetInstance().Init();
 #endif // !GAMERELEASE
         }
+
+
+        void RendererManager::SetBackgroundColor(float const r, float const g, float const b, float const a)
+        {
+            m_backgroundColor.r = r;
+            m_backgroundColor.g = g;
+            m_backgroundColor.b = b;
+            m_backgroundColor.a = a;
+        }
+
         
         void RendererManager::InitializeSystem()
         {
@@ -237,7 +247,7 @@ namespace PE
 #endif // !GAMERELEASE
 
             // Clear the texture object
-            m_renderFrameBuffer.Clear(0.796f, 0.6157f, 0.4588f, 1.f);
+            m_renderFrameBuffer.Clear(m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a);
 
 #ifndef GAMERELEASE            
             // Get the world to NDC matrix of the editor cam or the main runtime camera
