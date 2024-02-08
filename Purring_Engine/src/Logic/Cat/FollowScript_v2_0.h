@@ -13,10 +13,7 @@ namespace PE
 	struct FollowScriptData_v2_0 
 	{
 		int Size{ 64 }; // fixed size of each object
-		float Speed{ 100 };
-		int NumberOfSlots{ MAXFOLLOWERS };
-		std::vector<EntityID> FollowingObject;
-		float Rotation;
+		float Rotation{};
 		vec2 CurrentPosition;
 		std::vector<vec2> NextPosition;
 
@@ -31,10 +28,8 @@ namespace PE
 		// new followers stack
 		std::vector<EntityID> followers;
 		
-		
-
 		//sound
-		EntityID SoundID;
+		EntityID SoundID{};
 	};
 
 
@@ -66,7 +61,6 @@ namespace PE
 		virtual void OnDetach(EntityID) override;
 
 
-		void Adopt(EntityID owner, EntityID adopt);
 		void CollisionCheck(const Event<CollisionEvents>& r_event);
 
 		/*!***********************************************************************************

@@ -3408,11 +3408,11 @@ namespace PE {
 											}
 											else if (props.get_type().get_name() == "bool" && props.get_name() == "isCaged")
 											{
-												bool val = props.get_value(inst).get_value<bool>();
+												bool value = props.get_value(inst).get_value<bool>();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
-												ImGui::Checkbox(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
+												ImGui::Checkbox(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "unsigned__int64")
 											{

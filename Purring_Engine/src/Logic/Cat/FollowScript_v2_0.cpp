@@ -52,8 +52,6 @@ namespace PE
 			m_ScriptData[id].IsAttaching = false;
 		}
 
-		/*if (p_gamestateController->currentState != GameStates_v2_0::EXECUTE)
-			return;*/
 
 		vec2 NewPosition = EntityManager::GetInstance().Get<Transform>(id).position;
 
@@ -70,79 +68,42 @@ namespace PE
 			//setting current new position for the next object
 			m_ScriptData[id].NextPosition[0] = EntityManager::GetInstance().Get<Transform>(id).position;
 
-
-
-
 			//checking rotation to set
 			float rotationOffset = newRotation - m_ScriptData[id].Rotation;
 
 			if (rotationOffset != 0 && m_ScriptData[id].LookTowardsMovement)
 				EntityManager::GetInstance().Get<Transform>(id).orientation = EntityManager::GetInstance().Get<Transform>(id).orientation + rotationOffset;
 
-
-
 			m_ScriptData[id].Rotation = newRotation;
 			m_ScriptData[id].CurrentPosition = EntityManager::GetInstance().Get<Transform>(id).position;
+		
+			int index{ 1 };
 
-			//if (m_ScriptData[id].NumberOfFollower > 1)
+			for (auto follower : m_ScriptData[id].followers)
 			{
-				//for (int index = 1; index < m_ScriptData[id].NumberOfFollower; ++index)
-				//{
-				//	//to get rotation new position - current position which we set previously
-				//	vec2 NewPosition2 = savedLocation; //new position is the position of the previous mouse
-				//	//calculate new rotation since previous location
+				//to get rotation new position - current position which we set previously
+				vec2 NewPosition2 = savedLocation; //new position is the position of the previous mouse
+				//calculate new rotation since previous location
 
-				//	vec2 directionalvector2 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
+				vec2 directionalvector2 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
 
+				float newRotation2 = atan2(directionalvector2.y, directionalvector2.x);
 
-				//	float newRotation2 = atan2(directionalvector2.y, directionalvector2.x);
+				//saving current position as 
+				savedLocation = m_ScriptData[id].NextPosition[index];
+				m_ScriptData[id].NextPosition[index] = NewPosition2 + vec2(m_ScriptData[id].Size * cosf(newRotation2 - static_cast<float>(M_PI)), m_ScriptData[id].Size * sinf(newRotation2 - static_cast<float>(M_PI)));
 
-				//	//saving current position as 
-				//	savedLocation = m_ScriptData[id].NextPosition[index];
-				//	m_ScriptData[id].NextPosition[index] = NewPosition2 + vec2(m_ScriptData[id].Size * cosf(newRotation2 - static_cast<float>(M_PI)), m_ScriptData[id].Size * sinf(newRotation2 - static_cast<float>(M_PI)));
-
-				//	if (m_ScriptData[id].FollowingObject[index] != -1)
-				//		EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).position = m_ScriptData[id].NextPosition[index];
-				//	//checking rotation to set can ignore this for now lets get position to work
-				//	if (m_ScriptData[id].FollowingObject[index] != -1)
-				//	{
-				//		vec2 directionalvector3 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
-				//		float newRot = atan2(directionalvector3.y, directionalvector3.x);
-				//		if (m_ScriptData[id].LookTowardsMovement)
-				//			EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).orientation = newRot;
-				//		else
-				//			EntityManager::GetInstance().Get<Transform>(m_ScriptData[id].FollowingObject[index]).width = EntityManager::GetInstance().Get<Transform>(id).width;
-				//	}
-				//}
-
-				int index{ 1 };
-
-				for (auto follower : m_ScriptData[id].followers)
-				{
-					//to get rotation new position - current position which we set previously
-					vec2 NewPosition2 = savedLocation; //new position is the position of the previous mouse
-					//calculate new rotation since previous location
-
-					vec2 directionalvector2 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
-
-					float newRotation2 = atan2(directionalvector2.y, directionalvector2.x);
-
-					//saving current position as 
-					savedLocation = m_ScriptData[id].NextPosition[index];
-					m_ScriptData[id].NextPosition[index] = NewPosition2 + vec2(m_ScriptData[id].Size * cosf(newRotation2 - static_cast<float>(M_PI)), m_ScriptData[id].Size * sinf(newRotation2 - static_cast<float>(M_PI)));
-
-					
-					EntityManager::GetInstance().Get<Transform>(follower).position = m_ScriptData[id].NextPosition[index];
-					++index;
-					//checking rotation to set can ignore this for now lets get position to work
-					
-					vec2 directionalvector3 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
-					float newRot = atan2(directionalvector3.y, directionalvector3.x);
-					if (m_ScriptData[id].LookTowardsMovement)
-						EntityManager::GetInstance().Get<Transform>(follower).orientation = newRot;
-					else
-						EntityManager::GetInstance().Get<Transform>(follower).width = EntityManager::GetInstance().Get<Transform>(id).width;
-				}
+				
+				EntityManager::GetInstance().Get<Transform>(follower).position = m_ScriptData[id].NextPosition[index];
+				++index;
+				//checking rotation to set can ignore this for now lets get position to work
+				
+				vec2 directionalvector3 = m_ScriptData[id].NextPosition[index - 1] - m_ScriptData[id].NextPosition[index];
+				float newRot = atan2(directionalvector3.y, directionalvector3.x);
+				if (m_ScriptData[id].LookTowardsMovement)
+					EntityManager::GetInstance().Get<Transform>(follower).orientation = newRot;
+				else
+					EntityManager::GetInstance().Get<Transform>(follower).width = EntityManager::GetInstance().Get<Transform>(id).width;
 			}
 		}
 	}
@@ -155,14 +116,7 @@ namespace PE
 	void FollowScript_v2_0::OnAttach(EntityID id)
 	{
 		m_ScriptData[id] = FollowScriptData_v2_0();
-		//hardcoded based on unity demo
 		m_ScriptData[id].NextPosition.resize(MAXFOLLOWERS * 2 + 1);
-		//m_ScriptData[id].FollowingObject.resize(6);
-		// emplace a dummy object
-		//m_ScriptData[id].folowers.push(MAXSIZE_T);
-		//std::fill(m_ScriptData[id].FollowingObject.begin(), m_ScriptData[id].FollowingObject.end(), static_cast<EntityID>(-1));
-		//m_ScriptData[id].ToAttach.resize(6);
-		//std::fill(m_ScriptData[id].ToAttach.begin(), m_ScriptData[id].ToAttach.end(), static_cast<EntityID>(-1));
 	}
 
 	void FollowScript_v2_0::OnDetach(EntityID id)
@@ -170,12 +124,6 @@ namespace PE
 		auto it = m_ScriptData.find(id);
 		if (it != m_ScriptData.end())
 			m_ScriptData.erase(id);
-	}
-
-	void FollowScript_v2_0::Adopt(EntityID owner, EntityID adopt)
-	{
-		m_ScriptData[owner].IsAttaching = true;
-		m_ScriptData[owner].ToAttach.emplace_back(adopt);
 	}
 
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)
