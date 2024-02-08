@@ -389,6 +389,7 @@ RTTR_REGISTRATION
         .property("MyID", &PE::HealthBarScript_v2_0_Data::myID)
         .property("FollowObjectID", &PE::HealthBarScript_v2_0_Data::followObjectID)
         .property("FillColor", &PE::HealthBarScript_v2_0_Data::fillColor);
+
 }
 
 PE::CoreApplication::CoreApplication()

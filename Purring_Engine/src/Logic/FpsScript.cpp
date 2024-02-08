@@ -63,7 +63,7 @@ namespace PE
 
 	rttr::instance FpsScript::GetScriptData(EntityID id)
 	{
-		return rttr::instance();
+		return rttr::instance(m_scriptData.at(id));
 	}
 
 	void FpsScript::OnKeyEvent(const PE::Event<PE::KeyEvents>& r_event)
