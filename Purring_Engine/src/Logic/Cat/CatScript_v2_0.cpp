@@ -96,7 +96,7 @@ namespace PE
 
 	void CatScript_v2_0::Update(EntityID id, float deltaTime)
 	{
-		if (m_scriptData[id].isCaged) { return; }
+		if (m_scriptData[id].isCaged || p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 		if (p_gsc->currentState == GameStates_v2_0::WIN || p_gsc->currentState == GameStates_v2_0::LOSE)
 		{
 			// @TODO: disable attack telegraphs
