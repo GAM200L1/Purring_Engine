@@ -251,7 +251,7 @@ namespace PE
         RatScript_v2_0::ToggleEntity(p_data->redTelegraphEntityID, false);
         RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
 
-        if (EntityManager::GetInstance().Has<AnimationComponent>(id))
+        if (EntityManager::GetInstance().Has<Graphics::Renderer>(p_data->attackTelegraphEntityID))
             EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(false);
 
         gameStateController = nullptr;
