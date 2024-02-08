@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -809,7 +809,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1152,7 +1152,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1194,7 +1194,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1546,7 +1546,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1814,7 +1814,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2216,7 +2216,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2533,7 +2533,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2613,7 +2613,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3283,7 +3283,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3551,7 +3551,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {

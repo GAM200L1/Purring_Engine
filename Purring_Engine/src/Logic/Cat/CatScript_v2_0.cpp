@@ -63,25 +63,25 @@ namespace PE
 
 		switch (m_scriptData[id].catType)
 		{
-		case EnumCatType::FLUFFYCAT:
-		{
-			break;
-		}
-		case EnumCatType::ORANGECAT:
-		{
-			break;
-		}
-		default: // main cat or grey cat
-		{
-			GreyCatAttackVariables& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
-			// create telegraphs
-			GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(id, vars.bulletRange, vars.telegraphIDs);
-			// Creates an entity for the projectile
-			SerializationManager serializationManager;
-			vars.projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
-			CatHelperFunctions::ToggleEntity(vars.projectileID, false);
-			break; 
-		}
+			case EnumCatType::FLUFFYCAT:
+			{
+				break;
+			}
+			case EnumCatType::ORANGECAT:
+			{
+				break;
+			}
+			default: // main cat or grey cat
+			{
+				GreyCatAttackVariables& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
+				// create telegraphs
+				GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(id, vars.bulletRange, vars.telegraphIDs);
+				// Creates an entity for the projectile
+				SerializationManager serializationManager;
+				vars.projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
+				CatHelperFunctions::ToggleEntity(vars.projectileID, false);
+				break; 
+			}
 		}
 
 		MakeStateManager(id);
@@ -311,34 +311,43 @@ namespace PE
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
-				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
-				PlayAnimation(id, "Walk");
+				if (m_scriptData[id].animationStates.size())
+				{
+					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+					PlayAnimation(id, "Walk");
+				}
 			}
 		}
 		// executes movement and plays movement animation
 		else if (r_stateName == "MovementEXECUTE")// && !m_scriptData[id].attackSelected
 		{
-			PlayAnimation(id, "Walk");
-			if (CheckShouldStateChange(id, deltaTime))
+			if (m_scriptData[id].animationStates.size())
 			{
-				m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
-				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+				PlayAnimation(id, "Walk");
+				if (CheckShouldStateChange(id, deltaTime))
+				{
+					m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
+					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+				}
 			}
 		}
 		// executes attack and plays attack animation, plays idle animation if attack is finished early
 		else if (r_stateName == "AttackEXECUTE")
 		{
-			if (m_scriptData[id].attackSelected && !m_scriptData[id].finishedExecution)
+			if (m_scriptData[id].animationStates.size())
 			{
-				PlayAnimation(id, "Attack");
-				if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
+				if (m_scriptData[id].attackSelected && !m_scriptData[id].finishedExecution)
 				{
-					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
-					m_scriptData[id].finishedExecution = true;
+					PlayAnimation(id, "Attack");
+					if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
+					{
+						m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+						m_scriptData[id].finishedExecution = true;
+					}
 				}
+				else
+					PlayAnimation(id, "Idle");
 			}
-			else
-				PlayAnimation(id, "Idle");
 		}
 	}
 

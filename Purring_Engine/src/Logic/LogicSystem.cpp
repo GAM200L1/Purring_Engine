@@ -50,6 +50,7 @@
 #include "Cat/CatController_v2_0.h"
 
 #include "Cat/CatScript_v2_0.h"
+#include "Cat/FollowScript_v2_0.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -89,6 +90,7 @@ void PE::LogicSystem::InitializeSystem()
 
 	REGISTER_SCRIPT(CatScript_v2_0);
 	REGISTER_SCRIPT(CatController_v2_0);
+	REGISTER_SCRIPT(FollowScript_v2_0);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)

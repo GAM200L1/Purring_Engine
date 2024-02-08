@@ -3005,7 +3005,6 @@
                                 "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isCaged": false,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
@@ -3084,43 +3083,7 @@
                         "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": {
-                        "CatScript_v2_0": {
-                            "data": {
-                                "animationStates": {},
-                                "attackVariants": {
-                                    "GreyCatAttackVariables": {
-                                        "attacKDirection": 0,
-                                        "bulletDelay": 0.0,
-                                        "bulletForce": 1000.0,
-                                        "bulletLifeTime": 1.0,
-                                        "bulletRange": 3.0,
-                                        "damage": 0,
-                                        "projectileID": 0,
-                                        "teleGraphIDs": []
-                                    }
-                                },
-                                "catCurrentEnergy": 21,
-                                "catID": 0,
-                                "catMaxMovementEnergy": 21,
-                                "catType": 1,
-                                "currentPositionIndex": 0,
-                                "delaySet": false,
-                                "finishedExecution": false,
-                                "forgivenessOffset": 1.0,
-                                "isCaged": false,
-                                "maxDistance": 50.0,
-                                "minDistance": 10.0,
-                                "movementSpeed": 300.0,
-                                "nodeSize": 10.0,
-                                "pathQuads": [],
-                                "shouldChangeState": false,
-                                "timeBeforeChangingState": 0.0,
-                                "toggleDeathAnimation": false
-                            },
-                            "state": 0
-                        }
-                    },
+                    "ScriptComponent": null,
                     "Transform": {
                         "height": 64.0,
                         "orientation": 0.0,
@@ -3185,9 +3148,6 @@
                     },
                     "ScriptComponent": {
                         "RatScript_v2_0": {
-                            "data": {
-                                "animationStates": {}
-                            },
                             "state": 0
                         }
                     },
@@ -3255,9 +3215,6 @@
                     },
                     "ScriptComponent": {
                         "RatScript_v2_0": {
-                            "data": {
-                                "animationStates": {}
-                            },
                             "state": 0
                         }
                     },

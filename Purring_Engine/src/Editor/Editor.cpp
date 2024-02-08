@@ -3390,58 +3390,58 @@ namespace PE {
 										{
 											if (props.get_type().get_name() == "float")
 											{
-												float val = props.get_value(inst).get_value<float>();
+												float value = props.get_value(inst).get_value<float>();
 												ImGui::Text(props.get_name().to_string().c_str()); 
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::InputFloat(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
+												ImGui::InputFloat(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "int")
 											{
-												int val = props.get_value(inst).get_value<int>();
+												int value = props.get_value(inst).get_value<int>();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
+												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "bool" && props.get_name() == "isCaged")
 											{
-												bool val = props.get_value(inst).get_value<bool>();
+												bool value = props.get_value(inst).get_value<bool>();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
-												ImGui::Checkbox(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
+												ImGui::Checkbox(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "unsigned__int64")
 											{
-												EntityID val = props.get_value(inst).get_value<EntityID>();
+												EntityID value = props.get_value(inst).get_value<EntityID>();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												int tmp = static_cast<int>(val);
+												int tmp = static_cast<int>(value);
 												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &tmp);
-												val = static_cast<EntityID>(tmp);
-												props.set_value(inst, val);
+												value = static_cast<EntityID>(tmp);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "enumPE::EnumCatType")
 											{
-												int val = it->second.attackVariables.index();
+												int value = static_cast<int>(it->second.attackVariables.index());
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::Text(types.at(val).c_str());
-												props.set_value(inst, val);
+												ImGui::Text(types.at(value).c_str());
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "unsignedint")
 											{
-												int val = props.get_value(inst).get_value<int>();
+												int value = props.get_value(inst).get_value<int>();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
+												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
 											{

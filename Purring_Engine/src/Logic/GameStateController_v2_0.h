@@ -350,6 +350,7 @@ namespace PE
 		GameStates_v2_0 currentState = GameStates_v2_0::INACTIVE;
 		GameStates_v2_0 prevState = GameStates_v2_0::INACTIVE;
 		int CurrentTurn{1};
+
 	private:
 		//Script Variables
 		std::map<EntityID, GameStateController_v2_0Data> m_scriptData; // Data associated with each instance of the script
