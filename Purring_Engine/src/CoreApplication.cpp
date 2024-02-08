@@ -355,7 +355,8 @@ RTTR_REGISTRATION
         .property("shouldChangeState", &PE::CatScript_v2_0Data::shouldChangeState)
         .property("delaySet", &PE::CatScript_v2_0Data::delaySet)
         .property("timeBeforeChangingState", &PE::CatScript_v2_0Data::timeBeforeChangingState)
-        .property("animationStates", &PE::CatScript_v2_0Data::animationStates);
+        .property("animationStates", &PE::CatScript_v2_0Data::animationStates)
+        .property("attackVariants", &PE::CatScript_v2_0Data::attackVariables);
 
 
     rttr::registration::class_<PE::RatScriptData>("RatScript")

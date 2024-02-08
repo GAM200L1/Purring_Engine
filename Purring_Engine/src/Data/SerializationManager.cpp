@@ -44,6 +44,9 @@
 #include <rttr/variant.h>
 #include <rttr/type.h>
 
+// scripts
+#include "Logic/Cat/CatScript_v2_0.h"
+
 const std::wstring wjsonExt = L".json";
 
 std::string SerializationManager::OpenFileExplorer()
@@ -675,6 +678,61 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                 val = data[prop.get_name().to_string().c_str()].get<std::map<std::string, std::string>>();
                             }
                             prop.set_value(inst, val);
+                        }
+                        else if (prop.get_type().get_name() == "enumPE::EnumCatType")
+                        {
+                            if (data.contains(prop.get_name().to_string().c_str()))
+                            {
+                                PE::EnumCatType val = data[prop.get_name().to_string().c_str()].get<PE::EnumCatType>();
+                                prop.set_value(inst, val);
+                            }
+                        }
+                        else if (prop.get_type().get_name() == "classstd::variant<structPE::GreyCatAttackVariables,structPE::OrangeCatAttackVariables>")
+                        {
+                            if (data.contains(prop.get_name().to_string().c_str()))
+                            {
+                                std::variant<PE::GreyCatAttackVariables, PE::OrangeCatAttackVariables> vari;
+                                
+                                if (data[prop.get_name().to_string().c_str()].contains("GreyCatAttackVariables"))
+                                {
+                                    PE::GreyCatAttackVariables val;
+                                    val.projectileID = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["projectileID"].get<EntityID>();
+                                    val.damage = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["damage"].get<int>();
+                                    val.attackDirection = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["attacKDirection"].get<PE::EnumCatAttackDirection_v2_0>();
+                                    val.telegraphIDs = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["teleGraphIDs"].get<std::map<PE::EnumCatAttackDirection_v2_0, EntityID>>();
+                                    val.bulletDelay = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletDelay"].get<float>();
+                                    val.bulletRange = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletRange"].get<float>();
+                                    val.bulletLifeTime = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletLifeTime"].get<float>();
+                                    val.bulletForce = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletForce"].get<float>();
+                                    vari = val;
+                                }
+                                else if (data[prop.get_name().to_string().c_str()].contains("OrangeCatAttackVariables"))
+                                {
+                                    PE::OrangeCatAttackVariables val;
+                                    val.seismicID = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicID"].get<EntityID>();
+                                    val.telegraphID = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["telegraphID"].get<EntityID>();
+                                    val.damage = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["damage"].get<int>();
+                                    val.stompRadius = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompRadius"].get<float>();
+                                    val.stompLifeTime = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompLifetime"].get<float>();
+                                    val.stomopForce = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompForce"].get<float>();
+                                    vari = val;
+                                }
+                                
+                                prop.set_value(inst, vari);
+                            }
+                            
+                        }
+                        else if (prop.get_type().get_name() == "unsignedint")
+                        {
+                            if (data.contains(prop.get_name().to_string().c_str()))
+                            {
+                                unsigned val = data[prop.get_name().to_string().c_str()].get<unsigned>();
+                                prop.set_value(inst, val);
+                            }
+                        }
+                        else
+                        {
+                            std::cout << prop.get_type().get_name().to_string() << std::endl;
                         }
                     }
                 }
