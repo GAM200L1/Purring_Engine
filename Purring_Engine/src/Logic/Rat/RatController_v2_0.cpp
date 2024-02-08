@@ -85,7 +85,7 @@ namespace PE
 
 		void RatController_v2_0::Update(EntityID id, float deltaTime)
 		{
-				if (!ratsPrinted)
+				/*if (!ratsPrinted)
 				{
 						auto const& myVec{ GetRats(id) };
 						for (auto const& [ratId, rat] : myVec)
@@ -93,7 +93,7 @@ namespace PE
 								std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
 						}
 						ratsPrinted = true;
-				}
+				}*/
 		}
 
 

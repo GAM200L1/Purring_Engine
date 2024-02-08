@@ -105,10 +105,10 @@ namespace PE
         case RatType::IDLE:
             // Idle logic doing nothing
 
-            std::cout << "Idle";
+            //std::cout << "Idle";
             break;
         case RatType::PATROL:
-            std::cout << "Patrolling Update\n";
+            //std::cout << "Patrolling Update\n";
             PatrolLogic(id, deltaTime);
             break;
         }
@@ -148,7 +148,7 @@ namespace PE
         }
 
         const Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
-        std::cout << "Rat Position: X=" << ratTransform.position.x << ", Y=" << ratTransform.position.y << std::endl;
+          //std::cout << "Rat Position: X=" << ratTransform.position.x << ", Y=" << ratTransform.position.y << std::endl;
     }
 
     void RatIdle_v2_0::MoveTowards(EntityID id, const vec2& target, float deltaTime)

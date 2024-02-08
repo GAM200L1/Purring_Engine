@@ -83,6 +83,7 @@ namespace PE
         }
         catch (...)
         {
+            engine_logger.AddLog(false, "Warning, failed to remoev entity from layering system!!", __FUNCTION__);
         }
     }
 

@@ -175,6 +175,7 @@ namespace PE
 				
 			}
 			Hierarchy::GetInstance().DetachChild(id);
+			LayerManager::GetInstance().RemoveEntity(id);
 			for (const ComponentID& r_pool : GetComponentIDs(id))
 			{
 				m_componentPools[r_pool]->Remove(id);
@@ -183,7 +184,6 @@ namespace PE
 			m_removed.emplace(id);
 			
 			UpdateVectors(id, false);
-			LayerManager::GetInstance().UpdateEntity(id);
 		}
 	}
 
