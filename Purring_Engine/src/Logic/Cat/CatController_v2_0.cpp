@@ -140,6 +140,7 @@ namespace PE
 	{
 		mainInstance = id;
 		m_scriptData[id] = CatController_v2_0Data{};
+		m_currentCats.clear();
 	}
 
 	void CatController_v2_0::OnDetach(EntityID id)
@@ -149,9 +150,6 @@ namespace PE
 		{
 			m_scriptData.erase(id);
 		}
-		if (id == mainInstance) { mainInstance = 0; }
-
-		m_currentCats.clear();
 	}
 
 	void CatController_v2_0::Destroy(EntityID id)

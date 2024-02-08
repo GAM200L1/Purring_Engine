@@ -36,7 +36,7 @@ namespace PE
 
 	void DeploymentScript::Update(EntityID id, float)
 	{
-		if (m_catPlaced >= m_catController->GetDeployableCats().size()-1 && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
+		if (m_catPlaced >= m_catController->GetDeployableCats().size() && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].DeploymentArea).SetColor(1, 1, 1, 0);
