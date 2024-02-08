@@ -9,11 +9,12 @@
 
 namespace PE
 {
+	constexpr size_t MAXFOLLOWERS = 4;
 	struct FollowScriptData_v2_0 
 	{
 		int Size{ 64 }; // fixed size of each object
 		float Speed{ 100 };
-		int NumberOfSlots{ 5 };
+		int NumberOfSlots{ MAXFOLLOWERS };
 		std::vector<EntityID> FollowingObject;
 		float Rotation;
 		vec2 CurrentPosition;
