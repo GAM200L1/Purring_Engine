@@ -20,6 +20,7 @@
 #include "CatScript_v2_0.h"
 #include "CatHelperFunctions.h"
 #include "CatController_v2_0.h"
+#include "Logic/Rat/RatController_v2_0.h"
 
 #include "Hierarchy/HierarchyManager.h"
 #include "Physics/CollisionManager.h"
@@ -257,9 +258,8 @@ namespace PE
 			}
 			m_bulletLifetime -= deltaTime;
 		}
-
 		// when the frame is attack frame, shoot the projectile after delay passes											//@TODO UNCOMMENT
-		if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)// && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
+		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)// && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
 		{
 			if (m_bulletDelay <= 0.f) // extra delay after the frame in case of slight inaccuracy
 			{
@@ -276,7 +276,6 @@ namespace PE
 			else
 				m_bulletDelay -= deltaTime;
 		}
-		//std::cout << (GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution << ' ';
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::StateCleanUp()
@@ -298,26 +297,43 @@ namespace PE
 			{
 				if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id))
 				{
-					if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id))
-						return false;
-					else
+					if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id))
 						return true;
 				}
-				else
-					return false;
+				return false;
 			};
 
 		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
 		{
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
+			bool hitSomething{ false };
 			// @TODO: UNCOMMENT
 			//if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0) // check if hit cat for friendly fire
+			//{
+			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID)
 			{
 				if (OCEE.Entity1 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity2))
+				{
 					CatController_v2_0::KillCat(OCEE.Entity2);
+					hitSomething = true;
+				}
 				else if (OCEE.Entity2 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity1))
+				{
 					CatController_v2_0::KillCat(OCEE.Entity1);
-				if ((GETSCRIPTDATA(CatScript_v2_0, m_catID))->catType != EnumCatType::MAINCAT)
+					hitSomething = true;
+				}
+				else if (OCEE.Entity1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(OCEE.Entity2))
+				{
+					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(OCEE.Entity2, p_attackData->damage);
+					hitSomething = true;
+				}
+				else if (OCEE.Entity2 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(OCEE.Entity1))
+				{
+					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(OCEE.Entity1, p_attackData->damage);
+					hitSomething = true;
+				}
+
+				if (hitSomething && (GETSCRIPTDATA(CatScript_v2_0, m_catID))->catType != EnumCatType::MAINCAT)
 				{
 					EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
 					EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
@@ -325,6 +341,7 @@ namespace PE
 					(GETSCRIPTDATA(CatScript_v2_0, m_catID))->finishedExecution = true;
 				}
 			}
+			//}
 
 			// kill rat
 

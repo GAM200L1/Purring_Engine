@@ -81,7 +81,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -384,7 +384,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -652,7 +652,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -809,7 +809,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1152,7 +1152,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1194,7 +1194,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1546,7 +1546,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1814,7 +1814,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2216,7 +2216,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2533,7 +2533,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2613,7 +2613,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -2992,7 +2992,7 @@
                                         "bulletForce": 1000.0,
                                         "bulletLifeTime": 1.0,
                                         "bulletRange": 3.0,
-                                        "damage": 1,
+                                        "damage": 0,
                                         "projectileID": 0,
                                         "teleGraphIDs": []
                                     }
@@ -3005,7 +3005,6 @@
                                 "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isCaged": false,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
@@ -3108,7 +3107,6 @@
                                 "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isCaged": false,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
@@ -3142,6 +3140,12 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/RatMovingTest_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/RatMovingTest_Anim.json"
+                    },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -3186,7 +3190,9 @@
                     "ScriptComponent": {
                         "RatScript_v2_0": {
                             "data": {
-                                "animationStates": {}
+                                "animationStates": {
+                                    "Walk": "../Assets/Animation/RatMovingTest_Anim.json"
+                                }
                             },
                             "state": 0
                         }
@@ -3212,6 +3218,10 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [],
+                        "CurrentAnimationID": ""
+                    },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -3283,7 +3293,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3551,7 +3561,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {

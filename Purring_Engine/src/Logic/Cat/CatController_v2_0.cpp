@@ -148,21 +148,21 @@ namespace PE
 		{
 			m_scriptData.erase(id);
 		}
-		if (id == mainInstance) { mainInstance = 0; }
+		//if (id == mainInstance) { mainInstance = 0; }
 
 		m_currentCats.clear();
 	}
 
 	void CatController_v2_0::Destroy(EntityID id)
 	{
-
+		m_cachedCats = m_currentCats;
 	}
 
 	// getters
 	std::vector<EnumCatType> CatController_v2_0::GetDeployableCats()
 	{
 		std::vector<EnumCatType> deployableCats{};
-		for (auto const& [catID, type] : m_currentCats)
+		for (auto const& [catID, type] : m_cachedCats)
 		{
 			// if cat is alive when caching
 			if (!(GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)
@@ -180,6 +180,7 @@ namespace PE
 	{
 		EnumCatType const& r_catType = (GETSCRIPTDATA(CatScript_v2_0, id))->catType;
 		m_currentCats.erase(std::find(m_currentCats.begin(), m_currentCats.end(), std::pair{id, r_catType}));
+		CatHelperFunctions::ToggleEntity(id, false);
 	}
 
 	int CatController_v2_0::GetCurrentMovementEnergy(EntityID catID)
