@@ -25,7 +25,8 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(RatScript_v2_0, id);
 		gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		previousGameState = gameStateController->currentState;
+		m_previousGameState = gameStateController->currentState;
+		m_planningRunOnce = false;
 
 		// Subscribe to events
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatHunt_v2_0::OnTriggerEnterAndStay, this);
@@ -36,7 +37,7 @@ namespace PE
 		p_data->originalPosition = RatScript_v2_0::GetEntityPosition(id);
 
 		// Store the ID of the cat being targeted and reset the hunting state
-		SetNewTarget(targetId);
+		SetHuntTarget(targetId);
 	}
 
 
@@ -44,17 +45,20 @@ namespace PE
 	{
 		if (gameStateController->currentState == GameStates_v2_0::PAUSE)
 		{
-				previousGameState = gameStateController->currentState;
+				m_previousGameState = gameStateController->currentState;
 				return;
 		}
 
 		// If the game state is execute, keep track of any cats that pass through the rat's radius
 		if (gameStateController->currentState == GameStates_v2_0::EXECUTE)
 		{
+				m_planningRunOnce = false;
+
 				// Update the number of turns left
-				if (StateJustChanged())
+				if (StateJustChanged() && m_previousGameState != GameStates_v2_0::PAUSE)
 				{
 						--huntingTurnsLeft;
+						DisableTelegraphs();
 				}
 
 				switch (p_data->ratType) 
@@ -77,50 +81,38 @@ namespace PE
 			case EnumRatType::GUTTER:
 			case EnumRatType::BRAWLER:
 			{
-				// Check if we should switch to the returning state
-				if (huntingTurnsLeft == 0)
+				// Choose where to move when the planning state has just started
+				if (!m_planningRunOnce)
 				{
-					--huntingTurnsLeft;
-					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
-					break; // Exit the switch case
-				}
+					m_planningRunOnce = true;
 
-				// Choose where to move
-				if (StateJustChanged())
-				{
-					// ----- Picking where to move
-					// Check if there are any cats in the detection range
-					if (CheckCatsInDetectionRange())
-					{
-							// there's a cat in the detection range, move to attack it
-							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(id);
-					}
-					else if (EntityManager::GetInstance().IsEntityValid(id)) // Check if the current cat is alive // @TODO to replace when we have a method for checking cat's alive status
-					{
-							// the cat we're chasing is dead, return to the original position
-							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(id);
-					}
+					// Check if any of the conditions to change states has been met
+					if (!(p_data->hasRatStateChanged))
+						CheckIfShouldChangeStates();
 					
-					PickTargetPosition();
+					// Continue hunting
+					vec2 targetPosition{ PickTargetPosition() };
 
 					// ---- Update telegraph
 					// Rotate the telegraph to face the target
-					// @TODO
+					EnableTelegraphs(targetPosition);
 				}
-				break;
+
+				break; // end of BRAWLER rat type
 			}
 			default: break;
 			}
 		}
 
 		// Store frame
-		previousGameState = gameStateController->currentState;
+		m_previousGameState = gameStateController->currentState;
 	}
 
 
 	void RatHunt_v2_0::StateExit(EntityID)
 	{
 			targetId = 0;
+			DisableTelegraphs();
 	}
 
 
@@ -133,7 +125,25 @@ namespace PE
 	}
 
 
-	void RatHunt_v2_0::SetNewTarget(EntityID const _targetId)
+	void RatHunt_v2_0::EnableTelegraphs(vec2 const& targetPosition)
+	{
+			vec2 directionOfTarget{ targetPosition - RatScript_v2_0::GetEntityPosition(p_data->myID) };
+			float orientation = atan2(directionOfTarget.y, directionOfTarget.x);
+
+			// Rotate the telegraph
+			RatScript_v2_0::RotateEntityRelative(p_data->pivotEntityID, orientation);
+			RatScript_v2_0::ToggleEntity(p_data->pivotEntityID, true); // enable the telegraph parent
+			RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, true); // enable the telegraph
+	}
+	
+
+	void RatHunt_v2_0::DisableTelegraphs()
+	{
+			RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false); // disable the telegraph
+	}
+
+
+	void RatHunt_v2_0::SetHuntTarget(EntityID const _targetId)
 	{
 			targetId = _targetId;
 
@@ -142,7 +152,7 @@ namespace PE
 	}
 
 
-	void RatHunt_v2_0::PickTargetPosition()
+	vec2 RatHunt_v2_0::PickTargetPosition()
 	{
 			// Check what cats have exited the collider
 			vec2 ratPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
@@ -198,18 +208,49 @@ namespace PE
 
 			// Set the rat target
 			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
+			return finalTarget;
 	}
 
 
-	bool RatHunt_v2_0::CheckCatsInDetectionRange()
+	void RatHunt_v2_0::CheckIfShouldChangeStates()
 	{
-			return !(p_data->catsInDetectionRadius.empty());
+			// Check if we should switch to the returning state
+			if (huntingTurnsLeft == 0)
+			{
+					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft == 0\n";
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
+			}
+			// ----- Picking where to move
+			// Check if there are any cats in the detection range
+			else if (!(p_data->catsInDetectionRadius.empty()))
+			{
+					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats in range\n";
+					// there's a cat in the detection range, move to attack it
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
+			}
+			// Check if any cats exited the detection range in the last turn
+			else if (!(p_data->catsExitedDetectionRadius.empty()))
+			{
+					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats exited range\n";
+					// cats just passed by us, hunt the closest one down
+					SetHuntTarget( RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) );
+			}
+			// Check if the current cat is alive // @TODO to replace when we have a method for checking cat's alive status
+			else if (!EntityManager::GetInstance().IsEntityValid(p_data->myID))
+			{
+					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat is dead\n";
+					// the cat we're chasing is dead, return to the original position
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
+			}
+
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
 	}
 
 
 	void RatHunt_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
 	{
 			if (!p_data) { return; }
+			else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
 			if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
 			{
@@ -219,12 +260,26 @@ namespace PE
 							EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity2);
+
+							std::cout << "RatHunt_v2_0::OnTriggerEnter() catsInDetectionRadius: ";
+							for (auto const& catId : p_data->catsInDetectionRadius)
+							{
+									std::cout << catId << ' ';
+							}
+							std::cout << std::endl;
 					}
 					// check if entity2 is the rat's detection collider and entity1 is cat
 					else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
 							EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
+
+							std::cout << "RatHunt_v2_0::OnTriggerEnter() catsInDetectionRadius: ";
+							for (auto const& catId : p_data->catsInDetectionRadius)
+							{
+									std::cout << catId << ' ';
+							}
+							std::cout << std::endl;
 					}
 			}
 			else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
@@ -235,12 +290,24 @@ namespace PE
 							EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
+							std::cout << "RatHunt_v2_0::OnTriggerStay() catsInDetectionRadius: ";
+							for (auto const& catId : p_data->catsInDetectionRadius)
+							{
+									std::cout << catId << ' ';
+							}
+							std::cout << std::endl;
 					}
 					// check if entity2 is the rat's detection collider and entity1 is cat
 					else if ((OTSE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity1) &&
 							EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
+							std::cout << "RatHunt_v2_0::OnTriggerStay() catsInDetectionRadius: ";
+							for (auto const& catId : p_data->catsInDetectionRadius)
+							{
+									std::cout << catId << ' ';
+							}
+							std::cout << std::endl;
 					}
 			}
 	}
@@ -249,6 +316,7 @@ namespace PE
 	void RatHunt_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
 	{
 			if (!p_data) { return; }
+			else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
 			OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
 			// check if entity1 is the rat's detection collider and entity2 is cat
@@ -256,12 +324,24 @@ namespace PE
 					EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
 			{
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
+					std::cout << "RatHunt_v2_0::OnTriggerExit() catsExitedDetectionRadius: ";
+					for (auto const& catId : p_data->catsExitedDetectionRadius)
+					{
+							std::cout << catId << ' ';
+					}
+					std::cout << std::endl;
 			}
 			// check if entity2 is the rat's detection collider and entity1 is cat
 			else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
 					EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
 			{
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
+					std::cout << "RatHunt_v2_0::OnTriggerExit() catsExitedDetectionRadius: ";
+					for (auto const& catId : p_data->catsExitedDetectionRadius)
+					{
+							std::cout << catId << ' ';
+					}
+					std::cout << std::endl;
 			}
 	}
 } // End of namespace PE

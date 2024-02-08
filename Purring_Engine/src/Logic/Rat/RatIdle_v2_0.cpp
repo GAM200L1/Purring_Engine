@@ -20,7 +20,7 @@ namespace PE
     {
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                   // Get GSM instance
-
+        m_planningRunOnce = false;
 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatIdle_v2_0::OnTriggerEnterAndStay, this);
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatIdle_v2_0::OnTriggerEnterAndStay, this);
@@ -109,6 +109,8 @@ namespace PE
 
         if (gameStateController->currentState == GameStates_v2_0::EXECUTE)
         {
+            m_planningRunOnce = false;
+
             switch (m_type)
             {
             case RatType::IDLE:
@@ -131,14 +133,20 @@ namespace PE
             case RatType::PATROL:
                 // Check if any cats have entered or exited
                 // the rat's detection range and change state accordingly
-                if (StateJustChanged()) 
+                if (!m_planningRunOnce)
                 { 
-                    CheckIfShouldChangeStates(); 
+                    m_planningRunOnce = true;
+
+                    if (!(p_data->hasRatStateChanged))
+                        CheckIfShouldChangeStates(); 
                 }
                 break;
             default: break;
             }
         }
+
+        // Store the current state
+        m_previousGameState = gameStateController->currentState;
     }
 
     void RatIdle_v2_0::PatrolLogic(EntityID id, float deltaTime)
@@ -248,12 +256,6 @@ namespace PE
     {
         // disables all the UI from showing up
         RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false);
-        RatScript_v2_0::ToggleEntity(p_data->redTelegraphEntityID, false);
-        RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
-
-        if (EntityManager::GetInstance().Has<Graphics::Renderer>(p_data->attackTelegraphEntityID))
-            EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(false);
-
         gameStateController = nullptr;
     }
 
@@ -263,24 +265,30 @@ namespace PE
         // Check if there are any cats in the detection range
         if (!(p_data->catsInDetectionRadius.empty()))
         {
+            std::cout << "RatIdle_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat in range\n";
             // Change to aggressive state
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
         }
         // Check if any cats exited the radius during execution
         else if (!(p_data->catsExitedDetectionRadius.empty()))
         {
+            std::cout << "RatIdle_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat exited range\n";
+
             // Check for the closest cat
             EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) };
 
             // Change to hunting state
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToHunt(p_data->myID, closestCat);
         }
+
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
     }
 
 
     void RatIdle_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
     {
         if (!p_data) { return; }
+        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
         if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
         {
@@ -320,6 +328,7 @@ namespace PE
     void RatIdle_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
     {
         if (!p_data) { return; }
+        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 
         OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
         // check if entity1 is the rat's detection collider and entity2 is cat

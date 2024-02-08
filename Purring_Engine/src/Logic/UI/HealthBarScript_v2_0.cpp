@@ -97,7 +97,7 @@ namespace PE
 		// Get the GUI slider component
 		if (EntityManager::GetInstance().Has<GUISlider>(id))
 		{
-			EntityManager::GetInstance().Get<GUISlider>(id).CalculateKnobCenter(std::clamp(fillAmount, 0.f, 1.f));
+			EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue = fillAmount;
 		}
 	}
 

@@ -76,6 +76,7 @@ namespace PE
 		bool delaySet{ false }; // Whether the state change has been flagged
 		float timeBeforeChangingState{ 0.f }; // Delay before state should change
 		bool finishedExecution{ false }; // Keeps track of whether the execution phase has been completed
+		bool hasRatStateChanged{ false }; // True if the rat state changed in the last frame, false otherwise
 
 		// Detection and movement
 		EntityID detectionRadiusId{};
@@ -228,13 +229,22 @@ namespace PE
 		static void ScaleEntity(EntityID const transformId, float const width, float const height);
 
 		/*!***********************************************************************************
-		 \brief Rotates the entity about the pivot point passed in. 
+		 \brief Rotates the entity by the orientation amount passed in. 
 
 		 \param[in] transformId ID of the entity to update the transform of.
 		 \param[in] orientation Angle in radians about the z-axis starting from 
 						the positive x axis.
 		*************************************************************************************/
 		static void RotateEntity(EntityID const transformId, float const orientation);
+
+		/*!***********************************************************************************
+		 \brief Updates the relative rotation of the entity by the orientation amount passed in. 
+
+		 \param[in] transformId ID of the entity to update the transform of.
+		 \param[in] orientation Angle in radians about the z-axis starting from 
+						the positive x axis.
+		*************************************************************************************/
+		static void RotateEntityRelative(EntityID const transformId, float const orientation);
 
 
 		// ----- Rat stuff ----- //
