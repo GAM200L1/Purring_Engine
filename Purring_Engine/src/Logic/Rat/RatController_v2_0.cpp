@@ -156,4 +156,21 @@ namespace PE
 				}
 				catch (...) { }
 		}
+
+		bool RatController_v2_0::IsRatAndIsAlive(EntityID id) //@yeni
+		{
+			// Iterate through the cached active rats to find the rat with the given ID
+			for (const auto& [ratId, ratType] : m_cachedActiveRats)
+			{
+				// Check if the current rat ID matches the given ID
+				if (ratId == id)
+				{
+					return true;								// Since the rat is in the cached active rats vector, it is alive
+				}
+			}
+
+			// If the rat ID was not found in the cached active rats, it is not alive
+			return false;
+		}
+
 }
