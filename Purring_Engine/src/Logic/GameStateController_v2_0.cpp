@@ -683,6 +683,7 @@ namespace PE
 	void GameStateController_v2_0::WinGame()
 	{
 		PauseBGM();
+		PlayWinAudio();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
 	}
@@ -690,6 +691,7 @@ namespace PE
 	void GameStateController_v2_0::LoseGame()
 	{
 		PauseBGM();
+		PlayLoseAudio();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
 	}
@@ -1005,8 +1007,8 @@ namespace PE
 				if (EntityManager::GetInstance().Has<GUISlider>(id2))
 				{
 					//get value from specific rat
-					EntityManager::GetInstance().Get<GUISlider>(id2).m_maxValue = Max;
-					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = Current;
+					EntityManager::GetInstance().Get<GUISlider>(id2).m_maxValue = static_cast<float>(Max);
+					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = static_cast<float>(Current);
 				}
 			}
 		}
@@ -1027,8 +1029,8 @@ namespace PE
 				if (EntityManager::GetInstance().Has<GUISlider>(catid))
 				{
 					//get value from specific rat
-					EntityManager::GetInstance().Get<GUISlider>(catid).m_maxValue = Max;
-					EntityManager::GetInstance().Get<GUISlider>(catid).m_currentValue = Current;
+					EntityManager::GetInstance().Get<GUISlider>(catid).m_maxValue = static_cast<float>(Max);
+					EntityManager::GetInstance().Get<GUISlider>(catid).m_currentValue = static_cast<float>(Current);
 				}
 			}
 		}
@@ -1050,6 +1052,22 @@ namespace PE
 	void GameStateController_v2_0::PlayPageAudio()
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Menu Transition SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
+	void GameStateController_v2_0::PlayWinAudio()
+	{
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Win SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
+	void GameStateController_v2_0::PlayLoseAudio()
+	{
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Lose SFX_Prefab.json");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
