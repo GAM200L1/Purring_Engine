@@ -5,14 +5,14 @@
             "audioKey": "../Assets/Audio/vo_Rat_Injured2.wav",
             "loop": false
           },
-            "EntityDescriptor": {
-                "Prefab Type": "Rat Death SFX",
-                "children": [],
-                "isActive": true,
-                "name": "Rat Death SFX",
-                "parent": null,
-                "sceneID": 18446744073709551615
-            }
+          "EntityDescriptor": {
+            "Prefab Type": "Rat Injured SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Rat Injured SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
         },
         "name": ""
     }

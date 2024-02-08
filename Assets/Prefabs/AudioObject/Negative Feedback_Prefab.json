@@ -5,14 +5,14 @@
             "audioKey": "../Assets/Audio/sfx_UI_NegativeFeedback.wav",
             "loop": false
           },
-            "EntityDescriptor": {
-                "Prefab Type": "Background Music",
-                "children": [],
-                "isActive": true,
-                "name": "Background Music",
-                "parent": null,
-                "sceneID": 18446744073709551615
-            }
+          "EntityDescriptor": {
+            "Prefab Type": "Negative Feedback SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Negative Feedback SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
         },
         "name": ""
     }

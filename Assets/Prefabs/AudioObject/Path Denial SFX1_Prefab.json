@@ -2,14 +2,14 @@
     "Entity": {
         "components": {
           "AudioComponent": {
-            "audioKey": "../Assets/Audio/mus_BackgroundAmbience_Loop.wav",
-            "loop": true
+            "audioKey": "../Assets/Audio/sfx_UI_Denial.wav",
+            "loop": false
           },
             "EntityDescriptor": {
-                "Prefab Type": "Background Ambience",
+                "Prefab Type": "UI Denial SFX",
                 "children": [],
                 "isActive": true,
-                "name": "Background Ambience",
+                "name": "UI Denial SFX",
                 "parent": null,
                 "sceneID": 18446744073709551615
             }
