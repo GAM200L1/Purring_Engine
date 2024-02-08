@@ -47,12 +47,15 @@ namespace PE
 		EntityID mainCatID{ 3 };						// needs manual setting
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		StateMachine* p_stateManager;
+		
+		// rat stats
+		int ratHealth{ 1 };								// health of the rat, needs manual setting
 
 		// Movement Variables
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
 
 		// Attack entities and variables
-		EntityID pivotEntityID{ 0 };			// id of parent obj to rotate to adjust the orientation of the telegraphs
+		EntityID pivotEntityID{ 0 };					// id of parent obj to rotate to adjust the orientation of the telegraphs
 		EntityID telegraphArrowEntityID{ 0 };			// id of arrow telegraph
 		EntityID attackTelegraphEntityID{ 0 };			// id of cross attack telegraph
 		vec2 directionFromRatToPlayerCat{ 0.f, 0.f };	// stores the normalized vector pointing at player cat
