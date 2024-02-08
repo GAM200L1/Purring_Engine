@@ -248,6 +248,7 @@ namespace PE
 	{
 		// reset to max energy
 		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
+		m_mouseClickPrevious = false;
 		
 		FollowScriptData* follow_data = GETSCRIPTDATA(FollowScript, p_data->catID);
 
