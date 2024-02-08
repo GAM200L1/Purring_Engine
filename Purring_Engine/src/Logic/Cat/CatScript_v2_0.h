@@ -50,9 +50,7 @@ namespace PE
 		// id of cat and its type
 		EntityID catID{ 0 };
 		EnumCatType catType{ EnumCatType::GREYCAT };
-		bool catIsDead{ false };
 		bool finishedExecution{ false };
-		bool isMainCat{ false };
 
 		// cat attack
 		std::variant<GreyCatAttackVariables, OrangeCatAttackVariables> attackVariables{ GreyCatAttackVariables{} };
