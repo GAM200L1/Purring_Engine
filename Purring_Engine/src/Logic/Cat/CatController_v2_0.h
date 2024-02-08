@@ -23,7 +23,7 @@ namespace PE
 	struct CatController_v2_0Data
 	{
 		// vector of pairs <catID, catType>
-
+		EntityID mainCatID{ 0 };
 	};
 
 	class CatController_v2_0 : public Script
@@ -50,6 +50,10 @@ namespace PE
 
 		void CacheCurrentCats();
 
+		static void KillCat(EntityID id);
+
+		bool IsCatAndIsAlive(EntityID id);
+		
 		// getters
 		int GetCurrentMovementEnergy(EntityID id);
 		int GetMaxMovementEnergy(EntityID id);

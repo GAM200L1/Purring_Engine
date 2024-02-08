@@ -1,0 +1,200 @@
+{
+    "Entities": [
+        {
+            "Entity": {
+                "components": {
+                    "Camera": {
+                        "ismaincamera": true,
+                        "magnification": 1.0,
+                        "viewportHeight": 1080.0,
+                        "viewportWidth": 1920.0
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 2,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "CameraObject",
+                        "parent": null,
+                        "sceneID": 2
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {},
+                                "attackVariants": {
+                                    "GreyCatAttackVariables": {
+                                        "attacKDirection": 1,
+                                        "bulletDelay": 0.5,
+                                        "bulletForce": 1000.0,
+                                        "bulletLifeTime": 1.0,
+                                        "bulletRange": 3.0,
+                                        "damage": 0,
+                                        "projectileID": 0,
+                                        "teleGraphIDs": []
+                                    }
+                                },
+                                "catCurrentEnergy": 21,
+                                "catID": 0,
+                                "catMaxMovementEnergy": 21,
+                                "catType": 1,
+                                "currentPositionIndex": 0,
+                                "delaySet": false,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "pathQuads": [],
+                                "shouldChangeState": false,
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": -100.0,
+                            "y": -100.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 50.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 1,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Empty Object",
+                        "parent": null,
+                        "sceneID": 1
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "NewState": "",
+                                    "NewState\u0001": "",
+                                    "NewState\u0001\u0001": "",
+                                    "NewState\u0001\u0001\u0001": ""
+                                },
+                                "attackVariants": {
+                                    "OrangeCatAttackVariables": {
+                                        "damage": 5,
+                                        "seismicID": 0,
+                                        "stompForce": 1000.0,
+                                        "stompLifetime": 1.0,
+                                        "stompRadius": 20.0,
+                                        "telegraphID": 0
+                                    }
+                                },
+                                "catCurrentEnergy": 21,
+                                "catID": 0,
+                                "catMaxMovementEnergy": 21,
+                                "catType": 1,
+                                "currentPositionIndex": 0,
+                                "delaySet": false,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "pathQuads": [],
+                                "shouldChangeState": false,
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        }
+    ]
+}

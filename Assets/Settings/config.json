@@ -8,7 +8,7 @@
         "showComponentWindow": true,
         "showConsole": true,
         "showEditor": true,
-        "showLayerWindow": true,
+        "showLayerWindow": false,
         "showLogs": true,
         "showObjectList": true,
         "showPerformanceWindow": false,

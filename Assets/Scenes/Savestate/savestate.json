@@ -895,6 +895,7 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 19,
                         "Prefab Type": "Text",
@@ -951,6 +952,7 @@
                         "Width": 1604.0
                     },
                     "EntityDescriptor": {
+                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 20,
                         "Prefab Type": "Canvas Object",

@@ -75,7 +75,10 @@ namespace PE
 			GreyCatAttackVariables& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
 			// create telegraphs
 			GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(id, vars.bulletRange, vars.telegraphIDs);
-			vars.attackDirection = std::pair(EnumCatAttackDirection_v2_0::NONE, id);
+			// Creates an entity for the projectile
+			SerializationManager serializationManager;
+			vars.projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
+			CatHelperFunctions::ToggleEntity(vars.projectileID, false);
 			break; 
 		}
 		}
@@ -104,18 +107,18 @@ namespace PE
 		}
 
 		// cat dies
-		if (m_scriptData[id].catIsDead)
+		if (m_scriptData[id].toggleDeathAnimation)
 		{
 			// plays death animation
 			PlayAnimation(id, "Death");
 			// TODO: play death audio
 
 			
-			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
+			//if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
 				CatHelperFunctions::ToggleEntity(id, false);
-
-				if (m_scriptData[id].isMainCat)
+				m_scriptData[id].toggleDeathAnimation = false;
+				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
 					p_gsc->LoseGame();
 			}
 			return;
@@ -159,8 +162,6 @@ namespace PE
 				PlanningStatesHandler<GreyCatAttack_v2_0PLAN>(id, deltaTime);
 			else if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
 			{
-				GreyCatAttackVariables const& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
-				CatHelperFunctions::ToggleEntity(vars.attackDirection.second, false);
 				ExecuteStatesHandler<GreyCatAttack_v2_0EXECUTE>(id, deltaTime);
 			}
 			break;

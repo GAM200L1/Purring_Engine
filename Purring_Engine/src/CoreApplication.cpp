@@ -93,6 +93,8 @@
 #include "Logic/RatScript.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/UI/HealthBarScript_v2_0.h"
+#include "Logic/Rat/RatDetectionScript_v2_0.h"
+#include "Logic/Rat/RatScript_v2_0.h"
 #include "Logic/DeploymentScript.h"
 #include "Logic/MainMenuController.h"
 #include "Logic/IntroCutsceneController.h"
@@ -349,9 +351,8 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::CatScript_v2_0Data>("CatScript_v2_0")
         .property("catID", &PE::CatScript_v2_0Data::catID)
         .property("catType", &PE::CatScript_v2_0Data::catType)
-        .property("catIsDead", &PE::CatScript_v2_0Data::catIsDead)
+        .property("toggleDeathAnimation", &PE::CatScript_v2_0Data::toggleDeathAnimation)
         .property("finishedExecution", &PE::CatScript_v2_0Data::finishedExecution)
-        .property("isMainCat", &PE::CatScript_v2_0Data::isMainCat)
         .property("catMaxMovementEnergy", &PE::CatScript_v2_0Data::catMaxMovementEnergy)
         .property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
         .property("minDistance", &PE::CatScript_v2_0Data::minDistance)
@@ -366,7 +367,8 @@ RTTR_REGISTRATION
         .property("shouldChangeState", &PE::CatScript_v2_0Data::shouldChangeState)
         .property("delaySet", &PE::CatScript_v2_0Data::delaySet)
         .property("timeBeforeChangingState", &PE::CatScript_v2_0Data::timeBeforeChangingState)
-        .property("animationStates", &PE::CatScript_v2_0Data::animationStates);
+        .property("animationStates", &PE::CatScript_v2_0Data::animationStates)
+        .property("attackVariants", &PE::CatScript_v2_0Data::attackVariables);
 
 
     rttr::registration::class_<PE::RatScriptData>("RatScript")
@@ -393,6 +395,11 @@ RTTR_REGISTRATION
         .property("FollowObjectID", &PE::HealthBarScript_v2_0_Data::followObjectID)
         .property("FillColor", &PE::HealthBarScript_v2_0_Data::fillColor);
 
+    rttr::registration::class_<PE::RatDetectionScript_v2_0_Data>("RatDetectionScript_v2_0")
+        .property("MyID", &PE::RatDetectionScript_v2_0_Data::myID)
+        .property("MainRatID", &PE::RatDetectionScript_v2_0_Data::mainRatID)
+        .property("StoredParentRat", &PE::RatDetectionScript_v2_0_Data::storedParentRat)
+        .property("DetectionRadius", &PE::RatDetectionScript_v2_0_Data::detectionRadius);
 }
 
 PE::CoreApplication::CoreApplication()

@@ -941,6 +941,8 @@ namespace PE
 		PlaySceneTransition();
 		m_currentLevel = nextStage;
 		m_leveltoLoad = m_level2SceneName;
+
+		
 	}
 
 	void GameStateController_v2_0::StartGameLoop()

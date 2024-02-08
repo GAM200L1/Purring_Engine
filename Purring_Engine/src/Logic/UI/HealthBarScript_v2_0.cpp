@@ -41,7 +41,6 @@ namespace PE
 			newPosition = GETCAMERAMANAGER()->GetWorldToWindowPosition(newPosition.x, newPosition.y);
 			newPosition = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(newPosition.x, newPosition.y);
 			PositionEntityRelative(id, newPosition);
-
 		}
 	}
 

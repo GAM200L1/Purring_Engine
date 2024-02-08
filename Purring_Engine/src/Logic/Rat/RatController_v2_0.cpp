@@ -85,15 +85,48 @@ namespace PE
 
 		void RatController_v2_0::Update(EntityID id, float deltaTime)
 		{
-				/*if (!ratsPrinted)
+				///*if (!ratsPrinted)
+				//{
+				//		auto const& myVec{ GetRats(id) };
+				//		for (auto const& [ratId, rat] : myVec)
+				//		{
+				//				std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
+				//		}
+				//		ratsPrinted = true;
+				//}
+				//else
+				//{
+				//	 If rats have already been printed, refresh the m_cachedActiveRats without printing
+				//	GetRats(id);
+				//}
+
+				// Iterate through the cached active rats to check if they are still active
+				for (auto it = m_cachedActiveRats.begin(); it != m_cachedActiveRats.end(); )
 				{
-						auto const& myVec{ GetRats(id) };
-						for (auto const& [ratId, rat] : myVec)
-						{
-								std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
-						}
-						ratsPrinted = true;
-				}*/
+					EntityID ratId = it->first;
+					bool isActive = false;
+
+					try
+					{
+						// Check if the rat entity is still active
+						isActive = EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive;
+					}
+					catch (...)
+					{
+						std::cout << "rat entity active got error";
+					}
+
+					if (!isActive)
+					{
+						// If the rat is no longer active, erase it from the vector
+						it = m_cachedActiveRats.erase(it);
+					}
+					else
+					{
+						// If the rat is still active, move to the next one
+						++it;
+					}
+				}
 		}
 
 
@@ -156,4 +189,21 @@ namespace PE
 				}
 				catch (...) { }
 		}
+
+		bool RatController_v2_0::IsRatAndIsAlive(EntityID id) //@yeni
+		{
+			// Iterate through the cached active rats to find the rat with the given ID
+			for (const auto& [ratId, ratType] : m_cachedActiveRats)
+			{
+				// Check if the current rat ID matches the given ID
+				if (ratId == id)
+				{
+					return true;								// Since the rat is in the cached active rats vector, it is alive
+				}
+			}
+
+			// If the rat ID was not found in the cached active rats, it is not alive
+			return false;
+		}
+
 }

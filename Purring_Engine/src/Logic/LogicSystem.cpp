@@ -44,6 +44,7 @@
 
 #include "Rat/RatScript_v2_0.h"
 #include "Rat/RatController_v2_0.h"
+#include "Rat/RatDetectionScript_v2_0.h"
 #include "UI/HealthBarScript_v2_0.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
 
@@ -53,6 +54,8 @@
 
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/CatController_v2_0.h"
+
+#include "Cat/CatScript_v2_0.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -84,6 +87,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(DeploymentScript);
 	REGISTER_SCRIPT(MainMenuController);
 
+	REGISTER_SCRIPT(RatDetectionScript_v2_0);
 	REGISTER_SCRIPT(RatScript_v2_0);
 	REGISTER_SCRIPT(RatController_v2_0);
 	REGISTER_SCRIPT(HealthBarScript_v2_0);
@@ -161,4 +165,116 @@ void PE::LogicSystem::DeleteScriptData(EntityID id)
 		val->OnDetach(id);
 	}
 
+}
+
+nlohmann::json PE::ScriptComponent::ToJson(EntityID id) const
+{
+	nlohmann::json ret;
+
+	for (auto [k, v] : m_scriptKeys)
+	{
+		ret[k.c_str()]["state"] = v;
+		rttr::type scriptDataType = rttr::type::get_by_name(k.c_str());
+		for (auto& prop : scriptDataType.get_properties())
+		{
+			rttr::instance inst = PE::LogicSystem::m_scriptContainer.at(k.c_str())->GetScriptData(id);
+
+			if (!inst.is_valid()) // if no data for this script type, just break out of this loop
+				break;
+			rttr::variant var = prop.get_value(inst);
+			if (var.get_type().get_name() == "float")
+			{
+				float val = var.get_value<float>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else if (var.get_type().get_name() == "enumPE::PlayerState")
+			{
+				PlayerState val = var.get_value<PlayerState>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else if (var.get_type().get_name() == "int")
+			{
+				int val = var.get_value<int>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else if (var.get_type().get_name() == "unsigned__int64")
+			{
+				size_t val = var.get_value<size_t>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else if (var.get_type().get_name() == "bool")
+			{
+				bool val = var.get_value<bool>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else if (var.get_type().get_name() == "classstd::vector<unsigned__int64,classstd::allocator<unsigned__int64> >")
+			{
+				std::vector<EntityID> val = var.get_value<std::vector<EntityID>>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else if (var.get_type().get_name() == "structPE::vec2")
+			{
+				PE::vec2 val = var.get_value<PE::vec2>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["x"] = val.x;
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["y"] = val.y;
+			}
+			else if (var.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
+			{
+				std::vector<PE::vec2> val = var.get_value<std::vector<PE::vec2>>();
+				size_t cnt{};
+				for (const auto& vec : val)
+				{
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()][std::to_string(cnt)]["x"] = vec.x;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()][std::to_string(cnt)]["y"] = vec.y;
+					++cnt;
+				}
+			}
+			else if (var.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
+			{
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = var.get_value<std::map<std::string, std::string>>();
+			}
+			else if (var.get_type().get_name() == "enumPE::EnumCatType")
+			{
+				PE::EnumCatType val = var.get_value<EnumCatType>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else if (var.get_type().get_name() == "classstd::variant<structPE::GreyCatAttackVariables,structPE::OrangeCatAttackVariables>")
+			{
+				auto vari = var.get_value<std::variant<GreyCatAttackVariables, OrangeCatAttackVariables>>();
+				if (!vari.index())
+				{
+					GreyCatAttackVariables val = std::get<GreyCatAttackVariables>(vari);
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["projectileID"] = val.projectileID;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["damage"] = val.damage;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["attacKDirection"] = val.attackDirection;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["teleGraphIDs"] = val.telegraphIDs;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletDelay"] = val.bulletDelay;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletRange"] = val.bulletRange;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletLifeTime"] = val.bulletLifeTime;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletForce"] = val.bulletForce;
+				}
+				else
+				{
+					OrangeCatAttackVariables val = std::get<OrangeCatAttackVariables>(vari);
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicID"] = val.seismicID;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["telegraphID"] = val.telegraphID;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["damage"] = val.damage;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompRadius"] = val.stompRadius;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompLifetime"] = val.stompLifeTime;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompForce"] = val.stomopForce;
+				}
+			}
+			else if (var.get_type().get_name() == "unsignedint")
+			{
+				unsigned val = var.get_value<unsigned>();
+				ret[k.c_str()]["data"][prop.get_name().to_string().c_str()] = val;
+			}
+			else
+			{
+				std::cout << var.get_type().get_name() << std::endl;
+			}
+		}
+	}
+
+	return ret;
 }
