@@ -100,7 +100,7 @@ namespace PE
 
 			//resetting current turn
 			CurrentTurn = 0;
-
+			m_isPotraitShowing = false;
 
 		//getting the texture key for the current background and adding sepia to it
 		m_currentLevelBackground = EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).GetTextureKey();
@@ -189,6 +189,7 @@ namespace PE
 			DeactiveAllMenu();
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
+			DeactiveObject(m_scriptData.at(id).Portrait);
 
 			PhaseBannerTransition(id, deltaTime);
 			UpdateTurnCounter("Deployment");
@@ -252,6 +253,13 @@ namespace PE
 		case GameStates_v2_0::WIN: // win state, show win canvas
 			if (m_winOnce)
 			{
+				for (auto id2 : SceneView<GUIButton>())
+				{
+					if (EntityManager::GetInstance().Has<GUIButton>(id2))
+					{
+						EntityManager::GetInstance().Get<GUIButton>(id2).disabled = true;
+					}
+				}
 				ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
 				ActiveObject(m_scriptData[id].WinCanvas);
 				m_winOnce = false;
@@ -260,6 +268,13 @@ namespace PE
 		case GameStates_v2_0::LOSE: //lose state, show lose canvas				
 			if (m_loseOnce)
 			{
+				for (auto id2 : SceneView<GUIButton>())
+				{
+					if (EntityManager::GetInstance().Has<GUIButton>(id2))
+					{
+						EntityManager::GetInstance().Get<GUIButton>(id2).disabled = true;
+					}
+				}
 				ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
 				ActiveObject(m_scriptData[id].LoseCanvas);
 				m_loseOnce = false;
@@ -521,7 +536,7 @@ namespace PE
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
 								break;
 							case EnumCatType::GREYCAT: //
-								nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
+								nextPortraitTexture = "UnitPortrait_CatNameFrame_GreyCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_GreyCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Grey_256px.png"));
 								break;
@@ -563,7 +578,7 @@ namespace PE
 
 	void GameStateController_v2_0::SetPauseStateV2(EntityID)
 	{
-		if (currentState != GameStates_v2_0::PAUSE)
+		if (currentState != GameStates_v2_0::PAUSE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
