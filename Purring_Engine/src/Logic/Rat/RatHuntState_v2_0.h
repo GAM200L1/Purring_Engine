@@ -170,5 +170,7 @@ namespace PE
 			}
 
 			vec2 PickTargetPosition();
+
+			vec2 RotatePoint(vec2 PointA, vec2 PointB, float angle);
 	};
 } // End of namespace PE
