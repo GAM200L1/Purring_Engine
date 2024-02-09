@@ -355,8 +355,6 @@ namespace PE
 					m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
 					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
 					PlayAnimation(id, "Attack");
-					if (!m_scriptData[id].attackSelected)
-						m_scriptData[id].finishedExecution = true;
 				}
 			} 
 		}
