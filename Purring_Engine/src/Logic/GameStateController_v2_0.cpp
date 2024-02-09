@@ -99,7 +99,7 @@ namespace PE
 
 			//resetting current turn
 			CurrentTurn = 0;
-
+			m_isPotraitShowing = false;
 
 		//getting the texture key for the current background and adding sepia to it
 		m_currentLevelBackground = EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).GetTextureKey();
