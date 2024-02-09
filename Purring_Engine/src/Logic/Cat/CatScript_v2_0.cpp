@@ -132,7 +132,7 @@ namespace PE
 		}
 
 		// updates state // @TODO: change this
-		if (!(m_scriptData[id].catType != EnumCatType::GREYCAT && p_gsc->GetCurrentLevel() == 0)) // if cat is following cat in the chain 
+		if (!(m_scriptData[id].catType != EnumCatType::MAINCAT && p_gsc->GetCurrentLevel() == 0)) // if cat is following cat in the chain 
 			m_scriptData[id].p_stateManager->Update(id, deltaTime);
 		
 		// changes states depending on cat type
@@ -140,10 +140,7 @@ namespace PE
 		{
 		case EnumCatType::FLUFFYCAT:
 		{
-			/*if (p_gsc->currentState == GameStates_v2_0::PLANNING)
-				PlanningStatesHandler<GreyCatAttack_v2_0PLAN>(id, deltaTime);
-			else if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
-				ExecuteStatesHandler<GreyCatAttack_v2_0EXECUTE>(id, deltaTime);*/
+			// change states here for fluffy cat
 			break;
 		}
 		case EnumCatType::ORANGECAT:

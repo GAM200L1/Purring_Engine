@@ -1003,8 +1003,11 @@ namespace PE
 	{
 		if (!m_isRat && m_isPotraitShowing)
 		{
+			if ((GETSCRIPTDATA(CatScript_v2_0, catID))->planningAttack)
+				m_lastSelectedEntity = catID;
+
 			if (m_lastSelectedEntity == catID)
-			return true;
+				return true;
 		}
 		return false;
 	}
