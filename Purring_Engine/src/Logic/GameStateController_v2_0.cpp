@@ -33,6 +33,10 @@
 #include "Rat/RatController_v2_0.h"
 #include "Cat/CatController_v2_0.h"
 #include "Cat/CatScript_v2_0.h"
+
+#ifndef GAMERELEASE
+#include "Editor/Editor.h"
+#endif
 namespace PE
 {
 
@@ -381,7 +385,9 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE;
 		MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-
+#ifndef GAMERELEASE
+		if (Editor::GetInstance().IsRunTime())
+#endif
 		if (MBPE.button == GLFW_MOUSE_BUTTON_LEFT)
 		{
 			if (currentState == GameStates_v2_0::PLANNING)
