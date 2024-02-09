@@ -371,7 +371,7 @@ namespace PE
 			NextStage(0);
 		}
 
-		if (KTE.keycode == GLFW_KEY_F11)
+		if (KTE.keycode == GLFW_KEY_F9)
 		{
 			NextState();
 		}

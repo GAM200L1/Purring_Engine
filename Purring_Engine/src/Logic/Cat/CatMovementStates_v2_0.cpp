@@ -450,6 +450,13 @@ namespace PE
 				// Update the position of the cat
 				CatHelperFunctions::PositionEntity(id, currentCatPosition + directionToMove);
 
+				footstepTimer -= deltaTime;
+
+				if(footstepTimer <= 0)
+				{
+					PlayFootStep();
+				}
+
 				// Ensure the cat is facing the direction of their movement
 				vec2 newScale{ CatHelperFunctions::GetEntityScale(id) };
 				newScale.x = std::abs(newScale.x) * ((directionToMove.Dot(vec2{ 1.f, 0.f }) >= 0.f) ? 1.f : -1.f); // Set the scale to negative if the cat is facing left
@@ -482,6 +489,42 @@ namespace PE
 		// Position the player at the end of the path
 		if (p_data->pathPositions.size())
 			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.back());
+	}
+
+	void CatMovement_v2_0EXECUTE::PlayFootStep()
+	{
+		int randNum = (std::rand() % 3) + 1;
+		SerializationManager m_serializationManager;
+
+		switch (randNum)
+		{
+		case 1:
+		{
+			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 1_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(buttonpress);
+			break;
+		}
+		case 2:
+		{
+			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 2_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(buttonpress);
+			break;
+		}
+		case 3:
+		{
+			EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Cat Movement SFX 3_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+				EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(buttonpress);
+			break;
+		}
+		}
+
+		footstepTimer = footstepDelay;
 	}
 
 

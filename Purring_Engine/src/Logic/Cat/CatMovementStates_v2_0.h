@@ -202,6 +202,11 @@ namespace PE
 		*************************************************************************************/
 		void StopMoving(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Playfootstep sounds
+		*************************************************************************************/
+		void PlayFootStep();
+
 		// ----- Public Getters ----- //
 		virtual std::string_view GetName() override { return "MovementEXECUTE"; }
 
@@ -222,5 +227,8 @@ namespace PE
 		CatScript_v2_0Data* p_mainCatData;
 		int m_triggerEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_doneMoving{ false }; // Set to true when the cat has reached the end of their path
+	
+		float footstepDelay{ 0.45f };
+		float footstepTimer{ 0 };
 	};
 }
