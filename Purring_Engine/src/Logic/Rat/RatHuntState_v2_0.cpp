@@ -58,7 +58,7 @@ namespace PE
 				if (StateJustChanged() && m_previousGameState != GameStates_v2_0::PAUSE)
 				{
 						--huntingTurnsLeft;
-						DisableTelegraphs();
+						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
 				}
 
 				switch (p_data->ratType) 
@@ -96,7 +96,7 @@ namespace PE
 
 					// ---- Update telegraph
 					// Rotate the telegraph to face the target
-					EnableTelegraphs(targetPosition);
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->EnableTelegraphs(id, targetPosition);
 				}
 
 				break; // end of BRAWLER rat type
@@ -110,10 +110,10 @@ namespace PE
 	}
 
 
-	void RatHunt_v2_0::StateExit(EntityID)
+	void RatHunt_v2_0::StateExit(EntityID id)
 	{
 			targetId = 0;
-			DisableTelegraphs();
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
 	}
 
 
@@ -123,24 +123,6 @@ namespace PE
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
 			REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
-	}
-
-
-	void RatHunt_v2_0::EnableTelegraphs(vec2 const& targetPosition)
-	{
-			vec2 directionOfTarget{ targetPosition - RatScript_v2_0::GetEntityPosition(p_data->myID) };
-			float orientation = atan2(directionOfTarget.y, directionOfTarget.x);
-
-			// Rotate the telegraph
-			RatScript_v2_0::RotateEntityRelative(p_data->pivotEntityID, orientation);
-			RatScript_v2_0::ToggleEntity(p_data->pivotEntityID, true); // enable the telegraph parent
-			RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, true); // enable the telegraph
-	}
-	
-
-	void RatHunt_v2_0::DisableTelegraphs()
-	{
-			RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false); // disable the telegraph
 	}
 
 
@@ -160,55 +142,55 @@ namespace PE
 			vec2 finalTarget{ RatScript_v2_0::GetEntityPosition(targetId) };
 			float targetDistance{ (ratPosition - finalTarget).LengthSquared() };
 
-			// If the cat is farther than the rat's max dist
-			if (targetDistance > (p_data->maxMovementRange * p_data->maxMovementRange))
-			{
-					// Try to find a waypoint that's closer
-					vec2 closestTarget{ finalTarget }; float squaredDistance{ targetDistance };
+			//// If the cat is farther than the rat's max dist
+			//if (targetDistance > (p_data->maxMovementRange * p_data->maxMovementRange))
+			//{
+			//		// Try to find a waypoint that's closer
+			//		vec2 closestTarget{ finalTarget }; float squaredDistance{ targetDistance };
 
-					// Choose the two closest waypoints in the direction of the cat
-					if (gameStateController->GetCurrentLevel() == 0)
-					{
-							// We're in level 1
-							// Compare the distances of all the targets from the postion passed in
-							for (vec2 const& targetPosition : waypointsLevel1)
-							{
-									float currentSquaredDistance{ (ratPosition - targetPosition).LengthSquared() };
+			//		// Choose the two closest waypoints in the direction of the cat
+			//		if (gameStateController->GetCurrentLevel() == 0)
+			//		{
+			//				// We're in level 1
+			//				// Compare the distances of all the targets from the postion passed in
+			//				for (vec2 const& targetPosition : waypointsLevel1)
+			//				{
+			//						float currentSquaredDistance{ (ratPosition - targetPosition).LengthSquared() };
 
-									if ((currentSquaredDistance > p_data->minDistanceToTarget) && // Ensure that the player doesnt target a waypoint that it's already next to
-											(currentSquaredDistance < squaredDistance))
-									{
-											closestTarget = targetPosition;
-											squaredDistance = currentSquaredDistance;
-									}
-							}
-					} 
-					else
-					{
-							// We're in level 2
-							// Compare the distances of all the waypoints from the postion passed in
-							for (vec2 const& targetPosition : waypointsLevel2)
-							{
-									float currentSquaredDistance{ (ratPosition - targetPosition).LengthSquared() };
+			//						if ((currentSquaredDistance > p_data->minDistanceToTarget) && // Ensure that the player doesnt target a waypoint that it's already next to
+			//								(currentSquaredDistance < squaredDistance))
+			//						{
+			//								closestTarget = targetPosition;
+			//								squaredDistance = currentSquaredDistance;
+			//						}
+			//				}
+			//		} 
+			//		else
+			//		{
+			//				// We're in level 2
+			//				// Compare the distances of all the waypoints from the postion passed in
+			//				for (vec2 const& targetPosition : waypointsLevel2)
+			//				{
+			//						float currentSquaredDistance{ (ratPosition - targetPosition).LengthSquared() };
 
-									if ((currentSquaredDistance > p_data->minDistanceToTarget) && // Ensure that the player doesnt target a waypoint that it's already next to
-											(currentSquaredDistance < squaredDistance))
-									{
-											closestTarget = targetPosition;
-											squaredDistance = currentSquaredDistance;
-									}
-							}
-					}
+			//						if ((currentSquaredDistance > p_data->minDistanceToTarget) && // Ensure that the player doesnt target a waypoint that it's already next to
+			//								(currentSquaredDistance < squaredDistance))
+			//						{
+			//								closestTarget = targetPosition;
+			//								squaredDistance = currentSquaredDistance;
+			//						}
+			//				}
+			//		}
 
-					// If the waypoint is closer than the cat, then target the waypoint
-					if (squaredDistance < targetDistance)
-					{
-							finalTarget = closestTarget;
-					}
-			}
+			//		// If the waypoint is closer than the cat, then target the waypoint
+			//		if (squaredDistance < targetDistance)
+			//		CheckIfShouldChangeStates
+			//				finalTarget = closestTarget;
+			//		}
+			//}
 
 			// Set the rat target
-			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
+			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
 			return finalTarget;
 	}
 
@@ -261,26 +243,12 @@ namespace PE
 							EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity2);
-
-							std::cout << "RatHunt_v2_0::OnTriggerEnter() catsInDetectionRadius: ";
-							for (auto const& catId : p_data->catsInDetectionRadius)
-							{
-									std::cout << catId << ' ';
-							}
-							std::cout << std::endl;
 					}
 					// check if entity2 is the rat's detection collider and entity1 is cat
 					else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
 							EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
-
-							std::cout << "RatHunt_v2_0::OnTriggerEnter() catsInDetectionRadius: ";
-							for (auto const& catId : p_data->catsInDetectionRadius)
-							{
-									std::cout << catId << ' ';
-							}
-							std::cout << std::endl;
 					}
 			}
 			else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
@@ -291,24 +259,12 @@ namespace PE
 							EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
-							std::cout << "RatHunt_v2_0::OnTriggerStay() catsInDetectionRadius: ";
-							for (auto const& catId : p_data->catsInDetectionRadius)
-							{
-									std::cout << catId << ' ';
-							}
-							std::cout << std::endl;
 					}
 					// check if entity2 is the rat's detection collider and entity1 is cat
 					else if ((OTSE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity1) &&
 							EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
-							std::cout << "RatHunt_v2_0::OnTriggerStay() catsInDetectionRadius: ";
-							for (auto const& catId : p_data->catsInDetectionRadius)
-							{
-									std::cout << catId << ' ';
-							}
-							std::cout << std::endl;
 					}
 			}
 	}
@@ -325,24 +281,12 @@ namespace PE
 					EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
 			{
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
-					std::cout << "RatHunt_v2_0::OnTriggerExit() catsExitedDetectionRadius: ";
-					for (auto const& catId : p_data->catsExitedDetectionRadius)
-					{
-							std::cout << catId << ' ';
-					}
-					std::cout << std::endl;
 			}
 			// check if entity2 is the rat's detection collider and entity1 is cat
 			else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
 					EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
 			{
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
-					std::cout << "RatHunt_v2_0::OnTriggerExit() catsExitedDetectionRadius: ";
-					for (auto const& catId : p_data->catsExitedDetectionRadius)
-					{
-							std::cout << catId << ' ';
-					}
-					std::cout << std::endl;
 			}
 	}
 } // End of namespace PE

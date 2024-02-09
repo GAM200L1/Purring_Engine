@@ -63,18 +63,6 @@ namespace PE
 		virtual std::string_view GetName() override { return "RatHuntState_v2_0"; }
 
 		/*!***********************************************************************************
-		 \brief Displays and updates the rotation of the rat telegraphs.
-
-		 \param targetPosition - Position that is being targeted
-		*************************************************************************************/
-		void EnableTelegraphs(vec2 const& targetPosition);
-		
-		/*!***********************************************************************************
-		 \brief Disables the rat telegraphs.
-		*************************************************************************************/
-		void DisableTelegraphs();
-
-		/*!***********************************************************************************
 			\brief Sets the target and resets the number of hunting turns.
 
 			\param targetId - ID of the entity to target.
@@ -169,6 +157,11 @@ namespace PE
 					return m_previousGameState != gameStateController->currentState;
 			}
 
+			/*!***********************************************************************************
+				\brief Pick the position that the rat should move toward (in a straight line).
+
+				\return Returns a next viable target for the rat.
+			*************************************************************************************/
 			vec2 PickTargetPosition();
 	};
 } // End of namespace PE

@@ -25,8 +25,26 @@ namespace PE
 
         void RatHitCat(const Event<CollisionEvents>& r_TE);
 
-        void OnTriggerEnterForAttack(const Event<CollisionEvents>& r_TE);
-        void OnTriggerStayForAttack(const Event<CollisionEvents>& r_TE);
+
+        // --- COLLISION DETECTION --- // 
+
+        /*!***********************************************************************************
+         \brief Called when a trigger enter or stay event has occured. If an event has
+          occurred between this script's rat's detection collider or attack collider and a cat, 
+          the parent rat is notified.
+
+         \param[in,out] r_TE - Trigger event data.
+        *************************************************************************************/
+        void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
+
+        /*!***********************************************************************************
+         \brief Called when a trigger exit event has occured. If an event has occurred
+          between this script's rat's detection collider and a cat, the parent rat
+          is notified.
+
+         \param[in,out] r_TE - Trigger event data.
+        *************************************************************************************/
+        void OnTriggerExit(const Event<CollisionEvents>& r_TE);
 
         // Getter for the state name with version
         virtual std::string_view GetName() { return "Attack_v2_0"; }
@@ -36,12 +54,22 @@ namespace PE
 
         // Attack state specific variables and data
         RatScript_v2_0_Data* p_data;
-        int m_attackEventListener{};
-        int m_attackStayEventListener{};
         float m_delay{};
 
         bool attacksoundonce{};
         bool telegraphEnabled{ false };
+
+        // Event listener IDs 
+        int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+
+        // ----- PRIVATE METHODS ----- //
+    private:
+        /*!***********************************************************************************
+         \brief Checks if any cats entered or executed the rat's detection radius during
+                the last execution phase and decides whether to swap to the attacking or
+                hunting states respectively.
+        *************************************************************************************/
+        void CheckIfShouldChangeStates();
     };
 
 } // namespace PE

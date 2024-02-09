@@ -44,7 +44,6 @@ namespace PE
 		// reference entities
 		EntityID myID{ 0 };								// id of the rat with this data
 		EntityID ratTelegraphID{ 0 };					// id of an additional invisible object with transform for rotating the arrow telegraph
-		EntityID mainCatID{ 3 };						// needs manual setting
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		StateMachine* p_stateManager;
 		
@@ -53,6 +52,7 @@ namespace PE
 
 		// Movement Variables
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement
+		vec2 targetPosition{ 0.f, 0.f };				// stores the target position the rat is supposed to move towards
 
 		// Attack entities and variables
 		EntityID pivotEntityID{ 0 };					// id of parent obj to rotate to adjust the orientation of the telegraphs
@@ -253,7 +253,13 @@ namespace PE
 		// ----- Rat stuff ----- //
 		void RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE);
 
-		void CheckFollowOrMain(EntityID mainCat, EntityID collidedCat, EntityID damagingID, EntityID rat);
+		/*!***********************************************************************************
+		 \brief Deals damage to the cat that the attack collider collided with.
+
+		 \param[in] collidedCat - ID of the cat to deal damage to.
+		 \param[in] rat - ID of the rat dealing damage to the cat.
+		*************************************************************************************/
+		void DealDamageToCat(EntityID collidedCat, EntityID rat);
 
 		// ----- Getters/RTTR ----- //
 
@@ -285,6 +291,19 @@ namespace PE
 		 \return rttr::instance Instance of the script to get the data from
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
+
+
+		// --- TELEGRAPH HELPER FUNCTIONS --- // 
+
+		/*!***********************************************************************************
+		 \brief Rotates the movement telegraph to face the target position of the rat 
+				and enable it.
+
+		 \param[in] r_targetPosition - Position that the rat aims to move towards.
+		*************************************************************************************/
+		void EnableTelegraphs(EntityID id, vec2 const& r_targetPosition);
+
+		void DisableTelegraphs(EntityID id);
 
 
 		// --- RAT STATE CHANGE DETECTION --- // 
@@ -342,8 +361,15 @@ namespace PE
 		*************************************************************************************/
 		void ChangeStateToIdle(EntityID const id, float const stateChangeDelay = 0.f);
 
-		void ChangeStateToMovement(EntityID const id, float const stateChangeDelay = 0.f);
+		/*!***********************************************************************************
+		 \brief Sets the flag for the state to be changed to the movement state
+						after the delay passed in.
 
+		 \param[in] id - EntityID of the entity to change the state of.
+		 \param[in] stateChangeDelay - Time in seconds before switching to the next state.
+										Set to zero by default.
+		*************************************************************************************/
+		void ChangeStateToMovement(EntityID const id, float const stateChangeDelay = 0.f);
 
 		/*!***********************************************************************************
 		 \brief Sets the flag for the state to be changed to the attack state 
@@ -387,12 +413,33 @@ namespace PE
 		static EntityID GetCloserTarget(vec2 position, std::set<EntityID> const& potentialTargets);
 		static vec2 GetCloserTarget(vec2 position, std::vector<vec2> const& potentialTargets);
 
-		void SetTarget(EntityID id, EntityID targetId);
-		void SetTarget(EntityID id, vec2 const& r_targetPosition);
+		/*!***********************************************************************************
+		 \brief Sets the position that the rat should move towards when CalculateMovement
+						is called.
+
+		 \param[in] id - EntityID of the rat.
+		 \param[in] targetId - ID of the entity that has a position we are to move towards.
+		 \param[in] capMaximum - Set to true to shift the target position within the range
+					of the rat's maximum range per turn, false to allow the rat to exceed their
+					max range.
+		*************************************************************************************/
+		void SetTarget(EntityID id, EntityID targetId, bool const capMaximum);
+
+		/*!***********************************************************************************
+		 \brief Sets the position that the rat should move towards when CalculateMovement 
+						is called. 
+
+		 \param[in] id - EntityID of the rat.
+		 \param[in] r_targetPosition - position to move towards.
+		 \param[in] capMaximum - Set to true to shift the target position within the range 
+					of the rat's maximum range per turn, false to allow the rat to exceed their 
+					max range.
+		*************************************************************************************/
+		void SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum);
 
 		// Returns true if the target has been reached, false otherwise
 		bool CalculateMovement(EntityID id, float deltaTime);
-		bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
+		static bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
 		
 		void CatEnteredAttackRadius(EntityID const id, EntityID const catID);
 		void CatExitedAttackRadius(EntityID const id, EntityID const catID);

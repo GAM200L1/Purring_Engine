@@ -47,7 +47,7 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<ScriptComponent>(m_scriptData[id].followObjectID))
 			{
-				EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue = *GETSCRIPTDATA(RatScript_v2_0, m_scriptData[id].followObjectID).ratHealth;
+				EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue = static_cast<float>(*GETSCRIPTDATA(RatScript_v2_0, m_scriptData[id].followObjectID).ratHealth);
 				EntityManager::GetInstance().Get<GUISlider>(id).m_maxValue = 3;
 			}
 		}

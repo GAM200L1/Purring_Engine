@@ -232,6 +232,31 @@ namespace PE
 			return rttr::instance(m_scriptData.at(id));
 		}
 
+
+		void RatScript_v2_0::EnableTelegraphs(EntityID id, vec2 const& targetPosition)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				vec2 directionOfTarget{ targetPosition - RatScript_v2_0::GetEntityPosition(it->second.myID) };
+				float orientation = atan2(directionOfTarget.y, directionOfTarget.x);
+
+				// Rotate the telegraph
+				RotateEntityRelative(it->second.pivotEntityID, orientation);
+				ToggleEntity(it->second.pivotEntityID, true); // enable the telegraph parent
+				ToggleEntity(it->second.telegraphArrowEntityID, true); // enable the telegraph
+		}
+
+
+		void RatScript_v2_0::DisableTelegraphs(EntityID id)
+		{
+				auto it = m_scriptData.find(id);
+				if (it == m_scriptData.end()) { return; }
+
+				ToggleEntity(it->second.telegraphArrowEntityID, false); // disable the telegraph
+		}
+
+
 		void RatScript_v2_0::TriggerStateChange(EntityID id, State* p_nextState, float const stateChangeDelay)
 		{
 			//std::cout << "RatScript_v2_0::TriggerStateChange(" << id << ", " << p_nextState->GetName() << ", " << stateChangeDelay << ")\n";
@@ -445,7 +470,7 @@ namespace PE
 
 
 
-		void RatScript_v2_0::SetTarget(EntityID id, EntityID targetId)
+		void RatScript_v2_0::SetTarget(EntityID id, EntityID targetId, bool const capMaximum)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
@@ -456,15 +481,16 @@ namespace PE
 
 				// Calculate the distance and direction from the rat to the player cat
 				it->second.ratPlayerDistance = (targetPosition - ratPosition).Length();
-				if (it->second.ratPlayerDistance > it->second.maxMovementRange)
+				if (capMaximum && it->second.ratPlayerDistance > it->second.maxMovementRange)
 				{
 						it->second.ratPlayerDistance = it->second.maxMovementRange;
 				}
 				it->second.directionFromRatToPlayerCat = (targetPosition - ratPosition).GetNormalized();
+				it->second.targetPosition = it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
 		}
 
 
-		void RatScript_v2_0::SetTarget(EntityID id, vec2 const& r_targetPosition)
+		void RatScript_v2_0::SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum)
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
@@ -473,11 +499,12 @@ namespace PE
 
 				// Calculate the distance and direction from the rat to the player cat
 				it->second.ratPlayerDistance = (r_targetPosition - ratPosition).Length();
-				if (it->second.ratPlayerDistance > it->second.maxMovementRange)
+				if (capMaximum && it->second.ratPlayerDistance > it->second.maxMovementRange)
 				{
 					it->second.ratPlayerDistance = it->second.maxMovementRange;
 				}
 				it->second.directionFromRatToPlayerCat = (r_targetPosition - ratPosition).GetNormalized();
+				it->second.targetPosition = it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
 		}
 
 
@@ -496,7 +523,7 @@ namespace PE
 						//		<< " moved to new position: (" << newPosition.x << ", " << newPosition.y
 						//		<< "), Remaining distance: " << it->second.ratPlayerDistance << std::endl;
 
-						return CheckDestinationReached(it->second.minDistanceToTarget, newPosition, RatScript_v2_0::GetEntityPosition(it->second.mainCatID));
+						return CheckDestinationReached(it->second.minDistanceToTarget, newPosition, it->second.targetPosition);
 				}
 				else
 				{
