@@ -65,7 +65,7 @@
                             "GreyCatAttackVariables": {
                                 "attacKDirection": 0,
                                 "bulletDelay": 0.0,
-                                "bulletForce": 1000.0,
+                                "bulletForce": 500.0,
                                 "bulletLifeTime": 1.0,
                                 "bulletRange": 3.0,
                                 "damage": 2,
