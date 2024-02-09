@@ -49,9 +49,9 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<ScriptComponent>(m_scriptData[id].followObjectID))
 			{
-				EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue = static_cast<float>(*GETSCRIPTDATA(RatScript, m_scriptData[id].followObjectID).health);
-				EntityManager::GetInstance().Get<GUISlider>(id).m_maxValue = 3;
-				if (EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue <= 0)
+				float currentHealth{ static_cast<float>(*GETSCRIPTDATA(RatScript, m_scriptData[id].followObjectID).health) };
+
+				if (currentHealth <= 0.f)
 				{
 						//deactive all the children objects first
 						for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
@@ -68,6 +68,8 @@ namespace PE
 						//deactive current object
 						EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
 				}
+
+				SetFillAmount(id, currentHealth <= 0.f ? 0.f : currentHealth / 3.f);
 			}
 		}
 	}

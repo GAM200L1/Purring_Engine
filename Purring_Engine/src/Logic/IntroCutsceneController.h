@@ -16,6 +16,7 @@
 
 *************************************************************************************/
 #pragma once
+#include "Events/EventHandler.h"
 #include "Script.h"
 namespace PE
 {
@@ -25,6 +26,9 @@ namespace PE
 		EntityID Text;
 		EntityID CutsceneObject;
 		EntityID FinalScene;
+
+		int windowNotFocusEventID;
+		int windowFocusEventID;
 	};
 
 	class IntroCutsceneController : public Script
@@ -126,6 +130,18 @@ namespace PE
 		 \param[in]		float the alpha to set
 		*************************************************************************************/
 		void FadeAllObject(EntityID id, float const alpha);
+
+		/*!***********************************************************************************
+		 \brief			Handle window out of focus event.
+		 \param[in]     Event containing window-specific details.
+		*************************************************************************************/
+		void OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event);
+
+		/*!***********************************************************************************
+		 \brief			Handle window out of focus event.
+		 \param[in]     Event containing window-specific details.
+		*************************************************************************************/
+		void OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event);
 
 	private:
 		std::map<EntityID, IntroCutsceneControllerData> m_scriptData;
