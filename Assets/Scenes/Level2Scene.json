@@ -83,8 +83,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -391,8 +391,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -664,8 +664,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -821,8 +821,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1170,8 +1170,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1213,8 +1213,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1572,8 +1572,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1845,8 +1845,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2255,8 +2255,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2578,8 +2578,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2660,8 +2660,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3261,8 +3261,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3534,8 +3534,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3988,7 +3988,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 42
                     },
@@ -4052,7 +4052,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 44
                     },
@@ -4116,7 +4116,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 28
                     },
@@ -4180,7 +4180,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 41
                     },
@@ -4244,7 +4244,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 29
                     },
@@ -4308,7 +4308,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 30
                     },
@@ -4372,7 +4372,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 31
                     },
@@ -4436,7 +4436,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 32
                     },
@@ -4500,7 +4500,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 33
                     },
@@ -4564,7 +4564,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 34
                     },
@@ -4692,7 +4692,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 36
                     },
@@ -4756,7 +4756,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 37
                     },
@@ -4820,7 +4820,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 38
                     },
@@ -4884,7 +4884,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 39
                     },
@@ -4948,7 +4948,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 40
                     },
@@ -5012,7 +5012,7 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Collider",
+                        "name": "Obstacle",
                         "parent": null,
                         "sceneID": 43
                     },
@@ -5047,8 +5047,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5126,8 +5126,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -5162,8 +5162,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 875.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
