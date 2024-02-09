@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "AudioComponent": {
-                "audioKey": "../Assets/Audio/vo_Rat_Attack1.wav",
+                "audioKey": "../Assets/Audio/vo_Rat_Attack2.wav",
                 "loop": false
             },
             "EntityDescriptor": {
