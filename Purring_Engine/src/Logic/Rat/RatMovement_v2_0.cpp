@@ -1,3 +1,26 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401/2451-A
+ \file     RatMovement_v2_0.cpp
+ \date     17-01-2024
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+ \par      code %:     50%
+ \par      changes:    Majority rat movement AI logic.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     20%
+ \par      changes:    06-02-2024
+                       Integration of gamestates with the Rat States and Rat AI.
+
+ \brief
+    This file contains functions for the rat movement state.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "Logic/Rat/RatMovement_v2_0.h"
@@ -82,7 +105,6 @@ namespace PE
             }
         }
     }
-
 
     void RatMovement_v2_0::StateCleanUp()
     {
