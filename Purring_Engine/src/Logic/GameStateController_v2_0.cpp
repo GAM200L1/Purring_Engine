@@ -576,7 +576,7 @@ namespace PE
 
 	void GameStateController_v2_0::SetPauseStateV2(EntityID)
 	{
-		if (currentState != GameStates_v2_0::PAUSE)
+		if (currentState != GameStates_v2_0::PAUSE && currentState != GameStates_v2_0::WIN && currentState != GameStates_v2_0::LOSE)
 		{
 			prevState = currentState;
 			currentState = GameStates_v2_0::PAUSE;
