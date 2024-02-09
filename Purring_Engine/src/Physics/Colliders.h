@@ -18,11 +18,13 @@
 
 #include <variant>
 #include <set>
+#include <optional>
 #include "Math/MathCustom.h"
 #include "Math/Transform.h"
 #include "ECS/Components.h"
 #include "RigidBody.h"
 #include "Layers/CollisionLayer.h"
+
 
 namespace PE
 {
@@ -325,4 +327,55 @@ namespace PE
 		*************************************************************************************/
 		void ResolvePosition();
 	};
+
+	struct LSColResult
+	{
+		vec2 contactPoint{};
+		size_t contactedEntity{ 0ULL };
+		float angle{ 0.f };
+	};
+
+	/*!***********************************************************************************
+	 \brief Takes a line segment and an entity (will return a nullopt obj if no collider)
+	 		otherwise it will check for collision, and if found, the nearest point of 
+			intersection is returned.
+	 
+	 \param[in] ls  line segment
+	 \param[in] tgt Target entity to check for intersection with the line segment
+	 				if the entity does not have a collider component it will return
+					a nullopt std::optional as it assumes there was no collision.
+	 \return std::optional<LSColResult> optional return (possible to have no intersection)
+	*************************************************************************************/
+	std::optional<LSColResult> DoRayCast(const LineSegment& ls, const size_t& tgt);
+
+	/*!***********************************************************************************
+	 \brief Uses std::visit to handle the Collider variants, utilizing the two overloaded
+	 		functions CheckLSCollision() to handle the current two possible variants
+	 
+	 \param[in] ls 	line segment
+	 \param[in] tgt target collider
+	 \return std::optional<LSColResult> optional return (possible to have no intersection)
+	*************************************************************************************/
+	std::optional<LSColResult> CheckLineCollision(const LineSegment& ls, const Collider& tgt);
+	
+	// std::visit helper functions
+	/*!***********************************************************************************
+	 \brief Overloaded function to handle circle colliders for the ray cast/line intersec
+	 		function
+	 
+	 \param[in] ls 	line segment
+	 \param[in] tgt target circle collider
+	 \return std::optional<LSColResult> optional return (possible to have no intersection)
+	*************************************************************************************/
+	std::optional<LSColResult> CheckLSCollision(const LineSegment& ls, const CircleCollider& tgt);
+
+	/*!***********************************************************************************
+	 \brief Overloaded function to handle AABB colliders for the ray cast/line intersect
+	 		function
+	 
+	 \param[in] ls 	line segment
+	 \param[in] tgt target AABB collider
+	 \return std::optional<LSColResult> optional return (possible to have no intersection)
+	*************************************************************************************/
+	std::optional<LSColResult> CheckLSCollision(const LineSegment& ls, const AABBCollider& tgt);
 }
