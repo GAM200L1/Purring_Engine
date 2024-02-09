@@ -3731,6 +3731,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 114.0,
                         "orientation": 0.0,
@@ -3794,6 +3799,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 103.0,
@@ -3859,6 +3869,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 124.0,
                         "orientation": 0.0,
@@ -3922,6 +3937,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 115.0,
@@ -3987,6 +4007,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 115.0,
                         "orientation": 0.0,
@@ -4050,6 +4075,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 115.0,
@@ -4115,6 +4145,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 115.0,
                         "orientation": 0.0,
@@ -4178,6 +4213,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 121.0,
@@ -4243,6 +4283,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 115.0,
                         "orientation": 0.0,
@@ -4306,6 +4351,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 120.0,
@@ -4435,6 +4485,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 114.0,
                         "orientation": 0.0,
@@ -4498,6 +4553,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 118.0,
@@ -4563,6 +4623,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 121.0,
                         "orientation": 0.0,
@@ -4626,6 +4691,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 124.0,
@@ -4691,6 +4761,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 124.0,
                         "orientation": 0.0,
@@ -4754,6 +4829,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 124.0,
@@ -5387,8 +5467,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": 127.0001449584961,
+                                "y": -123.99987030029297
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5452,8 +5532,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": 127.0001449584961,
+                            "y": -123.99987030029297
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5483,8 +5563,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": 280.9999084472656,
+                                "y": 77.99984741210938
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5548,8 +5628,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": 280.9999084472656,
+                            "y": 77.99984741210938
                         },
                         "relativeposition": {
                             "x": 0.0,
