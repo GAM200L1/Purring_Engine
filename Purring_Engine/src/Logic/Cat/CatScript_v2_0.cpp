@@ -48,7 +48,6 @@ namespace PE
 	{
 		//m_scriptData[id].catID = id;
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		if (m_scriptData[id].isCaged && m_scriptData[id].cageID == 0) { throw "No CageID attached"; }
 		m_scriptData[id].catID = id;
 		
 		try

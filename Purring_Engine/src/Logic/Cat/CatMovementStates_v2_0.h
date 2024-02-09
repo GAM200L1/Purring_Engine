@@ -218,7 +218,6 @@ namespace PE
 		// ----- Private Variables ----- //
 		CatScript_v2_0Data* p_data;
 		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
-		bool m_collidedWithRat{ false }; // Set to true when the cat has collided with a rat
 		bool m_doneMoving{ false }; // Set to true when the cat has reached the end of their path
 	};
 }

@@ -3057,7 +3057,6 @@
                                         "teleGraphIDs": []
                                     }
                                 },
-                                "cageID": 0,
                                 "catID": 0,
                                 "catMaxMovementEnergy": 21,
                                 "catType": 1,
@@ -3621,15 +3620,6 @@
                         "name": "Exit Point",
                         "parent": null,
                         "sceneID": 72
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
                     },
                     "Transform": {
                         "height": 113.0,
@@ -4470,7 +4460,6 @@
                                         "teleGraphIDs": []
                                     }
                                 },
-                                "cageID": 0,
                                 "catID": 0,
                                 "catMaxMovementEnergy": 21,
                                 "catType": 1,
@@ -4483,6 +4472,9 @@
                                 "nodeSize": 10.0,
                                 "toggleDeathAnimation": false
                             },
+                            "state": 0
+                        },
+                        "FollowScript_v2_0": {
                             "state": 0
                         }
                     },
@@ -4525,7 +4517,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
                     },
                     "Transform": {
                         "height": 100.0,

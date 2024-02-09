@@ -448,14 +448,15 @@ namespace PE
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEvent) };
 
-		// Check if the rat is colliding with the cat
-		if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
-			|| (CatHelperFunctions::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
-		{
-			m_collidedWithRat = true;
-		}
-		if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
-			|| (CatHelperFunctions::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
+		//// Check if the rat is colliding with the cat
+		//if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
+		//	|| (CatHelperFunctions::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
+		//{
+		//	m_collidedWithRat = true;
+		//}
+		auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
+		if ((CheckExitPoint(OCEE.Entity1) && OCEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::GREYCAT))
+			|| (CheckExitPoint(OCEE.Entity2) && OCEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::GREYCAT)))
 		{
 			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage((p_gsc->GetCurrentLevel() == 2)? 0 : (p_gsc->GetCurrentLevel() + 1)); //
 		}
