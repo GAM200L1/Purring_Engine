@@ -1,14 +1,14 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401/2451-A
- \file     RatController_v2_0.h
+ \file     RatController_v2_0.cpp
  \date     17-01-2024
 
  \author               Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
 
  \brief
-	This file contains declarations for functions used for rats.
+	This file contains definitions for functions used for rats.
 
  All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
 

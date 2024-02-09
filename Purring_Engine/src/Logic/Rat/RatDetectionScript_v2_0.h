@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401/2451-A
- \file     RatDetectionScript_v2_0_Data.h
+ \file     RatDetectionScript_v2_0.h
  \date     17-01-2024
 
  \author               Krystal YAMIN

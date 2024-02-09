@@ -1,3 +1,18 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401/2451-A
+ \file     RatAttack_v2_0.cpp
+ \date     24-01-2024
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+
+ \brief
+    This file contains definitions for functions used for the rat attack state.
+
+ All content (c) 2024 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "RatScript_v2_0.h"
 #include "Logic/Rat/RatAttack_v2_0.h"
@@ -16,6 +31,7 @@ namespace PE
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                                                           // Get GSM instance
 
+        //Subscribe to events
         m_attackEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnterForAttack, this);
         m_attackStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerStayForAttack, this);
 
@@ -29,12 +45,14 @@ namespace PE
     {
         //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Rat ID: " << id << " is updating with attacking status: " << p_data->attacking << std::endl;
 
+        //If the game state is pause, return
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
         {
             //std::cout << "[DEBUG] RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
             return;
         }
 
+        //If there is delay and currently attacking, countdown delay
         if (m_delay > 0.f && p_data->attacking)
         {
             m_delay -= deltaTime;

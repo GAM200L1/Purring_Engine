@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401/2451-A
- \file     RatHuntState_v2_0.cpp
+ \file     RatHuntState_v2_0.h
  \date     24-01-2024
 
  \author               Krystal YAMIN

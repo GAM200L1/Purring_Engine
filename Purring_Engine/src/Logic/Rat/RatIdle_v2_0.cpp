@@ -1,3 +1,18 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401/2451-A
+ \file     RatIdle_v2_0.cpp
+ \date     24-01-2024
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+
+ \brief
+    This file contains definitions for functions used for the rat idle state.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
 
