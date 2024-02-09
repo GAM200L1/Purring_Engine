@@ -18,6 +18,7 @@
 #include "ECS/SceneView.h"
 #include "SpatialGrid.h"
 #include "Logging/Logger.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -100,19 +101,22 @@ namespace PE
 		if (checkForComponents.begin() != checkForComponents.end())
 		{
 			int firstIndex = 0;
-			for (EntityID colliderID : checkForComponents)
+			for (const auto& layer : LayerView<Collider, Transform>())
 			{
-				Transform const& r_transform = EntityManager::GetInstance().Get<Transform>(colliderID);
-				
-				// to fill up the width with a value first
-				if (firstIndex == 0)
+				for (EntityID colliderID : InternalView(layer))
 				{
-					m_cellWidth = r_transform.height;
-					++firstIndex;
-				}
+					Transform const& r_transform = EntityManager::GetInstance().Get<Transform>(colliderID);
 
-				m_cellWidth = (m_cellWidth < r_transform.height) ? m_cellWidth : r_transform.height;
-				m_cellWidth = (m_cellWidth < r_transform.width) ? m_cellWidth : r_transform.width;
+					// to fill up the width with a value first
+					if (firstIndex == 0)
+					{
+						m_cellWidth = r_transform.height;
+						++firstIndex;
+					}
+
+					m_cellWidth = (m_cellWidth < r_transform.height) ? m_cellWidth : r_transform.height;
+					m_cellWidth = (m_cellWidth < r_transform.width) ? m_cellWidth : r_transform.width;
+				}
 			}
 		}
 		else
@@ -154,35 +158,38 @@ namespace PE
 			}
 		}
 
-		for (EntityID colliderID : SceneView<Collider, Transform>())
+		for (const auto& layer : LayerView<Collider, Transform>())
 		{
-			Collider const& r_collider = EntityManager::GetInstance().Get<Collider>(colliderID);
-			bool inGrid{false};
-			std::visit([&](auto const& r_col)
+			for (EntityID colliderID : InternalView(layer))
 			{
-					inGrid = CheckInGridArea(r_col);
-			}, r_collider.colliderVariant);
+				Collider const& r_collider = EntityManager::GetInstance().Get<Collider>(colliderID);
+				bool inGrid{ false };
+				std::visit([&](auto const& r_col)
+					{
+						inGrid = CheckInGridArea(r_col);
+					}, r_collider.colliderVariant);
 
-			if (!inGrid)
-			{
-				// if any part of the collider is outside the grid size, don't include in collision check
-				std::stringstream ss;
-				ss << "Error: Collider of Entity " << colliderID << " is Out of Bounds and won't be counted for collision " << '\n';
-				engine_logger.AddLog(false, ss.str(), "");
-				continue;
-			}
-
-			std::pair<GridID, GridID> colliderMinMaxID{ {0,0}, {0,0} };
-			std::visit([&](auto const& r_col)
-			{
-				colliderMinMaxID = GetMinMaxIDs(r_col);
-			}, r_collider.colliderVariant);
-
-			for (int col{ colliderMinMaxID.first.x }; col <= colliderMinMaxID.second.x; ++col)
-			{
-				for (int row{ colliderMinMaxID.first.y }; row <= colliderMinMaxID.second.y; ++row)
+				if (!inGrid)
 				{
-					m_cells[col][row].Add(colliderID);
+					// if any part of the collider is outside the grid size, don't include in collision check
+					std::stringstream ss;
+					ss << "Error: Collider of Entity " << colliderID << " is Out of Bounds and won't be counted for collision " << '\n';
+					engine_logger.AddLog(false, ss.str(), "");
+					continue;
+				}
+
+				std::pair<GridID, GridID> colliderMinMaxID{ {0,0}, {0,0} };
+				std::visit([&](auto const& r_col)
+					{
+						colliderMinMaxID = GetMinMaxIDs(r_col);
+					}, r_collider.colliderVariant);
+
+				for (int col{ colliderMinMaxID.first.x }; col <= colliderMinMaxID.second.x; ++col)
+				{
+					for (int row{ colliderMinMaxID.first.y }; row <= colliderMinMaxID.second.y; ++row)
+					{
+						m_cells[col][row].Add(colliderID);
+					}
 				}
 			}
 		}

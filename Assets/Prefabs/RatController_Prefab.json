@@ -1,0 +1,36 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "RatController",
+                "children": [],
+                "isActive": true,
+                "name": "RatController",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "ScriptComponent": {
+                "RatController_v2_0": {
+                    "state": 0
+                }
+            },
+            "Transform": {
+                "height": 100.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 0.0
+                },
+                "relorientation": 0.0,
+                "width": 100.0
+            }
+        },
+        "name": ""
+    }
+}

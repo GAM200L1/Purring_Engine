@@ -26,6 +26,7 @@
 #include "GUISystem.h"
 #include "GameStateManager.h"
 #include "Input/InputSystem.h"
+#include "PauseManager.h"
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #include "SceneManager/SceneManager.h"
@@ -101,6 +102,7 @@ namespace PE
 		ADD_ALL_KEY_EVENT_LISTENER(WindowManager::OnKeyEvent, this)
 
 		REGISTER_UI_FUNCTION(TestFunction, WindowManager);
+		REGISTER_UI_FUNCTION(CloseWindow, WindowManager);
 
 		return window;
 	}
@@ -113,6 +115,10 @@ namespace PE
 	void WindowManager::SetWindow(GLFWwindow* p_win)
 	{
 		p_currWindow = p_win;
+	}
+	void WindowManager::CloseWindow(EntityID)
+	{
+		glfwSetWindowShouldClose(WindowManager::GetInstance().GetWindow(), true);
 	}
 
 
@@ -224,11 +230,15 @@ namespace PE
 #else
 			if (r_event.GetType() == WindowEvents::WindowLostFocus)
 			{
-					GameStateManager::GetInstance().SetPauseState();
+					PauseManager::GetInstance().SetPaused(true);
 					if (msepress)
 							glfwIconifyWindow(WindowManager::GetInstance().GetWindow());
 
 					msepress = true;
+			}
+			else if (r_event.GetType() == WindowEvents::WindowFocus)
+			{
+					PauseManager::GetInstance().SetPaused(false);
 			}
 #endif
 	}

@@ -68,6 +68,11 @@ namespace PE
         void SetWindow(GLFWwindow* p_win);
 
         /*!***********************************************************************************
+         \brief     Close The Window
+        *************************************************************************************/
+        void CloseWindow(EntityID = -1);
+
+        /*!***********************************************************************************
          \brief     Update the window title to show current FPS.
          \param     window Pointer to the GLFW window.
          \param     fps Current frames per second.
@@ -148,8 +153,10 @@ namespace PE
         *************************************************************************************/
         void TestFunction(EntityID);
 
-    private:
+    public:
         GLFWwindow* p_currWindow;
+
+    private:
         GLFWmonitor* p_monitor;
         static bool msepress;
         bool m_showFps;

@@ -22,6 +22,7 @@
 #include "Hierarchy/HierarchyManager.h"
 #include "Logic/LogicSystem.h"
 #include "Graphics/CameraManager.h"
+#include "Layers/LayerManager.h"
 
 extern Logger engine_logger;
 
@@ -129,6 +130,11 @@ namespace PE
 
     }
 
+    void SceneManager::RestartScene()
+    {
+        RestartScene(m_activeScene);
+    }
+
     void SceneManager::DeleteObjects()
     {
         // delete all objects
@@ -142,6 +148,8 @@ namespace PE
                 EntityManager::GetInstance().RemoveEntity(n);
             }
         }
+
         Hierarchy::GetInstance().Update();
+        //LayerManager::GetInstance().ResetLayerCache();
     }
 }

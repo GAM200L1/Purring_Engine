@@ -50,6 +50,10 @@
 #include "Logic/FollowScript.h"
 #include "Logic/CameraManagerScript.h"
 #include "Logic/GameStateController.h"
+#include "Logic/GameStateController_v2_0.h"
+#include "Logic/UI/HealthBarScript_v2_0.h"
+#include "Logic/DeploymentScript.h"
+#include "Logic/MainMenuController.h"
 #include "GUISystem.h"
 #include "GUI/Canvas.h"
 #include "Utilities/FileUtilities.h"
@@ -68,6 +72,9 @@
 #include "System.h"
 #include "Math/MathCustom.h"
 #include "SceneManager/SceneManager.h"
+#include "Logic/Rat/RatScript_v2_0.h"
+#include "Logic/Rat/RatIdle_v2_0.h"
+#include "Layers/LayerManager.h"
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -75,6 +82,9 @@
 
 //Hierarchy
 #include "Hierarchy/HierarchyManager.h"
+
+// interaction layer manager
+#include "Layers/LayerManager.h"
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
@@ -134,6 +144,16 @@ namespace PE {
 			if (configJson["Editor"].contains("renderDebug"))
 				m_renderDebug = configJson["Editor"]["renderDebug"].get<bool>(); // whether to render debug lines
 
+			if (configJson["Editor"].contains("showLayerWindow"))
+				m_showLayerWindow = configJson["Editor"]["showLayerWindow"].get<bool>(); 
+
+			if (configJson["Editor"].contains("layerSettings"))
+			{
+				LayerState layer = configJson["Editor"]["layerSettings"].get<unsigned long long>();
+				LayerManager::GetInstance().SetLayerState(layer);
+			}
+
+
 			// also an e.g of how to make it safe
 			m_isPrefabMode = false;
 		}
@@ -156,6 +176,7 @@ namespace PE {
 			m_showEditor = true; // depends on the mode, whether we want to see the scene or the editor
 			m_renderDebug = true; // whether to render debug lines
 			m_isPrefabMode = false;
+			m_showLayerWindow = false;
 		}
 
 		configFile.close();
@@ -202,10 +223,13 @@ namespace PE {
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
 		configJson["Editor"]["showAnimationWindow"] = m_showAnimationWindow;
 		configJson["Editor"]["showPhysicsWindow"] = m_showPhysicsWindow;
+		configJson["Editor"]["showLayerWindow"] = m_showLayerWindow;
+
 		//show the entire gui 
 		configJson["Editor"]["showEditor"] = true; // depends on the mode, whether we want to see the scene or the editor
 		configJson["Editor"]["renderDebug"] = m_renderDebug; // whether to render debug lines
 		configJson["Editor"]["isPrefabMode"] = m_isPrefabMode;
+		configJson["Editor"]["layerSettings"] = LayerManager::GetInstance().GetLayerState().to_ullong();
 
 
 		std::ofstream outFile(filepath);
@@ -298,7 +322,7 @@ namespace PE {
 		//delete all objects
 
 		std::vector<EntityID> temp = EntityManager::GetInstance().GetEntitiesInPool(ALL);
-
+		
 		for (auto n :temp)
 		{
 			if (n != Graphics::CameraManager::GetUiCameraId())
@@ -308,6 +332,7 @@ namespace PE {
 			}
 		}
 		Hierarchy::GetInstance().Update();
+		LayerManager::GetInstance().ResetLayerCache();
 	}
 
 	void Editor::Init()
@@ -409,6 +434,8 @@ namespace PE {
 			if (m_showGameView) ShowGameView(r_frameBuffer , &m_showGameView);
 
 			if (m_applyPrefab) ShowApplyWindow(&m_applyPrefab);
+
+			if (m_showLayerWindow) ShowLayerWindow(&m_showLayerWindow);
 
 			if (m_isPrefabMode && ImGui::IsKeyPressed(ImGuiKey_Escape))
 			{
@@ -682,6 +709,7 @@ namespace PE {
 					continue;
 				std::string name2;
 
+
 				name2 += EntityManager::GetInstance().Get<EntityDescriptor>(v).name;
 
 				if (usedNames.count(name2))
@@ -691,10 +719,19 @@ namespace PE {
 
 				r_selected = (m_currentSelectedObject == static_cast<int>(v));
 
-				if (ImGui::Selectable(name2.c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
+				if (!LayerManager::GetInstance().GetLayerState(EntityManager::GetInstance().Get<EntityDescriptor>(v).interactionLayer) || !EntityManager::GetInstance().Get<EntityDescriptor>(v).isActive)
+				{
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(128, 128, 128, 255));
+				}
+				else
+				{
+					ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 255));
+				}
+
+				if ((name2.length()) ? ImGui::Selectable(name2.c_str(), r_selected) : ImGui::Selectable(("##" + name2).c_str(), r_selected)) //imgui selectable is the function to make the clickable bar of text
 					m_currentSelectedObject = static_cast<int>(v);
 
-
+				ImGui::PopStyleColor();
 
 				if (ImGui::IsItemHovered()) 
 				{
@@ -744,7 +781,7 @@ namespace PE {
 			if (ImGui::BeginChild("GameObjectList", ImVec2(0, 0), true, ImGuiWindowFlags_HorizontalScrollbar)) 
 			{
 				m_mouseInObjectWindow = ImGui::IsWindowHovered();
-				for (const EntityID& id : Hierarchy::GetInstance().GetParentOrder())
+				for (const EntityID& id : Hierarchy::GetInstance().GetHierarchyOrder())
 				{
 					// skip camera
 					if (id == Graphics::CameraManager::GetUiCameraId())
@@ -765,11 +802,19 @@ namespace PE {
 
 					if (!EntityManager::GetInstance().Get<EntityDescriptor>(id).parent.has_value())
 					{
-						
-						
+						if (!LayerManager::GetInstance().GetLayerState(EntityManager::GetInstance().Get<EntityDescriptor>(id).interactionLayer) || !EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive)
+						{
+							ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(128, 128, 128, 255));
+						}
+						else
+						{
+							ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(255, 255, 255, 255));
+						}
+
 						if ((name.length())? ImGui::Selectable(name.c_str(), is_selected) : ImGui::Selectable(("##" + name).c_str(), is_selected)) //imgui selectable is the function to make the clickable bar of text
 							m_currentSelectedObject = static_cast<int>(id);
 
+						ImGui::PopStyleColor();
 
 						if (ImGui::IsItemHovered()) {
 							isHoveringObject = true;
@@ -791,7 +836,7 @@ namespace PE {
 							ImGui::OpenPopup("popup");
 						}
 						ObjectWindowHelper(id, is_selected, isHoveringObject, drag, hoveredObject, dragID, dragName, usedNames);
-
+						
 					}
 					
 
@@ -832,7 +877,7 @@ namespace PE {
 								Hierarchy::GetInstance().DetachChild(dragID.value());
 								EntityID order = 1;
 								EntityID largest = 1;
-								for (const auto& id : Hierarchy::GetInstance().GetParentOrder())
+								for (const auto& id : Hierarchy::GetInstance().GetHierarchyOrder())
 								{
 									if (id == dragID.value())
 										continue;
@@ -1110,7 +1155,7 @@ namespace PE {
 									}
 									else if (vp.get_type().get_name() == "int")
 									{
-										if (prop.get_name().to_string() == "Layer")
+										if (prop.get_name().to_string() == "Render Layer")
 										{
 											int tmp = vp.get_value<int>();
 											std::string str = "##" + prop.get_name().to_string();
@@ -1124,6 +1169,21 @@ namespace PE {
 											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
 											EntityManager::GetInstance().Get<EntityDescriptor>(entityID).SetLayer(tmp);
 										}	
+										else if (prop.get_name().to_string() == "Interaction Layer")
+										{
+											int tmp = vp.get_value<int>();
+											std::string str = "##" + prop.get_name().to_string();
+											/*if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+												ImGui::BeginDisabled();*/
+
+											ImGui::SameLine(); ImGui::SliderInt(str.c_str(), &tmp, 0, 10);
+
+											/*if (EntityManager::GetInstance().Get<EntityDescriptor>(entityID).parent)
+												ImGui::EndDisabled();*/
+											prop.set_value(EntityManager::GetInstance().Get<EntityDescriptor>(entityID), tmp);
+											EntityManager::GetInstance().Get<EntityDescriptor>(entityID).interactionLayer = tmp;
+											LayerManager::GetInstance().UpdateEntity(entityID);
+										}
 									}
 									else if (vp.get_type().get_name() == "unsigned__int64")
 									{
@@ -1777,6 +1837,8 @@ namespace PE {
 									}
 									ImGui::PopStyleColor(1);
 									ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+
 								}
 							}
 						}
@@ -2139,7 +2201,10 @@ namespace PE {
 								}
 
 								ImGui::SeparatorText("Value");
-
+								ImGui::Checkbox("Is Health Bar", &EntityManager::GetInstance().Get<GUISlider>(entityID).m_isHealthBar);
+								ImGui::Text("Knob Width: "); ImGui::SameLine();
+								ImGui::SetNextItemWidth(200.0f);
+								ImGui::DragFloat("##knobw", &EntityManager::GetInstance().Get<GUISlider>(entityID).m_currentWidth);
 								ImGui::Text("Min Value: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
 								ImGui::DragFloat("##Min Value", &EntityManager::GetInstance().Get<GUISlider>(entityID).m_minValue);
@@ -2150,8 +2215,7 @@ namespace PE {
 								ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 								ImGui::Text("Current Value: "); ImGui::SameLine();
 								ImGui::SetNextItemWidth(200.0f);
-								float currVal = EntityManager::GetInstance().Get<GUISlider>(entityID).m_currentValue;
-								ImGui::DragFloat("##Current Value", &currVal);
+								ImGui::DragFloat("##Current Value", &EntityManager::GetInstance().Get<GUISlider>(entityID).m_currentValue);
 							}
 						}
 						
@@ -3055,12 +3119,245 @@ namespace PE {
 								}
 							}
 
+							if (key == "GameStateController_v2_0")
+							{
+								GameStateController_v2_0* p_script = dynamic_cast<GameStateController_v2_0*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("GameStateController_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										ImGui::Text("Game State Active: "); ImGui::SameLine(); ImGui::Checkbox("##act", &it->second.GameStateManagerActive);
+										int PauseBackGroundCanvasID = static_cast<int> (it->second.PauseBackGroundCanvas);
+										int PauseMenuCanvasID = static_cast<int> (it->second.PauseMenuCanvas);
+										int AreYouSureCanvasID = static_cast<int> (it->second.AreYouSureCanvas);
+										int AreYouSureRestartCanvasID = static_cast<int> (it->second.AreYouSureRestartCanvas);
+										int WinCanvasID = static_cast<int> (it->second.WinCanvas);
+										int LoseCanvasID = static_cast<int> (it->second.LoseCanvas);
+										int HowToPlayCanvasID = static_cast<int> (it->second.HowToPlayCanvas);
+										int HUDCanvasID = static_cast<int> (it->second.HUDCanvas);
+										int ExecuteCanvasID = static_cast<int> (it->second.ExecuteCanvas);
+										int TurnCounterCanvasID = static_cast<int> (it->second.TurnCounterCanvas);
+										int HTPID1 = static_cast<int> (it->second.HowToPlayPageOne);
+										int HTPID2 = static_cast<int> (it->second.HowToPlayPageTwo);
+										int CatPortID = static_cast<int> (it->second.CatPortrait);
+										int RatPortID = static_cast<int> (it->second.RatPortrait);
+										int PortID = static_cast<int> (it->second.Portrait);
+										int BackgroundID = static_cast<int> (it->second.Background);
+										int JournalID = static_cast<int> (it->second.Journal);
+										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
+										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
+									
+										ImGui::Text("BackgroundCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bgc", &PauseBackGroundCanvasID);
+										if (PauseBackGroundCanvasID != m_currentSelectedObject) { it->second.PauseBackGroundCanvas = PauseBackGroundCanvasID; }
+
+										ImGui::Text("PauseMenuCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##pmc", &PauseMenuCanvasID);
+										if (PauseMenuCanvasID != m_currentSelectedObject) { it->second.PauseMenuCanvas = PauseMenuCanvasID; }
+
+										ImGui::Text("AreYouSureCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ays", &AreYouSureCanvasID);
+										if (AreYouSureCanvasID != m_currentSelectedObject) { it->second.AreYouSureCanvas = AreYouSureCanvasID; }
+
+										ImGui::Text("AreYouSureRestartCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##aysr", &AreYouSureRestartCanvasID);
+										if (AreYouSureRestartCanvasID != m_currentSelectedObject) { it->second.AreYouSureRestartCanvas = AreYouSureRestartCanvasID; }
+
+										ImGui::Text("WinCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ws", &WinCanvasID);
+										if (WinCanvasID != m_currentSelectedObject) { it->second.WinCanvas = WinCanvasID; }
+
+										ImGui::Text("LoseCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##ls", &LoseCanvasID);
+										if (LoseCanvasID != m_currentSelectedObject) { it->second.LoseCanvas = LoseCanvasID; }
+
+										ImGui::Text("HowToPlayCanvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htps", &HowToPlayCanvasID);
+										if (HowToPlayCanvasID != m_currentSelectedObject) { it->second.HowToPlayCanvas = HowToPlayCanvasID; }
+
+										ImGui::Text("How to Play P1 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htp1", &HTPID1);
+										if (HTPID1 != m_currentSelectedObject) { it->second.HowToPlayPageOne = HTPID1; }
+
+										ImGui::Text("How to Play P2 ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##htp2", &HTPID2);
+										if (HTPID2 != m_currentSelectedObject) { it->second.HowToPlayPageTwo = HTPID2; }
+
+										ImGui::Text("HUD Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##hudc", &HUDCanvasID);
+										if (HUDCanvasID != m_currentSelectedObject) { it->second.HUDCanvas = HUDCanvasID; }
+
+										ImGui::Text("Foliage ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##folc", &ExecuteCanvasID);
+										if (ExecuteCanvasID != m_currentSelectedObject) { it->second.ExecuteCanvas = ExecuteCanvasID; }
+
+										ImGui::Text("Turn Counter Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tcc", &TurnCounterCanvasID);
+										if (TurnCounterCanvasID != m_currentSelectedObject) { it->second.TurnCounterCanvas = TurnCounterCanvasID; }
+
+										ImGui::Text("Cat Portrait Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##cpt", &CatPortID);
+										if (CatPortID != m_currentSelectedObject) { it->second.CatPortrait = CatPortID; }
+
+										ImGui::Text("Rat Portrait Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##rpt", &RatPortID);
+										if (RatPortID != m_currentSelectedObject) { it->second.RatPortrait = RatPortID; }
+
+										ImGui::Text("Portrait ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##npt", &PortID);
+										if (PortID != m_currentSelectedObject) { it->second.Portrait = PortID; }
+
+										ImGui::Text("Level Background ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bg", &BackgroundID);
+										if (BackgroundID != m_currentSelectedObject) { it->second.Background = BackgroundID; }
+
+										ImGui::Text("Transition Panel ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##tpc", &TransitionPanelID);
+										if (TransitionPanelID != m_currentSelectedObject) { it->second.TransitionPanel = TransitionPanelID; }
+
+										ImGui::Text("Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##jcid", &JournalID);
+										if (JournalID != m_currentSelectedObject) { it->second.TransitionPanel = JournalID; }
+
+										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
+										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }
+
+										for (int i = 0; i < 5; i++)
+										{
+											if (i != 0)
+											{
+												int id = static_cast<int> (it->second.clicklisttest[i]);
+												std::string test = std::string("##id2") + std::to_string(i);
+												ImGui::Text("Click Test ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt(test.c_str(), &id);
+												if (id != m_currentSelectedObject)
+													it->second.clicklisttest[i] = id;
+											}
+										}
+									}
+								}
+							}
+
+							if (key == "HealthBarScript_v2_0")
+							{
+								HealthBarScript_v2_0* p_Script = dynamic_cast<HealthBarScript_v2_0*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("HealthBarScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int id = static_cast<int> (it->second.followObjectID);
+										ImGui::Text("Follow Object ID: "); ImGui::SameLine(); ImGui::InputInt("##healthbarfollowid", &id);
+										it->second.followObjectID = id;
+
+										//get and set color variable of the healthbar
+										ImVec4 color;
+										color.x = it->second.fillColor.x;
+										color.y = it->second.fillColor.y;
+										color.z = it->second.fillColor.z;
+										color.w = it->second.fillColor.w;
+
+										ImGui::Text("Health Bar Color: "); ImGui::SameLine();
+										ImGui::ColorEdit4("##healthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+										it->second.fillColor.x = color.x;
+										it->second.fillColor.y = color.y;
+										it->second.fillColor.z = color.z;
+										it->second.fillColor.w = color.w;
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+									}
+								}
+							}
+
+							if (key == "DeploymentScript")
+							{
+								DeploymentScript* p_script = dynamic_cast<DeploymentScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("DeploymentScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int FollowingTextureObjectID = static_cast<int> (it->second.FollowingTextureObject);
+										int NoGoAreaID = static_cast<int> (it->second.NoGoArea);
+										int DeploymentAreaID = static_cast<int> (it->second.DeploymentArea);
+
+										ImGui::Text("Following Texture Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##FTO", &FollowingTextureObjectID);
+										 it->second.FollowingTextureObject = FollowingTextureObjectID;
+
+										ImGui::Text("No Go Areas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##NGA", &NoGoAreaID);
+										if (NoGoAreaID != m_currentSelectedObject) { it->second.NoGoArea = NoGoAreaID; }
+
+
+										ImGui::Text("Deployment Zone ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##DPZ", &DeploymentAreaID);
+										{ it->second.DeploymentArea = DeploymentAreaID; }
+									}
+								}
+							}
+
+							if (key == "MainMenuController")
+							{
+								MainMenuController* p_script = dynamic_cast<MainMenuController*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("MainMenuController", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int AreYouSureID = static_cast<int> (it->second.AreYouSureCanvas);
+										int MainMenuCanvasID = static_cast<int> (it->second.MainMenuCanvas);
+										int SplashScreenID = static_cast<int> (it->second.SplashScreen);
+
+										ImGui::Text("Main Menu Canvas ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##MMCID", &MainMenuCanvasID);
+										if (MainMenuCanvasID != m_currentSelectedObject) { it->second.MainMenuCanvas = MainMenuCanvasID; }
+
+										ImGui::Text("Splash Screen ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##SSMM", &SplashScreenID);
+										if (SplashScreenID != m_currentSelectedObject) { it->second.SplashScreen = SplashScreenID; }
+
+										ImGui::Text("Are You Sure Canvas Object ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##AYSMMID", &AreYouSureID);
+										if (AreYouSureID != m_currentSelectedObject) it->second.AreYouSureCanvas = AreYouSureID;
+									}
+								}
+							}
+
+							if (key == "RatScript_v2_0")
+							{
+								RatScript_v2_0* p_Script = dynamic_cast<RatScript_v2_0*>(val);
+								auto it = p_Script->GetScriptData().find(m_currentSelectedObject);
+
+								if (it != p_Script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("Rat Settings", ImGuiTreeNodeFlags_DefaultOpen))
+									{
+										ImGui::Checkbox("Should Patrol", &it->second.shouldPatrol);
+									}
+
+									if (ImGui::CollapsingHeader("Rat Patrol Points", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										if (it->second.patrolPoints.empty())
+										{
+											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));		// Default Point 1
+											it->second.patrolPoints.push_back(PE::vec2(100.0f, 100.0f));	// Default Point 2
+										}
+
+										for (size_t i = 0; i < it->second.patrolPoints.size(); ++i)
+										{
+											ImGui::PushID(static_cast<int>(i)); // Use i as the ID
+											ImGui::Text("Point %zu:", i + 1); // Display point number
+											ImGui::SameLine();
+											float pos[2] = { it->second.patrolPoints[i].x, it->second.patrolPoints[i].y };
+											ImGui::InputFloat2("##PatrolPoint", pos); // Input field for editing points
+											it->second.patrolPoints[i] = PE::vec2(pos[0], pos[1]); // Update patrol point with new values
+											ImGui::PopID();
+										}
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.7f, 0.0f, 1.0f)); // Green color
+										if (ImGui::Button("Add Patrol Point"))
+										{
+											it->second.patrolPoints.push_back(PE::vec2(0.0f, 0.0f));
+										}
+										ImGui::PopStyleColor(1); // Pop button color style
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));
+
+										ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.7f, 0.0f, 0.0f, 1.0f)); // Red color
+										if (ImGui::Button("Delete Last Patrol Point") && it->second.patrolPoints.size() > 2)
+										{
+											it->second.patrolPoints.pop_back();
+										}
+										ImGui::PopStyleColor(1); // Pop button color style
+									}
+								}
+							}
+
+
 
 
 						}
 					}
-
-
 
 					ImGui::Dummy(ImVec2(0.0f, 10.0f));//add space
 					ImGui::Separator();
@@ -3142,6 +3439,13 @@ namespace PE {
 									EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<TextComponent>() });
 								else
 									AddErrorLog("ALREADY HAS TEXT");
+							}
+							if (ImGui::Selectable("Add ScriptComponent"))
+							{
+									if (!EntityManager::GetInstance().Has(entityID, EntityManager::GetInstance().GetComponentID<ScriptComponent>()))
+											EntityFactory::GetInstance().Assign(entityID, { EntityManager::GetInstance().GetComponentID<ScriptComponent>() });
+									else
+											AddErrorLog("ALREADY HAS A SCRIPTCOMPONENT");
 							}
 						}
 
@@ -3715,6 +4019,17 @@ namespace PE {
 			int framesHeld{};
 
 			static bool playAnimation{ false };
+
+
+			// get all the entities with animation component
+			/*for (const auto& layer : LayerView<AnimationComponent>())
+			{
+				for (EntityID id : InternalView(layer))
+				{
+					entities[EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str()] = id;
+					entityList.push_back(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.c_str());
+				}
+			}*/
 
 			std::vector<std::filesystem::path> animationFilePaths;
 			std::vector<std::string> loadedAnimationKeys;
@@ -4479,6 +4794,15 @@ namespace PE {
 
 							ImGui::EndMenu();
 						}
+						if (ImGui::BeginMenu("Settings"))
+						{
+							if (ImGui::MenuItem("Layer Settings", ""))
+							{
+								m_showLayerWindow = true;
+							}
+
+							ImGui::EndMenu();
+						}
 					}
 					ImGui::EndMainMenuBar(); // closing of menu begin function
 
@@ -4966,7 +5290,6 @@ namespace PE {
 
 
 		ImGui::End();
-
 	}
 
 	void Editor::ShowApplyWindow(bool* p_active)
@@ -4987,55 +5310,58 @@ namespace PE {
 			static std::set<EntityID> modify;
 			static std::map<EntityID, std::vector<bool>> modComps;
 			int cnt{};
-			for (const auto& id : SceneView())
+			for (const auto& layer : LayerView<>())
 			{
-				if (prefabTP != "" && prefabTP == EntityManager::GetInstance().Get<EntityDescriptor>(id).prefabType)
+				for (const auto& id : InternalView(layer))
 				{
-					bool tmp{ static_cast<bool>(modify.count(id)) };
-					ImGui::Checkbox((std::to_string(id) + ". " + EntityManager::GetInstance().Get<EntityDescriptor>(id).name).c_str(), &tmp);
-					if (tmp && !modify.count(id))
+					if (prefabTP != "" && prefabTP == EntityManager::GetInstance().Get<EntityDescriptor>(id).prefabType)
 					{
-						modify.emplace(id);
-						if (!modComps.count(id))
+						bool tmp{ static_cast<bool>(modify.count(id)) };
+						ImGui::Checkbox((std::to_string(id) + ". " + EntityManager::GetInstance().Get<EntityDescriptor>(id).name).c_str(), &tmp);
+						if (tmp && !modify.count(id))
 						{
-							modComps.emplace(id, std::vector<bool>(prefabCID.size()));
-
-							for (auto b : modComps.at(id))
+							modify.emplace(id);
+							if (!modComps.count(id))
 							{
-								b = true;
+								modComps.emplace(id, std::vector<bool>(prefabCID.size()));
+
+								for (auto b : modComps.at(id))
+								{
+									b = true;
+								}
 							}
 						}
-					}
-					if (!tmp && modify.count(id))
-					{
-						modify.erase(id);
-						modComps.erase(id);
-						
-					}
-
-					ImGui::Separator();
-					if (tmp)
-					{
-						ImGui::Indent();
-							
-						for (size_t i{}; i < modComps[id].size(); ++i)
+						if (!tmp && modify.count(id))
 						{
-							if (prefabCID.at(i) == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
-								continue;
+							modify.erase(id);
+							modComps.erase(id);
 
-							bool tmp2 = modComps[id].at(i);
-							std::string name = EntityManager::GetInstance().m_componentNames.at(prefabCID.at(i)).c_str();
-							name += "##";
-							name += std::to_string(i);
-							name += std::to_string(id);
-							ImGui::Checkbox(name.c_str(), &tmp2);
-							modComps[id].at(i) = tmp2;
 						}
 
-						ImGui::Unindent();
 						ImGui::Separator();
+						if (tmp)
+						{
+							ImGui::Indent();
+
+							for (size_t i{}; i < modComps[id].size(); ++i)
+							{
+								if (prefabCID.at(i) == EntityManager::GetInstance().GetComponentID<EntityDescriptor>())
+									continue;
+
+								bool tmp2 = modComps[id].at(i);
+								std::string name = EntityManager::GetInstance().m_componentNames.at(prefabCID.at(i)).c_str();
+								name += "##";
+								name += std::to_string(i);
+								name += std::to_string(id);
+								ImGui::Checkbox(name.c_str(), &tmp2);
+								modComps[id].at(i) = tmp2;
+							}
+
+							ImGui::Unindent();
+							ImGui::Separator();
+						}
+						++cnt;
 					}
-					++cnt;
 				}
 			}
 			if (!cnt)
@@ -5078,6 +5404,34 @@ namespace PE {
 			// do some apply, set boolean to false
 
 			ImGui::End();
+		}
+	}
+
+	void Editor::ShowLayerWindow(bool* p_active)
+	{
+		
+		if (!ImGui::Begin("Layer Settings", p_active, ImGuiWindowFlags_NoCollapse)) // draw resource list
+		{
+			*p_active = false;
+			ImGui::End(); //imgui close
+		}
+		else
+		{
+			if (IsEditorActive())
+			{
+				for (size_t i{}; i < LayerManager::GetInstance().GetLayerState().size(); ++i)
+				{
+					bool flag = LayerManager::GetInstance().GetLayerState(i);
+					std::string txt = "Layer " + std::to_string(i) + ":  ";
+					ImGui::Text(txt.c_str()); ImGui::SameLine(); ImGui::Checkbox(("##" + txt).c_str(), &flag);
+					LayerManager::GetInstance().SetLayerState(i, flag);
+				}
+			}
+			else
+			{
+				p_active = false;
+			}
+			ImGui::End(); //imgui close
 		}
 	}
 
@@ -5159,20 +5513,23 @@ namespace PE {
 
 	EntityID Editor::CountCanvas()
 	{
-		int count{};
-
-		for (const EntityID& objectID : SceneView<Canvas>())
+		EntityID FirstCanvasID{};
+		for (auto layer : LayerView<Canvas>())
 		{
-			UNREFERENCED_PARAMETER(objectID);
-			++count;
+			for (EntityID objectID : InternalView(layer))
+			{
+				FirstCanvasID = objectID;
+			}
+			
 		}
-		return count;
+		return FirstCanvasID;
 	}
 
 	EntityID Editor::CheckCanvas()
 	{
 		EntityID NextCanvasID{};
-		if (NextCanvasID == CountCanvas())
+		NextCanvasID = CountCanvas();
+		if (NextCanvasID)
 		{
 			//if more than 1 canvas popup choose which canvas, to be done in the future
 		}
@@ -5616,5 +5973,6 @@ namespace PE {
 		std::string lowerToFind = ToLower(toFind);
 		return lowerStr.find(lowerToFind) != std::string::npos;
 	}
+
 
 }

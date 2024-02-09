@@ -16,7 +16,6 @@
  
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/
-
 #include <glm/glm.hpp>
 #include "Camera.h"
 

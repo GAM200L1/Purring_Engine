@@ -91,12 +91,17 @@
 #include "GameStateManager.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
-
+#include "Logic/GameStateController_v2_0.h"
+#include "Logic/UI/HealthBarScript_v2_0.h"
+#include "Logic/DeploymentScript.h"
+#include "Logic/MainMenuController.h"
 
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
 #include "Hierarchy/HierarchyManager.h"
+
+#include "Layers/LayerManager.h"
 
 // Testing
 Logger engine_logger = Logger("ENGINE");
@@ -135,7 +140,8 @@ RTTR_REGISTRATION
         .property_readonly("Entity ID", &PE::EntityDescriptor::oldID)
         .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
-        .property("Layer", &PE::EntityDescriptor::layer)
+        .property("Render Layer", &PE::EntityDescriptor::layer)
+        .property("Interaction Layer", &PE::EntityDescriptor::interactionLayer)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
         .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 
@@ -204,26 +210,58 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
-  
-    rttr::registration::class_<PE::GameStateController>("GameStateController")
-        .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
-        .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
-        .property("executingStatement", &PE::GameStateControllerData::executingStatement)
-        .property("mapOverlay", &PE::GameStateControllerData::mapOverlay)
-        .property("pawOverlay", &PE::GameStateControllerData::pawOverlay)
-        .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
-        .property("energyHeader", &PE::GameStateControllerData::energyHeader)
-        .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
-        .property("slashText", &PE::GameStateControllerData::slashText)
-        .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
-        .property("energyBackground", &PE::GameStateControllerData::energyBackground)
-        .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
-        .property("planAttackText", &PE::GameStateControllerData::planAttackText)
-        .property("planMovementText", &PE::GameStateControllerData::planMovementText)
-        .property("turnBackground", &PE::GameStateControllerData::turnBackground)
-        .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
-        .property("endMovementText", &PE::GameStateControllerData::endMovementText)
-        .property("endTurnText", &PE::GameStateControllerData::endTurnText);
+    rttr::registration::class_<PE::GameStateController_v2_0Data>("GameStateController_v2_0")
+        .property("GameStateManagerActive", &PE::GameStateController_v2_0Data::GameStateManagerActive)
+        .property("PauseBackGroundCanvas", &PE::GameStateController_v2_0Data::PauseBackGroundCanvas)
+        .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
+        .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)
+        .property("AreYouSureRestartCanvas", &PE::GameStateController_v2_0Data::AreYouSureRestartCanvas)
+        .property("LoseCanvas", &PE::GameStateController_v2_0Data::LoseCanvas)
+        .property("WinCanvas", &PE::GameStateController_v2_0Data::WinCanvas)
+        .property("HUDCanvas", &PE::GameStateController_v2_0Data::HUDCanvas)
+        .property("ExecuteCanvas", &PE::GameStateController_v2_0Data::ExecuteCanvas)
+        .property("TurnCounterCanvas", &PE::GameStateController_v2_0Data::TurnCounterCanvas)
+        .property("HowToPlayCanvas", &PE::GameStateController_v2_0Data::HowToPlayCanvas)
+        .property("HowToPlayPageOne", &PE::GameStateController_v2_0Data::HowToPlayPageOne)
+        .property("HowToPlayPageTwo", &PE::GameStateController_v2_0Data::HowToPlayPageTwo)
+        .property("CatPortrait", &PE::GameStateController_v2_0Data::CatPortrait)
+        .property("RatPortrait", &PE::GameStateController_v2_0Data::RatPortrait)
+        .property("Portrait", &PE::GameStateController_v2_0Data::Portrait)
+        .property("Background", &PE::GameStateController_v2_0Data::Background)
+        .property("TransitionPanel", &PE::GameStateController_v2_0Data::TransitionPanel)
+        .property("Journal", &PE::GameStateController_v2_0Data::Journal)
+        .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
+        .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
+
+    //rttr::registration::class_<PE::GameStateController>("GameStateController")
+    //    .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
+    //    .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
+    //    .property("executingStatement", &PE::GameStateControllerData::executingStatement)
+    //    .property("mapOverlay", &PE::GameStateControllerData::mapOverlay)
+    //    .property("pawOverlay", &PE::GameStateControllerData::pawOverlay)
+    //    .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
+    //    .property("energyHeader", &PE::GameStateControllerData::energyHeader)
+    //    .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
+    //    .property("slashText", &PE::GameStateControllerData::slashText)
+    //    .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
+    //    .property("energyBackground", &PE::GameStateControllerData::energyBackground)
+    //    .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
+    //    .property("planAttackText", &PE::GameStateControllerData::planAttackText)
+    //    .property("planMovementText", &PE::GameStateControllerData::planMovementText)
+    //    .property("turnBackground", &PE::GameStateControllerData::turnBackground)
+    //    .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
+    //    .property("endMovementText", &PE::GameStateControllerData::endMovementText)
+    //    .property("endTurnText", &PE::GameStateControllerData::endTurnText);
+
+    rttr::registration::class_<PE::DeploymentScriptData>("DeploymentScript")
+        .property("FollowingTextureObject", &PE::DeploymentScriptData::FollowingTextureObject)
+        .property("NoGoArea", &PE::DeploymentScriptData::NoGoArea)
+        .property("DeploymentArea", &PE::DeploymentScriptData::DeploymentArea);   
+    
+    rttr::registration::class_<PE::MainMenuControllerData>("MainMenuController")
+        .property("AreYouSureCanvas", &PE::MainMenuControllerData::AreYouSureCanvas)
+        .property("MainMenuCanvas", &PE::MainMenuControllerData::MainMenuCanvas)
+        .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
         .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
@@ -314,6 +352,11 @@ RTTR_REGISTRATION
         .method("Width", &PE::Canvas::SetWidth)
         .method("Height", &PE::Canvas::SetHeight)
         .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
+
+    rttr::registration::class_<PE::HealthBarScript_v2_0_Data>("HealthBarScript_v2_0")
+        .property("MyID", &PE::HealthBarScript_v2_0_Data::myID)
+        .property("FollowObjectID", &PE::HealthBarScript_v2_0_Data::followObjectID)
+        .property("FillColor", &PE::HealthBarScript_v2_0_Data::fillColor);
 }
 
 PE::CoreApplication::CoreApplication()
@@ -363,7 +406,7 @@ void PE::CoreApplication::Run()
 #ifndef GAMERELEASE
     SceneManager::GetInstance().CreateDefaultScene();
 #else
-    SceneManager::GetInstance().SetStartScene("GameSceneFINAL.json"); // set game scene here <-
+    SceneManager::GetInstance().SetStartScene("MainMenu.json"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
 #endif // !GAMERELEASE
@@ -417,6 +460,9 @@ void PE::CoreApplication::Run()
         }
 
         Hierarchy::GetInstance().Update();
+        
+        
+        //std::cout << Graphics::CameraManager::GetUiCameraId() << std::endl;
 
         // Update Graphics with variable timestep
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
