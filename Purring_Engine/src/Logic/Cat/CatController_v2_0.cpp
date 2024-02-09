@@ -95,7 +95,7 @@ namespace PE
 
 	void CatController_v2_0::KillCat(EntityID id)
 	{
-		if (IsCat(id) && IsCatCaged(id))
+		if (IsCat(id) && !IsCatCaged(id))
 		{
 			EntityID catToRemove = id;
 			if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
