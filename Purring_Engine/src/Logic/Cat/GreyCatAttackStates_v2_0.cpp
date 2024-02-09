@@ -1,6 +1,6 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
+ \module   CSD2451-A
  \file     GreyCatAttackStates_v2_0.cpp
  \date     3-2-2024
 
@@ -350,16 +350,6 @@ namespace PE
 		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
 			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
-			if (IsCatAndNotCaged(OTEE.Entity1))
-			{
-				if ((GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity1))->catType != EnumCatType::MAINCAT)
-					return;
-			}
-			if (IsCatAndNotCaged(OTEE.Entity2))
-			{
-				if ((GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity2))->catType != EnumCatType::MAINCAT)
-					return;
-			}
 			GeneralCollision(OTEE.Entity1, OTEE.Entity2);
 		}
 	}
@@ -377,16 +367,16 @@ namespace PE
 				return false;
 			};
 
-		auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
+		//auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
 
-		if (id1 != m_catID && id2 != m_catID && !CheckExitPoint(id1) && !CheckExitPoint(id2))
+		if (id1 != m_catID && id2 != m_catID)
 		{
-			if (id1 == p_attackData->projectileID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+			if (id1 == p_attackData->projectileID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
 				return true;
 			}
-			else if (id2 == p_attackData->projectileID && IsCatAndNotCaged(id1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+			else if (id2 == p_attackData->projectileID && IsCatAndNotCaged(id1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
 				return true;

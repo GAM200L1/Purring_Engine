@@ -1,14 +1,16 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
- \file     CatMovementScript.h
+ \module   CSD2451-A
+ \file     CatMovementStates_v2_0.h
  \date     21-11-2023
 
  \author:              Krystal YAMIN
  \par      email:      krystal.y@digipen.edu
+ \par      code %:     80%
 
  \co-author:		   LIEW Yeni
  \par	   email:	   yeni.l@digipen.edu
+ \par      code %:     20%
 
  \brief
 	This file contains declarations for functions used for a grey cat's movement states.
@@ -117,7 +119,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Callback function for the mouse click event.
 
-		 \param[in] r_mouseEvent - Details of the mouse click event.
+		 \param[in] r_mouseEvent - Mouse event data.
 		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_mouseEvent);
 
@@ -125,7 +127,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Callback function for the mouse release event.
 
-		 \param[in] r_mouseEvent - Details of the mouse click event.
+		 \param[in] r_mouseEvent - Mouse event data.
 		*************************************************************************************/
 		void OnMouseRelease(const Event<MouseEvents>& r_mouseEvent);
 
@@ -133,7 +135,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Callback function for collision events.
 
-		 \param[in] r_mouseEvent - Details of the collision event.
+		 \param[in] r_mouseEvent - Collision event data.
 		*************************************************************************************/
 		void OnPathCollision(const Event<CollisionEvents>& r_TE);
 
@@ -161,6 +163,7 @@ namespace PE
 	class CatMovement_v2_0EXECUTE : public State
 	{
 	public:
+		
 		// ----- Destructor ----- //
 		virtual ~CatMovement_v2_0EXECUTE() override { p_data = nullptr; p_mainCatData = nullptr; }
 
@@ -217,7 +220,7 @@ namespace PE
 		 \brief Callback function for the collision enter event. Checks if the player has
 						collided with the rat.
 
-		 \param[in] r_mouseEvent cDetails of the collision event.
+		 \param[in] r_collisionEvent - Trigger event data.
 		*************************************************************************************/
 		void OnTriggerEnter(const Event<CollisionEvents>& r_collisionEvent);
 
