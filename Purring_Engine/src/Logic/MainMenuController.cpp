@@ -199,6 +199,7 @@ namespace PE
 			m_inSplashScreen = true;
 			m_timeSinceEnteredState = 0;
 			m_timeSinceExitedState = m_splashTimer;
+			DeactiveObject(m_scriptData[id].MainMenuCanvas);
 		}
 
 		if (m_inSplashScreen)
@@ -221,6 +222,8 @@ namespace PE
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 				EntityManager::GetInstance().RemoveEntity(bgm);
+
+				ActiveObject(m_scriptData[id].MainMenuCanvas);
 
 				m_inSplashScreen = false;
 			}
