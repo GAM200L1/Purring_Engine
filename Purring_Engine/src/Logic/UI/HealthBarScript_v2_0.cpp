@@ -51,6 +51,23 @@ namespace PE
 			{
 				EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue = static_cast<float>(*GETSCRIPTDATA(RatScript, m_scriptData[id].followObjectID).health);
 				EntityManager::GetInstance().Get<GUISlider>(id).m_maxValue = 3;
+				if (EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue <= 0)
+				{
+						//deactive all the children objects first
+						for (auto id2 : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+						{
+								if (!EntityManager::GetInstance().Has<EntityDescriptor>(id2))
+										break;
+
+								EntityManager::GetInstance().Get<EntityDescriptor>(id2).isActive = false;
+						}
+
+						if (!EntityManager::GetInstance().Has<EntityDescriptor>(id))
+								return;
+
+						//deactive current object
+						EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
+				}
 			}
 		}
 	}

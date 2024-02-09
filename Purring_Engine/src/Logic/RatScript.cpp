@@ -92,8 +92,13 @@ namespace PE
 			{
 				try
 				{
+					ToggleEntity(m_scriptData.at(id).attackTelegraphID, false);
+					ToggleEntity(m_scriptData.at(id).arrowTelegraphID, false);
+					ToggleEntity(m_scriptData.at(id).detectionTelegraphID, false);
+
 					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Death"))
 						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+
 				}
 				catch (...)
 				{
@@ -290,9 +295,13 @@ namespace PE
 		 
 	void RatScript::OnDetach(EntityID id)
 	{
+
 		auto it = m_scriptData.find(id);
 		if (it != m_scriptData.end())
 		{
+			ToggleEntity(m_scriptData.at(id).attackTelegraphID, false);
+			ToggleEntity(m_scriptData.at(id).arrowTelegraphID, false);
+			ToggleEntity(m_scriptData.at(id).detectionTelegraphID, false);
 			delete m_scriptData.at(id).p_stateManager;
 			m_scriptData.erase(id);
 		}

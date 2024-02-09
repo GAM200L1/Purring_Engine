@@ -15,7 +15,7 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "RatController_v2_0.h"
-//#include "RatScript_v2_0.h"
+#include "RatScript_v2_0.h"
 #include "../RatScript.h"
 
 #include "../Logic/LogicSystem.h"
