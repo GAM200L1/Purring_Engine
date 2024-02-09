@@ -38,9 +38,6 @@ namespace PE
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, FollowScript_v2_0::CollisionCheck, this);
 		if (!EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
 			EntityManager::GetInstance().Assign<CatSaveData>(MAXSIZE_T);
-		CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
-		dat.saved.clear();
-		dat.saved.emplace_back(MAINCAT);
 	}
 
 	void FollowScript_v2_0::Update(EntityID id, float)
@@ -53,15 +50,10 @@ namespace PE
 				if (m_ScriptData[id].followers.size() == MAXFOLLOWERS)
 					continue;
 
-					
-	
 				if (EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.find("CatScript_v2_0") != EntityManager::GetInstance().Get<ScriptComponent>(id).m_scriptKeys.end())
 				{
 					if (std::find(m_ScriptData[id].followers.begin(), m_ScriptData[id].followers.end(), flw) == m_ScriptData[id].followers.end())
 						m_ScriptData[id].followers.emplace_back(flw);
-
-					auto data = GETSCRIPTDATA(CatScript_v2_0, flw);
-					EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved.push_back(data->catType);
 
 					int randomInteger = std::rand() % 2 + 1;
 					SerializationManager m_serializationManager;
@@ -166,17 +158,9 @@ namespace PE
 	}
 
 	void FollowScript_v2_0::OnDetach(EntityID id)
-	{
-		if (m_ScriptData.count(id))
-		{
-			
-			
-		}
-		// after this we should also add all other cats.
-		
+	{		
 		auto it = m_ScriptData.find(id);
-		if (it != m_ScriptData.end())
-			m_ScriptData.erase(id);
+		
 	}
 
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)
@@ -230,6 +214,8 @@ namespace PE
 
 	FollowScript_v2_0::~FollowScript_v2_0()
 	{
+		if (EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
+			EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved.clear();
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 	}
 }

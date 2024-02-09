@@ -86,7 +86,10 @@ namespace PE
 	{
 		std::vector<EnumCatType> deployableCats{};
 		if (EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
+		{
 			deployableCats = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved;
+			//EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved.clear();
+		}
 		//for (auto const& [catID, type] : m_cachedCats)
 		//{
 		//	// if cat is alive when caching
