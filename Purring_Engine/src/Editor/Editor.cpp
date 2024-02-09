@@ -4777,7 +4777,7 @@ namespace PE {
 							m_isRunTime = false;
 
 						m_showGameView = false;
-						GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
+						GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)-> SetCurrentLevel(0);
 					}
 					ImGui::EndDisabled();
 				}

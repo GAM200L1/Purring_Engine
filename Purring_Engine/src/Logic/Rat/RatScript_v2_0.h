@@ -109,6 +109,9 @@ namespace PE
 		int patrolIndex{ 0 };							// Index of the current patrol point the rat is moving towards
 		bool returnToFirstPoint{ false };				// Flag to indicate if the rat should return to the first patrol point after reaching the last
 
+
+		bool animationStart{ false };
+
 	private:
 		State* p_queuedState{ nullptr }; // State to load
 

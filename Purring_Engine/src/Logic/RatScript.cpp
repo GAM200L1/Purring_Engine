@@ -196,17 +196,19 @@ namespace PE
 							// error
 						}
 					}
-					else if (m_scriptData[id].attackDelay <= 0.f)
+					else if (m_scriptData[id].attackDelay <= 0.f && !m_scriptData[id].animationStart)
 					{
 						try
 						{
 							EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Attack"));
+							m_scriptData[id].animationStart = true;
 						}
 						catch (...)
 						{
 							// error
 						}
 					}
+					
 
 
 				}
@@ -218,6 +220,7 @@ namespace PE
 					{
 						m_scriptData[id].p_stateManager->ChangeState(new RatIDLE{}, id);
 						m_scriptData[id].finishedExecution = false;
+						m_scriptData[id].animationStart = false;
 					}
 				}
 			}

@@ -303,7 +303,7 @@ namespace PE
 
 		void RatScript_v2_0::ChangeStateToAttack(EntityID const id, float const stateChangeDelay)
 		{
-				TriggerStateChange(id, new RatAttack_v2_0, stateChangeDelay);
+			TriggerStateChange(id, new RatAttack_v2_0, stateChangeDelay);
 		}
 
 

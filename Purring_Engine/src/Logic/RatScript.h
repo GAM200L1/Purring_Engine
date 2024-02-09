@@ -65,6 +65,7 @@ namespace PE
 		bool delaySet{ false }; // check if there is state change delay
 		float timeBeforeChangingState{ 0.f }; // delay before state change
 		bool finishedExecution{ false }; // bool to check if rat has finished its movemen and attack executions
+		bool animationStart{ false };
 
 		std::map<std::string, std::string> animationStates;
 
