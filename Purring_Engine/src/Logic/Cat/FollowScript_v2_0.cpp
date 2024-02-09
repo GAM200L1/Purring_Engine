@@ -160,7 +160,10 @@ namespace PE
 	void FollowScript_v2_0::OnDetach(EntityID id)
 	{		
 		auto it = m_ScriptData.find(id);
-		
+		if (it != m_ScriptData.end())
+		{
+			m_ScriptData.erase(id);
+		}
 	}
 
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)
