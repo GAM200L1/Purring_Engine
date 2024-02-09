@@ -54,6 +54,7 @@ namespace PE
 
 		try
 		{
+			std::cout << (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected << ' ';
 			for (auto const& r_telegraph : p_attackData->telegraphIDs) // for every telegraph
 			{
 				AABBCollider const& r_telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(r_telegraph.second).colliderVariant);
@@ -80,7 +81,7 @@ namespace PE
 					CatHelperFunctions::SetColor(r_telegraph.second, m_defaultColor);
 				}
 			}
-			std::cout << (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected << ' ';
+
 			// disables telegraphs if anywhere but the telegraphs are clicked
 			if (m_mouseClick && !m_mouseClickedPrevious && !collidingWithAnyTelegraph)
 			{
@@ -308,16 +309,14 @@ namespace PE
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
 			bool hitSomething{ false };
 			// @TODO: UNCOMMENT
-			//if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0) // check if hit cat for friendly fire
-			//{
 			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID)
 			{
-				if (OCEE.Entity1 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity2))
+				if (OCEE.Entity1 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 				{
 					CatController_v2_0::KillCat(OCEE.Entity2);
 					hitSomething = true;
 				}
-				else if (OCEE.Entity2 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity1))
+				else if (OCEE.Entity2 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 				{
 					CatController_v2_0::KillCat(OCEE.Entity1);
 					hitSomething = true;
@@ -341,7 +340,6 @@ namespace PE
 					(GETSCRIPTDATA(CatScript_v2_0, m_catID))->finishedExecution = true;
 				}
 			}
-			//}
 
 			// kill rat
 

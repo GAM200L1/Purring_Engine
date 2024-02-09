@@ -274,7 +274,7 @@ namespace PE
                 // fail to load animation, delete key
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
-                engine_logger.AddLog(false, "Animation " + r_key + " does not exist.", __FUNCTION__);
+                //engine_logger.AddLog(false, "Animation " + r_key + " does not exist.", __FUNCTION__);
 
                 Animations.erase(r_key);
                 return false;
@@ -403,7 +403,7 @@ namespace PE
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(false, "Animation " + r_name + " not loaded, loading animation.", __FUNCTION__);
+            //engine_logger.AddLog(false, "Animation " + r_name + " not loaded, loading animation.", __FUNCTION__);
 
             // load animation
             if (LoadAnimationFromFile(r_name, r_name))

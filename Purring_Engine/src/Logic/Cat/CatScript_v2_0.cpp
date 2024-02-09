@@ -294,6 +294,7 @@ namespace PE
 			{
 				ChangeToPlanningState(id);
 				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0); // resets animation to 0
+				m_executionAnimationFinished = false; // reset attack animation
 			}
 		}
 	}
@@ -336,21 +337,19 @@ namespace PE
 				{
 					m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
 					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+					PlayAnimation(id, "Attack");
 				}
 			}
 		}
 		// executes attack and plays attack animation, plays idle animation if attack is finished early
 		else if (r_stateName == "AttackEXECUTE")
 		{
-			if (m_scriptData[id].attackSelected && !m_scriptData[id].finishedExecution)
+			if (m_scriptData[id].attackSelected
+				&& m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
-				PlayAnimation(id, "Attack");
-				if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
-				{
-					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
-				}
+				m_executionAnimationFinished = true; // if attack animation finished set to true
 			}
-			else
+			if (m_executionAnimationFinished)
 				PlayAnimation(id, "Idle");
 		}
 	}

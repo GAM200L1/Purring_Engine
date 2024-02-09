@@ -54,7 +54,7 @@ namespace PE
 		float bulletForce{ 1000.f };
 
 		// for syncing
-		unsigned int bulletFireAnimationIndex{ 4 };
+		unsigned int bulletFireAnimationIndex{ 3 };
 	};
 
 	class GreyCatAttack_v2_0PLAN : public CatAttackBase_v2_0

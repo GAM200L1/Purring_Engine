@@ -40,7 +40,6 @@ namespace PE
 
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
 	{
-		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(id)) { return; }
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 
@@ -105,7 +104,7 @@ namespace PE
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		//if (p_data->catID == 60) // @TODO: Change to selected cat ID
+		//if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID))
 		{
 			if (MBPE.button == 1 && p_data->attackSelected)
 			{
