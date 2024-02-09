@@ -1,3 +1,25 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2401/2451-A
+ \file     RatAttack_v2_0.cpp
+ \date     17-01-2024
+
+ \author               Hans (You Yang) ONG
+ \par      email:      youyang.o@digipen.edu
+ \par      code %:     80%
+ \par      changes:    Majority rat idle/patrol AI logic.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     20%
+ \par      changes:    06-02-2024
+                       Integration of gamestates with the Rat States and Rat AI.
+ \brief
+    This file contains functions for the rat idle/patrol state.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "Logic/Rat/RatIdle_v2_0.h"
 
@@ -98,6 +120,7 @@ namespace PE
         }
     }
 
+
     void RatIdle_v2_0::StateUpdate(EntityID id, float deltaTime)
     {
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
@@ -140,6 +163,7 @@ namespace PE
             }
         }
     }
+
 
     void RatIdle_v2_0::PatrolLogic(EntityID id, float deltaTime)
     {
@@ -211,6 +235,7 @@ namespace PE
         }
     }
 
+
     bool RatIdle_v2_0::HasReachedDestination(EntityID id, const vec2& target)
     {
         Transform& ratTransform = EntityManager::GetInstance().Get<Transform>(id);
@@ -223,6 +248,7 @@ namespace PE
         return false;
     }
 
+
     void RatIdle_v2_0::InitializePatrolPoints()
     {
         if (p_data->patrolPoints.size() < 2)
@@ -234,6 +260,7 @@ namespace PE
         p_data->patrolIndex = 0;
     }
 
+
     void RatIdle_v2_0::SetPatrolPoints(const std::vector<vec2>& points)
     {
         p_data->patrolPoints.clear();
@@ -243,6 +270,7 @@ namespace PE
         }
         p_data->patrolIndex = 0;
     }
+
 
     void RatIdle_v2_0::StateExit(EntityID id)
     {
