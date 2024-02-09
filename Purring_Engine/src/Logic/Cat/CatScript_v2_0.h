@@ -74,6 +74,7 @@ namespace PE
 		// animation
 		AnimationComponent* p_catAnimation = nullptr;
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
+		bool playDeathSound{ true };
 	};
 
 	class CatScript_v2_0 : public Script

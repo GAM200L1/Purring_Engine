@@ -4777,6 +4777,7 @@ namespace PE {
 							m_isRunTime = false;
 
 						m_showGameView = false;
+						GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 					}
 					ImGui::EndDisabled();
 				}
@@ -5525,6 +5526,8 @@ namespace PE {
 				StopAndLoadScene();
 
 				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
+
+				GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->SetCurrentLevel(0);
 			}
 
 			if (m_showEditor)

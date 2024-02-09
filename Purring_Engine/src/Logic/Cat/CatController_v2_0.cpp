@@ -112,34 +112,6 @@ namespace PE
 			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
 			if ((GETSCRIPTDATA(CatScript_v2_0, catToRemove))->catType == EnumCatType::MAINCAT)
 				m_lostGame = true;
-			SerializationManager m_serializationManager;
-			EntityID sound{};
-
-			if ((GETSCRIPTDATA(CatScript_v2_0, id))->catType == EnumCatType::MAINCAT)
-			{
-				sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot_Prefab.json");
-			}
-			else
-			{
-				int randomInteger = std::rand() % 3 + 1;
-
-				switch (randomInteger)
-				{
-				case 1:
-					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX1_Prefab.json");
-					break;
-				case 2:
-					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX2_Prefab.json");
-					break;
-				case 3:
-					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX3_Prefab.json");
-					break;
-				}
-			}
-
-			if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-				EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(sound);
 		}
 	}
 
