@@ -4441,10 +4441,10 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationGrey_Attack_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Death_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Idle_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Walk_Anim.json"
+                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
                         ],
                         "CurrentAnimationID": ""
                     },
@@ -4452,14 +4452,14 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -116.0,
-                                "y": -14.999982833862305
+                                "x": -100.00008392333984,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 37.5,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -4468,13 +4468,13 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 83,
-                        "Prefab Type": "",
+                        "Old ID": 61,
+                        "Prefab Type": "Meowsalot",
                         "children": [],
                         "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
-                        "sceneID": 83
+                        "sceneID": 61
                     },
                     "Renderer": {
                         "Color": {
@@ -4493,7 +4493,12 @@
                     "ScriptComponent": {
                         "CatScript_v2_0": {
                             "data": {
-                                "animationStates": {},
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                                },
                                 "attackVariants": {
                                     "GreyCatAttackVariables": {
                                         "attacKDirection": 0,
@@ -4525,18 +4530,18 @@
                         }
                     },
                     "Transform": {
-                        "height": 75.0,
+                        "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -116.0,
-                            "y": -14.999982833862305
+                            "x": -100.00008392333984,
+                            "y": 0.0
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 75.0
+                        "width": 64.0
                     }
                 },
                 "name": ""

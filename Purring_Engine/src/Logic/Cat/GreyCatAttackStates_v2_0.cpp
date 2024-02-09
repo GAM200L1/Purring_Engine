@@ -289,6 +289,8 @@ namespace PE
 		p_attackData->attackDirection = EnumCatAttackDirection_v2_0::NONE;
 		(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = false;
 		CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
+		m_projectileFired = false;
+		(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = false;
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::ProjectileCollided(const Event<CollisionEvents>& r_CE)

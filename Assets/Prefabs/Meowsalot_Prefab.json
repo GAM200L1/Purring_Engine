@@ -2,14 +2,19 @@
     "Entity": {
         "components": {
             "AnimationComponent": {
-                "AnimationIDs": [],
+                "AnimationIDs": [
+                    "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                ],
                 "CurrentAnimationID": ""
             },
             "Collider": {
                 "collisionLayerIndex": 0,
                 "data": {
                     "center": {
-                        "x": 0.0,
+                        "x": -100.00008392333984,
                         "y": 0.0
                     },
                     "positionOffset": {
@@ -50,7 +55,12 @@
             "ScriptComponent": {
                 "CatScript_v2_0": {
                     "data": {
-                        "animationStates": {},
+                        "animationStates": {
+                            "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                            "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                        },
                         "attackVariants": {
                             "GreyCatAttackVariables": {
                                 "attacKDirection": 0,
@@ -85,7 +95,7 @@
                 "height": 64.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 0.0,
+                    "x": -100.00008392333984,
                     "y": 0.0
                 },
                 "relativeposition": {
