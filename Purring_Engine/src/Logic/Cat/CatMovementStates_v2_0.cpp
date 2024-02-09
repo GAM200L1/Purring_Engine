@@ -328,8 +328,6 @@ namespace PE
 			MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
 			if (MBPE.button != 1)
 				m_mouseClick = true; // Flag that the mouse has been clicked
-		
-
 		}
 	}
 

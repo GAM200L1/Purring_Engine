@@ -79,7 +79,7 @@ namespace PE
 	void CatController_v2_0::Destroy(EntityID id)
 	{
 		if (id != mainInstance) { return; }
-		if (!m_lostGame)
+		if (!m_lostGame && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
 			m_cachedCats = m_currentCats;
 	}
 
