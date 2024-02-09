@@ -28,6 +28,8 @@ namespace PE
         void OnTriggerEnterForAttack(const Event<CollisionEvents>& r_TE);
         void OnTriggerStayForAttack(const Event<CollisionEvents>& r_TE);
 
+        void PlayAttackAudio();
+
         // Getter for the state name with version
         virtual std::string_view GetName() { return "Attack_v2_0"; }
 

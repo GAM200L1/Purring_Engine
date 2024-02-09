@@ -62,14 +62,7 @@ namespace PE
 
             if (!attacksoundonce)
             {
-                //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Playing attack sound." << std::endl;
-                SerializationManager serializationManager;
-                EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Attack SFX_Prefab.json");
-                if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-                    EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-                EntityManager::GetInstance().RemoveEntity(sound);
-
-                attacksoundonce = true;
+                PlayAttackAudio();
             }
         }
         else
@@ -228,4 +221,34 @@ namespace PE
         //    }
         //}
     }
+
+    void RatAttack_v2_0::PlayAttackAudio()
+    {
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+        int randSound = std::rand() % 2 + 1;
+
+        std::string soundPrefab;
+        if (randSound == 1)
+        {
+            soundPrefab = "AudioObject/Rat Attack SFX1_Prefab.json";
+        }
+        else
+        {
+            soundPrefab = "AudioObject/Rat Attack SFX2_Prefab.json";
+        }
+
+        // Play the selected sound
+        SerializationManager serializationManager;
+        EntityID sound = serializationManager.LoadFromFile(soundPrefab);
+        if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+        {
+            EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+        }
+        EntityManager::GetInstance().RemoveEntity(sound);
+
+        attacksoundonce = true;
+    }
+
+
 } // namespace PE
