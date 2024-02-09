@@ -306,9 +306,6 @@ namespace PE
 		{
 			Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(p_data->catID) };
 			p_data->pathPositions.emplace_back(r_transform.position);
-
-			// Reduce the player's energy
-			p_data->catCurrentEnergy = p_data->catMaxMovementEnergy - 1;
 		}
 		catch (...)
 		{
