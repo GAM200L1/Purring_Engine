@@ -45,6 +45,8 @@ namespace PE
 
 		//add the mouse click event listener
 		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, MainMenuController::OnMouseClick, this);
+		m_scriptData[id].windowNotFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowLostFocus, MainMenuController::OnWindowOutOfFocus, this)
+		m_scriptData[id].windowFocusEventID = ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus, MainMenuController::OnWindowFocus, this)
 	}
 
 	void MainMenuController::Update(EntityID id, float deltaTime)
@@ -93,6 +95,8 @@ namespace PE
 		if (it != m_scriptData.end())
 		{
 			REMOVE_MOUSE_EVENT_LISTENER(m_scriptData[id].mouseClickEventID);
+			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].windowNotFocusEventID);
+			REMOVE_WINDOW_EVENT_LISTENER(m_scriptData[id].windowFocusEventID);
 		}
 
 
@@ -134,6 +138,16 @@ namespace PE
 
 			}
 		}
+	}
+
+	void MainMenuController::OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event)
+	{
+		PauseManager::GetInstance().SetPaused(true);
+	}
+
+	void MainMenuController::OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event)
+	{
+		PauseManager::GetInstance().SetPaused(false);
 	}
 
 	void MainMenuController::ActiveObject(EntityID id)
@@ -199,6 +213,7 @@ namespace PE
 			m_inSplashScreen = true;
 			m_timeSinceEnteredState = 0;
 			m_timeSinceExitedState = m_splashTimer;
+			DeactiveObject(m_scriptData[id].MainMenuCanvas);
 		}
 
 		if (m_inSplashScreen)
@@ -221,6 +236,8 @@ namespace PE
 				if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 					EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 				EntityManager::GetInstance().RemoveEntity(bgm);
+
+				ActiveObject(m_scriptData[id].MainMenuCanvas);
 
 				m_inSplashScreen = false;
 			}

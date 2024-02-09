@@ -763,6 +763,9 @@
                         "TextureKey": ""
                     },
                     "ScriptComponent": {
+                        "CatController_v2_0": {
+                            "state": 0
+                        },
                         "GameStateController_v2_0": {
                             "data": {
                                 "AreYouSureCanvas": 8,
@@ -5467,8 +5470,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 127.0001449584961,
-                                "y": -123.99987030029297
+                                "x": 175.00021362304688,
+                                "y": -27.999717712402344
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5532,8 +5535,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 127.0001449584961,
-                            "y": -123.99987030029297
+                            "x": 175.00021362304688,
+                            "y": -27.999717712402344
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -5563,8 +5566,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 280.9999084472656,
-                                "y": 77.99984741210938
+                                "x": 565.0003662109375,
+                                "y": 87.99986267089844
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5628,8 +5631,8 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 280.9999084472656,
-                            "y": 77.99984741210938
+                            "x": 565.0003662109375,
+                            "y": 87.99986267089844
                         },
                         "relativeposition": {
                             "x": 0.0,

@@ -30,12 +30,13 @@ namespace PE
 	{
 		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
 		m_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-		m_catPlaced = m_catController->GetDeployableCats().size()-1;
+		m_catPlaced = static_cast<int>(m_catController->GetDeployableCats().size()-1);
 		m_gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 	}
 
 	void DeploymentScript::Update(EntityID id, float)
 	{
+		std::cout << "catleft" << m_catPlaced << std::endl;
 		if (m_catPlaced < 0 && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
