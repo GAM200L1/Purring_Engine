@@ -135,15 +135,47 @@ namespace PE
 		}
 		
 		// getters
+		/*!***********************************************************************************
+		 \brief Gets current movement energy of cat
+
+		 \param[in] id - catID to get energy of
+		 \param[out] int - energy of the cat
+		*************************************************************************************/
 		int GetCurrentMovementEnergy(EntityID id);
+		
+		/*!***********************************************************************************
+		 \brief Gets max movement energy of cat
+
+		 \param[in] id - catID to get energy of
+		 \param[out] int - energy of the cat
+		*************************************************************************************/
 		int GetMaxMovementEnergy(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Gets current vector of cat ids and types
+
+		 \param[in] id - id of the cat controller
+		 \param[out] std::vector<std::pair<EntityID, EnumCatType>> - current vector of cats
+		*************************************************************************************/
 		std::vector<std::pair<EntityID, EnumCatType>> GetCurrentCats(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Gets script data
+
+		 \param[out] std::map<EntityID, CatController_v2_0Data>& Reference to script data variable
+		*************************************************************************************/
 		std::map<EntityID, CatController_v2_0Data>& GetScriptData() { return m_scriptData; }
+
+		/*!***********************************************************************************
+		 \brief Gets rttr instance of script data
+
+		 \param[out] rttr::instance - rttr instance to script data variable
+		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 
 	private:
 		EntityID m_mainCatID{ 0 };
+		bool m_lostGame;
 		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
 		std::vector<std::pair<EntityID, EnumCatType>> m_cachedCats;
 	};
