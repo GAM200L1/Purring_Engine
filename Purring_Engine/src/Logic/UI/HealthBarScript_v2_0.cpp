@@ -20,6 +20,8 @@
 #include "../ECS/Entity.h"
 #include "../ECS/EntityFactory.h"
 #include "../Graphics/CameraManager.h"
+//#include "../Rat/RatScript_v2_0.h"
+#include "../RatScript.h"
 
 namespace PE
 {
@@ -39,8 +41,17 @@ namespace PE
 			// Update the position of the healthbar
 			vec2 newPosition{ EntityManager::GetInstance().Get<Transform>(m_scriptData[id].followObjectID).position }; 
 			newPosition = GETCAMERAMANAGER()->GetWorldToWindowPosition(newPosition.x, newPosition.y);
-			newPosition = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(newPosition.x, newPosition.y);
+			newPosition = GETCAMERAMANAGER()->GetUiWindowToScreenPosition(newPosition.x, newPosition.y + 32);
 			PositionEntityRelative(id, newPosition);
+		}
+
+		if (EntityManager::GetInstance().Has<GUISlider>(id))
+		{
+			if (EntityManager::GetInstance().Has<ScriptComponent>(m_scriptData[id].followObjectID))
+			{
+				EntityManager::GetInstance().Get<GUISlider>(id).m_currentValue = static_cast<float>(*GETSCRIPTDATA(RatScript, m_scriptData[id].followObjectID).health);
+				EntityManager::GetInstance().Get<GUISlider>(id).m_maxValue = 3;
+			}
 		}
 	}
 
@@ -97,9 +108,35 @@ namespace PE
 		// Get the GUI slider component
 		if (EntityManager::GetInstance().Has<GUISlider>(id))
 		{
-			EntityManager::GetInstance().Get<GUISlider>(id).CalculateKnobCenter(std::clamp(fillAmount, 0.f, 1.f));
+			// set the healthbar fill
+			GUISlider& healthBar{ EntityManager::GetInstance().Get<GUISlider>(id) };
+			healthBar.m_currentValue = fillAmount;
+
+			// set the color of the healthbar according to the fill amount 
+			if(healthBar.m_knobID.has_value())
+			{
+				EntityID fillId{ healthBar.m_knobID.value() };
+				if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(id))
+				{
+					vec4 fillColor{ *(GETSCRIPTDATA(HealthBarScript_v2_0, id).fillColorFull) };
+
+					if (fillAmount < 0.333f) // only a third of the health is left
+					{
+							fillColor = *(GETSCRIPTDATA(HealthBarScript_v2_0, id).fillColorAlmostEmpty);
+					}
+					else if (fillAmount < 0.666f) // two thirds of the health is left
+					{
+							fillColor = *(GETSCRIPTDATA(HealthBarScript_v2_0, id).fillColorHalf);
+					}
+
+					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(fillId))
+					{
+							EntityManager::GetInstance().Get<Graphics::GUIRenderer>(fillId).SetColor(fillColor.x, fillColor.y, fillColor.z, fillColor.w);
+					}
+				}
+			}
 		}
-	}
+	} // end of HealthBarScript_v2_0::SetFillAmount
 
 	void HealthBarScript_v2_0::ToggleEntity(EntityID id, bool setToActive)
 	{
