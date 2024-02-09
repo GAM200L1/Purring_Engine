@@ -68,7 +68,7 @@
                                 "bulletForce": 500.0,
                                 "bulletLifeTime": 1.0,
                                 "bulletRange": 3.0,
-                                "damage": 1,
+                                "damage": 2,
                                 "projectileID": 0,
                                 "teleGraphIDs": []
                             }

@@ -543,7 +543,7 @@ namespace PE
 		if ((CheckExitPoint(OCEE.Entity1) && OCEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
 			|| (CheckExitPoint(OCEE.Entity2) && OCEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
 		{
-			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage((p_gsc->GetCurrentLevel() == 2)? 0 : (p_gsc->GetCurrentLevel() + 1)); // goes to the next stage
+			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage((p_gsc->GetCurrentLevel()+1 == 3)? 0 : (p_gsc->GetCurrentLevel() + 1)); // goes to the next stage
 		}
 	}
 }

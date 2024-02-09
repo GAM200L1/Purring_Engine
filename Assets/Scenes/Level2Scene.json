@@ -4398,7 +4398,7 @@
                                 "y": 1.0
                             }
                         },
-                        "isTrigger": false,
+                        "isTrigger": true,
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {

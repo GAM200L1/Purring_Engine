@@ -2993,134 +2993,6 @@
         {
             "Entity": {
                 "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": -163.000244140625,
-                                "y": 102.99998474121094
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 50.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 62,
-                        "Prefab Type": "GutterRat",
-                        "children": [],
-                        "isActive": true,
-                        "name": "GutterRat",
-                        "parent": null,
-                        "sceneID": 64
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": null,
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -163.000244140625,
-                            "y": 102.99998474121094
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 106.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 50.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 63,
-                        "Prefab Type": "GutterRat",
-                        "children": [],
-                        "isActive": true,
-                        "name": "GutterRat",
-                        "parent": null,
-                        "sceneID": 72
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": null,
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 106.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
                     "Canvas": {
                         "Height": 1080.0,
                         "Width": 1920.0
@@ -3560,7 +3432,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 83
+                        "sceneID": 80
                     },
                     "Renderer": {
                         "Color": {
@@ -3570,6 +3442,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 122.0,
@@ -3635,6 +3512,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
@@ -3698,6 +3580,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3763,6 +3650,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 116.0,
                         "orientation": 0.0,
@@ -3826,6 +3718,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 116.0,
@@ -3891,6 +3788,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 378.0,
                         "orientation": 0.0,
@@ -3955,6 +3857,11 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 122.0,
                         "orientation": 0.0,
@@ -4008,7 +3915,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 80
+                        "sceneID": 83
                     },
                     "Renderer": {
                         "Color": {
@@ -4018,6 +3925,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 113.0,
@@ -4082,6 +3994,11 @@
                             "r": 1.0
                         },
                         "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
                     },
                     "Transform": {
                         "height": 113.0,
@@ -4537,8 +4454,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 875.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4643,8 +4560,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 1,
-                                "MyID": 4
+                                "FollowObjectID": 91
                             },
                             "state": 0
                         }
@@ -4779,8 +4695,7 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 1,
-                                "MyID": 4
+                                "FollowObjectID": 92
                             },
                             "state": 0
                         }
@@ -4921,6 +4836,198 @@
                         },
                         "relorientation": 0.0,
                         "width": 70.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                            "../Assets/Animation/AnimationRat_Death_Anim.json",
+                            "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                            "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                            "../Assets/Animation/AnimationRat_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": -348.0001525878906,
+                                "y": 164.99981689453125
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 91,
+                        "Prefab Type": "Rat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Rat",
+                        "parent": null,
+                        "sceneID": 91
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
+                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
+                                },
+                                "attackDamage": 1,
+                                "attackDelay": 0.0,
+                                "attackDiameter": 64.0,
+                                "attackDuration": 0.5,
+                                "collisionDamage": 1,
+                                "detectionRadius": 4.0,
+                                "health": 3,
+                                "mainCatID": 61,
+                                "movementSpeed": 200.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -348.0001525878906,
+                            "y": 164.99981689453125
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                            "../Assets/Animation/AnimationRat_Death_Anim.json",
+                            "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                            "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                            "../Assets/Animation/AnimationRat_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 0.0,
+                                "y": 221.99996948242188
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 92,
+                        "Prefab Type": "Rat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Rat",
+                        "parent": null,
+                        "sceneID": 92
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
+                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
+                                },
+                                "attackDamage": 1,
+                                "attackDelay": 0.0,
+                                "attackDiameter": 64.0,
+                                "attackDuration": 0.5,
+                                "collisionDamage": 1,
+                                "detectionRadius": 4.0,
+                                "health": 3,
+                                "mainCatID": 61,
+                                "movementSpeed": 200.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 221.99996948242188
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""
