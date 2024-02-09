@@ -184,7 +184,7 @@ namespace PE
 				if (it->second.ratHealth <= 0)
 				{
 					// Handle the rat's death (e.g., make it inactive, trigger death animation, etc.)
-					std::cout << "Rat ID: " << ratID << " has been defeated." << std::endl;
+					//std::cout << "Rat ID: " << ratID << " has been defeated." << std::endl;
 					ToggleEntity(ratID, false);  // Making the rat entity inactive
 					it->second.isAlive = false;  // Marking the rat as not alive
 				}

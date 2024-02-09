@@ -3,7 +3,7 @@
         "firstLaunch": false,
         "isPrefabMode": false,
         "layerSettings": 2047,
-        "renderDebug": true,
+        "renderDebug": false,
         "showAnimationWindow": false,
         "showComponentWindow": true,
         "showConsole": false,

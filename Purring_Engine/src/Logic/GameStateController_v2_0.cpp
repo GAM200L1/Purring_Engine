@@ -122,6 +122,12 @@ namespace PE
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
 
+		//start the background ambience
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
+			EntityManager::GetInstance().Get<AudioComponent>(bga).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(bga);
+
 		ResetPhaseBanner(true);
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
@@ -683,6 +689,7 @@ namespace PE
 	void GameStateController_v2_0::WinGame()
 	{
 		PauseBGM();
+		PlayWinAudio();
 		SetGameState(GameStates_v2_0::WIN);
 		m_winOnce = true;
 	}
@@ -690,6 +697,7 @@ namespace PE
 	void GameStateController_v2_0::LoseGame()
 	{
 		PauseBGM();
+		PlayLoseAudio();
 		SetGameState(GameStates_v2_0::LOSE);
 		m_loseOnce = true;
 	}
@@ -910,7 +918,7 @@ namespace PE
 	{
 		DeactiveAllMenu();
 		ActiveObject(m_scriptData[m_currentGameStateControllerID].AreYouSureCanvas);
-		PlayClickAudio();
+		PlayNegativeFeedback();
 	}
 
 	void GameStateController_v2_0::OpenAYSR(EntityID)
@@ -934,16 +942,27 @@ namespace PE
 
 	void GameStateController_v2_0::NextStage(int nextStage)
 	{
-		m_isTransitioning = true;
-		m_isTransitioningIn = false;
-		m_timeSinceTransitionStarted = 0;
-		m_timeSinceTransitionEnded = m_transitionTimer;
-
 		PlaySceneTransition();
-		m_currentLevel = nextStage;
-		m_leveltoLoad = m_level2SceneName;
 
-		
+		switch (nextStage)
+		{
+		case 1: // 2nd level
+			m_isTransitioning = true;
+			m_isTransitioningIn = false;
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
+
+			m_currentLevel = nextStage;
+			m_leveltoLoad = m_level2SceneName;
+			break;
+		case 2: // win game
+			WinGame();
+			m_leveltoLoad = "MainMenu.json";
+			break;
+		default:
+			break;
+		}
+	
 	}
 
 	void GameStateController_v2_0::StartGameLoop()
@@ -981,6 +1000,16 @@ namespace PE
 		return m_currentLevel;
 	}
 
+	bool GameStateController_v2_0::GetSelectedCat(EntityID catID)
+	{
+		if (!m_isRat && m_isPotraitShowing)
+		{
+			if (m_lastSelectedEntity == catID)
+			return true;
+		}
+		return false;
+	}
+
 	void GameStateController_v2_0::GetMouseCurrentPosition(vec2& Output)
 	{
 		InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().p_currWindow, Output.x, Output.y);
@@ -1006,8 +1035,8 @@ namespace PE
 				if (EntityManager::GetInstance().Has<GUISlider>(id2))
 				{
 					//get value from specific rat
-					EntityManager::GetInstance().Get<GUISlider>(id2).m_maxValue = Max;
-					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = Current;
+					EntityManager::GetInstance().Get<GUISlider>(id2).m_maxValue = static_cast<float>(Max);
+					EntityManager::GetInstance().Get<GUISlider>(id2).m_currentValue = static_cast<float>(Current);
 				}
 			}
 		}
@@ -1028,8 +1057,8 @@ namespace PE
 				if (EntityManager::GetInstance().Has<GUISlider>(catid))
 				{
 					//get value from specific rat
-					EntityManager::GetInstance().Get<GUISlider>(catid).m_maxValue = Max;
-					EntityManager::GetInstance().Get<GUISlider>(catid).m_currentValue = Current;
+					EntityManager::GetInstance().Get<GUISlider>(catid).m_maxValue = static_cast<float>(Max);
+					EntityManager::GetInstance().Get<GUISlider>(catid).m_currentValue = static_cast<float>(Current);
 				}
 			}
 		}
@@ -1048,9 +1077,33 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(buttonpress);
 	}
 
+	void GameStateController_v2_0::PlayNegativeFeedback()
+	{
+		EntityID buttonpress = m_serializationManager.LoadFromFile("AudioObject/Negative Feedback_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(buttonpress))
+			EntityManager::GetInstance().Get<AudioComponent>(buttonpress).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(buttonpress);
+	}
+
 	void GameStateController_v2_0::PlayPageAudio()
 	{
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Menu Transition SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
+	void GameStateController_v2_0::PlayWinAudio()
+	{
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Win SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
+	void GameStateController_v2_0::PlayLoseAudio()
+	{
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Game Lose SFX_Prefab.json");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
@@ -1078,6 +1131,11 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).PauseSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
+			EntityManager::GetInstance().Get<AudioComponent>(bga).PauseSound();
+		EntityManager::GetInstance().RemoveEntity(bga);
 	}
 
 	void GameStateController_v2_0::ResumeBGM()
@@ -1086,6 +1144,11 @@ namespace PE
 		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
 			EntityManager::GetInstance().Get<AudioComponent>(bgm).ResumeSound();
 		EntityManager::GetInstance().RemoveEntity(bgm);
+
+		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");
+		if (EntityManager::GetInstance().Has<EntityDescriptor>(bga))
+			EntityManager::GetInstance().Get<AudioComponent>(bga).ResumeSound();
+		EntityManager::GetInstance().RemoveEntity(bga);
 	}
 
 	void GameStateController_v2_0::UpdateTurnCounter(std::string currentphase)

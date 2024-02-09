@@ -63,10 +63,9 @@ namespace PE
 		bool m_mouseClickPrevious{ false };
 		//bool m_rightMouseClicked{ false };
 
-		bool m_planningAttack{ false };
-
 		int m_doubleClick{ 0 };
 		float m_timer{ 0.f };
+		bool m_moving{ false };
 
 		vec2 m_prevCursorPosition{ 0.f, 0.f };
 
