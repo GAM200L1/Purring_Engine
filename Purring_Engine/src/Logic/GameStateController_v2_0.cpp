@@ -941,14 +941,25 @@ namespace PE
 
 	void GameStateController_v2_0::NextStage(int nextStage)
 	{
-		m_isTransitioning = true;
-		m_isTransitioningIn = false;
-		m_timeSinceTransitionStarted = 0;
-		m_timeSinceTransitionEnded = m_transitionTimer;
-
 		PlaySceneTransition();
-		m_currentLevel = nextStage;
-		m_leveltoLoad = m_level2SceneName;
+
+		switch (nextStage)
+		{
+		case 1: // 2nd level
+			m_isTransitioning = true;
+			m_isTransitioningIn = false;
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
+
+			m_currentLevel = nextStage;
+			m_leveltoLoad = m_level2SceneName;
+		case 2: // win game
+			WinGame();
+			m_leveltoLoad = "MainMenu.json";
+			break;
+		default:
+		}
+
 
 		
 	}
