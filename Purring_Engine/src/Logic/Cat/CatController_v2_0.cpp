@@ -104,7 +104,7 @@ namespace PE
 				// if in cat chain stage, kill the last cat in the chain
 				if (!(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty())
 				{
-					catToRemove = *(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end();
+					catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
 					(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
 				}
 			}
