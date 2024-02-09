@@ -481,7 +481,6 @@ namespace PE
 							m_isPotraitShowing = true;
 							m_lastSelectedEntity = CatID;
 
-							SerializationManager m_serializationManager;
 							EntityID sound{};
 								int randomInteger = std::rand() % 4 + 1;
 

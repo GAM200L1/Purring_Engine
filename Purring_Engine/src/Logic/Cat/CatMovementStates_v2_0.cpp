@@ -205,11 +205,6 @@ namespace PE
 		if (!coordinatesInWindow) {
 			m_invalidPath = true;
 			SetPathColor(1.f, 0.f, 0.f, 1.f);
-			SerializationManager m_serializationManager;
-			EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Path Denial SFX1_Prefab.json");
-			if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-				EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-			EntityManager::GetInstance().RemoveEntity(sound);
 			return false;
 		}
 
