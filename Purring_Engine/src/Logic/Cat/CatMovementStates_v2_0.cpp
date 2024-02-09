@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
- \file     CatMovementStates_v2_0.h
+ \module   CSD2451-A
+ \file     CatMovementStates_v2_0.cpp
  \date     21-11-2023
 
  \author:              Krystal YAMIN

@@ -1,4 +1,18 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2451-A
+ \file     FollowScript_v2_0.h
+ \date     3-2-2024
 
+ \author:              LIEW Yeni
+ \par      email:      yeni.l@digipen.edu
+
+ \brief
+	This file contains the declaration for the Cat Planning State.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #pragma once
 #include <vector>
 #include <stack>
@@ -60,7 +74,11 @@ namespace PE
 		*************************************************************************************/
 		virtual void OnDetach(EntityID) override;
 
+		/*!***********************************************************************************
+		 \brief Called when a collision event has occured. 
 
+		 \param[in,out] r_event - Collision event data.
+		*************************************************************************************/
 		void CollisionCheck(const Event<CollisionEvents>& r_event);
 
 		/*!***********************************************************************************
@@ -69,6 +87,7 @@ namespace PE
 		 \return std::map<EntityID, FollowScriptData>& Map of the script data
 		*************************************************************************************/
 		std::map<EntityID, FollowScriptData_v2_0>& GetScriptData();
+
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
 
@@ -76,9 +95,8 @@ namespace PE
 		 \return rttr::instance Script instance
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
-		/*!***********************************************************************************
-		 \brief Does nothing
-		*************************************************************************************/
+		
+		// ----- Destructor ----- //
 		virtual ~FollowScript_v2_0();
 	private:
 		std::map<EntityID, FollowScriptData_v2_0> m_ScriptData;

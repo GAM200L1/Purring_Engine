@@ -1,6 +1,6 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
+ \module   CSD2451-A
  \file     CatController_v2_0.cpp
  \date     15-1-2024
 
@@ -35,7 +35,7 @@ namespace PE
 
 	void CatController_v2_0::Init(EntityID id)
 	{
-
+		m_lostGame = false;
 		for (EntityID catID : SceneView<ScriptComponent>())
 		{
 			auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
@@ -77,7 +77,8 @@ namespace PE
 
 	void CatController_v2_0::Destroy(EntityID id)
 	{
-		m_cachedCats = m_currentCats;
+		if (!m_lostGame)
+			m_cachedCats = m_currentCats;
 	}
 
 	// getters
@@ -95,16 +96,22 @@ namespace PE
 
 	void CatController_v2_0::KillCat(EntityID id)
 	{
-		if (IsCat(id) && IsCatCaged(id))
+		if (IsCat(id) && !IsCatCaged(id))
 		{
 			EntityID catToRemove = id;
 			if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
 			{
 				// if in cat chain stage, kill the last cat in the chain
-				catToRemove = *(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end();
+				if (!(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty())
+				{
+					catToRemove = *(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end();
+					(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
+				}
 			}
 			//else kill cat that has been hit
 			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
+			if ((GETSCRIPTDATA(CatScript_v2_0, catToRemove))->catType == EnumCatType::MAINCAT)
+				m_lostGame = true;
 			SerializationManager m_serializationManager;
 			EntityID sound{};
 
