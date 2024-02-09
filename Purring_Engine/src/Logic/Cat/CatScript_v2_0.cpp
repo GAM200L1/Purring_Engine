@@ -308,7 +308,7 @@ namespace PE
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				if(m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy)
+				if (m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy)
 				{
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
 					if (m_scriptData[id].animationStates.size())
@@ -323,7 +323,7 @@ namespace PE
 					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
 					PlayAnimation(id, "Attack");
 				}
-			}
+			} 
 		}
 		// executes movement and plays movement animation
 		else if (r_stateName == "MovementEXECUTE")// && !m_scriptData[id].attackSelected
@@ -340,7 +340,7 @@ namespace PE
 					else
 					{
 						PlayAnimation(id, "Idle");
-						m_executionAnimationFinished = true;
+						m_scriptData[id].finishedExecution = true;
 					}
 				}
 			}
