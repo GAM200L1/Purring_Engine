@@ -3464,8 +3464,8 @@ namespace PE {
 									//std::cout << "CatData_______________________________" << std::endl;
 									if (ImGui::CollapsingHeader("CatScript_v2_0", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
-										std::vector<std::string> types{ "Grey Cat", "Orange Cat" };
-										std::vector < std::variant < GreyCatAttackVariables, OrangeCatAttackVariables>> variants{ GreyCatAttackVariables(), OrangeCatAttackVariables() };
+										std::vector<std::string> types{"Main Cat", "Grey Cat", "Orange Cat", "Fluffy Cat"};
+										std::vector < std::variant <GreyCatAttackVariables, OrangeCatAttackVariables>> variants{ GreyCatAttackVariables(), OrangeCatAttackVariables() };
 
 										rttr::type type = rttr::type::get_by_name("CatScript_v2_0");
 										rttr::instance inst = rttr::instance(it->second);
@@ -3510,11 +3510,32 @@ namespace PE {
 											}
 											else if (props.get_type().get_name() == "enumPE::EnumCatType")
 											{
-												int value = static_cast<int>(it->second.attackVariables.index());
+												int value = static_cast<int>(it->second.catType);
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::Text(types.at(value).c_str());
+												if (ImGui::BeginCombo(("##" + types[value]).c_str(), types[value].c_str()))
+												{
+													int cnt{ 0 };
+													bool selected{ false };
+													for (const auto& str : types)
+													{
+														if (ImGui::Selectable(str.c_str(), &selected))
+														{
+																													
+															it->second.catType = EnumCatType(cnt);
+															// temp logic since only 2 variants are programmed in
+															int tmp = (cnt <= 1) ? 0 : 1;
+															if (tmp != it->second.attackVariables.index())
+															{
+																it->second.attackVariables = variants.at(tmp);
+																break;
+															}
+														}
+														++cnt;
+													}
+													ImGui::EndCombo();
+												}
 												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "unsignedint")
@@ -3607,28 +3628,6 @@ namespace PE {
 											{
 												// display option to swap the types
 												ImGui::Separator();
-
-												
-												if (ImGui::BeginCombo(("##" + types[it->second.attackVariables.index()]).c_str(), types[it->second.attackVariables.index()].c_str()))
-												{
-													int cnt{ 0 };
-													bool selected{ false };
-													for (const auto& str : types)
-													{
-														if (ImGui::Selectable(str.c_str(), &selected))
-														{
-															if (cnt != it->second.attackVariables.index())
-															{
-																it->second.attackVariables = variants.at(cnt);
-																break;
-															}
-														}
-														++cnt;
-													}
-													ImGui::EndCombo();
-												}
-
-
 												if (!it->second.attackVariables.index())
 												{ 
 													GreyCatAttackVariables& var = std::get<GreyCatAttackVariables>(it->second.attackVariables);
