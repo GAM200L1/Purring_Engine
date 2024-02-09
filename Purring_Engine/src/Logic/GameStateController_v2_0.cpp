@@ -251,6 +251,13 @@ namespace PE
 		case GameStates_v2_0::WIN: // win state, show win canvas
 			if (m_winOnce)
 			{
+				for (auto id2 : SceneView<GUIButton>())
+				{
+					if (EntityManager::GetInstance().Has<GUIButton>(id2))
+					{
+						EntityManager::GetInstance().Get<GUIButton>(id2).disabled = true;
+					}
+				}
 				ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
 				ActiveObject(m_scriptData[id].WinCanvas);
 				m_winOnce = false;
@@ -259,6 +266,13 @@ namespace PE
 		case GameStates_v2_0::LOSE: //lose state, show lose canvas				
 			if (m_loseOnce)
 			{
+				for (auto id2 : SceneView<GUIButton>())
+				{
+					if (EntityManager::GetInstance().Has<GUIButton>(id2))
+					{
+						EntityManager::GetInstance().Get<GUIButton>(id2).disabled = true;
+					}
+				}
 				ActiveObject(m_scriptData[id].PauseBackGroundCanvas);
 				ActiveObject(m_scriptData[id].LoseCanvas);
 				m_loseOnce = false;
