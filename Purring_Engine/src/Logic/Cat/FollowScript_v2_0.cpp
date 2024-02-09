@@ -1,3 +1,18 @@
+/*!***********************************************************************************
+ \project  Purring Engine
+ \module   CSD2451-A
+ \file     FollowScript_v2_0.cpp
+ \date     3-2-2024
+
+ \author:              LIEW Yeni
+ \par      email:      yeni.l@digipen.edu
+
+ \brief
+	This file contains the definitions for the functions for the Cat Planning State.
+
+ All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
+
+*************************************************************************************/
 #include "prpch.h"
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"

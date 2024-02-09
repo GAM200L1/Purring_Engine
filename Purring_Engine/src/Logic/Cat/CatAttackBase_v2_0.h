@@ -1,6 +1,6 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
+ \module   CSD2451-A
  \file     CatPlanningState_v2_0.h
  \date     3-2-2024
 
