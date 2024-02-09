@@ -115,6 +115,39 @@ namespace PE
 			// plays death animation
 			PlayAnimation(id, "Death");
 			// TODO: play death audio
+			if (m_scriptData[id].playDeathSound)
+			{
+				m_scriptData[id].playDeathSound = false;
+				SerializationManager m_serializationManager;
+				EntityID sound{};
+
+				if ((GETSCRIPTDATA(CatScript_v2_0, id))->catType == EnumCatType::MAINCAT)
+				{
+					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot_Prefab.json");
+				}
+				else
+				{
+					int randomInteger = std::rand() % 3 + 1;
+
+					switch (randomInteger)
+					{
+					case 1:
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX1_Prefab.json");
+						break;
+					case 2:
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX2_Prefab.json");
+						break;
+					case 3:
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX3_Prefab.json");
+						break;
+					}
+				}
+
+				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+				EntityManager::GetInstance().RemoveEntity(sound);
+			}
+
 
 			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
@@ -367,7 +400,9 @@ namespace PE
 			try
 			{
 				if (m_scriptData[id].p_catAnimation->GetAnimationID() != m_scriptData[id].animationStates.at(r_animationState))
+				{
 					m_scriptData[id].p_catAnimation->SetCurrentAnimationID(m_scriptData[id].animationStates.at(r_animationState));
+				}
 			}
 			catch (...)
 			{

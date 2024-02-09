@@ -92,13 +92,15 @@ namespace PE
 			{
 				try
 				{
-					ToggleEntity(m_scriptData.at(id).attackTelegraphID, false);
-					ToggleEntity(m_scriptData.at(id).arrowTelegraphID, false);
-					ToggleEntity(m_scriptData.at(id).detectionTelegraphID, false);
-
 					if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationID() != m_scriptData[id].animationStates.at("Death"))
-						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+					{
+						ToggleEntity(m_scriptData.at(id).attackTelegraphID, false);
+						ToggleEntity(m_scriptData.at(id).arrowTelegraphID, false);
+						ToggleEntity(m_scriptData.at(id).detectionTelegraphID, false);
 
+						EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(m_scriptData[id].animationStates.at("Death"));
+						PlayDeathAudio();
+					}						
 				}
 				catch (...)
 				{
@@ -108,12 +110,6 @@ namespace PE
 				// death animation example
 				if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
 				{
-					//p_gsc->WinGame();
-					SerializationManager serializationManager;
-					EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Death SFX_Prefab.json");
-					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-					EntityManager::GetInstance().RemoveEntity(sound);
 					ToggleEntity(id, false);
 				}
 			}
@@ -396,6 +392,102 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(data.detectionTelegraphID).relPosition = vec2{ 0.f,0.f }; // detection UI will always show
 	}
 
+	void RatScript::PlayAttackAudio()
+	{
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+			int randSound = std::rand() % 2 + 1;
+
+			std::string soundPrefab;
+			if (randSound == 1)
+			{
+					soundPrefab = "AudioObject/Rat Attack SFX1_Prefab.json";
+			}
+			else
+			{
+					soundPrefab = "AudioObject/Rat Attack SFX2_Prefab.json";
+			}
+
+			// Play the selected sound
+			PlayAudio(soundPrefab);
+	}
+	
+
+	void RatScript::PlayDeathAudio()
+	{
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+			int randSound = std::rand() % 2 + 1;
+
+			std::string soundPrefab;
+			if (randSound == 1)
+			{
+					soundPrefab = "AudioObject/Rat Death SFX1_Prefab.json";
+			}
+			else
+			{
+					soundPrefab = "AudioObject/Rat Death SFX2_Prefab.json";
+			}
+
+			// Play the selected sound
+			PlayAudio(soundPrefab);
+	}
+	
+
+	void RatScript::PlayDetectionAudio()
+	{
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+			int randSound = std::rand() % 3 + 1;
+
+			std::string soundPrefab;
+			switch (randSound)
+			{
+			case 1: 
+					soundPrefab = "AudioObject/Rat Detection SFX1_Prefab.json"; break;
+			case 2: 
+					soundPrefab = "AudioObject/Rat Detection SFX2_Prefab.json"; break;
+			case 3: 
+					soundPrefab = "AudioObject/Rat Detection SFX3_Prefab.json"; break;
+			}
+
+			// Play the selected sound
+			PlayAudio(soundPrefab);
+	}
+	
+
+	void RatScript::PlayInjuredAudio()
+	{
+			std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+			int randSound = std::rand() % 3 + 1;
+
+			std::string soundPrefab;
+			switch (randSound)
+			{
+			case 1:
+					soundPrefab = "AudioObject/Rat Injured SFX1_Prefab.json"; break;
+			case 2:
+					soundPrefab = "AudioObject/Rat Injured SFX2_Prefab.json"; break;
+			case 3:
+					soundPrefab = "AudioObject/Rat Injured SFX3_Prefab.json"; break;
+			}
+
+			// Play the selected sound
+			PlayAudio(soundPrefab);
+	}
+
+	void RatScript::PlayAudio(std::string const& r_soundPrefab)
+	{
+			SerializationManager serializationManager;
+			EntityID sound = serializationManager.LoadFromFile(r_soundPrefab);
+			if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			{
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			}
+			EntityManager::GetInstance().RemoveEntity(sound);
+	}
+
 
 	// ===== RatIDLE definition ===== //
 
@@ -462,6 +554,8 @@ namespace PE
 
 			// settings for the attack cross
 			//RatScript::ToggleEntity(p_data->attackTelegraphID, true); // show the arrow of movement
+
+			RatScript::PlayDetectionAudio();
 		}
 		else
 		{
@@ -491,6 +585,8 @@ namespace PE
 	{
 		m_scriptData[id].health -= damageTaken;
 		std::cout << "Rat HP: " << m_scriptData[id].health << '\n';
+
+		PlayInjuredAudio();
 	}
 
 	// ===== RatMovementEXECUTE ===== //
@@ -569,11 +665,7 @@ namespace PE
 
 			 if (!attacksoundonce) 
 			 {
-				 SerializationManager serializationManager;
-				 EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Attack SFX_Prefab.json");
-				 if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-					 EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-				 EntityManager::GetInstance().RemoveEntity(sound);
+				 RatScript::PlayAttackAudio();
 
 				 attacksoundonce = true;
 			 }

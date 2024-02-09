@@ -228,6 +228,37 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 
+
+		// ----- Play Audio ----- //
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random attack SFX.
+		*************************************************************************************/
+		static void PlayAttackAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random death SFX.
+		*************************************************************************************/
+		static void PlayDeathAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random detection SFX.
+		*************************************************************************************/
+		static void PlayDetectionAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random injury SFX.
+		*************************************************************************************/
+		static void PlayInjuredAudio();
+
+		/*!***********************************************************************************
+		 \brief Spawn an audio object using the audio object at the filepath passed in and 
+				play audio with it.
+
+		 \param[in] soundPrefab - Filepath of the audio object prefab to load.
+		*************************************************************************************/
+		static void PlayAudio(std::string const& soundPrefab);
+
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc;
@@ -240,6 +271,7 @@ namespace PE
 		 \param[in] id - EntityID of the rat to create telegraphs for
 		*************************************************************************************/
 		void CreateAttackTelegraphs(EntityID id);
+
 	};
 
 	class RatIDLE : public State

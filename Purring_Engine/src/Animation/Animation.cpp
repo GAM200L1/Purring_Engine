@@ -202,6 +202,7 @@ namespace PE
 
 	void AnimationComponent::SetCurrentAnimationID(std::string animationIndex)
 	{
+		m_currentFrameIndex = 0;
 		m_currentAnimationID = animationIndex;
 	}
 
