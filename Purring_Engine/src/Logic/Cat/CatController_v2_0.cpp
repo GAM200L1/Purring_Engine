@@ -102,9 +102,9 @@ namespace PE
 			if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
 			{
 				// if in cat chain stage, kill the last cat in the chain
-				if (!(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty())
+				if (!((GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty()))
 				{
-					catToRemove = *(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end();
+					catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
 					(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
 				}
 			}
