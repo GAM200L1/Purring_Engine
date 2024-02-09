@@ -132,8 +132,7 @@ namespace PE
 		}
 
 		// updates state // @TODO: change this
-		if (!(m_scriptData[id].catType != EnumCatType::MAINCAT && p_gsc->GetCurrentLevel() == 0)) // if cat is following cat in the chain 
-			m_scriptData[id].p_stateManager->Update(id, deltaTime);
+		m_scriptData[id].p_stateManager->Update(id, deltaTime);
 		
 		// changes states depending on cat type
 		switch (m_scriptData[id].catType)

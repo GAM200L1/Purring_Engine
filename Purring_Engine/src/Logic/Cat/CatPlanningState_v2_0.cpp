@@ -28,6 +28,15 @@ namespace PE
 	void Cat_v2_0PLAN::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
+		
+		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
+
+		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
+		{ 
+			p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
+			return; 
+		} // if cat is following cat in the chain )
+
 		// initializes the cat movement planning sub state
 		p_catMovement->Enter(id);
 
@@ -37,11 +46,14 @@ namespace PE
 		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, Cat_v2_0PLAN::OnMouseClick, this);
 		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, Cat_v2_0PLAN::OnMouseRelease, this);
 
-		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
+		
 	}
 
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
 	{
+		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
+			{ return; } // if cat is following cat in the chain )
+		
 		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
 		vec2 const& r_cursorPosition = CatHelperFunctions::GetCursorPositionInWorld();
 
@@ -99,6 +111,9 @@ namespace PE
 
 	void Cat_v2_0PLAN::StateExit(EntityID id)
 	{
+		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
+		{ return; } // if cat is following cat in the chain )
+
 		p_catMovement->Exit(id);
 		p_catAttack->Exit(id);
 		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
@@ -108,23 +123,23 @@ namespace PE
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
 		
-			if (MBPE.button == 1 && p_data->attackSelected)
-			{
-				if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
-				if (!p_data->planningAttack) // if not currently planning attack, 
-					p_catAttack->ToggleTelegraphs(false, false);
-				p_catAttack->ResetSelection(p_data->catID);
-				m_doubleClick = 0;
-			}
-			else if (MBPE.button == 1)
-			{
-				p_catMovement->ResetDrawnPath();
+		if (MBPE.button == 1 && p_data->attackSelected)
+		{
+			//if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
+			if (!p_data->planningAttack) // if not currently planning attack, 
 				p_catAttack->ToggleTelegraphs(false, false);
-				p_data->planningAttack = false;
-				m_doubleClick = 0;
-			}
-			else
-				m_mouseClicked = true;
+			p_catAttack->ResetSelection(p_data->catID);
+			m_doubleClick = 0;
+		}
+		else if (MBPE.button == 1)
+		{
+			p_catMovement->ResetDrawnPath();
+			p_catAttack->ToggleTelegraphs(false, false);
+			p_data->planningAttack = false;
+			m_doubleClick = 0;
+		}
+		else
+			m_mouseClicked = true;
 	}
 	
 	void Cat_v2_0PLAN::OnMouseRelease(const Event<MouseEvents>& r_ME)
