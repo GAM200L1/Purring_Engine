@@ -87,13 +87,17 @@ namespace PE
 	std::vector<EnumCatType> CatController_v2_0::GetDeployableCats()
 	{
 		std::vector<EnumCatType> deployableCats{};
-		for (auto const& [catID, type] : m_cachedCats)
+		if (EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
 		{
-			// if cat is alive when caching
-			if ((GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)
-				continue;
-			deployableCats.emplace_back(type);
+			deployableCats = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved;
+			//EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved.clear();
 		}
+		//for (auto const& [catID, type] : m_cachedCats)
+		//{
+		//	// if cat is alive when caching
+		//	if (!(GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)
+		//		deployableCats.emplace_back(type);
+		//}
 		return deployableCats;
 	}
 
@@ -105,9 +109,9 @@ namespace PE
 			if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
 			{
 				// if in cat chain stage, kill the last cat in the chain
-				if (!(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty())
+				if (!((GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty()))
 				{
-					catToRemove = *(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end();
+					catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
 					(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
 				}
 			}

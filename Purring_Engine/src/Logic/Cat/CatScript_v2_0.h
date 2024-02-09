@@ -77,6 +77,11 @@ namespace PE
 		bool playDeathSound{ true };
 	};
 
+	struct CatSaveData
+	{
+		std::vector<EnumCatType> saved{};
+	};
+
 	class CatScript_v2_0 : public Script
 	{
 	public:
