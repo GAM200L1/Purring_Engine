@@ -19,9 +19,18 @@
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
 #include "Events/EventHandler.h"
+#include "GameStateController_v2_0.h"
 
 namespace PE
 {
+	enum class EnumOldRatType
+	{
+		GUTTER,
+		BRAWLER,
+		SNIPER,
+		HERALD
+	};
+
 	struct RatScriptData
 	{
 		// reference entities
@@ -41,7 +50,7 @@ namespace PE
 		EntityID attackTelegraphID{ 0 }; // id of cross attack telegraph
 		EntityID detectionTelegraphID{ 0 }; // id of red detection telegraph
 		float detectionRadius{ 4.f }; // radius of the detection UI needs manual setting
-		float attackDiameter{ 64.f }; // radius of the attack
+		float attackDiameter{ 64.f * 2.f }; // radius of the attack
 		float attackDuration{ 0.5f }; // how long the attack is active needs manual setting
 		int collisionDamage{ 1 }; // damage when touching the rat needs manual setting
 		int attackDamage{ 1 }; // damage when properly attacked by the rat needs manual setting
@@ -58,6 +67,10 @@ namespace PE
 		bool finishedExecution{ false }; // bool to check if rat has finished its movemen and attack executions
 
 		std::map<std::string, std::string> animationStates;
+
+		std::vector<EntityID> targetCats;
+
+		EnumOldRatType ratType{ EnumOldRatType::GUTTER };
 	};
 
 	class RatScript : public Script
@@ -216,6 +229,9 @@ namespace PE
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 
 	private:
+		// ----- Private Variables ----- //
+		GameStateController_v2_0* p_gsc;
+
 		// ----- Private Functions ----- //
 		/*!***********************************************************************************
 		 \brief Create entities for the attack telegraphs for the rat from prefabs. Adjusts 

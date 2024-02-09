@@ -15,7 +15,8 @@
 *************************************************************************************/
 #include "prpch.h"
 #include "RatController_v2_0.h"
-#include "RatScript_v2_0.h"
+//#include "RatScript_v2_0.h"
+#include "../RatScript.h"
 
 #include "../Logic/LogicSystem.h"
 
@@ -35,7 +36,7 @@ namespace PE
 						try
 						{
 								// Check that the entity is active and rat is alive
-								if (EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive && data.isAlive)
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive)// && data.isAlive)
 								{
 										m_cachedActiveRats.emplace_back(std::make_pair(ratId, EnumRatType::GUTTER));
 								}
@@ -58,7 +59,7 @@ namespace PE
 						try
 						{
 								// Check that the entity is active and rat is alive
-								if (EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive && data.isAlive)
+								if (EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive)// && data.isAlive)
 								{
 										++count;
 								}
@@ -76,7 +77,7 @@ namespace PE
 		void RatController_v2_0::Init(EntityID id)
 		{
 				// Look for all the rats in the scene
-				m_scriptData[id].p_ratsMap = &(dynamic_cast<RatScript_v2_0*>(LogicSystem::m_scriptContainer[GETSCRIPTNAME(RatScript_v2_0)])->m_scriptData);
+				m_scriptData[id].p_ratsMap = &(dynamic_cast<RatScript*>(LogicSystem::m_scriptContainer[GETSCRIPTNAME(RatScript)])->m_scriptData);
 
 				// Look for all the spawners in the scene
 
@@ -85,47 +86,19 @@ namespace PE
 
 		void RatController_v2_0::Update(EntityID id, float deltaTime)
 		{
-				///*if (!ratsPrinted)
-				//{
-				//		auto const& myVec{ GetRats(id) };
-				//		for (auto const& [ratId, rat] : myVec)
-				//		{
-				//				std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
-				//		}
-				//		ratsPrinted = true;
-				//}
-				//else
-				//{
-				//	 If rats have already been printed, refresh the m_cachedActiveRats without printing
-				//	GetRats(id);
-				//}
-
-				// Iterate through the cached active rats to check if they are still active
-				for (auto it = m_cachedActiveRats.begin(); it != m_cachedActiveRats.end(); )
+				if (!ratsPrinted)
 				{
-					EntityID ratId = it->first;
-					bool isActive = false;
-
-					try
+					auto const& myVec{ GetRats(id) };
+					for (auto const& [ratId, rat] : myVec)
 					{
-						// Check if the rat entity is still active
-						isActive = EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive;
+							std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
 					}
-					catch (...)
-					{
-						std::cout << "rat entity active got error";
-					}
-
-					if (!isActive)
-					{
-						// If the rat is no longer active, erase it from the vector
-						it = m_cachedActiveRats.erase(it);
-					}
-					else
-					{
-						// If the rat is still active, move to the next one
-						++it;
-					}
+					ratsPrinted = true;
+				}
+				else
+				{
+					// If rats have already been printed, refresh the m_cachedActiveRats without printing
+					GetRats(id);
 				}
 		}
 
@@ -177,17 +150,19 @@ namespace PE
 
 			if (it != ratsMap.end())
 			{
-				// Subtract the damage from the rat's health
-				it->second.ratHealth -= damage;
+				GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(it->second.ratID, damage);
 
-				// Check if the rat's health drops below or equals zero
-				if (it->second.ratHealth <= 0)
-				{
-					// Handle the rat's death (e.g., make it inactive, trigger death animation, etc.)
-					//std::cout << "Rat ID: " << ratID << " has been defeated." << std::endl;
-					ToggleEntity(ratID, false);  // Making the rat entity inactive
-					it->second.isAlive = false;  // Marking the rat as not alive
-				}
+				//// Subtract the damage from the rat's health
+				//it->second.ratHealth -= damage;
+
+				//// Check if the rat's health drops below or equals zero
+				//if (it->second.ratHealth <= 0)
+				//{
+				//	// Handle the rat's death (e.g., make it inactive, trigger death animation, etc.)
+				//	//std::cout << "Rat ID: " << ratID << " has been defeated." << std::endl;
+				//	ToggleEntity(ratID, false);  // Making the rat entity inactive
+				//	it->second.isAlive = false;  // Marking the rat as not alive
+				//}
 			}
 			else
 			{

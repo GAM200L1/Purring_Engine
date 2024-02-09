@@ -17,6 +17,7 @@
 #include "../Script.h"
 #include "../StateManager.h"
 #include "RatScript_v2_0.h"
+#include "../RatScript.h"
 
 namespace PE
 {
@@ -25,7 +26,7 @@ namespace PE
 	{
 		// reference entities
 		EntityID myID{ 0 }; // ID of entity that this script belongs to
-		std::map<EntityID, RatScript_v2_0_Data>* p_ratsMap;
+		std::map<EntityID, RatScriptData>* p_ratsMap;
 	};
 
 	
