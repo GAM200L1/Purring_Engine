@@ -3019,7 +3019,9 @@
                         "Layer": 0,
                         "Old ID": 61,
                         "Prefab Type": "OrangeCatPrefab",
-                        "children": [],
+                        "children": [
+                            84
+                        ],
                         "isActive": true,
                         "name": "Orange Cat 2",
                         "parent": null,
@@ -3055,12 +3057,10 @@
                                         "teleGraphIDs": []
                                     }
                                 },
-                                "catCurrentEnergy": 21,
+                                "cageID": 0,
                                 "catID": 0,
                                 "catMaxMovementEnergy": 21,
                                 "catType": 1,
-                                "currentPositionIndex": 0,
-                                "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
                                 "isCaged": true,
@@ -3068,9 +3068,6 @@
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
                                 "nodeSize": 10.0,
-                                "pathQuads": [],
-                                "shouldChangeState": false,
-                                "timeBeforeChangingState": 0.0,
                                 "toggleDeathAnimation": false
                             },
                             "state": 0
@@ -3627,12 +3624,12 @@
                     },
                     "Renderer": {
                         "Color": {
-                            "a": 0.0,
-                            "b": 0.0,
+                            "a": 1.0,
+                            "b": 1.0,
                             "g": 1.0,
-                            "r": 0.10196078568696976
+                            "r": 1.0
                         },
-                        "TextureKey": ""
+                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
                     },
                     "Transform": {
                         "height": 113.0,
@@ -4473,12 +4470,10 @@
                                         "teleGraphIDs": []
                                     }
                                 },
-                                "catCurrentEnergy": 21,
+                                "cageID": 0,
                                 "catID": 0,
                                 "catMaxMovementEnergy": 21,
                                 "catType": 1,
-                                "currentPositionIndex": 0,
-                                "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
                                 "isCaged": false,
@@ -4486,9 +4481,6 @@
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
                                 "nodeSize": 10.0,
-                                "pathQuads": [],
-                                "shouldChangeState": false,
-                                "timeBeforeChangingState": 0.0,
                                 "toggleDeathAnimation": false
                             },
                             "state": 0
@@ -4507,6 +4499,47 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 84,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Cage",
+                        "parent": 61,
+                        "sceneID": 84
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 142.0001678466797,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 1.2003631591796875,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""

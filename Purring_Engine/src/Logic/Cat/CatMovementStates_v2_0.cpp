@@ -445,6 +445,7 @@ namespace PE
 
 	void CatMovement_v2_0EXECUTE::OnCollisionEnter(const Event<CollisionEvents>& r_collisionEvent)
 	{
+		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEvent) };
 
 		// Check if the rat is colliding with the cat
@@ -453,6 +454,10 @@ namespace PE
 		{
 			m_collidedWithRat = true;
 		}
-
+		if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
+			|| (CatHelperFunctions::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
+		{
+			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage((p_gsc->GetCurrentLevel() == 2)? 0 : (p_gsc->GetCurrentLevel() + 1)); //
+		}
 	}
 }

@@ -10,6 +10,8 @@
 #include "../LogicSystem.h"
 #include "../GameStateController_v2_0.h"
 #include "CatScript_v2_0.h"
+#include "CatHelperFunctions.h"
+#include "Hierarchy/HierarchyManager.h"
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
 
@@ -46,6 +48,13 @@ namespace PE
 					// Flag the cat if so it knows it has been attached 
 					CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, flw) };
 					catData->isCaged = false;
+					for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
+					{
+						if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
+						{
+							CatHelperFunctions::ToggleEntity(findCageID, false);
+						}
+					}
 				}
 			}
 			m_ScriptData[id].ToAttach.clear();

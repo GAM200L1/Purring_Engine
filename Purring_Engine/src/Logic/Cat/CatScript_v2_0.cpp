@@ -48,7 +48,7 @@ namespace PE
 	{
 		//m_scriptData[id].catID = id;
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-
+		if (m_scriptData[id].isCaged && m_scriptData[id].cageID == 0) { throw "No CageID attached"; }
 		m_scriptData[id].catID = id;
 		
 		try
@@ -337,14 +337,20 @@ namespace PE
 				{
 					m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
 					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
-					PlayAnimation(id, "Attack");
+					if (m_scriptData[id].attackSelected)
+						PlayAnimation(id, "Attack");
+					else
+					{
+						PlayAnimation(id, "Idle");
+						m_executionAnimationFinished = true;
+					}
 				}
 			}
 		}
 		// executes attack and plays attack animation, plays idle animation if attack is finished early
 		else if (r_stateName == "AttackEXECUTE")
 		{
-			if (m_scriptData[id].attackSelected
+			if (!m_executionAnimationFinished && m_scriptData[id].attackSelected
 				&& m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
 				m_executionAnimationFinished = true; // if attack animation finished set to true
