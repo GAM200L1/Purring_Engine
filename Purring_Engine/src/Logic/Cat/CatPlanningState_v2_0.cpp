@@ -31,9 +31,10 @@ namespace PE
 		
 		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
 
+		p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
+
 		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
 		{ 
-			p_data->resetPosition = CatHelperFunctions::GetEntityPosition(id);
 			return; 
 		} // if cat is following cat in the chain )
 
@@ -92,8 +93,9 @@ namespace PE
 			}
 		}
 
-		if (m_moving && !p_data->planningAttack)
+		if ((m_moving && !p_data->planningAttack) || p_catMovement->CheckInvalid())
 			p_catMovement->Update(id, deltatime);
+		
 
 		m_timer += deltatime;
 		m_prevCursorPosition = r_cursorPosition;
