@@ -184,7 +184,7 @@ namespace PE
             {
                 EntityID catID = (EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos) ? OTEE.Entity2 : OTEE.Entity1;
                 //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Rat attack collides with Cat ID: " << catID << ", applying damage." << std::endl;
-
+                catID;
                 // Trigger the attack logic directly without checking attackRadiusId
                 //GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(catID, p_data->attackDamage);
 
