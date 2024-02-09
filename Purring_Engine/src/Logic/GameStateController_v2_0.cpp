@@ -1042,6 +1042,11 @@ namespace PE
 		return m_currentLevel;
 	}
 
+	void GameStateController_v2_0::SetCurrentLevel(int lvl)
+	{
+		m_currentLevel = lvl;
+	}
+
 	bool GameStateController_v2_0::GetSelectedCat(EntityID catID)
 	{
 		if (!m_isRat && m_isPotraitShowing)
