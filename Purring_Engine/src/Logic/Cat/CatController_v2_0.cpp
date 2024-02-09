@@ -17,10 +17,10 @@
 
 #include "CatController_v2_0.h"
 #include "CatHelperFunctions.h"
+#include "FollowScript_v2_0.h"
 
 #include "ECS/SceneView.h"
 #include "Logic/LogicSystem.h"
-#include "Logic/FollowScript.h"
 
 
 
@@ -44,6 +44,8 @@ namespace PE
 				{
 					EnumCatType const& r_catType = *GETSCRIPTDATA(CatScript_v2_0, catID).catType;
 					m_currentCats.emplace_back(std::pair{ catID, r_catType }); // saves all cats, including the caged ones
+					if (r_catType == EnumCatType::MAINCAT)
+						m_mainCatID = catID;
 				}
 			}
 		}
@@ -89,7 +91,17 @@ namespace PE
 
 	void CatController_v2_0::KillCat(EntityID id)
 	{
-		(GETSCRIPTDATA(CatScript_v2_0, id))->toggleDeathAnimation = true;
+		if (IsCat(id) && IsCatCaged(id))
+		{
+			EntityID catToRemove = id;
+			if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+			{
+				// if in cat chain stage, kill the last cat in the chain
+				catToRemove = *(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.end();
+			}
+			//else kill cat that has been hit
+			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
+		}
 	}
 
 	void CatController_v2_0::RemoveCatFromVector(EntityID id)

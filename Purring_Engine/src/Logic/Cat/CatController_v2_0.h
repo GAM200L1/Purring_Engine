@@ -60,13 +60,18 @@ namespace PE
 
 		 \param[in] id - ID of cat to remove
 		*************************************************************************************/
-		static void KillCat(EntityID id);
+		void KillCat(EntityID id);
 
 		void RemoveCatFromVector(EntityID id);
 
 		inline void SetCurrentCats(std::vector<std::pair<EntityID, EnumCatType>> const& r_vectorOfNewCats)
 		{
 			m_currentCats = r_vectorOfNewCats;
+			for (auto const& [catID, catType] : m_currentCats)
+			{
+				if (catType == EnumCatType::MAINCAT)
+					m_mainCatID = catID;
+			}
 		}
 
 		/*!***********************************************************************************
@@ -106,6 +111,7 @@ namespace PE
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 
 	private:
+		EntityID m_mainCatID{ 0 };
 		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
 		std::vector<std::pair<EntityID, EnumCatType>> m_cachedCats;
 	};
