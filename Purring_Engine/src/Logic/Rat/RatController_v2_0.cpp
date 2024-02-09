@@ -162,6 +162,38 @@ namespace PE
 				ratsPrinted = false;
 		}
 
+		void RatController_v2_0::ApplyDamageToRat(EntityID ratID, int damage)
+		{
+			// Check if the given ID is valid and refers to an active, alive rat
+			if (!IsRatAndIsAlive(ratID))
+			{
+				//std::cout << "Rat ID: " << ratID << " is not valid or the rat is not alive." << std::endl;
+				return;
+			}
+
+			// Access the rat's script data from the map
+			auto& ratsMap = *m_scriptData[mainInstance].p_ratsMap;
+			auto it = ratsMap.find(ratID);
+
+			if (it != ratsMap.end())
+			{
+				// Subtract the damage from the rat's health
+				it->second.ratHealth -= damage;
+
+				// Check if the rat's health drops below or equals zero
+				if (it->second.ratHealth <= 0)
+				{
+					// Handle the rat's death (e.g., make it inactive, trigger death animation, etc.)
+					//std::cout << "Rat ID: " << ratID << " has been defeated." << std::endl;
+					ToggleEntity(ratID, false);  // Making the rat entity inactive
+					it->second.isAlive = false;  // Marking the rat as not alive
+				}
+			}
+			else
+			{
+				//std::cout << "Rat ID: " << ratID << " not found in rats map." << std::endl;
+			}
+		}
 
 		std::map<EntityID, RatController_v2_0_Data>& RatController_v2_0::GetScriptData()
 		{

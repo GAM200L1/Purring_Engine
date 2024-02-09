@@ -3378,6 +3378,80 @@ namespace PE {
 										}
 										ImGui::PopStyleColor(1); // Pop button color style
 									}
+									ImGui::Separator();
+									int num{};
+									ImGui::Text("Add Animation state"); ImGui::SameLine();
+									bool worked{ false };
+									if (ImGui::Button("+"))
+									{
+										std::string str = "NewState";
+										while (!worked)
+										{
+											if (it->second.animationStates.count(str))
+											{
+												str += 1;
+											}
+											else
+											{
+												it->second.animationStates.emplace(str, "");
+												worked = true;
+											}
+										}
+									}
+									static std::pair<std::string, std::string> whoToRemove;
+									static bool rmFlag{ false };
+									for (auto& [k, v] : it->second.animationStates)
+									{
+										ImGui::Text("State: "); ImGui::SameLine();
+										std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
+										bool changed = ImGui::InputText(std::string("##" + k + std::to_string(++num)).c_str(), &curr);
+										if (!changed)
+										{
+											if (whoToRemove.first == k)
+											{
+												if (!ImGui::IsItemActivated())
+												{
+													rmFlag = true;
+												}
+											}
+										}
+										else
+										{
+											if (k != curr)
+											{
+												whoToRemove.first = k;
+												whoToRemove.second = curr;
+												rmFlag = false;
+											}
+
+										}
+
+
+										ImGui::Text("Animation: "); ImGui::SameLine();
+										bool bl = ImGui::BeginCombo(std::string("##Animation" + k + std::to_string(num)).c_str(), v.c_str());
+										if (bl)
+										{
+											if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+											{
+												for (const auto& name : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+												{
+													if (ImGui::Selectable(name.c_str()))
+														v = name;
+												}
+											}
+											ImGui::EndCombo();
+										}
+										ImGui::Separator();
+									}
+									if (rmFlag)
+									{
+										it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
+										it->second.animationStates.erase(whoToRemove.first);
+										whoToRemove.first = "";
+										whoToRemove.second = "";
+										rmFlag = false;
+									}
+								
 								}
 							}
 							if (key == "CatScript_v2_0")
@@ -3399,50 +3473,58 @@ namespace PE {
 										{
 											if (props.get_type().get_name() == "float")
 											{
-												float val = props.get_value(inst).get_value<float>();
+												float value = props.get_value(inst).get_value<float>();
 												ImGui::Text(props.get_name().to_string().c_str()); 
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::InputFloat(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
+												ImGui::InputFloat(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "int")
 											{
-												int val = props.get_value(inst).get_value<int>();
+												int value = props.get_value(inst).get_value<int>();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
+												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
+											}
+											else if (props.get_type().get_name() == "bool" && props.get_name() == "isCaged")
+											{
+												bool value = props.get_value(inst).get_value<bool>();
+												ImGui::Text(props.get_name().to_string().c_str());
+												ImGui::SameLine();
+												ImGui::Checkbox(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "unsigned__int64")
 											{
-												EntityID val = props.get_value(inst).get_value<EntityID>();
+												EntityID value = props.get_value(inst).get_value<EntityID>();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												int tmp = static_cast<int>(val);
+												int tmp = static_cast<int>(value);
 												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &tmp);
-												val = static_cast<EntityID>(tmp);
-												props.set_value(inst, val);
+												value = static_cast<EntityID>(tmp);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "enumPE::EnumCatType")
 											{
-												int val = it->second.attackVariables.index();
+												int value = static_cast<int>(it->second.attackVariables.index());
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::Text(types.at(val).c_str());
-												props.set_value(inst, val);
+												ImGui::Text(types.at(value).c_str());
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "unsignedint")
 											{
-												int val = props.get_value(inst).get_value<int>();
+												int value = props.get_value(inst).get_value<int>();
 												ImGui::Text(props.get_name().to_string().c_str());
 												ImGui::SameLine();
 												ImGui::SetNextItemWidth(100.0f);
-												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &val);
-												props.set_value(inst, val);
+												ImGui::InputInt(("##" + props.get_name().to_string()).c_str(), &value);
+												props.set_value(inst, value);
 											}
 											else if (props.get_type().get_name() == "classstd::map<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>,structstd::less<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>,classstd::allocator<structstd::pair<classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>const,classstd::basic_string<char,structstd::char_traits<char>,classstd::allocator<char>>>> >")
 											{

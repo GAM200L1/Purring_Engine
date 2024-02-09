@@ -58,6 +58,20 @@ namespace PE
 		void Exit(EntityID id);
 
 		/*!***********************************************************************************
+		 \brief Sets variable path being drawn
+
+		 \param[in] toggle - true if path being drawn, false if otherwise
+		*************************************************************************************/
+		inline void SetPathBeingDrawn(bool toggle) { m_pathBeingDrawn = toggle; }
+
+		/*!***********************************************************************************
+		 \brief Gets variable path being drawn
+
+		 \param[out] bool - true if path being drawn, false if otherwise
+		*************************************************************************************/
+		inline bool GetPathBeingDrawn() { return m_pathBeingDrawn; }
+
+		/*!***********************************************************************************
 		 \brief Checks if the position is far away enough from the previous node to add a new
 						node. If the proposed position is too far away, points are added in a straight
 						line until the proposed position is reached or the cat runs out of energy.
@@ -198,13 +212,12 @@ namespace PE
 
 		 \param[in] r_mouseEvent cDetails of the collision event.
 		*************************************************************************************/
-		void OnCollisionEnter(const Event<CollisionEvents>& r_collisionEvent);
+		void OnTriggerEnter(const Event<CollisionEvents>& r_collisionEvent);
 
 	private:
 		// ----- Private Variables ----- //
 		CatScript_v2_0Data* p_data;
-		int m_collisionEventListener{}; // Stores the handler for the mouse click and release events
-		bool m_collidedWithRat{ false }; // Set to true when the cat has collided with a rat
+		int m_triggerEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_doneMoving{ false }; // Set to true when the cat has reached the end of their path
 	};
 }

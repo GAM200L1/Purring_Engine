@@ -4,7 +4,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 1,
                         "Prefab Type": "",
@@ -51,7 +50,6 @@
                         "viewportWidth": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 2,
                         "Prefab Type": "",
@@ -83,11 +81,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 3,
                         "Prefab Type": "Canvas Object",
@@ -101,7 +98,7 @@
                         "isActive": false,
                         "name": "PauseCanvas",
                         "parent": null,
-                        "sceneID": 12
+                        "sceneID": 11
                     },
                     "Transform": {
                         "height": 100.0,
@@ -125,7 +122,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 4,
                         "Prefab Type": "Pawsed Text Object",
@@ -166,7 +162,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 5,
                         "Prefab Type": "HowToPlayButton",
@@ -241,7 +236,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 6,
                         "Prefab Type": "QuitGameButton",
@@ -316,7 +310,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 7,
                         "Prefab Type": "ResumeGameButton",
@@ -391,11 +384,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 8,
                         "Prefab Type": "Canvas Object",
@@ -408,7 +400,7 @@
                         "isActive": false,
                         "name": "AreYouSureCanvas",
                         "parent": null,
-                        "sceneID": 13
+                        "sceneID": 12
                     },
                     "Transform": {
                         "height": 100.0,
@@ -432,7 +424,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 9,
                         "Prefab Type": "areyousure",
@@ -473,7 +464,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 10,
                         "Prefab Type": "yesbutton",
@@ -548,7 +538,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 11,
                         "Prefab Type": "SadCat",
@@ -589,7 +578,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 12,
                         "Prefab Type": "nobutton",
@@ -664,11 +652,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 13,
                         "Prefab Type": "Canvas Object",
@@ -678,7 +665,7 @@
                         "isActive": false,
                         "name": "Background Canvas",
                         "parent": null,
-                        "sceneID": 10
+                        "sceneID": 9
                     },
                     "Transform": {
                         "height": 100.0,
@@ -702,7 +689,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 15,
                         "Prefab Type": "",
@@ -743,7 +729,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 14,
                         "Prefab Type": "",
@@ -782,10 +767,10 @@
                                 "LoseCanvas": 37,
                                 "PauseBackGroundCanvas": 13,
                                 "PauseMenuCanvas": 3,
-                                "PhaseBanner": 17,
+                                "PhaseBanner": 0,
                                 "Portrait": 47,
                                 "RatPortrait": 53,
-                                "TransitionPanel": 70,
+                                "TransitionPanel": 0,
                                 "TurnCounterCanvas": 43,
                                 "WinCanvas": 32,
                                 "clicklisttest": [
@@ -824,11 +809,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 18,
                         "Prefab Type": "Canvas Object",
@@ -842,7 +826,7 @@
                         "isActive": false,
                         "name": "HowToPlayCanvas",
                         "parent": null,
-                        "sceneID": 11
+                        "sceneID": 10
                     },
                     "Transform": {
                         "height": 100.0,
@@ -866,7 +850,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 19,
                         "Prefab Type": "",
@@ -907,7 +890,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 20,
                         "Prefab Type": "",
@@ -948,7 +930,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 21,
                         "Prefab Type": "",
@@ -1023,7 +1004,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 22,
                         "Prefab Type": "",
@@ -1098,7 +1078,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 23,
                         "Prefab Type": "",
@@ -1173,11 +1152,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 24,
                         "Prefab Type": "Canvas Object",
@@ -1216,11 +1194,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 25,
                         "Prefab Type": "Canvas Object",
@@ -1254,7 +1231,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 26,
                         "Prefab Type": "FoliageOverlay",
@@ -1295,7 +1271,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 27,
                         "Prefab Type": "",
@@ -1336,7 +1311,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 29,
                         "Prefab Type": "",
@@ -1377,7 +1351,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 28,
                         "Prefab Type": "",
@@ -1452,7 +1425,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 30,
                         "Prefab Type": "Text",
@@ -1500,7 +1472,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 31,
                         "Prefab Type": "",
@@ -1575,11 +1546,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 32,
                         "Prefab Type": "Canvas Object",
@@ -1592,7 +1562,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 16
+                        "sceneID": 14
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1616,7 +1586,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 33,
                         "Prefab Type": "youwin",
@@ -1657,7 +1626,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 34,
                         "Prefab Type": "HappyCat",
@@ -1698,7 +1666,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 35,
                         "Prefab Type": "restartbutton",
@@ -1773,7 +1740,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 36,
                         "Prefab Type": "wlquitbutton",
@@ -1848,11 +1814,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 37,
                         "Prefab Type": "Canvas Object",
@@ -1889,7 +1854,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 38,
                         "Prefab Type": "SadCat",
@@ -1930,7 +1894,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 39,
                         "Prefab Type": "wlquitbutton",
@@ -2005,7 +1968,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 40,
                         "Prefab Type": "restartbutton",
@@ -2080,7 +2042,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 41,
                         "Prefab Type": "youlose",
@@ -2121,7 +2082,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 42,
                         "Prefab Type": "",
@@ -2162,7 +2122,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 45,
                         "Prefab Type": "",
@@ -2210,7 +2169,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 46,
                         "Prefab Type": "",
@@ -2258,11 +2216,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 43,
                         "Prefab Type": "Canvas Object",
@@ -2298,7 +2255,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 44,
                         "Prefab Type": "",
@@ -2373,7 +2329,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 47,
                         "Prefab Type": "",
@@ -2414,7 +2369,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 48,
                         "Prefab Type": "SliderBody",
@@ -2499,7 +2453,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 49,
                         "Prefab Type": "SliderKnob",
@@ -2540,7 +2493,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 50,
                         "Prefab Type": "",
@@ -2581,11 +2533,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 51,
                         "Prefab Type": "Canvas Object",
@@ -2622,7 +2573,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 54,
                         "Prefab Type": "",
@@ -2663,11 +2613,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 53,
                         "Prefab Type": "Canvas Object",
@@ -2704,7 +2653,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 52,
                         "Prefab Type": "",
@@ -2745,7 +2693,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 55,
                         "Prefab Type": "SliderBody",
@@ -2830,7 +2777,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 56,
                         "Prefab Type": "SliderKnob",
@@ -2871,7 +2817,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 57,
                         "Prefab Type": "",
@@ -2912,7 +2857,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 58,
                         "Prefab Type": "",
@@ -2953,7 +2897,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 59,
                         "Prefab Type": "",
@@ -3001,7 +2944,7 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 140.7998046875,
+                                "x": 0.0,
                                 "y": 0.0
                             },
                             "positionOffset": {
@@ -3011,21 +2954,18 @@
                             "radius": 32.0,
                             "scaleOffset": 1.0
                         },
-                        "isTrigger": true,
+                        "isTrigger": false,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 61,
+                        "Old ID": 60,
                         "Prefab Type": "OrangeCatPrefab",
-                        "children": [
-                            84
-                        ],
+                        "children": [],
                         "isActive": true,
-                        "name": "Orange Cat 2",
+                        "name": "Orange Cat 1",
                         "parent": null,
-                        "sceneID": 71
+                        "sceneID": 69
                     },
                     "Renderer": {
                         "Color": {
@@ -3057,16 +2997,123 @@
                                         "teleGraphIDs": []
                                     }
                                 },
+                                "catCurrentEnergy": 21,
                                 "catID": 0,
                                 "catMaxMovementEnergy": 21,
                                 "catType": 1,
+                                "currentPositionIndex": 0,
+                                "delaySet": false,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isCaged": true,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
                                 "nodeSize": 10.0,
+                                "pathQuads": [],
+                                "shouldChangeState": false,
+                                "timeBeforeChangingState": 0.0,
+                                "toggleDeathAnimation": false
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [],
+                        "CurrentAnimationID": ""
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 140.7998046875,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "Layer": 0,
+                        "Old ID": 61,
+                        "Prefab Type": "OrangeCatPrefab",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Orange Cat 2",
+                        "parent": null,
+                        "sceneID": 62
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {},
+                                "attackVariants": {
+                                    "GreyCatAttackVariables": {
+                                        "attacKDirection": 0,
+                                        "bulletDelay": 0.0,
+                                        "bulletForce": 1000.0,
+                                        "bulletLifeTime": 1.0,
+                                        "bulletRange": 3.0,
+                                        "damage": 0,
+                                        "projectileID": 0,
+                                        "teleGraphIDs": []
+                                    }
+                                },
+                                "catCurrentEnergy": 21,
+                                "catID": 0,
+                                "catMaxMovementEnergy": 21,
+                                "catType": 1,
+                                "currentPositionIndex": 0,
+                                "delaySet": false,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "pathQuads": [],
+                                "shouldChangeState": false,
+                                "timeBeforeChangingState": 0.0,
                                 "toggleDeathAnimation": false
                             },
                             "state": 0
@@ -3093,6 +3140,12 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/RatMovingTest_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/RatMovingTest_Anim.json"
+                    },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -3111,7 +3164,6 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 62,
                         "Prefab Type": "GutterRat",
@@ -3138,7 +3190,9 @@
                     "ScriptComponent": {
                         "RatScript_v2_0": {
                             "data": {
-                                "animationStates": {}
+                                "animationStates": {
+                                    "Walk": "../Assets/Animation/RatMovingTest_Anim.json"
+                                }
                             },
                             "state": 0
                         }
@@ -3164,6 +3218,10 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [],
+                        "CurrentAnimationID": ""
+                    },
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -3182,7 +3240,6 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 63,
                         "Prefab Type": "GutterRat",
@@ -3236,11 +3293,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 64,
                         "Prefab Type": "",
@@ -3253,7 +3309,7 @@
                         "isActive": false,
                         "name": "AreYouSureRestartCanvas",
                         "parent": null,
-                        "sceneID": 14
+                        "sceneID": 13
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3277,7 +3333,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 65,
                         "Prefab Type": "",
@@ -3352,7 +3407,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 66,
                         "Prefab Type": "",
@@ -3393,7 +3447,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 67,
                         "Prefab Type": "",
@@ -3434,7 +3487,6 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 68,
                         "Prefab Type": "",
@@ -3509,11 +3561,10 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 69,
                         "Prefab Type": "Canvas Object",
@@ -3523,7 +3574,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 62
+                        "sceneID": 61
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3547,22 +3598,21 @@
             "Entity": {
                 "components": {
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 70,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": false,
-                        "name": "Transition Panel",
+                        "name": "UI Object",
                         "parent": 69,
                         "sceneID": 0
                     },
                     "GUIRenderer": {
                         "Color": {
                             "a": 0.9960784316062927,
-                            "b": 0.0,
-                            "g": 0.0,
-                            "r": 0.0
+                            "b": 0.35686275362968445,
+                            "g": 0.35686275362968445,
+                            "r": 0.35686275362968445
                         },
                         "TextureKey": ""
                     },
@@ -3611,7 +3661,6 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 72,
                         "Prefab Type": "",
@@ -3620,6 +3669,15 @@
                         "name": "Exit Point",
                         "parent": null,
                         "sceneID": 72
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 0.0,
+                            "g": 1.0,
+                            "r": 0.10196078568696976
+                        },
+                        "TextureKey": ""
                     },
                     "Transform": {
                         "height": 113.0,
@@ -3666,13 +3724,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 73,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject73",
                         "parent": null,
                         "sceneID": 73
                     },
@@ -3730,13 +3787,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 74,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject74",
                         "parent": null,
                         "sceneID": 74
                     },
@@ -3794,13 +3850,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 75,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject75",
                         "parent": null,
                         "sceneID": 75
                     },
@@ -3858,13 +3913,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 76,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject76",
                         "parent": null,
                         "sceneID": 76
                     },
@@ -3922,13 +3976,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 77,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject77",
                         "parent": null,
                         "sceneID": 77
                     },
@@ -3986,13 +4039,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 78,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject78",
                         "parent": null,
                         "sceneID": 78
                     },
@@ -4050,13 +4102,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 79,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject79",
                         "parent": null,
                         "sceneID": 79
                     },
@@ -4114,13 +4165,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 80,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject80",
                         "parent": null,
                         "sceneID": 80
                     },
@@ -4178,13 +4228,12 @@
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 81,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "Obstacle",
+                        "name": "GameObject81",
                         "parent": null,
                         "sceneID": 81
                     },
@@ -4210,328 +4259,6 @@
                         },
                         "relorientation": 0.0,
                         "width": 65.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 16,
-                        "Prefab Type": "Canvas Object",
-                        "children": [
-                            17
-                        ],
-                        "isActive": false,
-                        "name": "PhaseBannerCanvas",
-                        "parent": null,
-                        "sceneID": 9
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 17,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": false,
-                        "name": "PhaseBanner",
-                        "parent": 16,
-                        "sceneID": 0
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/PhaseSplash_Planning_1429x415.png"
-                    },
-                    "Transform": {
-                        "height": 400.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 273.00006103515625
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 273.00006103515625
-                        },
-                        "relorientation": 0.0,
-                        "width": 1200.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 71,
-                        "Prefab Type": "Canvas Object",
-                        "children": [
-                            82
-                        ],
-                        "isActive": true,
-                        "name": "Canvas Object",
-                        "parent": null,
-                        "sceneID": 61
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 82,
-                        "Prefab Type": "Text",
-                        "children": [],
-                        "isActive": true,
-                        "name": "FPSTextObject",
-                        "parent": 71,
-                        "sceneID": 82
-                    },
-                    "ScriptComponent": {
-                        "FpsScript": {
-                            "state": 0
-                        }
-                    },
-                    "TextComponent": {
-                        "Color": {
-                            "w": 1.0,
-                            "x": 0.0,
-                            "y": 0.0,
-                            "z": 0.0
-                        },
-                        "Font": "../Assets/Fonts/Kalam/Kalam-Regular.ttf",
-                        "HAlignment": 0,
-                        "HOverflow": 0,
-                        "LineSpacing": 1.0,
-                        "Size": 1.2999999523162842,
-                        "Text": "FPS: 100",
-                        "VAlignment": 2,
-                        "VOverflow": 2
-                    },
-                    "Transform": {
-                        "height": 127.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -777.4993896484375,
-                            "y": 472.49993896484375
-                        },
-                        "relativeposition": {
-                            "x": -777.4993896484375,
-                            "y": 472.49993896484375
-                        },
-                        "relorientation": 0.0,
-                        "width": 322.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationGrey_Attack_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Death_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Idle_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Walk_Anim.json"
-                        ],
-                        "CurrentAnimationID": ""
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 60,
-                        "Prefab Type": "Grey Cat",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Grey Cat",
-                        "parent": null,
-                        "sceneID": 60
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "CatScript_v2_0": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationGrey_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationGrey_Death_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationGrey_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationGrey_Walk_Anim.json"
-                                },
-                                "attackVariants": {
-                                    "GreyCatAttackVariables": {
-                                        "attacKDirection": 0,
-                                        "bulletDelay": 0.0,
-                                        "bulletForce": 1000.0,
-                                        "bulletLifeTime": 1.0,
-                                        "bulletRange": 3.0,
-                                        "damage": 0,
-                                        "projectileID": 0,
-                                        "teleGraphIDs": []
-                                    }
-                                },
-                                "catID": 0,
-                                "catMaxMovementEnergy": 21,
-                                "catType": 1,
-                                "finishedExecution": false,
-                                "forgivenessOffset": 1.0,
-                                "isCaged": false,
-                                "maxDistance": 50.0,
-                                "minDistance": 10.0,
-                                "movementSpeed": 300.0,
-                                "nodeSize": 10.0,
-                                "toggleDeathAnimation": false
-                            },
-                            "state": 0
-                        },
-                        "FollowScript_v2_0": {
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 84,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Cage",
-                        "parent": 61,
-                        "sceneID": 84
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 142.0001678466797,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 1.2003631591796875,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
                     }
                 },
                 "name": ""

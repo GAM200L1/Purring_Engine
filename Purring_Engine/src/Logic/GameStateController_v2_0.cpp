@@ -953,6 +953,7 @@ namespace PE
 
 			m_currentLevel = nextStage;
 			m_leveltoLoad = m_level2SceneName;
+			break;
 		case 2: // win game
 			WinGame();
 			m_leveltoLoad = "MainMenu.json";
@@ -960,9 +961,7 @@ namespace PE
 		default:
 			break;
 		}
-
 	
-		
 	}
 
 	void GameStateController_v2_0::StartGameLoop()
@@ -1000,11 +999,11 @@ namespace PE
 		return m_currentLevel;
 	}
 
-	bool GameStateController_v2_0::GetSelectedCat(EntityID& catID)
+	bool GameStateController_v2_0::GetSelectedCat(EntityID catID)
 	{
 		if (!m_isRat && m_isPotraitShowing)
 		{
-			catID = m_lastSelectedEntity;
+			if (m_lastSelectedEntity == catID)
 			return true;
 		}
 		return false;

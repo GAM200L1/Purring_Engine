@@ -355,19 +355,19 @@ RTTR_REGISTRATION
         .property("finishedExecution", &PE::CatScript_v2_0Data::finishedExecution)
         .property("isCaged", &PE::CatScript_v2_0Data::isCaged)
         .property("catMaxMovementEnergy", &PE::CatScript_v2_0Data::catMaxMovementEnergy)
-        .property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
+        //.property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
         .property("minDistance", &PE::CatScript_v2_0Data::minDistance)
         .property("maxDistance", &PE::CatScript_v2_0Data::maxDistance)
         .property("nodeSize", &PE::CatScript_v2_0Data::nodeSize)
         .property("movementSpeed", &PE::CatScript_v2_0Data::movementSpeed)
         .property("forgivenessOffset", &PE::CatScript_v2_0Data::forgivenessOffset)
-        .property("currentPositionIndex", &PE::CatScript_v2_0Data::currentPositionIndex)
-        .property("pathPositions", &PE::CatScript_v2_0Data::pathPositions)
-        .property("followCatPositions", &PE::CatScript_v2_0Data::followCatPositions)
-        .property("pathQuads", &PE::CatScript_v2_0Data::pathQuads)
-        .property("shouldChangeState", &PE::CatScript_v2_0Data::shouldChangeState)
-        .property("delaySet", &PE::CatScript_v2_0Data::delaySet)
-        .property("timeBeforeChangingState", &PE::CatScript_v2_0Data::timeBeforeChangingState)
+        //.property("currentPositionIndex", &PE::CatScript_v2_0Data::currentPositionIndex)
+        //.property("pathPositions", &PE::CatScript_v2_0Data::pathPositions)
+        //.property("followCatPositions", &PE::CatScript_v2_0Data::followCatPositions)
+        //.property("pathQuads", &PE::CatScript_v2_0Data::pathQuads)
+        //.property("shouldChangeState", &PE::CatScript_v2_0Data::shouldChangeState)
+        //.property("delaySet", &PE::CatScript_v2_0Data::delaySet)
+        //.property("timeBeforeChangingState", &PE::CatScript_v2_0Data::timeBeforeChangingState)
         .property("animationStates", &PE::CatScript_v2_0Data::animationStates)
         .property("attackVariants", &PE::CatScript_v2_0Data::attackVariables);
 
@@ -401,6 +401,19 @@ RTTR_REGISTRATION
         .property("MainRatID", &PE::RatDetectionScript_v2_0_Data::mainRatID)
         .property("StoredParentRat", &PE::RatDetectionScript_v2_0_Data::storedParentRat)
         .property("DetectionRadius", &PE::RatDetectionScript_v2_0_Data::detectionRadius);
+
+    rttr::registration::class_<PE::RatScript_v2_0_Data>("RatScript_v2_0")
+        //.property("mainCatID", &PE::RatScriptData::mainCatID)
+        //.property("health", &PE::RatScriptData::health)
+        //.property("movementSpeed", &PE::RatScriptData::movementSpeed)
+        //.property("detectionRadius", &PE::RatScriptData::detectionRadius)
+        //.property("attackDiameter", &PE::RatScriptData::attackDiameter)
+        //.property("attackDuration", &PE::RatScriptData::attackDuration)
+        //.property("collisionDamage", &PE::RatScriptData::collisionDamage)
+        //.property("attackDamage", &PE::RatScriptData::attackDamage)
+        //.property("attackDelay", &PE::RatScriptData::attackDelay)
+        .property("animationStates", &PE::RatScript_v2_0_Data::animationStates);
+
 }
 
 PE::CoreApplication::CoreApplication()
