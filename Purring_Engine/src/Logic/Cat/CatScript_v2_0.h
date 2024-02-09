@@ -1,20 +1,11 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
+ \module   CSD2451-A
  \file     CatScript_v2_0.h
  \date     15-1-2024
 
  \author               Liew Yeni
  \par      email:      yeni.l@digipen.edu
- \par      code %:     50%
- \par      changes:    Defined the cat script class and added functions for the
-											 player cat's attack states.
-
- \co-author            Krystal YAMIN
- \par      email:      krystal.y@digipen.edu
- \par      code %:     50%
- \par      changes:    21-11-2023
-											 Added functions for the player cat's movement states.
 
  \brief
 	This file contains the structs and declarations of functions for the base of a cat object.
@@ -93,10 +84,19 @@ namespace PE
 		
 	public:
 
+		// ----- Destructor ----- //
 		virtual ~CatScript_v2_0();
 
+		/*!***********************************************************************************
+		\brief					The Initialise Function for a script, to initialize any variables
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void Init(EntityID id);
 
+		/*!***********************************************************************************
+		\brief					The update function of the script
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime);
 
 		virtual void Destroy(EntityID id){}
@@ -169,16 +169,44 @@ namespace PE
 		*************************************************************************************/
 		bool CheckShouldStateChange(EntityID id, float const deltaTime);
 
+		/*!***********************************************************************************
+		 \brief Helper function for cat planning state
+
+		 \param[in] id - EntityID of the cat undergoing the planning state.
+		 \param[in] deltaTime - Time in seconds that have passed since the last frame.
+		*************************************************************************************/
 		template <typename AttackPLAN>
 		void PlanningStatesHandler(EntityID id, float deltaTime);
 
+		/*!***********************************************************************************
+		 \brief Helper function for cat execution state
+
+		 \param[in] id - EntityID of the cat undergoing the execution state.
+		 \param[in] deltaTime - Time in seconds that have passed since the last frame.
+		*************************************************************************************/
 		template <typename AttackEXECUTE>
 		void ExecuteStatesHandler(EntityID id, float deltaTime);
 
+		/*!***********************************************************************************
+		 \brief Helper function for playing cat animation.
+
+		 \param[in] id - EntityID of the cat which the animation should be playing on.
+		 \param[in] r_animationState - animation state that should be played.
+		*************************************************************************************/
 		void PlayAnimation(EntityID id, std::string const& r_animationState);
 
+		/*!***********************************************************************************
+		 \brief Helper function for cat selection
+
+		 \param[in] r_ME - mouse selection trigger data.
+		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
 
+		/*!***********************************************************************************
+		 \brief Helper function for cat state change
+
+		 \param[in] id - EntityID of the cat undergoing the execution state.
+		*************************************************************************************/
 		inline void ChangeToPlanningState(EntityID id);
 
 		///*!***********************************************************************************

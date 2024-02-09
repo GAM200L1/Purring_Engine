@@ -1,6 +1,6 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
+ \module   CSD2451-A
  \file     OrangeCatAttackStates_v2_0.h
  \date     21-11-2023
 
@@ -8,7 +8,7 @@
  \par      email:      yeni.l@digipen.edu
 
  \brief
-	This file contains the declaration for the Cat Attack Base class
+	This file contains the declaration for the Orange Cat Attack class
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -39,21 +39,55 @@ namespace PE
 	class OrangeCatAttack_v2_0PLAN : public CatAttackBase_v2_0
 	{
 	public:
+
 		// ----- Destructor ----- //
 		virtual ~OrangeCatAttack_v2_0PLAN() { p_attackData = nullptr; }
 
+		/*!***********************************************************************************
+			\brief Set up the state and subscribe to the collision events
+
+			\param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void Enter(EntityID id);
 
+		/*!***********************************************************************************
+			\brief Checks if its state should change
+
+			\param[in,out] id - ID of instance of script
+			\param[in,out] deltaTime - delta time to update the state with
+		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime);
 
+		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+		*************************************************************************************/
 		virtual void CleanUp();
 
+		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+
+		 \param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void Exit(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Resets the currently selected cat
+
+		 \param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void ResetSelection(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Toggles the attack telegraphs on or off accordingly
+
+		 \param setToggle - toggle telegraphs or not
+		 \param ignoreSelected - ignore telegraphs selected or not
+		*************************************************************************************/
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
 
+		/*!***********************************************************************************
+		 \brief Forces number of mouse clicks to 0
+		*************************************************************************************/
 		virtual void ForceZeroMouse() { m_mouseClicked = 0; }
 
 	private:

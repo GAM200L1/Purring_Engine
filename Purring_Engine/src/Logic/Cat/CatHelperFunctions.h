@@ -1,7 +1,7 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
- \file     CatScript_v2_0.cpp
+ \module   CSD2451-A
+ \file     CatHelperFunctions.h
  \date     3-2-2024
 
  \author               Liew Yeni
@@ -100,7 +100,7 @@ namespace PE
 			/*!***********************************************************************************
 			 \brief Adjusts the scale of the transform to the value passed in.
 
-			 \param[in] idd - ID of the entity to update the transform of.
+			 \param[in] id - ID of the entity to update the transform of.
 			 \param[in] width - Width to set the transform to.
 			 \param[in] height - Height to set the transform to.
 			*************************************************************************************/
@@ -115,6 +115,12 @@ namespace PE
 				catch (...) { return; }
 			}
 
+			/*!***********************************************************************************
+			 \brief Sets the colour of the entity.
+
+			 \param[in] id - ID of the entity to set the colour of
+			 \param[in] color - color to set the entity to
+			*************************************************************************************/
 			static void SetColor(EntityID const id, vec4 const& color)
 			{
 				try

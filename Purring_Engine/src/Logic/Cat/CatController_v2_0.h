@@ -1,14 +1,14 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
- \file     CatController_v2_0.cpp
+ \module   CSD2451-A
+ \file     CatController_v2_0.h
  \date     15-1-2024
 
  \author               Liew Yeni
  \par      email:      yeni.l@digipen.edu
 
  \brief
-	This file contains definitions for functions that manage cats in a scene.
+	This file contains declarations for functions that manage cats in a scene.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
@@ -36,16 +36,38 @@ namespace PE
 
 	public:
 		// ----- Public Functions ----- //
+
+		// ----- Constructor ----- //
 		virtual ~CatController_v2_0();
 
+		/*!***********************************************************************************
+		 \brief					The Initialise Function for a script, to initialize any variables
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void Init(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief					The update function of the script
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime);
 
+		/*!***********************************************************************************
+		\brief					The function that is called on the end of the script's lifetime
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void Destroy(EntityID id);
 
+		/*!***********************************************************************************
+		\brief					The function that is called when the script is attached onto an object
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void OnAttach(EntityID id);
 
+		/*!***********************************************************************************
+		\brief					The function that is called when the script is detached from an object
+		\param [In] EntityID	The ID of the object currently running the script
+		*************************************************************************************/
 		virtual void OnDetach(EntityID id);
 
 		/*!***********************************************************************************
@@ -62,8 +84,18 @@ namespace PE
 		*************************************************************************************/
 		void KillCat(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Removes cats from current cats in the scene
+
+		 \param[in] id - ID of cat to remove
+		*************************************************************************************/
 		void RemoveCatFromVector(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Sets the current cats in the scene
+
+		 \param[in] r_vectorOfNewCats - A pair that holds the ID of current cat and cat type
+		*************************************************************************************/
 		inline void SetCurrentCats(std::vector<std::pair<EntityID, EnumCatType>> const& r_vectorOfNewCats)
 		{
 			m_currentCats = r_vectorOfNewCats;
