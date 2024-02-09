@@ -4517,7 +4517,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
                     },
                     "Transform": {
                         "height": 100.0,

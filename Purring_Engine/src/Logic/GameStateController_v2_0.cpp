@@ -953,15 +953,15 @@ namespace PE
 
 			m_currentLevel = nextStage;
 			m_leveltoLoad = m_level2SceneName;
+			break;
 		case 2: // win game
 			WinGame();
 			m_leveltoLoad = "MainMenu.json";
 			break;
 		default:
+			break;
 		}
-
-
-		
+	
 	}
 
 	void GameStateController_v2_0::StartGameLoop()

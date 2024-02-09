@@ -337,7 +337,7 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
-		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovement_v2_0EXECUTE::OnCollisionEnter, this);
+		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 
 		// Return if this cat is not the main cat
 		//if (!p_data->isMainCat) { return; }
@@ -423,7 +423,7 @@ namespace PE
 
 	void CatMovement_v2_0EXECUTE::StateCleanUp()
 	{
-		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_triggerEventListener);
 	}
 
 	void CatMovement_v2_0EXECUTE::StateExit(EntityID id)
@@ -443,10 +443,10 @@ namespace PE
 	}
 
 
-	void CatMovement_v2_0EXECUTE::OnCollisionEnter(const Event<CollisionEvents>& r_collisionEvent)
+	void CatMovement_v2_0EXECUTE::OnTriggerEnter(const Event<CollisionEvents>& r_TriggerEvent)
 	{
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEvent) };
+		OnTriggerEnterEvent OCEE{ dynamic_cast<const OnTriggerEnterEvent&>(r_TriggerEvent) };
 
 		//// Check if the rat is colliding with the cat
 		//if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
@@ -458,7 +458,7 @@ namespace PE
 		if ((CheckExitPoint(OCEE.Entity1) && OCEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::GREYCAT))
 			|| (CheckExitPoint(OCEE.Entity2) && OCEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::GREYCAT)))
 		{
-			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage((p_gsc->GetCurrentLevel() == 2)? 0 : (p_gsc->GetCurrentLevel() + 1)); //
+			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage((p_gsc->GetCurrentLevel() == 2)? 0 : (p_gsc->GetCurrentLevel() + 1)); // goes to the next stage
 		}
 	}
 }

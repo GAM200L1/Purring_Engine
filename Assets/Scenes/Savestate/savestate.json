@@ -3020,7 +3020,7 @@
                         "Old ID": 61,
                         "Prefab Type": "OrangeCatPrefab",
                         "children": [
-                            83
+                            84
                         ],
                         "isActive": true,
                         "name": "Orange Cat 2",
@@ -4502,13 +4502,13 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 83,
+                        "Old ID": 84,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
                         "name": "Cage",
                         "parent": 61,
-                        "sceneID": 83
+                        "sceneID": 84
                     },
                     "Renderer": {
                         "Color": {
@@ -4523,11 +4523,11 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 143.0001678466797,
+                            "x": 142.0001678466797,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 2.2003631591796875,
+                            "x": 1.2003631591796875,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
