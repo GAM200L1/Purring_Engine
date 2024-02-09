@@ -534,7 +534,7 @@ namespace PE
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
 								break;
 							case EnumCatType::GREYCAT: //
-								nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
+								nextPortraitTexture = "UnitPortrait_CatNameFrame_GreyCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_GreyCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Grey_256px.png"));
 								break;
