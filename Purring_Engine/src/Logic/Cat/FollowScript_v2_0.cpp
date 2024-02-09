@@ -41,7 +41,7 @@ namespace PE
 
 					int randomInteger = std::rand() % 2 + 1;
 					SerializationManager m_serializationManager;
-					EntityID sound;
+					EntityID sound{};
 
 					switch (randomInteger)
 					{
