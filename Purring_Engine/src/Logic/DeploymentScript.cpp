@@ -30,13 +30,13 @@ namespace PE
 	{
 		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
 		m_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-		m_catPlaced = 0;
+		m_catPlaced = m_catController->GetDeployableCats().size()-1;
 		m_gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 	}
 
 	void DeploymentScript::Update(EntityID id, float)
 	{
-		if (m_catPlaced >= m_catController->GetDeployableCats().size() && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
+		if (m_catPlaced < 0 && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].DeploymentArea).SetColor(1, 1, 1, 0);
@@ -261,7 +261,7 @@ namespace PE
 					EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;
 
 					m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(std::make_pair(NewCatID, m_catController->GetDeployableCats()[m_catPlaced]));
-					m_catPlaced++;
+					--m_catPlaced;
 					return;
 				}
 			
