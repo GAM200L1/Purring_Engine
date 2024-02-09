@@ -138,11 +138,13 @@ namespace PE
 		void OnPathCollision(const Event<CollisionEvents>& r_TE);
 
 
-		/*!***********************************************************************************
+		/*!**********************************************************************************
 		 \brief Resets the position of the player to the beginning of their drawn path,
 						clears the drawn path, and resets the energy level of the player.
 		*************************************************************************************/
 		void ResetDrawnPath();
+
+		bool CheckInvalid();
 
 
 	private:
