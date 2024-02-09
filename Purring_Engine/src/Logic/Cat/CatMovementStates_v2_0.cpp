@@ -205,7 +205,11 @@ namespace PE
 		if (!coordinatesInWindow) {
 			m_invalidPath = true;
 			SetPathColor(1.f, 0.f, 0.f, 1.f);
-
+			SerializationManager m_serializationManager;
+			EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Path Denial SFX1_Prefab.json");
+			if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+				EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(sound);
 			return false;
 		}
 
@@ -214,6 +218,12 @@ namespace PE
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
 		CatHelperFunctions::ToggleEntity(nodeId, true);
 		
+		SerializationManager m_serializationManager;
+		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Movement Planning SFX_Prefab.json");
+		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+		EntityManager::GetInstance().RemoveEntity(sound);
+
 		// @TODO: Add place path audio here
 
 		// Add the position to the path positions list
@@ -326,6 +336,8 @@ namespace PE
 			MouseButtonPressedEvent MBPE = dynamic_cast<MouseButtonPressedEvent const&>(r_ME);
 			if (MBPE.button != 1)
 				m_mouseClick = true; // Flag that the mouse has been clicked
+		
+
 		}
 	}
 
@@ -349,6 +361,12 @@ namespace PE
 				// The entity is colliding with is an obstacle
 				SetPathColor(1.f, 0.f, 0.f, 1.f); // Set the color of the path nodes to red
 				m_invalidPath = true;
+
+				SerializationManager m_serializationManager;
+				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Path Denial SFX1_Prefab.json");
+				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+				EntityManager::GetInstance().RemoveEntity(sound);
 			}
 		}
 	}

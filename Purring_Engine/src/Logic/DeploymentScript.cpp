@@ -211,12 +211,12 @@ namespace PE
 					{
 						case EnumCatType::MAINCAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("DeploymentTest_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("Meowsalot_Prefab.json"));
 							break;
 						}
 						case EnumCatType::GREYCAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("DeploymentTest_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("Grey Cat_Prefab.json"));
 							break;
 						}
 						case EnumCatType::ORANGECAT:

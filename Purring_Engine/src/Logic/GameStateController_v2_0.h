@@ -280,6 +280,11 @@ namespace PE
 		*************************************************************************************/
 		void PhaseBannerTransition(EntityID const id, float deltaTime);
 
+		/*!***********************************************************************************
+		 \brief			Reset the phase banner
+
+		 \param[in]		whether it is transitioning
+		*************************************************************************************/
 		void ResetPhaseBanner(bool SetPhaseBannerTransitionOn);
 
 		/*!***********************************************************************************
@@ -296,6 +301,11 @@ namespace PE
 		 \param[in]		the current phase to set the text to
 		*************************************************************************************/
 		void UpdateTurnCounter(std::string currentphase);
+
+		/*!***********************************************************************************
+		 \brief			Check whether we should finish execution
+		*************************************************************************************/
+		void CheckFinishExecution();
 
 		// ----- MENU Helper Functions ----- //
 	private:
@@ -423,6 +433,8 @@ namespace PE
 		bool m_isPotraitShowing{};
 		bool m_isRat{};
 		EntityID m_lastSelectedEntity{};
+		std::string nextPortraitTexture{};
+
 
 		//journal object testing
 		bool m_journalShowing;
