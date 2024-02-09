@@ -30,7 +30,7 @@ namespace PE
 	{
 	public:
 		// ----- Public Variables ----- //
-		EntityID mainInstance;
+		static EntityID mainInstance;
 		
 		std::map<EntityID, CatController_v2_0Data> m_scriptData; // data associated with each instance of the script
 

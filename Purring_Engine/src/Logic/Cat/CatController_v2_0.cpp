@@ -28,6 +28,7 @@
 
 namespace PE
 {
+	EntityID CatController_v2_0::mainInstance{};
 
 	CatController_v2_0::~CatController_v2_0()
 	{
@@ -77,6 +78,7 @@ namespace PE
 
 	void CatController_v2_0::Destroy(EntityID id)
 	{
+		if (id != mainInstance) { return; }
 		if (!m_lostGame)
 			m_cachedCats = m_currentCats;
 	}
@@ -88,8 +90,9 @@ namespace PE
 		for (auto const& [catID, type] : m_cachedCats)
 		{
 			// if cat is alive when caching
-			if (!(GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)
-				deployableCats.emplace_back(type);
+			if ((GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)
+				continue;
+			deployableCats.emplace_back(type);
 		}
 		return deployableCats;
 	}
