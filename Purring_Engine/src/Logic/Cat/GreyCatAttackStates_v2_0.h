@@ -1,6 +1,6 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
+ \module   CSD2451-A
  \file     GreyCatAttackStates_v2_0.h
  \date     3-2-2024
 
@@ -46,7 +46,7 @@ namespace PE
 		// Telegraph variables
 		EnumCatAttackDirection_v2_0 attackDirection{ EnumCatAttackDirection_v2_0::NONE }; // Direction of attack chosen
 		std::map<EnumCatAttackDirection_v2_0, EntityID> telegraphIDs{}; // IDs of entities used to visualise the directions the player can attack in
-		
+
 		// projectile variables
 		float bulletDelay{ 0.f }; // for after the bullet fire frame if slight 
 		float bulletRange{ 3.f };
@@ -60,26 +60,67 @@ namespace PE
 	class GreyCatAttack_v2_0PLAN : public CatAttackBase_v2_0
 	{
 	public:
+		
 		// ----- Destructor ----- //
 		~GreyCatAttack_v2_0PLAN() { p_attackData = nullptr; p_gsc = nullptr; }
 
+		// ----- Public Functions ----- //
+		/*!***********************************************************************************
+		\brief Set up the state and subscribe to the collision events
+
+		\param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void Enter(EntityID id);
 
+		/*!***********************************************************************************
+			\brief Checks if its state should change
+
+			\param[in,out] id - ID of instance of script
+			\param[in,out] deltaTime - delta time to update the state with
+		*************************************************************************************/
 		virtual void Update(EntityID id, float deltaTime);
 
+		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+		*************************************************************************************/
 		virtual void CleanUp();
 
+		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+
+		 \param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void Exit(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Resets the currently selected cat
+
+		 \param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void ResetSelection(EntityID id);
 
+		/*!***********************************************************************************
+		 \brief Activate all attack telegraphs
+
+		 \param[in] id - EntityID of the entity this instance of the script is attached to.
+		 \param[in] bulletRange - Distance projectile travels.
+		*************************************************************************************/
 		static void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
 
+		/*!***********************************************************************************
+		 \brief Toggles the attack telegraphs on or off accordingly
+
+		 \param setToggle - toggle telegraphs or not
+		 \param ignoreSelected - ignore telegraphs selected or not
+		*************************************************************************************/
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
-		
+
+		/*!***********************************************************************************
+		 \brief Forces number of mouse clicks to 0
+		*************************************************************************************/
 		virtual void ForceZeroMouse() { m_mouseClick = false; }
 	private:
-		
+
 		GameStateController_v2_0* p_gsc; // pointer to the game state controller
 		GreyCatAttackVariables* p_attackData; // attack data for the cat
 
@@ -96,28 +137,63 @@ namespace PE
 		int m_mouseClickEventListener; // Stores the handler for the mouse click event
 		int m_mouseReleaseEventListener; // Stores the handler for the mouse release event
 
+		/*!***********************************************************************************
+		 \brief Function to handle mouse click events for GreyCatPLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		/*!***********************************************************************************
+		 \brief Function to handle mouse release events for GreyCatPLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
 		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 	};
 
 	class GreyCatAttack_v2_0EXECUTE : public State
 	{
 	public:
+
 		// ----- Destructor ----- //
 		virtual ~GreyCatAttack_v2_0EXECUTE() { p_attackData = nullptr; }
 
+		/*!***********************************************************************************
+			\brief Set up the state and subscribe to the collision events
+
+			\param[in,out] id - ID of instance of script
+		*************************************************************************************/
 		virtual void StateEnter(EntityID id);
 
+		/*!***********************************************************************************
+			\brief Checks if its state should change
+
+			\param[in,out] id - ID of instance of script
+			\param[in,out] deltaTime - delta time to update the state with
+		*************************************************************************************/
 		virtual void StateUpdate(EntityID id, float deltaTime);
 
+		/*!***********************************************************************************
+		 \brief Unsubscribes from the collision events
+		*************************************************************************************/
 		virtual void StateCleanUp();
 
+		/*!***********************************************************************************
+			\brief does nothing
+		*************************************************************************************/
 		virtual void StateExit(EntityID id);
 
+		// ----- Getter ----- //
+		/*!***********************************************************************************
+		 \brief Gets the name of the state
+
+		 \param[out] std::string_view - name of the state
+		*************************************************************************************/
 		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
-		
+
+		// cat attacks
 		GreyCatAttackVariables* p_attackData;
 
 		EntityID m_catID{ 0 };
@@ -128,11 +204,28 @@ namespace PE
 		int m_collisionEventListener{}, m_triggerEventListener;
 
 		bool m_projectileFired{ false };
-		
+
+		/*!***********************************************************************************
+		 \brief Handles collision events when non-trigger projectile collides with rat or cat
+
+		 \param[in] r_CE - Collision event data.
+		*************************************************************************************/
 		void ProjectileCollided(const Event<CollisionEvents>& r_CE);
 
+		/*!***********************************************************************************
+		 \brief Handles collision events when trigger projectile collides with rat or cat
+
+		 \param[in] r_CE - Collision event data.
+		*************************************************************************************/
 		void TriggerHit(const Event<CollisionEvents>& r_CE);
 
+		/*!***********************************************************************************
+		 \brief Function to check if entities involved are cats or rats and to damage cat or rat
+				accordingly
+
+		 \param[in] id1 - ID of the first entity to check
+		 \param[in] id2 - ID of the second entity to check
+		*************************************************************************************/
 		bool GeneralCollision(EntityID id1, EntityID id2);
 	};
 }

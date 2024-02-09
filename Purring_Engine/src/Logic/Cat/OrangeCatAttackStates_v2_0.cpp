@@ -1,6 +1,6 @@
 /*!***********************************************************************************
  \project  Purring Engine
- \module   CSD2401-A
+ \module   CSD2451-A
  \file     OrangeCatAttackStates_v2_0.cpp
  \date     3-2-2024
 
@@ -8,7 +8,7 @@
  \par      email:      yeni.l@digipen.edu
 
  \brief
-	This file contains the declaration for the Cat Attack Base class
+	This file contains the definitions for the functions for the Orange Cat Attack class
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 
