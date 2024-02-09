@@ -54,7 +54,7 @@ namespace PE
 		float bulletForce{ 1000.f };
 
 		// for syncing
-		unsigned int bulletFireAnimationIndex{ 4 };
+		unsigned int bulletFireAnimationIndex{ 3 };
 	};
 
 	class GreyCatAttack_v2_0PLAN : public CatAttackBase_v2_0
@@ -77,6 +77,7 @@ namespace PE
 
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
 		
+		virtual void ForceZeroMouse() { m_mouseClick = false; }
 	private:
 		
 		GameStateController_v2_0* p_gsc; // pointer to the game state controller

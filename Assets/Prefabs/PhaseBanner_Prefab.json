@@ -1,0 +1,40 @@
+{
+    "Entity": {
+        "components": {
+            "EntityDescriptor": {
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "PhaseBanner",
+                "children": [],
+                "isActive": true,
+                "name": "PhaseBanner",
+                "parent": null,
+                "sceneID": 18446744073709551615
+            },
+            "GUIRenderer": {
+                "Color": {
+                    "a": 0.0,
+                    "b": 1.0,
+                    "g": 1.0,
+                    "r": 1.0
+                },
+                "TextureKey": "../Assets/Textures/PhaseSplash_Planning_1429x415.png"
+            },
+            "Transform": {
+                "height": 400.0,
+                "orientation": 0.0,
+                "position": {
+                    "x": 0.0,
+                    "y": 273.00006103515625
+                },
+                "relativeposition": {
+                    "x": 0.0,
+                    "y": 273.00006103515625
+                },
+                "relorientation": 0.0,
+                "width": 1200.0
+            }
+        },
+        "name": ""
+    }
+}

@@ -53,7 +53,6 @@ namespace PE
 			FollowScriptData* follow_data = GETSCRIPTDATA(FollowScript, p_data->catID);
 			p_data->followCatPositions = follow_data->NextPosition;
 		/*}*/
-
 		/*if (!p_data->startedPlanning)
 		{*/
 			ResetDrawnPath();
@@ -83,7 +82,7 @@ namespace PE
 		}
 
 		// Check if the mouse has just been clicked
-		if (m_mouseClick && !m_mouseClickPrevious && !m_pathBeingDrawn && p_data->catCurrentEnergy)
+		if (m_mouseClick && !m_pathBeingDrawn && p_data->catCurrentEnergy)
 		{
 			// Get the position of the cat
 			vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
@@ -96,7 +95,7 @@ namespace PE
 				m_pathBeingDrawn = true;
 			}
 		}
-
+		
 		// If the mouse is being pressed
 		if (m_mouseClick && m_pathBeingDrawn)
 		{
@@ -338,7 +337,7 @@ namespace PE
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
-		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnCollisionEnter, CatMovement_v2_0EXECUTE::OnCollisionEnter, this);
+		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 
 		// Return if this cat is not the main cat
 		//if (!p_data->isMainCat) { return; }
@@ -424,7 +423,7 @@ namespace PE
 
 	void CatMovement_v2_0EXECUTE::StateCleanUp()
 	{
-		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_triggerEventListener);
 	}
 
 	void CatMovement_v2_0EXECUTE::StateExit(EntityID id)
@@ -444,16 +443,22 @@ namespace PE
 	}
 
 
-	void CatMovement_v2_0EXECUTE::OnCollisionEnter(const Event<CollisionEvents>& r_collisionEvent)
+	void CatMovement_v2_0EXECUTE::OnTriggerEnter(const Event<CollisionEvents>& r_TriggerEvent)
 	{
-		OnCollisionEnterEvent OCEE{ dynamic_cast<const OnCollisionEnterEvent&>(r_collisionEvent) };
+		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		OnTriggerEnterEvent OCEE{ dynamic_cast<const OnTriggerEnterEvent&>(r_TriggerEvent) };
 
-		// Check if the rat is colliding with the cat
-		if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
-			|| (CatHelperFunctions::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
+		//// Check if the rat is colliding with the cat
+		//if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
+		//	|| (CatHelperFunctions::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
+		//{
+		//	m_collidedWithRat = true;
+		//}
+		auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
+		if ((CheckExitPoint(OCEE.Entity1) && OCEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::GREYCAT))
+			|| (CheckExitPoint(OCEE.Entity2) && OCEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::GREYCAT)))
 		{
-			m_collidedWithRat = true;
+			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage((p_gsc->GetCurrentLevel() == 2)? 0 : (p_gsc->GetCurrentLevel() + 1)); // goes to the next stage
 		}
-
 	}
 }

@@ -49,7 +49,7 @@ namespace PE
 	{
 		// id of cat and its type
 		EntityID catID{ 0 };
-		EnumCatType catType{ EnumCatType::GREYCAT };
+		EnumCatType catType{ EnumCatType::ORANGECAT };
 		bool finishedExecution{ false };
 		bool toggleDeathAnimation{ false };
 		bool isCaged{ false };

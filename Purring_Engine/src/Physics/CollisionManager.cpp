@@ -21,6 +21,7 @@
 #include "Data/json.hpp"
 #include "Events/EventHandler.h"
 #include "Layers/CollisionLayer.h"
+#include "Layers/LayerManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -47,6 +48,16 @@ namespace PE
 				gridSize.x = cfgJson["Gridsize"]["x"].get<float>();
 				gridSize.y = cfgJson["Gridsize"]["y"].get<float>();
 			}
+			if (cfgJson.contains("collisionLayers"))
+			{
+				for (auto const& layerJson : cfgJson["collisionLayers"])
+				{
+					std::shared_ptr<CollisionLayer> p_layer{ CollisionLayerManager::GetInstance().GetCollisionLayer(layerJson["collisionLayerIndex"].get<unsigned>())};
+
+					p_layer->SetCollisionLayerName(layerJson["collisionLayerName"].get<std::string>());
+					p_layer->GetCollisionLayerSignature() = std::bitset<TOTAL_COLLISION_LAYERS>(layerJson["collisionLayerSignature"].get<std::string>());
+				}
+			}
 		}
 
 		// initilize collision layer manager
@@ -57,15 +68,17 @@ namespace PE
 	CollisionManager::~CollisionManager()
 	{
 		const char* filepath = "../Assets/Settings/collidercfg.json";
-		std::ifstream cfgFile(filepath);
 		nlohmann::json cfgjson;
-		if (cfgFile.is_open())
-		{
-			cfgFile >> cfgjson;
-			cfgFile.close();
-		}
+
 		cfgjson["Gridsize"]["x"] = gridSize.x;
 		cfgjson["Gridsize"]["y"] = gridSize.y;
+		
+		for (auto const& layer : CollisionLayerManager::GetInstance().GetCollisionLayers())
+		{
+			CollisionLayer const& r_layer = *layer;
+
+			cfgjson["collisionLayers"].push_back(r_layer.ToJson());
+		}
 
 		std::ofstream outfile(filepath);
 		if (outfile.is_open())
@@ -154,22 +167,25 @@ namespace PE
 
 	void CollisionManager::UpdateColliders()
 	{
-		for (EntityID ColliderID : SceneView<Collider, Transform>())
+		for (const auto& layer : LayerView<Collider, Transform>())
 		{
-			// if the entity is not active, do not update collision
-			if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID).isActive) { continue; }
-			Transform const& transform = EntityManager::GetInstance().Get<Transform>(ColliderID);
-			Collider& collider = EntityManager::GetInstance().Get<Collider>(ColliderID);
-			
-			// remove objects that were checked for collision from previous frame
-			collider.collisionChecked.clear();
-
-			// update each collider
-			std::visit([&](auto& col)
+			for (EntityID ColliderID : InternalView(layer))
 			{
-				Update(col, transform.position, vec2(transform.width, transform.height));
+				// if the entity is not active, do not update collision
+				if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID).isActive) { continue; }
+				Transform const& transform = EntityManager::GetInstance().Get<Transform>(ColliderID);
+				Collider& collider = EntityManager::GetInstance().Get<Collider>(ColliderID);
 
-			}, collider.colliderVariant);
+				// remove objects that were checked for collision from previous frame
+				collider.collisionChecked.clear();
+
+				// update each collider
+				std::visit([&](auto& col)
+					{
+						Update(col, transform.position, vec2(transform.width, transform.height));
+
+					}, collider.colliderVariant);
+			}
 		}
 	}
 
@@ -324,87 +340,93 @@ namespace PE
 		}
 		else
 		{
-			for (EntityID ColliderID_1 : SceneView<Collider,Transform>())
+			for (const auto& layer : LayerView<Collider, Transform>())
 			{
-				// if the entity is not active, do not check for collision
-				if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_1).isActive) { continue; }
-
-				Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
-
-				for (EntityID ColliderID_2 : SceneView<Collider, Transform>())
+				for (EntityID ColliderID_1 : InternalView(layer))
 				{
 					// if the entity is not active, do not check for collision
-					if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_2).isActive) { continue; }
+					if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_1).isActive) { continue; }
 
-					Collider& collider2 = EntityManager::GetInstance().Get<Collider>(ColliderID_2);
+					Collider& collider1 = EntityManager::GetInstance().Get<Collider>(ColliderID_1);
 
-					// if its the same don't check
-					if (ColliderID_1 == ColliderID_2) { continue; }
-					// if they have been checked before don't check again
-					if (collider1.collisionChecked.count(ColliderID_2)) { continue; }
-					// if the layers are not colliding, don't check
-					if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
-
-					std::visit([&](auto& col1)
+					for (const auto& layer2 : LayerView<Collider, Transform>())
+					{
+						for (EntityID ColliderID_2 : InternalView(layer2))
 						{
-							std::visit([&](auto& col2)
+							// if the entity is not active, do not check for collision
+							if (!EntityManager::GetInstance().Get<EntityDescriptor>(ColliderID_2).isActive) { continue; }
+
+							Collider& collider2 = EntityManager::GetInstance().Get<Collider>(ColliderID_2);
+
+							// if its the same don't check
+							if (ColliderID_1 == ColliderID_2) { continue; }
+							// if they have been checked before don't check again
+							if (collider1.collisionChecked.count(ColliderID_2)) { continue; }
+							// if the layers are not colliding, don't check
+							if (!CollisionLayerManager::GetInstance().GetCollisionLayer(collider1.collisionLayerIndex)->IsCollidingWith(collider2.collisionLayerIndex)) { continue; }
+
+							std::visit([&](auto& col1)
 								{
-									Contact contactPt;
-									if (CollisionIntersection(col1, col2, contactPt))
-									{
-										// adds collided objects so that it won't be checked again
-										collider1.collisionChecked.emplace(ColliderID_2);
-										collider2.collisionChecked.emplace(ColliderID_1);
-										if (!collider1.isTrigger && !collider2.isTrigger)
+									std::visit([&](auto& col2)
 										{
-											if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
+											Contact contactPt;
+											if (CollisionIntersection(col1, col2, contactPt))
 											{
-												OnCollisionEnterEvent OCEE;
-												OCEE.Entity1 = ColliderID_1;
-												OCEE.Entity2 = ColliderID_2;
-												SEND_COLLISION_EVENT(OCEE);
-												if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
+												// adds collided objects so that it won't be checked again
+												collider1.collisionChecked.emplace(ColliderID_2);
+												collider2.collisionChecked.emplace(ColliderID_1);
+												if (!collider1.isTrigger && !collider2.isTrigger)
 												{
-													m_manifolds.emplace_back
-													(Manifold{ contactPt,
-																EntityManager::GetInstance().Get<Transform>(ColliderID_2),
-																EntityManager::GetInstance().Get<Transform>(ColliderID_1),
-																EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2),
-																EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1) });
+													if (EntityManager::GetInstance().Has<RigidBody>(ColliderID_1) && EntityManager::GetInstance().Has<RigidBody>(ColliderID_2))
+													{
+														OnCollisionEnterEvent OCEE;
+														OCEE.Entity1 = ColliderID_1;
+														OCEE.Entity2 = ColliderID_2;
+														SEND_COLLISION_EVENT(OCEE);
+														if (std::holds_alternative<AABBCollider>(collider1.colliderVariant) && std::holds_alternative<CircleCollider>(collider2.colliderVariant))
+														{
+															m_manifolds.emplace_back
+															(Manifold{ contactPt,
+																		EntityManager::GetInstance().Get<Transform>(ColliderID_2),
+																		EntityManager::GetInstance().Get<Transform>(ColliderID_1),
+																		EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2),
+																		EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1) });
+														}
+														else
+														{
+															m_manifolds.emplace_back
+															(Manifold{ contactPt,
+																		EntityManager::GetInstance().Get<Transform>(ColliderID_1),
+																		EntityManager::GetInstance().Get<Transform>(ColliderID_2),
+																		EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1),
+																		EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2) });
+														}
+													}
+													else
+													{
+														std::stringstream ss;
+														ss << "Error: Missing RigidBody at Collision between Entities " << ColliderID_1 << " & " << ColliderID_2 << '\n';
+														engine_logger.AddLog(false, ss.str(), "");
+													}
 												}
 												else
 												{
-													m_manifolds.emplace_back
-													(Manifold{ contactPt,
-																EntityManager::GetInstance().Get<Transform>(ColliderID_1),
-																EntityManager::GetInstance().Get<Transform>(ColliderID_2),
-																EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_1),
-																EntityManager::GetInstance().GetPointer<RigidBody>(ColliderID_2) });
+													// else send message to trigger event associated with this entity
+													engine_logger.AddLog(false, "Collided with Trigger!\n", "");
+													//sending collision enter event
+													OnTriggerEnterEvent OTEE;
+													OTEE.Entity1 = ColliderID_1;
+													OTEE.Entity2 = ColliderID_2;
+													SEND_COLLISION_EVENT(OTEE);
 												}
+
 											}
-											else
-											{
-												std::stringstream ss;
-												ss << "Error: Missing RigidBody at Collision between Entities " << ColliderID_1 << " & " << ColliderID_2 << '\n';
-												engine_logger.AddLog(false, ss.str(), "");
-											}
-										}
-										else
-										{
-											// else send message to trigger event associated with this entity
-											engine_logger.AddLog(false, "Collided with Trigger!\n", "");
-											//sending collision enter event
-											OnTriggerEnterEvent OTEE;
-											OTEE.Entity1 = ColliderID_1;
-											OTEE.Entity2 = ColliderID_2;
-											SEND_COLLISION_EVENT(OTEE);
-										}
 
-									}
+										}, collider2.colliderVariant);
 
-								}, collider2.colliderVariant);
-
-						}, collider1.colliderVariant);
+								}, collider1.colliderVariant);
+						}
+					}
 				}
 			}
 		}

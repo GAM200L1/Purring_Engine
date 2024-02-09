@@ -576,7 +576,7 @@ bool SerializationManager::LoadAnimationComponent(const size_t& r_id, const nloh
 
     // load resource
     PE::ResourceManager::GetInstance().AddAnimationKeyToLoad(comp.GetAnimationID());
-    PE::ResourceManager::GetInstance().AddTextureKeyToLoad(PE::ResourceManager::GetInstance().GetAnimation(comp.GetAnimationID())->GetSpriteSheetKey());
+   // PE::ResourceManager::GetInstance().AddTextureKeyToLoad(PE::ResourceManager::GetInstance().GetAnimation(comp.GetAnimationID())->GetSpriteSheetKey());
     return true;
 }
 

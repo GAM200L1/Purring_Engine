@@ -21,6 +21,7 @@
 #include "CatHelperFunctions.h"
 #include "CatController_v2_0.h"
 #include "Logic/Rat/RatController_v2_0.h"
+#include "CatPlanningState_v2_0.h"
 
 #include "Hierarchy/HierarchyManager.h"
 #include "Physics/CollisionManager.h"
@@ -53,6 +54,7 @@ namespace PE
 
 		try
 		{
+			std::cout << (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected << ' ';
 			for (auto const& r_telegraph : p_attackData->telegraphIDs) // for every telegraph
 			{
 				AABBCollider const& r_telegraphCollider = std::get<AABBCollider>(EntityManager::GetInstance().Get<Collider>(r_telegraph.second).colliderVariant);
@@ -81,7 +83,7 @@ namespace PE
 			}
 
 			// disables telegraphs if anywhere but the telegraphs are clicked
-			if (m_mouseClick && !collidingWithAnyTelegraph)
+			if (m_mouseClick && !m_mouseClickedPrevious && !collidingWithAnyTelegraph)
 			{
 				(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 				ToggleTelegraphs(false, true);
@@ -106,7 +108,6 @@ namespace PE
 
 	void GreyCatAttack_v2_0PLAN::ResetSelection(EntityID id)
 	{
-		m_showTelegraphs = false;
 		for (auto const& r_telegraphs : p_attackData->telegraphIDs)
 		{
 			CatHelperFunctions::SetColor(r_telegraphs.second, m_defaultColor);
@@ -258,8 +259,8 @@ namespace PE
 			}
 			m_bulletLifetime -= deltaTime;
 		}
-		// when the frame is attack frame, shoot the projectile after delay passes											//@TODO UNCOMMENT
-		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)// && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
+		// when the frame is attack frame, shoot the projectile after delay passes											
+		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
 		{
 			if (m_bulletDelay <= 0.f) // extra delay after the frame in case of slight inaccuracy
 			{
@@ -308,16 +309,14 @@ namespace PE
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
 			bool hitSomething{ false };
 			// @TODO: UNCOMMENT
-			//if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0) // check if hit cat for friendly fire
-			//{
 			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID)
 			{
-				if (OCEE.Entity1 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity2))
+				if (OCEE.Entity1 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 				{
 					CatController_v2_0::KillCat(OCEE.Entity2);
 					hitSomething = true;
 				}
-				else if (OCEE.Entity2 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity1))
+				else if (OCEE.Entity2 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 				{
 					CatController_v2_0::KillCat(OCEE.Entity1);
 					hitSomething = true;
@@ -341,7 +340,6 @@ namespace PE
 					(GETSCRIPTDATA(CatScript_v2_0, m_catID))->finishedExecution = true;
 				}
 			}
-			//}
 
 			// kill rat
 

@@ -54,6 +54,8 @@ namespace PE
 
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
 
+		virtual void ForceZeroMouse() { m_mouseClicked = 0; }
+
 	private:
 		
 		// data
