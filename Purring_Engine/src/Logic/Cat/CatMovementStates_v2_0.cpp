@@ -479,6 +479,7 @@ namespace PE
 	{
 		StopMoving(id);
 		p_data->pathPositions.clear();
+		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
 	}
 
 
