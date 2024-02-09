@@ -188,6 +188,7 @@ namespace PE
 			DeactiveAllMenu();
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
+			DeactiveObject(m_scriptData.at(id).Portrait);
 
 			PhaseBannerTransition(id, deltaTime);
 			UpdateTurnCounter("Deployment");
