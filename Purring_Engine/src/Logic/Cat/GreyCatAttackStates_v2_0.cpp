@@ -283,6 +283,7 @@ namespace PE
 	void GreyCatAttack_v2_0EXECUTE::StateCleanUp()
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_triggerEventListener);
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::StateExit(EntityID id)
@@ -332,7 +333,9 @@ namespace PE
 				return false;
 			};
 
-		if (id1 != m_catID && id2 != m_catID)
+		auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
+
+		if (id1 != m_catID && id2 != m_catID && !CheckExitPoint(id1) && !CheckExitPoint(id2))
 		{
 			if (id1 == p_attackData->projectileID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 			{
