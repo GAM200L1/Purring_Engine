@@ -125,14 +125,14 @@ namespace PE
 		vec2 m_bulletImpulse;
 		float m_bulletDelay;
 		float m_bulletLifetime; // how long the bullet will persist
-		int m_collisionEventListener{};
+		int m_collisionEventListener{}, m_triggerEventListener;
 
 		bool m_projectileFired{ false };
 		
 		void ProjectileCollided(const Event<CollisionEvents>& r_CE);
 
-		void ProjectileHitCat(const Event<CollisionEvents>& r_CE);
+		void TriggerHit(const Event<CollisionEvents>& r_CE);
 
-		void ProjectileHitRat(const Event<CollisionEvents>& r_CE);
+		bool GeneralCollision(EntityID id1, EntityID id2);
 	};
 }

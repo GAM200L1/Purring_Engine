@@ -2993,106 +2993,6 @@
         {
             "Entity": {
                 "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [],
-                        "CurrentAnimationID": ""
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 140.7998046875,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": true,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 61,
-                        "Prefab Type": "OrangeCatPrefab",
-                        "children": [
-                            84
-                        ],
-                        "isActive": true,
-                        "name": "Orange Cat 2",
-                        "parent": null,
-                        "sceneID": 71
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "CatScript_v2_0": {
-                            "data": {
-                                "animationStates": {},
-                                "attackVariants": {
-                                    "GreyCatAttackVariables": {
-                                        "attacKDirection": 0,
-                                        "bulletDelay": 0.0,
-                                        "bulletForce": 1000.0,
-                                        "bulletLifeTime": 1.0,
-                                        "bulletRange": 3.0,
-                                        "damage": 0,
-                                        "projectileID": 0,
-                                        "teleGraphIDs": []
-                                    }
-                                },
-                                "catID": 0,
-                                "catMaxMovementEnergy": 21,
-                                "catType": 1,
-                                "finishedExecution": false,
-                                "forgivenessOffset": 1.0,
-                                "isCaged": true,
-                                "maxDistance": 50.0,
-                                "minDistance": 10.0,
-                                "movementSpeed": 300.0,
-                                "nodeSize": 10.0,
-                                "toggleDeathAnimation": false
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 140.7998046875,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
@@ -4401,8 +4301,8 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": 225.6004638671875,
+                                "y": 10.200397491455078
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4419,7 +4319,9 @@
                         "Layer": 0,
                         "Old ID": 60,
                         "Prefab Type": "Grey Cat",
-                        "children": [],
+                        "children": [
+                            84
+                        ],
                         "isActive": true,
                         "name": "Grey Cat",
                         "parent": null,
@@ -4455,7 +4357,7 @@
                                         "bulletForce": 1000.0,
                                         "bulletLifeTime": 1.0,
                                         "bulletRange": 3.0,
-                                        "damage": 0,
+                                        "damage": 1,
                                         "projectileID": 0,
                                         "teleGraphIDs": []
                                     }
@@ -4465,7 +4367,7 @@
                                 "catType": 1,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isCaged": false,
+                                "isCaged": true,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
@@ -4473,17 +4375,14 @@
                                 "toggleDeathAnimation": false
                             },
                             "state": 0
-                        },
-                        "FollowScript_v2_0": {
-                            "state": 0
                         }
                     },
                     "Transform": {
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": 225.6004638671875,
+                            "y": 10.200397491455078
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4507,7 +4406,7 @@
                         "children": [],
                         "isActive": true,
                         "name": "Cage",
-                        "parent": 61,
+                        "parent": 60,
                         "sceneID": 84
                     },
                     "Renderer": {
@@ -4523,15 +4422,126 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 142.0001678466797,
-                            "y": 0.0
+                            "x": 227.2007598876953,
+                            "y": 10.200397491455078
                         },
                         "relativeposition": {
-                            "x": 1.2003631591796875,
+                            "x": 1.6002922058105469,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
                         "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": ""
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": -100.00008392333984,
+                                "y": 0.0
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 61,
+                        "Prefab Type": "Meowsalot",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Meowsalot",
+                        "parent": null,
+                        "sceneID": 61
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                                },
+                                "attackVariants": {
+                                    "GreyCatAttackVariables": {
+                                        "attacKDirection": 0,
+                                        "bulletDelay": 0.0,
+                                        "bulletForce": 1000.0,
+                                        "bulletLifeTime": 1.0,
+                                        "bulletRange": 3.0,
+                                        "damage": 2,
+                                        "projectileID": 0,
+                                        "teleGraphIDs": []
+                                    }
+                                },
+                                "catID": 0,
+                                "catMaxMovementEnergy": 14,
+                                "catType": 0,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "isCaged": false,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "toggleDeathAnimation": false
+                            },
+                            "state": 0
+                        },
+                        "FollowScript_v2_0": {
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -100.00008392333984,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""
