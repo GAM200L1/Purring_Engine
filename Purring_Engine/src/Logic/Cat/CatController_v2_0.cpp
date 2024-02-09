@@ -48,6 +48,8 @@ namespace PE
 					m_currentCats.emplace_back(std::pair{ catID, r_catType }); // saves all cats, including the caged ones
 					if (r_catType == EnumCatType::MAINCAT)
 						m_mainCatID = catID;
+					else if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+						(GETSCRIPTDATA(CatScript_v2_0, catID))->finishedExecution = true;
 				}
 			}
 		}
