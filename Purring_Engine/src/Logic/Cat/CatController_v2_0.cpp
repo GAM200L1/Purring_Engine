@@ -85,12 +85,14 @@ namespace PE
 	std::vector<EnumCatType> CatController_v2_0::GetDeployableCats()
 	{
 		std::vector<EnumCatType> deployableCats{};
-		for (auto const& [catID, type] : m_cachedCats)
-		{
-			// if cat is alive when caching
-			if (!(GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)
-				deployableCats.emplace_back(type);
-		}
+		if (EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
+			deployableCats = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved;
+		//for (auto const& [catID, type] : m_cachedCats)
+		//{
+		//	// if cat is alive when caching
+		//	if (!(GETSCRIPTDATA(CatScript_v2_0, catID))->isCaged)
+		//		deployableCats.emplace_back(type);
+		//}
 		return deployableCats;
 	}
 
