@@ -27,6 +27,8 @@ namespace PE
 		EntityID MainMenuCanvas;
 
 		int mouseClickEventID;
+		int windowNotFocusEventID;
+		int windowFocusEventID;
 	};
 
 	class MainMenuController : public Script
@@ -95,6 +97,18 @@ namespace PE
 		 \param[in]		r_ME mouse click event details
 		*************************************************************************************/
 		void OnMouseClick(const Event<MouseEvents>& r_ME);
+
+		/*!***********************************************************************************
+		 \brief			Handle window out of focus event.
+		 \param[in]     Event containing window-specific details.
+		*************************************************************************************/
+		void OnWindowOutOfFocus(const PE::Event<PE::WindowEvents>& r_event);
+
+		/*!***********************************************************************************
+		 \brief			Handle window out of focus event.
+		 \param[in]     Event containing window-specific details.
+		*************************************************************************************/
+		void OnWindowFocus(const PE::Event<PE::WindowEvents>& r_event);
 
 	private:
 		/*!***********************************************************************************
