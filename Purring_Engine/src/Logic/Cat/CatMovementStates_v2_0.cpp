@@ -77,6 +77,7 @@ namespace PE
 		{
 			ResetDrawnPath();
 			m_invalidPath = false;
+			return;
 		}
 
 		// Check if the mouse has just been clicked
@@ -152,8 +153,13 @@ namespace PE
 			}
 		}
 
+		if (p_data->pathPositions.empty())
+			p_data->pathPositions.emplace_back(r_position);
+
 		// Get the distance of the proposed position from the last node in the path
-		float distanceOfPosition{ p_data->pathPositions.back().Distance(r_position) };
+		float distanceOfPosition = p_data->pathPositions.back().Distance(r_position);
+		
+
 		if (distanceOfPosition > p_data->maxDistance)
 		{
 			// Compute the direction of the proposed position from the last node in the path
@@ -243,17 +249,24 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::ResetDrawnPath()
 	{
-		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
-		{
-			CatHelperFunctions::PositionEntity(p_data->catID, p_data->resetPosition);
-			return;
-		} // if cat is following cat in the chain )
+		FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, p_data->catID);
 
+		for (auto s : follow_data->followers)
+		{
+			auto dat = GETSCRIPTDATA(CatScript_v2_0, s);
+
+			if ((dat->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
+			{
+				CatHelperFunctions::PositionEntity(dat->catID, dat->resetPosition);
+			} // if cat is following cat in the chain )
+		}
+
+		CatHelperFunctions::PositionEntity(p_data->catID, p_data->resetPosition);
+	
 		// reset to max energy
 		p_data->catCurrentEnergy = p_data->catMaxMovementEnergy;
 		m_mouseClickPrevious = false;
 		
-		FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, p_data->catID);
 
 		// Clear all the path data
 		if (!p_data->pathPositions.empty())
@@ -297,6 +310,11 @@ namespace PE
 			p_data->pathPositions.emplace_back(vec2{ 0.f, 0.f });
 			return;
 		}
+	}
+
+	bool CatMovement_v2_0PLAN::CheckInvalid()
+	{
+		return m_invalidPath;
 	}
 
 
