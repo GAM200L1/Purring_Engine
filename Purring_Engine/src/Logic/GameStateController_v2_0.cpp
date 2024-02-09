@@ -371,7 +371,7 @@ namespace PE
 			NextStage(0);
 		}
 
-		if (KTE.keycode == GLFW_KEY_F11)
+		if (KTE.keycode == GLFW_KEY_F9)
 		{
 			NextState();
 		}
@@ -481,7 +481,6 @@ namespace PE
 							m_isPotraitShowing = true;
 							m_lastSelectedEntity = CatID;
 
-							SerializationManager serializationManager;
 							EntityID sound{};
 								int randomInteger = std::rand() % 4 + 1;
 

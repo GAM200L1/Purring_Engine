@@ -48,6 +48,8 @@ namespace PE
 					m_currentCats.emplace_back(std::pair{ catID, r_catType }); // saves all cats, including the caged ones
 					if (r_catType == EnumCatType::MAINCAT)
 						m_mainCatID = catID;
+					else if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+						(GETSCRIPTDATA(CatScript_v2_0, catID))->finishedExecution = true;
 				}
 			}
 		}
@@ -103,6 +105,34 @@ namespace PE
 			}
 			//else kill cat that has been hit
 			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
+			SerializationManager m_serializationManager;
+			EntityID sound{};
+
+			if ((GETSCRIPTDATA(CatScript_v2_0, id))->catType == EnumCatType::MAINCAT)
+			{
+				sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot_Prefab.json");
+			}
+			else
+			{
+				int randomInteger = std::rand() % 3 + 1;
+
+				switch (randomInteger)
+				{
+				case 1:
+					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX1_Prefab.json");
+					break;
+				case 2:
+					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX2_Prefab.json");
+					break;
+				case 3:
+					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX3_Prefab.json");
+					break;
+				}
+			}
+
+			if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+				EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+			EntityManager::GetInstance().RemoveEntity(sound);
 		}
 	}
 

@@ -123,11 +123,10 @@ namespace PE
 
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
+		if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
-		
 		if (MBPE.button == 1 && p_data->attackSelected)
 		{
-			//if (!GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetSelectedCat(p_data->catID)) { return; }
 			if (!p_data->planningAttack) // if not currently planning attack, 
 				p_catAttack->ToggleTelegraphs(false, false);
 			p_catAttack->ResetSelection(p_data->catID);
