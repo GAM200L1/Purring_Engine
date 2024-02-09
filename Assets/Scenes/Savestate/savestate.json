@@ -83,8 +83,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -664,8 +669,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -824,8 +834,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1173,8 +1188,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1216,8 +1236,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1575,8 +1600,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1848,8 +1878,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2258,8 +2293,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2581,8 +2621,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2663,8 +2708,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2994,8 +3044,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3267,8 +3322,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4022,8 +4082,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4101,8 +4166,13 @@
             "Entity": {
                 "components": {
                     "Canvas": {
+<<<<<<< Updated upstream
                         "Height": 1080.0,
                         "Width": 1920.0
+=======
+                        "Height": 881.0,
+                        "Width": 1604.0
+>>>>>>> Stashed changes
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4204,8 +4274,13 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
+<<<<<<< Updated upstream
                                 "x": 388.60040283203125,
                                 "y": 56.20039367675781
+=======
+                                "x": 225.6004638671875,
+                                "y": 10.200397491455078
+>>>>>>> Stashed changes
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4284,8 +4359,13 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
+<<<<<<< Updated upstream
                             "x": 388.60040283203125,
                             "y": 56.20039367675781
+=======
+                            "x": 225.6004638671875,
+                            "y": 10.200397491455078
+>>>>>>> Stashed changes
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4325,8 +4405,13 @@
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
+<<<<<<< Updated upstream
                             "x": 390.20068359375,
                             "y": 56.20039367675781
+=======
+                            "x": 227.2007598876953,
+                            "y": 10.200397491455078
+>>>>>>> Stashed changes
                         },
                         "relativeposition": {
                             "x": 1.6002922058105469,
@@ -4355,8 +4440,13 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
+<<<<<<< Updated upstream
                                 "x": -478.00079345703125,
                                 "y": 77.00000762939453
+=======
+                                "x": -100.00008392333984,
+                                "y": 0.0
+>>>>>>> Stashed changes
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4436,8 +4526,13 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
+<<<<<<< Updated upstream
                             "x": -478.00079345703125,
                             "y": 77.00000762939453
+=======
+                            "x": -100.00008392333984,
+                            "y": 0.0
+>>>>>>> Stashed changes
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4505,6 +4600,7 @@
                         "name": "WorldHealthBar",
                         "parent": 83,
                         "sceneID": 85
+<<<<<<< Updated upstream
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -4557,6 +4653,60 @@
                         "m_pressedTexture": "",
                         "m_startPoint": -32.0
                     },
+=======
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 1.0,
+                        "m_currentWidth": 16.0,
+                        "m_currentXpos": 32.0,
+                        "m_defaultColor": [
+                            0.3607843220233917,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.9882352948188782,
+                            0.23137255012989044,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 32.0,
+                        "m_hoveredColor": [
+                            0.9254902005195618,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": true,
+                        "m_knobID": 86,
+                        "m_maxValue": 1.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -32.0
+                    },
+>>>>>>> Stashed changes
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
@@ -4858,8 +5008,13 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
+<<<<<<< Updated upstream
                                 "x": 144.99905395507813,
                                 "y": -72.00016784667969
+=======
+                                "x": -348.0001525878906,
+                                "y": 164.99981689453125
+>>>>>>> Stashed changes
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -4923,8 +5078,13 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
+<<<<<<< Updated upstream
                             "x": 144.99905395507813,
                             "y": -72.00016784667969
+=======
+                            "x": -348.0001525878906,
+                            "y": 164.99981689453125
+>>>>>>> Stashed changes
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -4954,8 +5114,13 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
+<<<<<<< Updated upstream
                                 "x": 63.99998474121094,
                                 "y": 167.99993896484375
+=======
+                                "x": 0.0,
+                                "y": 221.99996948242188
+>>>>>>> Stashed changes
                             },
                             "positionOffset": {
                                 "x": 0.0,
@@ -5019,8 +5184,13 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
+<<<<<<< Updated upstream
                             "x": 63.99998474121094,
                             "y": 167.99993896484375
+=======
+                            "x": 0.0,
+                            "y": 221.99996948242188
+>>>>>>> Stashed changes
                         },
                         "relativeposition": {
                             "x": 0.0,
