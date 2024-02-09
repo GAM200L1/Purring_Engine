@@ -78,6 +78,8 @@ namespace PE
 				SerializationManager serializationManager;
 				vars.projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
 				CatHelperFunctions::ToggleEntity(vars.projectileID, false);
+				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
+					EntityManager::GetInstance().Get<Collider>(vars.projectileID).isTrigger = true; // sets main cat attack as trigger
 				break; 
 			}
 		}
