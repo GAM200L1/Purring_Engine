@@ -48,7 +48,8 @@ namespace PE
 					}
 
 					// Move the rat back towards its original position
-					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime);
+					if(!(p_data->finishedExecution))
+						p_data->finishedExecution = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime);
 			}
 			// If the game state is planning, set the target 
 			else if (gameStateController->currentState == GameStates_v2_0::PLANNING)
@@ -118,7 +119,7 @@ namespace PE
 			{
 					std::cout << "RatIdle_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cat in range\n";
 					// there's a cat in the detection range, move to attack it
-					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToAttack(p_data->myID);
 			}
 			// Check if any cats exited the detection range in the last turn
 			else if (!(p_data->catsExitedDetectionRadius.empty()))

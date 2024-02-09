@@ -24,25 +24,22 @@ namespace PE
         p_data->ratPlayerDistance = (playerPosition - ratPosition).Length();
         p_data->directionFromRatToPlayerCat = (playerPosition - ratPosition).GetNormalized();
 
-        std::cout << "Rat ID: " << id
-            << " - Initial ratPlayerDistance: " << p_data->ratPlayerDistance
-            << ", Initial directionFromRatToPlayerCat: "
-            << p_data->directionFromRatToPlayerCat.x << ", "
-            << p_data->directionFromRatToPlayerCat.y << std::endl;
+        //std::cout << "Rat ID: " << id
+        //    << " - Initial ratPlayerDistance: " << p_data->ratPlayerDistance
+        //    << ", Initial directionFromRatToPlayerCat: "
+        //    << p_data->directionFromRatToPlayerCat.x << ", "
+        //    << p_data->directionFromRatToPlayerCat.y << std::endl;
 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovement_v2_0::OnTriggerEnterAndStay, this);
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovement_v2_0::OnTriggerEnterAndStay, this);
-        //m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatMovement_v2_0::OnTriggerExit, this);
 
     }
 
     void RatMovement_v2_0::StateUpdate(EntityID id, float deltaTime)
     {
-        std::cout << "RatMovement_v2_0::StateUpdate - Rat ID: " << id << " is updating." << std::endl;
-
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
         {
-            std::cout << "RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
+            //std::cout << "RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
             return;
         }
 
@@ -55,13 +52,9 @@ namespace PE
             if (isRatMoving)
             {
                 // Set to "Walk" animation only if movement occurred
-                try
+                if(EntityManager::GetInstance().Has<AnimationComponent>(id))
                 {
                     EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(p_data->animationStates.at("Walk"));
-                }
-                catch (const std::exception& e)
-                {
-                    std::cerr << "Exception setting Walk animation: " << e.what() << std::endl;
                 }
             }
         }
@@ -72,13 +65,9 @@ namespace PE
         if (!isRatMoving)
         {
             // Set to "Idle" animation if the rat didn't move
-            try
+            if (EntityManager::GetInstance().Has<AnimationComponent>(id))
             {
                 EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(p_data->animationStates.at("Idle"));
-            }
-            catch (const std::exception& e)
-            {
-                std::cerr << "Exception setting Idle animation: " << e.what() << std::endl;
             }
         }
     }
@@ -92,7 +81,7 @@ namespace PE
 
     void RatMovement_v2_0::StateExit(EntityID id)
     {
-        std::cout << "RatMovement_v2_0::StateExit - Rat ID: " << id << " is exiting the movement state." << std::endl;
+        //std::cout << "RatMovement_v2_0::StateExit - Rat ID: " << id << " is exiting the movement state." << std::endl;
         p_data->ratPlayerDistance = 0.f;
     }
 
@@ -152,7 +141,7 @@ namespace PE
     bool RatMovement_v2_0::CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition)
     {
         bool reached = (newPosition - targetPosition).Length() <= minDistanceToTarget;
-        std::cout << "RatMovement_v2_0::CheckDestinationReached - Destination " << (reached ? "reached." : "not reached.") << std::endl;
+        /*std::cout << "RatMovement_v2_0::CheckDestinationReached - Destination " << (reached ? "reached." : "not reached.") << std::endl;*/
         return reached;
     }
 
@@ -193,24 +182,4 @@ namespace PE
             }
         }
     }
-
-    void RatMovement_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
-    {
-        if (!p_data) { return; }
-
-        OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
-        // check if entity1 is the rat's detection collider and entity2 is cat
-        if ((OTEE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
-            EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
-        {
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
-        }
-        // check if entity2 is the rat's detection collider and entity1 is cat
-        else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
-            EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
-        {
-            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
-        }
-    }
-
 }

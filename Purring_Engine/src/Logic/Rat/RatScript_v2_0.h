@@ -49,7 +49,7 @@ namespace PE
 		StateMachine* p_stateManager;
 		
 		// rat stats
-		int ratHealth{ 1 };								// health of the rat, needs manual setting
+		int ratHealth{ 3 };								// health of the rat, needs manual setting
 
 		// Movement Variables
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement

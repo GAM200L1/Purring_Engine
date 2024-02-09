@@ -394,7 +394,9 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::HealthBarScript_v2_0_Data>("HealthBarScript_v2_0")
         .property("MyID", &PE::HealthBarScript_v2_0_Data::myID)
         .property("FollowObjectID", &PE::HealthBarScript_v2_0_Data::followObjectID)
-        .property("FillColor", &PE::HealthBarScript_v2_0_Data::fillColor);
+        .property("fillColorFull", &PE::HealthBarScript_v2_0_Data::fillColorFull)
+        .property("fillColorHalf", &PE::HealthBarScript_v2_0_Data::fillColorHalf)
+        .property("fillColorAlmostEmpty", &PE::HealthBarScript_v2_0_Data::fillColorAlmostEmpty);
 
     rttr::registration::class_<PE::RatDetectionScript_v2_0_Data>("RatDetectionScript_v2_0")
         .property("MyID", &PE::RatDetectionScript_v2_0_Data::myID)

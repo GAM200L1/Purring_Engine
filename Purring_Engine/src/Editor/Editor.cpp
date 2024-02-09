@@ -3234,18 +3234,52 @@ namespace PE {
 
 										//get and set color variable of the healthbar
 										ImVec4 color;
-										color.x = it->second.fillColor.x;
-										color.y = it->second.fillColor.y;
-										color.z = it->second.fillColor.z;
-										color.w = it->second.fillColor.w;
+										color.x = it->second.fillColorFull.x;
+										color.y = it->second.fillColorFull.y;
+										color.z = it->second.fillColorFull.z;
+										color.w = it->second.fillColorFull.w;
 
-										ImGui::Text("Health Bar Color: "); ImGui::SameLine();
-										ImGui::ColorEdit4("##healthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+										ImGui::Text("Full Health Color: "); ImGui::SameLine();
+										ImGui::ColorEdit4("##fullhealthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
 
-										it->second.fillColor.x = color.x;
-										it->second.fillColor.y = color.y;
-										it->second.fillColor.z = color.z;
-										it->second.fillColor.w = color.w;
+										it->second.fillColorFull.x = color.x;
+										it->second.fillColorFull.y = color.y;
+										it->second.fillColorFull.z = color.z;
+										it->second.fillColorFull.w = color.w;
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+
+										//get and set color variable of the healthbar
+										color.x = it->second.fillColorHalf.x;
+										color.y = it->second.fillColorHalf.y;
+										color.z = it->second.fillColorHalf.z;
+										color.w = it->second.fillColorHalf.w;
+
+										ImGui::Text("Half Health Color: "); ImGui::SameLine();
+										ImGui::ColorEdit4("##halfhealthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+										it->second.fillColorHalf.x = color.x;
+										it->second.fillColorHalf.y = color.y;
+										it->second.fillColorHalf.z = color.z;
+										it->second.fillColorHalf.w = color.w;
+
+										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+
+										//get and set color variable of the healthbar
+										color.x = it->second.fillColorAlmostEmpty.x;
+										color.y = it->second.fillColorAlmostEmpty.y;
+										color.z = it->second.fillColorAlmostEmpty.z;
+										color.w = it->second.fillColorAlmostEmpty.w;
+
+										ImGui::Text("Low Health Color: "); ImGui::SameLine();
+										ImGui::ColorEdit4("##lowhealthbarcolor", (float*)&color, ImGuiColorEditFlags_AlphaPreview);
+
+										it->second.fillColorAlmostEmpty.x = color.x;
+										it->second.fillColorAlmostEmpty.y = color.y;
+										it->second.fillColorAlmostEmpty.z = color.z;
+										it->second.fillColorAlmostEmpty.w = color.w;
 
 										ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
 									}

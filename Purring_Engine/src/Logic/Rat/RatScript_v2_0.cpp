@@ -456,6 +456,10 @@ namespace PE
 
 				// Calculate the distance and direction from the rat to the player cat
 				it->second.ratPlayerDistance = (targetPosition - ratPosition).Length();
+				if (it->second.ratPlayerDistance > it->second.maxMovementRange)
+				{
+						it->second.ratPlayerDistance = it->second.maxMovementRange;
+				}
 				it->second.directionFromRatToPlayerCat = (targetPosition - ratPosition).GetNormalized();
 		}
 
@@ -469,6 +473,10 @@ namespace PE
 
 				// Calculate the distance and direction from the rat to the player cat
 				it->second.ratPlayerDistance = (r_targetPosition - ratPosition).Length();
+				if (it->second.ratPlayerDistance > it->second.maxMovementRange)
+				{
+					it->second.ratPlayerDistance = it->second.maxMovementRange;
+				}
 				it->second.directionFromRatToPlayerCat = (r_targetPosition - ratPosition).GetNormalized();
 		}
 

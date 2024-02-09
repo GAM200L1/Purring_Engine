@@ -24,7 +24,9 @@ namespace PE
 		{
 				EntityID myID{ 0 };
 				EntityID followObjectID{ 0 }; // ID of the object whose position we should follow
-				vec4 fillColor{ 1.f, 0.f, 0.f, 1.f };
+				vec4 fillColorFull{ 0.36f, 0.98f, 0.21f, 1.f };  // Color of the healthbar when it's full
+				vec4 fillColorHalf{ 0.92f, 0.98f, 0.21f, 1.f };  // Color of the healthbar when it's half full
+				vec4 fillColorAlmostEmpty{ 0.98f, 0.23f, 0.21f, 1.f }; // Color of the healthbar when it's almost empty
 		};
 
 		class HealthBarScript_v2_0 : public Script

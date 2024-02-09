@@ -42,6 +42,5 @@ namespace PE
 
         int m_collisionEventListener{};
         int m_collisionStayEventListener{};
-        int m_collisionExitEventListener{};
     };
 }
