@@ -4198,7 +4198,7 @@
                             "../Assets/Animation/AnimationGrey_Idle_Anim.json",
                             "../Assets/Animation/AnimationGrey_Walk_Anim.json"
                         ],
-                        "CurrentAnimationID": ""
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle_Anim.json"
                     },
                     "Collider": {
                         "collisionLayerIndex": 0,
