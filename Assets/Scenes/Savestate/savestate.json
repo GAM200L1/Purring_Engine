@@ -3035,7 +3035,14 @@
                         "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": null,
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {}
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
@@ -3099,7 +3106,14 @@
                         "mass": 10.0,
                         "type": 1
                     },
-                    "ScriptComponent": null,
+                    "ScriptComponent": {
+                        "RatScript_v2_0": {
+                            "data": {
+                                "animationStates": {}
+                            },
+                            "state": 0
+                        }
+                    },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
