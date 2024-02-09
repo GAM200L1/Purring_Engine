@@ -4,8 +4,16 @@
  \file     RatMovement_v2_0.h
  \date     17-01-2024
 
- \author               ONG You Yang
+ \author               Hans (You Yang) ONG
  \par      email:      youyang.o@digipen.edu
+ \par      code %:     50%
+ \par      changes:    Majority rat movement AI logic.
+
+ \co-author            Krystal Yamin
+ \par      email:      krystal.y\@digipen.edu
+ \par      code %:     20%
+ \par      changes:    06-02-2024
+                       Integration of gamestates with the Rat States and Rat AI.
 
  \brief
     This file contains declarations for functions used for rats movement state.
