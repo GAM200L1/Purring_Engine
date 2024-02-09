@@ -3,10 +3,10 @@
         "components": {
             "AnimationComponent": {
                 "AnimationIDs": [
-                    "../Assets/Animation/AnimationGrey_Attack_Anim.json",
-                    "../Assets/Animation/AnimationGrey_Death_Anim.json",
-                    "../Assets/Animation/AnimationGrey_Idle_Anim.json",
-                    "../Assets/Animation/AnimationGrey_Walk_Anim.json"
+                    "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                    "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
                 ],
                 "CurrentAnimationID": ""
             },
@@ -14,8 +14,8 @@
                 "collisionLayerIndex": 0,
                 "data": {
                     "center": {
-                        "x": 225.6004638671875,
-                        "y": 10.200397491455078
+                        "x": -100.00008392333984,
+                        "y": 0.0
                     },
                     "positionOffset": {
                         "x": 0.0,
@@ -31,10 +31,10 @@
                 "InteractionLayer": 0,
                 "Layer": 0,
                 "Old ID": 18446744073709551615,
-                "Prefab Type": "Grey Cat",
+                "Prefab Type": "Meowsalot",
                 "children": [],
                 "isActive": true,
-                "name": "Grey Cat",
+                "name": "Meowsalot",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
@@ -45,7 +45,7 @@
                     "g": 1.0,
                     "r": 1.0
                 },
-                "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
             },
             "RigidBody": {
                 "linearDrag": 2.0,
@@ -56,10 +56,10 @@
                 "CatScript_v2_0": {
                     "data": {
                         "animationStates": {
-                            "Attack": "../Assets/Animation/AnimationGrey_Attack_Anim.json",
-                            "Death": "../Assets/Animation/AnimationGrey_Death_Anim.json",
-                            "Idle": "../Assets/Animation/AnimationGrey_Idle_Anim.json",
-                            "Walk": "../Assets/Animation/AnimationGrey_Walk_Anim.json"
+                            "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                            "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
                         },
                         "attackVariants": {
                             "GreyCatAttackVariables": {
@@ -68,17 +68,17 @@
                                 "bulletForce": 1000.0,
                                 "bulletLifeTime": 1.0,
                                 "bulletRange": 3.0,
-                                "damage": 1,
+                                "damage": 2,
                                 "projectileID": 0,
                                 "teleGraphIDs": []
                             }
                         },
                         "catID": 0,
                         "catMaxMovementEnergy": 14,
-                        "catType": 1,
+                        "catType": 0,
                         "finishedExecution": false,
                         "forgivenessOffset": 1.0,
-                        "isCaged": true,
+                        "isCaged": false,
                         "maxDistance": 50.0,
                         "minDistance": 10.0,
                         "movementSpeed": 300.0,
@@ -86,14 +86,17 @@
                         "toggleDeathAnimation": false
                     },
                     "state": 0
+                },
+                "FollowScript_v2_0": {
+                    "state": 0
                 }
             },
             "Transform": {
                 "height": 64.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 225.6004638671875,
-                    "y": 10.200397491455078
+                    "x": -100.00008392333984,
+                    "y": 0.0
                 },
                 "relativeposition": {
                     "x": 0.0,

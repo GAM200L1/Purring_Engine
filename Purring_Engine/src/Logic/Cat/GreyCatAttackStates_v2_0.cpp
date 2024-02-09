@@ -203,6 +203,7 @@ namespace PE
 
 		// Subscribe to event
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, GreyCatAttack_v2_0EXECUTE::ProjectileCollided, this);
+		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerEnter, GreyCatAttack_v2_0EXECUTE::TriggerHit, this);
 
 		// Set the start values of the attack projectile
 		m_bulletImpulse = vec2{ 0.f, 0.f };
@@ -282,6 +283,7 @@ namespace PE
 	void GreyCatAttack_v2_0EXECUTE::StateCleanUp()
 	{
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+		REMOVE_KEY_COLLISION_LISTENER(m_triggerEventListener);
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::StateExit(EntityID id)
@@ -289,11 +291,38 @@ namespace PE
 		p_attackData->attackDirection = EnumCatAttackDirection_v2_0::NONE;
 		(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = false;
 		CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
+		m_projectileFired = false;
+		(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = false;
 	}
 
 	void GreyCatAttack_v2_0EXECUTE::ProjectileCollided(const Event<CollisionEvents>& r_CE)
 	{
-		auto IsCatAndNotCaged = 
+
+		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
+		{
+			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
+			if (GeneralCollision(OCEE.Entity1, OCEE.Entity2))
+			{
+				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
+				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
+				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
+				(GETSCRIPTDATA(CatScript_v2_0, m_catID))->finishedExecution = true;
+			}
+		}
+	}
+
+	void GreyCatAttack_v2_0EXECUTE::TriggerHit(const Event<CollisionEvents>& r_CE)
+	{
+		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
+		{
+			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
+			GeneralCollision(OTEE.Entity1, OTEE.Entity2);
+		}
+	}
+
+	bool GreyCatAttack_v2_0EXECUTE::GeneralCollision(EntityID id1, EntityID id2)
+	{
+		auto IsCatAndNotCaged =
 			[&](EntityID id)
 			{
 				if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id))
@@ -304,45 +333,31 @@ namespace PE
 				return false;
 			};
 
-		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
+		auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
+
+		if (id1 != m_catID && id2 != m_catID && !CheckExitPoint(id1) && !CheckExitPoint(id2))
 		{
-			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
-			bool hitSomething{ false };
-			// @TODO: UNCOMMENT
-			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID)
+			if (id1 == p_attackData->projectileID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 			{
-				if (OCEE.Entity1 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
-				{
-					CatController_v2_0::KillCat(OCEE.Entity2);
-					hitSomething = true;
-				}
-				else if (OCEE.Entity2 == p_attackData->projectileID && IsCatAndNotCaged(OCEE.Entity1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
-				{
-					CatController_v2_0::KillCat(OCEE.Entity1);
-					hitSomething = true;
-				}
-				else if (OCEE.Entity1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(OCEE.Entity2))
-				{
-					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(OCEE.Entity2, p_attackData->damage);
-					hitSomething = true;
-				}
-				else if (OCEE.Entity2 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(OCEE.Entity1))
-				{
-					GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(OCEE.Entity1, p_attackData->damage);
-					hitSomething = true;
-				}
-
-				if (hitSomething && (GETSCRIPTDATA(CatScript_v2_0, m_catID))->catType != EnumCatType::MAINCAT)
-				{
-					EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
-					EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
-					CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
-					(GETSCRIPTDATA(CatScript_v2_0, m_catID))->finishedExecution = true;
-				}
+				CatController_v2_0::KillCat(id2);
+				return true;
 			}
-
-			// kill rat
-
+			else if (id2 == p_attackData->projectileID && IsCatAndNotCaged(id1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
+			{
+				CatController_v2_0::KillCat(id1);
+				return true;
+			}
+			else if (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
+			{
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, p_attackData->damage);
+				return true;
+			}
+			else if (id2 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
+			{
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, p_attackData->damage);
+				return true;
+			}
 		}
+		return false;
 	}
 }
