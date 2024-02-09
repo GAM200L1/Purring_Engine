@@ -33,6 +33,7 @@
 #include "Rat/RatController_v2_0.h"
 #include "Cat/CatController_v2_0.h"
 #include "Cat/CatScript_v2_0.h"
+#include "Layers/LayerManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -1250,14 +1251,14 @@ namespace PE
 		for (auto [RatID, RatType] : RatManager->GetRats(RatManager->mainInstance))
 		{
 			//Finished = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetScriptData()[RatID].finishedExecution;
-			Finished = GETSCRIPTINSTANCEPOINTER(RatScript)->GetScriptData()[RatID].finishedExecution;
+			Finished = Finished &&  GETSCRIPTINSTANCEPOINTER(RatScript)->GetScriptData()[RatID].finishedExecution;
 			std::cout << "GameStateController_v2_0::CheckFinishExecution() RatID " << RatID << " finished exec " << Finished << " \n";
 		}
 
 		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
 		{
 			if(!GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].isCaged)
-			Finished = GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
+			Finished = Finished &&  GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
 			std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
 		}
 
