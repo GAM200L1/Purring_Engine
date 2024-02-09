@@ -36,6 +36,8 @@ namespace PE
 
 		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, Cat_v2_0PLAN::OnMouseClick, this);
 		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, Cat_v2_0PLAN::OnMouseRelease, this);
+
+		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = true;
 	}
 
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)
@@ -99,6 +101,7 @@ namespace PE
 	{
 		p_catMovement->Exit(id);
 		p_catAttack->Exit(id);
+		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
 	}
 
 	void Cat_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
