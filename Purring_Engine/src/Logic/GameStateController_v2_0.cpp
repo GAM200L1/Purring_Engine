@@ -136,10 +136,11 @@ namespace PE
 	}
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
+
 		if (!m_isRat && m_isPotraitShowing)
 		{
 			CatScript_v2_0Data* cat = GETSCRIPTDATA(CatScript_v2_0, m_lastSelectedEntity);
-			SetPortraitInformation("UnitPortrait_CatNameFrame_Meowsalot_239x82.png", cat->catCurrentEnergy, cat->catMaxMovementEnergy, 0);
+			SetPortraitInformation(nextPortraitTexture, cat->catCurrentEnergy, cat->catMaxMovementEnergy, 0);
 		}
 
 
@@ -243,6 +244,7 @@ namespace PE
 			ExecutionStateHUD(id, deltaTime);
 			PhaseBannerTransition(id, deltaTime);
 			UpdateTurnCounter("Executing...");
+			CheckFinishExecution();
 			prevState = currentState;
 			break;
 		}
@@ -362,21 +364,16 @@ namespace PE
 		if (KTE.keycode == GLFW_KEY_F4)
 		{
 			NextStage(1);
+		}		
+		
+		if (KTE.keycode == GLFW_KEY_F5)
+		{
+			NextStage(0);
 		}
 
 		if (KTE.keycode == GLFW_KEY_F11)
 		{
 			NextState();
-		}
-
-		if (KTE.keycode == GLFW_KEY_F6)
-		{
-			m_currentLevel++;
-		}
-
-		if (KTE.keycode == GLFW_KEY_F5)
-		{
-			m_currentLevel--;
 		}
 
 	}
@@ -422,16 +419,19 @@ namespace PE
 							//set rat portrait active
 							ActiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
+
+							RatScript_v2_0* RatScript = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0);
+
 							switch (RatType)
 							{
 							case 0: //GUTTER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
-								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", 0, 3, 1);
-
+								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png",RatScript->GetScriptData()[RatID].ratHealth, 3, 1);
 								break;
 							case 1: //BRAWLER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Brawler_256px.png"));
-								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", 0, 3, 1);
+								
+								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", RatScript->GetScriptData()[RatID].ratHealth, 3, 1);
 								break;
 							case 2: //SNIPER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Sniper_256px.png"));
@@ -480,6 +480,31 @@ namespace PE
 							m_isRat = false;
 							m_isPotraitShowing = true;
 							m_lastSelectedEntity = CatID;
+
+							SerializationManager m_serializationManager;
+							EntityID sound{};
+								int randomInteger = std::rand() % 4 + 1;
+
+								switch (randomInteger)
+								{
+								case 1:
+									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX1_Prefab.json");
+									break;
+								case 2:
+									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX2_Prefab.json");
+									break;
+								case 3:
+									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX3_Prefab.json");
+									break;							
+								case 4:
+									sound = m_serializationManager.LoadFromFile("AudioObject/Cat Selection SFX4_Prefab.json");
+									break;
+								}
+
+							if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+								EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+							EntityManager::GetInstance().RemoveEntity(sound);
+
 							//debug
 							std::cout << "Clicked on: " << EntityManager::GetInstance().Get<EntityDescriptor>(CatID).name << std::endl;
 							//add a switch statement here
@@ -490,14 +515,17 @@ namespace PE
 							switch (CatType)
 							{
 							case EnumCatType::MAINCAT: //
+								nextPortraitTexture = "UnitPortrait_CatNameFrame_Meowsalot_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_Meowsalot_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
 								break;
 							case EnumCatType::GREYCAT: //
+								nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_GreyCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Grey_256px.png"));
 								break;
 							case EnumCatType::ORANGECAT: //
+								nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_OrangeCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
 								break;
@@ -951,6 +979,15 @@ namespace PE
 
 		switch (nextStage)
 		{
+		case 0: // 2nd level
+			m_isTransitioning = true;
+			m_isTransitioningIn = false;
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
+
+			m_currentLevel = nextStage;
+			m_leveltoLoad = m_level1SceneName;
+			break;		
 		case 1: // 2nd level
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
@@ -1181,6 +1218,28 @@ namespace PE
 				continue;
 			}
 		}
+	}
+
+	void GameStateController_v2_0::CheckFinishExecution()
+	{
+		bool Finished = true;;
+
+		RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+
+		for (auto [RatID, RatType] : RatManager->GetRats(RatManager->mainInstance))
+		{
+			Finished = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetScriptData()[RatID].finishedExecution;
+		}
+
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			if(!GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].isCaged)
+			Finished = GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
+		}
+
+		if (Finished)
+			NextState();
 	}
 
 

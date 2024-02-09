@@ -19,6 +19,7 @@
 #include "prpch.h"
 
 
+
 // Entity Component System (ECS)
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
@@ -443,7 +444,7 @@ PE::CoreApplication::CoreApplication()
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
 
-    
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 }
 
 PE::CoreApplication::~CoreApplication()

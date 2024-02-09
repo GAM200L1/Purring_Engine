@@ -182,12 +182,6 @@ namespace PE {
 		*************************************************************************************/
 		void ShowObjectWindow(bool* p_active);
 		/*!***********************************************************************************
-		 \brief render the test windows (Temp for milestone 1 for elie to test)
-
-		 \param[in] bool* reference to the boolean that sets the window active
-		*************************************************************************************/
-		void ShowDemoWindow(bool* p_active);
-		/*!***********************************************************************************
 		 \brief render the object component window
 
 		 \param[in] bool* reference to the boolean that sets the window active
@@ -245,6 +239,11 @@ namespace PE {
 		*************************************************************************************/
 		void ShowApplyWindow(bool*p_active);
 
+		/*!***********************************************************************************
+		 \brief open the layer window
+
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
 		void ShowLayerWindow(bool* p_active);
 
 		/*!***********************************************************************************
@@ -351,8 +350,14 @@ namespace PE {
 		*************************************************************************************/
 		EntityID CheckCanvas();
 
+		/*!***********************************************************************************
+		 \brief Save the current state as save state and press play
+		*************************************************************************************/
 		void SaveAndPlayScene();
 
+		/*!***********************************************************************************
+		 \brief Stop and Load previous safestate
+		*************************************************************************************/
 		void StopAndLoadScene();
 
 	private:
@@ -384,7 +389,6 @@ namespace PE {
 		bool m_showObjectList;
 		bool m_showConsole;
 		bool m_showSceneView;
-		bool m_showTestWindows;
 		bool m_showEditor;
 		bool m_showComponentWindow;
 		bool m_showResourceWindow;

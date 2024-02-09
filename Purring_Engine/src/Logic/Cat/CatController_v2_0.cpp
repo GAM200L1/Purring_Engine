@@ -21,7 +21,9 @@
 
 #include "ECS/SceneView.h"
 #include "Logic/LogicSystem.h"
-
+#include "Logic/FollowScript.h"
+#include <cstdlib>   // For srand and rand
+#include <ctime>     // For time
 
 
 namespace PE

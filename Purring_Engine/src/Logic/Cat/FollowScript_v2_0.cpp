@@ -38,8 +38,21 @@ namespace PE
 				{
 					if (std::find(m_ScriptData[id].followers.begin(), m_ScriptData[id].followers.end(), flw) == m_ScriptData[id].followers.end())
 						m_ScriptData[id].followers.emplace_back(flw);
-					SerializationManager serializationManager;
-					EntityID sound = serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX_Prefab.json");
+
+					int randomInteger = std::rand() % 2 + 1;
+					SerializationManager m_serializationManager;
+					EntityID sound;
+
+					switch (randomInteger)
+					{
+					case 1:
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX_Prefab.json");
+						break;
+					case 2:
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Rescue SFX2_Prefab.json");
+						break;
+					}
+
 					if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 					EntityManager::GetInstance().RemoveEntity(sound);

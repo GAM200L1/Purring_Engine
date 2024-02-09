@@ -75,7 +75,7 @@ namespace PE {
 
 				if (InputSystem::IsKeyHeld(GLFW_KEY_LEFT_SHIFT) && KTE.keycode == GLFW_KEY_F10)
 				{
-					m_showTestWindows = !m_showTestWindows;
+					m_showLayerWindow = !m_showLayerWindow;
 				}
 				else if (KTE.keycode == GLFW_KEY_F10)
 				{

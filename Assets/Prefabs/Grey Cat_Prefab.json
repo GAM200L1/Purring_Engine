@@ -74,7 +74,7 @@
                             }
                         },
                         "catID": 0,
-                        "catMaxMovementEnergy": 14,
+                        "catMaxMovementEnergy": 7,
                         "catType": 1,
                         "finishedExecution": false,
                         "forgivenessOffset": 1.0,

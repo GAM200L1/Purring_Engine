@@ -123,9 +123,6 @@ namespace PE {
 			if (configJson["Editor"].contains("showSceneView"))
 				m_showSceneView = configJson["Editor"]["showSceneView"].get<bool>();
 
-			if (configJson["Editor"].contains("showTestWindows"))
-				m_showTestWindows = configJson["Editor"]["showTestWindows"].get<bool>();
-
 			if (configJson["Editor"].contains("showComponentWindow"))
 				m_showComponentWindow = configJson["Editor"]["showComponentWindow"].get<bool>();
 
@@ -169,7 +166,6 @@ namespace PE {
 			m_showLogs = true;
 			m_showObjectList = true;
 			m_showSceneView = true;
-			m_showTestWindows = false;
 			m_showComponentWindow = true;
 			m_showResourceWindow = true;
 			m_showPerformanceWindow = false;
@@ -220,7 +216,6 @@ namespace PE {
 		configJson["Editor"]["showLogs"] = m_showLogs;
 		configJson["Editor"]["showObjectList"] = m_showObjectList;
 		configJson["Editor"]["showSceneView"] = m_showSceneView;
-		configJson["Editor"]["showTestWindows"] = m_showTestWindows;
 		configJson["Editor"]["showComponentWindow"] = m_showComponentWindow;
 		configJson["Editor"]["showResourceWindow"] = m_showResourceWindow;
 		configJson["Editor"]["showPerformanceWindow"] = m_showPerformanceWindow;
@@ -315,7 +310,7 @@ namespace PE {
 
 	void Editor::test()
 	{
-		m_showTestWindows = true;
+		AddConsole("test");
 	}
 
 	void Editor::ClearObjectList()
@@ -420,9 +415,6 @@ namespace PE {
 
 			//draw scene view
 			if (m_showSceneView) ShowSceneView(r_frameBuffer, &m_showSceneView);
-
-			//draw the stuff for ellie to test
-			if (m_showTestWindows) ShowDemoWindow(&m_showTestWindows);
 
 			//resource window for drag n drop
 			if (m_showResourceWindow) ShowResourceWindow(&m_showResourceWindow);
@@ -1016,49 +1008,6 @@ namespace PE {
 				ImGui::EndPopup();
 			}
 
-			ImGui::End();
-		}
-	}
-
-	//temporary hardcoded stuff for testing for milestone 2
-	void Editor::ShowDemoWindow(bool* p_active)
-	{
-		if (IsEditorActive())
-		if (!ImGui::Begin("Rubric Test Window", p_active, ImGuiWindowFlags_AlwaysAutoResize))
-		{
-			ImGui::End();
-		}
-		else
-		{			
-			ImGui::SeparatorText("Scenes To Test");
-			if (ImGui::Button("Reset Default Scene"))
-			{
-				LoadSceneFromGivenPath("RubricTestScenes/DefaultScene.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Undo/Screen Picking"))
-			{
-				LoadSceneFromGivenPath("RubricTestScenes/UndoTest.json");
-			}
-			if (ImGui::Button("Prefab Editor Test Scene"))
-			{
-				LoadSceneFromGivenPath("RubricTestScenes/Demo_Scene.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Layer Test Scene"))
-			{
-				LoadSceneFromGivenPath("RubricTestScenes/LayerTest.json");
-			}
-			if (ImGui::Button("Script Test Scene 1"))
-			{
-				LoadSceneFromGivenPath("RubricTestScenes/LogicScene1.json");
-			}
-			ImGui::SameLine();
-			if (ImGui::Button("Script Test Scene 2"))
-			{
-				LoadSceneFromGivenPath("RubricTestScenes/ChainPickUpScene.json");
-			}
-			ImGui::Dummy(ImVec2(0.0f, 10.0f)); // Adds 10 pixels of vertical space
 			ImGui::End();
 		}
 	}
@@ -5036,11 +4985,6 @@ namespace PE {
 							if (ImGui::MenuItem("PhysicsWindow", "", m_showPhysicsWindow, !m_showPhysicsWindow))
 							{
 								m_showPhysicsWindow = !m_showPhysicsWindow;
-							}
-							ImGui::Separator();
-							if (ImGui::MenuItem("Rubrics Test", "", m_showTestWindows, !m_showTestWindows))
-							{
-								m_showTestWindows = !m_showTestWindows;
 							}
 							ImGui::Separator();
 							if (ImGui::MenuItem("Reset Default", "", false, true))
