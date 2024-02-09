@@ -5,14 +5,14 @@
             "audioKey": "../Assets/Audio/sfx_Info_DefeatThud.wav",
             "loop": false
           },
-            "EntityDescriptor": {
-                "Prefab Type": "Button Click SFX",
-                "children": [],
-                "isActive": true,
-                "name": "Button Click SFX",
-                "parent": null,
-                "sceneID": 18446744073709551615
-            }
+          "EntityDescriptor": {
+            "Prefab Type": "Game Lose SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Game Lose SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
         },
         "name": ""
     }

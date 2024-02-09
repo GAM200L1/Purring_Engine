@@ -163,5 +163,7 @@ namespace PE
 				\return Returns a next viable target for the rat.
 			*************************************************************************************/
 			vec2 PickTargetPosition();
+
+			vec2 RotatePoint(vec2 PointA, vec2 PointB, float angle);
 	};
 } // End of namespace PE

@@ -5,14 +5,14 @@
             "audioKey": "../Assets/Audio/vo_Cat_VictoryCheer.wav",
             "loop": false
           },
-            "EntityDescriptor": {
-                "Prefab Type": "Button Click SFX",
-                "children": [],
-                "isActive": true,
-                "name": "Button Click SFX",
-                "parent": null,
-                "sceneID": 18446744073709551615
-            }
+          "EntityDescriptor": {
+            "Prefab Type": "Game Win SFX",
+            "children": [],
+            "isActive": true,
+            "name": "Game Win SFX",
+            "parent": null,
+            "sceneID": 18446744073709551615
+          }
         },
         "name": ""
     }

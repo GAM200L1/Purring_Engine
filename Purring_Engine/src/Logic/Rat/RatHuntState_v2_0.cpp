@@ -18,6 +18,9 @@
 #include "RatReturnState_v2_0.h"
 #include "../Events/EventHandler.h"
 #include "../GameStateController_v2_0.h"
+#include "Layers/LayerManager.h"
+
+# define M_PI           3.14159265358979323846 
 
 namespace PE
 {
@@ -137,63 +140,78 @@ namespace PE
 
 	vec2 RatHunt_v2_0::PickTargetPosition()
 	{
+		bool hitSomething{};
+		bool continueLoop{true};
+		int loopTimer = 360/15;
+		vec2 ratPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
+		vec2 finalTarget{ RatScript_v2_0::GetEntityPosition(targetId) };
+
+
+		while (continueLoop)
+		{
+			hitSomething = false;
 			// Check what cats have exited the collider
-			vec2 ratPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
-			vec2 finalTarget{ RatScript_v2_0::GetEntityPosition(targetId) };
-			float targetDistance{ (ratPosition - finalTarget).LengthSquared() };
 
-			//// If the cat is farther than the rat's max dist
-			//if (targetDistance > (p_data->maxMovementRange * p_data->maxMovementRange))
-			//{
-			//		// Try to find a waypoint that's closer
-			//		vec2 closestTarget{ finalTarget }; float squaredDistance{ targetDistance };
+			std::cout<<"help aaaaaaaaaaa: " << finalTarget.x << " " << finalTarget.y << std::endl;
+			float targetDistance{ (ratPosition - finalTarget).LengthSquared() }; //magnitude
 
-			//		// Choose the two closest waypoints in the direction of the cat
-			//		if (gameStateController->GetCurrentLevel() == 0)
-			//		{
-			//				// We're in level 1
-			//				// Compare the distances of all the targets from the postion passed in
-			//				for (vec2 const& targetPosition : waypointsLevel1)
-			//				{
-			//						float currentSquaredDistance{ (ratPosition - targetPosition).LengthSquared() };
+			vec2 targetNormalized = (ratPosition - finalTarget) / targetDistance;
 
-			//						if ((currentSquaredDistance > p_data->minDistanceToTarget) && // Ensure that the player doesnt target a waypoint that it's already next to
-			//								(currentSquaredDistance < squaredDistance))
-			//						{
-			//								closestTarget = targetPosition;
-			//								squaredDistance = currentSquaredDistance;
-			//						}
-			//				}
-			//		} 
-			//		else
-			//		{
-			//				// We're in level 2
-			//				// Compare the distances of all the waypoints from the postion passed in
-			//				for (vec2 const& targetPosition : waypointsLevel2)
-			//				{
-			//						float currentSquaredDistance{ (ratPosition - targetPosition).LengthSquared() };
+			float range = std::min(p_data->maxMovementRange, targetDistance);
 
-			//						if ((currentSquaredDistance > p_data->minDistanceToTarget) && // Ensure that the player doesnt target a waypoint that it's already next to
-			//								(currentSquaredDistance < squaredDistance))
-			//						{
-			//								closestTarget = targetPosition;
-			//								squaredDistance = currentSquaredDistance;
-			//						}
-			//				}
-			//		}
+			vec2 endPoint = ratPosition + (targetNormalized * range);
 
-			//		// If the waypoint is closer than the cat, then target the waypoint
-			//		if (squaredDistance < targetDistance)
-			//		CheckIfShouldChangeStates
-			//				finalTarget = closestTarget;
-			//		}
-			//}
+			LineSegment ls(ratPosition, endPoint);
 
+			for (const auto& layer : LayerView<Collider>())
+			{
+				for (EntityID objectID : InternalView(layer))
+				{
+					if (objectID == p_data->myID)
+						continue;
+
+					if (EntityManager::GetInstance().Has<EntityDescriptor>(objectID))
+					{
+						if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name == "Obstacle")
+						{
+							if (DoRayCast(ls, objectID).has_value())
+							{	
+								std::cout <<"I am: "<<p_data->myID << " I Have Hit Entity: " << objectID << std::endl;
+								hitSomething = true;
+							}
+						}
+					}
+				}
+			}
+			if (!hitSomething)
+			{
+				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
+				return finalTarget;
+			}
+			--loopTimer;
+
+			if (loopTimer == 0)
+			{
+				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
+				return finalTarget;
+			}
+
+			finalTarget = RotatePoint(ratPosition, finalTarget, 15);
+		}
 			// Set the rat target
-			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
-			return finalTarget;
+			//GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
+		//	return finalTarget;
 	}
 
+	vec2 RatHunt_v2_0::RotatePoint( vec2 center,  vec2 point, float m)
+	{
+		float angle = m * (M_PI / 180.0f);
+
+		float newX = center.x + (point.x - center.x) * std::cos(angle) - (point.y - center.y) * std::sin(angle);
+		float newY = center.y + (point.x - center.x) * std::sin(angle) + (point.y - center.y) * std::cos(angle);
+
+		return vec2(newX, newY);
+	}
 
 	void RatHunt_v2_0::CheckIfShouldChangeStates()
 	{
