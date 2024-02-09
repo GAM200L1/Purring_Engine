@@ -20,6 +20,7 @@
 
 #include "CatMovementStates_v2_0.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "CatController_v2_0.h"
 
 #include "ECS/Entity.h"
 #include "Events/CollisionEvent.h"
@@ -373,10 +374,10 @@ namespace PE
 
 		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
 		{ return; }// if cat is following cat in the chain )
-		else
+		/*else
 		{
 			p_mainCatData = (GETSCRIPTDATA(CatScript_v2_0, id));
-		}
+		}*/
 
 		CatHelperFunctions::PositionEntity(id, p_data->pathPositions.front());
 		p_data->currentPositionIndex = 0;
@@ -386,12 +387,12 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
 		
-		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0) 
+		/*if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0) 
 			&& p_mainCatData->currentPositionIndex >= p_data->pathPositions.size())
 		{
 			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
 		}
-		else if (p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+		else */if (p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
 		{ return; }// if cat is following cat in the chain )
 		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
@@ -460,6 +461,13 @@ namespace PE
 		{
 			// Wait a second before changing state
 			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
+			if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+			{
+				for (auto const& r_catID : GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance))
+				{
+					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(r_catID.first, 0.5f);
+				}
+			}
 		}
 	}
 

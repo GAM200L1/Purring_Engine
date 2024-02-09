@@ -308,7 +308,7 @@ namespace PE
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				if (m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy)
+				if (m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy || (p_gsc->GetCurrentLevel() == 0 && m_scriptData[id].catType != EnumCatType::MAINCAT))
 				{
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
 					if (m_scriptData[id].animationStates.size())
