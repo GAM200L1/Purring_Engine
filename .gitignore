@@ -30,7 +30,6 @@ Assets/*
 !Assets/Animation
 
 Assets/Scenes/Savestate/savestate.json
-Assets/Settings/config.json
 
 *.sln
 
