@@ -1954,17 +1954,6 @@ namespace PE {
 
 								ImGui::SeparatorText("Events");
 
-								//get the current collider type using the variant
-								int index = static_cast<int>(EntityManager::GetInstance().Get<GUIButton>(entityID).m_UIType);
-								const char* types[] = { "Button","Slider" };
-								ImGui::Text("UI Type: "); ImGui::SameLine();
-								ImGui::SetNextItemWidth(200.0f);
-								//set combo box for the different collider types
-								if (ImGui::Combo("##UI Types", &index, types, IM_ARRAYSIZE(types)))
-								{
-									EntityManager::GetInstance().Get<GUIButton>(entityID).m_UIType = static_cast<UIType>(index);
-								}
-
 								//set combo box for functions
 								//setting keys
 								std::vector<const char*> key;

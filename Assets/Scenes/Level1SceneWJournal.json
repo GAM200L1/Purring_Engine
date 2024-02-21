@@ -5151,7 +5151,7 @@
                         "m_hoveredTexture": "../Assets/Textures/UnitPortrait_Default_256px.png",
                         "m_onClicked": "",
                         "m_onHoverEnter": "JournalHoverEnter",
-                        "m_onHoverExit": "",
+                        "m_onHoverExit": "JournalHoverExit",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
