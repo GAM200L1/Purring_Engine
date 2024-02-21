@@ -638,9 +638,9 @@ namespace PE
 		gui.m_onClicked = r_j["m_onClicked"];
 		gui.m_onHovered = r_j["m_onHovered"];
 		if (r_j.contains("m_onHoverEnter")) 
-			gui.m_onHoverEnter = r_j.at("m_onHoverEnter").get<std::string>();
+			gui.m_onHoverEnter = r_j["m_onHoverEnter"].get<std::string>();
 		if (r_j.contains("m_onHoverExit")) 
-			gui.m_onHoverExit = r_j.at("m_onHoverExit").get<std::string>();
+			gui.m_onHoverExit = r_j["m_onHoverExit"].get<std::string>();
 		gui.m_UIType = static_cast<UIType>(r_j["m_UIType"].get<int>());
 		gui.disabled = r_j["disabled"].get<bool>();
 
