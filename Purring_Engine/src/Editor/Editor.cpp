@@ -2015,7 +2015,7 @@ namespace PE {
 								ImGui::SetNextItemWidth(200.0f);
 								if (!key.empty())
 								{
-									ImGui::Text("On Hovered Enter: "); ImGui::SameLine();
+									ImGui::Text("On Hover Enter: "); ImGui::SameLine();
 									ImGui::SetNextItemWidth(200.0f);
 									//set selected texture id
 									if (ImGui::Combo("##On Hover Enter Function", &onhoverenterfunc, key.data(), static_cast<int>(key.size())))
