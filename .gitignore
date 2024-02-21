@@ -27,9 +27,9 @@ Assets/*
 !Assets/Prefabs
 !Assets/Settings
 !Assets/Scenes
-!Assets/RubricTestScenes
+!Assets/Animation
 
-Assets/Prefabs/savestate.json
+Assets/Scenes/Savestate/savestate.json
 Assets/Settings/config.json
 
 *.sln
