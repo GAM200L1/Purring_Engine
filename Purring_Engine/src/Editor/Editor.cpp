@@ -956,6 +956,8 @@ namespace PE {
 				{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+
+						m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
@@ -963,6 +965,7 @@ namespace PE {
 					{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -971,6 +974,7 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -978,6 +982,7 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					if (ImGui::MenuItem("Create UI Slider")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -985,6 +990,7 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody_Prefab.json");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -992,6 +998,7 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					ImGui::EndMenu();
 				}
@@ -999,11 +1006,13 @@ namespace PE {
 				{
 					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio_Prefab.json");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+					m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
 					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+					m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				ImGui::EndPopup();
 			}
@@ -3135,6 +3144,7 @@ namespace PE {
 										int PortID = static_cast<int> (it->second.Portrait);
 										int BackgroundID = static_cast<int> (it->second.Background);
 										int JournalID = static_cast<int> (it->second.Journal);
+										int JournalButtonID = static_cast<int> (it->second.JournalButton);
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
 									
@@ -3191,6 +3201,9 @@ namespace PE {
 
 										ImGui::Text("Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##jcid", &JournalID);
 										if (JournalID != m_currentSelectedObject) { it->second.Journal = JournalID; }
+
+										ImGui::Text("Journal Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##jbid", &JournalButtonID);
+										if (JournalButtonID != m_currentSelectedObject) { it->second.JournalButton = JournalButtonID; }
 
 										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
 										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }

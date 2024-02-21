@@ -240,6 +240,7 @@ RTTR_REGISTRATION
         .property("Background", &PE::GameStateController_v2_0Data::Background)
         .property("TransitionPanel", &PE::GameStateController_v2_0Data::TransitionPanel)
         .property("Journal", &PE::GameStateController_v2_0Data::Journal)
+        .property("JournalButton", &PE::GameStateController_v2_0Data::JournalButton)
         .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
         .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
 

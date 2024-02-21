@@ -43,6 +43,8 @@ namespace PE
 		EntityID TurnCounterCanvas;
 
 		EntityID Journal;
+		EntityID JournalButton;
+
 		EntityID PhaseBanner;
 
 		EntityID CatPortrait,RatPortrait;
@@ -359,6 +361,10 @@ namespace PE
 		*************************************************************************************/
 		void OpenAYSR(EntityID);
 
+		void JournalHoverEnter(EntityID);
+
+		void JournalHoverExit(EntityID);
+
 		// ----- Audio Helper Functions ----- //
 	private:
 		/*!***********************************************************************************
@@ -444,7 +450,7 @@ namespace PE
 
 
 		//journal object testing
-		bool m_journalShowing;
+		bool m_journalShowing{};
 
 		//phase banner
 		const float m_phaseBannerTransitionTimer{ .2f };
