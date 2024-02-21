@@ -201,6 +201,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_HowToPlay_Highlighted_512x128.png",
                         "m_onClicked": "OpenHTP",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -276,6 +278,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYS",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -351,6 +355,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_ResumeGame_Highlighted_512x128.png",
                         "m_onClicked": "ResumeStateV2",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -508,6 +514,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
                         "m_onClicked": "CloseWindow",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -624,6 +632,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                         "m_onClicked": "ReturnFromAYS",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -778,7 +788,8 @@
                                 "HowToPlayCanvas": 18,
                                 "HowToPlayPageOne": 19,
                                 "HowToPlayPageTwo": 20,
-                                "Journal": 0,
+                                "Journal": 62,
+                                "JournalButton": 63,
                                 "LoseCanvas": 37,
                                 "PauseBackGroundCanvas": 13,
                                 "PauseMenuCanvas": 3,
@@ -983,6 +994,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Return_Highlighted_512x128.png",
                         "m_onClicked": "CloseHTP",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1058,6 +1071,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Next_Highlighted_79x77.png",
                         "m_onClicked": "HTPPage2",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
@@ -1133,6 +1148,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Back_Highlighted_79x77.png",
                         "m_onClicked": "HTPPage1",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
@@ -1187,7 +1204,9 @@
                             29,
                             30,
                             44,
-                            47
+                            47,
+                            62,
+                            63
                         ],
                         "isActive": false,
                         "name": "HUDCanvas",
@@ -1344,7 +1363,7 @@
                         "isActive": false,
                         "name": "MapOverlay",
                         "parent": 24,
-                        "sceneID": 8
+                        "sceneID": 1
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1385,7 +1404,7 @@
                         "isActive": false,
                         "name": "EndTurnButton",
                         "parent": 24,
-                        "sceneID": 11
+                        "sceneID": 8
                     },
                     "GUI": {
                         "disabled": false,
@@ -1412,6 +1431,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Highlighted_512x128.png",
                         "m_onClicked": "NextState",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1535,6 +1556,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
                         "m_onClicked": "RetryStage",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1733,6 +1756,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RestartGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYSR",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1808,6 +1833,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_QuitGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYS",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -1965,6 +1992,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RestartGame_Highlighted_512x128.png",
                         "m_onClicked": "OpenAYSR",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -2040,6 +2069,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_RetryLevel_Highlighted_512x128.png",
                         "m_onClicked": "RetryStage",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -2333,6 +2364,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Menu_Highlighted_127x107.png",
                         "m_onClicked": "SetPauseStateV2",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             0.6000000238418579,
@@ -2381,7 +2414,7 @@
                         "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
-                        "sceneID": 13
+                        "sceneID": 11
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3070,6 +3103,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_Yes_Highlighted_512x128.png",
                         "m_onClicked": "RestartGame",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -3227,6 +3262,8 @@
                         ],
                         "m_hoveredTexture": "../Assets/Textures/Button_No_Highlighted_512x128.png",
                         "m_onClicked": "ReturnFromAYS",
+                        "m_onHoverEnter": "",
+                        "m_onHoverExit": "",
                         "m_onHovered": "",
                         "m_pressedColor": [
                             1.0,
@@ -5028,6 +5065,124 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 62,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "Journal",
+                        "parent": 24,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/CatJournal_Meowsalot_753x402.png"
+                    },
+                    "Transform": {
+                        "height": 251.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -419.9999694824219,
+                            "y": -312.00006103515625
+                        },
+                        "relativeposition": {
+                            "x": -419.9999694824219,
+                            "y": -312.00006103515625
+                        },
+                        "relorientation": 0.0,
+                        "width": 470.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 63,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": false,
+                        "name": "JournalButton",
+                        "parent": 24,
+                        "sceneID": 13
+                    },
+                    "GUI": {
+                        "disabled": false,
+                        "m_UIType": 0,
+                        "m_defaultColor": [
+                            1.0,
+                            1.0,
+                            1.0,
+                            0.0
+                        ],
+                        "m_defaultTexture": "../Assets/Textures/Resources/UnitPortrait_Default_256px.png",
+                        "m_disabledColor": [
+                            0.501960813999176,
+                            0.501960813999176,
+                            0.501960813999176,
+                            0.0
+                        ],
+                        "m_disabledTexture": "../Assets/Textures/UnitPortrait_Default_256px.png",
+                        "m_hoveredColor": [
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.800000011920929,
+                            0.0
+                        ],
+                        "m_hoveredTexture": "../Assets/Textures/UnitPortrait_Default_256px.png",
+                        "m_onClicked": "",
+                        "m_onHoverEnter": "JournalHoverEnter",
+                        "m_onHoverExit": "JournalHoverExit",
+                        "m_onHovered": "",
+                        "m_pressedColor": [
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.6000000238418579,
+                            0.0
+                        ],
+                        "m_pressedTexture": "../Assets/Textures/UnitPortrait_Default_256px.png"
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Resources/UnitPortrait_Default_256px.png"
+                    },
+                    "Transform": {
+                        "height": 257.89459228515625,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -805.0001220703125,
+                            "y": -352.5001525878906
+                        },
+                        "relativeposition": {
+                            "x": -805.0001220703125,
+                            "y": -352.5001525878906
+                        },
+                        "relorientation": 0.0,
+                        "width": 250.0
                     }
                 },
                 "name": ""
