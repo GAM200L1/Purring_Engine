@@ -1965,6 +1965,7 @@ namespace PE {
 								{
 									key.push_back(it->first.data());
 								}
+
 								int onclickfunc{};
 								for (std::string str : key)
 								{
@@ -2002,6 +2003,46 @@ namespace PE {
 									if (ImGui::Combo("##On Hover Function", &onhoverfunc, key.data(), static_cast<int>(key.size())))
 									{
 											EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHovered = key[onhoverfunc];
+									}
+								}
+
+								int onhoverenterfunc{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHoverEnter)
+										break;
+									onhoverenterfunc++;
+								}
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("On Hovered Enter: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##On Hover Enter Function", &onhoverenterfunc, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHoverEnter = key[onhoverenterfunc];
+									}
+								}
+
+								int onhoverexitfunc{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHoverExit)
+										break;
+									onhoverexitfunc++;
+								}
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("On Hover Exit: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##On Hover Exit Function", &onhoverexitfunc, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHoverExit = key[onhoverexitfunc];
 									}
 								}
 							}
