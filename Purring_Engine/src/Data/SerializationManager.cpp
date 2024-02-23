@@ -490,6 +490,7 @@ bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r
 
     if (r_json["Entity"]["components"].contains("GUI"))
     {    
+        gui = gui.Deserialize(r_json["Entity"]["components"]["GUI"]);
         if (r_json["Entity"]["components"]["GUI"].contains("m_onClicked"))
             gui.m_onClicked = r_json["Entity"]["components"]["GUI"]["m_onClicked"].get<std::string>();
         if (r_json["Entity"]["components"]["GUI"].contains("m_onHovered"))
@@ -536,6 +537,7 @@ bool SerializationManager::LoadGUI(const EntityID& r_id, const nlohmann::json& r
             r_json["Entity"]["components"]["GUI"]["m_disabledColor"][2].get<float>(),
             r_json["Entity"]["components"]["GUI"]["m_disabledColor"][3].get<float>()
         );
+        
     }
     PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::GUIButton>(), static_cast<void*>(&gui));
     return true;

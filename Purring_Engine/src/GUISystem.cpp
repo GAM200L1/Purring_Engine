@@ -119,6 +119,13 @@ namespace PE
 				}
 				if (gui.m_Hovered)
 				{
+					if (!gui.m_hoveredOnce)
+					{
+						gui.OnHoverEnter(objectID);
+						gui.m_hoveredOnce = true;
+						return;
+					}
+
 					gui.OnHover(objectID);
 					if (EntityManager::GetInstance().Has(objectID, EntityManager::GetInstance().GetComponentID<Graphics::GUIRenderer>()) && gui.m_clickedTimer <= 0)
 					{
@@ -126,9 +133,18 @@ namespace PE
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_hoveredTexture);
 					}
 				}
-				else if (gui.m_clickedTimer <= 0)
+				else 
 				{
-					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) {
+					if (gui.m_hoveredOnce)
+					{
+						gui.OnHoverExit(objectID);
+						gui.m_hoveredOnce = false;
+						return;
+					}
+
+					if (gui.m_clickedTimer <= 0)
+					if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(objectID)) 
+					{
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetColor(gui.m_defaultColor.x, gui.m_defaultColor.y, gui.m_defaultColor.z, gui.m_defaultColor.w);
 						EntityManager::GetInstance().Get<Graphics::GUIRenderer>(objectID).SetTextureKey(gui.m_defaultTexture);
 					}
@@ -594,6 +610,8 @@ namespace PE
 		// Serialize properties
 		j["m_onClicked"] = m_onClicked;
 		j["m_onHovered"] = m_onHovered;
+		j["m_onHoverEnter"] = m_onHoverEnter;
+		j["m_onHoverExit"] = m_onHoverExit;
 		j["m_UIType"] = static_cast<int>(m_UIType);
 		j["disabled"] = disabled;
 
@@ -616,8 +634,13 @@ namespace PE
 	GUIButton GUIButton::Deserialize(const nlohmann::json& r_j)
 	{
 		GUIButton gui;
+
 		gui.m_onClicked = r_j["m_onClicked"];
 		gui.m_onHovered = r_j["m_onHovered"];
+		if (r_j.contains("m_onHoverEnter")) 
+			gui.m_onHoverEnter = r_j["m_onHoverEnter"].get<std::string>();
+		if (r_j.contains("m_onHoverExit")) 
+			gui.m_onHoverExit = r_j["m_onHoverExit"].get<std::string>();
 		gui.m_UIType = static_cast<UIType>(r_j["m_UIType"].get<int>());
 		gui.disabled = r_j["disabled"].get<bool>();
 

@@ -956,6 +956,8 @@ namespace PE {
 				{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+
+						m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				if (ImGui::BeginMenu("Create UI Object"))
 				{
@@ -963,6 +965,7 @@ namespace PE {
 					{
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					if (ImGui::MenuItem("Create UI Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -971,6 +974,7 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -978,6 +982,7 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					if (ImGui::MenuItem("Create UI Slider")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -985,6 +990,7 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody_Prefab.json");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
@@ -992,6 +998,7 @@ namespace PE {
 						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+						m_currentSelectedObject = static_cast<int>(s_id);
 					}
 					ImGui::EndMenu();
 				}
@@ -999,11 +1006,13 @@ namespace PE {
 				{
 					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio_Prefab.json");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+					m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
 					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
+					m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				ImGui::EndPopup();
 			}
@@ -1945,17 +1954,6 @@ namespace PE {
 
 								ImGui::SeparatorText("Events");
 
-								//get the current collider type using the variant
-								int index = static_cast<int>(EntityManager::GetInstance().Get<GUIButton>(entityID).m_UIType);
-								const char* types[] = { "Button","Slider" };
-								ImGui::Text("UI Type: "); ImGui::SameLine();
-								ImGui::SetNextItemWidth(200.0f);
-								//set combo box for the different collider types
-								if (ImGui::Combo("##UI Types", &index, types, IM_ARRAYSIZE(types)))
-								{
-									EntityManager::GetInstance().Get<GUIButton>(entityID).m_UIType = static_cast<UIType>(index);
-								}
-
 								//set combo box for functions
 								//setting keys
 								std::vector<const char*> key;
@@ -1965,6 +1963,7 @@ namespace PE {
 								{
 									key.push_back(it->first.data());
 								}
+
 								int onclickfunc{};
 								for (std::string str : key)
 								{
@@ -2002,6 +2001,46 @@ namespace PE {
 									if (ImGui::Combo("##On Hover Function", &onhoverfunc, key.data(), static_cast<int>(key.size())))
 									{
 											EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHovered = key[onhoverfunc];
+									}
+								}
+
+								int onhoverenterfunc{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHoverEnter)
+										break;
+									onhoverenterfunc++;
+								}
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("On Hover Enter: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##On Hover Enter Function", &onhoverenterfunc, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHoverEnter = key[onhoverenterfunc];
+									}
+								}
+
+								int onhoverexitfunc{};
+								for (std::string str : key)
+								{
+									if (str == EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHoverExit)
+										break;
+									onhoverexitfunc++;
+								}
+								//create a combo box of scripts
+								ImGui::SetNextItemWidth(200.0f);
+								if (!key.empty())
+								{
+									ImGui::Text("On Hover Exit: "); ImGui::SameLine();
+									ImGui::SetNextItemWidth(200.0f);
+									//set selected texture id
+									if (ImGui::Combo("##On Hover Exit Function", &onhoverexitfunc, key.data(), static_cast<int>(key.size())))
+									{
+										EntityManager::GetInstance().Get<GUIButton>(entityID).m_onHoverExit = key[onhoverexitfunc];
 									}
 								}
 							}
@@ -3094,6 +3133,7 @@ namespace PE {
 										int PortID = static_cast<int> (it->second.Portrait);
 										int BackgroundID = static_cast<int> (it->second.Background);
 										int JournalID = static_cast<int> (it->second.Journal);
+										int JournalButtonID = static_cast<int> (it->second.JournalButton);
 										int TransitionPanelID = static_cast<int> (it->second.TransitionPanel);
 										int PhaseBannerID = static_cast<int> (it->second.PhaseBanner);
 									
@@ -3150,6 +3190,9 @@ namespace PE {
 
 										ImGui::Text("Journal ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##jcid", &JournalID);
 										if (JournalID != m_currentSelectedObject) { it->second.Journal = JournalID; }
+
+										ImGui::Text("Journal Button ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##jbid", &JournalButtonID);
+										if (JournalButtonID != m_currentSelectedObject) { it->second.JournalButton = JournalButtonID; }
 
 										ImGui::Text("Phase Banner ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##PBID", &PhaseBannerID);
 										if (PhaseBannerID != m_currentSelectedObject) { it->second.PhaseBanner = PhaseBannerID; }

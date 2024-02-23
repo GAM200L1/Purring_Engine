@@ -55,6 +55,8 @@ namespace PE
 		REGISTER_UI_FUNCTION(SetPauseStateV2, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(RestartGame, PE::GameStateController_v2_0);
 		REGISTER_UI_FUNCTION(OpenAYSR, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(JournalHoverEnter, PE::GameStateController_v2_0);
+		REGISTER_UI_FUNCTION(JournalHoverExit, PE::GameStateController_v2_0);
 	}
 
 	void GameStateController_v2_0::Init(EntityID id)
@@ -101,6 +103,7 @@ namespace PE
 			//resetting current turn
 			CurrentTurn = 0;
 			m_isPotraitShowing = false;
+			m_journalShowing = false;
 
 		//getting the texture key for the current background and adding sepia to it
 		m_currentLevelBackground = EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[m_currentGameStateControllerID].Background).GetTextureKey();
@@ -443,15 +446,20 @@ namespace PE
 							{
 							case 0: //GUTTER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_GutterRat_753x402.png"));
 								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
 								break;
 							case 1: //BRAWLER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Brawler_256px.png"));
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_BrawlerRat_753x402.png"));
 								
 								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
 								break;
 							case 2: //SNIPER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Sniper_256px.png"));
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_SniperRat_753x402.png"));
+								SetPortraitInformation("UnitPortrait_RatNameFrame_SniperRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
+
 								break;
 								//case 3: //HERALD
 									//break;
@@ -475,6 +483,7 @@ namespace PE
 							}
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].RatPortrait);
 							m_isPotraitShowing = false;
+							m_journalShowing = false;
 						}
 					}
 				}
@@ -534,16 +543,19 @@ namespace PE
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_Meowsalot_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_Meowsalot_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Meowsalot_256px.png"));
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_Meowsalot_753x402.png"));
 								break;
 							case EnumCatType::GREYCAT: //
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_GreyCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_GreyCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Grey_256px.png"));
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_GreyCat_753x402.png"));
 								break;
 							case EnumCatType::ORANGECAT: //
 								nextPortraitTexture = "UnitPortrait_CatNameFrame_OrangeCat_239x82.png";
 								SetPortraitInformation("UnitPortrait_CatNameFrame_OrangeCat_239x82.png", CatManager->GetCurrentMovementEnergy(CatID), CatManager->GetMaxMovementEnergy(CatID), 0);
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Cat_Orange_256px.png"));
+								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("CatJournal_OrangeCat_753x402.png"));
 								break;
 							}
 							return;
@@ -566,7 +578,11 @@ namespace PE
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
 
 							if (!m_isRat)
+							{
 								m_isPotraitShowing = false;
+								m_journalShowing = false;
+							}
+
 						}
 					}
 				}
@@ -820,7 +836,9 @@ namespace PE
 		ActiveObject(m_scriptData[id].TurnCounterCanvas);
 
 		if (!m_isPotraitShowing)
+		{
 			DeactiveObject(m_scriptData.at(id).Portrait);
+		}
 
 		if (prevState == GameStates_v2_0::EXECUTE)
 		{
@@ -836,6 +854,21 @@ namespace PE
 
 		FadeAllObject(m_scriptData[id].HUDCanvas, fadeInSpeed);
 		FadeAllObject(m_scriptData[id].ExecuteCanvas, fadeOutSpeed);
+
+		if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].JournalButton))
+			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].JournalButton).SetAlpha(0);
+
+		if (!m_journalShowing)
+		{
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+		}
+		else
+		{
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeInSpeed);
+		}
+
 
 		if (fadeInSpeed >= 1)
 		{
@@ -975,6 +1008,17 @@ namespace PE
 		DeactiveAllMenu();
 		ActiveObject(m_scriptData[m_currentGameStateControllerID].AreYouSureRestartCanvas);
 		PlayClickAudio();
+	}
+
+	void GameStateController_v2_0::JournalHoverEnter(EntityID)
+	{
+		if(m_isPotraitShowing)
+		m_journalShowing = true;
+	}
+
+	void GameStateController_v2_0::JournalHoverExit(EntityID)
+	{
+		m_journalShowing = false;
 	}
 
 	void GameStateController_v2_0::RetryStage(EntityID)

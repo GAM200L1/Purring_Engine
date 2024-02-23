@@ -197,6 +197,22 @@ namespace PE
 				GUISystem::m_uiFunc[m_onHovered](id);
 		}
 		/*!***********************************************************************************
+		 \brief On entering hovering over the UI element
+		*************************************************************************************/
+		void OnHoverEnter(EntityID id)
+		{
+			if (m_onHoverEnter != "")
+				GUISystem::m_uiFunc[m_onHoverEnter](id);
+		}
+		/*!***********************************************************************************
+		 \brief On exiting hovering over the UI element
+		*************************************************************************************/
+		void OnHoverExit(EntityID id)
+		{
+			if (m_onHoverExit != "")
+				GUISystem::m_uiFunc[m_onHoverExit](id);
+		}
+		/*!***********************************************************************************
 		 \brief On clicking the UI element	 
 		*************************************************************************************/
 		void OnClick(EntityID id) 
@@ -211,7 +227,10 @@ namespace PE
 	public:
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
+		std::string m_onHoverEnter{""};
+		std::string m_onHoverExit{""};
 		bool m_Hovered{};
+		bool m_hoveredOnce{};
 		bool disabled{false};
 		UIType m_UIType{0};
 
