@@ -360,9 +360,18 @@ namespace PE
 		 \param[in]		EntityID so that this function can be called by a button
 		*************************************************************************************/
 		void OpenAYSR(EntityID);
+		/*!***********************************************************************************
+		 \brief			Function to call when mouse hovers over portrait, enables showing
+						of journal
 
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
 		void JournalHoverEnter(EntityID);
+		/*!***********************************************************************************
+		 \brief			Function to call when mouse exits portrait, disables showing of journal
 
+		 \param[in]		EntityID so that this function can be called by a button
+		*************************************************************************************/
 		void JournalHoverExit(EntityID);
 
 		// ----- Audio Helper Functions ----- //
