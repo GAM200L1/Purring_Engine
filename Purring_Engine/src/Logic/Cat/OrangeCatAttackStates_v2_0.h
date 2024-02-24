@@ -19,6 +19,8 @@
 
 #include "Events/MouseEvent.h"
 #include "Events/CollisionEvent.h"
+
+#include "Logic/GameStateController_v2_0.h"
 #include "CatAttackBase_v2_0.h"
 
 namespace PE
@@ -34,6 +36,13 @@ namespace PE
 		float stompRadius{ 20.f };
 		float stompLifeTime{ 1.f };
 		float stomopForce{ 1000.f };
+
+		/*!***********************************************************************************
+		 \brief Creates Stomp Telegraph and actual seismic
+
+		 \param[in] catID - EntityID of the entity to create stomp telegraph for
+		*************************************************************************************/
+		void CreateSeismicAndTelegraph(EntityID catID);
 	};
 
 	class OrangeCatAttack_v2_0PLAN : public CatAttackBase_v2_0
@@ -88,10 +97,12 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Forces number of mouse clicks to 0
 		*************************************************************************************/
-		virtual void ForceZeroMouse() { m_mouseClicked = 0; }
+		virtual void ForceZeroMouse() { m_mouseClick = false; }
 
 	private:
-		
+		// ----- Private Variables ----- //
+		// pointer to the game state controller
+		GameStateController_v2_0* p_gsc;
 		// data
 		OrangeCatAttackVariables* p_attackData;
 
@@ -101,15 +112,25 @@ namespace PE
 		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
 
 		// checks
-		bool m_mouseClicked{ false }; // Set to true when the mouse is pressed, false otherwise
+		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
-		int m_mouseEventListener; // Stores the handler for the mouse click event
-		//int m_triggerEnterEventListener; // Stores the handler for the collision enter event
-		//int m_triggerStayEventListener; // Stores the handler for the collision stay event
+		int m_mouseClickEventListener; // Stores the handler for the mouse click event
+		int m_mouseReleaseEventListener; // Stores the handler for the mouse release event
 
+	private:
 		// ----- Private Functions ----- //
-		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		/*!***********************************************************************************
+		 \brief Function to handle mouse click events for GreyCatPLAN
 
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		/*!***********************************************************************************
+		 \brief Function to handle mouse release events for GreyCatPLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
+		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 	};
 
 	class OrangeCatAttack_v2_0EXECUTE : public State
@@ -131,7 +152,7 @@ namespace PE
 	private:
 		OrangeCatAttackVariables* p_attackData;
 
-		int m_collisionEventListener;
+		int m_collisionEnterEventListener; // stores the handler for collision enter event
 
 		void SlamHitCat(const Event<CollisionEvents>& r_CE);
 

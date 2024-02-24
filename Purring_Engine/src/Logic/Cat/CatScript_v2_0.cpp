@@ -61,26 +61,22 @@ namespace PE
 
 		switch (m_scriptData[id].catType)
 		{
-			case EnumCatType::FLUFFYCAT:
+			/*case EnumCatType::FLUFFYCAT:
 			{
 				break;
-			}
+			}*/
 			case EnumCatType::ORANGECAT:
 			{
+				OrangeCatAttackVariables& vars = std::get<OrangeCatAttackVariables>(m_scriptData[id].attackVariables);
+				// Creates an entity for the projectile
+				vars.CreateStompAndTelegraph(id);
 				break;
 			}
 			default: // main cat or grey cat
 			{
 				GreyCatAttackVariables& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
-				// create telegraphs
-				GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(id, vars.bulletRange, vars.telegraphIDs);
 				// Creates an entity for the projectile
-				SerializationManager serializationManager;
-				vars.projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
-				CatHelperFunctions::ToggleEntity(vars.projectileID, false);
-
-				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
-					EntityManager::GetInstance().Get<Collider>(vars.projectileID).isTrigger = true; // sets main cat attack as trigger
+				vars.CreateProjectileAndTelegraphs(id, (m_scriptData[id].catType == EnumCatType::MAINCAT)? true : false);
 				break; 
 			}
 		}
@@ -173,11 +169,11 @@ namespace PE
 		// changes states depending on cat type
 		switch (m_scriptData[id].catType)
 		{
-		case EnumCatType::FLUFFYCAT:
-		{
-			// change states here for fluffy cat
-			break;
-		}
+		//case EnumCatType::FLUFFYCAT:
+		//{
+		//	// change states here for fluffy cat
+		//	break;
+		//}
 		case EnumCatType::ORANGECAT:
 		{
 			if (p_gsc->currentState == GameStates_v2_0::PLANNING)
@@ -420,10 +416,10 @@ namespace PE
 			m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{ new OrangeCatAttack_v2_0PLAN, new CatMovement_v2_0PLAN }, id);
 			break;
 		}
-		case EnumCatType::FLUFFYCAT:
+		/*case EnumCatType::FLUFFYCAT:
 		{
 			break;
-		}
+		}*/
 		default: // grey cat or main cat
 			m_scriptData[id].p_stateManager->ChangeState(new Cat_v2_0PLAN{new GreyCatAttack_v2_0PLAN, new CatMovement_v2_0PLAN}, id);
 			break;

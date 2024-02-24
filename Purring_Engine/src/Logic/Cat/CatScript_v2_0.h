@@ -32,8 +32,8 @@ namespace PE
 	{
 		MAINCAT,
 		GREYCAT,
-		ORANGECAT,
-		FLUFFYCAT
+		ORANGECAT
+		//FLUFFYCAT
 	};
 
 	struct CatScript_v2_0Data

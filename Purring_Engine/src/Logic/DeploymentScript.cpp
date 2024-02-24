@@ -103,12 +103,12 @@ namespace PE
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Orange_512px.png"));
 			break;
 		}
-		case EnumCatType::FLUFFYCAT:
+		/*case EnumCatType::FLUFFYCAT:
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetTextureKey(ResourceManager::GetInstance().LoadTexture("Cat_Meowsalot_512px.png"));
 			break;
-		}
+		}*/
 		}
 		
 		CircleCollider cc;
@@ -251,12 +251,12 @@ namespace PE
 							NewCatID = sm.LoadFromFile(("DeploymentTest_Prefab.json"));
 							break;
 						}
-						case EnumCatType::FLUFFYCAT:
-						{
-							//to be replaced
-							NewCatID = sm.LoadFromFile(("DeploymentTest_Prefab.json"));
-							break;
-						}
+						//case EnumCatType::FLUFFYCAT:
+						//{
+						//	//to be replaced
+						//	NewCatID = sm.LoadFromFile(("DeploymentTest_Prefab.json"));
+						//	break;
+						//}
 					}
 					EntityManager::GetInstance().Get<Transform>(NewCatID).position = m_mousepos;
 					EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;

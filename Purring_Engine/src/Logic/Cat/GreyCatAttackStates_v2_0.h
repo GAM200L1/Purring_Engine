@@ -55,6 +55,14 @@ namespace PE
 
 		// for syncing
 		unsigned int bulletFireAnimationIndex{ 3 };
+
+		/*!***********************************************************************************
+			\brief Creates Entities assigned to the grey/main cat as its telegraphs and projectile
+
+			\param[in] catID - id of the cat which projectile and telegraphs are assigned to
+			\param[in] catType - main or grey cat, to decide for piercing projectile
+		*************************************************************************************/
+		void CreateProjectileAndTelegraphs(EntityID catID, bool isMainCat);
 	};
 
 	class GreyCatAttack_v2_0PLAN : public CatAttackBase_v2_0
@@ -100,14 +108,6 @@ namespace PE
 		virtual void ResetSelection(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief Activate all attack telegraphs
-
-		 \param[in] id - EntityID of the entity this instance of the script is attached to.
-		 \param[in] bulletRange - Distance projectile travels.
-		*************************************************************************************/
-		static void CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs);
-
-		/*!***********************************************************************************
 		 \brief Toggles the attack telegraphs on or off accordingly
 
 		 \param setToggle - toggle telegraphs or not
@@ -119,8 +119,9 @@ namespace PE
 		 \brief Forces number of mouse clicks to 0
 		*************************************************************************************/
 		virtual void ForceZeroMouse() { m_mouseClick = false; }
+	
 	private:
-
+		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc; // pointer to the game state controller
 		GreyCatAttackVariables* p_attackData; // attack data for the cat
 
@@ -131,12 +132,13 @@ namespace PE
 		vec4 const m_hoverColor{ 1.f, 0.859f, 0.278f, 1.f };
 		vec4 const m_selectColor{ 1.f, 0.784f, 0.f, 1.f };
 
-		bool m_rightMouseClick{ false }; // set to true when mouse is right clicked
 		bool m_mouseClick{ false }; // set to true when mouse is clicked
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
 		int m_mouseClickEventListener; // Stores the handler for the mouse click event
 		int m_mouseReleaseEventListener; // Stores the handler for the mouse release event
 
+	private:
+		// ----- Private Functions ----- //
 		/*!***********************************************************************************
 		 \brief Function to handle mouse click events for GreyCatPLAN
 
