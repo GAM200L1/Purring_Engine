@@ -17,6 +17,7 @@
 #include "prpch.h"
 
 #include "Hierarchy/HierarchyManager.h"
+#include "Physics/CollisionManager.h"
 
 #include "OrangeCatAttackStates_v2_0.h"
 #include "CatScript_v2_0.h"
@@ -73,24 +74,53 @@ namespace PE
 	{
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 
+		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
+
 		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
+		bool collidingWithTelegraph = PointCollision(r_telegraphCollider, cursorPosition);
 
+		if (collidingWithTelegraph)
+		{
+			CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
+			if (m_mouseClick)
+			{
+				(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = true;
+				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_selectColor);
+			}
+		}
+		else
+		{
+			if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
+				CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
+		}
+
+		if (m_mouseClick && !m_mouseClickedPrevious && !collidingWithTelegraph)
+		{
+			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
+			
+			if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
+				CatHelperFunctions::ToggleEntity(p_attackData->telegraphID, false);
+		}
+
+		m_mouseClickedPrevious = m_mouseClick;
 	}
 
 	void OrangeCatAttack_v2_0PLAN::CleanUp()
 	{
-
+		REMOVE_MOUSE_EVENT_LISTENER(m_mouseClickEventListener);
+		REMOVE_MOUSE_EVENT_LISTENER(m_mouseReleaseEventListener);
 	}
 
 	void OrangeCatAttack_v2_0PLAN::Exit(EntityID id)
 	{
-
+		CatHelperFunctions::ToggleEntity(p_attackData->telegraphID, false);
 	}
 
 	void OrangeCatAttack_v2_0PLAN::ResetSelection(EntityID id)
 	{
-
+		CatHelperFunctions::SetColor(p_attackData->telegraphID, m_defaultColor);
+		(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = false;
 	}
 
 	void OrangeCatAttack_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
@@ -108,7 +138,7 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::ToggleTelegraphs(bool setToggle, bool ignoreSelected)
 	{
-
+		CatHelperFunctions::ToggleEntity(p_attackData->telegraphID, false);
 	}
 
 	// ----- ATTACK EXECUTE ----- //

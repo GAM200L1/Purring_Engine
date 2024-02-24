@@ -88,9 +88,10 @@ namespace PE
 
 		/*!***********************************************************************************
 		 \brief Toggles the attack telegraphs on or off accordingly
+				Implemented just to follow parent virtual
 
 		 \param setToggle - toggle telegraphs or not
-		 \param ignoreSelected - ignore telegraphs selected or not
+		 \param ignoreSelected - not used for this type
 		*************************************************************************************/
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
 
@@ -107,9 +108,9 @@ namespace PE
 		OrangeCatAttackVariables* p_attackData;
 
 		// Telegraph colors
-		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
-		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
-		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
+		vec4 const m_defaultColor{ 0.545f, 1.f, 0.576f, 1.f };
+		vec4 const m_hoverColor{ 1.f, 0.859f, 0.278f, 1.f };
+		vec4 const m_selectColor{ 1.f, 0.784f, 0.f, 1.f };
 
 		// checks
 		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
