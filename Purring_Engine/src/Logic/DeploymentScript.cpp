@@ -36,7 +36,6 @@ namespace PE
 
 	void DeploymentScript::Update(EntityID id, float)
 	{
-		std::cout << "catleft" << m_catPlaced << std::endl;
 		if (m_catPlaced < 0 && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
