@@ -30,12 +30,16 @@ namespace PE
 		EntityID seismicID{ 0 }; // id of the seismic attack
 		EntityID telegraphID{ 0 }; // id of the UI
 
-		int damage{ 0 };
+		int damage{ 2 };
 
 		// projectile variables
-		float stompRadius{ 20.f };
-		float stompLifeTime{ 1.f };
-		float stomopForce{ 1000.f };
+		float seismicRadius{ 3.f };
+		float seismicDelay{ 0.f };
+		float seismicLifeTime{ 1.f };
+		float seismicForce{ 500.f };
+
+		// for syncing animation with firing
+		unsigned int seismicSlamAnimationIndex{ 3 };
 
 		/*!***********************************************************************************
 		 \brief Creates Stomp Telegraph and actual seismic
@@ -151,12 +155,22 @@ namespace PE
 		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
+
+		EntityID m_catID;
 		OrangeCatAttackVariables* p_attackData;
+		CatScript_v2_0Data* p_catData;
+
+		float m_seismicDelay;
+		float m_seismicLifeTime;
+		
+		bool m_seismicSlammed{ false };
 
 		int m_collisionEnterEventListener; // stores the handler for collision enter event
 
-		void SlamHitCat(const Event<CollisionEvents>& r_CE);
+		void SeismicCollided(const Event<CollisionEvents> r_CE);
 
-		void SlamHitRat(const Event<CollisionEvents>& r_CE);
+		void SeismicHitCat(const Event<CollisionEvents>& r_CE);
+
+		void SeismicHitRat(const Event<CollisionEvents>& r_CE);
 	};
 }

@@ -69,7 +69,7 @@ namespace PE
 			{
 				OrangeCatAttackVariables& vars = std::get<OrangeCatAttackVariables>(m_scriptData[id].attackVariables);
 				// Creates an entity for the projectile
-				vars.CreateStompAndTelegraph(id);
+				vars.CreateSeismicAndTelegraph(id);
 				break;
 			}
 			default: // main cat or grey cat

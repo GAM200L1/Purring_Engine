@@ -41,7 +41,7 @@ namespace PE
 		EntityID projectileID{ 0 };
 
 		// damage of the attack
-		int damage{ 0 };
+		int damage{ 1 };
 
 		// Telegraph variables
 		EnumCatAttackDirection_v2_0 attackDirection{ EnumCatAttackDirection_v2_0::NONE }; // Direction of attack chosen
@@ -228,6 +228,6 @@ namespace PE
 		 \param[in] id1 - ID of the first entity to check
 		 \param[in] id2 - ID of the second entity to check
 		*************************************************************************************/
-		bool GeneralCollision(EntityID id1, EntityID id2);
+		bool CollideCatOrRat(EntityID id1, EntityID id2);
 	};
 }

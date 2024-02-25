@@ -280,7 +280,8 @@ namespace PE
 				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, true);
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ApplyLinearImpulse(m_bulletImpulse);
 				m_projectileFired = true;
-				// @TODO: play attack audio here
+				
+				// ----- Attacking Audio ----- //
 				SerializationManager m_serializationManager;
 				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX_Prefab.json");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
@@ -307,8 +308,9 @@ namespace PE
 				EntityManager::GetInstance().RemoveEntity(sound);
 
 			}
-			else
+			else {
 				m_bulletDelay -= deltaTime;
+			}
 		}
 	}
 
@@ -333,7 +335,7 @@ namespace PE
 		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
 		{
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
-			if (GeneralCollision(OCEE.Entity1, OCEE.Entity2))
+			if (CollideCatOrRat(OCEE.Entity1, OCEE.Entity2))
 			{
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
@@ -359,11 +361,11 @@ namespace PE
 		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
 			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
-			GeneralCollision(OTEE.Entity1, OTEE.Entity2);
+			CollideCatOrRat(OTEE.Entity1, OTEE.Entity2);
 		}
 	}
 
-	bool GreyCatAttack_v2_0EXECUTE::GeneralCollision(EntityID id1, EntityID id2)
+	bool GreyCatAttack_v2_0EXECUTE::CollideCatOrRat(EntityID id1, EntityID id2)
 	{
 		auto IsCatAndNotCaged =
 			[&](EntityID id)
