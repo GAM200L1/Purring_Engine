@@ -83,13 +83,6 @@ namespace PE
         void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
 
         /*!***********************************************************************************
-            \brief Called when a trigger exit event has occurred
-
-            \param[in,out] r_TE - Trigger event data
-        *************************************************************************************/
-        void OnTriggerExit(const Event<CollisionEvents>& r_TE);
-
-        /*!***********************************************************************************
             \brief Returns the name of this state
 
             \return A string view representing the name of the state, useful for debugging and logging
@@ -97,28 +90,12 @@ namespace PE
         virtual std::string_view GetName() { return "Movement_v2_0"; }
 
     private:
-        /*!***********************************************************************************
-            \brief Calculates the next movement step for the rat based on its current position, target position, and other factors
-
-            \param[in] id - The entity ID of the rat
-            \param[in] deltaTime - Time elapsed since the last update call, used for frame rate independent movement
-            \return A boolean indicating whether a new position has been successfully calculated
-        *************************************************************************************/
-        bool CalculateMovement(EntityID id, float deltaTime);
-
-        /*!***********************************************************************************
-            \brief Checks if the rat has reached its destination
-
-            \param[in] newPosition - The new position of the rat after a movement calculation
-            \param[in] targetPosition - The target position the rat is moving towards
-            \return A boolean indicating whether the rat has reached its target position
-        *************************************************************************************/
-        bool CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition);
 
         /*!***********************************************************************************
             \brief Pointer to the game state controller, used to query and manage the overall game state
         *************************************************************************************/
         GameStateController_v2_0* gameStateController{ nullptr };
+        GameStates_v2_0 m_previousGameState{GameStates_v2_0::PLANNING}; // The game state in the previous frame
 
         /*!***********************************************************************************
             \brief Pointer to data specific to the RatScript, containing information such as current position, health, etc.
@@ -140,9 +117,31 @@ namespace PE
         *************************************************************************************/
         int m_collisionStayEventListener{};
 
+        EntityID m_targetId{}; // ID of the cat to target
+        bool m_planningRunOnce{}; // True if the planning phase has been run once
+
+
+        // ----- PRIVATE METHODS ----- //
+    private:
         /*!***********************************************************************************
-            \brief ID of the event listener for collision exit events, used to determine when the rat has exited a collision with another entity
+          \brief Returns true if the current game state is different from the game state
+                  in the previous frame, false otherwise.
         *************************************************************************************/
-        int m_collisionExitEventListener{};
+        inline bool StateJustChanged() const
+        {
+            return m_previousGameState != gameStateController->currentState;
+        }
+
+        /*!***********************************************************************************
+          \brief Sets the animation to be played based on whether the rat is moving or not.
+        *************************************************************************************/
+        void UpdateAnimation(bool const isRatMoving);
+
+        /*!***********************************************************************************
+          \brief Pick the position that the rat should move toward (in a straight line).
+
+          \return Returns a next viable target for the rat.
+        *************************************************************************************/
+        vec2 PickTargetPosition();
     };
 }
