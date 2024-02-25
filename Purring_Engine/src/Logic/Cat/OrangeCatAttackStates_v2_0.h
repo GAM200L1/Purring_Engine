@@ -35,7 +35,7 @@ namespace PE
 		// projectile variables
 		float seismicRadius{ 3.f };
 		float seismicDelay{ 0.f };
-		float seismicLifeTime{ 1.f };
+		//float seismicLifeTime{ 1.f };
 		float seismicForce{ 500.f };
 
 		// for syncing animation with firing
@@ -158,10 +158,9 @@ namespace PE
 
 		EntityID m_catID;
 		OrangeCatAttackVariables* p_attackData;
-		CatScript_v2_0Data* p_catData;
 
 		float m_seismicDelay;
-		float m_seismicLifeTime;
+		//float m_seismicLifeTime;
 		
 		bool m_seismicSlammed{ false };
 
@@ -169,8 +168,8 @@ namespace PE
 
 		void SeismicCollided(const Event<CollisionEvents> r_CE);
 
-		void SeismicHitCat(const Event<CollisionEvents>& r_CE);
+		bool SeismicHitCat(EntityID id1, EntityID id2);
 
-		void SeismicHitRat(const Event<CollisionEvents>& r_CE);
+		bool SeismicHitRat(EntityID id1, EntityID id2);
 	};
 }

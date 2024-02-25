@@ -207,6 +207,7 @@ namespace PE
 	{
 		// retrieves the data for the grey cat's attack
 		m_catID = id;
+
 		p_attackData = &std::get<GreyCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 
 		// Subscribe to event
@@ -215,7 +216,7 @@ namespace PE
 
 		// Set the start values of the attack projectile
 		m_bulletImpulse = vec2{ 0.f, 0.f };
-		if (GETSCRIPTDATA(CatScript_v2_0, id).attackSelected)
+		if ((GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
 		{
 			vec2 direction{ 0.f, 0.f };
 			switch (p_attackData->attackDirection)
@@ -253,7 +254,8 @@ namespace PE
 	void GreyCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
+		CatScript_v2_0Data* p_catData = GETSCRIPTDATA(CatScript_v2_0, id);
+		if (p_gsc->currentState == GameStates_v2_0::PAUSE || !p_catData->attackSelected) { return; }
 
 		// if projectile has been fired, keep reducing lifetime and disable bullet
 
@@ -261,7 +263,7 @@ namespace PE
 		{
 			if (m_bulletLifetime <= 0.f)
 			{
-				(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = true;
+				p_catData->finishedExecution = true;
 				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
@@ -269,7 +271,7 @@ namespace PE
 			m_bulletLifetime -= deltaTime;
 		}
 		// when the frame is attack frame, shoot the projectile after delay passes											
-		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
+		else if (!p_catData->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
 		{
 			if (m_bulletDelay <= 0.f) // extra delay after the frame in case of slight inaccuracy
 			{
@@ -331,12 +333,12 @@ namespace PE
 
 	void GreyCatAttack_v2_0EXECUTE::ProjectileCollided(const Event<CollisionEvents>& r_CE)
 	{
-
 		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
 		{
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
 			if (CollideCatOrRat(OCEE.Entity1, OCEE.Entity2))
 			{
+				// deactivates entity since it is 
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
 				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
@@ -347,6 +349,7 @@ namespace PE
 
 	void GreyCatAttack_v2_0EXECUTE::TriggerHit(const Event<CollisionEvents>& r_CE)
 	{
+		// for meowsalot piercing damage
 		auto IsCatAndNotCaged =
 			[&](EntityID id)
 			{
@@ -357,7 +360,7 @@ namespace PE
 				}
 				return false;
 			};
-
+		
 		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
 			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
@@ -367,6 +370,7 @@ namespace PE
 
 	bool GreyCatAttack_v2_0EXECUTE::CollideCatOrRat(EntityID id1, EntityID id2)
 	{
+		// checks if it is an active cat
 		auto IsCatAndNotCaged =
 			[&](EntityID id)
 			{
@@ -378,10 +382,9 @@ namespace PE
 				return false;
 			};
 
-		//auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
-
 		if (id1 != m_catID && id2 != m_catID)
 		{
+			// kill cat if not in chain level and projectile hits cat
 			if (id1 == p_attackData->projectileID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
@@ -390,16 +393,6 @@ namespace PE
 			else if (id2 == p_attackData->projectileID && IsCatAndNotCaged(id1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
-				return true;
-			}
-			else if (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
-			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, p_attackData->damage);
-				return true;
-			}
-			else if (id2 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
-			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, p_attackData->damage);
 				return true;
 			}
 		}

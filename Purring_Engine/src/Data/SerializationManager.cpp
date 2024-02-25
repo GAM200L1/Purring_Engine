@@ -715,6 +715,7 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                     val.bulletRange = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletRange"].get<float>();
                                     val.bulletLifeTime = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletLifeTime"].get<float>();
                                     val.bulletForce = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletForce"].get<float>();
+                                    //val.bulletFireAnimationIndex = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletFireAnimationIndex"].get<int>();
                                     vari = val;
                                 }
                                 else if (data[prop.get_name().to_string().c_str()].contains("OrangeCatAttackVariables"))
@@ -723,9 +724,10 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                     val.seismicID = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicID"].get<EntityID>();
                                     val.telegraphID = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["telegraphID"].get<EntityID>();
                                     val.damage = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["damage"].get<int>();
-                                    val.stompRadius = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompRadius"].get<float>();
-                                    val.stompLifeTime = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompLifetime"].get<float>();
-                                    val.stomopForce = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompForce"].get<float>();
+                                    val.seismicRadius = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicRadius"].get<float>();
+                                    val.seismicDelay = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicDelay"].get<float>();
+                                    val.seismicForce = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicForce"].get<float>();
+                                    //val.seismicSlamAnimationIndex = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicSlamAnimationIndex"].get<int>();
                                     vari = val;
                                 }
                                 
