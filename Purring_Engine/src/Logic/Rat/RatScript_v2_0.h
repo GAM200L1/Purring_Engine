@@ -27,6 +27,7 @@ namespace PE
 {
 	enum EnumRatType
 	{
+		GUTTER_V1,
 		GUTTER,
 		BRAWLER,
 		SNIPER,
@@ -43,12 +44,13 @@ namespace PE
 
 		// reference entities
 		EntityID myID{ 0 };								// id of the rat with this data
-		EntityID ratTelegraphID{ 0 };					// id of an additional invisible object with transform for rotating the arrow telegraph
+		EntityID ratTelegraphID{ 0 };			// id of an additional invisible object with transform for rotating the arrow telegraph
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		StateMachine* p_stateManager;
 		
 		// rat stats
 		int ratHealth{ 3 };								// health of the rat, needs manual setting
+		int ratMaxHealth{ 3 };						// maximum health of the rat
 
 		// Movement Variables
 		float ratPlayerDistance{ 0.f };					// stores distance of rat from player cat to determine movement

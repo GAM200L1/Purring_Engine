@@ -27,6 +27,7 @@ namespace PE
 		// reference entities
 		EntityID myID{ 0 }; // ID of entity that this script belongs to
 		std::map<EntityID, RatScriptData>* p_ratsMap;
+		std::map<EntityID, RatScript_v2_0_Data>* p_ratsV2Map;
 	};
 
 	
@@ -116,7 +117,10 @@ namespace PE
 
 		void ApplyDamageToRat(EntityID ratID, int damage);
 
-		bool IsRatAndIsAlive(EntityID id);
+		bool IsRatAndIsAlive(EntityID id) const;
+
+		int GetRatHealth(EntityID id) const;
+		int GetRatMaxHealth(EntityID id) const;
 
 		/*!***********************************************************************************
 		 \brief Get the Script Data object
@@ -133,6 +137,9 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
 
+		// ----- Private Members ----- //
+	private:
+		bool refreshedThisFrame{false}; // set to true if the rat data has been refreshed once this frame
 
 		// ----- Private Functions ----- //
 	private:
@@ -143,6 +150,13 @@ namespace PE
 		 \param[in] setToActive - Whether this entity should be set to active or inactive.
 		*************************************************************************************/
 		static void ToggleEntity(EntityID id, bool setToActive);
+
+		/*!***********************************************************************************
+		 \brief Helper function to refresh the vector of cached rats.
+
+		 \param[in,out] id - ID of the script to get the data from.
+		*************************************************************************************/
+		void RefreshRats(EntityID id);
 
 	}; // end of class 
 

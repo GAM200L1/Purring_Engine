@@ -440,25 +440,26 @@ namespace PE
 							DeactiveObject(m_scriptData[m_currentGameStateControllerID].CatPortrait);
 
 							//RatScript_v2_0* RatScript = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0);
-							RatScript* _RatScript = GETSCRIPTINSTANCEPOINTER(RatScript);
+							//RatScript* _RatScript = GETSCRIPTINSTANCEPOINTER(RatScript);
 
 							switch (RatType)
 							{
-							case 0: //GUTTER
+							case EnumRatType::GUTTER_V1: //GUTTER V1 (M3)
+							case EnumRatType::GUTTER: //GUTTER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Gutter_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_GutterRat_753x402.png"));
-								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
+								SetPortraitInformation("UnitPortrait_RatNameFrame_GutterRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 								break;
-							case 1: //BRAWLER
+							case EnumRatType::BRAWLER: //BRAWLER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Brawler_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_BrawlerRat_753x402.png"));
 								
-								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
+								SetPortraitInformation("UnitPortrait_RatNameFrame_BrawlerRatRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 								break;
-							case 2: //SNIPER
+							case EnumRatType::SNIPER: //SNIPER
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Portrait).SetTextureKey(ResourceManager::GetInstance().LoadTexture("UnitPortrait_Rat_Sniper_256px.png"));
 								EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].Journal).SetTextureKey(ResourceManager::GetInstance().LoadTexture("RatJournal_SniperRat_753x402.png"));
-								SetPortraitInformation("UnitPortrait_RatNameFrame_SniperRat_239x82.png", _RatScript->GetScriptData()[RatID].health, 3, 1);
+								SetPortraitInformation("UnitPortrait_RatNameFrame_SniperRat_239x82.png", RatManager->GetRatHealth(RatID), RatManager->GetRatMaxHealth(RatID), true);
 
 								break;
 								//case 3: //HERALD
@@ -1320,16 +1321,24 @@ namespace PE
 
 		for (auto [RatID, RatType] : RatManager->GetRats(RatManager->mainInstance))
 		{
-			//Finished = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetScriptData()[RatID].finishedExecution;
-			Finished = Finished && GETSCRIPTINSTANCEPOINTER(RatScript)->GetScriptData()[RatID].finishedExecution;
-			std::cout << "GameStateController_v2_0::CheckFinishExecution() RatID " << RatID << " finished exec " << Finished << " \n";
+			if (RatType == EnumRatType::GUTTER_V1) 
+			{
+					// Ensures backwards compatability with the V1 rat
+					Finished = Finished && GETSCRIPTINSTANCEPOINTER(RatScript)->GetScriptData()[RatID].finishedExecution;
+			}
+			else 
+			{
+					// Checks the V2 rat
+					Finished = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetScriptData()[RatID].finishedExecution;
+			}
+			//std::cout << "GameStateController_v2_0::CheckFinishExecution() RatID " << RatID << " finished exec " << Finished << " \n";
 		}
 
 		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
 		{
 			if(!GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].isCaged)
 			Finished = Finished && GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
-			std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
+			//std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
 		}
 
 		if (Finished)

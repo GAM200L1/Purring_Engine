@@ -40,6 +40,7 @@ namespace PE
 		
 		// rat stats
 		int health{ 3 }; // health of the rat, needs manual setting
+		int maxHealth{ 3 }; // health of the rat, needs manual setting
 
 		// movement variables
 		float movementSpeed{ 200.f }; // speed of rat needs manual setting

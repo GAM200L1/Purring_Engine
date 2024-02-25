@@ -1208,7 +1208,7 @@
                             62,
                             63
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 5
@@ -1319,7 +1319,7 @@
                         "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "PawOverlay",
                         "parent": 24,
                         "sceneID": 14
@@ -1360,7 +1360,7 @@
                         "Old ID": 29,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "MapOverlay",
                         "parent": 24,
                         "sceneID": 1
@@ -1401,7 +1401,7 @@
                         "Old ID": 28,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "EndTurnButton",
                         "parent": 24,
                         "sceneID": 8
@@ -1478,7 +1478,7 @@
                         "Old ID": 30,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "EndPlanningText",
                         "parent": 24,
                         "sceneID": 47
@@ -2334,7 +2334,7 @@
                         "Old ID": 44,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "PauseButton",
                         "parent": 24,
                         "sceneID": 43
@@ -2411,7 +2411,7 @@
                         "Old ID": 47,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "UnitPortrait",
                         "parent": 24,
                         "sceneID": 11
@@ -2473,7 +2473,7 @@
                         "m_clicked": false,
                         "m_currentValue": 3.0,
                         "m_currentWidth": 45.0,
-                        "m_currentXpos": 50.75,
+                        "m_currentXpos": -101.49630737304688,
                         "m_defaultColor": [
                             0.3921568691730499,
                             0.3921568691730499,
@@ -2555,11 +2555,11 @@
                         "height": 50.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -819.8751831054688,
+                            "x": -972.1214599609375,
                             "y": -455.0
                         },
                         "relativeposition": {
-                            "x": -25.375,
+                            "x": -177.62130737304688,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -2804,7 +2804,7 @@
                         "m_clicked": false,
                         "m_currentValue": 1.0,
                         "m_currentWidth": 75.0,
-                        "m_currentXpos": -33.83332824707031,
+                        "m_currentXpos": -101.49835968017578,
                         "m_defaultColor": [
                             0.3921568691730499,
                             0.3921568691730499,
@@ -2886,11 +2886,11 @@
                         "height": 50.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -861.6666870117188,
+                            "x": -929.3316650390625,
                             "y": -455.0
                         },
                         "relativeposition": {
-                            "x": -67.66666412353516,
+                            "x": -135.33169555664063,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -4557,7 +4557,7 @@
                         "m_clicked": false,
                         "m_currentValue": 1.0,
                         "m_currentWidth": 16.0,
-                        "m_currentXpos": 32.0,
+                        "m_currentXpos": -31.984375,
                         "m_defaultColor": [
                             0.3607843220233917,
                             0.9882352948188782,
@@ -4647,11 +4647,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": -63.984375,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": -63.984375,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -4692,7 +4692,7 @@
                         "m_clicked": false,
                         "m_currentValue": 1.0,
                         "m_currentWidth": 16.0,
-                        "m_currentXpos": 32.0,
+                        "m_currentXpos": -31.984375,
                         "m_defaultColor": [
                             0.3607843220233917,
                             0.9882352948188782,
@@ -4782,11 +4782,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
+                            "x": -63.984375,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": 0.0,
+                            "x": -63.984375,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -5079,7 +5079,7 @@
                         "Old ID": 62,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Journal",
                         "parent": 24,
                         "sceneID": 0
@@ -5120,7 +5120,7 @@
                         "Old ID": 63,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "JournalButton",
                         "parent": 24,
                         "sceneID": 13

@@ -200,7 +200,7 @@ namespace PE
 		}
 			// Set the rat target
 			//GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
-		//	return finalTarget;
+		 return finalTarget;
 	}
 
 	vec2 RatHunt_v2_0::RotatePoint( vec2 center,  vec2 point, float m)
