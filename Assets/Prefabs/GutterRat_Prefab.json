@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "Collider": {
-                "collisionLayerIndex": 0,
+                "collisionLayerIndex": 1,
                 "data": {
                     "center": {
                         "x": 0.0,
@@ -12,13 +12,14 @@
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "radius": 50.0,
+                    "radius": 32.0,
                     "scaleOffset": 1.0
                 },
                 "isTrigger": false,
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {
+                "InteractionLayer": 0,
                 "Layer": 0,
                 "Old ID": 18446744073709551615,
                 "Prefab Type": "GutterRat",
@@ -44,11 +45,14 @@
             },
             "ScriptComponent": {
                 "RatScript_v2_0": {
+                    "data": {
+                        "animationStates": {}
+                    },
                     "state": 0
                 }
             },
             "Transform": {
-                "height": 100.0,
+                "height": 64.0,
                 "orientation": 0.0,
                 "position": {
                     "x": 0.0,
@@ -59,7 +63,7 @@
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 100.0
+                "width": 64.0
             }
         },
         "name": ""

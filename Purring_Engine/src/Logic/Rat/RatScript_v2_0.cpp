@@ -28,6 +28,9 @@
 #include "../Rat/RatReturnState_v2_0.h"
 #include "../Rat/RatAttack_v2_0.h"
 
+#include "../Cat/CatController_v2_0.h"
+
+#define DEBUG_PRINT
 
 namespace PE
 {
@@ -324,8 +327,10 @@ namespace PE
 				case EnumRatType::GUTTER:
 				case EnumRatType::BRAWLER:
 				{
-						idleBehaviour = RatType::PATROL;
+						idleBehaviour = RatType::IDLE;
+						break;
 				}
+				default: break;
 				}
 
 				TriggerStateChange(id, new RatIdle_v2_0{ idleBehaviour }, stateChangeDelay);
@@ -345,6 +350,23 @@ namespace PE
 
 		// ------------ CAT DETECTION ------------ // 
 
+		bool RatScript_v2_0::GetIsCat(EntityID const id) {
+			bool hasCatInName{ false };
+			if (EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			{
+				// Check if the object has cat in the name
+				hasCatInName = EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Cat") != std::string::npos;
+			}
+
+			if (!hasCatInName)
+			{
+				// Check if it's considered a cat by the cat controller
+				hasCatInName = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id);
+			}
+
+			return hasCatInName;
+		}
+
 		void RatScript_v2_0::ClearCollisionContainers(EntityID const id) 
 		{
 				auto it = m_scriptData.find(id);
@@ -363,7 +385,7 @@ namespace PE
 			if (it == m_scriptData.end()) { return; }
 
 			// Check if the cat is alive
-			// -- no function exists --- @TODO
+			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
 
 			// Store the cat in the container
 			it->second.catsInDetectionRadius.insert(catID);
@@ -378,7 +400,7 @@ namespace PE
 			if (it == m_scriptData.end()) { return; }
 
 			// Check if the cat is alive
-			// -- no function exists --- @TODO
+			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
 
 			// Store the cat in the container
 			it->second.catsExitedDetectionRadius.insert(catID);
@@ -392,6 +414,9 @@ namespace PE
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
 
+			// Check if the cat is alive
+			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
+
 			it->second.attackRangeInDetectionRadius.emplace(catID);
 
 			// Remove the cats in the exit container from the enter container
@@ -402,6 +427,9 @@ namespace PE
 		{
 			auto it = m_scriptData.find(id);
 			if (it == m_scriptData.end()) { return; }
+
+			// Check if the cat is alive
+			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
 
 			// Store the cat in the container
 			it->second.attackRangeExitedDetectionRadius.emplace(catID);
@@ -487,6 +515,15 @@ namespace PE
 				}
 				it->second.directionFromRatToPlayerCat = (targetPosition - ratPosition).GetNormalized();
 				it->second.targetPosition = it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
+
+#ifdef DEBUG_PRINT
+				std::cout << "--- RatScript_v2_0::SetTarget(" << id << ") stats: \n"
+						<< "ratPosition: (" << ratPosition.x << ", " << ratPosition.y << ")\n"
+						<< "ratPlayerDistance: " << it->second.ratPlayerDistance << " (versus max range " << it->second.maxMovementRange << ")\n"
+						<< "directionFromRatToPlayerCat: (" << it->second.directionFromRatToPlayerCat.x << ", " << it->second.directionFromRatToPlayerCat.y << ")\n"
+						<< "targetPosition: (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n"
+						<< "--- end stats for SetTarget(" << id << ") ---" << std::endl;
+#endif // DEBUG_PRINT
 		}
 
 
@@ -494,6 +531,10 @@ namespace PE
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
+
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::SetTarget(" << id << ") r_targetPosition: (" << r_targetPosition.x << ", " << r_targetPosition.y << "), capmax? " << capMaximum << "\n";
+#endif // DEBUG_PRINT
 
 				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
 
@@ -504,7 +545,16 @@ namespace PE
 					it->second.ratPlayerDistance = it->second.maxMovementRange;
 				}
 				it->second.directionFromRatToPlayerCat = (r_targetPosition - ratPosition).GetNormalized();
-				it->second.targetPosition = it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
+				it->second.targetPosition = ratPosition + it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
+
+#ifdef DEBUG_PRINT
+				std::cout << "--- RatScript_v2_0::SetTarget(" << id << ") stats: \n"
+						<< "ratPosition: (" << ratPosition.x << ", " << ratPosition.y << ")\n"
+						<< "ratPlayerDistance: " << it->second.ratPlayerDistance << " (versus max range " << it->second.maxMovementRange << ")\n"
+						<< "directionFromRatToPlayerCat: (" << it->second.directionFromRatToPlayerCat.x << ", " << it->second.directionFromRatToPlayerCat.y << ")\n"
+						<< "targetPosition: (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n"
+						<< "--- end stats for SetTarget(" << id << ") ---" << std::endl;
+#endif // DEBUG_PRINT
 		}
 
 
@@ -512,31 +562,48 @@ namespace PE
 		{
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return false; }
-
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): ratPlayerDistance: " << it->second.ratPlayerDistance << ", curr pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
+#endif // DEBUG_PRINT
 				if (it->second.ratPlayerDistance > 0.f)
 				{
-						vec2 newPosition = RatScript_v2_0::GetEntityPosition(id) + (it->second.directionFromRatToPlayerCat * it->second.movementSpeed * deltaTime);
+						float amountToMove{ std::min(it->second.ratPlayerDistance, it->second.movementSpeed * deltaTime) };
+						vec2 newPosition = RatScript_v2_0::GetEntityPosition(id) + (it->second.directionFromRatToPlayerCat * amountToMove);
 						RatScript_v2_0::PositionEntity(id, newPosition);
-						it->second.ratPlayerDistance -= it->second.movementSpeed * deltaTime;
+						it->second.ratPlayerDistance -= amountToMove;
 
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id
 						//		<< " moved to new position: (" << newPosition.x << ", " << newPosition.y
 						//		<< "), Remaining distance: " << it->second.ratPlayerDistance << std::endl;
 
+#ifdef DEBUG_PRINT
+						std::cout << "RatScript_v2_0::CalculateMovement(" << id << ") after moving: ratPlayerDistance: " << it->second.ratPlayerDistance << ", new pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
+#endif // DEBUG_PRINT
+
 						return CheckDestinationReached(it->second.minDistanceToTarget, newPosition, it->second.targetPosition);
 				}
 				else
 				{
+#ifdef DEBUG_PRINT
+						std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): dist to target is zero (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n";
+#endif // DEBUG_PRINT
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " has no movement or already at destination." << std::endl;
-						return false;
+						RatScript_v2_0::PositionEntity(id, it->second.targetPosition);
+						it->second.ratPlayerDistance = 0.f;
+						return true;
 				}
 		}
 
 
 		bool RatScript_v2_0::CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition)
 		{
-				bool reached = (newPosition - targetPosition).LengthSquared() <= (minDistanceToTarget * minDistanceToTarget);
-				//std::cout << "RatMovement_v2_0::CheckDestinationReached - Destination " << (reached ? "reached." : "not reached.") << std::endl;
+				float distanceToTarget{ (newPosition - targetPosition).LengthSquared() };
+				bool reached = distanceToTarget <= (minDistanceToTarget * minDistanceToTarget);
+
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::CheckDestinationReached(): distanceToTarget: " << distanceToTarget << ", minDistToTarget: " << (minDistanceToTarget * minDistanceToTarget) << ")\n";
+#endif // DEBUG_PRINT
+
 				return reached;
 		}
 

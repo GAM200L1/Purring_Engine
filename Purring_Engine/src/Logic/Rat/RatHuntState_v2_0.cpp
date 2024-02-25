@@ -20,6 +20,7 @@
 #include "../GameStateController_v2_0.h"
 #include "Layers/LayerManager.h"
 
+#define DEBUG_PRINT
 # define M_PI           3.14159265358979323846 
 
 namespace PE
@@ -62,6 +63,10 @@ namespace PE
 				{
 						--huntingTurnsLeft;
 						GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DisableTelegraphs(id);
+
+#ifdef DEBUG_PRINT
+						std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute\n";
+#endif // DEBUG_PRINT
 				}
 
 				switch (p_data->ratType) 
@@ -70,8 +75,18 @@ namespace PE
 				case EnumRatType::BRAWLER:
 				{
 						// Move towards the target position until we've reached or we've run out of turns
-						if (!(p_data->finishedExecution))
+						if (!(p_data->finishedExecution)) {
 								p_data->finishedExecution = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CalculateMovement(p_data->myID, deltaTime);
+#ifdef DEBUG_PRINT
+								std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute - moving\n";
+#endif // DEBUG_PRINT
+						}
+						else 
+						{
+#ifdef DEBUG_PRINT
+								std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in execute - finished moving\n";
+#endif // DEBUG_PRINT
+						}
 						break;
 				}
 				default: break;
@@ -88,7 +103,11 @@ namespace PE
 				// Choose where to move when the planning state has just started
 				if (!m_planningRunOnce)
 				{
+#ifdef DEBUG_PRINT
+						std::cout << "RatHunt_v2_0::StateUpdate(" << p_data->myID << "): in planning\n";
+#endif // DEBUG_PRINT
 					m_planningRunOnce = true;
+					p_data->finishedExecution = false;
 
 					// Check if any of the conditions to change states has been met
 					if (!(p_data->hasRatStateChanged))
@@ -147,60 +166,61 @@ namespace PE
 		vec2 finalTarget{ RatScript_v2_0::GetEntityPosition(targetId) };
 
 
-		while (continueLoop)
-		{
-			hitSomething = false;
-			// Check what cats have exited the collider
+		//while (continueLoop)
+		//{
+		//	hitSomething = false;
+		//	// Check what cats have exited the collider
 
-			std::cout<<"help aaaaaaaaaaa: " << finalTarget.x << " " << finalTarget.y << std::endl;
-			float targetDistance{ (ratPosition - finalTarget).LengthSquared() }; //magnitude
+		//	std::cout<<"help aaaaaaaaaaa: " << finalTarget.x << " " << finalTarget.y << std::endl;
+		//	float targetDistance{ (ratPosition - finalTarget).LengthSquared() }; //magnitude
 
-			vec2 targetNormalized = (ratPosition - finalTarget) / targetDistance;
+		//	vec2 targetNormalized = (ratPosition - finalTarget) / targetDistance;
 
-			float range = std::min(p_data->maxMovementRange, targetDistance);
+		//	float range = std::min(p_data->maxMovementRange, targetDistance);
 
-			vec2 endPoint = ratPosition + (targetNormalized * range);
+		//	vec2 endPoint = ratPosition + (targetNormalized * range);
 
-			LineSegment ls(ratPosition, endPoint);
+		//	LineSegment ls(ratPosition, endPoint);
 
-			for (const auto& layer : LayerView<Collider>())
-			{
-				for (EntityID objectID : InternalView(layer))
-				{
-					if (objectID == p_data->myID)
-						continue;
+		//	for (const auto& layer : LayerView<Collider>())
+		//	{
+		//		for (EntityID objectID : InternalView(layer))
+		//		{
+		//			if (objectID == p_data->myID)
+		//				continue;
 
-					if (EntityManager::GetInstance().Has<EntityDescriptor>(objectID))
-					{
-						if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name == "Obstacle")
-						{
-							if (DoRayCast(ls, objectID).has_value())
-							{	
-								std::cout <<"I am: "<<p_data->myID << " I Have Hit Entity: " << objectID << std::endl;
-								hitSomething = true;
-							}
-						}
-					}
-				}
-			}
-			if (!hitSomething)
-			{
-				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
-				return finalTarget;
-			}
-			--loopTimer;
+		//			if (EntityManager::GetInstance().Has<EntityDescriptor>(objectID))
+		//			{
+		//				if (EntityManager::GetInstance().Get<EntityDescriptor>(objectID).name == "Obstacle")
+		//				{
+		//					if (DoRayCast(ls, objectID).has_value())
+		//					{	
+		//						std::cout <<"I am: "<<p_data->myID << " I Have Hit Entity: " << objectID << std::endl;
+		//						hitSomething = true;
+		//					}
+		//				}
+		//			}
+		//		}
+		//	}
+		//	if (!hitSomething)
+		//	{
+		//		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
+		//		return finalTarget;
+		//	}
+		//	--loopTimer;
 
-			if (loopTimer == 0)
-			{
-				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
-				return finalTarget;
-			}
+		//	if (loopTimer == 0)
+		//	{
+		//		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
+		//		return finalTarget;
+		//	}
 
-			finalTarget = RotatePoint(ratPosition, finalTarget, 15);
-		}
-			// Set the rat target
-			//GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
-		 return finalTarget;
+		//	finalTarget = RotatePoint(ratPosition, finalTarget, 15);
+		//}
+		// 
+		// Set the rat target
+		GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
+		return finalTarget;
 	}
 
 	vec2 RatHunt_v2_0::RotatePoint( vec2 center,  vec2 point, float m)
@@ -257,14 +277,12 @@ namespace PE
 			{
 					OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
 					// check if entity1 is the rat's detection collider and entity2 is cat
-					if ((OTEE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
-							EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
+					if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity2))
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity2);
 					}
 					// check if entity2 is the rat's detection collider and entity1 is cat
-					else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
-							EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
+					else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity1))
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
 					}
@@ -273,14 +291,12 @@ namespace PE
 			{
 					OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
 					// check if entity1 is the rat's detection collider and entity2 is cat
-					if ((OTSE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity2) &&
-							EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
+					if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTSE.Entity2))
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
 					}
 					// check if entity2 is the rat's detection collider and entity1 is cat
-					else if ((OTSE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity1) &&
-							EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
+					else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTSE.Entity1))
 					{
 							GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
 					}
@@ -295,14 +311,12 @@ namespace PE
 
 			OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
 			// check if entity1 is the rat's detection collider and entity2 is cat
-			if ((OTEE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
-					EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
+			if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity2))
 			{
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
 			}
 			// check if entity2 is the rat's detection collider and entity1 is cat
-			else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
-					EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
+			else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity1))
 			{
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
 			}

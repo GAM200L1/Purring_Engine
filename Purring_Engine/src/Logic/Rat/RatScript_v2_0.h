@@ -80,7 +80,7 @@ namespace PE
 		bool shouldChangeState{};  // Flags that the state should change when [timeBeforeChangingState] is zero
 		bool delaySet{ false }; // Whether the state change has been flagged
 		float timeBeforeChangingState{ 0.f }; // Delay before state should change
-		bool finishedExecution{ false }; // Keeps track of whether the execution phase has been completed
+		bool finishedExecution{ true }; // Keeps track of whether the execution phase has been completed
 		bool hasRatStateChanged{ false }; // True if the rat state changed in the last frame, false otherwise
 
 		// Detection and movement
@@ -96,7 +96,7 @@ namespace PE
 		std::set<EntityID> attackRangeExitedDetectionRadius;
 
 		float movementSpeed{ 200.f };
-		float maxMovementRange{ 300.f }; // Total distance that the rat will move in one execution phase
+		float maxMovementRange{ 100.f }; // Total distance that the rat will move in one execution phase
 		float minDistanceToTarget{ 1.f }; // Amount that the rat can be offset from their target before being considered "close enough"
 
 		// Hunting and returning
@@ -390,6 +390,14 @@ namespace PE
 		// --- COLLISION DETECTION --- // 
 
 		/*!***********************************************************************************
+		 \brief Returns true if the entity passed in is a cat, false otherwise.
+
+		 \param[in] id - EntityID of the entity to check.
+		 \return bool - Returns true if the entity passed in is a cat, false otherwise.
+		*************************************************************************************/
+		static bool GetIsCat(EntityID const id);
+
+		/*!***********************************************************************************
 		 \brief Clears the containers used to store the cats being collided with.
 
 		 \param[in] id - EntityID of the rat whose detection radius was entered.
@@ -448,6 +456,7 @@ namespace PE
 		
 		void CatEnteredAttackRadius(EntityID const id, EntityID const catID);
 		void CatExitedAttackRadius(EntityID const id, EntityID const catID);
+
 
 
 		// ----- Private Members ----- //

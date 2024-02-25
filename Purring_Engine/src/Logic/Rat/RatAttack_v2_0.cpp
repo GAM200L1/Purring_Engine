@@ -100,8 +100,6 @@ namespace PE
         {
            // std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack finished, setting finishedExecution to true." << std::endl;
             p_data->finishedExecution = true;
-
-
         }
 
     }
@@ -134,13 +132,13 @@ namespace PE
             OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
             // check if entity1 is rat or rat's attack and entity2 is cat
             if ((OTEE.Entity1 == m_scriptData[id].myID || OTEE.Entity1 == m_scriptData[id].attackTelegraphEntityID) &&
-                EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
+                RatScript_v2_0::GetIsCat(OTEE.Entity2))
             {
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTEE.Entity2, id);
             }
             // check if entity2 is rat or rat's attack and entity1 is cat
             else if ((OTEE.Entity2 == m_scriptData[id].myID || OTEE.Entity2 == m_scriptData[id].attackTelegraphEntityID) &&
-                EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
+                RatScript_v2_0::GetIsCat(OTEE.Entity1))
             {
                 // save the id of the cat that has been checked so that it wont be checked again
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTEE.Entity1, id);
@@ -151,14 +149,14 @@ namespace PE
             OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
             // check if entity1 is rat or rat's attack and entity2 is cat
             if ((OTSE.Entity1 == m_scriptData[id].myID || OTSE.Entity1 == m_scriptData[id].attackTelegraphEntityID) &&
-                EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
+                RatScript_v2_0::GetIsCat(OTSE.Entity2))
             {
                 // save the id of the cat that has been checked so that it wont be checked again
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTSE.Entity2, id);
             }
             // check if entity2 is rat or rat's attack and entity1 is cat
             else if ((OTSE.Entity2 == m_scriptData[id].myID || OTSE.Entity2 == m_scriptData[id].attackTelegraphEntityID) &&
-                EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
+                RatScript_v2_0::GetIsCat(OTSE.Entity1))
             {
                 // save the id of the cat that has been checked so that it wont be checked again
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->DealDamageToCat(OTSE.Entity1, id);
@@ -217,10 +215,9 @@ namespace PE
                 //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Collision detected. Entity1: " << OTEE.Entity1 << ", Entity2: " << OTEE.Entity2 << std::endl;
 
                 // Directly check if one of the entities is the Cat
-                if (EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos ||
-                    EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
+                if (RatScript_v2_0::GetIsCat(OTEE.Entity2) || RatScript_v2_0::GetIsCat(OTEE.Entity1))
                 {
-                    EntityID catID = (EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos) ? OTEE.Entity2 : OTEE.Entity1;
+                    EntityID catID = (RatScript_v2_0::GetIsCat(OTEE.Entity2) ? OTEE.Entity2 : OTEE.Entity1);
                     //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Rat attack collides with Cat ID: " << catID << ", applying damage." << std::endl;
                     catID;
                     // Trigger the attack logic directly without checking attackRadiusId
@@ -241,8 +238,7 @@ namespace PE
             {
                 OnTriggerEnterEvent OTEE = dynamic_cast<OnTriggerEnterEvent const&>(r_TE);
                 // check if entity1 is the rat's detection collider and entity2 is cat
-                if ((OTEE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
-                    EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
+                if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity2))
                 {
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity2);
 
@@ -254,8 +250,7 @@ namespace PE
                     std::cout << std::endl;
                 }
                 // check if entity2 is the rat's detection collider and entity1 is cat
-                else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
-                    EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
+                else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity1))
                 {
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTEE.Entity1);
 
@@ -271,8 +266,7 @@ namespace PE
             {
                 OnTriggerStayEvent OTSE = dynamic_cast<OnTriggerStayEvent const&>(r_TE);
                 // check if entity1 is the rat's detection collider and entity2 is cat
-                if ((OTSE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity2) &&
-                    EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity2).name.find("Cat") != std::string::npos)
+                if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTSE.Entity2))
                 {
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
                     std::cout << "RatAttack_v2_0::OnTriggerStay() catsInDetectionRadius: ";
@@ -283,8 +277,7 @@ namespace PE
                     std::cout << std::endl;
                 }
                 // check if entity2 is the rat's detection collider and entity1 is cat
-                else if ((OTSE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTSE.Entity1) &&
-                    EntityManager::GetInstance().Get<EntityDescriptor>(OTSE.Entity1).name.find("Cat") != std::string::npos)
+                else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTSE.Entity1))
                 {
                     GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
                     std::cout << "RatAttack_v2_0::OnTriggerStay() catsInDetectionRadius: ";
@@ -307,8 +300,7 @@ namespace PE
 
         OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
         // check if entity1 is the rat's detection collider and entity2 is cat
-        if ((OTEE.Entity1 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity2) &&
-            EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos)
+        if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity2))
         {
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
             std::cout << "RatAttack_v2_0::OnTriggerExit() catsExitedDetectionRadius: ";
@@ -319,8 +311,7 @@ namespace PE
             std::cout << std::endl;
         }
         // check if entity2 is the rat's detection collider and entity1 is cat
-        else if ((OTEE.Entity2 == p_data->detectionRadiusId) && EntityManager::GetInstance().Has<EntityDescriptor>(OTEE.Entity1) &&
-            EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
+        else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity1))
         {
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
             std::cout << "RatAttack_v2_0::OnTriggerExit() catsExitedDetectionRadius: ";
