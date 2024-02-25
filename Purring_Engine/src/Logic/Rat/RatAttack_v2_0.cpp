@@ -168,7 +168,7 @@ namespace PE
 
     void RatScript_v2_0::DealDamageToCat(EntityID collidedCat, EntityID rat)
     {
-        CatController_v2_0::KillCat(collidedCat);
+        GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(collidedCat);
         m_scriptData.at(rat).hitCat = true;
     }
 
@@ -190,23 +190,6 @@ namespace PE
             // Check for the closest cat
             EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) };
 
-            // Directly check if one of the entities is the Cat
-            if (EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos ||
-                EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity1).name.find("Cat") != std::string::npos)
-            {
-                EntityID catID = (EntityManager::GetInstance().Get<EntityDescriptor>(OTEE.Entity2).name.find("Cat") != std::string::npos) ? OTEE.Entity2 : OTEE.Entity1;
-                //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - Rat attack collides with Cat ID: " << catID << ", applying damage." << std::endl;
-                catID;
-                // Trigger the attack logic directly without checking attackRadiusId
-                //GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(catID, p_data->attackDamage);
-
-                // Optionally set a flag to prevent multiple attacks if necessary
-                p_data->attacking = false; // This prevents continuous attack, reset this flag when conditions are met for another attack
-            }
-            else
-            {
-                //std::cout << "[DEBUG] RatAttack_v2_0::OnTriggerEnterForAttack - No collision with Cat detected." << std::endl;
-            }
             // a cat just passed by us, hunt it down
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToHunt(p_data->myID, closestCat);
         }

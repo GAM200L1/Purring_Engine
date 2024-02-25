@@ -185,14 +185,14 @@ namespace PE
 			}
 			if (!hitSomething)
 			{
-				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
+				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
 				return finalTarget;
 			}
 			--loopTimer;
 
 			if (loopTimer == 0)
 			{
-				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget);
+				GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, finalTarget, true);
 				return finalTarget;
 			}
 
@@ -205,7 +205,7 @@ namespace PE
 
 	vec2 RatHunt_v2_0::RotatePoint( vec2 center,  vec2 point, float m)
 	{
-		float angle = m * (M_PI / 180.0f);
+		float angle = m * (static_cast<float>(M_PI) / 180.0f);
 
 		float newX = center.x + (point.x - center.x) * std::cos(angle) - (point.y - center.y) * std::sin(angle);
 		float newY = center.y + (point.x - center.x) * std::sin(angle) + (point.y - center.y) * std::cos(angle);
