@@ -134,6 +134,9 @@ namespace PE
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
 
+		// ID of the main cat
+		EntityID m_mainCatID;
+
 		// animation
 		bool m_executionAnimationFinished{ false };
 

@@ -20,6 +20,9 @@
 
 #include "CatMovementStates_v2_0.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "CatController_v2_0.h"
+#include "CatHelperFunctions.h"
+#include "FollowScript_v2_0.h"
 
 #include "ECS/Entity.h"
 #include "Events/CollisionEvent.h"
@@ -29,8 +32,7 @@
 #include "Graphics/CameraManager.h"
 #include "Animation/Animation.h"
 #include "Logic/Script.h"
-#include "CatHelperFunctions.h"
-#include "FollowScript_v2_0.h"
+
 
 namespace PE
 {
@@ -368,13 +370,17 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
-		//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 
-		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
-		{ return; }// if cat is following cat in the chain )
-		else 
-		{ m_mainCatID = id; }
+		if (p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+		{
+			m_doneMoving = true;
+			return;
+		}
+		else
+		{
+			m_mainCatID = id;
+		}
 
 		CatHelperFunctions::PositionEntity(id, p_data->pathPositions.front());
 		p_data->currentPositionIndex = 0;
@@ -383,15 +389,12 @@ namespace PE
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		if (p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
-		{ return; }// if cat is following cat in the chain )
-		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		/*if (p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+		{ return; }*/// if cat is following cat in the chain )
+		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
 		// Check if pause state 
-		if (gsc->currentState == GameStates_v2_0::PAUSE)
-		{
-			return;
-		}
+		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 
 		// Check if the player is still moving
 		if (!m_doneMoving)
@@ -457,8 +460,24 @@ namespace PE
 		}
 		else
 		{
-			// Wait a second before changing state
-			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
+			// for cat chain level
+			if (p_gsc->GetCurrentLevel() == 0 && id == m_mainCatID)
+			{
+				auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
+				// triggers state change for cats in the chain to sync animations
+				for (auto [catID, catType] : catVector)
+				{
+					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(catID);
+					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(catID, 0.5f);
+				}
+				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
+			}
+			// for other levels where cats move independently
+			else if (p_gsc->GetCurrentLevel() != 0)
+			{
+				// Wait a second before changing state
+				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
+			}
 		}
 	}
 

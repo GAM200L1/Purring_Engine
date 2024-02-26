@@ -72,6 +72,10 @@ namespace PE
 				vars.CreateSeismicAndTelegraph(id);
 				break;
 			}
+			case EnumCatType::MAINCAT:
+			{
+				m_mainCatID = id;
+			}
 			default: // main cat or grey cat
 			{
 				GreyCatAttackVariables& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
@@ -332,47 +336,63 @@ namespace PE
 		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
 
 		// when execution phase is activated, sets the state to movement
-		if (r_stateName != "MovementEXECUTE" && r_stateName != GETSCRIPTNAME(AttackEXECUTE))
+		if (r_stateName != "MovementEXECUTE" && r_stateName != "AttackEXECUTE")
 		{
 			TriggerStateChange(id);
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				if (m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy)
+				// if in cat chain level and main cat is moving, animation change to walking
+				if ((p_gsc->GetCurrentLevel() == 0 && m_scriptData[m_mainCatID].catCurrentEnergy < m_scriptData[m_mainCatID].catMaxMovementEnergy) ||
+					// if deployment level, check cats own energy
+					(m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy))
 				{
+					// change to movement execute state
 					m_scriptData[id].p_stateManager->ChangeState(new CatMovement_v2_0EXECUTE{}, id);
-					if (m_scriptData[id].animationStates.size())
-					{
-						m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
-						PlayAnimation(id, "Walk");
-					}
+					
+					// reset and play movement animation
+					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+					PlayAnimation(id, "Walk");
 				}
-				else
+				else if (m_scriptData[id].attackSelected) // if not moving, immediately set to attack state
 				{
+					// change to attack execute state
 					m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
+					
+					// reset and play attack animation
 					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
 					PlayAnimation(id, "Attack");
-					if (!m_scriptData[id].attackSelected)
-						m_scriptData[id].finishedExecution = true;
 				}
 			} 
 		}
 		// executes movement and plays movement animation
 		else if (r_stateName == "MovementEXECUTE")// && !m_scriptData[id].attackSelected
 		{
-			if (m_scriptData[id].animationStates.size())
+			// plays movement animation
+			PlayAnimation(id, "Walk");
+
+			// if in cat chain level and main cat has finished movement execution change state for this cat too
+			if (p_gsc->GetCurrentLevel() == 0 && m_scriptData[m_mainCatID].catCurrentEnergy >= m_scriptData[m_mainCatID].catMaxMovementEnergy)
 			{
-				PlayAnimation(id, "Walk");
-				if (CheckShouldStateChange(id, deltaTime))
+				TriggerStateChange(id);
+			}
+			
+			if (CheckShouldStateChange(id, deltaTime))
+			{
+				// changes to attack execute state when state change is triggered from movement script
+				m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
+				
+				// reset and play animation
+				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+				if (m_scriptData[id].attackSelected)
 				{
-					m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
-					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
-					if (m_scriptData[id].attackSelected)
-						PlayAnimation(id, "Attack");
-					else
-					{
-						PlayAnimation(id, "Idle");
-						m_scriptData[id].finishedExecution = true;
-					}
+					// if attack has been selected play attack execute animation
+					PlayAnimation(id, "Attack");
+				}
+				else
+				{
+					// if no attack has been selected play idle animation
+					PlayAnimation(id, "Idle");
+					m_scriptData[id].finishedExecution = true;
 				}
 			}
 		}
@@ -384,14 +404,14 @@ namespace PE
 			{
 				m_executionAnimationFinished = true; // if attack animation finished set to true
 			}
-			if (m_executionAnimationFinished)
+			if (m_executionAnimationFinished || m_scriptData[id].finishedExecution)
 				PlayAnimation(id, "Idle");
 		}
 	}
 
 	void CatScript_v2_0::PlayAnimation(EntityID id, std::string const& r_animationState)
 	{
-		if (m_scriptData[id].p_catAnimation != nullptr)
+		if (m_scriptData[id].p_catAnimation != nullptr && m_scriptData[id].animationStates.size())
 		{
 			try
 			{

@@ -77,12 +77,14 @@ namespace PE
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 
 		CircleCollider const& r_telegraphCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->telegraphID).colliderVariant);
-
+		CircleCollider const& r_catCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(id).colliderVariant);
+		
 		vec2 cursorPosition{ CatHelperFunctions::GetCursorPositionInWorld() };
 
 		bool collidingWithTelegraph = PointCollision(r_telegraphCollider, cursorPosition);
+		bool collidingWithCat = PointCollision(r_catCollider, cursorPosition);
 
-		if (collidingWithTelegraph)
+		if (collidingWithTelegraph && !collidingWithCat)
 		{
 			CatHelperFunctions::SetColor(p_attackData->telegraphID, m_hoverColor);
 			if (m_mouseClick)
@@ -102,7 +104,7 @@ namespace PE
 			(GETSCRIPTDATA(CatScript_v2_0, id))->planningAttack = false;
 
 			if (!(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
-				CatHelperFunctions::ToggleEntity(p_attackData->telegraphID, false);
+				ToggleTelegraphs(false, false);
 		}
 
 		m_mouseClickedPrevious = m_mouseClick;
@@ -116,7 +118,7 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::Exit(EntityID id)
 	{
-		CatHelperFunctions::ToggleEntity(p_attackData->telegraphID, false);
+		ToggleTelegraphs(false, false);
 	}
 
 	void OrangeCatAttack_v2_0PLAN::ResetSelection(EntityID id)
@@ -140,7 +142,8 @@ namespace PE
 
 	void OrangeCatAttack_v2_0PLAN::ToggleTelegraphs(bool setToggle, bool ignoreSelected)
 	{
-		CatHelperFunctions::ToggleEntity(p_attackData->telegraphID, false);
+		ignoreSelected;
+		CatHelperFunctions::ToggleEntity(p_attackData->telegraphID, setToggle);
 	}
 
 	// ----- ATTACK EXECUTE ----- //
