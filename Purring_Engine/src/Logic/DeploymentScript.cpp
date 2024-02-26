@@ -248,7 +248,7 @@ namespace PE
 						}
 						case EnumCatType::ORANGECAT:
 						{							//to be replaced
-							NewCatID = sm.LoadFromFile(("DeploymentTest_Prefab.json"));
+							NewCatID = sm.LoadFromFile(("OrangeCat_Prefab.json"));
 							break;
 						}
 						//case EnumCatType::FLUFFYCAT:
