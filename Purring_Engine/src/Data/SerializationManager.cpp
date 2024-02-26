@@ -45,8 +45,23 @@
 #include <rttr/type.h>
 
 const std::wstring wjsonExt = L".json";
+const std::wstring wAnimExt = L".anim";
+const std::wstring wSceneExt = L".scene";
+const std::wstring wTrueTypeFontExt = L".ttf";
+const std::wstring wPngExt = L".png";
 
-std::string SerializationManager::OpenFileExplorer()
+const wchar_t* wJsonFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
+const wchar_t* wAnimFilter = L"ANIM Files\0*.anim\0All Files\0*.*\0";
+const wchar_t* wTrueTypeFontFilter = L"TrueType font Files\0*.ttf\0All Files\0*.*\0";
+const wchar_t* wSceneFilter = L"SCENE Files\0*.scene\0All Files\0*.*\0";
+const wchar_t* wPngFilter = L"PNG Files\0*.png\0All Files\0*.*\0";
+
+const wchar_t* wAnimInitialDirectory = L"..\\Assets\\Animation";
+const wchar_t* wFontInitialDirectory = L"..\\Assets\\Fonts";
+const wchar_t* wSceneInitialDirectory = L"..\\Assets\\Scenes";
+const wchar_t* wTextureInitialDirectory = L"..\\Assets\\Textures";
+
+std::string SerializationManager::OpenFileExplorer(std::string const& type)
 {
     OPENFILENAME ofn;
     wchar_t szFile[260];
@@ -56,12 +71,37 @@ std::string SerializationManager::OpenFileExplorer()
     ofn.lpstrFile = szFile;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (type == ".json")
+    {
+        ofn.lpstrFilter = wJsonFilter;
+        ofn.lpstrInitialDir = NULL;
+    }
+    else if (type == ".anim")
+    {
+        ofn.lpstrFilter = wAnimFilter;
+        ofn.lpstrInitialDir = wAnimInitialDirectory;
+    }
+    else if (type == ".scene")
+    {
+        ofn.lpstrFilter = wSceneFilter;
+        ofn.lpstrInitialDir = wSceneInitialDirectory;
+    }
+    else if (type == ".ttf")
+    {
+        ofn.lpstrFilter = wTrueTypeFontFilter;
+        ofn.lpstrInitialDir = wFontInitialDirectory;
+    }
+    else if (type == ".png")
+    {
+        ofn.lpstrFilter = wPngFilter;
+        ofn.lpstrInitialDir = wTextureInitialDirectory;
+    }
+
 
     if (GetOpenFileNameW(&ofn) == TRUE)
     {
@@ -81,7 +121,7 @@ std::string SerializationManager::OpenFileExplorer()
     return "";
 }
 
-std::string SerializationManager::OpenFileExplorerRequestPath()
+std::string SerializationManager::OpenFileExplorerRequestPath(std::string const& type)
 {
     OPENFILENAME ofn;
     wchar_t szFile[260];
@@ -91,12 +131,36 @@ std::string SerializationManager::OpenFileExplorerRequestPath()
     ofn.lpstrFile = szFile;
     ofn.lpstrFile[0] = '\0';
     ofn.nMaxFile = sizeof(szFile);
-    ofn.lpstrFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
     ofn.nFilterIndex = 1;
     ofn.lpstrFileTitle = NULL;
     ofn.nMaxFileTitle = 0;
-    ofn.lpstrInitialDir = NULL;
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_NOCHANGEDIR;
+
+    if (type == ".json")
+    {
+        ofn.lpstrFilter = wJsonFilter;
+        ofn.lpstrInitialDir = NULL;
+    }
+    else if (type == ".anim")
+    {
+        ofn.lpstrFilter = wAnimFilter;
+        ofn.lpstrInitialDir = wAnimInitialDirectory;
+    }
+    else if (type == ".scene")
+    {
+        ofn.lpstrFilter = wSceneFilter;
+        ofn.lpstrInitialDir = wSceneInitialDirectory;
+    }
+    else if (type == ".ttf")
+    {
+        ofn.lpstrFilter = wTrueTypeFontFilter;
+        ofn.lpstrInitialDir = wFontInitialDirectory;
+    }
+    else if (type == ".png")
+    {
+        ofn.lpstrFilter = wPngFilter;
+        ofn.lpstrInitialDir = wTextureInitialDirectory;
+    }
 
     if (GetOpenFileNameW(&ofn) == TRUE)
     {
@@ -161,7 +225,23 @@ void SerializationManager::DeserializeAllEntities(const nlohmann::json& r_j)
     }
 }
 
-void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bool fp)
+//void SerializationManager::ConvertJsonToExtension(nlohmann::json const& r_json, std::string const& r_fileName)
+//{
+//    std::string jsonData{ r_json.dump() };
+//
+//    std::ofstream outFile(r_fileName);
+//    if (outFile)
+//    {
+//        outFile << jsonData;
+//        outFile.close();
+//    }
+//    else
+//    {
+//        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+//    }
+//}
+
+void SerializationManager::SerializeScene(std::string const& filename, bool fp)
 {
     nlohmann::json allEntitiesJson = SerializeAllEntities();
 
@@ -186,6 +266,31 @@ void SerializationManager::SaveAllEntitiesToFile(std::string const& filename, bo
     else
     {
         std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
+
+void SerializationManager::DeserializeScene(std::string const& r_scenePath)
+{
+    std::filesystem::path filepath = r_scenePath;
+
+    if (!std::filesystem::exists(filepath))
+    {
+        std::cerr << "File does not exist: " << filepath << std::endl;
+        return;
+    }
+
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        SerializationManager serializationManager;
+        nlohmann::json allEntitiesJson;
+        inFile >> allEntitiesJson;
+        serializationManager.DeserializeAllEntities(allEntitiesJson);
+        inFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
     }
 }
 
@@ -764,3 +869,5 @@ bool SerializationManager::LoadGUISlider(const EntityID& r_id, const nlohmann::j
     }
     return false;
 }
+
+

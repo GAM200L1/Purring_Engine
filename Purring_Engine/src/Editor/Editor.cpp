@@ -446,7 +446,7 @@ namespace PE {
 						
 						// deselect object
 						m_currentSelectedObject = -1;
-						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+						SceneManager::GetInstance().RestartScene("Savestate/savestate.scene");
 
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
@@ -459,7 +459,7 @@ namespace PE {
 
 						// deselect object
 						m_currentSelectedObject = -1;
-						SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+						SceneManager::GetInstance().RestartScene("Savestate/savestate.scene");
 
 						engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						ImGui::ClosePopupToLevel(0, true);
@@ -2450,7 +2450,7 @@ namespace PE {
 									ImGui::SameLine();
 									if (ImGui::Button("Load"))
 									{
-										std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+										std::string filePath = serializationManager.OpenFileExplorerRequestPath(".ttf");
 
 										// Check if filePath is not empty
 										if (!filePath.empty())
@@ -3379,7 +3379,7 @@ namespace PE {
 								engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 								// This will save all entities to a file
 		
-								serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+								serializationManager.SerializeScene("Savestate/savestate.scene");
 								engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								
 							}
@@ -3672,7 +3672,7 @@ namespace PE {
 			if (ImGui::Button("Create Animation"))
 			{
 				// Get the file path using the file explorer
-				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath(".anim");
 
 				// Check if filePath is not empty
 				if (!filePath.empty())
@@ -3779,7 +3779,7 @@ namespace PE {
 			// Load texture through file explorer
 			if (ImGui::Button("Load Spritesheet"))
 			{
-				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath(".png");
 
 				// Check if filePath is not empty
 				if (!filePath.empty())
@@ -3877,7 +3877,7 @@ namespace PE {
 			ImGui::SameLine();
 			if (ImGui::Button("Load"))
 			{
-				std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+				std::string filePath = serializationManager.OpenFileExplorerRequestPath(".anim");
 
 				// Check if filePath is not empty
 				if (!filePath.empty())
@@ -4048,7 +4048,7 @@ namespace PE {
 						m_showGameView = true;
 						engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 						// This will save all entities to a file
-						serializationManager.SaveAllEntitiesToFile("Savestate/savestate.json");
+						serializationManager.SerializeScene("Savestate/savestate.scene");
 						UndoStack::GetInstance().ClearStack();
 						engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 					}
@@ -4061,7 +4061,7 @@ namespace PE {
 						{
 							// deselect object
 							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							SceneManager::GetInstance().RestartScene("Savestate/savestate.scene");
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
@@ -4127,7 +4127,7 @@ namespace PE {
 							m_isPrefabMode = false;
 							// deselect object
 							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							SceneManager::GetInstance().RestartScene("Savestate/savestate.scene");
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 							m_applyPrefab = true;
@@ -4139,7 +4139,7 @@ namespace PE {
 							m_isPrefabMode = false;
 							// deselect object
 							m_currentSelectedObject = -1;
-							SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+							SceneManager::GetInstance().RestartScene("Savestate/savestate.scene");
 
 							engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 						}
@@ -4250,7 +4250,7 @@ namespace PE {
 									engine_logger.AddLog(false, "Attempting to save all entities to file...", __FUNCTION__);
 									// This will save all entities to a file
 
-									serializationManager.SaveAllEntitiesToFile(serializationManager.OpenFileExplorerRequestPath(), true);
+									serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(".scene"), true);
 									engine_logger.AddLog(false, "Entities saved successfully to file.", __FUNCTION__);
 								}
 								if (ImGui::MenuItem("Load"))
@@ -4258,7 +4258,7 @@ namespace PE {
 									engine_logger.AddLog(false, "Opening file explorer to load entities...", __FUNCTION__);
 
 									// Invoke the file explorer and allow user to choose a JSON file for loading entities.
-									std::string filePath = serializationManager.OpenFileExplorer();
+									std::string filePath = serializationManager.OpenFileExplorer(".scene");
 									if (!filePath.empty())
 									{
 										engine_logger.AddLog(false, "Attempting to load entities from chosen file...", __FUNCTION__);
@@ -4762,7 +4762,7 @@ namespace PE {
 			{
 				// deselect object
 				m_currentSelectedObject = -1;
-				SceneManager::GetInstance().RestartScene("Savestate/savestate.json");
+				SceneManager::GetInstance().RestartScene("Savestate/savestate.scene");
 
 				engine_logger.AddLog(false, "Entities loaded successfully from file.", __FUNCTION__);
 			}

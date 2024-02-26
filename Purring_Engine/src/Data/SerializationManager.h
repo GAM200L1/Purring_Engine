@@ -70,14 +70,14 @@ public:
     /*!***********************************************************************************
      \brief Opens a file explorer and returns the selected file path as a string.
     *************************************************************************************/
-    std::string OpenFileExplorer();
+    std::string OpenFileExplorer(std::string const& type = ".json");
 
     /*!***********************************************************************************
      \brief Opens a file explorer and returns the selected file path as a string.
             This version is used mainly to save a file with a potentially not existing
             filename.
     *************************************************************************************/
-    std::string OpenFileExplorerRequestPath();
+    std::string OpenFileExplorerRequestPath(std::string const& type = ".json");
 
     /*!***********************************************************************************
      \brief Serialize all entities in the scene into a single JSON object.
@@ -92,7 +92,9 @@ public:
     /*!***********************************************************************************
      \brief Save the serialized JSON of all entities to a file with the given filename.
     *************************************************************************************/
-    void SaveAllEntitiesToFile(std::string const& fileName, bool fp = false);
+    void SerializeScene(std::string const& fileName, bool fp = false);
+
+    void DeserializeScene(std::string const& r_scenePath);
 
     /*!***********************************************************************************
      \brief Serialize the entity with the given ID to a JSON object.
@@ -223,6 +225,10 @@ private:
      \brief Load the Transform component from JSON.
     *************************************************************************************/
     bool LoadGUISlider(const size_t& r_id, const nlohmann::json& r_json);
+
+    void ConvertJsonToExtension(nlohmann::json const& r_json, std::string const& r_fileName);
+
+    void ParseExtensionToJson(const std::string& r_extension, nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:
