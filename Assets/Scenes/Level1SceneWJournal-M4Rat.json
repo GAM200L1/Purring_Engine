@@ -4152,7 +4152,7 @@
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 61
+                        "sceneID": 33
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4184,7 +4184,7 @@
                         "isActive": true,
                         "name": "FPSTextObject",
                         "parent": 71,
-                        "sceneID": 82
+                        "sceneID": 34
                     },
                     "ScriptComponent": {
                         "FpsScript": {
@@ -4597,7 +4597,25 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 91
+                                "FollowObjectID": 91,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
                             },
                             "state": 0
                         }
@@ -4732,7 +4750,25 @@
                     "ScriptComponent": {
                         "HealthBarScript_v2_0": {
                             "data": {
-                                "FollowObjectID": 92
+                                "FollowObjectID": 92,
+                                "fillColorAlmostEmpty": {
+                                    "w": 1.0,
+                                    "x": 0.9800000190734863,
+                                    "y": 0.23000000417232513,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorFull": {
+                                    "w": 1.0,
+                                    "x": 0.36000001430511475,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                },
+                                "fillColorHalf": {
+                                    "w": 1.0,
+                                    "x": 0.9200000166893005,
+                                    "y": 0.9800000190734863,
+                                    "z": 0.20999999344348907
+                                }
                             },
                             "state": 0
                         }
@@ -4895,14 +4931,14 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 144.99905395507813,
-                                "y": -72.00016784667969
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 0.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -4991,14 +5027,14 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 63.99998474121094,
-                                "y": 167.99993896484375
+                                "x": 0.0,
+                                "y": 0.0
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
+                            "radius": 0.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -5191,6 +5227,16 @@
         {
             "Entity": {
                 "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGutterRat_Attack_Anim.json",
+                            "../Assets/Animation/AnimationGutterRat_Death_Anim.json",
+                            "../Assets/Animation/AnimationGutterRat_Hurt_Anim.json",
+                            "../Assets/Animation/AnimationGutterRat_Idle_Anim.json",
+                            "../Assets/Animation/AnimationGutterRat_Walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": ""
+                    },
                     "Collider": {
                         "collisionLayerIndex": 1,
                         "data": {
@@ -5211,13 +5257,13 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 93,
+                        "Old ID": 94,
                         "Prefab Type": "GutterRat",
                         "children": [],
                         "isActive": true,
                         "name": "GutterRat",
                         "parent": null,
-                        "sceneID": 93
+                        "sceneID": 94
                     },
                     "Renderer": {
                         "Color": {
@@ -5236,7 +5282,13 @@
                     "ScriptComponent": {
                         "RatScript_v2_0": {
                             "data": {
-                                "animationStates": {}
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationGutterRat_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationGutterRat_Death_Anim.json",
+                                    "Hurt": "../Assets/Animation/AnimationGutterRat_Hurt_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationGutterRat_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationGutterRat_Walk_Anim.json"
+                                }
                             },
                             "state": 0
                         }
