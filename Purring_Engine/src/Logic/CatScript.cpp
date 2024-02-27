@@ -316,8 +316,20 @@ namespace PE
 	void CatScript::LoseHP(EntityID id, int damageTaken)
 	{
 		if (!GameStateManager::GetInstance().godMode)
+		{
+			// Debug: Log current HP before taking damage
+			std::cout << "[DEBUG] Cat ID: " << id << " - Current HP: " << m_scriptData[id].catHealth << std::endl;
+
 			m_scriptData[id].catHealth -= damageTaken;
-		std::cout << "Cat HP: " << m_scriptData[id].catHealth << '\n';
+
+			// Debug: Log HP after taking damage
+			std::cout << "[DEBUG] Cat ID: " << id << " - New HP after taking " << damageTaken << " damage: " << m_scriptData[id].catHealth << std::endl;
+		}
+		else
+		{
+			// If God Mode is enabled, log that the cat is invulnerable
+			std::cout << "[DEBUG] God Mode is ON. Cat ID: " << id << " did not take any damage." << std::endl;
+		}
 	}
 		
 	void CatScript::MakeStateManager(EntityID id)
@@ -424,7 +436,7 @@ namespace PE
 	vec2 CatScript::GetCursorPositionInWorld()
 	{
 			float mouseX{}, mouseY{};
-			InputSystem::GetCursorViewportPosition(GameStateManager::GetInstance().p_window, mouseX, mouseY);
+			InputSystem::GetCursorViewportPosition(WindowManager::GetInstance().GetWindow(), mouseX, mouseY);
 			return GETCAMERAMANAGER()->GetWindowToWorldPosition(mouseX, mouseY);
 	}
 

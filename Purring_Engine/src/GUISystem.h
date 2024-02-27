@@ -43,7 +43,7 @@ namespace PE
 		 \param [in] width - Target width of the canvas.
 		 \param [in] height - Target height of the canvas.
 		*************************************************************************************/
-		GUISystem(GLFWwindow* p_glfwWindow, float const width, float const height);
+		GUISystem(float const width, float const height);
 
 		/*!***********************************************************************************
 		 \brief     Virtual destructor for proper cleanup of derived systems.
@@ -153,12 +153,15 @@ namespace PE
 		*************************************************************************************/
 		static void AddFunction(std::string_view, const std::function<void(EntityID)>& func);
 
+		/*!***********************************************************************************
+		 \brief returns the map of functionss
+		*************************************************************************************/
+		static std::map<std::string_view, std::function<void(EntityID)>> GetButtonFunctions();
+
 	public:
 			static std::map<std::string_view, std::function<void(EntityID)>> m_uiFunc;
 
 	private:
-			GLFWwindow* p_window{};
-
 			// Stores the IDs of the active canvases
 			static std::unordered_set<EntityID> m_activeCanvases;
 			static float m_targetResolutionWidth, m_targetResolutionHeight; // Dimensions the canvases should have
@@ -194,6 +197,22 @@ namespace PE
 				GUISystem::m_uiFunc[m_onHovered](id);
 		}
 		/*!***********************************************************************************
+		 \brief On entering hovering over the UI element
+		*************************************************************************************/
+		void OnHoverEnter(EntityID id)
+		{
+			if (m_onHoverEnter != "")
+				GUISystem::m_uiFunc[m_onHoverEnter](id);
+		}
+		/*!***********************************************************************************
+		 \brief On exiting hovering over the UI element
+		*************************************************************************************/
+		void OnHoverExit(EntityID id)
+		{
+			if (m_onHoverExit != "")
+				GUISystem::m_uiFunc[m_onHoverExit](id);
+		}
+		/*!***********************************************************************************
 		 \brief On clicking the UI element	 
 		*************************************************************************************/
 		void OnClick(EntityID id) 
@@ -208,7 +227,10 @@ namespace PE
 	public:
 		std::string m_onClicked{""};
 		std::string m_onHovered{""};
+		std::string m_onHoverEnter{""};
+		std::string m_onHoverExit{""};
 		bool m_Hovered{};
+		bool m_hoveredOnce{};
 		bool disabled{false};
 		UIType m_UIType{0};
 
@@ -253,9 +275,14 @@ namespace PE
 		void Destroy();
 
 		/*!***********************************************************************************
-		 \brief Calculate the current value of the slider based on given min and max values.
+		 \brief Calculate the current value of the knob based on given min and max values.
 		*************************************************************************************/
-		float CalculateValue(float currentX);
+		float CalculateKnobValue(float currentX);
+
+		/*!***********************************************************************************
+		 \brief Calculate the current position of the knob based on given min and max values.
+		*************************************************************************************/
+		float CalculateKnobCenter(float currentX);
 
 		/*!***********************************************************************************
 		 \brief Destructor
@@ -269,6 +296,8 @@ namespace PE
 		//if knob is clicked to be changed by events
 		bool m_clicked{ false };
 
+		//if knob is a healthbar
+		bool m_isHealthBar{ false };
 
 		//texture for knob
 		vec4 m_defaultColor{ HEX(100),HEX(100) ,HEX(100),HEX(100) };
@@ -285,6 +314,10 @@ namespace PE
 		//calculated on update
 		float m_startPoint, m_endPoint;
 		float m_currentValue;
+		float m_currentXpos;
+
+		//default 75 but to be changed on editor
+		float m_currentWidth{75};
 
 		//set on editor
 		float m_minValue{ 0 }, m_maxValue{100};

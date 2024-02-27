@@ -19,9 +19,18 @@
 #include "ECS/Entity.h"
 #include "Math/MathCustom.h"
 #include "Events/EventHandler.h"
+#include "GameStateController_v2_0.h"
 
 namespace PE
 {
+	enum class EnumOldRatType
+	{
+		GUTTER,
+		BRAWLER,
+		SNIPER,
+		HERALD
+	};
+
 	struct RatScriptData
 	{
 		// reference entities
@@ -30,7 +39,7 @@ namespace PE
 		EntityID mainCatID{ 3 }; // needs manual setting
 		
 		// rat stats
-		int health{ 1 }; // health of the rat, needs manual setting
+		int health{ 3 }; // health of the rat, needs manual setting
 
 		// movement variables
 		float movementSpeed{ 200.f }; // speed of rat needs manual setting
@@ -41,7 +50,7 @@ namespace PE
 		EntityID attackTelegraphID{ 0 }; // id of cross attack telegraph
 		EntityID detectionTelegraphID{ 0 }; // id of red detection telegraph
 		float detectionRadius{ 4.f }; // radius of the detection UI needs manual setting
-		float attackDiameter{ 64.f }; // radius of the attack
+		float attackDiameter{ 64.f * 2.f }; // radius of the attack
 		float attackDuration{ 0.5f }; // how long the attack is active needs manual setting
 		int collisionDamage{ 1 }; // damage when touching the rat needs manual setting
 		int attackDamage{ 1 }; // damage when properly attacked by the rat needs manual setting
@@ -56,8 +65,13 @@ namespace PE
 		bool delaySet{ false }; // check if there is state change delay
 		float timeBeforeChangingState{ 0.f }; // delay before state change
 		bool finishedExecution{ false }; // bool to check if rat has finished its movemen and attack executions
+		bool animationStart{ false };
 
 		std::map<std::string, std::string> animationStates;
+
+		std::vector<EntityID> targetCats;
+
+		EnumOldRatType ratType{ EnumOldRatType::GUTTER };
 	};
 
 	class RatScript : public Script
@@ -215,7 +229,41 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id) { return rttr::instance(m_scriptData.at(id)); }
 
+
+		// ----- Play Audio ----- //
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random attack SFX.
+		*************************************************************************************/
+		static void PlayAttackAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random death SFX.
+		*************************************************************************************/
+		static void PlayDeathAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random detection SFX.
+		*************************************************************************************/
+		static void PlayDetectionAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random injury SFX.
+		*************************************************************************************/
+		static void PlayInjuredAudio();
+
+		/*!***********************************************************************************
+		 \brief Spawn an audio object using the audio object at the filepath passed in and 
+				play audio with it.
+
+		 \param[in] soundPrefab - Filepath of the audio object prefab to load.
+		*************************************************************************************/
+		static void PlayAudio(std::string const& soundPrefab);
+
 	private:
+		// ----- Private Variables ----- //
+		GameStateController_v2_0* p_gsc;
+
 		// ----- Private Functions ----- //
 		/*!***********************************************************************************
 		 \brief Create entities for the attack telegraphs for the rat from prefabs. Adjusts 
@@ -224,6 +272,7 @@ namespace PE
 		 \param[in] id - EntityID of the rat to create telegraphs for
 		*************************************************************************************/
 		void CreateAttackTelegraphs(EntityID id);
+
 	};
 
 	class RatIDLE : public State

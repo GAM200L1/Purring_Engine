@@ -35,6 +35,7 @@
 
 namespace PE
 {
+
 	//! Enum denoting cardinal directions for attack
 	enum EnumCatAttackDirection
 	{

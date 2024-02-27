@@ -62,7 +62,7 @@ namespace PE {
 
 		 \param[in] GLFWwindow 	the glfw window that we are drawing onto
 		*************************************************************************************/
-		void Init(GLFWwindow* p_window);
+		void Init();
 		/*!***********************************************************************************
 		 \brief Render all imgui windows
 
@@ -182,12 +182,6 @@ namespace PE {
 		*************************************************************************************/
 		void ShowObjectWindow(bool* p_active);
 		/*!***********************************************************************************
-		 \brief render the test windows (Temp for milestone 1 for elie to test)
-
-		 \param[in] bool* reference to the boolean that sets the window active
-		*************************************************************************************/
-		void ShowDemoWindow(bool* p_active);
-		/*!***********************************************************************************
 		 \brief render the object component window
 
 		 \param[in] bool* reference to the boolean that sets the window active
@@ -246,6 +240,13 @@ namespace PE {
 		void ShowApplyWindow(bool*p_active);
 
 		/*!***********************************************************************************
+		 \brief open the layer window
+
+		 \param[in] active reference to the boolean that sets the window active
+		*************************************************************************************/
+		void ShowLayerWindow(bool* p_active);
+
+		/*!***********************************************************************************
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Dark();
@@ -265,6 +266,11 @@ namespace PE {
 		 \brief Set custom ImGUI style
 		*************************************************************************************/
 		void SetImGUIStyle_Blue();
+
+
+		std::string ToLower(const std::string& str);
+		bool CaseInsensitiveFind(const std::string& str, const std::string& toFind);
+
 		// ----- Private Logging Functions ----- // 
 	private:
 		/*!***********************************************************************************
@@ -344,6 +350,16 @@ namespace PE {
 		*************************************************************************************/
 		EntityID CheckCanvas();
 
+		/*!***********************************************************************************
+		 \brief Save the current state as save state and press play
+		*************************************************************************************/
+		void SaveAndPlayScene();
+
+		/*!***********************************************************************************
+		 \brief Stop and Load previous safestate
+		*************************************************************************************/
+		void StopAndLoadScene();
+
 	private:
 		enum class GuiStyle
 		{
@@ -373,7 +389,6 @@ namespace PE {
 		bool m_showObjectList;
 		bool m_showConsole;
 		bool m_showSceneView;
-		bool m_showTestWindows;
 		bool m_showEditor;
 		bool m_showComponentWindow;
 		bool m_showResourceWindow;
@@ -382,6 +397,7 @@ namespace PE {
 		bool m_firstLaunch;
 		bool m_showGameView;
 		bool m_showAnimationWindow;
+		bool m_showLayerWindow;
 		//boolean for rendering
 		bool m_renderDebug;
 		bool m_isRunTime;
@@ -403,24 +419,27 @@ namespace PE {
 		bool m_mouseInObjectWindow;
 		bool m_objectIsSelected;
 		bool m_sceneViewFocused;
-		int m_currentSelectedObject;
+		int m_currentSelectedObject{ -1 };
 		ImGuizmo::OPERATION m_currentGizmoOperation{ImGuizmo::OPERATION::TRANSLATE};
 
 		//variable for assets browser
 		float m_time;
 		float m_renderWindowWidth, m_renderWindowHeight; // dimensions of the scene window
 		float m_playWindowOffset {27.f};
-		GLFWwindow* p_window;
 		bool m_mouseInScene;
 		static std::filesystem::path m_parentPath;
 		std::vector<std::filesystem::path> m_files;
 		std::pair<std::string, int> m_entityToModify;
+		std::pair<std::string, std::string> m_animationToModify;
 		static bool m_fileDragged;
 
 		// variables for prefab editor
 		std::string prefabFP;
 		std::string prefabTP;
 		std::vector<ComponentID> prefabCID;
+
+		// variable for scene loading
+		std::string m_savedScene;
 	};
 }
 

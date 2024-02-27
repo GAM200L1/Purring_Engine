@@ -34,6 +34,8 @@
 #include "ECS/SceneView.h"
 #include "Text.h"
 
+#pragma once
+
 namespace PE
 {
     namespace Graphics
@@ -63,8 +65,30 @@ namespace PE
              \param[in] windowWidth Width of the window.
              \param[in] windowHeight Height of the window.
             *************************************************************************************/
-            RendererManager(GLFWwindow* p_window, CameraManager& r_cameraManagerArg, 
+            RendererManager( CameraManager& r_cameraManagerArg, 
                 int const windowWidth, int const windowHeight);
+
+            // ----- Public getters / setters ----- //
+        public:
+            /*!***********************************************************************************
+             \brief Sets the RGBA color that is rendered when there is nothing in the scene. 
+
+             \param[in] r Red component of the color to set the background to (from [0, 1]).
+             \param[in] g Green component of the color to set the background to (from [0, 1]).
+             \param[in] b Blue component of the color to set the background to (from [0, 1]).
+             \param[in] a Alpha component of the color to set the background to (from [0, 1]).
+            *************************************************************************************/
+            void SetBackgroundColor(float const r = 0.f, float const g = 0.f, float const b = 0.f, float const a = 1.f);
+
+            /*!***********************************************************************************
+             \brief Gets the RGBA color that is rendered when there is nothing in the scene. 
+
+             \return The RGBA color that is rendered when there is nothing in the scene. 
+            *************************************************************************************/
+            inline vec4 GetBackgroundColor() const 
+            {
+                return vec4{ m_backgroundColor.r, m_backgroundColor.g, m_backgroundColor.b, m_backgroundColor.a };
+            }
 
             // ----- Public methods ----- //
         public:
@@ -351,6 +375,14 @@ namespace PE
             void RenderText(glm::mat4 const& r_worldToNdc);
 
             /*!***********************************************************************************
+             \brief Renders text from r_text parameter. Retrieves glyph information from map
+                   and renders a quad with the data.
+
+             \param[in] r_worldToNdc Projection matrix for transforming vertex coordinates of quad
+            *************************************************************************************/
+            void RenderText(const EntityID& r_id, glm::mat4 const& r_worldToNdc);
+
+            /*!***********************************************************************************
              \brief Renders a line of text from r_line parameter. Retrieves glyph information from
                     map and renders a quad with the data.
 
@@ -365,7 +397,6 @@ namespace PE
 
             // ----- Private variables ----- //
         private:
-            GLFWwindow* p_glfwWindow; // Pointer to the GLFW window to render to
             CameraManager& r_cameraManager; // Reference to the camera manager
 
             // Framebuffer object for rendering game scene rendered through the editor or in-game runtime camera
@@ -389,6 +420,9 @@ namespace PE
             std::vector<glm::mat4> m_modelToWorldMatrices{}; // Container that stores the model to world matrix for the quad
             std::vector<glm::vec4> m_colors{}; // Container that stores the color for each quad
             std::vector<glm::vec2> m_UV{};
+
+            // Color that is rendered when there is nothing in the scene
+            glm::vec4 m_backgroundColor{ 0.796f, 0.6157f, 0.4588f, 1.f }; // brown by default
 
             // ----- Private methods ----- //
         private:

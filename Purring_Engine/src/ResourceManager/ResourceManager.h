@@ -43,6 +43,7 @@
 #include "AudioManager/AudioManager.h"
 #include "Graphics/Text.h"
 #include "Animation/Animation.h"
+#include "imgui.h"
 
 //class Resource
 //{
@@ -80,6 +81,11 @@ namespace PE
         // ----- Public methods ----- //
         // ----- Get/Load Resource/Asset Functions ----- //
         
+        /*!***********************************************************************************
+            \brief Loads default assets for use.
+        *************************************************************************************/
+        void LoadDefaultAssets();
+
         /*!***********************************************************************************
             \brief Loads shaders from file, compile them and inserts into ShaderProgram map
                    container.
@@ -148,6 +154,51 @@ namespace PE
             \return True if animation is loaded successfully, false otherwise.
         *************************************************************************************/
         bool LoadAnimationFromFile(std::string const& r_key, std::string const& r_filePath);
+
+        /*!***********************************************************************************
+            \brief Gets the size of a texture with the given name from the ResourceManager.
+
+            \param[in] name The name of the texture to retrieve the size for.
+
+            \return An ImVec2 containing the width and height of the texture.
+        *************************************************************************************/
+        ImVec2 GetTextureSize(const std::string& name);
+
+        /*!***********************************************************************************
+        \brief Load texture from Resource folder in Textures folder
+
+        \param[in] r_fileName Name of texture.
+
+        \return key of texture object
+        *************************************************************************************/
+        std::string LoadTexture(std::string const& r_fileName);
+
+        /*!***********************************************************************************
+        \brief Load audio from Resource folder in Audio folder
+
+        \param[in] r_fileName Name of audio.
+
+        \return key of audio object
+        *************************************************************************************/
+        std::string LoadAudio(std::string const& r_fileName);
+
+        /*!***********************************************************************************
+        \brief Load font from Resource folder in Fonts folder
+
+        \param[in] r_fileName Name of font.
+
+        \return key of font object
+        *************************************************************************************/
+        std::string LoadFont(std::string const& r_fileName);
+
+        /*!***********************************************************************************
+        \brief Load animation from Resource folder in Animation folder
+
+        \param[in] r_fileName Name of animation.
+
+        \return key of animation object
+        *************************************************************************************/
+        std::string LoadAnimation(std::string const& r_fileName);
 
         /*!***********************************************************************************
             \brief Gets the texture object store in the resource manager.

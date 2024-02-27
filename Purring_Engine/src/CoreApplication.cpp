@@ -19,6 +19,7 @@
 #include "prpch.h"
 
 
+
 // Entity Component System (ECS)
 #include "ECS/EntityFactory.h"
 #include "ECS/Entity.h"
@@ -91,12 +92,25 @@
 #include "GameStateManager.h"
 #include "Logic/CatScript.h"
 #include "Logic/RatScript.h"
+#include "Logic/GameStateController_v2_0.h"
+#include "Logic/UI/HealthBarScript_v2_0.h"
+#include "Logic/Rat/RatDetectionScript_v2_0.h"
+#include "Logic/Rat/RatScript_v2_0.h"
+#include "Logic/DeploymentScript.h"
+#include "Logic/MainMenuController.h"
+#include "Logic/IntroCutsceneController.h"
 
 
+
+
+#include "Logic/Cat/CatController_v2_0.h"
+#include "Logic/Cat/CatScript_v2_0.h"
 // Scene Manager
 #include "SceneManager/SceneManager.h"
 
 #include "Hierarchy/HierarchyManager.h"
+
+#include "Layers/LayerManager.h"
 
 // Testing
 Logger engine_logger = Logger("ENGINE");
@@ -123,6 +137,7 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
     REGISTERCOMPONENT(PE::Canvas);
+    REGISTERCOMPONENT(PE::CatSaveData);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -135,7 +150,8 @@ RTTR_REGISTRATION
         .property_readonly("Entity ID", &PE::EntityDescriptor::oldID)
         .property_readonly("Scene ID", &PE::EntityDescriptor::sceneID)
         .property("Active", &PE::EntityDescriptor::isActive)
-        .property("Layer", &PE::EntityDescriptor::layer)
+        .property("Render Layer", &PE::EntityDescriptor::layer)
+        .property("Interaction Layer", &PE::EntityDescriptor::interactionLayer)
         .property_readonly("Parent", &PE::EntityDescriptor::parent)
         .property_readonly("Prefab Type", &PE::EntityDescriptor::prefabType);
 
@@ -204,29 +220,68 @@ RTTR_REGISTRATION
         .property("TargetRange", &PE::EnemyTestScriptData::TargetRange)
         .property("bounce", &PE::EnemyTestScriptData::bounce);
 
-  
-    rttr::registration::class_<PE::GameStateController>("GameStateController")
-        .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
-        .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
-        .property("executingStatement", &PE::GameStateControllerData::executingStatement)
-        .property("mapOverlay", &PE::GameStateControllerData::mapOverlay)
-        .property("pawOverlay", &PE::GameStateControllerData::pawOverlay)
-        .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
-        .property("energyHeader", &PE::GameStateControllerData::energyHeader)
-        .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
-        .property("slashText", &PE::GameStateControllerData::slashText)
-        .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
-        .property("energyBackground", &PE::GameStateControllerData::energyBackground)
-        .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
-        .property("planAttackText", &PE::GameStateControllerData::planAttackText)
-        .property("planMovementText", &PE::GameStateControllerData::planMovementText)
-        .property("turnBackground", &PE::GameStateControllerData::turnBackground)
-        .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
-        .property("endMovementText", &PE::GameStateControllerData::endMovementText)
-        .property("endTurnText", &PE::GameStateControllerData::endTurnText);
+    rttr::registration::class_<PE::GameStateController_v2_0Data>("GameStateController_v2_0")
+        .property("GameStateManagerActive", &PE::GameStateController_v2_0Data::GameStateManagerActive)
+        .property("PauseBackGroundCanvas", &PE::GameStateController_v2_0Data::PauseBackGroundCanvas)
+        .property("PauseMenuCanvas", &PE::GameStateController_v2_0Data::PauseMenuCanvas)
+        .property("AreYouSureCanvas", &PE::GameStateController_v2_0Data::AreYouSureCanvas)
+        .property("AreYouSureRestartCanvas", &PE::GameStateController_v2_0Data::AreYouSureRestartCanvas)
+        .property("LoseCanvas", &PE::GameStateController_v2_0Data::LoseCanvas)
+        .property("WinCanvas", &PE::GameStateController_v2_0Data::WinCanvas)
+        .property("HUDCanvas", &PE::GameStateController_v2_0Data::HUDCanvas)
+        .property("ExecuteCanvas", &PE::GameStateController_v2_0Data::ExecuteCanvas)
+        .property("TurnCounterCanvas", &PE::GameStateController_v2_0Data::TurnCounterCanvas)
+        .property("HowToPlayCanvas", &PE::GameStateController_v2_0Data::HowToPlayCanvas)
+        .property("HowToPlayPageOne", &PE::GameStateController_v2_0Data::HowToPlayPageOne)
+        .property("HowToPlayPageTwo", &PE::GameStateController_v2_0Data::HowToPlayPageTwo)
+        .property("CatPortrait", &PE::GameStateController_v2_0Data::CatPortrait)
+        .property("RatPortrait", &PE::GameStateController_v2_0Data::RatPortrait)
+        .property("Portrait", &PE::GameStateController_v2_0Data::Portrait)
+        .property("Background", &PE::GameStateController_v2_0Data::Background)
+        .property("TransitionPanel", &PE::GameStateController_v2_0Data::TransitionPanel)
+        .property("Journal", &PE::GameStateController_v2_0Data::Journal)
+        .property("JournalButton", &PE::GameStateController_v2_0Data::JournalButton)
+        .property("PhaseBanner", &PE::GameStateController_v2_0Data::PhaseBanner)
+        .property("clicklisttest", &PE::GameStateController_v2_0Data::clicklisttest);
+
+    //rttr::registration::class_<PE::GameStateController>("GameStateController")
+    //    .property("GameStateManagerActive", &PE::GameStateControllerData::GameStateManagerActive)
+    //    .property("SplashScreen", &PE::GameStateControllerData::SplashScreen)
+    //    .property("executingStatement", &PE::GameStateControllerData::executingStatement)
+    //    .property("mapOverlay", &PE::GameStateControllerData::mapOverlay)
+    //    .property("pawOverlay", &PE::GameStateControllerData::pawOverlay)
+    //    .property("foliageOverlay", &PE::GameStateControllerData::foliageOverlay)
+    //    .property("energyHeader", &PE::GameStateControllerData::energyHeader)
+    //    .property("currentEnergyText", &PE::GameStateControllerData::currentEnergyText)
+    //    .property("slashText", &PE::GameStateControllerData::slashText)
+    //    .property("maxEnergyText", &PE::GameStateControllerData::maxEnergyText)
+    //    .property("energyBackground", &PE::GameStateControllerData::energyBackground)
+    //    .property("turnNumberText", &PE::GameStateControllerData::turnNumberText)
+    //    .property("planAttackText", &PE::GameStateControllerData::planAttackText)
+    //    .property("planMovementText", &PE::GameStateControllerData::planMovementText)
+    //    .property("turnBackground", &PE::GameStateControllerData::turnBackground)
+    //    .property("endTurnButton", &PE::GameStateControllerData::endTurnButton)
+    //    .property("endMovementText", &PE::GameStateControllerData::endMovementText)
+    //    .property("endTurnText", &PE::GameStateControllerData::endTurnText);
+
+    rttr::registration::class_<PE::DeploymentScriptData>("DeploymentScript")
+        .property("FollowingTextureObject", &PE::DeploymentScriptData::FollowingTextureObject)
+        .property("NoGoArea", &PE::DeploymentScriptData::NoGoArea)
+        .property("DeploymentArea", &PE::DeploymentScriptData::DeploymentArea);   
+    
+    rttr::registration::class_<PE::MainMenuControllerData>("MainMenuController")
+        .property("AreYouSureCanvas", &PE::MainMenuControllerData::AreYouSureCanvas)
+        .property("MainMenuCanvas", &PE::MainMenuControllerData::MainMenuCanvas)
+        .property("SplashScreen", &PE::MainMenuControllerData::SplashScreen);
 
     rttr::registration::class_<PE::TestScriptData>("testScript")
-        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);
+        .property("m_rotationSpeed", &PE::TestScriptData::m_rotationSpeed);    
+    
+    rttr::registration::class_<PE::IntroCutsceneControllerData>("IntroCutsceneController")
+        .property("CutsceneObject", &PE::IntroCutsceneControllerData::CutsceneObject)
+        .property("FinalScene", &PE::IntroCutsceneControllerData::FinalScene)
+        .property("Text", &PE::IntroCutsceneControllerData::Text)
+        .property("TransitionScreen", &PE::IntroCutsceneControllerData::TransitionScreen);
 
     rttr::registration::class_<PE::AnimationComponent>(PE::EntityManager::GetInstance().GetComponentID<PE::AnimationComponent>().to_string().c_str())
         .method("GetAnimationID", &PE::AnimationComponent::GetAnimationID)
@@ -296,6 +351,30 @@ RTTR_REGISTRATION
         .property("bulletForce", &PE::CatScriptData::bulletForce)
         .property("animationStates", &PE::CatScriptData::animationStates);
 
+    rttr::registration::class_<PE::CatScript_v2_0Data>("CatScript_v2_0")
+        .property("catID", &PE::CatScript_v2_0Data::catID)
+        .property("catType", &PE::CatScript_v2_0Data::catType)
+        .property("toggleDeathAnimation", &PE::CatScript_v2_0Data::toggleDeathAnimation)
+        .property("finishedExecution", &PE::CatScript_v2_0Data::finishedExecution)
+        .property("isCaged", &PE::CatScript_v2_0Data::isCaged)
+        .property("catMaxMovementEnergy", &PE::CatScript_v2_0Data::catMaxMovementEnergy)
+        //.property("catCurrentEnergy", &PE::CatScript_v2_0Data::catCurrentEnergy)
+        .property("minDistance", &PE::CatScript_v2_0Data::minDistance)
+        .property("maxDistance", &PE::CatScript_v2_0Data::maxDistance)
+        .property("nodeSize", &PE::CatScript_v2_0Data::nodeSize)
+        .property("movementSpeed", &PE::CatScript_v2_0Data::movementSpeed)
+        .property("forgivenessOffset", &PE::CatScript_v2_0Data::forgivenessOffset)
+        //.property("currentPositionIndex", &PE::CatScript_v2_0Data::currentPositionIndex)
+        //.property("pathPositions", &PE::CatScript_v2_0Data::pathPositions)
+        //.property("followCatPositions", &PE::CatScript_v2_0Data::followCatPositions)
+        //.property("pathQuads", &PE::CatScript_v2_0Data::pathQuads)
+        //.property("shouldChangeState", &PE::CatScript_v2_0Data::shouldChangeState)
+        //.property("delaySet", &PE::CatScript_v2_0Data::delaySet)
+        //.property("timeBeforeChangingState", &PE::CatScript_v2_0Data::timeBeforeChangingState)
+        .property("animationStates", &PE::CatScript_v2_0Data::animationStates)
+        .property("attackVariants", &PE::CatScript_v2_0Data::attackVariables);
+
+
     rttr::registration::class_<PE::RatScriptData>("RatScript")
         .property("mainCatID", &PE::RatScriptData::mainCatID)
         .property("health", &PE::RatScriptData::health)
@@ -314,6 +393,31 @@ RTTR_REGISTRATION
         .method("Width", &PE::Canvas::SetWidth)
         .method("Height", &PE::Canvas::SetHeight)
         .method("SetTargetResolution", &PE::Canvas::SetTargetResolution);
+
+    rttr::registration::class_<PE::HealthBarScript_v2_0_Data>("HealthBarScript_v2_0")
+        .property("FollowObjectID", &PE::HealthBarScript_v2_0_Data::followObjectID)
+        .property("fillColorFull", &PE::HealthBarScript_v2_0_Data::fillColorFull)
+        .property("fillColorHalf", &PE::HealthBarScript_v2_0_Data::fillColorHalf)
+        .property("fillColorAlmostEmpty", &PE::HealthBarScript_v2_0_Data::fillColorAlmostEmpty);
+
+    rttr::registration::class_<PE::RatDetectionScript_v2_0_Data>("RatDetectionScript_v2_0")
+        .property("MyID", &PE::RatDetectionScript_v2_0_Data::myID)
+        .property("MainRatID", &PE::RatDetectionScript_v2_0_Data::mainRatID)
+        .property("StoredParentRat", &PE::RatDetectionScript_v2_0_Data::storedParentRat)
+        .property("DetectionRadius", &PE::RatDetectionScript_v2_0_Data::detectionRadius);
+
+    rttr::registration::class_<PE::RatScript_v2_0_Data>("RatScript_v2_0")
+        //.property("mainCatID", &PE::RatScriptData::mainCatID)
+        //.property("health", &PE::RatScriptData::health)
+        //.property("movementSpeed", &PE::RatScriptData::movementSpeed)
+        //.property("detectionRadius", &PE::RatScriptData::detectionRadius)
+        //.property("attackDiameter", &PE::RatScriptData::attackDiameter)
+        //.property("attackDuration", &PE::RatScriptData::attackDuration)
+        //.property("collisionDamage", &PE::RatScriptData::collisionDamage)
+        //.property("attackDamage", &PE::RatScriptData::attackDamage)
+        //.property("attackDelay", &PE::RatScriptData::attackDelay)
+        .property("animationStates", &PE::RatScript_v2_0_Data::animationStates);
+
 }
 
 PE::CoreApplication::CoreApplication()
@@ -342,6 +446,8 @@ PE::CoreApplication::CoreApplication()
     EntityID uiCameraId{ serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json") };
     Graphics::CameraManager::SetUiCamera(uiCameraId);
     EntityManager::GetInstance().Get<EntityDescriptor>(uiCameraId).name = "UI Camera";
+
+    std::srand(static_cast<unsigned>(std::time(nullptr)));
 }
 
 PE::CoreApplication::~CoreApplication()
@@ -356,14 +462,18 @@ void PE::CoreApplication::Run()
 
     SerializationManager serializationManager;
 
+    // Load default assets
+    ResourceManager::GetInstance().LoadDefaultAssets();
+
     // Set start scene
 #ifndef GAMERELEASE
-    SceneManager::GetInstance().SetStartScene("DefaultScene.json");
+    SceneManager::GetInstance().CreateDefaultScene();
 #else
-    SceneManager::GetInstance().SetStartScene("GameSceneFINAL.json"); // set game scene here <-
-#endif // !GAMERELEASE
+    const_cast<Graphics::RendererManager*>(GETRENDERERMANAGER())->SetBackgroundColor(0,0,0);
+    SceneManager::GetInstance().SetStartScene("MainMenu.json"); // set game scene here <-
     // Load scene
     SceneManager::GetInstance().LoadScene(SceneManager::GetInstance().GetStartScene());
+#endif // !GAMERELEASE
 
     // Main Application Loop
     // Continue until the GLFW window is flagged to close
@@ -404,21 +514,42 @@ void PE::CoreApplication::Run()
         TimeManager::GetInstance().StartAccumulator();
         while (TimeManager::GetInstance().UpdateAccumulator())
         { 
-            for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+            if (!skipFrame)
             {
-                TimeManager::GetInstance().SystemStartFrame(systemID);
-                m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
-                TimeManager::GetInstance().SystemEndFrame(systemID);
+                for (SystemID systemID{}; systemID < SystemID::GRAPHICS; ++systemID)
+                {
+                    TimeManager::GetInstance().SystemStartFrame(systemID);
+                    m_systemList[systemID]->UpdateSystem(TimeManager::GetInstance().GetFixedTimeStep());
+                    TimeManager::GetInstance().SystemEndFrame(systemID);
+                }
             }
             TimeManager::GetInstance().EndAccumulator();
         }
 
         Hierarchy::GetInstance().Update();
+        
+        
+        //std::cout << Graphics::CameraManager::GetUiCameraId() << std::endl;
 
         // Update Graphics with variable timestep
+
         TimeManager::GetInstance().SystemStartFrame(SystemID::GRAPHICS);
         m_systemList[SystemID::GRAPHICS]->UpdateSystem(TimeManager::GetInstance().GetDeltaTime());
         TimeManager::GetInstance().SystemEndFrame(SystemID::GRAPHICS);
+
+        skipFrame = false;
+
+        // if the scene is being loaded, skip the rest of the frame
+        if (SceneManager::GetInstance().IsLoadingScene())
+        {
+            SceneManager::GetInstance().LoadSceneToLoad();
+            skipFrame = true;
+        }
+        else if (SceneManager::GetInstance().IsRestartingScene())
+        {
+            SceneManager::GetInstance().RestartScene(SceneManager::GetInstance().GetActiveScene());
+            skipFrame = true;
+        }
 
         // Flush log entries
         engine_logger.FlushLog();
@@ -504,17 +635,17 @@ void PE::CoreApplication::InitializeSystems()
 {
     // Get the window width and height to initialize the camera manager with
     int width, height;
-    glfwGetWindowSize(m_window, &width, &height);
+    glfwGetWindowSize(WindowManager::GetInstance().GetWindow(), &width, &height);
 
     // Add system to list & assigning memory to them
 
     LogicSystem* p_logicSystem = new (MemoryManager::GetInstance().AllocateMemory("Logic System", sizeof(LogicSystem)))LogicSystem{};
     Graphics::CameraManager* p_cameraManager = new (MemoryManager::GetInstance().AllocateMemory("Camera Manager", sizeof(Graphics::CameraManager)))Graphics::CameraManager{ static_cast<float>(width), static_cast<float>(height) };
-    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{ m_window, *p_cameraManager, width, height };
+    Graphics::RendererManager* p_rendererManager = new (MemoryManager::GetInstance().AllocateMemory("Renderer Manager", sizeof(Graphics::RendererManager)))Graphics::RendererManager{*p_cameraManager, width, height };
     PhysicsManager* p_physicsManager = new (MemoryManager::GetInstance().AllocateMemory("Physics Manager", sizeof(PhysicsManager)))PhysicsManager{};
     CollisionManager* p_collisionManager = new (MemoryManager::GetInstance().AllocateMemory("Collision Manager", sizeof(CollisionManager)))CollisionManager{};
     InputSystem* p_inputSystem = new (MemoryManager::GetInstance().AllocateMemory("Input System", sizeof(InputSystem)))InputSystem{};
-    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{ m_window, static_cast<float>(width), static_cast<float>(height)};
+    GUISystem* p_guisystem = new (MemoryManager::GetInstance().AllocateMemory("GUI System", sizeof(GUISystem)))GUISystem{static_cast<float>(width), static_cast<float>(height)};
     AnimationManager* p_animationManager = new (MemoryManager::GetInstance().AllocateMemory("Animation System", sizeof(AnimationManager)))AnimationManager{};
     //AudioManager*     p_audioManager      = new (MemoryManager::GetInstance().AllocateMemory("Audio Manager",     sizeof(AudioManager)))      AudioManager{};
 
@@ -529,4 +660,6 @@ void PE::CoreApplication::InitializeSystems()
     //AddSystem(p_audioManager);
 
     GameStateManager::GetInstance().RegisterButtonFunctions();
+
+
 }

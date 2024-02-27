@@ -56,12 +56,6 @@ namespace PE
                       m_defaultFontKey{ "../Assets/Defaults/Default_Font.ttf" },
                       m_defaultAnimationKey{ "../Assets/Defaults/Default_Animation_Anim.json" }
         {
-            // initialize default assets
-            m_defaultTexture->CreateTexture(m_defaultTextureKey);
-            m_defaultAudio->LoadSound(m_defaultAudioKey, AudioManager::GetInstance().GetFMODSystem());
-            m_defaultFont->Initialize(m_defaultFontKey);
-            m_defaultAnimation->LoadAnimation(m_defaultAnimationKey);
-
 #ifndef GAMERELEASE
             // load editor icons
             LoadIconFromFile("../Assets/Icons/Directory_Icon.png", "../Assets/Icons/Directory_Icon.png");
@@ -71,7 +65,6 @@ namespace PE
             LoadIconFromFile("../Assets/Icons/Texture_Icon.png", "../Assets/Icons/Texture_Icon.png");
             LoadIconFromFile("../Assets/Icons/Other_Icon.png", "../Assets/Icons/Other_Icon.png");
 #endif // !GAMERELEASE
-
         }
 
     ResourceManager::~ResourceManager()
@@ -82,6 +75,15 @@ namespace PE
         m_defaultAudio.reset();
         m_defaultFont.reset();
         m_defaultAnimation.reset();
+    }
+
+    void ResourceManager::LoadDefaultAssets()
+    {
+        // initialize default assets
+        m_defaultTexture->CreateTexture(m_defaultTextureKey);
+        m_defaultAudio->LoadSound(m_defaultAudioKey, AudioManager::GetInstance().GetFMODSystem());
+        m_defaultFont->Initialize(m_defaultFontKey);
+        m_defaultAnimation->LoadAnimation(m_defaultAnimationKey);
     }
 
     void ResourceManager::LoadShadersFromFile(std::string const& r_key, std::string const& r_vertexShaderPath,
@@ -272,7 +274,7 @@ namespace PE
                 // fail to load animation, delete key
                 engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
                 engine_logger.SetTime();
-                engine_logger.AddLog(false, "Animation " + r_key + " does not exist.", __FUNCTION__);
+                //engine_logger.AddLog(false, "Animation " + r_key + " does not exist.", __FUNCTION__);
 
                 Animations.erase(r_key);
                 return false;
@@ -280,6 +282,72 @@ namespace PE
         }
 
         return true;
+    }
+
+    ImVec2 ResourceManager::GetTextureSize(const std::string& name)
+    {
+        auto it = Icons.find(name);
+        if (it != Icons.end()) {
+            auto texture = it->second;
+            return ImVec2(static_cast<float>(texture->GetWidth()), static_cast<float>(texture->GetHeight()));
+        }
+        else
+        {
+            // If Texture not found, maybe load a PURPLE icon? @Brandon -Hans
+            return ImVec2(1.0f, 1.0f); // Default size to avoid division by zero in aspect ratio calculations
+        }
+    }
+
+    std::string ResourceManager::LoadTexture(std::string const& r_fileName)
+    {
+        std::string filePath = "../Assets/Textures/Resources/" + r_fileName;
+
+        // if texture is loaded, return key
+        if(LoadTextureFromFile(filePath, filePath))
+        {
+            return filePath;
+        }
+
+        return m_defaultTextureKey;
+    }
+
+    std::string ResourceManager::LoadAudio(std::string const& r_fileName)
+    {
+        std::string filePath = "../Assets/Audio/Resources/" + r_fileName;
+
+        // if audio is loaded, return key
+        if (LoadAudioFromFile(filePath, filePath))
+        {
+            return filePath;
+        }
+
+        return m_defaultAudioKey;
+    }
+
+    std::string ResourceManager::LoadFont(std::string const& r_fileName)
+    {
+        std::string filePath = "../Assets/Fonts/Resources/" + r_fileName;
+
+        // if texture is loaded, return key
+        if (LoadFontFromFile(filePath, filePath))
+        {
+            return filePath;
+        }
+
+        return m_defaultFontKey;
+    }
+
+    std::string ResourceManager::LoadAnimation(std::string const& r_fileName)
+    {
+        std::string filePath = "../Assets/Animation/Resources/" + r_fileName;
+
+        // if texture is loaded, return key
+        if (LoadAnimationFromFile(filePath, filePath))
+        {
+            return filePath;
+        }
+
+        return m_defaultAnimationKey;
     }
 
     std::shared_ptr<Graphics::Texture> ResourceManager::GetTexture(std::string const& r_name)
@@ -335,7 +403,7 @@ namespace PE
         {
             engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
             engine_logger.SetTime();
-            engine_logger.AddLog(false, "Animation " + r_name + " not loaded, loading animation.", __FUNCTION__);
+            //engine_logger.AddLog(false, "Animation " + r_name + " not loaded, loading animation.", __FUNCTION__);
 
             // load animation
             if (LoadAnimationFromFile(r_name, r_name))
@@ -450,10 +518,10 @@ namespace PE
 
     void ResourceManager::LoadAllResources()
     {
+        LoadAllAnimations();
         LoadAllTextures();
         LoadAllAudio();
         LoadAllFonts();
-        LoadAllAnimations();
     }
 
     void ResourceManager::AddTextureKeyToLoad(std::string const& r_key)
