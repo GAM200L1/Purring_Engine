@@ -257,11 +257,11 @@ namespace PE
 			if (desc->renderOrder <= min || desc->renderOrder >= max || (desc->renderOrder != order))
 				m_sceneHierarchy.erase(desc->renderOrder);
 			desc->renderOrder = order;
-			m_sceneHierarchy[desc->renderOrder] = desc->sceneID;
+			m_sceneHierarchy[desc->renderOrder] = k;
 
 			if (desc->children.size())
 			{
-				RenderOrderUpdateHelper(desc->sceneID, desc->renderOrder, desc->renderOrder + delta);
+				RenderOrderUpdateHelper(k, desc->renderOrder, desc->renderOrder + delta);
 			}
 			++cnt;
 		}
