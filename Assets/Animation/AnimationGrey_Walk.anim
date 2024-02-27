@@ -73,7 +73,7 @@
             "textureKey": ""
         }
     ],
-    "animationID": "../Assets/Animation/AnimationGrey_Walk_Anim.json",
+    "animationID": "../Assets/Animation/AnimationGrey_Walk.anim",
     "frameRate": 30,
     "isSpriteSheet": true,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Walk.png",

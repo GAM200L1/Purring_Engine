@@ -67,7 +67,7 @@
             ]
         }
     ],
-    "animationID": "../Assets/Animation/AnimationOrange_Idle_Anim.json",
+    "animationID": "../Assets/Animation/AnimationOrange_Idle.anim",
     "frameRate": 30,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Orange_Idle.png",
     "totalSprites": 6

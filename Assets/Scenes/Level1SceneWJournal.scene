@@ -4381,7 +4381,7 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000.anim",
+                            "../Assets/Animation/AnimationMeowsalot_Attack.anim",
                             "../Assets/Animation/AnimationMeowsalot_Death.anim",
                             "../Assets/Animation/AnimationMeowsalot_Idle.anim",
                             "../Assets/Animation/AnimationMeowsalot_walk.anim"
@@ -4434,7 +4434,7 @@
                         "CatScript_v2_0": {
                             "data": {
                                 "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000.anim",
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack.anim",
                                     "Death": "../Assets/Animation/AnimationMeowsalot_Death.anim",
                                     "Idle": "../Assets/Animation/AnimationMeowsalot_Idle.anim",
                                     "Walk": "../Assets/Animation/AnimationMeowsalot_walk.anim"

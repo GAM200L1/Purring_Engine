@@ -242,7 +242,7 @@
         }
         
     ],
-    "animationID": "../Assets/Animation/Cutscene_Anim.json",
+    "animationID": "../Assets/Animation/Cutscene.anim",
     "frameRate": 30,
     "isSpriteSheet": false,
     "spriteSheetKey": "../Assets/Textures/Cutscenes/Cutscene_Intro1_1920x1080.png",

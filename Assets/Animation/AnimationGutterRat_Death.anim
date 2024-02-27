@@ -67,7 +67,7 @@
             ]
         }
     ],
-    "animationID": "../Assets/Animation/AnimationGutterRat_Death_Anim.json",
+    "animationID": "../Assets/Animation/AnimationGutterRat_Death.anim",
     "frameRate": 30,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Death.png",
     "totalSprites": 6

@@ -73,7 +73,7 @@
             "textureKey": ""
         }
     ],
-    "animationID": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json",
+    "animationID": "../Assets/Animation/AnimationMeowsalot_walk.anim",
     "frameRate": 30,
     "isSpriteSheet": true,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Meowsalot_Walk.png",

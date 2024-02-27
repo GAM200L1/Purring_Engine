@@ -67,7 +67,7 @@
             ]
         }
     ],
-    "animationID": "../Assets/Animation/AnimationGutterRat_Hurt_Anim.json",
+    "animationID": "../Assets/Animation/AnimationGutterRat_Hurt.anim",
     "frameRate": 30,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Hurt.png",
     "totalSprites": 6

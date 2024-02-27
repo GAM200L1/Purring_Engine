@@ -67,7 +67,7 @@
             ]
         }
     ],
-    "animationID": "../Assets/Animation/AnimationRat_Idle_Anim.json",
+    "animationID": "../Assets/Animation/AnimationRat_Idle.anim",
     "frameRate": 30,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Idle.png",
     "totalSprites": 6

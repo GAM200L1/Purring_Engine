@@ -67,7 +67,7 @@
             ]
         }
     ],
-    "animationID": "../Assets/Animation/AnimationOrange_walk_Anim.json",
+    "animationID": "../Assets/Animation/AnimationOrange_walk.anim",
     "frameRate": 30,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Orange_Walk.png",
     "totalSprites": 6

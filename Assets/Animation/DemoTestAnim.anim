@@ -67,7 +67,7 @@
             ]
         }
     ],
-    "animationID": "../Assets/Animation/DemoTestAnim_Anim.json",
+    "animationID": "../Assets/Animation/DemoTestAnim.anim",
     "frameRate": 30,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Grey_Attack.png",
     "totalSprites": 6

@@ -67,7 +67,7 @@
             ]
         }
     ],
-    "animationID": "../Assets/Animation/AnimationGutterRat_Walk_Anim.json",
+    "animationID": "../Assets/Animation/AnimationGutterRat_Walk.anim",
     "frameRate": 30,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Rat_Gutter_Walk.png",
     "totalSprites": 6

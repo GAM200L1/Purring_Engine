@@ -67,7 +67,7 @@
             ]
         }
     ],
-    "animationID": "../Assets/Animation/AnimationOrange_Attack_Anim.json",
+    "animationID": "../Assets/Animation/AnimationOrange_Attack.anim",
     "frameRate": 30,
     "spriteSheetKey": "../Assets/Textures/Animations/Individual Rows/Cat_Orange_Attack.png",
     "totalSprites": 6

@@ -268,7 +268,7 @@ namespace PE
 
 	void MainMenuController::PlayGameMM(EntityID)
 	{
-		SceneManager::GetInstance().LoadScene("IntroCutscene.scene");
+		SceneManager::GetInstance().LoadScene("IntroCutsceneScene.scene");
 		PlayPositiveFeedback();
 	}
 
