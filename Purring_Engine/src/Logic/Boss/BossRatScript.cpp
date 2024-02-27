@@ -107,6 +107,6 @@ namespace PE
 
 	EntityID BossRatScript::FindFurthestCat()
 	{
-
+		return static_cast<EntityID>(0);
 	}
 } // End of namespace PE

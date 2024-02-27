@@ -21,7 +21,7 @@
                             "g": 1.0,
                             "r": 1.0
                         },
-                        "TextureKey": "../Assets/Textures/MapBackground_Level4_1920x1080px.png"
+                        "TextureKey": "../Assets/Textures/MapBackground_Level1_1920x1080px.png"
                     },
                     "Transform": {
                         "height": 1080.0,
@@ -192,7 +192,7 @@
                             0.5,
                             1.0
                         ],
-                        "m_disabledTexture": "../Assets/Textures/Button_White_128px.png",
+                        "m_disabledTexture": "../Assets/Textures/Button_HowToPlay_512x128.png",
                         "m_hoveredColor": [
                             1.0,
                             1.0,
@@ -1190,8 +1190,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1208,7 +1208,7 @@
                             62,
                             63
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 5
@@ -1319,10 +1319,10 @@
                         "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PawOverlay",
                         "parent": 24,
-                        "sceneID": 44
+                        "sceneID": 14
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1360,10 +1360,10 @@
                         "Old ID": 29,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "MapOverlay",
                         "parent": 24,
-                        "sceneID": 11
+                        "sceneID": 1
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -1401,10 +1401,10 @@
                         "Old ID": 28,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "EndTurnButton",
                         "parent": 24,
-                        "sceneID": 13
+                        "sceneID": 8
                     },
                     "GUI": {
                         "disabled": false,
@@ -1478,10 +1478,10 @@
                         "Old ID": 30,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "EndPlanningText",
                         "parent": 24,
-                        "sceneID": 62
+                        "sceneID": 47
                     },
                     "TextComponent": {
                         "Color": {
@@ -1615,7 +1615,7 @@
                         "isActive": false,
                         "name": "WinCanvas",
                         "parent": null,
-                        "sceneID": 16
+                        "sceneID": 53
                     },
                     "Transform": {
                         "height": 100.0,
@@ -1892,7 +1892,7 @@
                         "isActive": false,
                         "name": "LoseCanvas",
                         "parent": null,
-                        "sceneID": 17
+                        "sceneID": 60
                     },
                     "Transform": {
                         "height": 100.0,
@@ -2334,10 +2334,10 @@
                         "Old ID": 44,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PauseButton",
                         "parent": 24,
-                        "sceneID": 47
+                        "sceneID": 43
                     },
                     "GUI": {
                         "disabled": false,
@@ -2411,10 +2411,10 @@
                         "Old ID": 47,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
-                        "sceneID": 14
+                        "sceneID": 11
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -3044,7 +3044,7 @@
                         "isActive": false,
                         "name": "AreYouSureRestartCanvas",
                         "parent": null,
-                        "sceneID": 15
+                        "sceneID": 16
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3318,7 +3318,7 @@
                         "isActive": true,
                         "name": "TransitionPanelBackground",
                         "parent": null,
-                        "sceneID": 18
+                        "sceneID": 63
                     },
                     "Transform": {
                         "height": 100.0,
@@ -3382,6 +3382,29 @@
         {
             "Entity": {
                 "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "max": {
+                                "x": 950.5000610351563,
+                                "y": 148.9998016357422
+                            },
+                            "min": {
+                                "x": 714.5000610351563,
+                                "y": 35.99980163574219
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 1.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": true,
+                        "type": "AABBCollider"
+                    },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
@@ -3389,42 +3412,23 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "DeploymentArea",
+                        "name": "Exit Point",
                         "parent": null,
-                        "sceneID": 20
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/DeploymentArea_Level4_319x531.png"
-                    },
-                    "ScriptComponent": {
-                        "DeploymentScript": {
-                            "data": {
-                                "DeploymentArea": 72,
-                                "FollowingTextureObject": 73,
-                                "NoGoArea": 74
-                            },
-                            "state": 0
-                        }
+                        "sceneID": 73
                     },
                     "Transform": {
-                        "height": 531.0,
+                        "height": 113.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -803.0003051757813,
-                            "y": 24.499839782714844
+                            "x": 832.5000610351563,
+                            "y": 92.49980163574219
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 319.0
+                        "width": 236.0
                     }
                 },
                 "name": ""
@@ -3436,19 +3440,25 @@
                     "Collider": {
                         "collisionLayerIndex": 0,
                         "data": {
-                            "center": {
-                                "x": -717.5001220703125,
-                                "y": 35.000022888183594
+                            "max": {
+                                "x": -520.9998168945313,
+                                "y": -104.00003051757813
+                            },
+                            "min": {
+                                "x": -668.9998168945313,
+                                "y": -226.00003051757813
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
+                            "scaleOffset": {
+                                "x": 2.0,
+                                "y": 1.0
+                            }
                         },
                         "isTrigger": false,
-                        "type": "CircleCollider"
+                        "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3457,55 +3467,9 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "DeployTexture",
+                        "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 21
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.4588235318660736,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Grey_512px.png"
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -717.5001220703125,
-                            "y": 35.000022888183594
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 74,
-                        "Prefab Type": "",
-                        "children": [
-                            75,
-                            76,
-                            78,
-                            104
-                        ],
-                        "isActive": true,
-                        "name": "NoGoAreas",
-                        "parent": null,
-                        "sceneID": 22
+                        "sceneID": 80
                     },
                     "Renderer": {
                         "Color": {
@@ -3516,12 +3480,86 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
+                    "Transform": {
+                        "height": 122.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -594.9998168945313,
+                            "y": -165.00003051757813
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 74.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "max": {
+                                "x": 10.00006103515625,
+                                "y": 519.9998168945313
+                            },
+                            "min": {
+                                "x": -389.99993896484375,
+                                "y": 419.99981689453125
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 4.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 74,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Obstacle",
+                        "parent": null,
+                        "sceneID": 74
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
                         "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 0.0,
-                            "y": 0.0
+                            "x": -189.99993896484375,
+                            "y": 469.99981689453125
                         },
                         "relativeposition": {
                             "x": 0.0,
@@ -3541,23 +3579,23 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -642.1004028320313,
-                                "y": -237.30010986328125
+                                "x": 387.4999694824219,
+                                "y": -229.99996948242188
                             },
                             "min": {
-                                "x": -958.1004028320313,
-                                "y": -348.30010986328125
+                                "x": -512.5000610351563,
+                                "y": -329.9999694824219
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
+                                "x": 9.0,
                                 "y": 1.0
                             }
                         },
-                        "isTrigger": true,
+                        "isTrigger": false,
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
@@ -3567,8 +3605,8 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "NoGo1",
-                        "parent": 74,
+                        "name": "Obstacle",
+                        "parent": null,
                         "sceneID": 75
                     },
                     "Renderer": {
@@ -3580,19 +3618,24 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
-                        "height": 111.0,
+                        "height": 100.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -800.1004028320313,
-                            "y": -292.80010986328125
+                            "x": -62.500038146972656,
+                            "y": -279.9999694824219
                         },
                         "relativeposition": {
-                            "x": -800.1004028320313,
-                            "y": -292.80010986328125
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 316.0
+                        "width": 100.0
                     }
                 },
                 "name": ""
@@ -3605,23 +3648,23 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -647.5999755859375,
-                                "y": 403.4000244140625
+                                "x": 954.0003051757813,
+                                "y": 285.5
                             },
                             "min": {
-                                "x": -953.5999755859375,
-                                "y": 289.4000244140625
+                                "x": 261.00030517578125,
+                                "y": 169.49998474121094
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
+                                "x": 9.0,
                                 "y": 1.0
                             }
                         },
-                        "isTrigger": true,
+                        "isTrigger": false,
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
@@ -3631,8 +3674,8 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "NoGo2",
-                        "parent": 74,
+                        "name": "Obstacle",
+                        "parent": null,
                         "sceneID": 76
                     },
                     "Renderer": {
@@ -3644,19 +3687,24 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
-                        "height": 114.0,
+                        "height": 116.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -800.5999755859375,
-                            "y": 346.4000244140625
+                            "x": 607.5003051757813,
+                            "y": 227.49998474121094
                         },
                         "relativeposition": {
-                            "x": -800.5999755859375,
-                            "y": 346.4000244140625
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 306.0
+                        "width": 77.0
                     }
                 },
                 "name": ""
@@ -3669,23 +3717,92 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -778.6846923828125,
-                                "y": -108.5299301147461
+                                "x": 954.0001831054688,
+                                "y": 20.49994659423828
                             },
                             "min": {
-                                "x": -963.116455078125,
-                                "y": -225.6700439453125
+                                "x": 516.0001831054688,
+                                "y": -95.50005340576172
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
+                                "x": 6.0,
                                 "y": 1.0
                             }
                         },
-                        "isTrigger": true,
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 77,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Obstacle",
+                        "parent": null,
+                        "sceneID": 77
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
+                    "Transform": {
+                        "height": 116.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 735.0001831054688,
+                            "y": -37.50005340576172
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 73.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "max": {
+                                "x": -650.99951171875,
+                                "y": 286.4998779296875
+                            },
+                            "min": {
+                                "x": -798.99951171875,
+                                "y": -91.50010681152344
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 2.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
                         "type": "AABBCollider"
                     },
                     "EntityDescriptor": {
@@ -3695,8 +3812,8 @@
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
-                        "name": "NoGo3",
-                        "parent": 74,
+                        "name": "Obstacle",
+                        "parent": null,
                         "sceneID": 78
                     },
                     "Renderer": {
@@ -3708,19 +3825,24 @@
                         },
                         "TextureKey": ""
                     },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
                     "Transform": {
-                        "height": 117.14012145996094,
+                        "height": 378.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -870.9005737304688,
-                            "y": -167.09999084472656
+                            "x": -724.99951171875,
+                            "y": 97.49989318847656
                         },
                         "relativeposition": {
-                            "x": -870.9005737304688,
-                            "y": -167.09999084472656
+                            "x": 0.0,
+                            "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 184.43182373046875
+                        "width": 74.0
                     }
                 },
                 "name": ""
@@ -3733,19 +3855,88 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -781.0421752929688,
-                                "y": 279.6492004394531
+                                "x": 536.49951171875,
+                                "y": -104.00003051757813
                             },
                             "min": {
-                                "x": -963.9575805664063,
-                                "y": 40.35088348388672
+                                "x": 388.49951171875,
+                                "y": -226.00003051757813
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
+                                "x": 2.0,
+                                "y": 1.0
+                            }
+                        },
+                        "isTrigger": false,
+                        "type": "AABBCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 79,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Obstacle",
+                        "parent": null,
+                        "sceneID": 79
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 0.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 0
+                    },
+                    "Transform": {
+                        "height": 122.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 462.49951171875,
+                            "y": -165.00003051757813
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 74.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "max": {
+                                "x": 264.99993896484375,
+                                "y": 406.499755859375
+                            },
+                            "min": {
+                                "x": 4.9999237060546875,
+                                "y": 293.499755859375
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "scaleOffset": {
+                                "x": 4.0,
                                 "y": 1.0
                             }
                         },
@@ -3761,7 +3952,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 25
+                        "sceneID": 83
                     },
                     "Renderer": {
                         "Color": {
@@ -3778,18 +3969,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 239.29832458496094,
+                        "height": 113.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -872.4998779296875,
-                            "y": 160.0000457763672
+                            "x": 134.9999237060547,
+                            "y": 349.999755859375
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 182.9154510498047
+                        "width": 65.0
                     }
                 },
                 "name": ""
@@ -3802,19 +3993,19 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "max": {
-                                "x": -644.3931884765625,
-                                "y": 405.00018310546875
+                                "x": -390.00030517578125,
+                                "y": 408.999755859375
                             },
                             "min": {
-                                "x": -815.6058349609375,
-                                "y": 290.00018310546875
+                                "x": -650.0003051757813,
+                                "y": 295.999755859375
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
                             "scaleOffset": {
-                                "x": 1.0,
+                                "x": 4.0,
                                 "y": 1.0
                             }
                         },
@@ -3830,7 +4021,7 @@
                         "isActive": true,
                         "name": "Obstacle",
                         "parent": null,
-                        "sceneID": 26
+                        "sceneID": 81
                     },
                     "Renderer": {
                         "Color": {
@@ -3847,156 +4038,18 @@
                         "type": 0
                     },
                     "Transform": {
-                        "height": 114.99999237060547,
+                        "height": 113.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -729.99951171875,
-                            "y": 347.50018310546875
+                            "x": -520.0003051757813,
+                            "y": 352.499755859375
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 171.21263122558594
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "max": {
-                                "x": 568.3528442382813,
-                                "y": -362.4999084472656
-                            },
-                            "min": {
-                                "x": -678.3517456054688,
-                                "y": -477.4999084472656
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 83,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Obstacle",
-                        "parent": null,
-                        "sceneID": 28
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 0
-                    },
-                    "Transform": {
-                        "height": 115.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -54.99945068359375,
-                            "y": -419.9999084472656
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 1246.70458984375
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "max": {
-                                "x": -777.499755859375,
-                                "y": -109.99996948242188
-                            },
-                            "min": {
-                                "x": -957.499755859375,
-                                "y": -224.99996948242188
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 84,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Obstacle",
-                        "parent": null,
-                        "sceneID": 29
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 0
-                    },
-                    "Transform": {
-                        "height": 115.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -867.499755859375,
-                            "y": -167.49996948242188
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 180.0
+                        "width": 65.0
                     }
                 },
                 "name": ""
@@ -4012,437 +4065,12 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 85,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Obstacle",
-                        "parent": null,
-                        "sceneID": 30
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "Transform": {
-                        "height": 400.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 273.00006103515625
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 273.00006103515625
-                        },
-                        "relorientation": 0.0,
-                        "width": 1200.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
-                    },
-                    "Transform": {
-                        "height": 644.1932983398438,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 706.5003662109375,
-                            "y": 31.49987030029297
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 132.5852508544922
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "max": {
-                                "x": -647.7584228515625,
-                                "y": -235.3890380859375
-                            },
-                            "min": {
-                                "x": -791.2420654296875,
-                                "y": -359.6109619140625
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 86,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Obstacle",
-                        "parent": null,
-                        "sceneID": 31
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 0
-                    },
-                    "Transform": {
-                        "height": 124.22193145751953,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -719.500244140625,
-                            "y": -297.5
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 143.48365783691406
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "max": {
-                                "x": 627.0653686523438,
-                                "y": -233.0
-                            },
-                            "min": {
-                                "x": 526.9349975585938,
-                                "y": -353.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
-                        "Old ID": 60,
-                        "Prefab Type": "Grey Cat",
-                        "children": [
-                            84
-                        ],
-                        "isActive": true,
-                        "name": "Obstacle",
-                        "parent": null,
-                        "sceneID": 32
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 0
-                    },
-                    "ScriptComponent": {
-                        "CatScript_v2_0": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationGrey_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationGrey_Death_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationGrey_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationGrey_Walk_Anim.json"
-                                },
-                                "attackVariants": {
-                                    "GreyCatAttackVariables": {
-                                        "attacKDirection": 0,
-                                        "bulletDelay": 0.0,
-                                        "bulletFireAnimationIndex": 3,
-                                        "bulletForce": 1000.0,
-                                        "bulletLifeTime": 1.0,
-                                        "bulletRange": 3.0,
-                                        "damage": 1,
-                                        "projectileID": 0,
-                                        "teleGraphIDs": []
-                                    }
-                                },
-                                "catID": 0,
-                                "catMaxMovementEnergy": 21,
-                                "catType": 1,
-                                "finishedExecution": false,
-                                "forgivenessOffset": 1.0,
-                                "isCaged": true,
-                                "maxDistance": 50.0,
-                                "minDistance": 10.0,
-                                "movementSpeed": 300.0,
-                                "nodeSize": 10.0,
-                                "toggleDeathAnimation": false
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 120.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 577.0001831054688,
-                            "y": -293.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.13033294677734
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "max": {
-                                "x": 633.7084350585938,
-                                "y": 435.2047119140625
-                            },
-                            "min": {
-                                "x": 516.2911987304688,
-                                "y": 294.79498291015625
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 89,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Obstacle",
-                        "parent": null,
-                        "sceneID": 34
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 0
-                    },
-                    "Transform": {
-                        "height": 140.4097442626953,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 574.9998168945313,
-                            "y": 364.9998474121094
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 117.41726684570313
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "max": {
-                                "x": 512.946533203125,
-                                "y": 532.0000610351563
-                            },
-                            "min": {
-                                "x": -642.9471435546875,
-                                "y": 414.00006103515625
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "scaleOffset": {
-                                "x": 1.0,
-                                "y": 1.0
-                            }
-                        },
-                        "isTrigger": false,
-                        "type": "AABBCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
-                        "Old ID": 61,
-                        "Prefab Type": "Meowsalot",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Obstacle",
-                        "parent": null,
-                        "sceneID": 35
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 0.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 0
-                    },
-                    "ScriptComponent": {
-                        "CatScript_v2_0": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
-                                },
-                                "attackVariants": {
-                                    "GreyCatAttackVariables": {
-                                        "attacKDirection": 0,
-                                        "bulletDelay": 0.0,
-                                        "bulletFireAnimationIndex": 3,
-                                        "bulletForce": 500.0,
-                                        "bulletLifeTime": 1.0,
-                                        "bulletRange": 3.0,
-                                        "damage": 2,
-                                        "projectileID": 0,
-                                        "teleGraphIDs": []
-                                    }
-                                },
-                                "catID": 0,
-                                "catMaxMovementEnergy": 22,
-                                "catType": 0,
-                                "finishedExecution": false,
-                                "forgivenessOffset": 1.0,
-                                "isCaged": false,
-                                "maxDistance": 50.0,
-                                "minDistance": 10.0,
-                                "movementSpeed": 300.0,
-                                "nodeSize": 10.0,
-                                "toggleDeathAnimation": false
-                            },
-                            "state": 0
-                        },
-                        "FollowScript_v2_0": {
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 118.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -65.00028991699219,
-                            "y": 473.00006103515625
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 1155.8936767578125
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Canvas": {
-                        "Height": 1061.0,
-                        "Width": 1920.0
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
                         "Old ID": 16,
                         "Prefab Type": "Canvas Object",
                         "children": [
                             17
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PhaseBannerCanvas",
                         "parent": null,
                         "sceneID": 10
@@ -4472,12 +4100,12 @@
                         "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 17,
-                        "Prefab Type": "PhaseBanner",
+                        "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PhaseBanner",
                         "parent": 16,
-                        "sceneID": 17
+                        "sceneID": 0
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -4510,57 +4138,21 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                        "Height": 1080.0,
+                        "Width": 1920.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 71,
                         "Prefab Type": "Canvas Object",
-                        "children": [],
-                        "isActive": true,
-                        "name": "PhaseBannerCanvas",
-                        "parent": null,
-                        "sceneID": 19
-                    },
-                    "Transform": {
-                        "height": 100.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 100.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 94,
-                        "Prefab Type": "Canvas Object",
                         "children": [
-                            96
+                            82
                         ],
                         "isActive": true,
                         "name": "Canvas Object",
                         "parent": null,
-                        "sceneID": 23
+                        "sceneID": 61
                     },
                     "Transform": {
                         "height": 100.0,
@@ -4586,13 +4178,13 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 96,
+                        "Old ID": 82,
                         "Prefab Type": "Text",
                         "children": [],
                         "isActive": true,
                         "name": "FPSTextObject",
-                        "parent": 94,
-                        "sceneID": 96
+                        "parent": 71,
+                        "sceneID": 82
                     },
                     "ScriptComponent": {
                         "FpsScript": {
@@ -4636,16 +4228,283 @@
         {
             "Entity": {
                 "components": {
-                    "Canvas": {
-                        "Height": 881.0,
-                        "Width": 1604.0
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationGrey_Attack_Anim.json",
+                            "../Assets/Animation/AnimationGrey_Death_Anim.json",
+                            "../Assets/Animation/AnimationGrey_Idle_Anim.json",
+                            "../Assets/Animation/AnimationGrey_Walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 388.60040283203125,
+                                "y": 56.20039367675781
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
-                        "Old ID": 91,
-                        "Prefab Type": "Rat",
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 60,
+                        "Prefab Type": "Grey Cat",
+                        "children": [
+                            84
+                        ],
+                        "isActive": true,
+                        "name": "Grey Cat",
+                        "parent": null,
+                        "sceneID": 61
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Grey_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationGrey_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationGrey_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationGrey_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationGrey_Walk_Anim.json"
+                                },
+                                "attackVariants": {
+                                    "GreyCatAttackVariables": {
+                                        "attacKDirection": 0,
+                                        "bulletDelay": 0.0,
+                                        "bulletFireAnimationIndex": 3,
+                                        "bulletForce": 1000.0,
+                                        "bulletLifeTime": 1.0,
+                                        "bulletRange": 3.0,
+                                        "damage": 1,
+                                        "projectileID": 0,
+                                        "teleGraphIDs": []
+                                    }
+                                },
+                                "catID": 0,
+                                "catMaxMovementEnergy": 21,
+                                "catType": 1,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "isCaged": true,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "toggleDeathAnimation": false
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 388.60040283203125,
+                            "y": 56.20039367675781
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 84,
+                        "Prefab Type": "",
                         "children": [],
+                        "isActive": true,
+                        "name": "Cage",
+                        "parent": 60,
+                        "sceneID": 84
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 390.20068359375,
+                            "y": 56.20039367675781
+                        },
+                        "relativeposition": {
+                            "x": 1.6002922058105469,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                            "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": ""
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": -478.00079345703125,
+                                "y": 77.00000762939453
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 61,
+                        "Prefab Type": "Meowsalot",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Meowsalot",
+                        "parent": null,
+                        "sceneID": 62
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Meowsalot_512px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                                },
+                                "attackVariants": {
+                                    "GreyCatAttackVariables": {
+                                        "attacKDirection": 0,
+                                        "bulletDelay": 0.0,
+                                        "bulletFireAnimationIndex": 3,
+                                        "bulletForce": 500.0,
+                                        "bulletLifeTime": 1.0,
+                                        "bulletRange": 3.0,
+                                        "damage": 2,
+                                        "projectileID": 0,
+                                        "teleGraphIDs": []
+                                    }
+                                },
+                                "catID": 0,
+                                "catMaxMovementEnergy": 7,
+                                "catType": 0,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "isCaged": false,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "toggleDeathAnimation": false
+                            },
+                            "state": 0
+                        },
+                        "FollowScript_v2_0": {
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -478.00079345703125,
+                            "y": 77.00000762939453
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "Canvas": {
+                        "Height": 1080.0,
+                        "Width": 1920.0
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 83,
+                        "Prefab Type": "Canvas Object",
+                        "children": [
+                            85,
+                            87
+                        ],
                         "isActive": true,
                         "name": "HealthBarCanvas",
                         "parent": null,
@@ -4672,6 +4531,358 @@
         {
             "Entity": {
                 "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 85,
+                        "Prefab Type": "WorldHealthBar",
+                        "children": [
+                            86,
+                            89
+                        ],
+                        "isActive": true,
+                        "name": "WorldHealthBar",
+                        "parent": 83,
+                        "sceneID": 85
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 1.0,
+                        "m_currentWidth": 16.0,
+                        "m_currentXpos": 32.0,
+                        "m_defaultColor": [
+                            0.3607843220233917,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.9882352948188782,
+                            0.23137255012989044,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 32.0,
+                        "m_hoveredColor": [
+                            0.9254902005195618,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": true,
+                        "m_knobID": 86,
+                        "m_maxValue": 1.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -32.0
+                    },
+                    "ScriptComponent": {
+                        "HealthBarScript_v2_0": {
+                            "data": {
+                                "FollowObjectID": 91
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 16.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 86,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SliderKnob",
+                        "parent": 85,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 16.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 87,
+                        "Prefab Type": "WorldHealthBar",
+                        "children": [
+                            88,
+                            90
+                        ],
+                        "isActive": true,
+                        "name": "WorldHealthBar",
+                        "parent": 83,
+                        "sceneID": 87
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": ""
+                    },
+                    "GUISlider": {
+                        "m_Hovered": false,
+                        "m_clicked": false,
+                        "m_currentValue": 1.0,
+                        "m_currentWidth": 16.0,
+                        "m_currentXpos": 32.0,
+                        "m_defaultColor": [
+                            0.3607843220233917,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_defaultTexture": "",
+                        "m_disabled": false,
+                        "m_disabledColor": [
+                            0.9882352948188782,
+                            0.23137255012989044,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_disabledTexture": "",
+                        "m_endPoint": 32.0,
+                        "m_hoveredColor": [
+                            0.9254902005195618,
+                            0.9882352948188782,
+                            0.21176470816135406,
+                            1.0
+                        ],
+                        "m_hoveredTexture": "",
+                        "m_isHealthBar": true,
+                        "m_knobID": 88,
+                        "m_maxValue": 1.0,
+                        "m_minValue": 0.0,
+                        "m_pressedColor": [
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            0.23529411852359772,
+                            1.0
+                        ],
+                        "m_pressedTexture": "",
+                        "m_startPoint": -32.0
+                    },
+                    "ScriptComponent": {
+                        "HealthBarScript_v2_0": {
+                            "data": {
+                                "FollowObjectID": 92
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 16.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 88,
+                        "Prefab Type": "SliderKnob",
+                        "children": [],
+                        "isActive": true,
+                        "name": "SliderKnob",
+                        "parent": 87,
+                        "sceneID": 0
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 0.5735294222831726,
+                            "g": 0.5735294222831726,
+                            "r": 0.5735294222831726
+                        },
+                        "TextureKey": ""
+                    },
+                    "Transform": {
+                        "height": 16.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 89,
+                        "Prefab Type": "WorldHealthBarFrame",
+                        "children": [],
+                        "isActive": true,
+                        "name": "WorldHealthBarFrame",
+                        "parent": 85,
+                        "sceneID": 89
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 70.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 90,
+                        "Prefab Type": "WorldHealthBarFrame",
+                        "children": [],
+                        "isActive": true,
+                        "name": "WorldHealthBarFrame",
+                        "parent": 87,
+                        "sceneID": 90
+                    },
+                    "GUIRenderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
+                    },
+                    "Transform": {
+                        "height": 19.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 70.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
                             "../Assets/Animation/AnimationRat_Attack_Anim.json",
@@ -4686,29 +4897,29 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 425.0,
-                                "y": 45.50028991699219
+                                "x": 144.99905395507813,
+                                "y": -72.00016784667969
                             },
                             "positionOffset": {
-                                "x": 8.0,
-                                "y": 10.0
+                                "x": 0.0,
+                                "y": 0.0
                             },
-                            "radius": 128.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
-                        "Old ID": 92,
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 91,
                         "Prefab Type": "Rat",
                         "children": [],
                         "isActive": true,
-                        "name": "BossRatTemp",
+                        "name": "Rat",
                         "parent": null,
-                        "sceneID": 41
+                        "sceneID": 91
                     },
                     "Renderer": {
                         "Color": {
@@ -4725,23 +4936,137 @@
                         "type": 1
                     },
                     "ScriptComponent": {
-                        "BossRatScript": {
+                        "RatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
+                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
+                                },
+                                "attackDamage": 1,
+                                "attackDelay": 0.0,
+                                "attackDiameter": 64.0,
+                                "attackDuration": 0.5,
+                                "collisionDamage": 1,
+                                "detectionRadius": 4.0,
+                                "health": 3,
+                                "mainCatID": 61,
+                                "movementSpeed": 200.0
+                            },
                             "state": 0
                         }
                     },
                     "Transform": {
-                        "height": 256.0,
+                        "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 417.0,
-                            "y": 35.50028991699219
+                            "x": 144.99905395507813,
+                            "y": -72.00016784667969
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 256.0
+                        "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "AnimationComponent": {
+                        "AnimationIDs": [
+                            "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                            "../Assets/Animation/AnimationRat_Death_Anim.json",
+                            "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                            "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                            "../Assets/Animation/AnimationRat_walk_Anim.json"
+                        ],
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle_Anim.json"
+                    },
+                    "Collider": {
+                        "collisionLayerIndex": 0,
+                        "data": {
+                            "center": {
+                                "x": 63.99998474121094,
+                                "y": 167.99993896484375
+                            },
+                            "positionOffset": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "radius": 32.0,
+                            "scaleOffset": 1.0
+                        },
+                        "isTrigger": false,
+                        "type": "CircleCollider"
+                    },
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 92,
+                        "Prefab Type": "Rat",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Rat",
+                        "parent": null,
+                        "sceneID": 92
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
+                    },
+                    "RigidBody": {
+                        "linearDrag": 2.0,
+                        "mass": 10.0,
+                        "type": 1
+                    },
+                    "ScriptComponent": {
+                        "RatScript": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
+                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
+                                },
+                                "attackDamage": 1,
+                                "attackDelay": 0.0,
+                                "attackDiameter": 64.0,
+                                "attackDuration": 0.5,
+                                "collisionDamage": 1,
+                                "detectionRadius": 4.0,
+                                "health": 3,
+                                "mainCatID": 61,
+                                "movementSpeed": 200.0
+                            },
+                            "state": 0
+                        }
+                    },
+                    "Transform": {
+                        "height": 64.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": 63.99998474121094,
+                            "y": 167.99993896484375
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 64.0
                     }
                 },
                 "name": ""
@@ -4754,12 +5079,12 @@
                         "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 62,
-                        "Prefab Type": "Journal",
+                        "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Journal",
                         "parent": 24,
-                        "sceneID": 8
+                        "sceneID": 0
                     },
                     "GUIRenderer": {
                         "Color": {
@@ -4795,12 +5120,12 @@
                         "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 63,
-                        "Prefab Type": "JournalButton",
+                        "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "JournalButton",
                         "parent": 24,
-                        "sceneID": 43
+                        "sceneID": 13
                     },
                     "GUI": {
                         "disabled": false,
@@ -4860,156 +5185,6 @@
                         },
                         "relorientation": 0.0,
                         "width": 250.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationOrange_Attack_Anim.json",
-                            "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                            "../Assets/Animation/AnimationOrange_Idle_Anim.json\u0000_Anim.json",
-                            "../Assets/Animation/AnimationOrange_walk_Anim.json"
-                        ],
-                        "CurrentAnimationID": ""
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": -294.99932861328125,
-                                "y": 0.0
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 48.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 10,
-                        "Old ID": 93,
-                        "Prefab Type": "OrangeCat",
-                        "children": [
-                            94
-                        ],
-                        "isActive": true,
-                        "name": "OrangeCat",
-                        "parent": null,
-                        "sceneID": 93
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Orange_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "CatScript_v2_0": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationOrange_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json\u0000_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationOrange_walk_Anim.json"
-                                },
-                                "attackVariants": {
-                                    "OrangeCatAttackVariables": {
-                                        "damage": 2,
-                                        "seismicDelay": 0.0,
-                                        "seismicForce": 500.0,
-                                        "seismicID": 0,
-                                        "seismicRadius": 3.0,
-                                        "seismicSlamAnimationIndex": 4,
-                                        "telegraphID": 0
-                                    }
-                                },
-                                "catID": 0,
-                                "catMaxMovementEnergy": 21,
-                                "catType": 2,
-                                "finishedExecution": false,
-                                "forgivenessOffset": 1.0,
-                                "isCaged": true,
-                                "maxDistance": 50.0,
-                                "minDistance": 10.0,
-                                "movementSpeed": 300.0,
-                                "nodeSize": 10.0,
-                                "toggleDeathAnimation": false
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 96.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -294.99932861328125,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 96.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 94,
-                        "Prefab Type": "",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Cage=OrangeCat",
-                        "parent": 93,
-                        "sceneID": 94
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
-                    },
-                    "Transform": {
-                        "height": 150.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": -294.99932861328125,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 150.0
                     }
                 },
                 "name": ""
