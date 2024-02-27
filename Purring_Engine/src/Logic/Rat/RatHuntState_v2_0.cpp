@@ -235,15 +235,11 @@ namespace PE
 
 	void RatHunt_v2_0::CheckIfShouldChangeStates()
 	{
-			// Check if we should switch to the returning state
-			if (huntingTurnsLeft == 0)
-			{
-					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft == 0\n";
-					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
-			}
+			std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft = " << huntingTurnsLeft << "\n";
+
 			// ----- Picking where to move
 			// Check if there are any cats in the detection range
-			else if (!(p_data->catsInDetectionRadius.empty()))
+			if (!(p_data->catsInDetectionRadius.empty()))
 			{
 					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats in range\n";
 					// there's a cat in the detection range, move to attack it
@@ -263,8 +259,18 @@ namespace PE
 					// the cat we're chasing is dead, return to the original position
 					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
 			}
+			// Check if we should switch to the returning state
+			else if (huntingTurnsLeft == 0)
+			{
+					std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): huntingTurnsLeft == 0\n";
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
+			}
+			else 
+			{
+					GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
+			}
 
-			GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
+			std::cout << "RatHunt_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): --- end huntingTurnsLeft = " << huntingTurnsLeft << "\n";
 	}
 
 

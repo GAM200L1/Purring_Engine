@@ -202,28 +202,12 @@ namespace PE
     vec2 RatMovement_v2_0::PickTargetPosition()
     {
         // Pick the closest cat to move 
-        vec2 ratPosition = RatScript_v2_0::GetEntityPosition(p_data->myID);
-
-        // Find the closest cat within the detection radius.
-        EntityID closestCat = 0;
-        vec2 closestPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
-        float minDistance = std::numeric_limits<float>::max();
-        for (auto& catID : p_data->catsInDetectionRadius)
-        {
-            vec2 catPosition = RatScript_v2_0::GetEntityPosition(catID);
-            float distance = (catPosition - RatScript_v2_0::GetEntityPosition(p_data->myID)).Length();
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                closestCat = catID;
-                closestPosition = RatScript_v2_0::GetEntityPosition(catID);
-            }
-        }
+        // ASSUMPTION: container of cats in detection radius has at least 1 element. 
+        EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsInDetectionRadius) };
 
         // Set the position for the rat to move to
-        m_targetId = closestCat;
-        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, closestPosition, false);
-        return closestPosition;
+        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->SetTarget(p_data->myID, closestCat, false);
+        return p_data->targetPosition;
     }
 
 }

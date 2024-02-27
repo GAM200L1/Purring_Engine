@@ -325,8 +325,10 @@ namespace PE
             // Change to hunting state
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToHunt(p_data->myID, closestCat);
         }
-
-        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
+        else
+        {
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ClearCollisionContainers(p_data->myID);
+        }
     }
 
 
@@ -362,7 +364,7 @@ namespace PE
             if ((OTSE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTSE.Entity2))
             {
 #ifdef DEBUG_PRINT
-                std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") stay: rat detection collider - " << OTSE.Entity1 << ", cat - " << OTSE.Entity2 << "\n";
+                //std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") stay: rat detection collider - " << OTSE.Entity1 << ", cat - " << OTSE.Entity2 << "\n";
 #endif // DEBUG_PRINT
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity2);
             }
@@ -370,7 +372,7 @@ namespace PE
             else if ((OTSE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTSE.Entity1))
             {
 #ifdef DEBUG_PRINT
-                std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") stay: rat detection collider - " << OTSE.Entity2 << ", cat - " << OTSE.Entity1 << "\n";
+                //std::cout << "RatIdle_v2_0::OnTriggerEnterAndStay(" << p_data->myID << ") stay: rat detection collider - " << OTSE.Entity2 << ", cat - " << OTSE.Entity1 << "\n";
 #endif // DEBUG_PRINT
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
             }
@@ -388,7 +390,7 @@ namespace PE
         if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity2))
         {
 #ifdef DEBUG_PRINT
-            std::cout << "RatIdle_v2_0::OnTriggerExit(" << p_data->myID << ") exit: rat detection collider - " << OTEE.Entity1 << ", cat - " << OTEE.Entity2 << "\n";
+            //std::cout << "RatIdle_v2_0::OnTriggerExit(" << p_data->myID << ") exit: rat detection collider - " << OTEE.Entity1 << ", cat - " << OTEE.Entity2 << "\n";
 #endif // DEBUG_PRINT
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
         }
@@ -396,7 +398,7 @@ namespace PE
         else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity1))
         {
 #ifdef DEBUG_PRINT
-            std::cout << "RatIdle_v2_0::OnTriggerExit(" << p_data->myID << ") exit: rat detection collider - " << OTEE.Entity2 << ", cat - " << OTEE.Entity1 << "\n";
+            //std::cout << "RatIdle_v2_0::OnTriggerExit(" << p_data->myID << ") exit: rat detection collider - " << OTEE.Entity2 << ", cat - " << OTEE.Entity1 << "\n";
 #endif // DEBUG_PRINT
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
         }

@@ -503,9 +503,17 @@ namespace PE
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return; }
 
+#ifdef DEBUG_PRINT
+				std::cout << "RatScript_v2_0::SetTarget(" << id << "): target id: " << targetId << ", ";
+#endif // DEBUG_PRINT
+
 				it->second.targetedCat = targetId;
 				vec2 targetPosition = RatScript_v2_0::GetEntityPosition(it->second.targetedCat);
 				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
+
+#ifdef DEBUG_PRINT
+				std::cout << "r_targetPosition: (" << targetPosition.x << ", " << targetPosition.y << "), capmax ? " << capMaximum << "\n";
+#endif // DEBUG_PRINT
 
 				// Calculate the distance and direction from the rat to the player cat
 				it->second.ratPlayerDistance = (targetPosition - ratPosition).Length();
@@ -514,7 +522,7 @@ namespace PE
 						it->second.ratPlayerDistance = it->second.maxMovementRange;
 				}
 				it->second.directionFromRatToPlayerCat = (targetPosition - ratPosition).GetNormalized();
-				it->second.targetPosition = it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
+				it->second.targetPosition = ratPosition + it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
 
 #ifdef DEBUG_PRINT
 				std::cout << "--- RatScript_v2_0::SetTarget(" << id << ") stats: \n"
@@ -536,6 +544,7 @@ namespace PE
 				std::cout << "RatScript_v2_0::SetTarget(" << id << ") r_targetPosition: (" << r_targetPosition.x << ", " << r_targetPosition.y << "), capmax? " << capMaximum << "\n";
 #endif // DEBUG_PRINT
 
+				it->second.targetedCat = 0U;
 				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
 
 				// Calculate the distance and direction from the rat to the player cat

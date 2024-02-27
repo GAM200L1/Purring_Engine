@@ -103,11 +103,6 @@ namespace PE
         RatScript_v2_0_Data* p_data{ nullptr };
 
         /*!***********************************************************************************
-            \brief The minimum distance considered to be close enough to the target position for the movement to be considered complete
-        *************************************************************************************/
-        float minDistanceToTarget{ 1.0f };
-
-        /*!***********************************************************************************
             \brief ID of the event listener for collision events, used to register and unregister the rat for collision notifications
         *************************************************************************************/
         int m_collisionEventListener{};
@@ -117,7 +112,6 @@ namespace PE
         *************************************************************************************/
         int m_collisionStayEventListener{};
 
-        EntityID m_targetId{}; // ID of the cat to target
         bool m_planningRunOnce{}; // True if the planning phase has been run once
 
 
