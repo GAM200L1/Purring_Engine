@@ -31,27 +31,32 @@ namespace PE
 	// ----- Create Orange Cat Stomp and Telegraphs ----- //
 	void OrangeCatAttackVariables::CreateSeismicAndTelegraph(EntityID catID)
 	{
+		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(catID);
+
 		// create seismic //
 		SerializationManager serializationManager;
 		seismicID = serializationManager.LoadFromFile("Seismic_Prefab.json");
 		
-		Hierarchy::GetInstance().GetInstance().AttachChild(catID, seismicID);
+		EntityManager::GetInstance().Get<Collider>(seismicID).collisionLayerIndex = 0;
+
+		//Hierarchy::GetInstance().GetInstance().AttachChild(catID, seismicID);
+		//EntityManager::GetInstance().Get<Transform>(seismicID).relPosition.Zero();
 		
 		CatHelperFunctions::ToggleEntity(seismicID, false);
+		EntityManager::GetInstance().Get<EntityDescriptor>(seismicID).toSave = false;
+		
+		CatHelperFunctions::ScaleEntity(seismicID, catTransform.width * seismicRadius, catTransform.height * seismicRadius);
 		
 		// create telegraph //
-		Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(catID);
-
 		telegraphID = serializationManager.LoadFromFile("OrangeCatAttackTelegraph_Prefab.json");
 
 		Hierarchy::GetInstance().AttachChild(catID, telegraphID);
 		EntityManager::GetInstance().Get<Transform>(telegraphID).relPosition.Zero();
 
 		CatHelperFunctions::ToggleEntity(telegraphID, false); // telegraph to not show until attack planning
-		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false; // telegraph to not show until attack planning
+		EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false;
 
 		CatHelperFunctions::ScaleEntity(telegraphID, catTransform.width * seismicRadius, catTransform.height * seismicRadius);
-		CatHelperFunctions::ScaleEntity(seismicID, catTransform.width * seismicRadius, catTransform.height * seismicRadius);
 
 		EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = CircleCollider();
 		EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
@@ -152,15 +157,18 @@ namespace PE
 	{
 		// stores ID of the cat
 		m_catID = id;
-
+		
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
+
+		// set seismic to where cat is and reset animation
+		CatHelperFunctions::PositionEntity(p_attackData->seismicID, CatHelperFunctions::GetEntityPosition(id));
 
 		// subscribes to collision events
 		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, OrangeCatAttack_v2_0EXECUTE::SeismicCollided, this);
 
 		m_seismicDelay = p_attackData->seismicDelay;
-		//m_seismicLifeTime = p_attackData->seismicLifeTime;
+
 	}
 
 	void OrangeCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -169,11 +177,10 @@ namespace PE
 		CatScript_v2_0Data* p_catData = GETSCRIPTDATA(CatScript_v2_0, id);
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE || !p_catData->attackSelected) { return; }
 		
-		AnimationComponent& seismicAnimation = EntityManager::GetInstance().Get<AnimationComponent>(id);
+		AnimationComponent& seismicAnimation = EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID);
 		
 		if (m_seismicSlammed)
 		{	
-			// @TODO ask brandon how to increment animation
 			if (seismicAnimation.GetCurrentFrameIndex() == seismicAnimation.GetAnimationMaxIndex())
 			{
 				p_catData->finishedExecution = true;
@@ -181,16 +188,17 @@ namespace PE
 			}
 		}
 		// if seismic is not yet done, attack is selected, and animation is at the point where seismic would play
-		else if (!p_catData->finishedExecution && seismicAnimation.GetCurrentFrameIndex() == p_attackData->seismicSlamAnimationIndex)
+		else if (!p_catData->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->seismicSlamAnimationIndex)
 		{
 			if (m_seismicDelay <= 0.f)
 			{
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, true);
 				m_seismicSlammed = true;
-
+				seismicAnimation.SetCurrentFrameIndex(0);
 				// @TODO add sound
 			}
-			else {
+			else 
+			{
 				m_seismicDelay -= deltaTime;
 			}
 		}

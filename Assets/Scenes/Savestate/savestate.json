@@ -5203,7 +5203,7 @@
                         "CurrentAnimationID": ""
                     },
                     "Collider": {
-                        "collisionLayerIndex": 0,
+                        "collisionLayerIndex": 1,
                         "data": {
                             "center": {
                                 "x": -325.9994812011719,
@@ -5220,8 +5220,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 1,
+                        "Layer": 1,
                         "Old ID": 93,
                         "Prefab Type": "OrangeCat",
                         "children": [],
@@ -5260,7 +5260,7 @@
                                         "seismicForce": 500.0,
                                         "seismicID": 0,
                                         "seismicRadius": 3.0,
-                                        "seismicSlamAnimationIndex": 3,
+                                        "seismicSlamAnimationIndex": 4,
                                         "telegraphID": 0
                                     }
                                 },

@@ -19,7 +19,7 @@
 #include "CatHelperFunctions.h"
 #include "FollowScript_v2_0.h"
 
-#include "ECS/SceneView.h"
+#include "Layers/LayerManager.h"
 #include "Logic/LogicSystem.h"
 #include "Logic/FollowScript.h"
 #include <cstdlib>   // For srand and rand
@@ -36,20 +36,23 @@ namespace PE
 	void CatController_v2_0::Init(EntityID id)
 	{
 		m_lostGame = false;
-		for (EntityID catID : SceneView<ScriptComponent>())
+		for (const auto& layer : LayerView<ScriptComponent>())
 		{
-			auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
-			//if (IsCat(catID))
-			for (auto &[scriptname,state] : r_scripts)
+			for (EntityID catID : InternalView(layer))
 			{
-				if (scriptname == "CatScript_v2_0")
+				auto const& r_scripts = EntityManager::GetInstance().Get<ScriptComponent>(catID).m_scriptKeys;
+				//if (IsCat(catID))
+				for (auto& [scriptname, state] : r_scripts)
 				{
-					EnumCatType const& r_catType = *GETSCRIPTDATA(CatScript_v2_0, catID).catType;
-					m_currentCats.emplace_back(std::pair{ catID, r_catType }); // saves all cats, including the caged ones
-					if (r_catType == EnumCatType::MAINCAT)
-						m_mainCatID = catID;
-					else if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
-						(GETSCRIPTDATA(CatScript_v2_0, catID))->finishedExecution = true;
+					if (scriptname == "CatScript_v2_0")
+					{
+						EnumCatType const& r_catType = *GETSCRIPTDATA(CatScript_v2_0, catID).catType;
+						m_currentCats.emplace_back(std::pair{ catID, r_catType }); // saves all cats, including the caged ones
+						if (r_catType == EnumCatType::MAINCAT)
+							m_mainCatID = catID;
+						//else if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+						//	(GETSCRIPTDATA(CatScript_v2_0, catID))->finishedExecution = true;
+					}
 				}
 			}
 		}

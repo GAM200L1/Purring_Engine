@@ -369,12 +369,6 @@ namespace PE
 		{
 			// plays movement animation
 			PlayAnimation(id, "Walk");
-
-			// if in cat chain level and main cat has finished movement execution change state for this cat too
-			if (p_gsc->GetCurrentLevel() == 0 && m_scriptData[m_mainCatID].catCurrentEnergy >= m_scriptData[m_mainCatID].catMaxMovementEnergy)
-			{
-				TriggerStateChange(id);
-			}
 			
 			if (CheckShouldStateChange(id, deltaTime))
 			{
@@ -393,6 +387,7 @@ namespace PE
 					// if no attack has been selected play idle animation
 					PlayAnimation(id, "Idle");
 					m_scriptData[id].finishedExecution = true;
+					m_executionAnimationFinished = true;
 				}
 			}
 		}
@@ -404,7 +399,7 @@ namespace PE
 			{
 				m_executionAnimationFinished = true; // if attack animation finished set to true
 			}
-			if (m_executionAnimationFinished || m_scriptData[id].finishedExecution)
+			if (m_executionAnimationFinished)
 				PlayAnimation(id, "Idle");
 		}
 	}

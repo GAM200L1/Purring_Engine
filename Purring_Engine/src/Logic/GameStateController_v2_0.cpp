@@ -1312,7 +1312,7 @@ namespace PE
 
 	void GameStateController_v2_0::CheckFinishExecution()
 	{
-		bool Finished = true;;
+		bool Finished = true;
 
 		RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
 		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);

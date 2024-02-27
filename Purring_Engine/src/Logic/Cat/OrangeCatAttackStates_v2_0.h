@@ -39,7 +39,7 @@ namespace PE
 		float seismicForce{ 500.f };
 
 		// for syncing animation with firing
-		unsigned int seismicSlamAnimationIndex{ 3 };
+		unsigned int seismicSlamAnimationIndex{ 4 };
 
 		/*!***********************************************************************************
 		 \brief Creates Stomp Telegraph and actual seismic
@@ -160,7 +160,7 @@ namespace PE
 		OrangeCatAttackVariables* p_attackData;
 
 		float m_seismicDelay;
-		//float m_seismicLifeTime;
+		float m_seismicLifeTime;
 		
 		bool m_seismicSlammed{ false };
 
