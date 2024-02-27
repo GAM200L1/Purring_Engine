@@ -245,17 +245,52 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
 
 nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
 {
-    PE::EntityDescriptor tmp;
-    tmp.name = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).name;
-    if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType == "")
-        tmp.prefabType = tmp.name;
+    nlohmann::json ret;
+    if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).children.size())
+    {
+        ret = SerializeEntityComposite(entityId);
+    }
     else
-        tmp.prefabType = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType;
+    {
+        PE::EntityDescriptor tmp = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId));
+        tmp.name = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).name;
+        if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType == "")
+            tmp.prefabType = tmp.name;
+        else
+            tmp.prefabType = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType;
 
-    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
-    nlohmann::json ret = SerializeEntity(entityId);
-    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+        std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+        ret = SerializeEntity(entityId);
+        std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+    }
     return ret;
+}
+
+nlohmann::json SerializationManager::SerializeEntityComposite(int entityID)
+{
+    nlohmann::json ret;
+    ret += (SerializeEntity(entityID));
+    auto& desc = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityID));
+    if (desc.children.size())
+    {
+        for (auto id : desc.children)
+        {
+            if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(id)).children.size())
+            {
+                ret += (SerializeEntityComposite(id));
+            }
+            else
+            {
+                ret += (SerializeEntity(id));
+            }
+        }
+    }
+    return ret;
+}
+
+nlohmann::json SerializationManager::SerializePrefabComposite()
+{
+    return SerializeAllEntities();
 }
 
 size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
@@ -347,7 +382,17 @@ size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
         nlohmann::json j;
         inFile >> j;
         inFile.close();
-        return DeserializeEntity(j);
+        size_t ret = DeserializeEntity(j);
+        int cnt{0};
+        for (auto item : j)
+        {
+            if (cnt)
+            {
+                DeserializeEntity(j);
+            }
+            ++cnt;
+        }
+        return ret;
     }
     else
     {

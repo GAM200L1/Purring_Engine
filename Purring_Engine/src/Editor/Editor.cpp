@@ -451,7 +451,7 @@ namespace PE {
 					{
 						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							auto save = serializationManager.SerializeEntityPrefab(1);
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
 							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 							m_applyPrefab = true;
@@ -785,6 +785,7 @@ namespace PE {
 					std::string name;
 
 					name += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+
 					if (usedNames.count(name))
 						name += " - " + std::to_string(id);
 					
@@ -901,7 +902,6 @@ namespace PE {
 				if (ImGui::Selectable("Delete Object"))
 				{
 						AddInfoLog("Object Deleted");
-
 						
 						if (m_currentSelectedObject != -1)
 						{
@@ -1034,7 +1034,7 @@ namespace PE {
 			{
 				if (m_objectIsSelected || m_isPrefabMode)
 				{
-					EntityID entityID = (m_isPrefabMode)? 1 : m_currentSelectedObject;
+					EntityID entityID = /*(m_isPrefabMode) ? 1 :*/ m_currentSelectedObject;
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
 					bool hasScripts = false;
@@ -2681,7 +2681,7 @@ namespace PE {
 
 					if (hasScripts)
 					{
-						m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
+						//m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
 							if (key == "GameStateController")
@@ -4109,8 +4109,7 @@ namespace PE {
 									}
 									else if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 									{
-
-										auto save = serializationManager.SerializeEntityPrefab(1);
+										nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 										std::ofstream outFile(prefabFP);
 										if (outFile)
 										{
@@ -4121,7 +4120,59 @@ namespace PE {
 									}
 									ClearObjectList();
 									engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-									serializationManager.LoadFromFile(prefabFP, true);
+									//serializationManager.LoadFromFile(prefabFP, true);
+									std::ifstream inFile(prefabFP);
+									if (inFile)
+									{
+										nlohmann::json j;
+										inFile >> j;
+										inFile.close();
+										if (j.contains("Entity"))
+										{ 
+											auto id = serializationManager.DeserializeEntity(j);
+											PE::EntityManager::GetInstance().UpdateVectors(id);
+											PE::EntityManager::GetInstance().AddHelper(id);
+											int cnt{ 0 };
+											for (auto item : j)
+											{
+												if (cnt)
+												{
+													size_t tmp = serializationManager.DeserializeEntity(item);
+													PE::EntityManager::GetInstance().UpdateVectors(tmp);
+													PE::EntityManager::GetInstance().AddHelper(tmp);
+												}
+												++cnt;
+											}
+											
+										}
+										else
+										{
+											for (auto item : j.items().begin().value())
+											{
+												auto id = serializationManager.DeserializeEntity(item);
+												PE::EntityManager::GetInstance().UpdateVectors(id);
+												PE::EntityManager::GetInstance().AddHelper(id);
+
+												/**/
+											}
+											int cnt{ 0 };
+											for (auto it : j)
+											{
+												if (cnt)
+												{
+													size_t tmp = serializationManager.DeserializeEntity(it);
+													PE::EntityManager::GetInstance().UpdateVectors(tmp);
+													PE::EntityManager::GetInstance().AddHelper(tmp);
+												}
+												++cnt;
+											}
+										}
+										
+									}
+									else
+									{
+										std::cerr << "Could not open the file for reading: " << prefabFP << std::endl;
+									}
 								}
 								if (ImGui::Selectable("Delete Asset"))
 								{
@@ -4131,7 +4182,6 @@ namespace PE {
 								ImGui::EndPopup();
 							}
 						}
-
 					}
 					ImGui::EndChild();
 
@@ -4844,8 +4894,7 @@ namespace PE {
 					{
 						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							auto save = serializationManager.SerializeEntityPrefab(1);
-
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 							std::ofstream outFile(prefabFP);
 							if (outFile)
 							{
@@ -4865,7 +4914,7 @@ namespace PE {
 						{
 							if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 							{
-								auto save = serializationManager.SerializeEntityPrefab(1);
+								nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 								prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
 								prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 								std::ofstream outFile(prefabFP);
@@ -4967,7 +5016,7 @@ namespace PE {
 									
 									if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 									{
-										auto save = serializationManager.SerializeEntityPrefab(1);
+										nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 
 										std::ofstream outFile(prefabFP);
 										if (outFile)

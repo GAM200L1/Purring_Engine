@@ -105,6 +105,16 @@ public:
     nlohmann::json SerializeEntityPrefab(int entityId);
 
     /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object as a prefab composite
+    *************************************************************************************/
+    nlohmann::json SerializeEntityComposite(int entityID);
+
+    /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object as a prefab composite
+    *************************************************************************************/
+    nlohmann::json SerializePrefabComposite();
+
+    /*!***********************************************************************************
      \brief Deserialize a JSON object to create an entity, returning its ID.
     *************************************************************************************/
     size_t DeserializeEntity(const nlohmann::json& r_j);
