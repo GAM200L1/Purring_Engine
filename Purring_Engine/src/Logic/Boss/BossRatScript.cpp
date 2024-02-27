@@ -19,6 +19,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "BossRatExecuteState.h"
 #include "BossRatPlanningState.h"
 #include "Logic/Cat/CatController_v2_0.h"
+#include "Layers/LayerManager.h"
 namespace PE
 {
 	// ---------- FUNCTION DEFINITIONS ---------- //
@@ -30,6 +31,7 @@ namespace PE
 	void BossRatScript::Init(EntityID id)
 	{
 		CreateCheckStateManager(id);
+
 	}
 
 
@@ -47,7 +49,7 @@ namespace PE
 			return;
 		}
 
-		if (m_scriptData[id].Health <= 0)
+		if (m_scriptData[id].health <= 0)
 		{
 			//do something
 		}
@@ -100,13 +102,43 @@ namespace PE
 		}
 	}
 
+	void BossRatScript::FindAllObstacles()
+	{
+		for (const auto& layer : LayerView<EntityDescriptor, Collider>(true))
+		{
+			for (const EntityID& id : InternalView(layer))
+			{
+				if(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos)
+				m_Obstacles.push_back(id);
+			}
+		}
+	}
+
 	void BossRatScript::TakeDamage(int damage)
 	{
-		--m_scriptData[currentBoss].Health;
+		--m_scriptData[currentBoss].health;
 	}
 
 	EntityID BossRatScript::FindFurthestCat()
 	{
-		return EntityID{};
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+		EntityID FurthestCat{};
+		float FurthestDistance{};
+		
+		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+		{
+			Transform cattransform = EntityManager::GetInstance().Get<Transform>(CatID);
+
+			if (cattransform.position.Distance(EntityManager::GetInstance().Get<Transform>(currentBoss).position) > FurthestDistance)
+			{
+				FurthestDistance = cattransform.position.Distance(EntityManager::GetInstance().Get<Transform>(currentBoss).position);
+				FurthestCat = CatID;
+			}
+
+		}
+
+		//std::cout << "Furthest Cat: " << EntityManager::GetInstance().Get<EntityDescriptor>(FurthestCat).name << "\n";
+
+		return FurthestCat;
 	}
 } // End of namespace PE

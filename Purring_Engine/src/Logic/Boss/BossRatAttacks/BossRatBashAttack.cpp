@@ -28,6 +28,31 @@ namespace PE
 		if (EntityManager::GetInstance().Has<Transform>(m_FurthestCat))
 			furthestCatTransform = EntityManager::GetInstance().Get<Transform>(m_FurthestCat);
 
+		Transform BossTransform;
+
+		if (EntityManager::GetInstance().Has<Transform>(id))
+			BossTransform = EntityManager::GetInstance().Get<Transform>(id);
+
+		//Direction of Boss to Furthest Cat
+		vec2 direction = furthestCatTransform.position - BossTransform.position;
+		vec2 unitDirection = direction.GetNormalized();
+
+		SerializationManager sm;
+
+
+		//to be put into a while loop, while not hitting obstacle
+		//Draw Telegraphs
+		EntityID telegraph = sm.LoadFromFile("RatBossBashAttackTelegraph_Prefab.json");
+		m_telegraphPoitions.push_back(telegraph);
+
+
+		if (EntityManager::GetInstance().Has<Transform>(telegraph))
+		{
+			Transform* TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
+
+			TelegraphTransform->position = BossTransform.position + unitDirection * 250;
+		}
+
 
 
 	}
@@ -42,5 +67,10 @@ namespace PE
 	}
 	BossRatBashAttack::~BossRatBashAttack()
 	{
+	}
+
+	void BossRatBashAttack::CheckCollisionWithWall(vec2 Position, float width)
+	{
+
 	}
 }

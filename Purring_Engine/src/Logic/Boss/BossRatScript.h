@@ -31,8 +31,7 @@ namespace PE
 
 		//other boss stats
 
-		int Health = 20;
-		EntityID myID{ 0 };
+		int health = 20;
 		StateMachine* p_stateManager;
 		BossRatAttack* p_currentAttack;
 		bool finishExecution{};
@@ -108,6 +107,10 @@ namespace PE
 		*************************************************************************************/
 		rttr::instance GetScriptData(EntityID id);
 
+		void TakeDamage(int damage);
+
+		EntityID FindFurthestCat();
+
 		// ----- Private Members ----- //
 	private:
 		// --- STATE CHANGE --- //
@@ -119,15 +122,14 @@ namespace PE
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
 
-		void TakeDamage(int damage);
-
-		EntityID FindFurthestCat();
+		void FindAllObstacles();
 
 
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
 		EntityID currentBoss;
+		std::vector<EntityID> m_Obstacles;
 		//do i want to store all the obstacles here?
 	}; // end of class 
 
