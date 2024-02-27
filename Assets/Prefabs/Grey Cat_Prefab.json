@@ -8,14 +8,14 @@
                     "../Assets/Animation/AnimationGrey_Idle_Anim.json",
                     "../Assets/Animation/AnimationGrey_Walk_Anim.json"
                 ],
-                "CurrentAnimationID": ""
+                "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle_Anim.json"
             },
             "Collider": {
                 "collisionLayerIndex": 0,
                 "data": {
                     "center": {
-                        "x": 225.6004638671875,
-                        "y": 10.200397491455078
+                        "x": 388.60040283203125,
+                        "y": 56.20039367675781
                     },
                     "positionOffset": {
                         "x": 0.0,
@@ -65,16 +65,17 @@
                             "GreyCatAttackVariables": {
                                 "attacKDirection": 0,
                                 "bulletDelay": 0.0,
-                                "bulletForce": 500.0,
+                                "bulletFireAnimationIndex": 3,
+                                "bulletForce": 1000.0,
                                 "bulletLifeTime": 1.0,
                                 "bulletRange": 3.0,
-                                "damage": 2,
+                                "damage": 1,
                                 "projectileID": 0,
                                 "teleGraphIDs": []
                             }
                         },
                         "catID": 0,
-                        "catMaxMovementEnergy": 7,
+                        "catMaxMovementEnergy": 21,
                         "catType": 1,
                         "finishedExecution": false,
                         "forgivenessOffset": 1.0,
@@ -92,8 +93,8 @@
                 "height": 64.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 225.6004638671875,
-                    "y": 10.200397491455078
+                    "x": 388.60040283203125,
+                    "y": 56.20039367675781
                 },
                 "relativeposition": {
                     "x": 0.0,

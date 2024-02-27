@@ -74,6 +74,7 @@ namespace PE
 		// animation
 		AnimationComponent* p_catAnimation = nullptr;
 		std::map<std::string, std::string> animationStates; // animation states of the cat <name, file>
+		bool executionAnimationFinished{ false };
 		bool playDeathSound{ true };
 	};
 
@@ -138,7 +139,7 @@ namespace PE
 		EntityID m_mainCatID;
 
 		// animation
-		bool m_executionAnimationFinished{ false };
+		float m_executionAnimationDuration{};
 
 		// Event Listeners
 		int m_mouseClickEventListener{};

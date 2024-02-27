@@ -101,6 +101,9 @@ namespace PE
 	private:
 		std::map<EntityID, FollowScriptData_v2_0> m_ScriptData;
 		GameStateController_v2_0* p_gamestateController;
+
+
+
 		// Event keys
 		int m_collisionEventListener{};
 	};

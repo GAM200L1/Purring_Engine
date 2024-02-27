@@ -1328,7 +1328,7 @@ namespace PE
 		{
 			if(!GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].isCaged)
 				Finished = Finished && GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
-			//std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
+			std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
 		}
 
 		if (Finished)

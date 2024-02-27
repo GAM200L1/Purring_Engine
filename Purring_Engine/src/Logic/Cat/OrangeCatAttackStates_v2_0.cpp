@@ -38,6 +38,7 @@ namespace PE
 		SerializationManager serializationManager;
 		seismicID = serializationManager.LoadFromFile("Seismic_Prefab.json");
 		
+		EntityManager::GetInstance().Get<EntityDescriptor>(seismicID).renderOrder = 0;
 		EntityManager::GetInstance().Get<Collider>(seismicID).collisionLayerIndex = 0;
 		CircleCollider& r_seismicCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(seismicID).colliderVariant);
 		r_seismicCollider.scaleOffset = 0.25f;
@@ -161,6 +162,9 @@ namespace PE
 		// stores ID of the cat
 		m_catID = id;
 		
+		// @TODO: remove this temp solution
+		EntityManager::GetInstance().Get<Collider>(id).isTrigger = true;
+
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 
@@ -231,6 +235,8 @@ namespace PE
 		(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = false;
 		m_seismicSlammed = false;
 		CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
+		// @TODO remove this temp solution
+		EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
 	}
 
 	void OrangeCatAttack_v2_0EXECUTE::SeismicCollided(const Event<CollisionEvents>& r_CE)
@@ -239,7 +245,7 @@ namespace PE
 		{
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
 
-			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID);
+			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID)
 			// if the seismic hits a cat or rat
 				(SeismicHitCat(OCEE.Entity1, OCEE.Entity2) || SeismicHitRat(OCEE.Entity1, OCEE.Entity2));
 		}

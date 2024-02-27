@@ -43,8 +43,6 @@ namespace PE
 
 		m_mouseClickEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonPressed, Cat_v2_0PLAN::OnMouseClick, this);
 		m_mouseReleaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, Cat_v2_0PLAN::OnMouseRelease, this);
-
-		
 	}
 
 	void Cat_v2_0PLAN::StateUpdate(EntityID id, float deltatime)

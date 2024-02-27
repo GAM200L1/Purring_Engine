@@ -15,8 +15,8 @@
                 "collisionLayerIndex": 0,
                 "data": {
                     "center": {
-                        "x": 0.0,
-                        "y": 0.0
+                        "x": 63.99998474121094,
+                        "y": 167.99993896484375
                     },
                     "positionOffset": {
                         "x": 0.0,
@@ -29,6 +29,9 @@
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {
+                "InteractionLayer": 0,
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
                 "Prefab Type": "Rat",
                 "children": [],
                 "isActive": true,
@@ -66,8 +69,8 @@
                         "attackDuration": 0.5,
                         "collisionDamage": 1,
                         "detectionRadius": 4.0,
-                        "health": 1,
-                        "mainCatID": 3,
+                        "health": 3,
+                        "mainCatID": 61,
                         "movementSpeed": 200.0
                     },
                     "state": 0
@@ -77,8 +80,8 @@
                 "height": 64.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0
+                    "x": 63.99998474121094,
+                    "y": 167.99993896484375
                 },
                 "relativeposition": {
                     "x": 0.0,

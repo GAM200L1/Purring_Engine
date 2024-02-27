@@ -4241,28 +4241,28 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": 388.60040283203125,
+                                "y": 56.20039367675781
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 0.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 1,
+                        "Layer": 1,
                         "Old ID": 60,
                         "Prefab Type": "Grey Cat",
                         "children": [
                             84
                         ],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Grey Cat",
                         "parent": null,
                         "sceneID": 61
@@ -4345,7 +4345,7 @@
                         "Old ID": 84,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Cage",
                         "parent": 60,
                         "sceneID": 84
@@ -4393,26 +4393,26 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": -478.00079345703125,
+                                "y": 77.00000762939453
                             },
                             "positionOffset": {
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 0.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 1,
+                        "Layer": 1,
                         "Old ID": 61,
                         "Prefab Type": "Meowsalot",
                         "children": [],
-                        "isActive": false,
+                        "isActive": true,
                         "name": "Meowsalot",
                         "parent": null,
                         "sceneID": 62
@@ -4454,7 +4454,7 @@
                                     }
                                 },
                                 "catID": 0,
-                                "catMaxMovementEnergy": 7,
+                                "catMaxMovementEnergy": 22,
                                 "catType": 0,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
@@ -4911,8 +4911,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 1,
+                        "Layer": 1,
                         "Old ID": 91,
                         "Prefab Type": "Rat",
                         "children": [],
@@ -5007,8 +5007,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
+                        "InteractionLayer": 1,
+                        "Layer": 1,
                         "Old ID": 92,
                         "Prefab Type": "Rat",
                         "children": [],
@@ -5203,10 +5203,10 @@
                         "CurrentAnimationID": ""
                     },
                     "Collider": {
-                        "collisionLayerIndex": 1,
+                        "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": -325.9994812011719,
+                                "x": -294.99932861328125,
                                 "y": 0.0
                             },
                             "positionOffset": {
@@ -5224,7 +5224,9 @@
                         "Layer": 1,
                         "Old ID": 93,
                         "Prefab Type": "OrangeCat",
-                        "children": [],
+                        "children": [
+                            94
+                        ],
                         "isActive": true,
                         "name": "OrangeCat",
                         "parent": null,
@@ -5269,7 +5271,7 @@
                                 "catType": 2,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
-                                "isCaged": false,
+                                "isCaged": true,
                                 "maxDistance": 50.0,
                                 "minDistance": 10.0,
                                 "movementSpeed": 300.0,
@@ -5283,7 +5285,7 @@
                         "height": 64.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -325.9994812011719,
+                            "x": -294.99932861328125,
                             "y": 0.0
                         },
                         "relativeposition": {
@@ -5292,6 +5294,47 @@
                         },
                         "relorientation": 0.0,
                         "width": 64.0
+                    }
+                },
+                "name": ""
+            }
+        },
+        {
+            "Entity": {
+                "components": {
+                    "EntityDescriptor": {
+                        "InteractionLayer": 0,
+                        "Layer": 0,
+                        "Old ID": 94,
+                        "Prefab Type": "",
+                        "children": [],
+                        "isActive": true,
+                        "name": "Cage=OrangeCat",
+                        "parent": 93,
+                        "sceneID": 94
+                    },
+                    "Renderer": {
+                        "Color": {
+                            "a": 1.0,
+                            "b": 1.0,
+                            "g": 1.0,
+                            "r": 1.0
+                        },
+                        "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
+                    },
+                    "Transform": {
+                        "height": 100.0,
+                        "orientation": 0.0,
+                        "position": {
+                            "x": -294.99932861328125,
+                            "y": 0.0
+                        },
+                        "relativeposition": {
+                            "x": 0.0,
+                            "y": 0.0
+                        },
+                        "relorientation": 0.0,
+                        "width": 100.0
                     }
                 },
                 "name": ""

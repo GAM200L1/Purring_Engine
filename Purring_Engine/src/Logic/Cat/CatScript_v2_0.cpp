@@ -33,6 +33,7 @@
 #include "CatController_v2_0.h"
 
 #include "ECS/EntityFactory.h"
+#include "ResourceManager/ResourceManager.h"
 
 namespace PE
 {
@@ -118,6 +119,10 @@ namespace PE
 			if (m_scriptData[id].playDeathSound)
 			{
 				m_scriptData[id].playDeathSound = false;
+				for (EntityID& nodeId : m_scriptData[id].pathQuads)
+				{
+					CatHelperFunctions::ToggleEntity(nodeId, false);
+				}
 				SerializationManager m_serializationManager;
 				EntityID sound{};
 
@@ -325,7 +330,6 @@ namespace PE
 			{
 				ChangeToPlanningState(id);
 				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0); // resets animation to 0
-				m_executionAnimationFinished = false; // reset attack animation
 			}
 		}
 	}
@@ -334,6 +338,38 @@ namespace PE
 	void CatScript_v2_0::ExecuteStatesHandler(EntityID id, float deltaTime)
 	{
 		std::string_view const& r_stateName = m_scriptData[id].p_stateManager->GetStateName();
+
+		auto ChangeToAttack = 
+		[&](EntityID animateID)
+		{
+			// change to attack execute state
+			m_scriptData[animateID].p_stateManager->ChangeState(new AttackEXECUTE{}, animateID);
+
+			// reset and play attack animation
+			m_scriptData[animateID].p_catAnimation->SetCurrentFrameIndex(0);
+			if (m_scriptData[animateID].attackSelected)
+			{
+				// if attack has been selected play attack execute animation
+				PlayAnimation(animateID, "Attack");
+				m_executionAnimationDuration = ResourceManager::GetInstance().GetAnimation(m_scriptData[animateID].p_catAnimation->GetAnimationID())->GetAnimationDuration();
+				m_scriptData[animateID].executionAnimationFinished = false;
+				m_scriptData[animateID].finishedExecution = false;
+			}
+			else
+			{
+				// if no attack has been selected play idle animation
+				PlayAnimation(animateID, "Idle");
+				m_scriptData[animateID].finishedExecution = true;
+				m_scriptData[animateID].executionAnimationFinished = true;
+			}
+		};
+
+		auto HasFinishedAnimation = 
+		[&]()
+		{
+			m_executionAnimationDuration -= deltaTime;
+			return (m_executionAnimationDuration <= 0.f);
+		};
 
 		// when execution phase is activated, sets the state to movement
 		if (r_stateName != "MovementEXECUTE" && r_stateName != "AttackEXECUTE")
@@ -353,14 +389,9 @@ namespace PE
 					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
 					PlayAnimation(id, "Walk");
 				}
-				else if (m_scriptData[id].attackSelected) // if not moving, immediately set to attack state
+				else // if not moving, immediately set to attack state
 				{
-					// change to attack execute state
-					m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
-					
-					// reset and play attack animation
-					m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
-					PlayAnimation(id, "Attack");
+					ChangeToAttack(id);
 				}
 			} 
 		}
@@ -372,35 +403,21 @@ namespace PE
 			
 			if (CheckShouldStateChange(id, deltaTime))
 			{
-				// changes to attack execute state when state change is triggered from movement script
-				m_scriptData[id].p_stateManager->ChangeState(new AttackEXECUTE{}, id);
-				
-				// reset and play animation
-				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
-				if (m_scriptData[id].attackSelected)
-				{
-					// if attack has been selected play attack execute animation
-					PlayAnimation(id, "Attack");
-				}
-				else
-				{
-					// if no attack has been selected play idle animation
-					PlayAnimation(id, "Idle");
-					m_scriptData[id].finishedExecution = true;
-					m_executionAnimationFinished = true;
-				}
+				ChangeToAttack(id);
 			}
 		}
 		// executes attack and plays attack animation, plays idle animation if attack is finished early
 		else if (r_stateName == "AttackEXECUTE")
 		{
-			if (!m_executionAnimationFinished && m_scriptData[id].attackSelected
-				&& m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
+			if (m_scriptData[id].executionAnimationFinished)
 			{
-				m_executionAnimationFinished = true; // if attack animation finished set to true
-			}
-			if (m_executionAnimationFinished)
 				PlayAnimation(id, "Idle");
+			}
+			else if (m_scriptData[id].attackSelected && HasFinishedAnimation())
+			{
+				m_scriptData[id].executionAnimationFinished = true; // if attack animation finished set to true
+				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
+			}
 		}
 	}
 
