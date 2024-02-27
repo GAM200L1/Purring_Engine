@@ -4403,7 +4403,7 @@ namespace PE {
 					{
 						// format filepath to be relative to the Assets folder
 						std::replace(filePath.begin(), filePath.end(), '\\', '/');
-						filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find(".") - filePath.find("/Assets/")) + ".anim";
+						filePath = ".." + filePath.substr(filePath.find("/Assets/"), filePath.find_last_of(".") - filePath.find("/Assets/")) + ".anim";
 
 						// Create a new animation
 						currentAnimationID = AnimationManager::CreateAnimation(filePath);
