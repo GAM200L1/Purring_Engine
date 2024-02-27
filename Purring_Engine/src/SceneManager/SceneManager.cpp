@@ -36,8 +36,8 @@ namespace PE
 
     void SceneManager::CreateDefaultScene()
     {
-        SetActiveScene("DefaultScene.scene");
-        LoadSceneFromPath("../Assets/Defaults/DefaultScene.scene");
+        SetActiveScene("Default_Scene.scene");
+        LoadSceneFromPath("../Assets/Defaults/Default_Scene.scene");
     }
 
     void SceneManager::SetStartScene(std::string const& r_sceneName)

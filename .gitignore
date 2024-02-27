@@ -29,7 +29,7 @@ Assets/*
 !Assets/Scenes
 !Assets/Animation
 
-Assets/Scenes/Savestate/savestate.json
+Assets/Scenes/Savestate/savestate.scene
 
 *.sln
 

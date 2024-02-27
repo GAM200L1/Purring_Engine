@@ -44,6 +44,8 @@
 
 extern Logger engine_logger;
 
+#define REGISTERPREFAB(prefab) PE::ResourceManager::GetInstance().AddPrefabKeyToLoad(prefab)
+
 namespace PE
 {
     ResourceManager::ResourceManager()
@@ -54,7 +56,8 @@ namespace PE
                       m_defaultTextureKey{ "../Assets/Defaults/Default_Texture_512px.png" },
                       m_defaultAudioKey{ "../Assets/Defaults/Default_Audio.wav" },
                       m_defaultFontKey{ "../Assets/Defaults/Default_Font.ttf" },
-                      m_defaultAnimationKey{ "../Assets/Defaults/Default_Animation.anim" }
+                      m_defaultAnimationKey{ "../Assets/Defaults/Default_Animation.anim" },
+                      m_defaultPrefabKey{ "../Assets/Defaults/Default_Prefab.prefab" }
         {
 #ifndef GAMERELEASE
             // load editor icons
@@ -516,8 +519,21 @@ namespace PE
 		}
     }
 
+    void ResourceManager::LoadAllPrefabs()
+    {
+        //engine_logger.SetFlag(Logger::EnumLoggerFlags::WRITE_TO_CONSOLE | Logger::EnumLoggerFlags::DEBUG, true);
+        //engine_logger.SetTime();
+        //engine_logger.AddLog(false, "Loading all animations", __FUNCTION__);
+        //for (auto const& itr : m_allAnimationKeys)
+        //{
+        //    engine_logger.AddLog(false, itr, __FUNCTION__);
+        //    LoadAnimationFromFile(itr, itr);
+        //}
+    }
+
     void ResourceManager::LoadAllResources()
     {
+        LoadAllPrefabs();
         LoadAllAnimations();
         LoadAllTextures();
         LoadAllAudio();
@@ -542,6 +558,11 @@ namespace PE
     void ResourceManager::AddAnimationKeyToLoad(std::string const& r_key)
     {
         m_allAnimationKeys.insert(r_key);
+    }
+
+    void ResourceManager::AddPrefabKeyToLoad(std::string const& r_key)
+    {
+        m_allPrefabKeys.insert(r_key);
     }
 
     void ResourceManager::UnloadResources()

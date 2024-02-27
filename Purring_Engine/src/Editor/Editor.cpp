@@ -5142,7 +5142,7 @@ namespace PE {
 							UndoStack::GetInstance().ClearStack();
 
 							// if active scene is default scene, open file explorer to save new scene
-							if (SceneManager::GetInstance().GetActiveScene() == "DefaultScene.scene")
+							if (SceneManager::GetInstance().GetActiveScene() == "Default_Scene.scene")
 							{
 								serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(), true);
 							}
