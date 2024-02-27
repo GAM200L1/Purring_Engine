@@ -193,6 +193,7 @@ namespace PE
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			FadeAllObject(m_scriptData[id].Journal, 0);
 
 			PhaseBannerTransition(id, deltaTime);
 			UpdateTurnCounter("Deployment");
@@ -742,6 +743,8 @@ namespace PE
 		{
 			CurrentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
+			m_isPotraitShowing = false;
+			m_journalShowing = false;
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
@@ -894,6 +897,21 @@ namespace PE
 
 		FadeAllObject(m_scriptData[id].HUDCanvas, fadeOutSpeed);
 		FadeAllObject(m_scriptData[id].ExecuteCanvas, fadeInSpeed);
+
+		if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].JournalButton))
+			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].JournalButton).SetAlpha(0);
+
+		if (!m_journalShowing)
+		{
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+		}
+		else
+		{
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeOutSpeed);
+		}
+
 
 		if (fadeInSpeed >= 1)
 		{
