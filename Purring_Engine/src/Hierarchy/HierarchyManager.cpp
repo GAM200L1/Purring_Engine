@@ -79,6 +79,9 @@ namespace PE
 		if (!EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).isActive)
 			EntityManager::GetInstance().Get<EntityDescriptor>(r_child).DisableEntity();
 		
+		auto& pr = EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
+		auto& ch = EntityManager::GetInstance().Get<EntityDescriptor>(r_child).children;
+		
 		UpdateRenderOrder(r_parent);
 	}
 
@@ -232,32 +235,32 @@ namespace PE
 	{
 		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children.size() + 1);
 		EntityID prevSceneID{ ULLONG_MAX };
-		std::map<EntityID, EntityDescriptor*> descs;
+		std::map<EntityID, std::pair<EntityDescriptor*, EntityID>> descs;
 		for (const auto& id : EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children)
 		{
 			EntityDescriptor& desc = EntityManager::GetInstance().Get<EntityDescriptor>(id);
 			if (desc.sceneID == ULLONG_MAX || desc.sceneID == prevSceneID)
 				desc.sceneID = prevSceneID + 1;
-			descs[desc.sceneID] = &desc;
+			descs[desc.sceneID] = std::make_pair(&desc, id);
 			prevSceneID = desc.sceneID;
 		}
 
 		unsigned cnt{ 1 };
-		for (auto [k,desc] : descs)
+		for (auto [k, desc] : descs)
 		{
 
 			// how to handle when the layer of the child is diff from parents??
 			// currently ignoring
 			const float order = min + (delta * cnt);
 
-			if (desc->renderOrder <= min || desc->renderOrder >= max || (desc->renderOrder != order))
-				m_sceneHierarchy.erase(desc->renderOrder);
-			desc->renderOrder = order;
-			m_sceneHierarchy[desc->renderOrder] = desc->oldID;
+			if (desc.first->renderOrder <= min || desc.first->renderOrder >= max || (desc.first->renderOrder != order))
+				m_sceneHierarchy.erase(desc.first->renderOrder);
+			desc.first->renderOrder = order;
+			m_sceneHierarchy[desc.first->renderOrder] = desc.second;
 
-			if (desc->children.size())
+			if (desc.first->children.size())
 			{
-				RenderOrderUpdateHelper(desc->oldID, desc->renderOrder, desc->renderOrder + delta);
+				RenderOrderUpdateHelper(desc.second, desc.first->renderOrder, desc.first->renderOrder + delta);
 			}
 			++cnt;
 		}
