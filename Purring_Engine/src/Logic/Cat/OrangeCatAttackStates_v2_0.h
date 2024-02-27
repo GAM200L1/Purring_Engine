@@ -161,12 +161,14 @@ namespace PE
 
 		float m_seismicDelay;
 		float m_seismicLifeTime;
+		float m_attackLifetime;
 		
 		bool m_seismicSlammed{ false };
+		bool m_seismicFinished{ false };
 
 		int m_collisionEnterEventListener; // stores the handler for collision enter event
 
-		void SeismicCollided(const Event<CollisionEvents> r_CE);
+		void SeismicCollided(const Event<CollisionEvents>& r_CE);
 
 		bool SeismicHitCat(EntityID id1, EntityID id2);
 

@@ -19,6 +19,7 @@
 #include "Hierarchy/HierarchyManager.h"
 #include "Physics/CollisionManager.h"
 #include "Animation/Animation.h"
+#include "ResourceManager/ResourceManager.h"
 
 #include "OrangeCatAttackStates_v2_0.h"
 #include "CatController_v2_0.h"
@@ -168,7 +169,7 @@ namespace PE
 		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, OrangeCatAttack_v2_0EXECUTE::SeismicCollided, this);
 
 		m_seismicDelay = p_attackData->seismicDelay;
-
+		m_attackLifetime = ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID).GetAnimationID())->GetAnimationDuration();
 	}
 
 	void OrangeCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -176,15 +177,19 @@ namespace PE
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		CatScript_v2_0Data* p_catData = GETSCRIPTDATA(CatScript_v2_0, id);
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE || !p_catData->attackSelected) { return; }
-		
+
 		AnimationComponent& seismicAnimation = EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID);
 		
 		if (m_seismicSlammed)
 		{	
-			if (seismicAnimation.GetCurrentFrameIndex() == seismicAnimation.GetAnimationMaxIndex())
+			if (m_attackLifetime <= 0.f)
 			{
 				p_catData->finishedExecution = true;
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
+			}
+			else
+			{
+				m_attackLifetime -= deltaTime;
 			}
 		}
 		// if seismic is not yet done, attack is selected, and animation is at the point where seismic would play
@@ -217,7 +222,7 @@ namespace PE
 		CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
 	}
 
-	void OrangeCatAttack_v2_0EXECUTE::SeismicCollided(const Event<CollisionEvents> r_CE)
+	void OrangeCatAttack_v2_0EXECUTE::SeismicCollided(const Event<CollisionEvents>& r_CE)
 	{
 		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
 		{
@@ -227,7 +232,6 @@ namespace PE
 			if (SeismicHitCat(OCEE.Entity1, OCEE.Entity2) || SeismicHitRat(OCEE.Entity1, OCEE.Entity2))
 			{
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
-				(GETSCRIPTDATA(CatScript_v2_0, m_catID))->finishedExecution = true;
 			}
 		}
 	}
