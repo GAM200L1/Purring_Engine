@@ -3,12 +3,12 @@
         "components": {
             "AnimationComponent": {
                 "AnimationIDs": [
-                    "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
-                    "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
-                    "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
-                    "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                    "../Assets/Animation/AnimationMeowsalot_Attack.anim",
+                    "../Assets/Animation/AnimationMeowsalot_Death.anim",
+                    "../Assets/Animation/AnimationMeowsalot_Idle.anim",
+                    "../Assets/Animation/AnimationMeowsalot_walk.anim"
                 ],
-                "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json"
+                "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle.anim"
             },
             "Collider": {
                 "collisionLayerIndex": 0,
@@ -53,10 +53,10 @@
                 "CatScript": {
                     "data": {
                         "animationStates": {
-                            "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
-                            "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
-                            "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
-                            "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                            "Attack": "../Assets/Animation/AnimationMeowsalot_Attack.anim",
+                            "Death": "../Assets/Animation/AnimationMeowsalot_Death.anim",
+                            "Idle": "../Assets/Animation/AnimationMeowsalot_Idle.anim",
+                            "Walk": "../Assets/Animation/AnimationMeowsalot_walk.anim"
                         },
                         "attackDamage": 1,
                         "bulletDelay": 0.699999988079071,

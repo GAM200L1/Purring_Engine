@@ -3,12 +3,12 @@
         "components": {
             "AnimationComponent": {
                 "AnimationIDs": [
-                    "../Assets/Animation/AnimationOrange_Attack_Anim.json",
-                    "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                    "../Assets/Animation/AnimationOrange_Idle_Anim.json",
-                    "../Assets/Animation/AnimationOrange_walk_Anim.json"
+                    "../Assets/Animation/AnimationOrange_Attack.anim",
+                    "../Assets/Animation/AnimationOrange_Death.anim",
+                    "../Assets/Animation/AnimationOrange_Idle.anim",
+                    "../Assets/Animation/AnimationOrange_walk.anim"
                 ],
-                "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle_Anim.json"
+                "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle.anim"
             },
             "Collider": {
                 "collisionLayerIndex": 0,
@@ -53,10 +53,10 @@
                 "CatScript": {
                     "data": {
                         "animationStates": {
-                            "Attack": "../Assets/Animation/AnimationOrange_Attack_Anim.json",
-                            "Death": "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                            "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json",
-                            "Walk": "../Assets/Animation/AnimationOrange_walk_Anim.json"
+                            "Attack": "../Assets/Animation/AnimationOrange_Attack.anim",
+                            "Death": "../Assets/Animation/AnimationOrange_Death.anim",
+                            "Idle": "../Assets/Animation/AnimationOrange_Idle.anim",
+                            "Walk": "../Assets/Animation/AnimationOrange_walk.anim"
                         },
                         "attackDamage": 0,
                         "bulletDelay": 0.699999988079071,

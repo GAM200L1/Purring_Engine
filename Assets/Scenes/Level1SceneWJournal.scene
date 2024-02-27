@@ -4230,12 +4230,12 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationGrey_Attack_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Death_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Idle_Anim.json",
-                            "../Assets/Animation/AnimationGrey_Walk_Anim.json"
+                            "../Assets/Animation/AnimationGrey_Attack.anim",
+                            "../Assets/Animation/AnimationGrey_Death.anim",
+                            "../Assets/Animation/AnimationGrey_Idle.anim",
+                            "../Assets/Animation/AnimationGrey_Walk.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle_Anim.json"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationGrey_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 0,
@@ -4285,10 +4285,10 @@
                         "CatScript_v2_0": {
                             "data": {
                                 "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationGrey_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationGrey_Death_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationGrey_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationGrey_Walk_Anim.json"
+                                    "Attack": "../Assets/Animation/AnimationGrey_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationGrey_Death.anim",
+                                    "Idle": "../Assets/Animation/AnimationGrey_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationGrey_Walk.anim"
                                 },
                                 "attackVariants": {
                                     "GreyCatAttackVariables": {
@@ -4381,10 +4381,10 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
-                            "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
-                            "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
-                            "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                            "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000.anim",
+                            "../Assets/Animation/AnimationMeowsalot_Death.anim",
+                            "../Assets/Animation/AnimationMeowsalot_Idle.anim",
+                            "../Assets/Animation/AnimationMeowsalot_walk.anim"
                         ],
                         "CurrentAnimationID": ""
                     },
@@ -4434,10 +4434,10 @@
                         "CatScript_v2_0": {
                             "data": {
                                 "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000.anim",
+                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death.anim",
+                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk.anim"
                                 },
                                 "attackVariants": {
                                     "GreyCatAttackVariables": {
@@ -4883,13 +4883,13 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack_Anim.json",
-                            "../Assets/Animation/AnimationRat_Death_Anim.json",
-                            "../Assets/Animation/AnimationRat_Hurt_Anim.json",
-                            "../Assets/Animation/AnimationRat_Idle_Anim.json",
-                            "../Assets/Animation/AnimationRat_walk_Anim.json"
+                            "../Assets/Animation/AnimationRat_Attack.anim",
+                            "../Assets/Animation/AnimationRat_Death.anim",
+                            "../Assets/Animation/AnimationRat_Hurt.anim",
+                            "../Assets/Animation/AnimationRat_Idle.anim",
+                            "../Assets/Animation/AnimationRat_walk.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle_Anim.json"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 0,
@@ -4937,11 +4937,11 @@
                         "RatScript": {
                             "data": {
                                 "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
-                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
+                                    "Attack": "../Assets/Animation/AnimationRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationRat_walk.anim"
                                 },
                                 "attackDamage": 1,
                                 "attackDelay": 0.0,
@@ -4979,13 +4979,13 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack_Anim.json",
-                            "../Assets/Animation/AnimationRat_Death_Anim.json",
-                            "../Assets/Animation/AnimationRat_Hurt_Anim.json",
-                            "../Assets/Animation/AnimationRat_Idle_Anim.json",
-                            "../Assets/Animation/AnimationRat_walk_Anim.json"
+                            "../Assets/Animation/AnimationRat_Attack.anim",
+                            "../Assets/Animation/AnimationRat_Death.anim",
+                            "../Assets/Animation/AnimationRat_Hurt.anim",
+                            "../Assets/Animation/AnimationRat_Idle.anim",
+                            "../Assets/Animation/AnimationRat_walk.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle_Anim.json"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle.anim"
                     },
                     "Collider": {
                         "collisionLayerIndex": 0,
@@ -5033,11 +5033,11 @@
                         "RatScript": {
                             "data": {
                                 "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
-                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
+                                    "Attack": "../Assets/Animation/AnimationRat_Attack.anim",
+                                    "Death": "../Assets/Animation/AnimationRat_Death.anim",
+                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt.anim",
+                                    "Idle": "../Assets/Animation/AnimationRat_Idle.anim",
+                                    "Walk": "../Assets/Animation/AnimationRat_walk.anim"
                                 },
                                 "attackDamage": 1,
                                 "attackDelay": 0.0,

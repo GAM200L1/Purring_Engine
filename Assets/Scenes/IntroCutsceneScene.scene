@@ -42,9 +42,9 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/Cutscene_Anim.json"
+                            "../Assets/Animation/Cutscene.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/Cutscene_Anim.json"
+                        "CurrentAnimationID": "../Assets/Animation/Cutscene.anim"
                     },
                     "EntityDescriptor": {
                         "Layer": 0,

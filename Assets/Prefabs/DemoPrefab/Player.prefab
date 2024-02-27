@@ -3,12 +3,12 @@
         "components": {
             "AnimationComponent": {
                 "AnimationIDs": [
-                    "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json",
-                    "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
-                    "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
-                    "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                    "../Assets/Animation/AnimationMeowsalot_Attack.anim",
+                    "../Assets/Animation/AnimationMeowsalot_Death.anim",
+                    "../Assets/Animation/AnimationMeowsalot_Idle.anim",
+                    "../Assets/Animation/AnimationMeowsalot_walk.anim"
                 ],
-                "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json"
+                "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_Idle.anim"
             },
             "Collider": {
                 "collisionLayerIndex": 0,

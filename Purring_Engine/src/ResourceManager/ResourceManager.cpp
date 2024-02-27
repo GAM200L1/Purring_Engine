@@ -54,7 +54,7 @@ namespace PE
                       m_defaultTextureKey{ "../Assets/Defaults/Default_Texture_512px.png" },
                       m_defaultAudioKey{ "../Assets/Defaults/Default_Audio.wav" },
                       m_defaultFontKey{ "../Assets/Defaults/Default_Font.ttf" },
-                      m_defaultAnimationKey{ "../Assets/Defaults/Default_Animation_Anim.json" }
+                      m_defaultAnimationKey{ "../Assets/Defaults/Default_Animation.anim" }
         {
 #ifndef GAMERELEASE
             // load editor icons
