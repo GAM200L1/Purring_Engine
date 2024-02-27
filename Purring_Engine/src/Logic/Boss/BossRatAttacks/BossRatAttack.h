@@ -15,6 +15,9 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 * ************************************************************************************/
 #pragma once
 
+#include "ECS/EntityFactory.h"
+#include "ECS/Entity.h"
+
 namespace PE
 {
 	class BossRatAttack
@@ -22,6 +25,8 @@ namespace PE
 	public:
 		virtual void DrawTelegraphs() = 0;
 		virtual void EnterAttack() = 0;
+		virtual void UpdateAttack() = 0;
+		virtual void ExitAttack() = 0;
 		virtual ~BossRatAttack() {}
 	};
 

@@ -33,6 +33,7 @@ namespace PE
 		if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 		{
 			p_data->p_stateManager->ChangeState(new BossRatExecuteState(),id);
+			p_data->finishExecution = false;
 		}
 	}
 

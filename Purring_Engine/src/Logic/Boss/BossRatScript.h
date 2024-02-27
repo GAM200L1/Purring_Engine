@@ -17,6 +17,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/StateManager.h"
 #include "Logic/Script.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "Logic/Boss/BossRatAttacks/BossRatAttack.h"
+
 namespace PE
 {
 	struct BossRatScriptData
@@ -26,8 +28,12 @@ namespace PE
 			delete p_stateManager;
 		}
 
+		//other boss stats
+
+
 		EntityID myID{ 0 };
 		StateMachine* p_stateManager;
+		BossRatAttack* p_currentAttack;
 		bool finishExecution;
 	};
 
@@ -111,6 +117,8 @@ namespace PE
 		 \param[in] id EntityID of the entity to create the state manager for.
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
+
+		void TakeDamage(int damage);
 
 	private:
 		// ----- Private Variables ----- //
