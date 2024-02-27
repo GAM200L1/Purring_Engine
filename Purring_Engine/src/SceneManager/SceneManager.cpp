@@ -163,7 +163,6 @@ namespace PE
                 EntityManager::GetInstance().RemoveEntity(n);
             }
         }
-
         Hierarchy::GetInstance().Update();
         //LayerManager::GetInstance().ResetLayerCache();
     }

@@ -156,7 +156,7 @@ namespace PE
 
 			if (m_scriptData[id].p_catAnimation->GetCurrentFrameIndex() == m_scriptData[id].p_catAnimation->GetAnimationMaxIndex())
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->RemoveCatFromVector(id);
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->RemoveCatFromCurrent(id);
 				m_scriptData[id].toggleDeathAnimation = false;
 				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
 					p_gsc->LoseGame();
