@@ -1190,7 +1190,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4138,7 +4138,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4493,7 +4493,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5213,7 +5213,7 @@
                                 "x": 0.0,
                                 "y": 0.0
                             },
-                            "radius": 48.0,
+                            "radius": 32.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -5221,7 +5221,7 @@
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 1,
-                        "Layer": 10,
+                        "Layer": 1,
                         "Old ID": 93,
                         "Prefab Type": "OrangeCat",
                         "children": [
@@ -5282,7 +5282,7 @@
                         }
                     },
                     "Transform": {
-                        "height": 96.0,
+                        "height": 64.0,
                         "orientation": 0.0,
                         "position": {
                             "x": -294.99932861328125,
@@ -5293,7 +5293,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 96.0
+                        "width": 64.0
                     }
                 },
                 "name": ""
@@ -5323,7 +5323,7 @@
                         "TextureKey": "../Assets/Textures/Cat_Cage_512px.png"
                     },
                     "Transform": {
-                        "height": 150.0,
+                        "height": 100.0,
                         "orientation": 0.0,
                         "position": {
                             "x": -294.99932861328125,
@@ -5334,7 +5334,7 @@
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 150.0
+                        "width": 100.0
                     }
                 },
                 "name": ""
