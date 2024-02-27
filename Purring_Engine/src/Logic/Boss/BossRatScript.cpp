@@ -18,7 +18,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/LogicSystem.h"
 #include "BossRatExecuteState.h"
 #include "BossRatPlanningState.h"
-
+#include "Logic/Cat/CatController_v2_0.h"
 namespace PE
 {
 	// ---------- FUNCTION DEFINITIONS ---------- //
@@ -103,5 +103,10 @@ namespace PE
 	void BossRatScript::TakeDamage(int damage)
 	{
 		--m_scriptData[currentBoss].Health;
+	}
+
+	EntityID BossRatScript::FindFurthestCat()
+	{
+
 	}
 } // End of namespace PE

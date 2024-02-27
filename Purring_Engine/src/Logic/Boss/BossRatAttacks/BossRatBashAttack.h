@@ -36,7 +36,7 @@ namespace PE
 	private:
 		//need to take a snapshot of the current player positions here
 		//actually no, only need the furtest cat
-		EntityID m_FurthestCat{-1};
+		EntityID m_FurthestCat{static_cast<EntityID>(-1)};
 		std::string m_telegraphPrefab{"RatBossBashAttackTelegraph_Prefab.json"};
 		std::vector<EntityID> m_telegraphPoitions;
 		int NumberOfAttacks;

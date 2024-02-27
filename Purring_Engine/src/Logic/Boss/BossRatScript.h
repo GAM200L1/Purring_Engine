@@ -121,6 +121,9 @@ namespace PE
 
 		void TakeDamage(int damage);
 
+		EntityID FindFurthestCat();
+
+
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
