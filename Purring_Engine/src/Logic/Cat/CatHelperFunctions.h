@@ -169,10 +169,7 @@ namespace PE
 
 			 \param[out] bool - whether it is the first level in the game
 			*************************************************************************************/
-			static bool IsFirstLevel()
-			{
-				return (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0);
-			}
+			
 		};
 	
 }

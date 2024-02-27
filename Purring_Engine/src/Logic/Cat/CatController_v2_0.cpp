@@ -149,4 +149,10 @@ namespace PE
 	{
 		return (GETSCRIPTDATA(CatScript_v2_0, catID))->catMaxMovementEnergy;
 	}
+
+	bool CatController_v2_0::IsFollowCat(EntityID catID)
+	{
+		FollowScriptData_v2_0* p_followScript = GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID);
+		return (std::find(p_followScript->followers.begin(), p_followScript->followers.end(), catID) != p_followScript->followers.end());
+	}
 }

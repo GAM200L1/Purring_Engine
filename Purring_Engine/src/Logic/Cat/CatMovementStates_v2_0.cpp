@@ -46,7 +46,7 @@ namespace PE
 		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovement_v2_0PLAN::OnPathCollision, this);
 
-		if (CatHelperFunctions::IsFirstLevel())
+		if (p_data->catType == EnumCatType::MAINCAT)
 		{
 			FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, p_data->catID);
 			p_data->followCatPositions = follow_data->NextPosition;
@@ -356,12 +356,7 @@ namespace PE
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 
-		if (p_data->catType != EnumCatType::MAINCAT && CatHelperFunctions::IsFirstLevel())
-		{
-			m_doneMoving = true;
-			return;
-		}
-		else
+		if (p_data->catType == EnumCatType::MAINCAT)
 		{
 			m_mainCatID = id;
 		}

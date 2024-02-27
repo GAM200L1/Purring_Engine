@@ -34,11 +34,8 @@ namespace PE
 {
 	void FollowScript_v2_0::Init(EntityID)
 	{
-		p_gamestateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		
+		p_gamestateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);		
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, FollowScript_v2_0::CollisionCheck, this);
-		if (!EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
-			EntityManager::GetInstance().Assign<CatSaveData>(MAXSIZE_T);
 	}
 
 	void FollowScript_v2_0::Update(EntityID id, float)
@@ -219,8 +216,6 @@ namespace PE
 
 	FollowScript_v2_0::~FollowScript_v2_0()
 	{
-		if (EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
-			EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T).saved.clear();
 		REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
 	}
 }
