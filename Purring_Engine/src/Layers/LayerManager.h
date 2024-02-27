@@ -330,7 +330,7 @@ namespace PE
 				end = en;
 				try
 				{ 
-					while (ite != end && !EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive) ++ite;
+					while (ite != end && (!EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive)) ++ite;
 				}
 				catch (...)
 				{
@@ -385,7 +385,7 @@ namespace PE
 				do
 				{
 					++ite;
-					if (ite != end && EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive)
+					if (ite != end && (EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isActive || EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive))
 						break;
 				} while (ite != end);
 				return *this;
