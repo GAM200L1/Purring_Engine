@@ -332,7 +332,16 @@ namespace PE
 				try
 				{ 
 					if (!ignore)
-						while (ite != end && (!EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive)) ++ite;
+						while (ite != end && (!EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isActive || !EntityManager::GetInstance().Get<EntityDescriptor>(*ite).isAlive)) 
+						{
+							auto& desc = EntityManager::GetInstance().Get<EntityDescriptor>(*ite);
+							if (*ite == 0)
+							{
+								desc.isActive = true;
+								continue;
+							}
+							++ite;
+						}
 				}
 				catch (...)
 				{
