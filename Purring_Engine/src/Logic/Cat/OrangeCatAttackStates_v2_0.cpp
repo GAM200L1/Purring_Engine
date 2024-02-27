@@ -39,6 +39,8 @@ namespace PE
 		seismicID = serializationManager.LoadFromFile("Seismic_Prefab.json");
 		
 		EntityManager::GetInstance().Get<Collider>(seismicID).collisionLayerIndex = 0;
+		CircleCollider& r_seismicCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(seismicID).colliderVariant);
+		r_seismicCollider.scaleOffset = 0.25f;
 
 		//Hierarchy::GetInstance().GetInstance().AttachChild(catID, seismicID);
 		//EntityManager::GetInstance().Get<Transform>(seismicID).relPosition.Zero();
@@ -162,13 +164,16 @@ namespace PE
 		// retrieves the data for the grey cat's attack
 		p_attackData = &std::get<OrangeCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 
-		// set seismic to where cat is and reset animation
+		// set seismic to where cat is
 		CatHelperFunctions::PositionEntity(p_attackData->seismicID, CatHelperFunctions::GetEntityPosition(id));
 
 		// subscribes to collision events
 		m_collisionEnterEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnCollisionEnter, OrangeCatAttack_v2_0EXECUTE::SeismicCollided, this);
 
 		m_seismicDelay = p_attackData->seismicDelay;
+
+		// reset animation
+		EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID).SetCurrentFrameIndex(0);
 		m_attackLifetime = ResourceManager::GetInstance().GetAnimation(EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID).GetAnimationID())->GetAnimationDuration();
 	}
 
@@ -178,8 +183,8 @@ namespace PE
 		CatScript_v2_0Data* p_catData = GETSCRIPTDATA(CatScript_v2_0, id);
 		if (p_gsc->currentState == GameStates_v2_0::PAUSE || !p_catData->attackSelected) { return; }
 
-		AnimationComponent& seismicAnimation = EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID);
-		
+		AnimationComponent& r_seismicAnimation = EntityManager::GetInstance().Get<AnimationComponent>(p_attackData->seismicID);
+
 		if (m_seismicSlammed)
 		{	
 			if (m_attackLifetime <= 0.f)
@@ -189,6 +194,12 @@ namespace PE
 			}
 			else
 			{
+				CircleCollider& r_seismicCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->seismicID).colliderVariant);
+
+				if (m_seismicPrevAnimationFrame < r_seismicAnimation.GetCurrentFrameIndex() && r_seismicCollider.scaleOffset < 1.f)
+					r_seismicCollider.scaleOffset += 0.25f;
+
+				m_seismicPrevAnimationFrame = r_seismicAnimation.GetCurrentFrameIndex();
 				m_attackLifetime -= deltaTime;
 			}
 		}
@@ -199,7 +210,7 @@ namespace PE
 			{
 				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, true);
 				m_seismicSlammed = true;
-				seismicAnimation.SetCurrentFrameIndex(0);
+				r_seismicAnimation.SetCurrentFrameIndex(0);
 				// @TODO add sound
 			}
 			else 
@@ -228,11 +239,9 @@ namespace PE
 		{
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
 
+			if (OCEE.Entity1 != m_catID && OCEE.Entity2 != m_catID);
 			// if the seismic hits a cat or rat
-			if (SeismicHitCat(OCEE.Entity1, OCEE.Entity2) || SeismicHitRat(OCEE.Entity1, OCEE.Entity2))
-			{
-				CatHelperFunctions::ToggleEntity(p_attackData->seismicID, false);
-			}
+				(SeismicHitCat(OCEE.Entity1, OCEE.Entity2) || SeismicHitRat(OCEE.Entity1, OCEE.Entity2));
 		}
 	}
 
@@ -250,38 +259,32 @@ namespace PE
 			return false;
 		};
 
-		if (id1 != m_catID && id2 != m_catID)
+		// kill cat if not in chain level and seismic hits a cat
+		if (id1 == p_attackData->seismicID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
 		{
-			// kill cat if not in chain level and seismic hits a cat
-			if (id1 == p_attackData->seismicID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
-			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
-				return true;
-			}
-			else if (id2 == p_attackData->seismicID && IsCatAndNotCaged(id1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
-			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
-				return true;
-			}
+			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
+			return true;
+		}
+		else if (id2 == p_attackData->seismicID && IsCatAndNotCaged(id1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
+		{
+			GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
+			return true;
 		}
 		return false;
 	}
 
 	bool OrangeCatAttack_v2_0EXECUTE::SeismicHitRat(EntityID id1, EntityID id2)
 	{
-		if (id1 != m_catID && id2 != m_catID)
+		// damage rat
+		if (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 		{
-			// damage rat
-			if (id1 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
-			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, p_attackData->damage);
-				return true;
-			}
-			else if (id2 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
-			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, p_attackData->damage);
-				return true;
-			}
+			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, p_attackData->damage);
+			return true;
+		}
+		else if (id2 == p_attackData->seismicID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
+		{
+			GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, p_attackData->damage);
+			return true;
 		}
 		return false;
 	}

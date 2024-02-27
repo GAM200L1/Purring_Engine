@@ -166,6 +166,8 @@ namespace PE
 		bool m_seismicSlammed{ false };
 		bool m_seismicFinished{ false };
 
+		unsigned int m_seismicPrevAnimationFrame{ 0 };
+
 		int m_collisionEnterEventListener; // stores the handler for collision enter event
 
 		void SeismicCollided(const Event<CollisionEvents>& r_CE);
