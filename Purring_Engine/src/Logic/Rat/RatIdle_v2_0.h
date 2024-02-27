@@ -19,6 +19,7 @@
 #include "Logic/LogicSystem.h"
 #include "ECS/Entity.h"
 #include "../StateManager.h"
+#include "Data/SerializationManager.h"
 
 namespace PE
 {
@@ -31,16 +32,40 @@ namespace PE
         PATROL
     };
 
+    struct PatrolPoint
+    {
+        vec2 position;
+
+        nlohmann::json ToJson() const
+        {
+            nlohmann::json j;
+            j["x"] = position.x;
+            j["y"] = position.y;
+            return j;
+        }
+
+        static PatrolPoint FromJson(const nlohmann::json& j)
+        {
+            PatrolPoint pp;
+            pp.position.x = j["x"];
+            pp.position.y = j["y"];
+            return pp;
+        }
+    };
+
     // ----- RAT IDLE STATE v2.0 ----- //
     class RatIdle_v2_0 : public State
     {
         // ----- Constructors ----- //
     public:
+        RatIdle_v2_0();
+
         RatIdle_v2_0(RatType type);
 
         virtual ~RatIdle_v2_0() { p_data = nullptr; }
         
         // ----- Public Functions ----- //
+
     public:
         /*!***********************************************************************************
             \brief Set up the state and subscribe to the collision events

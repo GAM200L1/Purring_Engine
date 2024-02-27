@@ -404,4 +404,29 @@ namespace PE
         }
     }
 
+    nlohmann::json RatIdle_v2_0::PatrolPointsToJson() const
+    {
+        nlohmann::json j = nlohmann::json::array();
+        for (const auto& pp : p_data->patrolPoints)
+        {
+            // Manually create a JSON object for each vec2
+            nlohmann::json point = { {"x", pp.x}, {"y", pp.y} };
+            j.push_back(point);
+        }
+        return j;
+    }
+
+    void RatIdle_v2_0::PatrolPointsFromJson(const nlohmann::json& j)
+    {
+        p_data->patrolPoints.clear();
+        for (const auto& pp_j : j)
+        {
+            // Assuming PE::vec2 has a constructor that takes x and y
+            PE::vec2 point(pp_j["x"], pp_j["y"]);
+            p_data->patrolPoints.push_back(point);
+        }
+    }
+
+
+
 } // namespace PE

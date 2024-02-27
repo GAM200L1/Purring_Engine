@@ -46,6 +46,7 @@
 
 // scripts
 #include "Logic/Cat/CatScript_v2_0.h"
+#include "Logic/Rat/RatIdle_v2_0.h"
 
 const std::wstring wjsonExt = L".json";
 
@@ -238,7 +239,7 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
     SerializeComponent<PE::AudioComponent>(entityId, "AudioComponent", j);
     SerializeComponent<PE::Canvas>(entityId, "Canvas", j);
     SerializeComponent<PE::GUISlider>(entityId, "GUISlider", j);
-
+    SerializeComponent<PE::RatIdle_v2_0>(entityId, "RatIdle_v2_0", j);
 
     return j; 
 }
@@ -389,6 +390,7 @@ void SerializationManager::LoadLoaders()
     m_initializeComponent.emplace("AudioComponent", &SerializationManager::LoadAudioComponent);
     m_initializeComponent.emplace("Canvas", &SerializationManager::LoadCanvasComponent);
     m_initializeComponent.emplace("GUISlider", &SerializationManager::LoadGUISlider);
+    m_initializeComponent.emplace("RatIdle", &SerializationManager::LoadRatIdle);
 
 }
 
@@ -837,3 +839,30 @@ bool SerializationManager::LoadGUISlider(const EntityID& r_id, const nlohmann::j
     }
     return false;
 }
+
+bool SerializationManager::LoadRatIdle(const EntityID& r_id, const nlohmann::json& r_json)
+{
+    // Check if the RatIdle_v2_0 component exists in the JSON
+    if (r_json["Entity"]["components"].contains("RatIdle_v2_0"))
+    {
+        // Create a local instance of RatIdle_v2_0 to be populated from JSON
+        PE::RatIdle_v2_0 ratIdleComponent;
+
+        const auto& ratIdleJson = r_json["Entity"]["components"]["RatIdle_v2_0"];
+
+        // Deserialize patrol points if they exist
+        if (ratIdleJson.contains("PatrolPoints"))
+        {
+            ratIdleComponent.PatrolPointsFromJson(ratIdleJson["PatrolPoints"]);
+        }
+
+        // Use EntityFactory to load the populated RatIdle_v2_0 component into the entity system
+        PE::EntityFactory::GetInstance().LoadComponent(r_id, PE::EntityManager::GetInstance().GetComponentID<PE::RatIdle_v2_0>(), static_cast<void*>(&ratIdleComponent));
+
+        return true;
+    }
+
+    return false; // RatIdle_v2_0 component not found in JSON
+}
+
+
