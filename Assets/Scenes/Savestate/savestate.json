@@ -12,13 +12,13 @@
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
-                        "Old ID": 2,
+                        "Old ID": 1,
                         "Prefab Type": "",
                         "children": [],
                         "isActive": true,
                         "name": "CameraObject",
                         "parent": null,
-                        "sceneID": 2
+                        "sceneID": 1
                     },
                     "Transform": {
                         "height": 100.0,

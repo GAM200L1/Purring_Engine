@@ -4120,59 +4120,10 @@ namespace PE {
 									}
 									ClearObjectList();
 									engine_logger.AddLog(false, "Entities Cleared.", __FUNCTION__);
-									//serializationManager.LoadFromFile(prefabFP, true);
-									std::ifstream inFile(prefabFP);
-									if (inFile)
-									{
-										nlohmann::json j;
-										inFile >> j;
-										inFile.close();
-										if (j.contains("Entity"))
-										{ 
-											auto id = serializationManager.DeserializeEntity(j);
-											PE::EntityManager::GetInstance().UpdateVectors(id);
-											PE::EntityManager::GetInstance().AddHelper(id);
-											int cnt{ 0 };
-											for (auto item : j)
-											{
-												if (cnt)
-												{
-													size_t tmp = serializationManager.DeserializeEntity(item);
-													PE::EntityManager::GetInstance().UpdateVectors(tmp);
-													PE::EntityManager::GetInstance().AddHelper(tmp);
-												}
-												++cnt;
-											}
-											
-										}
-										else
-										{
-											for (auto item : j.items().begin().value())
-											{
-												auto id = serializationManager.DeserializeEntity(item);
-												PE::EntityManager::GetInstance().UpdateVectors(id);
-												PE::EntityManager::GetInstance().AddHelper(id);
-
-												/**/
-											}
-											int cnt{ 0 };
-											for (auto it : j)
-											{
-												if (cnt)
-												{
-													size_t tmp = serializationManager.DeserializeEntity(it);
-													PE::EntityManager::GetInstance().UpdateVectors(tmp);
-													PE::EntityManager::GetInstance().AddHelper(tmp);
-												}
-												++cnt;
-											}
-										}
-										
-									}
-									else
-									{
-										std::cerr << "Could not open the file for reading: " << prefabFP << std::endl;
-									}
+									
+									serializationManager.LoadFromFile(prefabFP, true);
+									
+									
 								}
 								if (ImGui::Selectable("Delete Asset"))
 								{

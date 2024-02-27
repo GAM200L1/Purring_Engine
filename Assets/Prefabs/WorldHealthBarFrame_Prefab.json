@@ -1,43 +1,90 @@
-[
-    {
-        "Entity": {
-            "components": {
-                "EntityDescriptor": {
-                    "InteractionLayer": 0,
-                    "Layer": 0,
-                    "Old ID": 1,
-                    "Prefab Type": "WorldHealthBarFrame",
-                    "children": [],
-                    "isActive": true,
-                    "name": "WorldHealthBarFrame",
-                    "parent": null,
-                    "sceneID": 1
-                },
-                "GUIRenderer": {
-                    "Color": {
-                        "a": 1.0,
-                        "b": 1.0,
-                        "g": 1.0,
-                        "r": 1.0
+{
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 1,
+                            "Prefab Type": "",
+                            "children": [
+                                2
+                            ],
+                            "isActive": true,
+                            "name": "Empty Object",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": ""
+                        },
+                        "Transform": {
+                            "height": 100.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0
+                        }
                     },
-                    "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
-                },
-                "Transform": {
-                    "height": 19.0,
-                    "orientation": 0.0,
-                    "position": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "relativeposition": {
-                        "x": 0.0,
-                        "y": 0.0
-                    },
-                    "relorientation": 0.0,
-                    "width": 70.0
+                    "name": ""
                 }
             },
-            "name": ""
-        }
-    }
-]
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 2,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "AAAAAAAAAAA",
+                            "parent": 1,
+                            "sceneID": 2
+                        },
+                        "Renderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": ""
+                        },
+                        "Transform": {
+                            "height": 100.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 100.0
+                        }
+                    },
+                    "name": ""
+                }
+            }
+        ]
+    ]
+}

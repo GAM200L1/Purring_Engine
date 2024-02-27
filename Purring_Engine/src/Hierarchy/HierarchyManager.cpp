@@ -79,6 +79,9 @@ namespace PE
 		if (!EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).isActive)
 			EntityManager::GetInstance().Get<EntityDescriptor>(r_child).DisableEntity();
 		
+		auto& pr = EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
+		auto& ch = EntityManager::GetInstance().Get<EntityDescriptor>(r_child).children;
+		
 		UpdateRenderOrder(r_parent);
 	}
 
@@ -230,6 +233,7 @@ namespace PE
 
 	void Hierarchy::RenderOrderUpdateHelper(const EntityID& r_parent, float min, float max)
 	{
+		auto& pr = EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
 		const float delta = (max - min) / (EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children.size() + 1);
 		EntityID prevSceneID{ ULLONG_MAX };
 		std::map<EntityID, EntityDescriptor*> descs;
@@ -241,7 +245,7 @@ namespace PE
 			descs[desc.sceneID] = &desc;
 			prevSceneID = desc.sceneID;
 		}
-
+		
 		unsigned cnt{ 1 };
 		for (auto [k,desc] : descs)
 		{
@@ -253,11 +257,11 @@ namespace PE
 			if (desc->renderOrder <= min || desc->renderOrder >= max || (desc->renderOrder != order))
 				m_sceneHierarchy.erase(desc->renderOrder);
 			desc->renderOrder = order;
-			m_sceneHierarchy[desc->renderOrder] = desc->oldID;
+			m_sceneHierarchy[desc->renderOrder] = desc->sceneID;
 
 			if (desc->children.size())
 			{
-				RenderOrderUpdateHelper(desc->oldID, desc->renderOrder, desc->renderOrder + delta);
+				RenderOrderUpdateHelper(desc->sceneID, desc->renderOrder, desc->renderOrder + delta);
 			}
 			++cnt;
 		}

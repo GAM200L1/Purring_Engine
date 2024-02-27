@@ -159,6 +159,7 @@ public:
     template<typename ComponentType>
     void SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json);
 
+    size_t LoadPrefabFromFile(nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:
@@ -233,6 +234,8 @@ private:
      \brief Load the Transform component from JSON.
     *************************************************************************************/
     bool LoadGUISlider(const size_t& r_id, const nlohmann::json& r_json);
+
+
 
     // ----- Private Methods ----- //
 private:

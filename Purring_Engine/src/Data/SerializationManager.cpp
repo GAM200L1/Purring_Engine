@@ -39,6 +39,8 @@
 #include "Math/MathCustom.h"
 #include "GUI/Canvas.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Hierarchy/HierarchyManager.h"
+#include "Layers/LayerManager.h"
 
 // RTTR
 #include <rttr/variant.h>
@@ -246,30 +248,14 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
 nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
 {
     nlohmann::json ret;
-    if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).children.size())
-    {
-        ret = SerializeEntityComposite(entityId);
-    }
-    else
-    {
-        PE::EntityDescriptor tmp = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId));
-        tmp.name = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).name;
-        if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType == "")
-            tmp.prefabType = tmp.name;
-        else
-            tmp.prefabType = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType;
-
-        std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
-        ret = SerializeEntity(entityId);
-        std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
-    }
+    ret["Prefab"].push_back(SerializeEntityComposite(entityId));
     return ret;
 }
 
 nlohmann::json SerializationManager::SerializeEntityComposite(int entityID)
 {
     nlohmann::json ret;
-    ret += (SerializeEntity(entityID));
+    ret += SerializeEntity(entityID);
     auto& desc = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityID));
     if (desc.children.size())
     {
@@ -277,11 +263,11 @@ nlohmann::json SerializationManager::SerializeEntityComposite(int entityID)
         {
             if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(id)).children.size())
             {
-                ret += (SerializeEntityComposite(id));
+                ret += SerializeEntityComposite(static_cast<int>(id));
             }
             else
             {
-                ret += (SerializeEntity(id));
+                ret += SerializeEntity(static_cast<int>(id));
             }
         }
     }
@@ -324,6 +310,8 @@ size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
                 // // Deserialize components
             }
         }
+        PE::EntityManager::GetInstance().UpdateVectors(id);
+        PE::LayerManager::GetInstance().UpdateEntity(id);
     }
     return id;
 }
@@ -382,16 +370,7 @@ size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
         nlohmann::json j;
         inFile >> j;
         inFile.close();
-        size_t ret = DeserializeEntity(j);
-        int cnt{0};
-        for (auto item : j)
-        {
-            if (cnt)
-            {
-                DeserializeEntity(j);
-            }
-            ++cnt;
-        }
+        size_t ret = LoadPrefabFromFile(j);
         return ret;
     }
     else
@@ -417,6 +396,52 @@ nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem
 }
 
 
+
+size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
+{
+    if (r_json.contains("Prefab")) // following multi prefab method
+    {
+        for (auto item : r_json["Prefab"]) // each set should be a group of entities, first is parent, following is children
+        {
+            size_t parent = MAXSIZE_T;
+            for (auto entity : item)
+            {
+                if (parent == MAXSIZE_T)
+                {
+                    parent = DeserializeEntity(entity);
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).children.clear();
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).sceneID = parent;
+                }
+                else
+                {
+                    size_t id  = DeserializeEntity(entity);
+                    if (id == MAXSIZE_T) // child will have a child
+                    {
+                        nlohmann::json tmp;
+                        tmp["Prefab"].push_back(entity);
+                        //std::cout << tmp << std::endl;
+                        id = LoadPrefabFromFile(tmp);
+                    }
+                    else
+                    {
+                        PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).children.clear();
+                    }
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).sceneID = id;
+                    PE::Hierarchy::GetInstance().AttachChild(parent, id);
+                    
+                }
+            }
+
+            return parent;
+        }
+    }
+    else // following old format (handle old way)
+    {
+        std::cout << r_json << std::endl;
+        return DeserializeEntity(r_json);
+    }
+    return MAXSIZE_T;
+}
 
 void SerializationManager::LoadLoaders()
 {
@@ -795,7 +820,6 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
             }
         }
     }
-
     return true;
 }
 
