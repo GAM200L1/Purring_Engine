@@ -36,7 +36,6 @@ namespace PE
 
 	void DeploymentScript::Update(EntityID id, float)
 	{
-		//std::cout << "catleft" << m_catPlaced << std::endl;
 		if (m_catPlaced < 0 && m_gameStateController->currentState == GameStates_v2_0::DEPLOYMENT)
 		{
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].DeploymentArea))
@@ -165,13 +164,11 @@ namespace PE
 		}
 		else
 		{
-			//std::cout<<"not in deployment area"<<std::endl;
 			m_inNoGoArea = true;
 		}
 
 		if(m_inNoGoArea)
 		{ 
-			//std::cout << "in no go area" << std::endl;
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetColor(1,0,0,.65f);
 		}

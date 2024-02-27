@@ -1103,11 +1103,77 @@ namespace PE
 			m_leveltoLoad = m_level2SceneName;
 			break;
 		}
-		case 2: // win game
+		case 2: // 3rd level
+		{
+			CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
+			dat.saved.clear();
+			dat.saved.emplace_back(MAINCAT);
+
+			EntityID maincat{};
+			for (auto id : SceneView<ScriptComponent>())
+			{
+				if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
+				{
+					maincat = id;
+					break;
+				}
+			}
+			auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
+
+			for (auto flw : ptr->followers)
+			{
+				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
+				dat.saved.emplace_back(p_data->catType);
+			}
+			ptr->followers.clear();
+			m_isTransitioning = true;
+			m_isTransitioningIn = false;
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
+
+			m_currentLevel = nextStage;
+			m_leveltoLoad = m_level3SceneName;
+			break;
+		}
+		//case 3: // boss level
+		//{
+		//	CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
+		//	dat.saved.clear();
+		//	dat.saved.emplace_back(MAINCAT);
+
+		//	EntityID maincat{};
+		//	for (auto id : SceneView<ScriptComponent>())
+		//	{
+		//		if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
+		//		{
+		//			maincat = id;
+		//			break;
+		//		}
+		//	}
+		//	auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
+
+		//	for (auto flw : ptr->followers)
+		//	{
+		//		auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
+		//		dat.saved.emplace_back(p_data->catType);
+		//	}
+		//	ptr->followers.clear();
+		//	m_isTransitioning = true;
+		//	m_isTransitioningIn = false;
+		//	m_timeSinceTransitionStarted = 0;
+		//	m_timeSinceTransitionEnded = m_transitionTimer;
+
+		//	m_currentLevel = nextStage;
+		//	m_leveltoLoad = m_level4SceneName;
+		//	break;
+		//}
+		//case 3: // win game
+		//	WinGame();
+		//	m_leveltoLoad = "MainMenu.json";
+		//	break;
+		default:
 			WinGame();
 			m_leveltoLoad = "MainMenu.json";
-			break;
-		default:
 			break;
 		}
 	

@@ -1190,7 +1190,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1208,7 +1208,7 @@
                             62,
                             63
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "HUDCanvas",
                         "parent": null,
                         "sceneID": 5
@@ -1319,7 +1319,7 @@
                         "Old ID": 27,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PawOverlay",
                         "parent": 24,
                         "sceneID": 14
@@ -1360,7 +1360,7 @@
                         "Old ID": 29,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "MapOverlay",
                         "parent": 24,
                         "sceneID": 1
@@ -1401,7 +1401,7 @@
                         "Old ID": 28,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "EndTurnButton",
                         "parent": 24,
                         "sceneID": 8
@@ -1478,7 +1478,7 @@
                         "Old ID": 30,
                         "Prefab Type": "Text",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "EndPlanningText",
                         "parent": 24,
                         "sceneID": 47
@@ -2334,7 +2334,7 @@
                         "Old ID": 44,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "PauseButton",
                         "parent": 24,
                         "sceneID": 43
@@ -2411,7 +2411,7 @@
                         "Old ID": 47,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "UnitPortrait",
                         "parent": 24,
                         "sceneID": 11
@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4138,7 +4138,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4255,8 +4255,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 0,
+                        "Layer": 0,
                         "Old ID": 60,
                         "Prefab Type": "Grey Cat",
                         "children": [
@@ -4407,8 +4407,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 0,
+                        "Layer": 0,
                         "Old ID": 61,
                         "Prefab Type": "Meowsalot",
                         "children": [],
@@ -4454,7 +4454,7 @@
                                     }
                                 },
                                 "catID": 0,
-                                "catMaxMovementEnergy": 22,
+                                "catMaxMovementEnergy": 7,
                                 "catType": 0,
                                 "finishedExecution": false,
                                 "forgivenessOffset": 1.0,
@@ -4493,7 +4493,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4911,8 +4911,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 0,
+                        "Layer": 0,
                         "Old ID": 91,
                         "Prefab Type": "Rat",
                         "children": [],
@@ -5007,8 +5007,8 @@
                         "type": "CircleCollider"
                     },
                     "EntityDescriptor": {
-                        "InteractionLayer": 1,
-                        "Layer": 1,
+                        "InteractionLayer": 0,
+                        "Layer": 0,
                         "Old ID": 92,
                         "Prefab Type": "Rat",
                         "children": [],
@@ -5081,7 +5081,7 @@
                         "Old ID": 62,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Journal",
                         "parent": 24,
                         "sceneID": 0
@@ -5122,7 +5122,7 @@
                         "Old ID": 63,
                         "Prefab Type": "",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "JournalButton",
                         "parent": 24,
                         "sceneID": 13
