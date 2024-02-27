@@ -603,6 +603,9 @@ namespace PE
 		 m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovementEXECUTE::RatHitCat, this);
 		 m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovementEXECUTE::RatHitCat, this);
 		 p_data->attacking = (p_data->distanceFromPlayer > 0.f) ? true : false;
+
+		 // Clear the containers of entities that have been hit
+		 p_data->hitCats.clear(); p_data->hitBy.clear();
 	 }
 
 	 void RatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -645,7 +648,6 @@ namespace PE
 		 m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttackEXECUTE::RatHitCat, this);
 		 m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttackEXECUTE::RatHitCat, this);
 		 m_delay = p_data->attackDelay;
-		 
 	 }
 
 	 void RatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -711,6 +713,14 @@ namespace PE
 			return false;
 		};
 
+		auto AttackCat = [&](EntityID id)
+		{
+			auto it { m_scriptData[id].hitCats.find(id) };
+			if (it == m_scriptData[id].hitCats.end())
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id);
+			m_scriptData[id].hitCats.emplace(id);
+		};
+
 		// if cat has been checked before check the next event
 		if (m_scriptData[id].hitCat) { return; }
 		if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
@@ -719,12 +729,12 @@ namespace PE
 			// check if entity1 is rat or rat's attack and entity2 is cat
 			if ((OTEE.Entity1 == m_scriptData[id].ratID || OTEE.Entity1 == m_scriptData[id].attackTelegraphID) && IsCatAndNotCaged(OTEE.Entity2))
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(OTEE.Entity2);
+				AttackCat(OTEE.Entity2);
 			}
 			// check if entity2 is rat or rat's attack and entity1 is cat
 			else if ((OTEE.Entity2 == m_scriptData[id].ratID || OTEE.Entity2 == m_scriptData[id].attackTelegraphID) && IsCatAndNotCaged(OTEE.Entity1))
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(OTEE.Entity1);
+				AttackCat(OTEE.Entity1);
 			}
 		}
 		else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
@@ -733,28 +743,37 @@ namespace PE
 			// check if entity1 is rat or rat's attack and entity2 is cat
 			if ((OTSE.Entity1 == m_scriptData[id].ratID || OTSE.Entity1 == m_scriptData[id].attackTelegraphID) && IsCatAndNotCaged(OTSE.Entity2))
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(OTSE.Entity2);
+				AttackCat(OTSE.Entity2);
 			}
 			// check if entity2 is rat or rat's attack and entity1 is cat
 			else if ((OTSE.Entity2 == m_scriptData[id].ratID || OTSE.Entity2 == m_scriptData[id].attackTelegraphID) && IsCatAndNotCaged(OTSE.Entity1))
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(OTSE.Entity1);
+				AttackCat(OTSE.Entity1);
 			}
 		}
 	 }
 
 	 void RatScript::CheckFollowOrMain(EntityID mainCat, EntityID collidedCat, EntityID damagingID, EntityID rat)
 	 {
+
 		 try
 		 {
 			 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, mainCat);
+			 auto AttackCat = [&](EntityID ratId, EntityID collidedId, EntityID mainId, int damage)
+			 {
+			 	 auto it{ m_scriptData[ratId].hitCats.find(collidedId) };
+			 	 if (it == m_scriptData[ratId].hitCats.end())
+						 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(mainId, damage);
+			 	 m_scriptData[ratId].hitCats.emplace(collidedId);
+			 };
+
 			 // checks hit cat is the main cat
 			 if (collidedCat == mainCat)
 			 {
 				 int const& damage = (rat == m_scriptData[rat].ratID) ? m_scriptData[rat].collisionDamage : m_scriptData[rat].attackDamage;
 				 try
 				 {
-					 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(mainCat, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+					 AttackCat(rat, collidedCat, mainCat, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
 					 m_scriptData[rat].hitCat = true; // prevents double hits
 				 }
 				 catch (...) {}
@@ -767,7 +786,7 @@ namespace PE
 					 int const& damage = (damagingID == rat) ? m_scriptData[rat].collisionDamage : m_scriptData[rat].attackDamage;
 					 try
 					 {
-						 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(mainCat, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+						 AttackCat(rat, collidedCat, mainCat, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
 						 m_scriptData[rat].hitCat = true; // prevents double hits
 					 }
 					 catch (...) {}

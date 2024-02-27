@@ -135,7 +135,7 @@ namespace PE
 				ratsPrinted = false;
 		}
 
-		void RatController_v2_0::ApplyDamageToRat(EntityID ratID, int damage)
+		void RatController_v2_0::ApplyDamageToRat(EntityID ratID, EntityID attackId, int damage)
 		{
 			// Check if the given ID is valid and refers to an active, alive rat
 			if (!IsRatAndIsAlive(ratID))
@@ -150,7 +150,11 @@ namespace PE
 
 			if (it != ratsMap.end())
 			{
-				GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(it->second.ratID, damage);
+				if((GETSCRIPTDATA(RatScript, ratID).hitBy)->find(attackId) == (GETSCRIPTDATA(RatScript, ratID).hitBy)->end())
+				{
+					GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(it->second.ratID, damage);
+				}
+				(GETSCRIPTDATA(RatScript, ratID).hitBy)->emplace(attackId);
 
 				//// Subtract the damage from the rat's health
 				//it->second.ratHealth -= damage;
