@@ -890,7 +890,7 @@ namespace PE {
 					auto save = serializationManager.SerializeEntityPrefab(static_cast<int>(m_currentSelectedObject));
 					std::string filepath = "../Assets/Prefabs/";
 					filepath += EntityManager::GetInstance().Get<EntityDescriptor>(m_currentSelectedObject).name; // can change to request name or smth
-					filepath += "_Prefab.json";
+					filepath += ".prefab";
 					std::ofstream outFile(filepath);
 					if (outFile)
 					{
@@ -954,7 +954,7 @@ namespace PE {
 			{
 				if (ImGui::Selectable("Create Empty Object"))
 				{
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Empty.prefab");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -963,7 +963,7 @@ namespace PE {
 				{
 					if (ImGui::MenuItem("Create Canvas Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Canvas.prefab");
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
 					}
@@ -971,7 +971,7 @@ namespace PE {
 					{
 		
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/UIObject.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -979,7 +979,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create UI Button")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Button.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -987,7 +987,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create UI Slider")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/SliderBody.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -995,7 +995,7 @@ namespace PE {
 					if (ImGui::MenuItem("Create Text Object")) // the ctrl s is not programmed yet, need add to the key press event
 					{
 						NextCanvasID = CheckCanvas();
-						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text_Prefab.json");
+						EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Text.prefab");
 						Hierarchy::GetInstance().AttachChild(NextCanvasID, s_id);
 						UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 						m_currentSelectedObject = static_cast<int>(s_id);
@@ -1004,13 +1004,13 @@ namespace PE {
 				}
 				if (ImGui::Selectable("Create Audio Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Audio.prefab");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					m_currentSelectedObject = static_cast<int>(s_id);
 				}
 				if (ImGui::Selectable("Create Camera Object"))
 				{
-					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera_Prefab.json");
+					EntityID s_id = serializationManager.LoadFromFile("EditorDefaults/Camera.prefab");
 					UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
 					m_currentSelectedObject = static_cast<int>(s_id);
 				}
@@ -3972,7 +3972,7 @@ namespace PE {
 										icon = "../Assets/Icons/Audio_Icon.png";
 									else if (extension == ".ttf")
 										icon = "../Assets/Icons/Font_Icon.png";
-									else if (extension == ".json")
+									else if (extension == ".prefab")
 										icon = "../Assets/Icons/Prefabs_Icon.png";
 									else
 										icon = "../Assets/Icons/Other_Icon.png";
@@ -4036,7 +4036,7 @@ namespace PE {
 										}
 										else if (iconDraggedExtension == ".ttf")
 											iconDragged = "../Assets/Icons/Font_Icon.png";
-										else if (iconDraggedExtension == ".json")
+										else if (iconDraggedExtension == ".prefab")
 											iconDragged = "../Assets/Icons/Prefabs_Icon.png";
 										else if (iconDraggedExtension == ".png")
 											iconDragged = "../Assets/Icons/Texture_Icon.png";
@@ -4064,7 +4064,7 @@ namespace PE {
 							{
 								rmbIndex = n;
 
-								if (m_files[n].extension().string() == ".json")
+								if (m_files[n].extension().string() == ".prefab")
 								{
 									ImGui::OpenPopup("EditPrefab");
 								}
@@ -4205,7 +4205,7 @@ namespace PE {
 
 							if (m_mouseInScene || m_mouseInObjectWindow)
 							{
-								if (m_files[draggedItemIndex].extension() == ".json")
+								if (m_files[draggedItemIndex].extension() == ".prefab")
 								{
 									EntityID s_id = serializationManager.LoadFromFile(m_files[draggedItemIndex].string(), true);
 									UndoStack::GetInstance().AddChange(new CreateObjectUndo(s_id));
@@ -5142,7 +5142,7 @@ namespace PE {
 							UndoStack::GetInstance().ClearStack();
 
 							// if active scene is default scene, open file explorer to save new scene
-							if (SceneManager::GetInstance().GetActiveScene() == "DefaultScene.json")
+							if (SceneManager::GetInstance().GetActiveScene() == "DefaultScene.scene")
 							{
 								serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(), true);
 							}
@@ -5845,7 +5845,7 @@ namespace PE {
 		}
 		else
 		{
-			NextCanvasID = serializationManager.LoadFromFile("EditorDefaults/Canvas_Prefab.json");
+			NextCanvasID = serializationManager.LoadFromFile("EditorDefaults/Canvas.prefab");
 		}
 
 		return NextCanvasID;

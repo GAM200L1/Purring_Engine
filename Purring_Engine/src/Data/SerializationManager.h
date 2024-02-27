@@ -69,6 +69,8 @@ class SerializationManager
 public:
     /*!***********************************************************************************
      \brief Opens a file explorer and returns the selected file path as a string.
+
+     \param[in] type  The file type to filter for.
     *************************************************************************************/
     std::string OpenFileExplorer(std::string const& type = ".json");
 
@@ -76,6 +78,7 @@ public:
      \brief Opens a file explorer and returns the selected file path as a string.
             This version is used mainly to save a file with a potentially not existing
             filename.
+    \param[in] type  The file type to filter for.
     *************************************************************************************/
     std::string OpenFileExplorerRequestPath(std::string const& type = ".json");
 

@@ -76,7 +76,7 @@ namespace PE
 				GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(id, vars.bulletRange, vars.telegraphIDs);
 				// Creates an entity for the projectile
 				SerializationManager serializationManager;
-				vars.projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
+				vars.projectileID = serializationManager.LoadFromFile("Projectile.prefab");
 				CatHelperFunctions::ToggleEntity(vars.projectileID, false);
 
 				if (m_scriptData[id].catType == EnumCatType::MAINCAT)
@@ -123,7 +123,7 @@ namespace PE
 
 				if ((GETSCRIPTDATA(CatScript_v2_0, id))->catType == EnumCatType::MAINCAT)
 				{
-					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot_Prefab.json");
+					sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX_Meowsalot.prefab");
 				}
 				else
 				{
@@ -132,13 +132,13 @@ namespace PE
 					switch (randomInteger)
 					{
 					case 1:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX1_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX1.prefab");
 						break;
 					case 2:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX2_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX2.prefab");
 						break;
 					case 3:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX3_Prefab.json");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Death SFX3.prefab");
 						break;
 					}
 				}

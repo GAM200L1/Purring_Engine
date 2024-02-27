@@ -76,7 +76,7 @@ namespace PE
             {
                 //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Playing attack sound." << std::endl;
                 SerializationManager serializationManager;
-                EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Attack SFX_Prefab.json");
+                EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Attack SFX.prefab");
                 if (EntityManager::GetInstance().Has<AudioComponent>(sound))
                     EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
                 EntityManager::GetInstance().RemoveEntity(sound);

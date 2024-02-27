@@ -122,7 +122,7 @@ namespace PE
 
         std::string m_sceneDirectory;
         std::string m_startScene;
-        std::string m_activeScene{ "DefaultScene.json" };
+        std::string m_activeScene{ "DefaultScene.scene" };
         std::string m_sceneToLoad;
         bool m_loadingScene{ false };
         bool m_restartingScene{ false };

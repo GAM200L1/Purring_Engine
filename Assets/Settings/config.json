@@ -1,7 +1,7 @@
 {
     "Editor": {
         "firstLaunch": false,
-        "isPrefabMode": false,
+        "isPrefabMode": true,
         "layerSettings": 2047,
         "renderDebug": false,
         "showAnimationWindow": false,

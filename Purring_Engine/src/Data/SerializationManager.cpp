@@ -50,6 +50,7 @@
 const std::wstring wjsonExt = L".json";
 const std::wstring wAnimExt = L".anim";
 const std::wstring wSceneExt = L".scene";
+const std::wstring wPrefabExt = L".prefab";
 const std::wstring wTrueTypeFontExt = L".ttf";
 const std::wstring wPngExt = L".png";
 
@@ -57,11 +58,13 @@ const wchar_t* wJsonFilter = L"JSON Files\0*.json\0All Files\0*.*\0";
 const wchar_t* wAnimFilter = L"ANIM Files\0*.anim\0All Files\0*.*\0";
 const wchar_t* wTrueTypeFontFilter = L"TrueType font Files\0*.ttf\0All Files\0*.*\0";
 const wchar_t* wSceneFilter = L"SCENE Files\0*.scene\0All Files\0*.*\0";
+const wchar_t* wPrefabFilter = L"PREFAB Files\0*.scene\0All Files\0*.*\0";
 const wchar_t* wPngFilter = L"PNG Files\0*.png\0All Files\0*.*\0";
 
 const wchar_t* wAnimInitialDirectory = L"..\\Assets\\Animation";
 const wchar_t* wFontInitialDirectory = L"..\\Assets\\Fonts";
 const wchar_t* wSceneInitialDirectory = L"..\\Assets\\Scenes";
+const wchar_t* wPrefabInitialDirectory = L"..\\Assets\\Prefabs";
 const wchar_t* wTextureInitialDirectory = L"..\\Assets\\Textures";
 
 std::string SerializationManager::OpenFileExplorer(std::string const& type)
@@ -94,6 +97,11 @@ std::string SerializationManager::OpenFileExplorer(std::string const& type)
         ofn.lpstrFilter = wSceneFilter;
         ofn.lpstrInitialDir = wSceneInitialDirectory;
     }
+    else if (type == ".prefab")
+	{
+		ofn.lpstrFilter = wPrefabFilter;
+		ofn.lpstrInitialDir = wPrefabInitialDirectory;
+	}
     else if (type == ".ttf")
     {
         ofn.lpstrFilter = wTrueTypeFontFilter;
@@ -154,6 +162,11 @@ std::string SerializationManager::OpenFileExplorerRequestPath(std::string const&
         ofn.lpstrFilter = wSceneFilter;
         ofn.lpstrInitialDir = wSceneInitialDirectory;
     }
+    else if (type == ".prefab")
+	{
+		ofn.lpstrFilter = wPrefabFilter;
+		ofn.lpstrInitialDir = wPrefabInitialDirectory;
+	}
     else if (type == ".ttf")
     {
         ofn.lpstrFilter = wTrueTypeFontFilter;
