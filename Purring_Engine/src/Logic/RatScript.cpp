@@ -713,12 +713,15 @@ namespace PE
 			return false;
 		};
 
-		auto AttackCat = [&](EntityID id)
+		auto AttackCat = [&](EntityID catId)
 		{
-			auto it { m_scriptData[id].hitCats.find(id) };
+			auto it { m_scriptData[id].hitCats.find(catId) };
 			if (it == m_scriptData[id].hitCats.end())
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id);
-			m_scriptData[id].hitCats.emplace(id);
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(catId);
+				m_scriptData[id].hitCats.emplace(catId);
+				std::cout << "RatScript::RatHitCat(" << id << "): hit " << catId << std::endl;
+			}
 		};
 
 		// if cat has been checked before check the next event
@@ -763,8 +766,11 @@ namespace PE
 			 {
 			 	 auto it{ m_scriptData[ratId].hitCats.find(collidedId) };
 			 	 if (it == m_scriptData[ratId].hitCats.end())
+				 {
 						 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(mainId, damage);
-			 	 m_scriptData[ratId].hitCats.emplace(collidedId);
+						 m_scriptData[ratId].hitCats.emplace(collidedId);
+						 std::cout << "RatScript::CheckFollowOrMain(" << ratId << "): hit " << collidedId << std::endl;
+				 }
 			 };
 
 			 // checks hit cat is the main cat
