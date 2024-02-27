@@ -248,7 +248,10 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
 nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
 {
     nlohmann::json ret;
+    auto tmp = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent;
+    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent.reset();
     ret["Prefab"].push_back(SerializeEntityComposite(entityId));
+    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent = tmp;
     return ret;
 }
 
