@@ -30,7 +30,7 @@ namespace PE
 	{
 		m_scriptData[id].mouseClickEventID = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, DeploymentScript::OnMouseClick, this);
 		m_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-		m_catPlaced = static_cast<int>(m_catController->GetDeployableCats().size()-1);
+		m_catPlaced = static_cast<int>(m_catController->GetDeployableCats(m_catController->mainInstance).size()-1);
 		m_gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 	}
 
@@ -46,7 +46,7 @@ namespace PE
 				EntityManager::GetInstance().Get<EntityDescriptor>(m_scriptData[id].FollowingTextureObject).isActive = false;
 
 				m_gameStateController->StartGameLoop();
-				m_catController->SetCurrentCats(m_scriptData[id].AddedCats);
+				m_catController->UpdateCurrentCats(m_catController->mainInstance);
 			return;
 		}
 
@@ -81,7 +81,7 @@ namespace PE
 		else
 			return;
 
-		auto test = m_catController->GetDeployableCats();
+		auto test = m_catController->GetDeployableCats(m_catController->mainInstance);
 
 		switch (test[m_catPlaced])
 		{
@@ -233,7 +233,7 @@ namespace PE
 			{
 				SerializationManager sm;
 				EntityID NewCatID{};
-				auto test = m_catController->GetDeployableCats();
+				auto test = m_catController->GetDeployableCats(m_catController->mainInstance);
 					switch (test[m_catPlaced])
 					{
 						case EnumCatType::MAINCAT:
@@ -261,7 +261,7 @@ namespace PE
 					EntityManager::GetInstance().Get<Transform>(NewCatID).position = m_mousepos;
 					EntityManager::GetInstance().Get<EntityDescriptor>(NewCatID).toSave = false;
 
-					m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(std::make_pair(NewCatID, m_catController->GetDeployableCats()[m_catPlaced]));
+					m_scriptData[m_currentDeploymentScriptEntityID].AddedCats.push_back(std::make_pair(NewCatID, m_catController->GetDeployableCats(m_catController->mainInstance)[m_catPlaced]));
 					--m_catPlaced;
 					return;
 				}

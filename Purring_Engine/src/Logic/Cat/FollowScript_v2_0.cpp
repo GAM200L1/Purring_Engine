@@ -43,8 +43,6 @@ namespace PE
 
 	void FollowScript_v2_0::Update(EntityID id, float)
 	{
-
-
 		if (m_ScriptData[id].IsAttaching)
 		{
 			if (p_gamestateController->currentState == GameStates_v2_0::EXECUTE)
@@ -150,9 +148,9 @@ namespace PE
 		}
 	}
 
-	void FollowScript_v2_0::Destroy(EntityID)
+	void FollowScript_v2_0::Destroy(EntityID id)
 	{
-
+		m_ScriptData[id].followers.clear();
 	}
 
 	void FollowScript_v2_0::OnAttach(EntityID id)

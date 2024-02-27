@@ -1070,7 +1070,7 @@ namespace PE
 		case 1: // 2nd level
 		{
 
-			CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
+			/*CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
 			dat.saved.clear();
 			dat.saved.emplace_back(MAINCAT);
 
@@ -1090,7 +1090,10 @@ namespace PE
 				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
 				dat.saved.emplace_back(p_data->catType);
 			}
-			ptr->followers.clear();
+			ptr->followers.clear();*/
+			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			CatManager->UpdateDeployableCats(CatManager->mainInstance);
+
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;
