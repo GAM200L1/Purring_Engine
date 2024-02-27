@@ -47,7 +47,12 @@ namespace PE
 			return;
 		}
 
-		//CreateCheckStateManager(id);
+		if (m_scriptData[id].Health <= 0)
+		{
+			//do something
+		}
+
+		CreateCheckStateManager(id);
 
 		if(p_gsc->currentState == GameStates_v2_0::PLANNING || p_gsc->currentState == GameStates_v2_0::EXECUTE)
 		m_scriptData[id].p_stateManager->Update(id, deltaTime);
@@ -57,6 +62,7 @@ namespace PE
 	void BossRatScript::OnAttach(EntityID id)
 	{
 		m_scriptData[id] = BossRatScriptData();
+		currentBoss = id;
 	}
 
 
@@ -92,5 +98,10 @@ namespace PE
 			m_scriptData[id].p_stateManager = new StateMachine{};
 			m_scriptData[id].p_stateManager->ChangeState(new BossRatPlanningState{}, id);
 		}
+	}
+
+	void BossRatScript::TakeDamage(int damage)
+	{
+		--m_scriptData[currentBoss].Health;
 	}
 } // End of namespace PE

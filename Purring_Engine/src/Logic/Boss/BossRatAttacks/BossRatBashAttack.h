@@ -20,10 +20,25 @@ namespace PE
 {
 	class BossRatBashAttack : public BossRatAttack
 	{
-		virtual void DrawTelegraphs();
-		virtual void EnterAttack();
-		virtual void UpdateAttack();
-		virtual void ExitAttack();
+		//constructors
+	public:
+		BossRatBashAttack() = delete;
+		BossRatBashAttack(EntityID furthestCat);
+
+		//public functions
+	public:
+		virtual void DrawTelegraphs(EntityID);
+		virtual void EnterAttack(EntityID);
+		virtual void UpdateAttack(EntityID);
+		virtual void ExitAttack(EntityID);
 		virtual ~BossRatBashAttack();
+
+	private:
+		//need to take a snapshot of the current player positions here
+		//actually no, only need the furtest cat
+		EntityID m_FurthestCat{-1};
+		std::string m_telegraphPrefab{"RatBossBashAttackTelegraph_Prefab.json"};
+		std::vector<EntityID> m_telegraphPoitions;
+		int NumberOfAttacks;
 	};
 }

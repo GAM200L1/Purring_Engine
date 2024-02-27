@@ -26,15 +26,16 @@ namespace PE
 		~BossRatScriptData()
 		{
 			delete p_stateManager;
+			delete p_currentAttack;
 		}
 
 		//other boss stats
 
-
+		int Health = 20;
 		EntityID myID{ 0 };
 		StateMachine* p_stateManager;
 		BossRatAttack* p_currentAttack;
-		bool finishExecution;
+		bool finishExecution{};
 	};
 
 	class BossRatScript : public Script
@@ -123,6 +124,8 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
+		EntityID currentBoss;
+		//do i want to store all the obstacles here?
 	}; // end of class 
 
 } // End of namespace PE

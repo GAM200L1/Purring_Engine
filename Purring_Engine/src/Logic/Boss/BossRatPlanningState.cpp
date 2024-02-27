@@ -32,8 +32,8 @@ namespace PE
 		// Can conduct state checks and call for state changes here
 		if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 		{
-			p_data->p_stateManager->ChangeState(new BossRatExecuteState(),id);
 			p_data->finishExecution = false;
+			p_data->p_stateManager->ChangeState(new BossRatExecuteState(),id);
 		}
 	}
 
@@ -41,6 +41,14 @@ namespace PE
 	void BossRatPlanningState::StateExit(EntityID)
 	{
 
+	}
+
+	void BossRatPlanningState::DecideAttack()
+	{
+	}
+
+	void BossRatPlanningState::DrawTelegraph()
+	{
 	}
 
 } // End of namespace PE

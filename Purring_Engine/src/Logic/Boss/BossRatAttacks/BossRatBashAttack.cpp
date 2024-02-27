@@ -18,5 +18,29 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 
 namespace PE
 {
+	BossRatBashAttack::BossRatBashAttack(EntityID furthestCat) : m_FurthestCat{furthestCat}
+	{
+	}
+	void BossRatBashAttack::DrawTelegraphs(EntityID id)
+	{
+		Transform furthestCatTransform;
 
+		if (EntityManager::GetInstance().Has<Transform>(m_FurthestCat))
+			furthestCatTransform = EntityManager::GetInstance().Get<Transform>(m_FurthestCat);
+
+
+
+	}
+	void BossRatBashAttack::EnterAttack(EntityID)
+	{
+	}
+	void BossRatBashAttack::UpdateAttack(EntityID)
+	{
+	}
+	void BossRatBashAttack::ExitAttack(EntityID)
+	{
+	}
+	BossRatBashAttack::~BossRatBashAttack()
+	{
+	}
 }

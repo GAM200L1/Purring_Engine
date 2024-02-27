@@ -57,6 +57,16 @@ namespace PE
 		*************************************************************************************/
 		virtual std::string_view GetName() override { return "BossRatPlanningState"; }
 
+		/*!***********************************************************************************
+			\brief Set the Attack of the boss
+		*************************************************************************************/
+		void DecideAttack();
+
+		/*!***********************************************************************************
+			\brief Draw the Attack of the boss
+		*************************************************************************************/
+		void DrawTelegraph();
+
 	private:
 		BossRatScriptData* p_data; // pointer to script instance data
 		GameStateController_v2_0* p_gsc; // pointer to game state controller

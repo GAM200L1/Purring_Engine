@@ -83,8 +83,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -397,8 +397,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -674,8 +674,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -835,8 +835,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1190,8 +1190,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1235,8 +1235,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1598,8 +1598,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1875,8 +1875,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2289,8 +2289,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2614,8 +2614,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2696,8 +2696,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3027,8 +3027,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3304,8 +3304,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4351,8 +4351,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4430,8 +4430,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4466,8 +4466,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4557,20 +4557,17 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 881.0,
+                        "Width": 1604.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
                         "Layer": 0,
                         "Old ID": 60,
                         "Prefab Type": "Canvas Object",
-                        "children": [
-                            61,
-                            98
-                        ],
+                        "children": [],
                         "isActive": true,
-                        "name": "Canvas Object",
+                        "name": "HealthBarCanvas",
                         "parent": null,
                         "sceneID": 4
                     },
@@ -4595,358 +4592,6 @@
         {
             "Entity": {
                 "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 61,
-                        "Prefab Type": "WorldHealthBar",
-                        "children": [
-                            97,
-                            100
-                        ],
-                        "isActive": true,
-                        "name": "WorldHealthBar",
-                        "parent": 60,
-                        "sceneID": 61
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "GUISlider": {
-                        "m_Hovered": false,
-                        "m_clicked": false,
-                        "m_currentValue": 1.0,
-                        "m_currentWidth": 16.0,
-                        "m_currentXpos": 32.0,
-                        "m_defaultColor": [
-                            0.3607843220233917,
-                            0.9882352948188782,
-                            0.21176470816135406,
-                            1.0
-                        ],
-                        "m_defaultTexture": "",
-                        "m_disabled": false,
-                        "m_disabledColor": [
-                            0.9882352948188782,
-                            0.23137255012989044,
-                            0.21176470816135406,
-                            1.0
-                        ],
-                        "m_disabledTexture": "",
-                        "m_endPoint": 32.0,
-                        "m_hoveredColor": [
-                            0.9254902005195618,
-                            0.9882352948188782,
-                            0.21176470816135406,
-                            1.0
-                        ],
-                        "m_hoveredTexture": "",
-                        "m_isHealthBar": true,
-                        "m_knobID": 97,
-                        "m_maxValue": 1.0,
-                        "m_minValue": 0.0,
-                        "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            1.0
-                        ],
-                        "m_pressedTexture": "",
-                        "m_startPoint": -32.0
-                    },
-                    "ScriptComponent": {
-                        "HealthBarScript_v2_0": {
-                            "data": {
-                                "FollowObjectID": 102
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 16.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 97,
-                        "Prefab Type": "SliderKnob",
-                        "children": [],
-                        "isActive": true,
-                        "name": "SliderKnob",
-                        "parent": 61,
-                        "sceneID": 0
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
-                        },
-                        "TextureKey": ""
-                    },
-                    "Transform": {
-                        "height": 16.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 98,
-                        "Prefab Type": "WorldHealthBar",
-                        "children": [
-                            99,
-                            101
-                        ],
-                        "isActive": true,
-                        "name": "WorldHealthBar",
-                        "parent": 60,
-                        "sceneID": 98
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": ""
-                    },
-                    "GUISlider": {
-                        "m_Hovered": false,
-                        "m_clicked": false,
-                        "m_currentValue": 1.0,
-                        "m_currentWidth": 16.0,
-                        "m_currentXpos": 32.0,
-                        "m_defaultColor": [
-                            0.3607843220233917,
-                            0.9882352948188782,
-                            0.21176470816135406,
-                            1.0
-                        ],
-                        "m_defaultTexture": "",
-                        "m_disabled": false,
-                        "m_disabledColor": [
-                            0.9882352948188782,
-                            0.23137255012989044,
-                            0.21176470816135406,
-                            1.0
-                        ],
-                        "m_disabledTexture": "",
-                        "m_endPoint": 32.0,
-                        "m_hoveredColor": [
-                            0.9254902005195618,
-                            0.9882352948188782,
-                            0.21176470816135406,
-                            1.0
-                        ],
-                        "m_hoveredTexture": "",
-                        "m_isHealthBar": true,
-                        "m_knobID": 99,
-                        "m_maxValue": 1.0,
-                        "m_minValue": 0.0,
-                        "m_pressedColor": [
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            0.23529411852359772,
-                            1.0
-                        ],
-                        "m_pressedTexture": "",
-                        "m_startPoint": -32.0
-                    },
-                    "ScriptComponent": {
-                        "HealthBarScript_v2_0": {
-                            "data": {
-                                "FollowObjectID": 103
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 16.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 99,
-                        "Prefab Type": "SliderKnob",
-                        "children": [],
-                        "isActive": true,
-                        "name": "SliderKnob",
-                        "parent": 98,
-                        "sceneID": 0
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 0.5735294222831726,
-                            "g": 0.5735294222831726,
-                            "r": 0.5735294222831726
-                        },
-                        "TextureKey": ""
-                    },
-                    "Transform": {
-                        "height": 16.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 100,
-                        "Prefab Type": "WorldHealthBarFrame",
-                        "children": [],
-                        "isActive": true,
-                        "name": "WorldHealthBarFrame",
-                        "parent": 61,
-                        "sceneID": 100
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
-                    },
-                    "Transform": {
-                        "height": 19.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 70.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 101,
-                        "Prefab Type": "WorldHealthBarFrame",
-                        "children": [],
-                        "isActive": true,
-                        "name": "WorldHealthBarFrame",
-                        "parent": 98,
-                        "sceneID": 101
-                    },
-                    "GUIRenderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/UnitPortrait_EnergyBar_ThreeSeg_180x46.png"
-                    },
-                    "Transform": {
-                        "height": 19.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 70.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
                             "../Assets/Animation/AnimationRat_Attack_Anim.json",
@@ -4961,14 +4606,14 @@
                         "collisionLayerIndex": 0,
                         "data": {
                             "center": {
-                                "x": 180.0001983642578,
-                                "y": 104.50027465820313
+                                "x": 425.0,
+                                "y": 45.50028991699219
                             },
                             "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
+                                "x": 8.0,
+                                "y": 10.0
                             },
-                            "radius": 32.0,
+                            "radius": 128.0,
                             "scaleOffset": 1.0
                         },
                         "isTrigger": false,
@@ -4981,7 +4626,7 @@
                         "Prefab Type": "Rat",
                         "children": [],
                         "isActive": true,
-                        "name": "Rat",
+                        "name": "BossRatTemp",
                         "parent": null,
                         "sceneID": 41
                     },
@@ -5000,137 +4645,23 @@
                         "type": 1
                     },
                     "ScriptComponent": {
-                        "RatScript": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
-                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
-                                },
-                                "attackDamage": 1,
-                                "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
-                                "attackDuration": 0.5,
-                                "collisionDamage": 1,
-                                "detectionRadius": 4.0,
-                                "health": 3,
-                                "mainCatID": 3,
-                                "movementSpeed": 200.0
-                            },
+                        "BossRatScript": {
                             "state": 0
                         }
                     },
                     "Transform": {
-                        "height": 64.0,
+                        "height": 256.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": 180.0001983642578,
-                            "y": 104.50027465820313
+                            "x": 417.0,
+                            "y": 35.50028991699219
                         },
                         "relativeposition": {
                             "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
-                        "width": 64.0
-                    }
-                },
-                "name": ""
-            }
-        },
-        {
-            "Entity": {
-                "components": {
-                    "AnimationComponent": {
-                        "AnimationIDs": [
-                            "../Assets/Animation/AnimationRat_Attack_Anim.json",
-                            "../Assets/Animation/AnimationRat_Death_Anim.json",
-                            "../Assets/Animation/AnimationRat_Hurt_Anim.json",
-                            "../Assets/Animation/AnimationRat_Idle_Anim.json",
-                            "../Assets/Animation/AnimationRat_walk_Anim.json"
-                        ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationRat_Idle_Anim.json"
-                    },
-                    "Collider": {
-                        "collisionLayerIndex": 0,
-                        "data": {
-                            "center": {
-                                "x": 410.0003967285156,
-                                "y": -139.5001220703125
-                            },
-                            "positionOffset": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "radius": 32.0,
-                            "scaleOffset": 1.0
-                        },
-                        "isTrigger": false,
-                        "type": "CircleCollider"
-                    },
-                    "EntityDescriptor": {
-                        "InteractionLayer": 0,
-                        "Layer": 0,
-                        "Old ID": 103,
-                        "Prefab Type": "Rat",
-                        "children": [],
-                        "isActive": true,
-                        "name": "Rat",
-                        "parent": null,
-                        "sceneID": 42
-                    },
-                    "Renderer": {
-                        "Color": {
-                            "a": 1.0,
-                            "b": 1.0,
-                            "g": 1.0,
-                            "r": 1.0
-                        },
-                        "TextureKey": "../Assets/Textures/Rat_Gutter_128px.png"
-                    },
-                    "RigidBody": {
-                        "linearDrag": 2.0,
-                        "mass": 10.0,
-                        "type": 1
-                    },
-                    "ScriptComponent": {
-                        "RatScript": {
-                            "data": {
-                                "animationStates": {
-                                    "Attack": "../Assets/Animation/AnimationRat_Attack_Anim.json",
-                                    "Death": "../Assets/Animation/AnimationRat_Death_Anim.json",
-                                    "Hurt": "../Assets/Animation/AnimationRat_Hurt_Anim.json",
-                                    "Idle": "../Assets/Animation/AnimationRat_Idle_Anim.json",
-                                    "Walk": "../Assets/Animation/AnimationRat_walk_Anim.json"
-                                },
-                                "attackDamage": 1,
-                                "attackDelay": 0.0,
-                                "attackDiameter": 64.0,
-                                "attackDuration": 0.5,
-                                "collisionDamage": 1,
-                                "detectionRadius": 4.0,
-                                "health": 3,
-                                "mainCatID": 3,
-                                "movementSpeed": 200.0
-                            },
-                            "state": 0
-                        }
-                    },
-                    "Transform": {
-                        "height": 64.0,
-                        "orientation": 0.0,
-                        "position": {
-                            "x": 410.0003967285156,
-                            "y": -139.5001220703125
-                        },
-                        "relativeposition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "relorientation": 0.0,
-                        "width": 64.0
+                        "width": 256.0
                     }
                 },
                 "name": ""

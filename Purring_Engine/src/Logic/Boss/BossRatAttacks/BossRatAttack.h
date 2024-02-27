@@ -23,10 +23,10 @@ namespace PE
 	class BossRatAttack
 	{
 	public:
-		virtual void DrawTelegraphs() = 0;
-		virtual void EnterAttack() = 0;
-		virtual void UpdateAttack() = 0;
-		virtual void ExitAttack() = 0;
+		virtual void DrawTelegraphs(EntityID) = 0;
+		virtual void EnterAttack(EntityID) = 0;
+		virtual void UpdateAttack(EntityID) = 0;
+		virtual void ExitAttack(EntityID) = 0;
 		virtual ~BossRatAttack() {}
 	};
 
