@@ -116,6 +116,8 @@ namespace PE
 
 		EntityID FindFurthestCat();
 
+		void FindAllObstacles();
+
 		std::vector<EntityID> GetAllObstacles();
 
 		// ----- Private Members ----- //
@@ -129,7 +131,6 @@ namespace PE
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
 
-		void FindAllObstacles();
 
 
 	private:

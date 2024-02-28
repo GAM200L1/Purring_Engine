@@ -31,6 +31,7 @@ namespace PE
 	void BossRatScript::Init(EntityID id)
 	{
 		CreateCheckStateManager(id);
+		FindAllObstacles();
 	}
 
 
@@ -63,7 +64,6 @@ namespace PE
 	void BossRatScript::OnAttach(EntityID id)
 	{
 		m_scriptData[id] = BossRatScriptData();
-		FindAllObstacles();
 		currentBoss = id;
 	}
 
@@ -104,10 +104,12 @@ namespace PE
 
 	void BossRatScript::FindAllObstacles()
 	{
+		m_Obstacles.clear();
 		for (const auto& layer : LayerView<EntityDescriptor, Collider>(true))
 		{
 			for (const EntityID& id : InternalView(layer))
 			{
+				std::string nameTest = EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
 				if(EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos)
 				m_Obstacles.push_back(id);
 			}

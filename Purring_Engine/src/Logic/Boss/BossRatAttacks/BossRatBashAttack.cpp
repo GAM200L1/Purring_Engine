@@ -78,6 +78,9 @@ namespace PE
 			NextPosition += unitDirection * TelegraphTransform->width;
 
 			NoOfAttack++;
+
+			if (NoOfAttack >= 8)
+				return;
 		}
 		
 

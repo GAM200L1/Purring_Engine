@@ -27,6 +27,7 @@ namespace PE
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
 		DecideAttack();
+		p_script->FindAllObstacles();
 		p_data->p_currentAttack->DrawTelegraphs(id);
 	}
 
