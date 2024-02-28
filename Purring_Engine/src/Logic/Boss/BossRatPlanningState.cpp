@@ -52,6 +52,8 @@ namespace PE
 	{
 		// Decides which attack to use
 		//will add the other attacks later, fixed on bash for now
+		if (p_data->p_currentAttack)
+			delete p_data->p_currentAttack;
 		p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
 	}
 

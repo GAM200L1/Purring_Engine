@@ -44,8 +44,8 @@ namespace PE
 		BossRatScriptData* p_data;
 		std::string m_telegraphPrefab{"RatBossBashAttackTelegraph_Prefab.json"};
 		std::vector<EntityID> m_telegraphPoitions;
-		int NoOfAttack{};
-
+		int m_noOfAttack{};
+		int m_attacksActivated{};
 
 		float m_attackActivationTime;
 		float m_attackDelay;

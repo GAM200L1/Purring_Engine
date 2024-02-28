@@ -17,6 +17,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "BossRatBashAttack.h"
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/LogicSystem.h"
+#include "Hierarchy/HierarchyManager.h"
 
 namespace PE
 {
@@ -26,7 +27,6 @@ namespace PE
 		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);
 
 		m_attackActivationTime = p_data->activationTime;
-		m_attackDelay = p_data->attackDelay;
 	}
 
 	void BossRatBashAttack::DrawTelegraphs(EntityID id)
@@ -62,7 +62,7 @@ namespace PE
 		{
 
 			TelegraphTransform->position = NextPosition = BossTransform.position + unitDirection * (BossTransform.width/2 + TelegraphTransform->width /2);
-			NoOfAttack++;
+			m_noOfAttack++;
 		}
 
 		NextPosition += unitDirection * TelegraphTransform->width;
@@ -77,9 +77,9 @@ namespace PE
 
 			NextPosition += unitDirection * TelegraphTransform->width;
 
-			NoOfAttack++;
+			m_noOfAttack++;
 
-			if (NoOfAttack >= 8)
+			if (m_noOfAttack >= 8)
 				return;
 		}
 		
@@ -102,19 +102,54 @@ namespace PE
 		}
 		else
 		{
-			p_data->finishExecution = true;
+			if (m_attackDelay <= 0)
+			{	
+				EntityID tid = m_telegraphPoitions[m_attacksActivated++];
+				for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(tid).children)
+				{
+					EntityManager::GetInstance().Get<EntityDescriptor>(ie).isActive = true;
+				}
+				m_attackDelay = p_data->attackDelay;
+			}
+			else
+			{
+				m_attackDelay -= dt;
+			}
+
+			if (m_attacksActivated == m_noOfAttack)
+			{
+				p_data->finishExecution = true;
+				m_attackActivationTime = p_data->activationTime;
+				for (auto& id : m_telegraphPoitions)
+				{
+					std::cout << "deleting telegraph" << std::endl;
+					for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+					{
+						EntityManager::GetInstance().Get<EntityDescriptor>(ie).isActive = false;
+					}
+				}
+			}
+
 		}
 
 
 	}
 	void BossRatBashAttack::ExitAttack(EntityID)
 	{
+		std::vector<EntityID> childs;
 		for (auto& id : m_telegraphPoitions)
 		{
 			std::cout << "deleting telegraph" << std::endl;
+			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+			{
+				childs.push_back(ie);
+			}
 			EntityManager::GetInstance().RemoveEntity(id);
 		}
-
+		for (auto& iz : childs)
+		{
+			EntityManager::GetInstance().RemoveEntity(iz);
+		}
 		m_telegraphPoitions.clear();
 	}
 	BossRatBashAttack::~BossRatBashAttack()
