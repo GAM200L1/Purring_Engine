@@ -18,7 +18,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/Boss/BossRatScript.h"
 #include "Logic/LogicSystem.h"
 #include "Hierarchy/HierarchyManager.h"
-
+#include "Logic/Cat/CatController_v2_0.h"
 namespace PE
 {
 	BossRatBashAttack::BossRatBashAttack(EntityID furthestCat) : m_FurthestCat{furthestCat}
@@ -63,10 +63,15 @@ namespace PE
 
 			TelegraphTransform->position = NextPosition = BossTransform.position + unitDirection * (BossTransform.width/2 + TelegraphTransform->width /2);
 			m_noOfAttack++;
+			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
+			{
+				m_attackAnimations.push_back(ie);
+			}
 		}
 
 		NextPosition += unitDirection * TelegraphTransform->width;
 
+		//more than 1
 		while (CheckOutsideOfWall(NextPosition))
 		{
 			telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim_Prefab.json");
@@ -75,10 +80,16 @@ namespace PE
 			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
 			TelegraphTransform->position = NextPosition;
 
+			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(telegraph).children)
+			{
+				m_attackAnimations.push_back(ie);
+			}
+
 			NextPosition += unitDirection * TelegraphTransform->width;
 
 			m_noOfAttack++;
 
+			//just incase somehow it goes over all the obstacles
 			if (m_noOfAttack >= 8)
 				return;
 		}
@@ -116,6 +127,8 @@ namespace PE
 				m_attackDelay -= dt;
 			}
 
+			CheckCollisionWithTelegraphs();
+
 			if (m_attacksActivated == m_noOfAttack)
 			{
 				if (endExecutionTimer <= 0)
@@ -137,17 +150,17 @@ namespace PE
 	}
 	void BossRatBashAttack::ExitAttack(EntityID)
 	{
-		std::vector<EntityID> childs;
+		//std::vector<EntityID> childs;
 		for (auto& id : m_telegraphPoitions)
 		{
 			std::cout << "deleting telegraph" << std::endl;
-			for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
-			{
-				childs.push_back(ie);
-			}
+			//for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
+			//{
+			//	childs.push_back(ie);
+			//}
 			EntityManager::GetInstance().RemoveEntity(id);
 		}
-		for (auto& iz : childs)
+		for (auto& iz : m_attackAnimations)
 		{
 			EntityManager::GetInstance().RemoveEntity(iz);
 		}
@@ -175,5 +188,32 @@ namespace PE
 			}
 		}
 		return true;
+	}
+
+	bool BossRatBashAttack::CheckCollisionWithTelegraphs()
+	{
+		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+
+		for (int i = 0; i < m_attacksActivated; ++i)
+		{
+			//check if animation ended
+			//m_attackAnimations[i]
+
+			//check circle circle collision with each cat
+			for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
+			{
+				Transform cattransform = EntityManager::GetInstance().Get<Transform>(CatID);
+				Transform telegraphTransform = EntityManager::GetInstance().Get<Transform>(m_telegraphPoitions[i]);
+				float distance = cattransform.position.Distance(telegraphTransform.position);
+				float radiusSum = cattransform.width / 2 + telegraphTransform.width / 2;
+
+				if (distance <= radiusSum)
+				{
+					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(CatID);
+				}
+			}
+
+		}
+		return false;
 	}
 }

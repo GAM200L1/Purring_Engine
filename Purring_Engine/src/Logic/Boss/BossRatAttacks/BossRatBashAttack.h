@@ -33,9 +33,9 @@ namespace PE
 		virtual void UpdateAttack(EntityID,float);
 		virtual void ExitAttack(EntityID);
 		virtual ~BossRatBashAttack();
-
+	private:
 		bool CheckOutsideOfWall(vec2 Position);
-
+		bool CheckCollisionWithTelegraphs();
 	private:
 		//need to take a snapshot of the current player positions here
 		//actually no, only need the furtest cat
@@ -44,6 +44,7 @@ namespace PE
 		BossRatScriptData* p_data;
 		std::string m_telegraphPrefab{"RatBossBashAttackTelegraph_Prefab.json"};
 		std::vector<EntityID> m_telegraphPoitions;
+		std::vector<EntityID> m_attackAnimations;
 		int m_noOfAttack{};
 		int m_attacksActivated{};
 
