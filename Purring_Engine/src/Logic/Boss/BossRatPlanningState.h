@@ -62,13 +62,9 @@ namespace PE
 		*************************************************************************************/
 		void DecideAttack();
 
-		/*!***********************************************************************************
-			\brief Draw the Attack of the boss
-		*************************************************************************************/
-		void DrawTelegraph();
-
 	private:
 		BossRatScriptData* p_data; // pointer to script instance data
+		BossRatScript* p_script; // pointer to script
 		GameStateController_v2_0* p_gsc; // pointer to game state controller
 	};
 } // End of namespace PE

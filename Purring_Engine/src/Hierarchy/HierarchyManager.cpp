@@ -79,6 +79,9 @@ namespace PE
 		if (!EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).isActive)
 			EntityManager::GetInstance().Get<EntityDescriptor>(r_child).DisableEntity();
 		
+		auto& pr = EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
+		auto& ch = EntityManager::GetInstance().Get<EntityDescriptor>(r_child).children;
+		
 		UpdateRenderOrder(r_parent);
 	}
 
@@ -243,7 +246,7 @@ namespace PE
 		}
 
 		unsigned cnt{ 1 };
-		for (auto [k,desc] : descs)
+		for (auto [k, desc] : descs)
 		{
 
 			// how to handle when the layer of the child is diff from parents??

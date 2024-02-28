@@ -527,7 +527,7 @@ void PE::CoreApplication::Run()
         }
 
         Hierarchy::GetInstance().Update();
-        
+
         
         //std::cout << Graphics::CameraManager::GetUiCameraId() << std::endl;
 

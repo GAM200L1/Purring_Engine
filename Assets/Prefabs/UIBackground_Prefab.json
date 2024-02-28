@@ -1,37 +1,47 @@
 {
-    "Entity": {
-        "components": {
-            "EntityDescriptor": {
-                "children": [],
-                "isActive": true,
-                "name": "GameObject",
-                "parent": null,
-                "sceneID": 18446744073709551615
-            },
-            "GUIRenderer": {
-                "Color": {
-                    "a": 1.0,
-                    "b": 1.0,
-                    "g": 1.0,
-                    "r": 1.0
-                },
-                "TextureKey": "../Assets/Textures/PauseMenuBackground.png"
-            },
-            "Transform": {
-                "height": 1080.0,
-                "orientation": 0.0,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "relativeposition": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "relorientation": 0.0,
-                "width": 1920.0
+    "Prefab": [
+        [
+            {
+                "Entity": {
+                    "components": {
+                        "EntityDescriptor": {
+                            "InteractionLayer": 0,
+                            "Layer": 0,
+                            "Old ID": 1,
+                            "Prefab Type": "",
+                            "children": [],
+                            "isActive": true,
+                            "name": "GameObject",
+                            "parent": null,
+                            "sceneID": 1
+                        },
+                        "GUIRenderer": {
+                            "Color": {
+                                "a": 1.0,
+                                "b": 1.0,
+                                "g": 1.0,
+                                "r": 1.0
+                            },
+                            "TextureKey": "../Assets/Textures/PauseMenuBackground.png"
+                        },
+                        "Transform": {
+                            "height": 1080.0,
+                            "orientation": 0.0,
+                            "position": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relativeposition": {
+                                "x": 0.0,
+                                "y": 0.0
+                            },
+                            "relorientation": 0.0,
+                            "width": 1920.0
+                        }
+                    },
+                    "name": ""
+                }
             }
-        },
-        "name": ""
-    }
+        ]
+    ]
 }
