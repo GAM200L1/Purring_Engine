@@ -35,6 +35,11 @@ namespace PE
 		StateMachine* p_stateManager;
 		BossRatAttack* p_currentAttack;
 		bool finishExecution{};
+
+		//bash attack variables
+		float TelegraphRaadius;
+		float attackDelay{.25f};
+		float activationTime{1.f};
 	};
 
 	class BossRatScript : public Script
@@ -44,7 +49,7 @@ namespace PE
 		// ----- Public Members ----- //
 	public:
 		std::map<EntityID, BossRatScriptData> m_scriptData;
-
+		EntityID currentBoss;
 
 		// ----- Constructors ----- //
 	public:
@@ -130,7 +135,6 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc = nullptr;
-		EntityID currentBoss;
 		std::vector<EntityID> m_Obstacles;
 		//do i want to store all the obstacles here?
 	}; // end of class 

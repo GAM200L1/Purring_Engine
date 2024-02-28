@@ -10,7 +10,7 @@
                             "Old ID": 1,
                             "Prefab Type": "RatBossBashAttackTelegraph",
                             "children": [
-                                3
+                                2
                             ],
                             "isActive": true,
                             "name": "RatBossBashAttackTelegraphwAnim",
@@ -67,7 +67,7 @@
                             "isActive": false,
                             "name": "RatBossBashAttackSpike",
                             "parent": 1,
-                            "sceneID": 3
+                            "sceneID": 2
                         },
                         "Renderer": {
                             "Color": {

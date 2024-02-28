@@ -25,6 +25,7 @@ namespace PE
 		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_data = GETSCRIPTDATA(BossRatScript, id);
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+
 		DecideAttack();
 		p_data->p_currentAttack->DrawTelegraphs(id);
 	}
@@ -33,7 +34,7 @@ namespace PE
 	void BossRatPlanningState::StateUpdate(EntityID id, float deltaTime)
 	{
 		// Can conduct state checks and call for state changes here
-		if (p_gsc->currentState == GameStates_v2_0::PLANNING)
+		if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
 		{
 			p_data->finishExecution = false;
 			p_data->p_stateManager->ChangeState(new BossRatExecuteState(),id);

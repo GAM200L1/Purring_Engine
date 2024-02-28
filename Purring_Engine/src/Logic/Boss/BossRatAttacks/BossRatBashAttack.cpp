@@ -22,7 +22,13 @@ namespace PE
 {
 	BossRatBashAttack::BossRatBashAttack(EntityID furthestCat) : m_FurthestCat{furthestCat}
 	{
+		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
+		p_data = GETSCRIPTDATA(BossRatScript, p_script->currentBoss);
+
+		m_attackActivationTime = p_data->activationTime;
+		m_attackDelay = p_data->attackDelay;
 	}
+
 	void BossRatBashAttack::DrawTelegraphs(EntityID id)
 	{
 		Transform furthestCatTransform;
@@ -46,7 +52,7 @@ namespace PE
 		//Draw Telegraphs
 		
 		//atleast 1
-		EntityID telegraph = sm.LoadFromFile("RatBossBashAttackTelegraph_Prefab.json");
+		EntityID telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim_Prefab.json");
 		m_telegraphPoitions.push_back(telegraph);
 		vec2 NextPosition;
 		
@@ -56,34 +62,57 @@ namespace PE
 		{
 
 			TelegraphTransform->position = NextPosition = BossTransform.position + unitDirection * (BossTransform.width/2 + TelegraphTransform->width /2);
+			NoOfAttack++;
 		}
 
 		NextPosition += unitDirection * TelegraphTransform->width;
 
-		int count = 0;
-
 		while (CheckOutsideOfWall(NextPosition))
 		{
-			telegraph = sm.LoadFromFile("RatBossBashAttackTelegraph_Prefab.json");
+			telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim_Prefab.json");
 			m_telegraphPoitions.push_back(telegraph);
 
 			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
 			TelegraphTransform->position = NextPosition;
 
 			NextPosition += unitDirection * TelegraphTransform->width;
-			if (++count > 3) return;
+
+			NoOfAttack++;
 		}
 		
 
 	}
 	void BossRatBashAttack::EnterAttack(EntityID)
 	{
+		for (auto& id : m_telegraphPoitions)
+		{
+			Graphics::Renderer* tele_r = &EntityManager::GetInstance().Get<Graphics::Renderer>(id);
+			tele_r->SetColor(1, 1, 1, 0);
+		}
 	}
-	void BossRatBashAttack::UpdateAttack(EntityID)
-	{
+	void BossRatBashAttack::UpdateAttack(EntityID id, float dt)
+	{	
+		if (m_attackActivationTime > 0)
+		{
+			m_attackActivationTime -= dt;
+			return;
+		}
+		else
+		{
+			p_data->finishExecution = true;
+		}
+
+
 	}
 	void BossRatBashAttack::ExitAttack(EntityID)
 	{
+		for (auto& id : m_telegraphPoitions)
+		{
+			std::cout << "deleting telegraph" << std::endl;
+			EntityManager::GetInstance().RemoveEntity(id);
+		}
+
+		m_telegraphPoitions.clear();
 	}
 	BossRatBashAttack::~BossRatBashAttack()
 	{
@@ -91,8 +120,7 @@ namespace PE
 
 	bool BossRatBashAttack::CheckOutsideOfWall(vec2 Position)
 	{
-		BossRatScript* p_Script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
-		std::vector<EntityID>obstacles = p_Script->GetAllObstacles();
+		std::vector<EntityID>obstacles = p_script->GetAllObstacles();
 
 		for (auto& id : obstacles)
 		{

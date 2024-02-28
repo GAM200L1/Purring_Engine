@@ -60,5 +60,6 @@ namespace PE
 	private:
 		BossRatScriptData* p_data; // pointer to script instance data
 		GameStateController_v2_0* p_gsc; // pointer to game state controller
+		BossRatScript* p_script;
 	};
 } // End of namespace PE

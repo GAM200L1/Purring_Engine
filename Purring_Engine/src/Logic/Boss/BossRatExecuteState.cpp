@@ -24,24 +24,30 @@ namespace PE
 	void BossRatExecuteState::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(BossRatScript, id);
+		p_script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
 		p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+
+		p_data->p_currentAttack->EnterAttack(id);
 	}
 
 
 	void BossRatExecuteState::StateUpdate(EntityID id, float deltaTime)
 	{
+
+		p_data->p_currentAttack->UpdateAttack(id,deltaTime);
+
 		// Can conduct state checks and call for state changes here
 				// Can conduct state checks and call for state changes here
-		if (p_gsc->currentState == GameStates_v2_0::EXECUTE)
+		if (p_gsc->currentState == GameStates_v2_0::PLANNING)
 		{
 			p_data->p_stateManager->ChangeState(new BossRatPlanningState(), id);
 		}
 	}
 
 
-	void BossRatExecuteState::StateExit(EntityID)
+	void BossRatExecuteState::StateExit(EntityID id)
 	{
-
+		p_data->p_currentAttack->ExitAttack(id);
 	}
 
 } // End of namespace PE
