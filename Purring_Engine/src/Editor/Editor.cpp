@@ -187,6 +187,7 @@ namespace PE {
 
 		//Subscribe to key pressed event 
 		ADD_KEY_EVENT_LISTENER(PE::KeyEvents::KeyTriggered, Editor::OnKeyTriggeredEvent, this)
+		ADD_WINDOW_EVENT_LISTENER(PE::WindowEvents::WindowFocus, Editor::OnWindowFocusEvent, this)
 		//for the object list
 		m_objectIsSelected = false;
 		m_currentSelectedObject = -1;

@@ -161,6 +161,11 @@ namespace PE {
 		 \param[in] const temp::Event<temp::KeyEvents>& event called
 		*************************************************************************************/
 		void OnKeyTriggeredEvent(const PE::Event<PE::KeyEvents>& r_e);
+
+		/*!***********************************************************************************
+		\brief 
+		*************************************************************************************/
+		void OnWindowFocusEvent(const PE::Event<PE::WindowEvents>& r_e);
 		// ----- ImGui Window Functions ----- // 
 	private:
 		/*!***********************************************************************************
