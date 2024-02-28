@@ -260,14 +260,13 @@ namespace PE
 #else
             glm::mat4 worldToNdcMatrix{ r_cameraManager.GetWorldToNdcMatrix(false) };
 #endif // !GAMERELEASE
-
+            
             // Draw objects in the scene
             DrawQuadsInstanced<Renderer>(worldToNdcMatrix, Hierarchy::GetInstance().GetRenderOrder());
 
 #ifndef GAMERELEASE            
             // Draw UI objects in the scene
-            DrawQuadsInstanced<GUIRenderer>(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix(),
-                Hierarchy::GetInstance().GetRenderOrderUI());
+            DrawQuadsInstanced<GUIRenderer>(worldToNdcMatrix, Hierarchy::GetInstance().GetRenderOrderUI());
 
             // Render Text
             //RenderText(Editor::GetInstance().IsEditorActive() ? worldToNdcMatrix : r_cameraManager.GetUiViewToNdcMatrix());
