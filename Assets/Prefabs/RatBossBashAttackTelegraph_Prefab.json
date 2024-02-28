@@ -22,7 +22,7 @@
                                 "g": 1.0,
                                 "r": 1.0
                             },
-                            "TextureKey": "../Assets/Textures/Telegraphs/RatKing_Telegraph_Bash_512px.png"
+                            "TextureKey": "../Assets/Textures/Telegraphs/Boss/RatKing_Telegraph_Bash_512px.png"
                         },
                         "RigidBody": {
                             "linearDrag": 2.0,

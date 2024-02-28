@@ -111,6 +111,8 @@ namespace PE
 
 		EntityID FindFurthestCat();
 
+		std::vector<EntityID> GetAllObstacles();
+
 		// ----- Private Members ----- //
 	private:
 		// --- STATE CHANGE --- //

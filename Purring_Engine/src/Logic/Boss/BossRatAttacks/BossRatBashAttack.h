@@ -33,7 +33,7 @@ namespace PE
 		virtual void ExitAttack(EntityID);
 		virtual ~BossRatBashAttack();
 
-		void CheckCollisionWithWall(vec2 Position, float width);
+		bool CheckOutsideOfWall(vec2 Position);
 
 	private:
 		//need to take a snapshot of the current player positions here

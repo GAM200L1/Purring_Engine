@@ -31,7 +31,6 @@ namespace PE
 	void BossRatScript::Init(EntityID id)
 	{
 		CreateCheckStateManager(id);
-
 	}
 
 
@@ -64,6 +63,7 @@ namespace PE
 	void BossRatScript::OnAttach(EntityID id)
 	{
 		m_scriptData[id] = BossRatScriptData();
+		FindAllObstacles();
 		currentBoss = id;
 	}
 
@@ -140,5 +140,9 @@ namespace PE
 		//std::cout << "Furthest Cat: " << EntityManager::GetInstance().Get<EntityDescriptor>(FurthestCat).name << "\n";
 
 		return FurthestCat;
+	}
+	std::vector<EntityID> BossRatScript::GetAllObstacles()
+	{
+		return m_Obstacles;
 	}
 } // End of namespace PE

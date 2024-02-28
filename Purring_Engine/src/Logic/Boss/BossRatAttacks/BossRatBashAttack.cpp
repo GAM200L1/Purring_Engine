@@ -15,6 +15,8 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 * ************************************************************************************/
 #include "prpch.h"
 #include "BossRatBashAttack.h"
+#include "Logic/Boss/BossRatScript.h"
+#include "Logic/LogicSystem.h"
 
 namespace PE
 {
@@ -42,18 +44,36 @@ namespace PE
 
 		//to be put into a while loop, while not hitting obstacle
 		//Draw Telegraphs
+		
+		//atleast 1
 		EntityID telegraph = sm.LoadFromFile("RatBossBashAttackTelegraph_Prefab.json");
 		m_telegraphPoitions.push_back(telegraph);
-
+		vec2 NextPosition;
+		
+		Transform* TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
 
 		if (EntityManager::GetInstance().Has<Transform>(telegraph))
 		{
-			Transform* TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
 
-			TelegraphTransform->position = BossTransform.position + unitDirection * 250;
+			TelegraphTransform->position = NextPosition = BossTransform.position + unitDirection * (BossTransform.width/2 + TelegraphTransform->width /2);
 		}
 
+		NextPosition += unitDirection * TelegraphTransform->width;
 
+		int count = 0;
+
+		while (CheckOutsideOfWall(NextPosition))
+		{
+			telegraph = sm.LoadFromFile("RatBossBashAttackTelegraph_Prefab.json");
+			m_telegraphPoitions.push_back(telegraph);
+
+			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
+			TelegraphTransform->position = NextPosition;
+
+			NextPosition += unitDirection * TelegraphTransform->width;
+			if (++count > 3) return;
+		}
+		
 
 	}
 	void BossRatBashAttack::EnterAttack(EntityID)
@@ -69,8 +89,24 @@ namespace PE
 	{
 	}
 
-	void BossRatBashAttack::CheckCollisionWithWall(vec2 Position, float width)
+	bool BossRatBashAttack::CheckOutsideOfWall(vec2 Position)
 	{
+		BossRatScript* p_Script = GETSCRIPTINSTANCEPOINTER(BossRatScript);
+		std::vector<EntityID>obstacles = p_Script->GetAllObstacles();
 
+		for (auto& id : obstacles)
+		{
+			Transform wallTransform;
+
+			if (EntityManager::GetInstance().Has<Transform>(id))
+				wallTransform = EntityManager::GetInstance().Get<Transform>(id);
+
+			if (Position.x >= wallTransform.position.x - wallTransform.width / 2 && Position.x <= wallTransform.position.x + wallTransform.width / 2 &&
+				Position.y >= wallTransform.position.y - wallTransform.height / 2 && Position.y <= wallTransform.position.y + wallTransform.height / 2)
+			{
+				return false;
+			}
+		}
+		return true;
 	}
 }
