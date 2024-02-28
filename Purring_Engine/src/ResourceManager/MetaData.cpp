@@ -1,16 +1,14 @@
 /*!***********************************************************************************
  \project  Purring Engine
  \module   CSD2401-A
- \file     Animation.cpp
- \date     27-11-2023
+ \file     MetaData.cpp
+ \date     28-02-2024
 
  \author               Brandon HO Jun Jie
  \par      email:      brandonjunjie.ho@digipen.edu
 
- \brief	   This file contains the implementation of the Animation and AnimationManager
-           classes. Animation handles the logic for updating and maintaining individual
-           animation frames, while AnimationManager manages multiple Animation objects,
-           offering an interface for creating, updating, and adding frames to animations.
+ \brief	   This file contains the implementation of the Metadata clases. MetaData
+			is the base class for all metadata, and TextureMetaData is a derived class.
 
  All content (c) 2023 DigiPen Institute of Technology Singapore. All rights reserved.
 *************************************************************************************/

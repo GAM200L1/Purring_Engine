@@ -5,7 +5,15 @@
  \date     22-10-2023
 
  \author               Liew Yeni
- \par      email:      yeni.l/@digipen.edu
+ \par      email:      yeni.l\@digipen.edu
+ \par      code %:     35%
+ \par      changes:    Original Author
+
+ \co-author            Brandon Ho Jun Jie
+ \par      email:      brandonjunjie.ho\@digipen.edu
+ \par      code %:     65%
+ \par      changes:    28-02-2024
+					   Generating and clearing meta files
 
  \brief    Contains definitions for helper functions for files
 
@@ -44,7 +52,6 @@ namespace PE
 			}
 		}
 
-		//ClearMetaFiles();
 		GenerateMetaFiles();
 	}
 

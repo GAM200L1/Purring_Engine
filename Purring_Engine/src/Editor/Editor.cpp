@@ -3817,30 +3817,8 @@ namespace PE {
 
 							ImGui::Text("Guid: "); ImGui::SameLine(); ImGui::Text(metaData.Guid.c_str());
 							ImGui::Text("Type: "); ImGui::SameLine(); ImGui::Text(metaData.Type.c_str());
-						}
-						
-
-
+						}			
 					}
-					//if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
-					//{
-					//	Graphics::Camera& cameraComponent{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID) };
-					//	float viewportWidth{ cameraComponent.GetViewportWidth() };
-					//	float viewportHeight{ cameraComponent.GetViewportHeight() };
-					//	bool isMainCamera{ cameraComponent.GetIsMainCamera() };
-
-					//	ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-					//	ImGui::Checkbox("Is Main Camera: ", &isMainCamera); // bool to set this camera as the main cam
-					//	ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
-					//	float zoom{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetMagnification() };
-					//	ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
-					//	ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
-
-					//	cameraComponent.SetViewDimensions(viewportWidth, viewportHeight);
-					//	cameraComponent.SetMagnification(zoom);
-					//	cameraComponent.SetMainCamera(isMainCamera);
-					//}
 				}
 			}
 			ImGui::EndChild();
