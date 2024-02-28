@@ -34,7 +34,7 @@ namespace PE
 		int health = 20;
 		StateMachine* p_stateManager;
 		BossRatAttack* p_currentAttack;
-		bool finishExecution{};
+		bool finishExecution{true};
 
 		//bash attack variables
 		float TelegraphRaadius;
