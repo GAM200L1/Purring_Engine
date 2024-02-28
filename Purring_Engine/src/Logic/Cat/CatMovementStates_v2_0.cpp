@@ -440,19 +440,19 @@ namespace PE
 		else
 		{
 			// for cat chain level
-			if (CatHelperFunctions::IsFirstLevel() && id == m_mainCatID)
+			if (id == m_mainCatID)
 			{
-				auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
+				//auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
 				// triggers state change for cats in the chain to sync animations
-				for (auto [catID, catType] : catVector)
+				for (EntityID followersID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
 				{
-					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(catID);
-					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(catID, 0.5f);
+					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(followersID);
+					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(followersID, 0.5f);
 				}
 				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
 			}
 			// for other levels where cats move independently
-			else if (!CatHelperFunctions::IsFirstLevel())
+			else if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id))
 			{
 				// Wait a second before changing state
 				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);

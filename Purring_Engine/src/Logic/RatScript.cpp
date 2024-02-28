@@ -508,7 +508,8 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Get<ScriptComponent>(target).m_scriptKeys.count("CatScript_v2_0"))
 			{
-				p_data->targetCats.emplace_back(target);
+				if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(target))
+					p_data->targetCats.emplace_back(target);
 			}
 		}
 
