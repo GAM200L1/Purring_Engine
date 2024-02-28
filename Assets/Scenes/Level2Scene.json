@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4897,7 +4897,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4976,7 +4976,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5012,7 +5012,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5103,7 +5103,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1061.0,
+                        "Height": 1080.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -5837,7 +5837,7 @@
                         "children": [
                             105
                         ],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "OrangeCat",
                         "parent": null,
                         "sceneID": 104
@@ -5918,7 +5918,7 @@
                         "Old ID": 105,
                         "Prefab Type": "Cage",
                         "children": [],
-                        "isActive": true,
+                        "isActive": false,
                         "name": "Cage",
                         "parent": 104,
                         "sceneID": 105
