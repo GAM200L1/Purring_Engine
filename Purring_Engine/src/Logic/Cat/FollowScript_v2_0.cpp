@@ -79,10 +79,10 @@ namespace PE
 			m_ScriptData[id].IsAttaching = false;
 		}
 
-
+		auto current = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
 		vec2 NewPosition = EntityManager::GetInstance().Get<Transform>(id).position;
 
-		if (!(NewPosition.x == m_ScriptData[id].CurrentPosition.x && NewPosition.y == m_ScriptData[id].CurrentPosition.y))
+		if (p_gamestateController->currentState != GameStates_v2_0::DEPLOYMENT && !(NewPosition.x == m_ScriptData[id].CurrentPosition.x && NewPosition.y == m_ScriptData[id].CurrentPosition.y))
 		{
 			//for object 1 to 2
 				//to get rotation
