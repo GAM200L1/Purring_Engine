@@ -102,7 +102,7 @@ namespace PE
 		}
 		else
 		{
-			if (m_attackDelay <= 0)
+			if (m_attackDelay <= 0 && endExecutionTimer == endExecutionTime)
 			{	
 				EntityID tid = m_telegraphPoitions[m_attacksActivated++];
 				for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(tid).children)
@@ -118,16 +118,17 @@ namespace PE
 
 			if (m_attacksActivated == m_noOfAttack)
 			{
-				p_data->finishExecution = true;
-				m_attackActivationTime = p_data->activationTime;
-				for (auto& id : m_telegraphPoitions)
+				if (endExecutionTimer <= 0)
 				{
-					std::cout << "deleting telegraph" << std::endl;
-					for (auto ie : EntityManager::GetInstance().Get<EntityDescriptor>(id).children)
-					{
-						EntityManager::GetInstance().Get<EntityDescriptor>(ie).isActive = false;
-					}
+					m_attackActivationTime = p_data->activationTime;
+					endExecutionTimer = endExecutionTimer;
+					p_data->finishExecution = true;
 				}
+				else
+				{
+					endExecutionTimer -= dt;
+				}
+
 			}
 
 		}
