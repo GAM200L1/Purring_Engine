@@ -48,8 +48,9 @@ namespace PE
 
 		if (p_data->catType == EnumCatType::MAINCAT)
 		{
-			FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, p_data->catID);
-			p_data->followCatPositions = follow_data->NextPosition;
+			FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, id);
+			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
+			p_data->followCatPositions = follow_data->nextPosition;
 		}
 		
 		ResetDrawnPath();
@@ -266,7 +267,7 @@ namespace PE
 		if (!p_data->pathPositions.empty())
 		{
 			CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions.front());
-			follow_data->CurrentPosition = p_data->pathPositions.front();
+			follow_data->prevPosition = p_data->pathPositions.front();
 		}
 		p_data->pathPositions.clear();
 
@@ -357,11 +358,11 @@ namespace PE
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 
 		if (p_data->catType == EnumCatType::MAINCAT)
-		{
 			m_mainCatID = id;
-		}
-
-		CatHelperFunctions::PositionEntity(id, p_data->pathPositions.front());
+		
+		if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id))
+			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.front());
+		
 		p_data->currentPositionIndex = 0;
 		m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 	}

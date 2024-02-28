@@ -201,7 +201,7 @@ namespace PE
 			{
 				CircleCollider& r_seismicCollider = std::get<CircleCollider>(EntityManager::GetInstance().Get<Collider>(p_attackData->seismicID).colliderVariant);
 
-				if (m_seismicPrevAnimationFrame < r_seismicAnimation.GetCurrentFrameIndex() && r_seismicCollider.scaleOffset < 1.f)
+				if (m_seismicPrevAnimationFrame != r_seismicAnimation.GetCurrentFrameIndex() && r_seismicCollider.scaleOffset < 1.f)
 					r_seismicCollider.scaleOffset += 0.25f;
 
 				m_seismicPrevAnimationFrame = r_seismicAnimation.GetCurrentFrameIndex();
