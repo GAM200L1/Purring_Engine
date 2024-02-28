@@ -14,14 +14,14 @@
                 "collisionLayerIndex": 0,
                 "data": {
                     "center": {
-                        "x": -294.99932861328125,
-                        "y": 0.0
+                        "x": 320.0006103515625,
+                        "y": 71.99998474121094
                     },
                     "positionOffset": {
                         "x": 0.0,
                         "y": 0.0
                     },
-                    "radius": 48.0,
+                    "radius": 32.0,
                     "scaleOffset": 1.0
                 },
                 "isTrigger": false,
@@ -88,18 +88,18 @@
                 }
             },
             "Transform": {
-                "height": 96.0,
+                "height": 64.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": -294.99932861328125,
-                    "y": 0.0
+                    "x": 320.0006103515625,
+                    "y": 71.99998474121094
                 },
                 "relativeposition": {
                     "x": 0.0,
                     "y": 0.0
                 },
                 "relorientation": 0.0,
-                "width": 96.0
+                "width": 64.0
             }
         },
         "name": ""
