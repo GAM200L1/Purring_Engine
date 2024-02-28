@@ -73,6 +73,9 @@ namespace PE
 		std::vector<EntityID> targetCats;
 
 		EnumOldRatType ratType{ EnumOldRatType::GUTTER };
+
+		std::unordered_set<EntityID> hitCats; // Cats that have been hit by the rat / rat attack during this execution phase
+		std::unordered_set<EntityID> hitBy; // Attacks that the rat has been hit by during this execution phase
 	};
 
 	class RatScript : public Script

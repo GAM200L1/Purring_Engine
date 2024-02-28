@@ -5,17 +5,17 @@
                 "AnimationIDs": [
                     "../Assets/Animation/AnimationOrange_Attack_Anim.json",
                     "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                    "../Assets/Animation/AnimationOrange_Idle_Anim.json",
+                    "../Assets/Animation/AnimationOrange_Idle_Anim.json\u0000_Anim.json",
                     "../Assets/Animation/AnimationOrange_walk_Anim.json"
                 ],
-                "CurrentAnimationID": "../Assets/Animation/AnimationOrange_Idle_Anim.json"
+                "CurrentAnimationID": ""
             },
             "Collider": {
                 "collisionLayerIndex": 0,
                 "data": {
                     "center": {
-                        "x": 0.0,
-                        "y": 0.0
+                        "x": 320.0006103515625,
+                        "y": 71.99998474121094
                     },
                     "positionOffset": {
                         "x": 0.0,
@@ -28,10 +28,13 @@
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {
-                "Prefab Type": "OrangeCatPrefab",
+                "InteractionLayer": 0,
+                "Layer": 0,
+                "Old ID": 18446744073709551615,
+                "Prefab Type": "OrangeCat",
                 "children": [],
                 "isActive": true,
-                "name": "Orange Cat",
+                "name": "OrangeCat",
                 "parent": null,
                 "sceneID": 18446744073709551615
             },
@@ -50,79 +53,36 @@
                 "type": 1
             },
             "ScriptComponent": {
-                "CatScript": {
+                "CatScript_v2_0": {
                     "data": {
                         "animationStates": {
                             "Attack": "../Assets/Animation/AnimationOrange_Attack_Anim.json",
                             "Death": "../Assets/Animation/AnimationOrange_Death_Anim.json",
-                            "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json",
+                            "Idle": "../Assets/Animation/AnimationOrange_Idle_Anim.json\u0000_Anim.json",
                             "Walk": "../Assets/Animation/AnimationOrange_walk_Anim.json"
                         },
-                        "attackDamage": 0,
-                        "bulletDelay": 0.699999988079071,
-                        "bulletForce": 1000.0,
-                        "bulletLifeTime": 0.10000000149011612,
-                        "bulletRange": 3.0,
-                        "catHealth": 20,
-                        "catID": 0,
-                        "catMaxEnergy": 21,
-                        "projectileID": 0,
-                        "requiredAttackPoints": 0
-                    },
-                    "state": 0
-                },
-                "FollowScript": {
-                    "data": {
-                        "CurrentPosition": {
-                            "x": 0.0,
-                            "y": 0.0
-                        },
-                        "FollowingObject": [
-                            18446744073709551615,
-                            18446744073709551615,
-                            18446744073709551615,
-                            18446744073709551615,
-                            18446744073709551615,
-                            18446744073709551615
-                        ],
-                        "IsAttaching": true,
-                        "LookTowardsMovement": false,
-                        "NextPosition": {
-                            "0": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "1": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "2": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "3": {
-                                "x": 0.0,
-                                "y": 0.0
-                            },
-                            "4": {
-                                "x": 0.0,
-                                "y": 0.0
+                        "attackVariants": {
+                            "OrangeCatAttackVariables": {
+                                "damage": 2,
+                                "seismicDelay": 0.0,
+                                "seismicForce": 500.0,
+                                "seismicID": 0,
+                                "seismicRadius": 3.0,
+                                "seismicSlamAnimationIndex": 4,
+                                "telegraphID": 0
                             }
                         },
-                        "NumberOfAttacher": 2,
-                        "NumberOfFollower": 1,
-                        "Size": 65,
-                        "SoundID": 0,
-                        "Speed": 100.0,
-                        "ToAttach": [
-                            18446744073709551615,
-                            7,
-                            18446744073709551615,
-                            18446744073709551615,
-                            18446744073709551615,
-                            18446744073709551615
-                        ],
-                        "rotation": 0.0
+                        "catID": 0,
+                        "catMaxMovementEnergy": 6,
+                        "catType": 2,
+                        "finishedExecution": false,
+                        "forgivenessOffset": 1.0,
+                        "isCaged": false,
+                        "maxDistance": 50.0,
+                        "minDistance": 10.0,
+                        "movementSpeed": 300.0,
+                        "nodeSize": 10.0,
+                        "toggleDeathAnimation": false
                     },
                     "state": 0
                 }
@@ -131,8 +91,8 @@
                 "height": 64.0,
                 "orientation": 0.0,
                 "position": {
-                    "x": 0.0,
-                    "y": 0.0
+                    "x": 320.0006103515625,
+                    "y": 71.99998474121094
                 },
                 "relativeposition": {
                     "x": 0.0,

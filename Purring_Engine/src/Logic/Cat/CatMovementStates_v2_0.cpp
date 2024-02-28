@@ -20,6 +20,9 @@
 
 #include "CatMovementStates_v2_0.h"
 #include "Logic/GameStateController_v2_0.h"
+#include "CatController_v2_0.h"
+#include "CatHelperFunctions.h"
+#include "FollowScript_v2_0.h"
 
 #include "ECS/Entity.h"
 #include "Events/CollisionEvent.h"
@@ -29,27 +32,21 @@
 #include "Graphics/CameraManager.h"
 #include "Animation/Animation.h"
 #include "Logic/Script.h"
-#include "CatHelperFunctions.h"
-#include "FollowScript_v2_0.h"
+
 
 namespace PE
 {
 	// ----- Movement Plan Functions ----- //
 	void CatMovement_v2_0PLAN::Enter(EntityID id)
 	{
-		//std::cout << "CatMovementPLAN::StateEnter( " << id << " )\n";
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
-		//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
-
-		// Return if this cat is not the main cat
-		//if (!p_data->isMainCat) { return; }
 
 		// Subscribe to events
 		m_clickEventListener = ADD_MOUSE_EVENT_LISTENER(MouseEvents::MouseButtonPressed, CatMovement_v2_0PLAN::OnMouseClick, this);
 		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovement_v2_0PLAN::OnPathCollision, this);
 
-		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
+		if (CatHelperFunctions::IsFirstLevel())
 		{
 			FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, p_data->catID);
 			p_data->followCatPositions = follow_data->NextPosition;
@@ -60,9 +57,6 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::Update(EntityID id, float deltaTime)
 	{
-		// Return if this cat is not the main cat
-		//if (!p_data->isMainCat) { return; }
-
 		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		
 		// Check if pause state
@@ -133,9 +127,6 @@ namespace PE
 
 	void CatMovement_v2_0PLAN::Exit(EntityID id)
 	{
-		// Return if this cat is not the main cat
-		//if (!p_data->isMainCat) { return; }
-
 		EndPathDrawing(id);
 	}
 
@@ -213,13 +204,12 @@ namespace PE
 		CatHelperFunctions::PositionEntity(nodeId, r_nodePosition);
 		CatHelperFunctions::ToggleEntity(nodeId, true);
 		
+		// Plays path placing audio
 		SerializationManager m_serializationManager;
 		EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Movement Planning SFX_Prefab.json");
 		if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 			EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 		EntityManager::GetInstance().RemoveEntity(sound);
-
-		// @TODO: Add place path audio here
 
 		// Add the position to the path positions list
 		p_data->pathPositions.emplace_back(r_nodePosition);
@@ -250,7 +240,6 @@ namespace PE
 			EntityManager::GetInstance().Get<Graphics::Renderer>(nodeID).SetColor(r, g, b, a);
 		}
 	}
-
 
 	void CatMovement_v2_0PLAN::ResetDrawnPath()
 	{
@@ -285,14 +274,11 @@ namespace PE
 
 		//set it to current so that it doesnt update followers
 		//i only update followers if current position does not match the transform position
-		if (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->currentState != GameStates_v2_0::DEPLOYMENT)
+		/*follow_data->NextPosition = p_data->followCatPositions;
+		for (int i = 1; i < follow_data->NumberOfFollower; i++)
 		{
-			/*follow_data->NextPosition = p_data->followCatPositions;
-			for (int i = 1; i < follow_data->NumberOfFollower; i++)
-			{
-				EntityManager::GetInstance().Get<Transform>(follow_data->FollowingObject[i]).position = p_data->followCatPositions[i];
-			}*/
-		}
+			EntityManager::GetInstance().Get<Transform>(follow_data->FollowingObject[i]).position = p_data->followCatPositions[i];
+		}*/
 
 		// Disable all the path nodes
 		for (EntityID& nodeId : p_data->pathQuads)
@@ -368,14 +354,16 @@ namespace PE
 	void CatMovement_v2_0EXECUTE::StateEnter(EntityID id)
 	{
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
-		//EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentFrameIndex(0);
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 
-		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0))
-		{ return; }// if cat is following cat in the chain )
+		if (p_data->catType != EnumCatType::MAINCAT && CatHelperFunctions::IsFirstLevel())
+		{
+			m_doneMoving = true;
+			return;
+		}
 		else
 		{
-			p_mainCatData = (GETSCRIPTDATA(CatScript_v2_0, id));
+			m_mainCatID = id;
 		}
 
 		CatHelperFunctions::PositionEntity(id, p_data->pathPositions.front());
@@ -385,21 +373,12 @@ namespace PE
 
 	void CatMovement_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
-		
-		if ((p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0) 
-			&& p_mainCatData->currentPositionIndex >= p_data->pathPositions.size())
-		{
-			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
-		}
-		else if (p_data->catType != EnumCatType::MAINCAT && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0)
-		{ return; }// if cat is following cat in the chain )
-		GameStateController_v2_0* gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		/*if (p_data->catType != EnumCatType::MAINCAT && CatHelperFunctions::IsFirstLevel())
+		{ return; }*/// if cat is following cat in the chain )
+		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 
 		// Check if pause state 
-		if (gsc->currentState == GameStates_v2_0::PAUSE)
-		{
-			return;
-		}
+		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
 
 		// Check if the player is still moving
 		if (!m_doneMoving)
@@ -465,8 +444,24 @@ namespace PE
 		}
 		else
 		{
-			// Wait a second before changing state
-			GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
+			// for cat chain level
+			if (CatHelperFunctions::IsFirstLevel() && id == m_mainCatID)
+			{
+				auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
+				// triggers state change for cats in the chain to sync animations
+				for (auto [catID, catType] : catVector)
+				{
+					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(catID);
+					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(catID, 0.5f);
+				}
+				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
+			}
+			// for other levels where cats move independently
+			else if (!CatHelperFunctions::IsFirstLevel())
+			{
+				// Wait a second before changing state
+				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
+			}
 		}
 	}
 
@@ -481,7 +476,6 @@ namespace PE
 		p_data->pathPositions.clear();
 		EntityManager::GetInstance().Get<Collider>(p_data->catID).isTrigger = false;
 	}
-
 
 	void CatMovement_v2_0EXECUTE::StopMoving(EntityID id)
 	{
@@ -534,17 +528,11 @@ namespace PE
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
 		OnTriggerEnterEvent OCEE{ dynamic_cast<const OnTriggerEnterEvent&>(r_TriggerEvent) };
 
-		//// Check if the rat is colliding with the cat
-		//if ((CatHelperFunctions::IsEnemy(OCEE.Entity1) && OCEE.Entity2 == p_data->catID)
-		//	|| (CatHelperFunctions::IsEnemy(OCEE.Entity2) && OCEE.Entity1 == p_data->catID))
-		//{
-		//	m_collidedWithRat = true;
-		//}
 		auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
 		if ((CheckExitPoint(OCEE.Entity1) && OCEE.Entity2 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT))
 			|| (CheckExitPoint(OCEE.Entity2) && OCEE.Entity1 == p_data->catID && (p_data->catType == EnumCatType::MAINCAT)))
 		{
-			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage((p_gsc->GetCurrentLevel()+1 == 3)? 0 : (p_gsc->GetCurrentLevel() + 1)); // goes to the next stage
+			GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->NextStage(p_gsc->GetCurrentLevel() + 1); // goes to the next stage
 		}
 	}
 }

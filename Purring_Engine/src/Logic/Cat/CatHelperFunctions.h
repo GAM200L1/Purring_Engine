@@ -163,6 +163,16 @@ namespace PE
 				return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Obstacle") != std::string::npos);
 			}
 
+			/*!***********************************************************************************
+			 \brief To check if the game is in cat chain level as following cats are restricted
+					in this level
+
+			 \param[out] bool - whether it is the first level in the game
+			*************************************************************************************/
+			static bool IsFirstLevel()
+			{
+				return (GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() == 0);
+			}
 		};
 	
 }

@@ -58,6 +58,8 @@
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/FollowScript_v2_0.h"
 
+#include "Boss/BossRatScript.h"
+
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
@@ -99,6 +101,8 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(CatScript_v2_0);
 	REGISTER_SCRIPT(CatController_v2_0);
 	REGISTER_SCRIPT(FollowScript_v2_0);
+
+	REGISTER_SCRIPT(BossRatScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
@@ -262,6 +266,7 @@ nlohmann::json PE::ScriptComponent::ToJson(EntityID id) const
 					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletRange"] = val.bulletRange;
 					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletLifeTime"] = val.bulletLifeTime;
 					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletForce"] = val.bulletForce;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletFireAnimationIndex"] = val.bulletFireAnimationIndex;
 				}
 				else
 				{
@@ -269,9 +274,10 @@ nlohmann::json PE::ScriptComponent::ToJson(EntityID id) const
 					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicID"] = val.seismicID;
 					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["telegraphID"] = val.telegraphID;
 					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["damage"] = val.damage;
-					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompRadius"] = val.stompRadius;
-					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompLifetime"] = val.stompLifeTime;
-					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompForce"] = val.stomopForce;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicRadius"] = val.seismicRadius;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicDelay"] = val.seismicDelay;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicForce"] = val.seismicForce;
+					ret[k.c_str()]["data"][prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicSlamAnimationIndex"] = val.seismicSlamAnimationIndex;
 				}
 			}
 			else if (var.get_type().get_name() == "unsignedint")

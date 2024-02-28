@@ -35,6 +35,7 @@ namespace PE
 	void FollowScript_v2_0::Init(EntityID)
 	{
 		p_gamestateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
+		
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, FollowScript_v2_0::CollisionCheck, this);
 		if (!EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
 			EntityManager::GetInstance().Assign<CatSaveData>(MAXSIZE_T);
@@ -55,6 +56,7 @@ namespace PE
 					if (std::find(m_ScriptData[id].followers.begin(), m_ScriptData[id].followers.end(), flw) == m_ScriptData[id].followers.end())
 						m_ScriptData[id].followers.emplace_back(flw);
 
+					// Plays grabbing cat audio
 					int randomInteger = std::rand() % 2 + 1;
 					SerializationManager m_serializationManager;
 					EntityID sound{};
@@ -74,7 +76,7 @@ namespace PE
 					EntityManager::GetInstance().RemoveEntity(sound);
 
 
-					// Flag the cat if so it knows it has been attached 
+					// Flag the cat so it knows it has been attached 
 					CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, flw) };
 					catData->isCaged = false;
 					for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
@@ -146,9 +148,9 @@ namespace PE
 		}
 	}
 
-	void FollowScript_v2_0::Destroy(EntityID)
+	void FollowScript_v2_0::Destroy(EntityID id)
 	{
-
+		m_ScriptData[id].followers.clear();
 	}
 
 	void FollowScript_v2_0::OnAttach(EntityID id)

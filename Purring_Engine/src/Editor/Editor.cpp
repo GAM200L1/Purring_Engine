@@ -3669,10 +3669,10 @@ namespace PE {
 												{
 													OrangeCatAttackVariables& var = std::get<OrangeCatAttackVariables>(it->second.attackVariables);
 													ImGui::Text("Damage:"); ImGui::SameLine(); ImGui::InputInt("##OCAdamage", &(var.damage));
-													ImGui::Text("Stomp Radius:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stompRadius));
-													ImGui::Text("Stomp Lifetime:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stompLifeTime));
-													ImGui::Text("Stomp Force:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stomopForce));
-
+													ImGui::Text("Seismic Radius:"); ImGui::SameLine(); ImGui::InputFloat("##GCAradius", &(var.seismicRadius));
+													ImGui::Text("Seismic Delay:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.seismicDelay));
+													ImGui::Text("Seismic Force:"); ImGui::SameLine(); ImGui::InputFloat("##GCAforce", &(var.seismicForce));
+													ImGui::Text("Seismic Anim Index:"); ImGui::SameLine(); ImGui::InputInt("##GCAindex", reinterpret_cast<int*>(&(var.seismicSlamAnimationIndex)));
 												}
 											}
 										

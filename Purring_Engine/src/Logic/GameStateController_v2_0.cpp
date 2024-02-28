@@ -193,6 +193,7 @@ namespace PE
 			ActiveObject(m_scriptData[id].HUDCanvas);
 			ActiveObject(m_scriptData[id].TurnCounterCanvas);
 			DeactiveObject(m_scriptData.at(id).Portrait);
+			FadeAllObject(m_scriptData[id].Journal, 0);
 
 			PhaseBannerTransition(id, deltaTime);
 			UpdateTurnCounter("Deployment");
@@ -743,6 +744,8 @@ namespace PE
 		{
 			CurrentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
+			m_isPotraitShowing = false;
+			m_journalShowing = false;
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
@@ -895,6 +898,21 @@ namespace PE
 
 		FadeAllObject(m_scriptData[id].HUDCanvas, fadeOutSpeed);
 		FadeAllObject(m_scriptData[id].ExecuteCanvas, fadeInSpeed);
+
+		if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].JournalButton))
+			EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].JournalButton).SetAlpha(0);
+
+		if (!m_journalShowing)
+		{
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(0);
+		}
+		else
+		{
+			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[id].Journal))
+				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[id].Journal).SetAlpha(fadeOutSpeed);
+		}
+
 
 		if (fadeInSpeed >= 1)
 		{
@@ -1054,6 +1072,41 @@ namespace PE
 		case 1: // 2nd level
 		{
 
+			/*CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
+			dat.saved.clear();
+			dat.saved.emplace_back(MAINCAT);
+
+			EntityID maincat{};
+			for (auto id : SceneView<ScriptComponent>())
+			{
+				if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
+				{
+					maincat = id;
+					break;
+				}
+			}
+			auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
+
+			for (auto flw : ptr->followers)
+			{
+				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
+				dat.saved.emplace_back(p_data->catType);
+			}
+			ptr->followers.clear();*/
+			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			CatManager->UpdateDeployableCats(CatManager->mainInstance);
+
+			m_isTransitioning = true;
+			m_isTransitioningIn = false;
+			m_timeSinceTransitionStarted = 0;
+			m_timeSinceTransitionEnded = m_transitionTimer;
+
+			m_currentLevel = nextStage;
+			m_leveltoLoad = m_level2SceneName;
+			break;
+		}
+		case 2: // 3rd level
+		{
 			CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
 			dat.saved.clear();
 			dat.saved.emplace_back(MAINCAT);
@@ -1081,14 +1134,48 @@ namespace PE
 			m_timeSinceTransitionEnded = m_transitionTimer;
 
 			m_currentLevel = nextStage;
-			m_leveltoLoad = m_level2SceneName;
+			m_leveltoLoad = m_level3SceneName;
 			break;
 		}
-		case 2: // win game
+		//case 3: // boss level
+		//{
+		//	CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
+		//	dat.saved.clear();
+		//	dat.saved.emplace_back(MAINCAT);
+
+		//	EntityID maincat{};
+		//	for (auto id : SceneView<ScriptComponent>())
+		//	{
+		//		if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
+		//		{
+		//			maincat = id;
+		//			break;
+		//		}
+		//	}
+		//	auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
+
+		//	for (auto flw : ptr->followers)
+		//	{
+		//		auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
+		//		dat.saved.emplace_back(p_data->catType);
+		//	}
+		//	ptr->followers.clear();
+		//	m_isTransitioning = true;
+		//	m_isTransitioningIn = false;
+		//	m_timeSinceTransitionStarted = 0;
+		//	m_timeSinceTransitionEnded = m_transitionTimer;
+
+		//	m_currentLevel = nextStage;
+		//	m_leveltoLoad = m_level4SceneName;
+		//	break;
+		//}
+		//case 3: // win game
+		//	WinGame();
+		//	m_leveltoLoad = "MainMenu.json";
+		//	break;
+		default:
 			WinGame();
 			m_leveltoLoad = "MainMenu.json";
-			break;
-		default:
 			break;
 		}
 	
@@ -1314,7 +1401,7 @@ namespace PE
 
 	void GameStateController_v2_0::CheckFinishExecution()
 	{
-		bool Finished = true;;
+		bool Finished = true;
 
 		RatController_v2_0* RatManager = GETSCRIPTINSTANCEPOINTER(RatController_v2_0);
 		CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
@@ -1323,13 +1410,13 @@ namespace PE
 		{
 			if (RatType == EnumRatType::GUTTER_V1) 
 			{
-					// Ensures backwards compatability with the V1 rat
-					Finished = Finished && GETSCRIPTINSTANCEPOINTER(RatScript)->GetScriptData()[RatID].finishedExecution;
+				// Ensures backwards compatability with the V1 rat
+				Finished = Finished && GETSCRIPTINSTANCEPOINTER(RatScript)->GetScriptData()[RatID].finishedExecution;
 			}
 			else 
 			{
-					// Checks the V2 rat
-					Finished = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetScriptData()[RatID].finishedExecution;
+				// Checks the V2 rat
+				Finished = Finished && GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetScriptData()[RatID].finishedExecution;
 			}
 			//std::cout << "GameStateController_v2_0::CheckFinishExecution() RatID " << RatID << " finished exec " << Finished << " \n";
 		}
@@ -1337,8 +1424,8 @@ namespace PE
 		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
 		{
 			if(!GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].isCaged)
-			Finished = Finished && GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
-			//std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
+				Finished = Finished && GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
+			std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
 		}
 
 		if (Finished)

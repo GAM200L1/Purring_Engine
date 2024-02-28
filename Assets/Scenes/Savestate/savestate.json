@@ -83,8 +83,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -397,8 +397,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -674,8 +674,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -835,8 +835,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1190,7 +1190,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -1235,8 +1235,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1598,8 +1598,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -1875,8 +1875,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2289,8 +2289,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2473,7 +2473,7 @@
                         "m_clicked": false,
                         "m_currentValue": 3.0,
                         "m_currentWidth": 45.0,
-                        "m_currentXpos": -101.49630737304688,
+                        "m_currentXpos": 50.75,
                         "m_defaultColor": [
                             0.3921568691730499,
                             0.3921568691730499,
@@ -2555,11 +2555,11 @@
                         "height": 50.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -972.1214599609375,
+                            "x": -819.8751831054688,
                             "y": -455.0
                         },
                         "relativeposition": {
-                            "x": -177.62130737304688,
+                            "x": -25.375,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -2614,8 +2614,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2696,8 +2696,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -2804,7 +2804,7 @@
                         "m_clicked": false,
                         "m_currentValue": 1.0,
                         "m_currentWidth": 75.0,
-                        "m_currentXpos": -101.49835968017578,
+                        "m_currentXpos": -33.83332824707031,
                         "m_defaultColor": [
                             0.3921568691730499,
                             0.3921568691730499,
@@ -2886,11 +2886,11 @@
                         "height": 50.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -929.3316650390625,
+                            "x": -861.6666870117188,
                             "y": -455.0
                         },
                         "relativeposition": {
-                            "x": -135.33169555664063,
+                            "x": -67.66666412353516,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -3027,8 +3027,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -3304,7 +3304,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4059,8 +4059,8 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
-                        "Width": 1920.0
+                        "Height": 0.0,
+                        "Width": 0.0
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,
@@ -4138,7 +4138,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4294,6 +4294,7 @@
                                     "GreyCatAttackVariables": {
                                         "attacKDirection": 0,
                                         "bulletDelay": 0.0,
+                                        "bulletFireAnimationIndex": 3,
                                         "bulletForce": 1000.0,
                                         "bulletLifeTime": 1.0,
                                         "bulletRange": 3.0,
@@ -4443,6 +4444,7 @@
                                     "GreyCatAttackVariables": {
                                         "attacKDirection": 0,
                                         "bulletDelay": 0.0,
+                                        "bulletFireAnimationIndex": 3,
                                         "bulletForce": 500.0,
                                         "bulletLifeTime": 1.0,
                                         "bulletRange": 3.0,
@@ -4491,7 +4493,7 @@
             "Entity": {
                 "components": {
                     "Canvas": {
-                        "Height": 1080.0,
+                        "Height": 1061.0,
                         "Width": 1920.0
                     },
                     "EntityDescriptor": {
@@ -4557,7 +4559,7 @@
                         "m_clicked": false,
                         "m_currentValue": 1.0,
                         "m_currentWidth": 16.0,
-                        "m_currentXpos": -31.984375,
+                        "m_currentXpos": 32.0,
                         "m_defaultColor": [
                             0.3607843220233917,
                             0.9882352948188782,
@@ -4647,11 +4649,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -63.984375,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": -63.984375,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,
@@ -4692,7 +4694,7 @@
                         "m_clicked": false,
                         "m_currentValue": 1.0,
                         "m_currentWidth": 16.0,
-                        "m_currentXpos": -31.984375,
+                        "m_currentXpos": 32.0,
                         "m_defaultColor": [
                             0.3607843220233917,
                             0.9882352948188782,
@@ -4782,11 +4784,11 @@
                         "height": 16.0,
                         "orientation": 0.0,
                         "position": {
-                            "x": -63.984375,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relativeposition": {
-                            "x": -63.984375,
+                            "x": 0.0,
                             "y": 0.0
                         },
                         "relorientation": 0.0,

@@ -102,7 +102,7 @@ namespace PE
 				ratsPrinted = false;
 		}
 
-		void RatController_v2_0::ApplyDamageToRat(EntityID ratID, int damage)
+		void RatController_v2_0::ApplyDamageToRat(EntityID ratID, EntityID attackId, int damage)
 		{
 			RefreshRats(mainInstance);
 
@@ -113,8 +113,14 @@ namespace PE
 				if (ratID == cachedRatId)
 				{
 					if (ratType == EnumRatType::GUTTER_V1)
-					{
-						GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(ratID, damage);
+					{				
+						// Check if the rat has hit this cat before
+						if((GETSCRIPTDATA(RatScript, ratID).hitBy) &&
+						(GETSCRIPTDATA(RatScript, ratID).hitBy)->find(attackId) == (GETSCRIPTDATA(RatScript, ratID).hitBy)->end())
+						{
+							GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(ratID, damage);
+						}
+						(GETSCRIPTDATA(RatScript, ratID).hitBy)->emplace(attackId);
 					}
 					else
 					{
