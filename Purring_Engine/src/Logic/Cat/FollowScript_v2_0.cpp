@@ -26,6 +26,7 @@
 #include "../GameStateController_v2_0.h"
 #include "CatScript_v2_0.h"
 #include "CatHelperFunctions.h"
+#include "CatController_v2_0.h"
 #include "Hierarchy/HierarchyManager.h"
 
 # define M_PI           3.14159265358979323846 // temp definition of pi, will need to discuss where shld we leave this later on
@@ -72,17 +73,6 @@ namespace PE
 						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 					EntityManager::GetInstance().RemoveEntity(sound);
 
-
-					// Flag the cat so it knows it has been attached 
-					CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, flw) };
-					catData->isCaged = false;
-					for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
-					{
-						if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
-						{
-							CatHelperFunctions::ToggleEntity(findCageID, false);
-						}
-					}
 				}
 			}
 			m_ScriptData[id].ToAttach.clear();
@@ -167,38 +157,82 @@ namespace PE
 
 	void FollowScript_v2_0::CollisionCheck(const Event<CollisionEvents>& r_event)
 	{
+		if (p_gamestateController->currentState != GameStates_v2_0::EXECUTE) { return; }
 		if (r_event.GetType() == CollisionEvents::OnTriggerEnter)
 		{
-			OnTriggerEnterEvent event = static_cast<const OnTriggerEnterEvent&>(r_event);
-			EntityID id1{ event.Entity1 }, id2{ event.Entity2 };
+			OnTriggerEnterEvent OTEE = static_cast<const OnTriggerEnterEvent&>(r_event);
+			//EntityID id1{ event.Entity1 }, id2{ event.Entity2 };
 
-			// unable to find the follow script on id1
-			if (!m_ScriptData.count(id1))
-			{
-				// unable to find the follow script on id2
-				if (!m_ScriptData.count(id2))
-					return; // return, none of the entities in this event were relevant
-				
-				// entity id of id2 is the follow script holder, swap values so can reuse code
-				std::swap(id1, id2);
-			}
+			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 
-			if (EntityManager::GetInstance().Has<ScriptComponent>(id2))
+			if (OTEE.Entity1 == p_catController->GetMainCatID() && p_catController->IsCatCaged(OTEE.Entity2))
 			{
-				try
+				m_ScriptData[p_catController->GetMainCatID()].IsAttaching = true;
+				m_ScriptData[p_catController->GetMainCatID()].ToAttach.emplace_back(OTEE.Entity2);
+				// Flag the cat so it knows it has been attached 
+				CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity2) };
+				catData->isCaged = false;
+				for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
 				{
-					auto data = GETSCRIPTDATA(CatScript_v2_0, id2);
-					if (data->isCaged)
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
 					{
-						m_ScriptData[id1].IsAttaching = true;
-						m_ScriptData[id1].ToAttach.emplace_back(id2);
+						CatHelperFunctions::ToggleEntity(findCageID, false);
 					}
 				}
-				catch (...)
+			}
+			else if (OTEE.Entity2 == p_catController->GetMainCatID() && p_catController->IsCatCaged(OTEE.Entity1))
+			{
+				m_ScriptData[p_catController->GetMainCatID()].IsAttaching = true;
+				m_ScriptData[p_catController->GetMainCatID()].ToAttach.emplace_back(OTEE.Entity1);
+				// Flag the cat so it knows it has been attached 
+				CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, OTEE.Entity1) };
+				catData->isCaged = false;
+				for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
 				{
-					// failed to find the cat script on the target
+					if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
+					{
+						CatHelperFunctions::ToggleEntity(findCageID, false);
+					}
 				}
 			}
+
+			//// unable to find the follow script on id1
+			//if (!m_ScriptData.count(id1))
+			//{
+			//	// unable to find the follow script on id2
+			//	if (!m_ScriptData.count(id2))
+			//		return; // return, none of the entities in this event were relevant
+			//	
+			//	// entity id of id2 is the follow script holder, swap values so can reuse code
+			//	std::swap(id1, id2);
+			//}
+
+			//if (EntityManager::GetInstance().Has<ScriptComponent>(id2))
+			//{
+			//	try
+			//	{
+			//		auto const& data = GETSCRIPTDATA(CatScript_v2_0, id2);
+			//		if (data->isCaged)
+			//		{
+			//			m_ScriptData[id1].IsAttaching = true;
+			//			m_ScriptData[id1].ToAttach.emplace_back(id2);
+			//			// Flag the cat so it knows it has been attached 
+			//			CatScript_v2_0Data* catData{ GETSCRIPTDATA(CatScript_v2_0, id2) };
+			//			catData->isCaged = false;
+			//			for (EntityID findCageID : Hierarchy::GetInstance().GetChildren(catData->catID))
+			//			{
+			//				if (EntityManager::GetInstance().Get<EntityDescriptor>(findCageID).name.find("Cage") != std::string::npos)
+			//				{
+			//					CatHelperFunctions::ToggleEntity(findCageID, false);
+			//				}
+			//			}
+			//		}
+			//	}
+			//	catch (...)
+			//	{
+			//		// failed to find the cat script on the target
+			//	}
+			//}
 			
 		}
 	}
