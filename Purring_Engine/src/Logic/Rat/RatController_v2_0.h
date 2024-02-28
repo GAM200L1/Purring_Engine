@@ -114,7 +114,14 @@ namespace PE
 		*************************************************************************************/
 		virtual void OnDetach(EntityID id);
 
-		void ApplyDamageToRat(EntityID ratID, int damage);
+		/*!***********************************************************************************
+		 \brief Reduces the health of a rat.
+
+		 \param[in] ratID - ID of the rat to damage
+		 \param[in] attackID - ID of the entity dealing damage to the rat
+		 \param[in] damage - Amount of damage to deal to the rat
+		*************************************************************************************/
+		void ApplyDamageToRat(EntityID ratID, EntityID attackId, int damage);
 
 		bool IsRatAndIsAlive(EntityID id);
 
