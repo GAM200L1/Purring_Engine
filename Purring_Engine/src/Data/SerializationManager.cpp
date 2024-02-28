@@ -489,7 +489,34 @@ nlohmann::json SerializationManager::LoadAnimationFromFile(const std::filesystem
     return loadedData;
 }
 
+void SerializationManager::SaveMetaDataToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData)
+{
+    std::ofstream outFile(filepath);
+    if (outFile)
+    {
+        outFile << serializedData.dump(4);
+        outFile.close();
+    }
+    else
+    {
+        std::cerr << "Could not open the file for writing: " << filepath << std::endl;
+    }
+}
 
+nlohmann::json SerializationManager::LoadMetaDataFromFile(const std::filesystem::path& filepath)
+{
+    nlohmann::json loadedData;
+    std::ifstream inFile(filepath);
+    if (inFile)
+    {
+        inFile >> loadedData;
+        inFile.close();
+    }
+    else {
+        std::cerr << "Could not open the file for reading: " << filepath << std::endl;
+    }
+    return loadedData;
+}
 
 void SerializationManager::LoadLoaders()
 {

@@ -44,6 +44,7 @@
 #include "Graphics/Text.h"
 #include "Animation/Animation.h"
 #include "imgui.h"
+#include "MetaData.h"
 
 //class Resource
 //{

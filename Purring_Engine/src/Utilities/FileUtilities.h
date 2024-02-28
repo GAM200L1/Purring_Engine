@@ -27,4 +27,8 @@ namespace PE
 	 \param[in] r_fileNames		vector to save retrieved names to
 	*************************************************************************************/
 	void GetFileNamesInParentPath(std::filesystem::path const& r_parentPath, std::vector<std::filesystem::path>& r_fileNames);
+
+	void GenerateMetaFiles();
+
+	void ClearMetaFiles();
 }

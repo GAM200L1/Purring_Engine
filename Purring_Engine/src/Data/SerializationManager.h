@@ -140,6 +140,22 @@ public:
     *************************************************************************************/
     nlohmann::json LoadAnimationFromFile(const std::filesystem::path& filepath);
 
+    /*!***********************************************************************************
+    \brief Save animation data to file
+
+    \param[in] filepath  The path to the file to save to.
+    \param[in] serializedData  The data to save.
+    *************************************************************************************/
+    void SaveMetaDataToFile(const std::filesystem::path& filepath, const nlohmann::json& serializedData);
+
+    /*!***********************************************************************************
+    \brief Load an animation from a serialized file.
+
+    \param[in] filename  The path to the file to load from.
+    \return nlohmann::json  The loaded data.
+    *************************************************************************************/
+    nlohmann::json LoadMetaDataFromFile(const std::filesystem::path& filepath);
+
     /*!************************************************************************
      \brief Serializes an entity's component to JSON.
 
