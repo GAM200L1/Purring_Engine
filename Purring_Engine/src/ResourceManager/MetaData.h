@@ -33,17 +33,18 @@ namespace PE
     class MetaData
     {
     public:
+        MetaData() = default;
         MetaData(std::string extension) : Guid{ "guid" + extension + GenerateDateTimeUID()} {};
         nlohmann::json Serialize() const;
         MetaData& Deserialize(const nlohmann::json& r_j);
 
         std::string Guid{ "0" };
+        std::string Type{ "MetaData" };
     };
 
     class TextureMetaData : public MetaData
     {
     public:
-
         nlohmann::json Serialize() const;
         TextureMetaData& Deserialize(const nlohmann::json& r_j);
 

@@ -426,6 +426,7 @@ namespace PE {
 		bool m_objectIsSelected;
 		bool m_sceneViewFocused;
 		int m_currentSelectedObject{ -1 };
+		std::string m_currentSelectedResourcePath;
 		ImGuizmo::OPERATION m_currentGizmoOperation{ImGuizmo::OPERATION::TRANSLATE};
 
 		//variable for assets browser

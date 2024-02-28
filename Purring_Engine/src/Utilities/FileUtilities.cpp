@@ -38,7 +38,10 @@ namespace PE
 
 		for (std::filesystem::directory_entry const& r_dirEntry : std::filesystem::directory_iterator{ parentPath })
 		{
-			r_fileNames.emplace_back(parentPath.string() + "/" + r_dirEntry.path().filename().string());
+			if (r_dirEntry.path().extension().string() != ".meta")
+			{
+				r_fileNames.emplace_back(parentPath.string() + "/" + r_dirEntry.path().filename().string());
+			}
 		}
 
 		//ClearMetaFiles();

@@ -3778,6 +3778,70 @@ namespace PE {
 					}
 
 				}
+				else if (m_currentSelectedResourcePath != "")
+				{
+					// Display properties of the selected resource
+					if (ImGui::CollapsingHeader("Resource Properties", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+					{
+						std::filesystem::path path = m_currentSelectedResourcePath;
+						std::filesystem::path metaPath = path.string() + ".meta";
+						std::string guid;
+
+						ImGui::Text(path.filename().string().c_str());
+
+						if (path.extension().string() == ".png")
+						{
+							// load current resource metadata
+							TextureMetaData metaData{};
+							metaData.Deserialize(serializationManager.LoadMetaDataFromFile(metaPath));
+
+							ImGui::Text("Guid: "); ImGui::SameLine(); ImGui::Text(metaData.Guid.c_str());
+							ImGui::Text("Type: "); ImGui::SameLine(); ImGui::Text(metaData.Type.c_str());
+
+							bool checkBox = metaData.IsSpriteSheet;
+							std::string str = "##IsSpriteSheet";
+							ImGui::Text("Spritesheet: ");
+							ImGui::SameLine();
+							
+							if (ImGui::Checkbox(str.c_str(), &checkBox))
+							{
+								metaData.IsSpriteSheet = checkBox;
+								serializationManager.SaveMetaDataToFile(metaPath, metaData.Serialize());
+							}							
+						}
+						else
+						{
+							// load current resource metadata
+							MetaData metaData{};
+							metaData.Deserialize(serializationManager.LoadMetaDataFromFile(metaPath));
+
+							ImGui::Text("Guid: "); ImGui::SameLine(); ImGui::Text(metaData.Guid.c_str());
+							ImGui::Text("Type: "); ImGui::SameLine(); ImGui::Text(metaData.Type.c_str());
+						}
+						
+
+
+					}
+					//if (ImGui::CollapsingHeader("Camera", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+					//{
+					//	Graphics::Camera& cameraComponent{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID) };
+					//	float viewportWidth{ cameraComponent.GetViewportWidth() };
+					//	float viewportHeight{ cameraComponent.GetViewportHeight() };
+					//	bool isMainCamera{ cameraComponent.GetIsMainCamera() };
+
+					//	ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+					//	ImGui::Checkbox("Is Main Camera: ", &isMainCamera); // bool to set this camera as the main cam
+					//	ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+					//	float zoom{ EntityManager::GetInstance().Get<Graphics::Camera>(entityID).GetMagnification() };
+					//	ImGui::Text("Zoom: "); ImGui::SameLine(); ImGui::InputFloat("##Zoom", &zoom, 1.0f, 100.f, "%.3f");
+					//	ImGui::Dummy(ImVec2(0.0f, 5.0f));//add space
+
+					//	cameraComponent.SetViewDimensions(viewportWidth, viewportHeight);
+					//	cameraComponent.SetMagnification(zoom);
+					//	cameraComponent.SetMainCamera(isMainCamera);
+					//}
+				}
 			}
 			ImGui::EndChild();
 			ImGui::End();
@@ -3874,6 +3938,12 @@ namespace PE {
 
 				if (ImGui::IsWindowHovered())
 				{
+					if (ImGui::IsMouseClicked(0))
+					{
+						// reset selected resource
+						m_currentSelectedResourcePath.clear();
+					}
+
 					glfwSetDropCallback(WindowManager::GetInstance().GetWindow(), &HotLoadingNewFiles);
 					if (m_fileDragged)
 					{
@@ -4023,6 +4093,15 @@ namespace PE {
 									if (ImGui::IsMouseClicked(0)) {
 										draggedItemIndex = n; // Start dragging
 										isDragging = true;
+
+										// set current selected resource
+										std::filesystem::path filePath = m_files[n];
+										filePath.make_preferred();
+
+										m_currentSelectedObject = -1;
+										m_objectIsSelected = false;
+										m_currentSelectedResourcePath = filePath.string();
+										std::cout << "Selected Resource: " << m_currentSelectedResourcePath << std::endl;
 
 										std::string iconDraggedExtension = m_files[n].extension().string();
 										if (iconDraggedExtension == "")

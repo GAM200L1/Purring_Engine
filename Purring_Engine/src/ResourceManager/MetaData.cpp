@@ -29,6 +29,7 @@ namespace PE
     {
         nlohmann::json j;
         j["Guid"] = Guid;
+        j["Type"] = Type;
 
         return j;
     }
@@ -36,7 +37,9 @@ namespace PE
     MetaData& MetaData::Deserialize(const nlohmann::json& r_j)
     {
         if (r_j.contains("Guid"))
-            Guid = r_j["Guid"].get<bool>();
+            Guid = r_j["Guid"].get<std::string>();
+        if (r_j.contains("Type"))
+            Type = r_j["Type"].get<std::string>();
 
         return *this;
     }
@@ -83,12 +86,14 @@ namespace PE
         if (r_extension == ".png")
         {
             TextureMetaData metaData{ r_extension };
+            metaData.Type = "TextureMetaData";
             SerializationManager serializationManager;
             serializationManager.SaveMetaDataToFile(r_filePath, metaData.Serialize());
         }
         else
         {
             MetaData metaData{ r_extension };
+            metaData.Type = "MetaData";
             SerializationManager serializationManager;
             serializationManager.SaveMetaDataToFile(r_filePath, metaData.Serialize());
         }
