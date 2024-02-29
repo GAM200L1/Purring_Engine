@@ -2,7 +2,7 @@
     "Entity": {
         "components": {
             "Collider": {
-                "collisionLayerIndex": 5,
+                "collisionLayerIndex": 1,
                 "data": {
                     "center": {
                         "x": 0.0,
@@ -19,6 +19,7 @@
                 "type": "CircleCollider"
             },
             "EntityDescriptor": {
+                "InteractionLayer": 0,
                 "Layer": 0,
                 "Old ID": 18446744073709551615,
                 "Prefab Type": "RatDetectionRadius",
@@ -27,6 +28,11 @@
                 "name": "RatDetectionRadius",
                 "parent": null,
                 "sceneID": 18446744073709551615
+            },
+            "RigidBody": {
+                "linearDrag": 2.0,
+                "mass": 10.0,
+                "type": 1
             },
             "Transform": {
                 "height": 2.0,

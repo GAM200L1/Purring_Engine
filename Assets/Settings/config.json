@@ -6,7 +6,7 @@
         "renderDebug": false,
         "showAnimationWindow": false,
         "showComponentWindow": true,
-        "showConsole": true,
+        "showConsole": false,
         "showEditor": true,
         "showLayerWindow": false,
         "showLogs": true,
