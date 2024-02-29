@@ -1070,31 +1070,9 @@ namespace PE
 		}
 		case 1: // 2nd level
 		{
-
-			/*CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
-			dat.saved.clear();
-			dat.saved.emplace_back(MAINCAT);
-
-			EntityID maincat{};
-			for (auto id : SceneView<ScriptComponent>())
-			{
-				if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
-				{
-					maincat = id;
-					break;
-				}
-			}
-			auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
-
-			for (auto flw : ptr->followers)
-			{
-				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
-				dat.saved.emplace_back(p_data->catType);
-			}
-			ptr->followers.clear();*/
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateDeployableCats(CatManager->mainInstance);
-
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
+			
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;
@@ -1106,27 +1084,9 @@ namespace PE
 		}
 		case 2: // 3rd level
 		{
-			CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
-			dat.saved.clear();
-			dat.saved.emplace_back(MAINCAT);
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
-			EntityID maincat{};
-			for (auto id : SceneView<ScriptComponent>())
-			{
-				if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
-				{
-					maincat = id;
-					break;
-				}
-			}
-			auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
-
-			for (auto flw : ptr->followers)
-			{
-				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
-				dat.saved.emplace_back(p_data->catType);
-			}
-			ptr->followers.clear();
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;

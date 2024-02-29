@@ -31,6 +31,7 @@
 #include "CatPlanningState_v2_0.h"
 #include "CatHelperFunctions.h"
 #include "CatController_v2_0.h"
+#include "FollowScript_v2_0.h"
 
 #include "ECS/EntityFactory.h"
 #include "ResourceManager/ResourceManager.h"
@@ -378,7 +379,7 @@ namespace PE
 			if (CheckShouldStateChange(id, deltaTime))
 			{
 				// if in cat chain level and main cat is moving, animation change to walking
-				if ((p_gsc->GetCurrentLevel() == 0 && m_scriptData[m_mainCatID].catCurrentEnergy < m_scriptData[m_mainCatID].catMaxMovementEnergy) ||
+				if ((!(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty() && m_scriptData[m_mainCatID].catCurrentEnergy < m_scriptData[m_mainCatID].catMaxMovementEnergy) ||
 					// if deployment level, check cats own energy
 					(m_scriptData[id].catCurrentEnergy < m_scriptData[id].catMaxMovementEnergy))
 				{

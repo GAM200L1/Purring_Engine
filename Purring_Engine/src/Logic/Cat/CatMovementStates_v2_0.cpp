@@ -46,10 +46,11 @@ namespace PE
 		m_releaseEventListener = ADD_MOUSE_EVENT_LISTENER(PE::MouseEvents::MouseButtonReleased, CatMovement_v2_0PLAN::OnMouseRelease, this);
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(PE::CollisionEvents::OnTriggerStay, CatMovement_v2_0PLAN::OnPathCollision, this);
 
-		if (CatHelperFunctions::IsFirstLevel())
+		if (p_data->catType == EnumCatType::MAINCAT)
 		{
-			FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, p_data->catID);
-			p_data->followCatPositions = follow_data->NextPosition;
+			FollowScriptData_v2_0* follow_data = GETSCRIPTDATA(FollowScript_v2_0, id);
+			GETSCRIPTINSTANCEPOINTER(FollowScript_v2_0)->SavePositions(id);
+			p_data->followCatPositions = follow_data->nextPosition;
 		}
 		
 		ResetDrawnPath();
@@ -266,7 +267,7 @@ namespace PE
 		if (!p_data->pathPositions.empty())
 		{
 			CatHelperFunctions::PositionEntity(p_data->catID, p_data->pathPositions.front());
-			follow_data->CurrentPosition = p_data->pathPositions.front();
+			follow_data->prevPosition = p_data->pathPositions.front();
 		}
 		p_data->pathPositions.clear();
 
@@ -356,17 +357,12 @@ namespace PE
 		p_data = GETSCRIPTDATA(CatScript_v2_0, id);
 		m_triggerEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, CatMovement_v2_0EXECUTE::OnTriggerEnter, this);
 
-		if (p_data->catType != EnumCatType::MAINCAT && CatHelperFunctions::IsFirstLevel())
-		{
-			m_doneMoving = true;
-			return;
-		}
-		else
-		{
+		if (p_data->catType == EnumCatType::MAINCAT)
 			m_mainCatID = id;
-		}
-
-		CatHelperFunctions::PositionEntity(id, p_data->pathPositions.front());
+		
+		if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id))
+			CatHelperFunctions::PositionEntity(id, p_data->pathPositions.front());
+		
 		p_data->currentPositionIndex = 0;
 		m_doneMoving = p_data->pathPositions.size() <= 1; // Don't bother moving if there aren't enough paths
 	}
@@ -445,19 +441,19 @@ namespace PE
 		else
 		{
 			// for cat chain level
-			if (CatHelperFunctions::IsFirstLevel() && id == m_mainCatID)
+			if (id == m_mainCatID)
 			{
-				auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
+				//auto const& catVector = GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->GetCurrentCats(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->mainInstance);
 				// triggers state change for cats in the chain to sync animations
-				for (auto [catID, catType] : catVector)
+				for (EntityID followersID : (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers)
 				{
-					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(catID);
-					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(catID, 0.5f);
+					GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(followersID);
+					GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(followersID, 0.5f);
 				}
 				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);
 			}
 			// for other levels where cats move independently
-			else if (!CatHelperFunctions::IsFirstLevel())
+			else if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsFollowCat(id))
 			{
 				// Wait a second before changing state
 				GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->TriggerStateChange(id, 0.5f);

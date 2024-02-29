@@ -4645,7 +4645,39 @@
                         "type": 1
                     },
                     "ScriptComponent": {
-                        "BossRatScript": {
+                        "CatScript_v2_0": {
+                            "data": {
+                                "animationStates": {
+                                    "Attack": "../Assets/Animation/AnimationMeowsalot_Attack_Anim.json\u0000_Anim.json",
+                                    "Death": "../Assets/Animation/AnimationMeowsalot_Death_Anim.json",
+                                    "Idle": "../Assets/Animation/AnimationMeowsalot_Idle_Anim.json",
+                                    "Walk": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                                },
+                                "attackVariants": {
+                                    "GreyCatAttackVariables": {
+                                        "attacKDirection": 0,
+                                        "bulletDelay": 0.0,
+                                        "bulletFireAnimationIndex": 3,
+                                        "bulletForce": 500.0,
+                                        "bulletLifeTime": 1.0,
+                                        "bulletRange": 3.0,
+                                        "damage": 2,
+                                        "projectileID": 0,
+                                        "teleGraphIDs": []
+                                    }
+                                },
+                                "catID": 0,
+                                "catMaxMovementEnergy": 32,
+                                "catType": 0,
+                                "finishedExecution": false,
+                                "forgivenessOffset": 1.0,
+                                "isCaged": false,
+                                "maxDistance": 50.0,
+                                "minDistance": 10.0,
+                                "movementSpeed": 300.0,
+                                "nodeSize": 10.0,
+                                "toggleDeathAnimation": false
+                            },
                             "state": 0
                         }
                     },
