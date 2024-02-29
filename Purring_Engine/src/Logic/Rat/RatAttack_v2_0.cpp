@@ -30,22 +30,19 @@
 
 namespace PE
 {
-    // Constructor
-    RatAttack_v2_0::RatAttack_v2_0() : gameStateController(nullptr), p_data(nullptr) {}
-
-
     void RatAttack_v2_0::StateEnter(EntityID id)
     {
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
-        gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                                                           // Get GSM instance
+        gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                                                   // Get GSM instance
 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttack_v2_0::OnTriggerEnterAndStay, this);
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttack_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatAttack_v2_0::OnTriggerExit, this);
 
         m_delay = p_data->attackDelay;
+        m_attackDuration = GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->GetAnimationDuration(p_data->myID);
         p_data->attacking = true;  // Set the attacking flag to true
-        attacksoundonce = false;
+        attackFeedbackOnce = false;
         //std::cout << "[DEBUG] RatAttack_v2_0::StateEnter - Rat ID: " << id << " transitioning to Attack state." << std::endl;
     }
 
@@ -62,51 +59,40 @@ namespace PE
         if (m_delay > 0.f && p_data->attacking)
         {
             m_delay -= deltaTime;
-            //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Delay countdown: " << m_delay << std::endl;
+            std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate(" << id << ") - Delay countdown: " << m_delay << std::endl;
         }
         else if (p_data->attacking)
         {
+            std::cout << "RatAttack_v2_0::StateUpdate(" << id << "): p_data->attacking true" << std::endl;
+
             //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack initiated, enabling telegraph." << std::endl;
             RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, true);
-            //if (EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == EntityManager::GetInstance().Get<AnimationComponent>(id).GetAnimationMaxIndex())
-            //{
-            //    RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
-            //    p_data->finishedExecution = true;
-            //}
+            m_attackDuration -= deltaTime;
 
-                // Set the attack animation
-            //try
-            //{
-            //    EntityManager::GetInstance().Get<AnimationComponent>(id).SetCurrentAnimationID(p_data->animationStates.at("Attack"));
-            //}
-            //catch (const std::exception& e)
-            //{
-            //    std::cerr << "Exception setting Attack animation: " << e.what() << std::endl;
-            //}
-
-            if (!attacksoundonce)
+            if (!attackFeedbackOnce)
             {
-                //std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Playing attack sound." << std::endl;
-                SerializationManager serializationManager;
-                EntityID sound = serializationManager.LoadFromFile("AudioObject/Rat Attack SFX_Prefab.json");
-                if (EntityManager::GetInstance().Has<AudioComponent>(sound))
-                    EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
-                EntityManager::GetInstance().RemoveEntity(sound);
+                attackFeedbackOnce = true;
+                RatScript_v2_0::PlayAttackAudio();
+                GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->PlayAnimation(p_data->myID, EnumRatAnimations::ATTACK);
+            }
+            else if (m_attackDuration <= 0.f)
+            {
+                std::cout << "RatAttack_v2_0::StateUpdate(" << id << "): animation is done" << std::endl;
 
-                attacksoundonce = true;
+                RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
+                p_data->attacking = false;
+                p_data->finishedExecution = true;
+
+                ChangeStates();
             }
         }
-        else
-        {
-           // std::cout << "[DEBUG] RatAttack_v2_0::StateUpdate - Attack finished, setting finishedExecution to true." << std::endl;
-            p_data->finishedExecution = true;
-        }
-
     }
 
     void RatAttack_v2_0::StateCleanUp()
     {
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
     void RatAttack_v2_0::StateExit(EntityID id)
@@ -115,7 +101,6 @@ namespace PE
         gameStateController = nullptr;
         //std::cout << "[DEBUG] RatAttack_v2_0::StateExit - Rat ID: " << id << " exiting Attack state." << std::endl;
         p_data->hitCat = false;
-
     }
 
     void RatAttack_v2_0::RatHitCat(const Event<CollisionEvents>& r_TE)
@@ -171,12 +156,12 @@ namespace PE
     }
 
 
-    void RatAttack_v2_0::CheckIfShouldChangeStates()
+    void RatAttack_v2_0::ChangeStates()
     {
         // Check if there are any cats in the detection range
         if (!(p_data->catsInDetectionRadius.empty()))
         {
-            std::cout << "RatAttack_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats in detection radius\n";
+            std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): cats in detection radius\n";
 
             // there's a cat in the detection range, move to attack it again
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToMovement(p_data->myID);
@@ -184,7 +169,7 @@ namespace PE
         // Check if any cats exited the detection range
         else if (!(p_data->catsExitedDetectionRadius.empty()))
         {
-            std::cout << "RatAttack_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): cats exited radius\n";
+            std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): cats exited radius\n";
             // Check for the closest cat
             EntityID closestCat{ RatScript_v2_0::GetCloserTarget(RatScript_v2_0::GetEntityPosition(p_data->myID), p_data->catsExitedDetectionRadius) };
 
@@ -194,7 +179,7 @@ namespace PE
         // No cats in detection range
         else
         {
-            std::cout << "RatAttack_v2_0::CheckIfShouldChangeStates(" << p_data->myID << "): no cats in detection radius\n";
+            std::cout << "RatAttack_v2_0::ChangeStates(" << p_data->myID << "): no cats in detection radius\n";
 
             // the cat we're chasing is dead, return to the original position
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);

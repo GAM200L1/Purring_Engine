@@ -21,6 +21,7 @@
 #include "../Physics/Colliders.h"
 #include "../Data/SerializationManager.h"
 #include "../Hierarchy/HierarchyManager.h"
+#include "../ResourceManager/ResourceManager.h"
 
 #include "../Rat/RatIdle_v2_0.h"
 #include "../Rat/RatMovement_v2_0.h"
@@ -55,6 +56,8 @@ namespace PE
 			it->second.attackRadiusId = CreateAttackRangeRadius(it->second);
 			CreateRatPathTelegraph(it->second);
 
+			// Store the animation component
+			m_scriptData[id].p_ratAnimationComponent = &EntityManager::GetInstance().Get<AnimationComponent>(id);
 		}
 
 
@@ -203,6 +206,138 @@ namespace PE
 			}
 			catch (...) { return; }
 		}
+
+
+		void RatScript_v2_0::PlayAnimation(EntityID const id, EnumRatAnimations const animationState)
+		{
+				// Get the name of the animation state
+				std::string animationStateString{};
+				switch (animationState) {
+				case EnumRatAnimations::WALK:		animationStateString = "Walk";  break;
+				case EnumRatAnimations::ATTACK: animationStateString = "Attack";  break;
+				case EnumRatAnimations::HURT:		animationStateString = "Hurt";  break;
+				case EnumRatAnimations::DEATH:	animationStateString = "Death";  break;
+				default: animationStateString = "Idle";  break;
+				}
+				
+				// Play the animation state
+				if (m_scriptData[id].p_ratAnimationComponent && m_scriptData[id].animationStates.size())
+				{
+						try
+						{
+								if (m_scriptData[id].p_ratAnimationComponent->GetAnimationID() != m_scriptData[id].animationStates.at(animationStateString))
+								{
+										m_scriptData[id].p_ratAnimationComponent->SetCurrentAnimationID(m_scriptData[id].animationStates.at(animationStateString));
+								}
+						}
+						catch (...) { /* error */ }
+				}
+		}
+
+
+		float RatScript_v2_0::GetAnimationDuration(EntityID const id) const
+		{
+				// Return the total duration of the animation
+				return ResourceManager::GetInstance().GetAnimation(m_scriptData.at(id).p_ratAnimationComponent->GetAnimationID())->GetAnimationDuration();
+		}
+
+
+		void RatScript_v2_0::PlayAttackAudio()
+		{
+				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+				int randSound = std::rand() % 2 + 1;
+
+				std::string soundPrefab;
+				if (randSound == 1)
+				{
+						soundPrefab = "AudioObject/Rat Attack SFX1_Prefab.json";
+				}
+				else
+				{
+						soundPrefab = "AudioObject/Rat Attack SFX2_Prefab.json";
+				}
+
+				// Play the selected sound
+				PlayAudio(soundPrefab);
+		}
+
+
+		void RatScript_v2_0::PlayDeathAudio()
+		{
+				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+				int randSound = std::rand() % 2 + 1;
+
+				std::string soundPrefab;
+				if (randSound == 1)
+				{
+						soundPrefab = "AudioObject/Rat Death SFX1_Prefab.json";
+				}
+				else
+				{
+						soundPrefab = "AudioObject/Rat Death SFX2_Prefab.json";
+				}
+
+				// Play the selected sound
+				PlayAudio(soundPrefab);
+		}
+
+
+		void RatScript_v2_0::PlayDetectionAudio()
+		{
+				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+				int randSound = std::rand() % 3 + 1;
+
+				std::string soundPrefab;
+				switch (randSound)
+				{
+				case 1:
+						soundPrefab = "AudioObject/Rat Detection SFX1_Prefab.json"; break;
+				case 2:
+						soundPrefab = "AudioObject/Rat Detection SFX2_Prefab.json"; break;
+				case 3:
+						soundPrefab = "AudioObject/Rat Detection SFX3_Prefab.json"; break;
+				}
+
+				// Play the selected sound
+				PlayAudio(soundPrefab);
+		}
+
+
+		void RatScript_v2_0::PlayInjuredAudio()
+		{
+				std::srand(static_cast<unsigned int>(std::time(nullptr)));
+
+				int randSound = std::rand() % 3 + 1;
+
+				std::string soundPrefab;
+				switch (randSound)
+				{
+				case 1:
+						soundPrefab = "AudioObject/Rat Injured SFX1_Prefab.json"; break;
+				case 2:
+						soundPrefab = "AudioObject/Rat Injured SFX2_Prefab.json"; break;
+				case 3:
+						soundPrefab = "AudioObject/Rat Injured SFX3_Prefab.json"; break;
+				}
+
+				// Play the selected sound
+				PlayAudio(soundPrefab);
+		}
+
+		void RatScript_v2_0::PlayAudio(std::string const& r_soundPrefab)
+		{
+				SerializationManager serializationManager;
+				EntityID sound = serializationManager.LoadFromFile(r_soundPrefab);
+				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
+				{
+						EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
+				}
+				EntityManager::GetInstance().RemoveEntity(sound);
+		}
+
 
 		vec2 RatScript_v2_0::GetEntityPosition(EntityID const transformId)
 		{

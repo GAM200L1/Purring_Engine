@@ -25,13 +25,22 @@
 
 namespace PE
 {
-	enum EnumRatType
+	enum class EnumRatType : char
 	{
 		GUTTER_V1,
 		GUTTER,
 		BRAWLER,
 		SNIPER,
 		HERALD
+	};
+
+	enum class EnumRatAnimations : char
+	{
+		IDLE,
+		WALK,
+		ATTACK,
+		HURT,
+		DEATH
 	};
 
 	struct RatScript_v2_0_Data
@@ -47,6 +56,10 @@ namespace PE
 		EntityID ratTelegraphID{ 0 };			// id of an additional invisible object with transform for rotating the arrow telegraph
 		EnumRatType ratType{ EnumRatType::GUTTER };
 		StateMachine* p_stateManager;
+
+		// animation
+		AnimationComponent* p_ratAnimationComponent = nullptr;
+		std::map<std::string, std::string> animationStates; // animation states of the rat <state name, file name>
 		
 		// rat stats
 		int ratHealth{ 3 };								// health of the rat, needs manual setting
@@ -72,8 +85,6 @@ namespace PE
 
 		// Rat Idle
 		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
-
-		std::map<std::string, std::string> animationStates;
 
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 
@@ -253,6 +264,53 @@ namespace PE
 						the positive x axis.
 		*************************************************************************************/
 		static void RotateEntityRelative(EntityID const transformId, float const orientation);
+
+		/*!***********************************************************************************
+		 \brief Helper function for playing rat animation.
+
+		 \param[in] id - EntityID of the rat which the animation should be playing on.
+		 \param[in] animationState - Animation state that should be played.
+		*************************************************************************************/
+		void PlayAnimation(EntityID const id, EnumRatAnimations const animationState);
+
+		/*!***********************************************************************************
+		 \brief Helper function for checking if the rat's animation is done.
+
+		 \param[in] id - EntityID of the rat which the animation should be playing on.
+		 \return bool - Returns true if the animation is done, false otherwise.
+		*************************************************************************************/
+		float GetAnimationDuration(EntityID const id) const;
+
+
+		// ----- Play Audio ----- //
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random attack SFX.
+		*************************************************************************************/
+		static void PlayAttackAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random death SFX.
+		*************************************************************************************/
+		static void PlayDeathAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random detection SFX.
+		*************************************************************************************/
+		static void PlayDetectionAudio();
+
+		/*!***********************************************************************************
+		 \brief Play one of a few random injury SFX.
+		*************************************************************************************/
+		static void PlayInjuredAudio();
+
+		/*!***********************************************************************************
+		 \brief Spawn an audio object using the audio object at the filepath passed in and
+				play audio with it.
+
+		 \param[in] soundPrefab - Filepath of the audio object prefab to load.
+		*************************************************************************************/
+		static void PlayAudio(std::string const& soundPrefab);
 
 
 		// ----- Rat stuff ----- //

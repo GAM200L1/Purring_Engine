@@ -63,7 +63,7 @@ namespace PE
 					auto const& myVec{ GetRats(id) };
 					for (auto const& [ratId, rat] : myVec)
 					{
-							std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
+							std::cout << "Rat id: " << ratId << ", type: " << (char)rat << std::endl;
 					}
 					ratsPrinted = true;
 				}

@@ -36,8 +36,6 @@ namespace PE
     {
         // ----- Constructors ----- //
     public:
-        RatAttack_v2_0();
-
         virtual ~RatAttack_v2_0() { p_data = nullptr; };
 
         // ----- Public Functions ----- //
@@ -105,13 +103,14 @@ namespace PE
         virtual std::string_view GetName() { return "Attack_v2_0"; }
 
     private:
-        GameStateController_v2_0* gameStateController{ nullptr };
+        GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
 
         // Attack state specific variables and data
         RatScript_v2_0_Data* p_data;
         float m_delay{};
+        float m_attackDuration{};
 
-        bool attacksoundonce{};
+        bool attackFeedbackOnce{};
         bool telegraphEnabled{ false };
 
         // Event listener IDs 
@@ -124,7 +123,7 @@ namespace PE
                 the last execution phase and decides whether to swap to the attacking or
                 hunting states respectively.
         *************************************************************************************/
-        void CheckIfShouldChangeStates();
+        void ChangeStates();
     };
 
 } // namespace PE
