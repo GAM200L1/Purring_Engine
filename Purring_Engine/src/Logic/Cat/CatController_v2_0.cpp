@@ -119,13 +119,16 @@ namespace PE
 		{
 			EntityID catToRemove = id;
 		
-			if (!((GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.empty()))
+			// if cat was part of the following chain, kill just that cat and remove from followers vector
+			if (IsFollowCat(id))
 			{
 				catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
 				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
 			}
 			//else kill cat that has been hit
 			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
+
+			// if cat hit is main cat, game is lost
 			if ((GETSCRIPTDATA(CatScript_v2_0, catToRemove))->catType == EnumCatType::MAINCAT)
 			{
 				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.clear();

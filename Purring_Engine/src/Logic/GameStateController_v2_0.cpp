@@ -1069,9 +1069,9 @@ namespace PE
 		}
 		case 1: // 2nd level
 		{
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateDeployableCats(CatManager->mainInstance);
-
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
+			
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;
@@ -1083,8 +1083,8 @@ namespace PE
 		}
 		case 2: // 3rd level
 		{
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateDeployableCats(CatManager->mainInstance);
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
