@@ -10,11 +10,11 @@ namespace PE
     namespace Audio
     {
 
-        class FmodImpl
+        class FmodStudioManager
         {
         public:
-            FmodImpl();
-            ~FmodImpl();
+            FmodStudioManager();
+            ~FmodStudioManager();
 
             void OnUpdate(float dt);
 

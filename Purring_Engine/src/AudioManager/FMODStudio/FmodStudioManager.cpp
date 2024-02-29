@@ -2,7 +2,7 @@
 #include <vector>
 #include <fmod_errors.h>
 
-#include "AudioManager/FmodImpl.h"
+#include "AudioManager/FMODStudio/FmodStudioManager.h"
 #include "Logging/Logger.h"
 
 namespace PE
@@ -12,7 +12,7 @@ namespace PE
 
         extern Logger g_AudioLogger;
 
-        FmodImpl::FmodImpl()
+        FmodStudioManager::FmodStudioManager()
         {
             FMOD_RESULT result = FMOD::Studio::System::create(&studioSystem);
             if (result != FMOD_OK)
@@ -24,7 +24,7 @@ namespace PE
             studioSystem->getCoreSystem(&coreSystem);
         }
 
-        FmodImpl::~FmodImpl()
+        FmodStudioManager::~FmodStudioManager()
         {
             if (studioSystem)
             {
@@ -37,7 +37,7 @@ namespace PE
             }
         }
 
-        void FmodImpl::OnUpdate(float dt)
+        void FmodStudioManager::OnUpdate(float dt)
         {
             std::vector<ChannelMap::iterator> stoppedChannels;
             for (auto it = channels.begin(), itEnd = channels.end(); it != itEnd; ++it)
