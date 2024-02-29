@@ -34,6 +34,7 @@
 #include "Cat/CatController_v2_0.h"
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/FollowScript_v2_0.h"
+#include "Boss/BossRatScript.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -1071,31 +1072,9 @@ namespace PE
 		}
 		case 1: // 2nd level
 		{
-
-			/*CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
-			dat.saved.clear();
-			dat.saved.emplace_back(MAINCAT);
-
-			EntityID maincat{};
-			for (auto id : SceneView<ScriptComponent>())
-			{
-				if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
-				{
-					maincat = id;
-					break;
-				}
-			}
-			auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
-
-			for (auto flw : ptr->followers)
-			{
-				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
-				dat.saved.emplace_back(p_data->catType);
-			}
-			ptr->followers.clear();*/
-			CatController_v2_0* CatManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
-			CatManager->UpdateDeployableCats(CatManager->mainInstance);
-
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
+			
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;
@@ -1107,27 +1086,9 @@ namespace PE
 		}
 		case 2: // 3rd level
 		{
-			CatSaveData& dat = EntityManager::GetInstance().Get<CatSaveData>(MAXSIZE_T);
-			dat.saved.clear();
-			dat.saved.emplace_back(MAINCAT);
+			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
-			EntityID maincat{};
-			for (auto id : SceneView<ScriptComponent>())
-			{
-				if (CHECKSCRIPTDATA(FollowScript_v2_0, id))
-				{
-					maincat = id;
-					break;
-				}
-			}
-			auto ptr = GETSCRIPTDATA(FollowScript_v2_0, maincat);
-
-			for (auto flw : ptr->followers)
-			{
-				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
-				dat.saved.emplace_back(p_data->catType);
-			}
-			ptr->followers.clear();
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;
@@ -1424,9 +1385,12 @@ namespace PE
 		for (auto [CatID, CatType] : CatManager->GetCurrentCats(CatManager->mainInstance))
 		{
 			if(!GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].isCaged)
-				Finished = Finished && GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
-			std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
+			Finished = Finished && GETSCRIPTINSTANCEPOINTER(CatScript_v2_0)->GetScriptData()[CatID].finishedExecution;
+			//std::cout << "GameStateController_v2_0::CheckFinishExecution() CatID " << CatID << " finished exec " << Finished << " \n";
 		}
+
+		Finished = Finished && GETSCRIPTINSTANCEPOINTER(BossRatScript)->m_scriptData[GETSCRIPTINSTANCEPOINTER(BossRatScript)->currentBoss].finishExecution;
+
 
 		if (Finished)
 			NextState();

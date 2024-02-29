@@ -137,7 +137,6 @@ RTTR_REGISTRATION
     REGISTERCOMPONENT(PE::TextComponent);
     REGISTERCOMPONENT(PE::AudioComponent);
     REGISTERCOMPONENT(PE::Canvas);
-    REGISTERCOMPONENT(PE::CatSaveData);
    
     using namespace rttr;
     // test whether we need to register math lib stuff as well...
@@ -527,7 +526,7 @@ void PE::CoreApplication::Run()
         }
 
         Hierarchy::GetInstance().Update();
-        
+
         
         //std::cout << Graphics::CameraManager::GetUiCameraId() << std::endl;
 

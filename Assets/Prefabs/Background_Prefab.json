@@ -1,31 +1,43 @@
-{
-    "Entity": {
-        "components": {
-	   "EntityDescriptor": {
-                        "children": [],
-                        "name": "Background",
-                        "parent": null,
-                        "sceneID": 18446744073709551615
+[
+    {
+        "Entity": {
+            "components": {
+                "EntityDescriptor": {
+                    "InteractionLayer": 0,
+                    "Layer": 0,
+                    "Old ID": 18446744073709551615,
+                    "Prefab Type": "Background",
+                    "children": [],
+                    "isActive": true,
+                    "name": "Background",
+                    "parent": null,
+                    "sceneID": 18446744073709551615
+                },
+                "Renderer": {
+                    "Color": {
+                        "a": 1.0,
+                        "b": 1.0,
+                        "g": 1.0,
+                        "r": 1.0
                     },
-            "Renderer": {
-                "Color": {
-                    "a": 1.0,
-                    "b": 1.0,
-                    "g": 1.0,
-                    "r": 1.0
+                    "TextureKey": "../Assets/Textures/bg.png"
                 },
-                "TextureKey": "../Assets/Textures/bg.png"
+                "Transform": {
+                    "height": 1000.0,
+                    "orientation": 0.0,
+                    "position": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "relativeposition": {
+                        "x": 0.0,
+                        "y": 0.0
+                    },
+                    "relorientation": 0.0,
+                    "width": 1000.0
+                }
             },
-            "Transform": {
-                "height": 1000.0,
-                "orientation": 0.0,
-                "position": {
-                    "x": 0.0,
-                    "y": 0.0
-                },
-                "width": 1000.0
-            }
-        },
-        "name": ""
+            "name": ""
+        }
     }
-}
+]
