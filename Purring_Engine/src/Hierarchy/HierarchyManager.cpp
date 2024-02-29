@@ -79,8 +79,6 @@ namespace PE
 		if (!EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).isActive)
 			EntityManager::GetInstance().Get<EntityDescriptor>(r_child).DisableEntity();
 		
-		auto& pr = EntityManager::GetInstance().Get<EntityDescriptor>(r_parent).children;
-		auto& ch = EntityManager::GetInstance().Get<EntityDescriptor>(r_child).children;
 		
 		UpdateRenderOrder(r_parent);
 	}
