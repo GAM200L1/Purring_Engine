@@ -22,6 +22,7 @@ IncludeDir["glm"]           = "vendor/glm"
 IncludeDir["stb_image"]     = "vendor/stb_image"
 IncludeDir["GLEW"]          = "vendor/GLEW/include"
 IncludeDir["FMOD"]          = "vendor/FMOD/core/inc" -- CORE
+IncludeDir["FMODStudio"]    = "vendor/FMOD/studio/inc" -- STUDIO
 IncludeDir["RTTR"]          = "vendor/RTTR/include"
 --IncludeDir["mono"]          = "vendor/mono/include"
 
@@ -192,6 +193,7 @@ project "Purring_Engine"
         "%{IncludeDir.stb_image}",
         "%{IncludeDir.GLEW}",
         "%{IncludeDir.FMOD}",
+        "%{IncludeDir.FMODStudio}",
         "vendor/freetype/include",
         "%{IncludeDir.RTTR}",
         --"%{IncludeDir.mono}"
@@ -202,6 +204,7 @@ project "Purring_Engine"
         "vendor/",
         "vendor/GLEW/lib/Release/x64",
         "vendor/FMOD/core/lib/x64",
+        "vendor/FMOD/studio/lib/x64",
         "vendor/freetype/libs",
         "vendor/RTTR/lib"
     }
@@ -213,6 +216,7 @@ project "Purring_Engine"
         "ImGui",
         "opengl32",
         "fmod_vc",
+        "fmodstudio_vc",
         --"libmono-static-sgen",
         "freetype"
     }
@@ -317,6 +321,7 @@ project "Application"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLEW}",
         "%{IncludeDir.FMOD}",
+        "%{IncludeDir.FMODStudio}",
         "%{IncludeDir.RTTR}"
     }
 
@@ -351,6 +356,7 @@ project "Application"
                 ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
                 ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
                 ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Editor"),
+                ("{COPYFILE} ../vendor/FMOD/studio/lib/x64/fmodstudio.dll ../bin/" .. outputdir .. "/Editor"),
                 ("{COPYFILE} ../vendor/RTTR/bin/rttr_core_d.dll ../bin/" .. outputdir .. "/Editor"),
                 ("{COPYFILE} ../vendor/RTTR/bin/rttr_core_d.pdb ../bin/" .. outputdir .. "/Editor")
             }
@@ -375,6 +381,7 @@ project "Application"
                 ("{COPYDIR} ../Assets ../bin/" .. outputdir .. "/Assets"),
                 ("{COPYDIR} ../Shaders ../bin/" .. outputdir .. "/Shaders"),
                 ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. outputdir .. "/Editor"),
+                ("{COPYFILE} ../vendor/FMOD/studio/lib/x64/fmodstudio.dll ../bin/" .. outputdir .. "/Editor"),
                 ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. outputdir .. "/Editor"),
             }
             
@@ -404,6 +411,7 @@ project "Application"
                 ("{COPYDIR} ../Assets ../bin/" .. gameoutputdir .. "/Assets"),
                 ("{COPYDIR} ../Shaders ../bin/" .. gameoutputdir .. "/Shaders"),
                 ("{COPYFILE} ../vendor/FMOD/core/lib/x64/fmod.dll ../bin/" .. gameoutputdir .. "/MarchOfTheMeows"),
+                ("{COPYFILE} ../vendor/FMOD/studio/lib/x64/fmodstudio.dll ../bin/" .. outputdir .. "/MarchOfTheMeows"),
                 ("{COPYFILE} ../vendor/RTTR/bin/rttr_core.dll ../bin/" .. gameoutputdir .. "/MarchOfTheMeows"),
             }
 
