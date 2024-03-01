@@ -4,21 +4,35 @@
 #include <fmod.hpp>
 #include <map>
 #include <string>
+#include "Singleton.h"
 
 namespace PE
 {
     namespace Audio
     {
 
-        class FmodStudioManager
+        class FmodStudioManager : public Singleton<FmodStudioManager>
         {
+            friend class Singleton<FmodStudioManager>;
         public:
+            static FmodStudioManager& GetInstance()
+            {
+                static FmodStudioManager instance;
+                return instance;
+            }
+
+            void OnUpdate(float dt);
+            FMOD::Studio::Bank* GetBank(const std::string& bankName) const;
+            void LoadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags);
+
+            void LoadEvent(const std::string& eventName);
+
+        protected:
             FmodStudioManager();
             ~FmodStudioManager();
 
-            void OnUpdate(float dt);
-
         private:
+
             FMOD::System* coreSystem{ nullptr };
             FMOD::Studio::System* studioSystem{ nullptr };
 

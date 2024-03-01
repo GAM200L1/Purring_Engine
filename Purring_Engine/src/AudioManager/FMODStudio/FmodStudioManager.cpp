@@ -58,6 +58,42 @@ namespace PE
             g_AudioLogger.AddLog(false, "FMOD Studio system updated successfully.", __FUNCTION__);
         }
 
+
+        FMOD::Studio::Bank* FmodStudioManager::GetBank(const std::string& bankName) const {
+            auto it = banks.find(bankName);
+            return it != banks.end() ? it->second : nullptr;
+        }
+
+        void FmodStudioManager::LoadBank(const std::string& bankName, FMOD_STUDIO_LOAD_BANK_FLAGS flags) {
+            if (GetBank(bankName)) {
+                return; // Bank already loaded
+            }
+
+            FMOD::Studio::Bank* bank;
+            auto result = studioSystem->loadBankFile(bankName.c_str(), flags, &bank);
+            if (result == FMOD_OK) {
+                banks[bankName] = bank;
+            }
+            else {
+                // Handle error
+            }
+        }
+
+        void FmodStudioManager::LoadEvent(const std::string& eventName)
+        {
+            if (events.find(eventName) != events.end()) return; // Event already loaded
+
+            FMOD::Studio::EventDescription* eventDescription = nullptr;
+            FMOD_RESULT result = studioSystem->getEvent(eventName.c_str(), &eventDescription);
+            if (result == FMOD_OK && eventDescription) {
+                FMOD::Studio::EventInstance* eventInstance = nullptr;
+                eventDescription->createInstance(&eventInstance);
+                if (eventInstance) {
+                    events[eventName] = eventInstance;
+                }
+            }
+        }
+
     } // namespace Audio
 
 } // namespace PE
