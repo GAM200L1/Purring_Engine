@@ -166,7 +166,7 @@ namespace PE
 
             if (isImmediate)
             {
-                it->second->stop(FMOD_STUDIO_STOP_IMMEDIATE); // Stop immediately if specified
+                it->second->stop(FMOD_STUDIO_STOP_IMMEDIATE);
             }
         }
 
@@ -186,7 +186,7 @@ namespace PE
             {
                 channelPair.second->stop();
             }
-            channels.clear(); // Optionally clear the channels map if you don't need to retain channel references
+            channels.clear();
         }
 
         void FmodStudioManager::SetChannel3dPosition(int channelId, const glm::vec3& position)
@@ -205,7 +205,7 @@ namespace PE
             if (it == channels.end())
                 return; // Channel not found
 
-            float volume = dBToVolume(dB); // Assuming dBToVolume is a utility function that converts dB to linear volume
+            float volume = dBToVolume(dB);
             it->second->setVolume(volume);
         }
 
@@ -231,6 +231,7 @@ namespace PE
             return state == FMOD_STUDIO_PLAYBACK_PLAYING;
         }
 
+        // fade in fade out feature that jarran requested
         float FmodStudioManager::dBToVolume(float dB)
         {
             return std::pow(10.0f, dB / 20.0f);
