@@ -45,8 +45,6 @@ namespace PE
 
             bool IsPlaying(int channelId);
             bool IsEventPlaying(const std::string& eventName);
-            float dBToVolume(float dB);
-            float VolumeTodB(float volume);
 
         private:
             AudioSystem();
