@@ -43,9 +43,9 @@
                 "components": {
                     "AnimationComponent": {
                         "AnimationIDs": [
-                            "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                            "../Assets/Animation/AnimationMeowsalot_walk.anim"
                         ],
-                        "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_walk_Anim.json"
+                        "CurrentAnimationID": "../Assets/Animation/AnimationMeowsalot_walk.anim"
                     },
                     "EntityDescriptor": {
                         "InteractionLayer": 0,

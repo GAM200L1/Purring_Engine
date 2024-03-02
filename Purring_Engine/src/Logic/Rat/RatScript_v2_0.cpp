@@ -251,11 +251,11 @@ namespace PE
 				std::string soundPrefab;
 				if (randSound == 1)
 				{
-						soundPrefab = "AudioObject/Rat Attack SFX1_Prefab.json";
+						soundPrefab = "AudioObject/Rat Attack SFX1.prefab";
 				}
 				else
 				{
-						soundPrefab = "AudioObject/Rat Attack SFX2_Prefab.json";
+						soundPrefab = "AudioObject/Rat Attack SFX2.prefab";
 				}
 
 				// Play the selected sound
@@ -272,11 +272,11 @@ namespace PE
 				std::string soundPrefab;
 				if (randSound == 1)
 				{
-						soundPrefab = "AudioObject/Rat Death SFX1_Prefab.json";
+						soundPrefab = "AudioObject/Rat Death SFX1.prefab";
 				}
 				else
 				{
-						soundPrefab = "AudioObject/Rat Death SFX2_Prefab.json";
+						soundPrefab = "AudioObject/Rat Death SFX2.prefab";
 				}
 
 				// Play the selected sound
@@ -294,11 +294,11 @@ namespace PE
 				switch (randSound)
 				{
 				case 1:
-						soundPrefab = "AudioObject/Rat Detection SFX1_Prefab.json"; break;
+						soundPrefab = "AudioObject/Rat Detection SFX1.prefab"; break;
 				case 2:
-						soundPrefab = "AudioObject/Rat Detection SFX2_Prefab.json"; break;
+						soundPrefab = "AudioObject/Rat Detection SFX2.prefab"; break;
 				case 3:
-						soundPrefab = "AudioObject/Rat Detection SFX3_Prefab.json"; break;
+						soundPrefab = "AudioObject/Rat Detection SFX3.prefab"; break;
 				}
 
 				// Play the selected sound
@@ -316,11 +316,11 @@ namespace PE
 				switch (randSound)
 				{
 				case 1:
-						soundPrefab = "AudioObject/Rat Injured SFX1_Prefab.json"; break;
+						soundPrefab = "AudioObject/Rat Injured SFX1.prefab"; break;
 				case 2:
-						soundPrefab = "AudioObject/Rat Injured SFX2_Prefab.json"; break;
+						soundPrefab = "AudioObject/Rat Injured SFX2.prefab"; break;
 				case 3:
-						soundPrefab = "AudioObject/Rat Injured SFX3_Prefab.json"; break;
+						soundPrefab = "AudioObject/Rat Injured SFX3.prefab"; break;
 				}
 
 				// Play the selected sound
@@ -791,7 +791,7 @@ namespace PE
 		EntityID RatScript_v2_0::CreateDetectionRadius(RatScript_v2_0_Data const& r_data)
 		{
 			SerializationManager serializationManager;
-			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius_Prefab.json") };
+			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius.prefab") };
 			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
 			PositionEntity(radiusId, GetEntityPosition(r_data.myID));
 			PositionEntityRelative(radiusId, vec2{ 0.f, 0.f });
@@ -833,7 +833,7 @@ namespace PE
 		EntityID RatScript_v2_0::CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data)
 		{
 			SerializationManager serializationManager;
-			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius_Prefab.json") };
+			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius.prefab") };
 			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
 			PositionEntity(radiusId, GetEntityPosition(r_data.myID));
 			PositionEntityRelative(radiusId, vec2{0.f, 0.f});
@@ -881,7 +881,7 @@ namespace PE
 				EntityManager::GetInstance().Get<Transform>(r_data.pivotEntityID).relPosition = vec2{ 0.f, 0.f };
 
 				vec2 ratScale{ GetEntityScale(r_data.myID) };
-				r_data.telegraphArrowEntityID = serializationManager.LoadFromFile("PawPrints_Prefab.json");
+				r_data.telegraphArrowEntityID = serializationManager.LoadFromFile("PawPrints.prefab");
 				ToggleEntity(r_data.telegraphArrowEntityID, false); // set to inactive, it will only show during planning phase
 				ScaleEntity(r_data.telegraphArrowEntityID, ratScale.x * 0.5f, ratScale.y * 0.5f);
 				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent

@@ -52,7 +52,7 @@ namespace PE
 		//Draw Telegraphs
 		
 		//atleast 1
-		EntityID telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim_Prefab.json");
+		EntityID telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim.prefab");
 		m_telegraphPoitions.push_back(telegraph);
 		vec2 NextPosition;
 		
@@ -74,7 +74,7 @@ namespace PE
 		//more than 1
 		while (CheckOutsideOfWall(NextPosition))
 		{
-			telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim_Prefab.json");
+			telegraph = sm.LoadFromFile("RatBossBashAttackTelegraphwAnim.prefab");
 			m_telegraphPoitions.push_back(telegraph);
 
 			TelegraphTransform = &EntityManager::GetInstance().Get<Transform>(telegraph);
