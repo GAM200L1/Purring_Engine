@@ -20,8 +20,7 @@
 #include "../ECS/Entity.h"
 #include "../ECS/EntityFactory.h"
 #include "../Graphics/CameraManager.h"
-//#include "../Rat/RatScript_v2_0.h"
-#include "../RatScript.h"
+#include "../Rat/RatController_v2_0.h"
 
 namespace PE
 {
@@ -49,7 +48,8 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Has<ScriptComponent>(m_scriptData[id].followObjectID))
 			{
-				float currentHealth{ static_cast<float>(*GETSCRIPTDATA(RatScript, m_scriptData[id].followObjectID).health) };
+				float currentHealth{ static_cast<float>(GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->GetRatHealth(m_scriptData[id].followObjectID)) };
+				float maxHealth{ static_cast<float>(GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->GetRatMaxHealth(m_scriptData[id].followObjectID)) };
 
 				if (currentHealth <= 0.f)
 				{
@@ -69,7 +69,7 @@ namespace PE
 						EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = false;
 				}
 
-				SetFillAmount(id, currentHealth <= 0.f ? 0.f : currentHealth / 3.f);
+				SetFillAmount(id, (currentHealth <= 0.f || maxHealth == 0.f) ? 0.f : currentHealth / maxHealth);
 			}
 		}
 	}

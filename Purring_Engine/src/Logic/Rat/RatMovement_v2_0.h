@@ -119,6 +119,7 @@ namespace PE
             \brief Pointer to the game state controller, used to query and manage the overall game state
         *************************************************************************************/
         GameStateController_v2_0* gameStateController{ nullptr };
+        GameStates_v2_0 m_previousGameState{GameStates_v2_0::PLANNING}; // The game state in the previous frame
 
         /*!***********************************************************************************
             \brief Pointer to data specific to the RatScript, containing information such as current position, health, etc.
@@ -140,9 +141,30 @@ namespace PE
         *************************************************************************************/
         int m_collisionStayEventListener{};
 
+        bool m_planningRunOnce{}; // True if the planning phase has been run once
+
+
+        // ----- PRIVATE METHODS ----- //
+    private:
         /*!***********************************************************************************
-            \brief ID of the event listener for collision exit events, used to determine when the rat has exited a collision with another entity
+          \brief Returns true if the current game state is different from the game state
+                  in the previous frame, false otherwise.
         *************************************************************************************/
-        int m_collisionExitEventListener{};
+        inline bool StateJustChanged() const
+        {
+            return m_previousGameState != gameStateController->currentState;
+        }
+
+        /*!***********************************************************************************
+          \brief Sets the animation to be played based on whether the rat is moving or not.
+        *************************************************************************************/
+        void UpdateAnimation(bool const isRatMoving);
+
+        /*!***********************************************************************************
+          \brief Pick the position that the rat should move toward (in a straight line).
+
+          \return Returns a next viable target for the rat.
+        *************************************************************************************/
+        vec2 PickTargetPosition();
     };
 }

@@ -76,19 +76,26 @@ namespace PE
         *************************************************************************************/
         void RatHitCat(const Event<CollisionEvents>& r_TE);
 
-        /*!***********************************************************************************
-            \brief Called when a trigger enter event is detected, initiating the attack logic.
 
-            \param[in,out] r_TE - Trigger event data.
-        *************************************************************************************/
-        void OnTriggerEnterForAttack(const Event<CollisionEvents>& r_TE);
+        // --- COLLISION DETECTION --- // 
 
         /*!***********************************************************************************
-            \brief Called when a trigger stay event is detected, to continuously apply attack logic.
+         \brief Called when a trigger enter or stay event has occured. If an event has
+          occurred between this script's rat's detection collider or attack collider and a cat, 
+          the parent rat is notified.
 
-            \param[in,out] r_TE - Trigger event data.
+         \param[in,out] r_TE - Trigger event data.
         *************************************************************************************/
-        void OnTriggerStayForAttack(const Event<CollisionEvents>& r_TE);
+        void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
+
+        /*!***********************************************************************************
+         \brief Called when a trigger exit event has occured. If an event has occurred
+          between this script's rat's detection collider and a cat, the parent rat
+          is notified.
+
+         \param[in,out] r_TE - Trigger event data.
+        *************************************************************************************/
+        void OnTriggerExit(const Event<CollisionEvents>& r_TE);
 
         /*!***********************************************************************************
             \brief Returns the name of the state, useful for debugging and logging.
@@ -98,16 +105,29 @@ namespace PE
         virtual std::string_view GetName() { return "Attack_v2_0"; }
 
     private:
-        GameStateController_v2_0* gameStateController{ nullptr };
+        GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
 
         // Attack state specific variables and data
         RatScript_v2_0_Data* p_data;
         int m_attackEventListener{};
         int m_attackStayEventListener{};
         float m_delay{};
+        float m_attackDuration{};
 
-        bool attacksoundonce{};
+        bool attackFeedbackOnce{};
         bool telegraphEnabled{ false };
+
+        // Event listener IDs 
+        int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
+
+        // ----- PRIVATE METHODS ----- //
+    private:
+        /*!***********************************************************************************
+         \brief Checks if any cats entered or executed the rat's detection radius during
+                the last execution phase and decides whether to swap to the attacking or
+                hunting states respectively.
+        *************************************************************************************/
+        void ChangeStates();
     };
 
 } // namespace PE

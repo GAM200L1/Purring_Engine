@@ -226,6 +226,11 @@ namespace PE
 							PE::vec2 val = prop.get_value(from).get_value<PE::vec2>();
 							prop.set_value(to, val);
 						}
+						else if (prop.get_type().get_name() == "structPE::vec4")
+						{
+							PE::vec4 val = prop.get_value(from).get_value<PE::vec4>();
+							prop.set_value(to, val);
+						}
 						else if (prop.get_type().get_name() == "classstd::vector<structPE::vec2,classstd::allocator<structPE::vec2> >")
 						{
 							std::vector<PE::vec2> val = prop.get_value(from).get_value<std::vector<PE::vec2>>();

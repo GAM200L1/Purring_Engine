@@ -41,7 +41,7 @@ namespace PE
 		EntityID projectileID{ 0 };
 
 		// damage of the attack
-		int damage{ 0 };
+		int damage{ 1 };
 
 		// Telegraph variables
 		EnumCatAttackDirection_v2_0 attackDirection{ EnumCatAttackDirection_v2_0::NONE }; // Direction of attack chosen
@@ -55,6 +55,14 @@ namespace PE
 
 		// for syncing
 		unsigned int bulletFireAnimationIndex{ 3 };
+
+		/*!***********************************************************************************
+			\brief Creates Entities assigned to the grey/main cat as its telegraphs and projectile
+
+			\param[in] catID - id of the cat which projectile and telegraphs are assigned to
+			\param[in] catType - main or grey cat, to decide for piercing projectile
+		*************************************************************************************/
+		void CreateProjectileAndTelegraphs(EntityID catID, bool isMainCat);
 	};
 
 	class GreyCatAttack_v2_0PLAN : public CatAttackBase_v2_0
@@ -119,8 +127,9 @@ namespace PE
 		 \brief Forces number of mouse clicks to 0
 		*************************************************************************************/
 		virtual void ForceZeroMouse() { m_mouseClick = false; }
+	
 	private:
-
+		// ----- Private Variables ----- //
 		GameStateController_v2_0* p_gsc; // pointer to the game state controller
 		GreyCatAttackVariables* p_attackData; // attack data for the cat
 
@@ -137,6 +146,8 @@ namespace PE
 		int m_mouseClickEventListener; // Stores the handler for the mouse click event
 		int m_mouseReleaseEventListener; // Stores the handler for the mouse release event
 
+	private:
+		// ----- Private Functions ----- //
 		/*!***********************************************************************************
 		 \brief Function to handle mouse click events for GreyCatPLAN
 
@@ -226,6 +237,6 @@ namespace PE
 		 \param[in] id1 - ID of the first entity to check
 		 \param[in] id2 - ID of the second entity to check
 		*************************************************************************************/
-		bool GeneralCollision(EntityID id1, EntityID id2);
+		bool CollideCatOrRat(EntityID id1, EntityID id2);
 	};
 }

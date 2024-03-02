@@ -426,9 +426,11 @@ namespace PE
 
 		//Stage Variables
 		int m_currentLevel{};
-		std::string m_level1SceneName{ "Level1scene.scene" };
-		std::string m_level2SceneName{ "Level2scene.scene" };
-		std::string m_leveltoLoad{ "Level1scene.scene" };
+		std::string m_level1SceneName{ "Level1Scene.json" };
+		std::string m_level2SceneName{ "Level2Scene.json" };
+		std::string m_level3SceneName{ "Level3Scene.json" };
+		std::string m_level4SceneName{ "Level4Scene.json" };
+		std::string m_leveltoLoad{ "Level1Scene.json" };
 
 		//Texture Keys
 		std::string m_currentLevelBackground;

@@ -39,6 +39,8 @@
 #include "Math/MathCustom.h"
 #include "GUI/Canvas.h"
 #include "ResourceManager/ResourceManager.h"
+#include "Hierarchy/HierarchyManager.h"
+#include "Layers/LayerManager.h"
 
 // RTTR
 #include <rttr/variant.h>
@@ -363,17 +365,39 @@ nlohmann::json SerializationManager::SerializeEntity(int entityId)
 
 nlohmann::json SerializationManager::SerializeEntityPrefab(int entityId)
 {
-    PE::EntityDescriptor tmp;
-    tmp.name = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).name;
-    if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType == "")
-        tmp.prefabType = tmp.name;
-    else
-        tmp.prefabType = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).prefabType;
-
-    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
-    nlohmann::json ret = SerializeEntity(entityId);
-    std::swap(PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)), tmp);
+    nlohmann::json ret;
+    auto tmp = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent;
+    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent.reset();
+    ret["Prefab"].push_back(SerializeEntityComposite(entityId));
+    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityId)).parent = tmp;
     return ret;
+}
+
+nlohmann::json SerializationManager::SerializeEntityComposite(int entityID)
+{
+    nlohmann::json ret;
+    ret += SerializeEntity(entityID);
+    auto& desc = PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(entityID));
+    if (desc.children.size())
+    {
+        for (auto id : desc.children)
+        {
+            if (PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(static_cast<EntityID>(id)).children.size())
+            {
+                ret += SerializeEntityComposite(static_cast<int>(id));
+            }
+            else
+            {
+                ret += SerializeEntity(static_cast<int>(id));
+            }
+        }
+    }
+    return ret;
+}
+
+nlohmann::json SerializationManager::SerializePrefabComposite()
+{
+    return SerializeAllEntities();
 }
 
 size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
@@ -407,6 +431,8 @@ size_t SerializationManager::DeserializeEntity(const nlohmann::json& r_j)
                 // // Deserialize components
             }
         }
+        PE::EntityManager::GetInstance().UpdateVectors(id);
+        PE::LayerManager::GetInstance().UpdateEntity(id);
     }
     return id;
 }
@@ -465,7 +491,8 @@ size_t SerializationManager::LoadFromFile(std::string const& filename, bool fp)
         nlohmann::json j;
         inFile >> j;
         inFile.close();
-        return DeserializeEntity(j);
+        size_t ret = LoadPrefabFromFile(j);
+        return ret;
     }
     else
     {
@@ -516,6 +543,53 @@ nlohmann::json SerializationManager::LoadMetaDataFromFile(const std::filesystem:
         std::cerr << "Could not open the file for reading: " << filepath << std::endl;
     }
     return loadedData;
+}
+
+
+size_t SerializationManager::LoadPrefabFromFile(nlohmann::json& r_json)
+{
+    if (r_json.contains("Prefab")) // following multi prefab method
+    {
+        for (auto item : r_json["Prefab"]) // each set should be a group of entities, first is parent, following is children
+        {
+            size_t parent = MAXSIZE_T;
+            for (auto entity : item)
+            {
+                if (parent == MAXSIZE_T)
+                {
+                    parent = DeserializeEntity(entity);
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).children.clear();
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(parent).sceneID = parent;
+                }
+                else
+                {
+                    size_t id  = DeserializeEntity(entity);
+                    if (id == MAXSIZE_T) // child will have a child
+                    {
+                        nlohmann::json tmp;
+                        tmp["Prefab"].push_back(entity);
+                        //std::cout << tmp << std::endl;
+                        id = LoadPrefabFromFile(tmp);
+                    }
+                    else
+                    {
+                        PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).children.clear();
+                    }
+                    PE::EntityManager::GetInstance().Get<PE::EntityDescriptor>(id).sceneID = id;
+                    PE::Hierarchy::GetInstance().AttachChild(parent, id);
+                    
+                }
+            }
+
+            return parent;
+        }
+    }
+    else // following old format (handle old way)
+    {
+        std::cout << r_json << std::endl;
+        return DeserializeEntity(r_json);
+    }
+    return MAXSIZE_T;
 }
 
 void SerializationManager::LoadLoaders()
@@ -860,6 +934,7 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                     val.bulletRange = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletRange"].get<float>();
                                     val.bulletLifeTime = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletLifeTime"].get<float>();
                                     val.bulletForce = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletForce"].get<float>();
+                                    //val.bulletFireAnimationIndex = data[prop.get_name().to_string().c_str()]["GreyCatAttackVariables"]["bulletFireAnimationIndex"].get<int>();
                                     vari = val;
                                 }
                                 else if (data[prop.get_name().to_string().c_str()].contains("OrangeCatAttackVariables"))
@@ -868,9 +943,10 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
                                     val.seismicID = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicID"].get<EntityID>();
                                     val.telegraphID = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["telegraphID"].get<EntityID>();
                                     val.damage = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["damage"].get<int>();
-                                    val.stompRadius = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompRadius"].get<float>();
-                                    val.stompLifeTime = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompLifetime"].get<float>();
-                                    val.stomopForce = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["stompForce"].get<float>();
+                                    val.seismicRadius = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicRadius"].get<float>();
+                                    val.seismicDelay = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicDelay"].get<float>();
+                                    val.seismicForce = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicForce"].get<float>();
+                                    //val.seismicSlamAnimationIndex = data[prop.get_name().to_string().c_str()]["OrangeCatAttackVariables"]["seismicSlamAnimationIndex"].get<int>();
                                     vari = val;
                                 }
                                 
@@ -895,7 +971,6 @@ bool SerializationManager::LoadScriptComponent(const size_t& r_id, const nlohman
             }
         }
     }
-
     return true;
 }
 

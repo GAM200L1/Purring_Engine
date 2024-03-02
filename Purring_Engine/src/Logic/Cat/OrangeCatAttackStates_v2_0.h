@@ -19,6 +19,8 @@
 
 #include "Events/MouseEvent.h"
 #include "Events/CollisionEvent.h"
+
+#include "Logic/GameStateController_v2_0.h"
 #include "CatAttackBase_v2_0.h"
 
 namespace PE
@@ -28,12 +30,23 @@ namespace PE
 		EntityID seismicID{ 0 }; // id of the seismic attack
 		EntityID telegraphID{ 0 }; // id of the UI
 
-		int damage{ 0 };
+		int damage{ 2 };
 
 		// projectile variables
-		float stompRadius{ 20.f };
-		float stompLifeTime{ 1.f };
-		float stomopForce{ 1000.f };
+		float seismicRadius{ 3.f };
+		float seismicDelay{ 0.f };
+		//float seismicLifeTime{ 1.f };
+		float seismicForce{ 500.f };
+
+		// for syncing animation with firing
+		unsigned int seismicSlamAnimationIndex{ 4 };
+
+		/*!***********************************************************************************
+		 \brief Creates Stomp Telegraph and actual seismic
+
+		 \param[in] catID - EntityID of the entity to create stomp telegraph for
+		*************************************************************************************/
+		void CreateSeismicAndTelegraph(EntityID catID);
 	};
 
 	class OrangeCatAttack_v2_0PLAN : public CatAttackBase_v2_0
@@ -79,37 +92,50 @@ namespace PE
 
 		/*!***********************************************************************************
 		 \brief Toggles the attack telegraphs on or off accordingly
+				Implemented just to follow parent virtual
 
 		 \param setToggle - toggle telegraphs or not
-		 \param ignoreSelected - ignore telegraphs selected or not
+		 \param ignoreSelected - not used for this type
 		*************************************************************************************/
 		virtual void ToggleTelegraphs(bool setToggle, bool ignoreSelected);
 
 		/*!***********************************************************************************
 		 \brief Forces number of mouse clicks to 0
 		*************************************************************************************/
-		virtual void ForceZeroMouse() { m_mouseClicked = 0; }
+		virtual void ForceZeroMouse() { m_mouseClick = false; }
 
 	private:
-		
+		// ----- Private Variables ----- //
+		// pointer to the game state controller
+		GameStateController_v2_0* p_gsc;
 		// data
 		OrangeCatAttackVariables* p_attackData;
 
 		// Telegraph colors
-		vec3 const m_defaultColor{ 0.545f, 1.f, 0.576f };
-		vec3 const m_hoverColor{ 1.f, 0.859f, 0.278f };
-		vec3 const m_selectColor{ 1.f, 0.784f, 0.f };
+		vec4 const m_defaultColor{ 0.545f, 1.f, 0.576f, 1.f };
+		vec4 const m_hoverColor{ 1.f, 0.859f, 0.278f, 1.f };
+		vec4 const m_selectColor{ 1.f, 0.784f, 0.f, 1.f };
 
 		// checks
-		bool m_mouseClicked{ false }; // Set to true when the mouse is pressed, false otherwise
+		bool m_mouseClick{ false }; // Set to true when the mouse is pressed, false otherwise
 		bool m_mouseClickedPrevious{ false }; // Set to true if the mouse was pressed in the previous frame, false otherwise
-		int m_mouseEventListener; // Stores the handler for the mouse click event
-		//int m_triggerEnterEventListener; // Stores the handler for the collision enter event
-		//int m_triggerStayEventListener; // Stores the handler for the collision stay event
+		int m_mouseClickEventListener; // Stores the handler for the mouse click event
+		int m_mouseReleaseEventListener; // Stores the handler for the mouse release event
 
+	private:
 		// ----- Private Functions ----- //
-		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		/*!***********************************************************************************
+		 \brief Function to handle mouse click events for GreyCatPLAN
 
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
+		void OnMouseClick(const Event<MouseEvents>& r_ME);
+		/*!***********************************************************************************
+		 \brief Function to handle mouse release events for GreyCatPLAN
+
+		 \param[in] r_ME - Mouse event data.
+		*************************************************************************************/
+		void OnMouseRelease(const Event<MouseEvents>& r_ME);
 	};
 
 	class OrangeCatAttack_v2_0EXECUTE : public State
@@ -129,12 +155,25 @@ namespace PE
 		virtual std::string_view GetName() { return "AttackEXECUTE"; }
 
 	private:
+
+		EntityID m_catID;
 		OrangeCatAttackVariables* p_attackData;
 
-		int m_collisionEventListener;
+		float m_seismicDelay;
+		float m_seismicLifeTime;
+		float m_attackLifetime;
+		
+		bool m_seismicSlammed{ false };
+		bool m_seismicFinished{ false };
 
-		void SlamHitCat(const Event<CollisionEvents>& r_CE);
+		unsigned int m_seismicPrevAnimationFrame{ 0 };
 
-		void SlamHitRat(const Event<CollisionEvents>& r_CE);
+		int m_collisionEnterEventListener; // stores the handler for collision enter event
+
+		void SeismicCollided(const Event<CollisionEvents>& r_CE);
+
+		bool SeismicHitCat(EntityID id1, EntityID id2);
+
+		bool SeismicHitRat(EntityID id1, EntityID id2);
 	};
 }

@@ -105,7 +105,8 @@ namespace PE {
 		Transform m_deploymentZone;
 		EntityID m_currentDeploymentScriptEntityID;
 		bool m_inNoGoArea;
-		int m_catPlaced{};
+		size_t m_catPlaced{};
+		size_t m_deployableCats{};
 		CatController_v2_0* m_catController;
 		GameStateController_v2_0* m_gameStateController;
 	};

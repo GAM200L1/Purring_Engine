@@ -16,7 +16,7 @@
 #include "prpch.h"
 #include "RatController_v2_0.h"
 #include "RatScript_v2_0.h"
-#include "../RatScript.h"
+//#include "../RatScript.h"
 
 #include "../Logic/LogicSystem.h"
 
@@ -28,41 +28,16 @@ namespace PE
 
 		std::vector<std::pair<EntityID, EnumRatType>> const& RatController_v2_0::GetRats(EntityID id)
 		{
-				m_cachedActiveRats.clear();
-				if (!(m_scriptData[id].p_ratsMap)) { return m_cachedActiveRats; } // null check
-
-				for (auto const& [ratId, data] : *m_scriptData[id].p_ratsMap)
-				{
-						try
-						{
-								// Check that the entity is active and rat is alive
-								if (EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive)// && data.isAlive)
-								{
-										m_cachedActiveRats.emplace_back(std::make_pair(ratId, EnumRatType::GUTTER));
-								}
-						}
-						catch (...) { }
-				}
-
+				RefreshRats(id);
 				return m_cachedActiveRats;
 		}
 
 		
 		unsigned int RatController_v2_0::RatCount(EntityID id)
 		{
-				if (!(m_scriptData[id].p_ratsMap)) { return 0; } // null check
-
-				unsigned count{};
-
-				for (auto const& [ratId, data] : *m_scriptData[id].p_ratsMap)
-				{
-						try
-						{
-								// Check that the entity is active and rat is alive
-								if (EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive)// && data.isAlive)
-								{
-										++count;
-								}
+				RefreshRats(id); // I don't know if the rat controller's refresh
+				return static_cast<unsigned int>(m_cachedActiveRats.size());
+		}
 						}
 						catch (...) { }
 				}
@@ -76,13 +51,19 @@ namespace PE
 
 		void RatController_v2_0::Init(EntityID id)
 		{
-				// Look for all the rats in the scene
+				// Store a pointer to the maps with the rat scripts
 				m_scriptData[id].p_ratsMap = &(dynamic_cast<RatScript*>(LogicSystem::m_scriptContainer[GETSCRIPTNAME(RatScript)])->m_scriptData);
+				m_scriptData[id].p_ratsV2Map = &(dynamic_cast<RatScript_v2_0*>(LogicSystem::m_scriptContainer[GETSCRIPTNAME(RatScript_v2_0)])->m_scriptData);
+		}
 
 				// Look for all the spawners in the scene
 
-		}
+		void RatController_v2_0::Update(EntityID id, float)
+		{
+				// Allow the cached rats to be updated once this frame
+				refreshedThisFrame = false; 
 
+				RefreshRats(id); // Refresh the cached rats
 
 		void RatController_v2_0::Update(EntityID id, float deltaTime)
 		{
@@ -91,7 +72,7 @@ namespace PE
 					auto const& myVec{ GetRats(id) };
 					for (auto const& [ratId, rat] : myVec)
 					{
-							std::cout << "Rat id: " << ratId << ", type: " << rat << std::endl;
+							std::cout << "Rat id: " << ratId << ", type: " << (char)rat << std::endl;
 					}
 					ratsPrinted = true;
 				}
@@ -99,7 +80,7 @@ namespace PE
 				{
 					// If rats have already been printed, refresh the m_cachedActiveRats without printing
 					GetRats(id);
-				}
+		}
 		}
 
 
@@ -135,40 +116,47 @@ namespace PE
 				ratsPrinted = false;
 		}
 
-		void RatController_v2_0::ApplyDamageToRat(EntityID ratID, int damage)
+		void RatController_v2_0::ApplyDamageToRat(EntityID ratID, EntityID attackId, int damage)
 		{
-			// Check if the given ID is valid and refers to an active, alive rat
-			if (!IsRatAndIsAlive(ratID))
-			{
-				//std::cout << "Rat ID: " << ratID << " is not valid or the rat is not alive." << std::endl;
-				return;
-			}
+			RefreshRats(mainInstance);
 
-			// Access the rat's script data from the map
-			auto& ratsMap = *m_scriptData[mainInstance].p_ratsMap;
-			auto it = ratsMap.find(ratID);
-
-			if (it != ratsMap.end())
+			// Iterate through the cached active rats to find the rat with the given ID
+			for (const auto& [cachedRatId, ratType] : m_cachedActiveRats)
 			{
+				// Check if the current rat ID matches the given ID
+				if (ratID == cachedRatId)
+				{
+					if (ratType == EnumRatType::GUTTER_V1)
+					{				
+						// Check if the rat has hit this cat before
+						if((GETSCRIPTDATA(RatScript, ratID).hitBy) &&
+						(GETSCRIPTDATA(RatScript, ratID).hitBy)->find(attackId) == (GETSCRIPTDATA(RatScript, ratID).hitBy)->end())
+						{
+							GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(ratID, damage);
+						}
+						(GETSCRIPTDATA(RatScript, ratID).hitBy)->emplace(attackId);
+					}
+					else
+					{
 				GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(it->second.ratID, damage);
 
-				//// Subtract the damage from the rat's health
-				//it->second.ratHealth -= damage;
+						//// Subtract the damage from the rat's health
+						//it->second.ratHealth -= damage;
 
-				//// Check if the rat's health drops below or equals zero
-				//if (it->second.ratHealth <= 0)
-				//{
-				//	// Handle the rat's death (e.g., make it inactive, trigger death animation, etc.)
-				//	//std::cout << "Rat ID: " << ratID << " has been defeated." << std::endl;
-				//	ToggleEntity(ratID, false);  // Making the rat entity inactive
-				//	it->second.isAlive = false;  // Marking the rat as not alive
-				//}
+						//// Check if the rat's health drops below or equals zero
+						//if (it->second.ratHealth <= 0)
+						//{
+						//	// Handle the rat's death (e.g., make it inactive, trigger death animation, etc.)
+						//	//std::cout << "Rat ID: " << ratID << " has been defeated." << std::endl;
+						//	ToggleEntity(ratID, false);  // Making the rat entity inactive
+						//	it->second.isAlive = false;  // Marking the rat as not alive
+						//}
+					} // end of if (ratType == EnumRatType::GUTTER_V1)
+					break; 
+				} // end of if (ratID == cachedRatId)
+
 			}
-			else
-			{
-				//std::cout << "Rat ID: " << ratID << " not found in rats map." << std::endl;
-			}
-		}
+		} // end of ApplyDamageToRat()
 
 		std::map<EntityID, RatController_v2_0_Data>& RatController_v2_0::GetScriptData()
 		{
@@ -183,21 +171,15 @@ namespace PE
 
 		void RatController_v2_0::ToggleEntity(EntityID id, bool setToActive)
 		{
-				// Exit if the entity is not valid
-				if (!EntityManager::GetInstance().IsEntityValid(id))
-				{
-						return;
-				}
-
-				try
-				{
-						// Toggle the entity
-						EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
-				}
+			if(EntityManager::GetInstance().Has<EntityDescriptor>(id))
+			{
+				// Toggle the entity
+				EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
+			}
 				catch (...) { }
 		}
 
-		bool RatController_v2_0::IsRatAndIsAlive(EntityID id) //@yeni
+		bool RatController_v2_0::IsRatAndIsAlive(EntityID id) const 
 		{
 			// Iterate through the cached active rats to find the rat with the given ID
 			for (const auto& [ratId, ratType] : m_cachedActiveRats)
@@ -211,6 +193,86 @@ namespace PE
 
 			// If the rat ID was not found in the cached active rats, it is not alive
 			return false;
+		}
+
+		int RatController_v2_0::GetRatHealth(EntityID id) const
+		{
+			// Iterate through the cached active rats to find the rat with the given ID
+			for (const auto& [ratId, ratType] : m_cachedActiveRats)
+			{
+				// Check if the current rat ID matches the given ID
+				if (ratId == id)
+				{
+					if (ratType == EnumRatType::GUTTER_V1)
+					{
+						return *(GETSCRIPTDATA(RatScript, id).health);
+					}
+					else
+					{
+						return *(GETSCRIPTDATA(RatScript_v2_0, id).ratHealth);
+					} // end of if (ratType == EnumRatType::GUTTER_V1)
+				}
+			}
+
+			// ID couldn't be found in cached rats
+			return 0;
+		}
+
+		int RatController_v2_0::GetRatMaxHealth(EntityID id) const
+		{
+			// Iterate through the cached active rats to find the rat with the given ID
+			for (const auto& [ratId, ratType] : m_cachedActiveRats)
+			{
+				// Check if the current rat ID matches the given ID
+				if (ratId == id)
+				{
+					if (ratType == EnumRatType::GUTTER_V1)
+					{
+						return *(GETSCRIPTDATA(RatScript, id).maxHealth);
+					}
+					else
+					{
+						return *(GETSCRIPTDATA(RatScript_v2_0, id).ratMaxHealth);
+					} // end of if (ratType == EnumRatType::GUTTER_V1)
+				}
+			}
+
+			// ID couldn't be found in cached rats
+			return 0;
+		}
+
+		void RatController_v2_0::RefreshRats(EntityID id)
+		{
+			// Ensure that the container of rats is only refreshed once per frame
+			// Not too sure if this will cause issues later
+			if(refreshedThisFrame) { return; }
+			refreshedThisFrame = true;
+
+			m_cachedActiveRats.clear();
+
+			if (!(m_scriptData[id].p_ratsMap) || !(m_scriptData[id].p_ratsV2Map)) { return; } // null check - this null check didn't make any sense lmao
+
+			//	Get all rats that still have the V1 script on them
+			for (auto const& [ratId, data] : *m_scriptData[id].p_ratsMap)
+			{
+				// Check that the entity is active and rat is alive
+				if (EntityManager::GetInstance().Has<EntityDescriptor>(ratId) &&
+					EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive)// && data.isAlive)
+				{
+					m_cachedActiveRats.emplace_back(std::make_pair(ratId, EnumRatType::GUTTER_V1));
+				}
+			}
+
+			// Get all the rats with the V2 script on them
+			for (auto const& [ratId, data] : *m_scriptData[id].p_ratsV2Map)
+			{
+				// Check that the entity is active and rat is alive
+				if (EntityManager::GetInstance().Has<EntityDescriptor>(ratId) &&
+					EntityManager::GetInstance().Get<EntityDescriptor>(ratId).isActive && data.isAlive)
+				{
+					m_cachedActiveRats.emplace_back(std::make_pair(ratId, data.ratType));
+				}
+			}
 		}
 
 }

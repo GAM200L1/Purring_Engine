@@ -28,6 +28,70 @@
 
 namespace PE
 {
+	// ----- Create Projectile and Telegraphs ----- //
+	void GreyCatAttackVariables::CreateProjectileAndTelegraphs(EntityID catID, bool isMainCat)
+	{
+		// create projectile //
+		SerializationManager serializationManager;
+		projectileID = serializationManager.LoadFromFile("Projectile_Prefab.json");
+		CatHelperFunctions::ToggleEntity(projectileID, false);
+
+		if (isMainCat)
+			EntityManager::GetInstance().Get<Collider>(projectileID).isTrigger = true;
+
+		// create telegraphs //
+		auto CreateOneTelegraph =
+		[&](bool isXAxis, bool isNegative)
+		{
+			Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(catID);
+
+			SerializationManager serializationManager;
+
+			EntityID telegraphID = serializationManager.LoadFromFile("PlayerAttackTelegraph_Prefab.json");
+			Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
+
+			//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
+			Hierarchy::GetInstance().AttachChild(catID, telegraphID); // new way of attatching parent child
+			telegraphTransform.relPosition.Zero();
+			EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false; // telegraph to not show until attack planning
+			EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false; // telegraph to not show until attack planning
+
+
+			// set size of telegraph
+			telegraphTransform.height = catTransform.height * 0.75f;
+			telegraphTransform.width = catTransform.width * bulletRange;
+			EnumCatAttackDirection_v2_0 dir;
+			AABBCollider telegraphCollider;
+
+			// Set the dimensions of the telegraph based on the axis it's on
+			if (isXAxis)
+			{
+				telegraphTransform.relPosition.x = ((isNegative) ? -1.f : 1.f) * ((telegraphTransform.width * 0.5f) + (catTransform.width * 0.5f) + 10.f);
+				dir = (isNegative) ? EnumCatAttackDirection_v2_0::WEST : EnumCatAttackDirection_v2_0::EAST;
+			}
+			else
+			{
+				telegraphTransform.relOrientation = PE_PI * 0.5f;
+				telegraphTransform.relPosition.y = ((isNegative) ? -1.f : 1.f) * ((telegraphTransform.width * 0.5f) + (catTransform.width * 0.5f) + 10.f);
+
+				telegraphCollider.scaleOffset.x = telegraphTransform.height / telegraphTransform.width;
+				telegraphCollider.scaleOffset.y = telegraphTransform.width / telegraphTransform.height;
+
+				dir = (isNegative) ? EnumCatAttackDirection_v2_0::SOUTH : EnumCatAttackDirection_v2_0::NORTH;
+			}
+
+			// Configure the collider
+			EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = telegraphCollider;
+			EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
+
+			telegraphIDs.emplace(dir, telegraphID);
+		};
+
+		CreateOneTelegraph(true, false); // east
+		CreateOneTelegraph(true, true); // west
+		CreateOneTelegraph(false, false); // north
+		CreateOneTelegraph(false, true); // south
+	}
 
 	// ----- ATTACK PLAN ----- //
 
@@ -198,6 +262,7 @@ namespace PE
 	{
 		// retrieves the data for the grey cat's attack
 		m_catID = id;
+
 		p_attackData = &std::get<GreyCatAttackVariables>((GETSCRIPTDATA(CatScript_v2_0, id))->attackVariables);
 
 		// Subscribe to event
@@ -206,7 +271,7 @@ namespace PE
 
 		// Set the start values of the attack projectile
 		m_bulletImpulse = vec2{ 0.f, 0.f };
-		if (GETSCRIPTDATA(CatScript_v2_0, id).attackSelected)
+		if ((GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected)
 		{
 			vec2 direction{ 0.f, 0.f };
 			switch (p_attackData->attackDirection)
@@ -244,7 +309,8 @@ namespace PE
 	void GreyCatAttack_v2_0EXECUTE::StateUpdate(EntityID id, float deltaTime)
 	{
 		GameStateController_v2_0* p_gsc = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);
-		if (p_gsc->currentState == GameStates_v2_0::PAUSE) { return; }
+		CatScript_v2_0Data* p_catData = GETSCRIPTDATA(CatScript_v2_0, id);
+		if (p_gsc->currentState == GameStates_v2_0::PAUSE || !p_catData->attackSelected) { return; }
 
 		// if projectile has been fired, keep reducing lifetime and disable bullet
 
@@ -252,7 +318,7 @@ namespace PE
 		{
 			if (m_bulletLifetime <= 0.f)
 			{
-				(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution = true;
+				p_catData->finishedExecution = true;
 				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
@@ -260,7 +326,7 @@ namespace PE
 			m_bulletLifetime -= deltaTime;
 		}
 		// when the frame is attack frame, shoot the projectile after delay passes											
-		else if (!(GETSCRIPTDATA(CatScript_v2_0, id))->finishedExecution && (GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
+		else if (!p_catData->finishedExecution && EntityManager::GetInstance().Get<AnimationComponent>(id).GetCurrentFrameIndex() == p_attackData->bulletFireAnimationIndex)
 		{
 			if (m_bulletDelay <= 0.f) // extra delay after the frame in case of slight inaccuracy
 			{
@@ -271,9 +337,10 @@ namespace PE
 				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, true);
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ApplyLinearImpulse(m_bulletImpulse);
 				m_projectileFired = true;
-				// @TODO: play attack audio here
+				
+				// ----- Attacking Audio ----- //
 				SerializationManager m_serializationManager;
-				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX.prefab");
+				EntityID sound = m_serializationManager.LoadFromFile("AudioObject/Projectile Sound SFX_Prefab.json");
 				if (EntityManager::GetInstance().Has<AudioComponent>(sound))
 					EntityManager::GetInstance().Get<AudioComponent>(sound).PlayAudioSound();
 				EntityManager::GetInstance().RemoveEntity(sound);
@@ -283,13 +350,13 @@ namespace PE
 					switch (randomInteger)
 					{
 					case 1:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX1.prefab");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX1_Prefab.json");
 						break;
 					case 2:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX2.prefab");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX2_Prefab.json");
 						break;
 					case 3:
-						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX3.prefab");
+						sound = m_serializationManager.LoadFromFile("AudioObject/Cat Attack SFX3_Prefab.json");
 						break;
 					}
 
@@ -298,8 +365,9 @@ namespace PE
 				EntityManager::GetInstance().RemoveEntity(sound);
 
 			}
-			else
+			else {
 				m_bulletDelay -= deltaTime;
+			}
 		}
 	}
 
@@ -324,8 +392,9 @@ namespace PE
 		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
 		{
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
-			if (GeneralCollision(OCEE.Entity1, OCEE.Entity2))
+			if (CollideCatOrRat(OCEE.Entity1, OCEE.Entity2))
 			{
+				// deactivates entity since it is 
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).ZeroForce();
 				EntityManager::GetInstance().Get<RigidBody>(p_attackData->projectileID).velocity.Zero();
 				CatHelperFunctions::ToggleEntity(p_attackData->projectileID, false);
@@ -350,17 +419,12 @@ namespace PE
 		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
 			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
-			GeneralCollision(OTEE.Entity1, OTEE.Entity2);
+			CollideCatOrRat(OTEE.Entity1, OTEE.Entity2);
 		}
 	}
 
-	bool GreyCatAttack_v2_0EXECUTE::GeneralCollision(EntityID id1, EntityID id2)
+	bool GreyCatAttack_v2_0EXECUTE::CollideCatOrRat(EntityID id1, EntityID id2)
 	{
-		auto IsCatAndNotCaged =
-			[&](EntityID id)
-			{
-				if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id))
-				{
 					if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id))
 						return true;
 				}
@@ -371,24 +435,26 @@ namespace PE
 
 		if (id1 != m_catID && id2 != m_catID)
 		{
-			if (id1 == p_attackData->projectileID && IsCatAndNotCaged(id2) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
+			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
+			// kill cat if it is not following and not in cage and projectile hits cat
+			if (id1 == p_attackData->projectileID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id2);
 				return true;
 			}
-			else if (id2 == p_attackData->projectileID && IsCatAndNotCaged(id1) && GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0)->GetCurrentLevel() != 0)
+			else if (id2 == p_attackData->projectileID && !p_catController->IsFollowCat(id2) && !p_catController->IsCatCaged(id2))
 			{
 				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(id1);
 				return true;
 			}
 			else if (id1 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id2))
 			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, p_attackData->damage);
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id2, id1, p_attackData->damage);
 				return true;
 			}
 			else if (id2 == p_attackData->projectileID && GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->IsRatAndIsAlive(id1))
 			{
-				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, p_attackData->damage);
+				GETSCRIPTINSTANCEPOINTER(RatController_v2_0)->ApplyDamageToRat(id1, id2, p_attackData->damage);
 				return true;
 			}
 		}

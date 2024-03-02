@@ -165,7 +165,7 @@ namespace PE
 	public:
 		
 		// ----- Destructor ----- //
-		virtual ~CatMovement_v2_0EXECUTE() override { p_data = nullptr; p_mainCatData = nullptr; }
+		virtual ~CatMovement_v2_0EXECUTE() override { p_data = nullptr; }
 
 		// ----- Public Functions ----- //
 
@@ -227,7 +227,7 @@ namespace PE
 	private:
 		// ----- Private Variables ----- //
 		CatScript_v2_0Data* p_data;
-		CatScript_v2_0Data* p_mainCatData;
+		EntityID m_mainCatID;
 		int m_triggerEventListener{}; // Stores the handler for the mouse click and release events
 		bool m_doneMoving{ false }; // Set to true when the cat has reached the end of their path
 	

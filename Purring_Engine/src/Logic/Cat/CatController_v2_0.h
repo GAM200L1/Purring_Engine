@@ -89,22 +89,29 @@ namespace PE
 
 		 \param[in] id - ID of cat to remove
 		*************************************************************************************/
-		void RemoveCatFromVector(EntityID id);
+		void RemoveCatFromCurrent(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief Sets the current cats in the scene
+		 \brief Updates m_currentCats with all the cats in the scene, including the caged ones
 
-		 \param[in] r_vectorOfNewCats - A pair that holds the ID of current cat and cat type
+		 \param[in] id - id of the main instance of the cat controller
 		*************************************************************************************/
-		inline void SetCurrentCats(std::vector<std::pair<EntityID, EnumCatType>> const& r_vectorOfNewCats)
-		{
-			m_currentCats = r_vectorOfNewCats;
-			for (auto const& [catID, catType] : m_currentCats)
-			{
-				if (catType == EnumCatType::MAINCAT)
-					m_mainCatID = catID;
-			}
-		}
+		void UpdateCurrentCats(EntityID id);
+
+		/*!***********************************************************************************
+		 \brief Updates m_cachedCats with cats in m_currentCats
+
+		 \param[in] id - id of the main instance of the cat controller
+		*************************************************************************************/
+		void UpdateCachedCats(EntityID id) { m_cachedCats = m_currentCats; }
+
+
+		/*!***********************************************************************************
+		 \brief Gets Cats that have been collected and are deployable
+
+		 \param[out] std::vector<EnumCatType> - Vector of Deployable Cats
+		*************************************************************************************/
+		void UpdateDeployableCats(EntityID mainInstanceID);
 
 		/*!***********************************************************************************
 		 \brief Checks if entity is a cat
@@ -130,9 +137,13 @@ namespace PE
 		*************************************************************************************/
 		inline bool IsCatCaged(EntityID id)
 		{
-			if (!IsCat(id)) { throw; }
-			return (GETSCRIPTDATA(CatScript_v2_0, id))->isCaged;
+			if (IsCat(id))
+				return (GETSCRIPTDATA(CatScript_v2_0, id))->isCaged;
+			else
+				return false;
 		}
+
+		bool IsFollowCat(EntityID catID);
 		
 		// getters
 		/*!***********************************************************************************
@@ -152,12 +163,32 @@ namespace PE
 		int GetMaxMovementEnergy(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief Gets current vector of cat ids and types
+		 \brief Gets current vector of cat ids and types, including caged cats
 
 		 \param[in] id - id of the cat controller
 		 \param[out] std::vector<std::pair<EntityID, EnumCatType>> - current vector of cats
 		*************************************************************************************/
-		std::vector<std::pair<EntityID, EnumCatType>> GetCurrentCats(EntityID id);
+		std::vector<std::pair<EntityID, EnumCatType>> GetCurrentCats(EntityID id) { return m_currentCats; }
+
+		/*!***********************************************************************************
+		 \brief Gets cached vector of cat ids and types, including caged cats
+				(should only be updated at the start of a level)
+
+		 \param[in] id - id of the cat controller
+		 \param[out] std::vector<std::pair<EntityID, EnumCatType>> - current vector of cats
+		*************************************************************************************/
+		std::vector<std::pair<EntityID, EnumCatType>> GetCachedCats(EntityID id) { return m_cachedCats; }
+
+		/*!***********************************************************************************
+		 \brief Gets vector of cat types which are deployable 
+				(should be saved at the end of the previous level using UpdateDeployment function)
+
+		 \param[in] id - id of the cat controller
+		 \param[out] std::vector<EnumCatType> - deplyable vector of cats
+		*************************************************************************************/
+		std::vector<EnumCatType> GetDeployableCats(EntityID id) { return m_deployableCats; }
+
+		EntityID GetMainCatID() { return m_mainCatID; }
 
 		/*!***********************************************************************************
 		 \brief Gets script data
@@ -178,5 +209,6 @@ namespace PE
 		bool m_lostGame;
 		std::vector<std::pair<EntityID, EnumCatType>> m_currentCats;
 		std::vector<std::pair<EntityID, EnumCatType>> m_cachedCats;
+		std::vector<EnumCatType> m_deployableCats;
 	};
 }

@@ -373,7 +373,7 @@ namespace PE
 		EntityManager::GetInstance().Get<Transform>(data.psudoRatID).relPosition = vec2{ 0.f, 0.f };
 
 		// create the arrow telegraph
-		data.arrowTelegraphID = serializationManager.LoadFromFile("PawPrints.prefab");
+		data.arrowTelegraphID = serializationManager.LoadFromFile("PawPrints_Prefab.json");
 		ToggleEntity(data.arrowTelegraphID, false); // set to inactive, it will only show during planning phase
 		ScaleEntity(data.arrowTelegraphID, ratScale.x * 0.5f, ratScale.y * 0.5f);
 		Hierarchy::GetInstance().AttachChild(data.psudoRatID, data.arrowTelegraphID); // attach child to parent
@@ -404,11 +404,11 @@ namespace PE
 			std::string soundPrefab;
 			if (randSound == 1)
 			{
-					soundPrefab = "AudioObject/Rat Attack SFX1.prefab";
+					soundPrefab = "AudioObject/Rat Attack SFX1_Prefab.json";
 			}
 			else
 			{
-					soundPrefab = "AudioObject/Rat Attack SFX2.prefab";
+					soundPrefab = "AudioObject/Rat Attack SFX2_Prefab.json";
 			}
 
 			// Play the selected sound
@@ -425,11 +425,11 @@ namespace PE
 			std::string soundPrefab;
 			if (randSound == 1)
 			{
-					soundPrefab = "AudioObject/Rat Death SFX1.prefab";
+					soundPrefab = "AudioObject/Rat Death SFX1_Prefab.json";
 			}
 			else
 			{
-					soundPrefab = "AudioObject/Rat Death SFX2.prefab";
+					soundPrefab = "AudioObject/Rat Death SFX2_Prefab.json";
 			}
 
 			// Play the selected sound
@@ -447,11 +447,11 @@ namespace PE
 			switch (randSound)
 			{
 			case 1: 
-					soundPrefab = "AudioObject/Rat Detection SFX1.prefab"; break;
+					soundPrefab = "AudioObject/Rat Detection SFX1_Prefab.json"; break;
 			case 2: 
-					soundPrefab = "AudioObject/Rat Detection SFX2.prefab"; break;
+					soundPrefab = "AudioObject/Rat Detection SFX2_Prefab.json"; break;
 			case 3: 
-					soundPrefab = "AudioObject/Rat Detection SFX3.prefab"; break;
+					soundPrefab = "AudioObject/Rat Detection SFX3_Prefab.json"; break;
 			}
 
 			// Play the selected sound
@@ -469,11 +469,11 @@ namespace PE
 			switch (randSound)
 			{
 			case 1:
-					soundPrefab = "AudioObject/Rat Injured SFX1.prefab"; break;
+					soundPrefab = "AudioObject/Rat Injured SFX1_Prefab.json"; break;
 			case 2:
-					soundPrefab = "AudioObject/Rat Injured SFX2.prefab"; break;
+					soundPrefab = "AudioObject/Rat Injured SFX2_Prefab.json"; break;
 			case 3:
-					soundPrefab = "AudioObject/Rat Injured SFX3.prefab"; break;
+					soundPrefab = "AudioObject/Rat Injured SFX3_Prefab.json"; break;
 			}
 
 			// Play the selected sound
@@ -508,7 +508,8 @@ namespace PE
 		{
 			if (EntityManager::GetInstance().Get<ScriptComponent>(target).m_scriptKeys.count("CatScript_v2_0"))
 			{
-				p_data->targetCats.emplace_back(target);
+				if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(target))
+					p_data->targetCats.emplace_back(target);
 			}
 		}
 
@@ -603,6 +604,9 @@ namespace PE
 		 m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovementEXECUTE::RatHitCat, this);
 		 m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovementEXECUTE::RatHitCat, this);
 		 p_data->attacking = (p_data->distanceFromPlayer > 0.f) ? true : false;
+
+		 // Clear the containers of entities that have been hit
+		 p_data->hitCats.clear(); p_data->hitBy.clear();
 	 }
 
 	 void RatMovementEXECUTE::StateUpdate(EntityID id, float deltaTime)
@@ -711,6 +715,17 @@ namespace PE
 			return false;
 		};
 
+		auto AttackCat = [&](EntityID catId)
+		{
+			auto it { m_scriptData[id].hitCats.find(catId) };
+			if (it == m_scriptData[id].hitCats.end())
+			{
+				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(catId);
+				m_scriptData[id].hitCats.emplace(catId);
+				std::cout << "RatScript::RatHitCat(" << id << "): hit " << catId << std::endl;
+			}
+		};
+
 		// if cat has been checked before check the next event
 		if (m_scriptData[id].hitCat) { return; }
 		if (r_TE.GetType() == CollisionEvents::OnTriggerEnter)
@@ -719,12 +734,12 @@ namespace PE
 			// check if entity1 is rat or rat's attack and entity2 is cat
 			if ((OTEE.Entity1 == m_scriptData[id].ratID || OTEE.Entity1 == m_scriptData[id].attackTelegraphID) && IsCatAndNotCaged(OTEE.Entity2))
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(OTEE.Entity2);
+				AttackCat(OTEE.Entity2);
 			}
 			// check if entity2 is rat or rat's attack and entity1 is cat
 			else if ((OTEE.Entity2 == m_scriptData[id].ratID || OTEE.Entity2 == m_scriptData[id].attackTelegraphID) && IsCatAndNotCaged(OTEE.Entity1))
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(OTEE.Entity1);
+				AttackCat(OTEE.Entity1);
 			}
 		}
 		else if (r_TE.GetType() == CollisionEvents::OnTriggerStay)
@@ -733,28 +748,40 @@ namespace PE
 			// check if entity1 is rat or rat's attack and entity2 is cat
 			if ((OTSE.Entity1 == m_scriptData[id].ratID || OTSE.Entity1 == m_scriptData[id].attackTelegraphID) && IsCatAndNotCaged(OTSE.Entity2))
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(OTSE.Entity2);
+				AttackCat(OTSE.Entity2);
 			}
 			// check if entity2 is rat or rat's attack and entity1 is cat
 			else if ((OTSE.Entity2 == m_scriptData[id].ratID || OTSE.Entity2 == m_scriptData[id].attackTelegraphID) && IsCatAndNotCaged(OTSE.Entity1))
 			{
-				GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->KillCat(OTSE.Entity1);
+				AttackCat(OTSE.Entity1);
 			}
 		}
 	 }
 
 	 void RatScript::CheckFollowOrMain(EntityID mainCat, EntityID collidedCat, EntityID damagingID, EntityID rat)
 	 {
+
 		 try
 		 {
 			 auto& catFollowScript = *GETSCRIPTDATA(FollowScript, mainCat);
+			 auto AttackCat = [&](EntityID ratId, EntityID collidedId, EntityID mainId, int damage)
+			 {
+			 	 auto it{ m_scriptData[ratId].hitCats.find(collidedId) };
+			 	 if (it == m_scriptData[ratId].hitCats.end())
+				 {
+						 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(mainId, damage);
+						 m_scriptData[ratId].hitCats.emplace(collidedId);
+						 std::cout << "RatScript::CheckFollowOrMain(" << ratId << "): hit " << collidedId << std::endl;
+				 }
+			 };
+
 			 // checks hit cat is the main cat
 			 if (collidedCat == mainCat)
 			 {
 				 int const& damage = (rat == m_scriptData[rat].ratID) ? m_scriptData[rat].collisionDamage : m_scriptData[rat].attackDamage;
 				 try
 				 {
-					 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(mainCat, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+					 AttackCat(rat, collidedCat, mainCat, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
 					 m_scriptData[rat].hitCat = true; // prevents double hits
 				 }
 				 catch (...) {}
@@ -767,7 +794,7 @@ namespace PE
 					 int const& damage = (damagingID == rat) ? m_scriptData[rat].collisionDamage : m_scriptData[rat].attackDamage;
 					 try
 					 {
-						 GETSCRIPTINSTANCEPOINTER(CatScript)->LoseHP(mainCat, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
+						 AttackCat(rat, collidedCat, mainCat, damage); // only the main cat should lose hp because the number of cat following will decrease based on its hp
 						 m_scriptData[rat].hitCat = true; // prevents double hits
 					 }
 					 catch (...) {}

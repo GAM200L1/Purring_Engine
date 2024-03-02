@@ -452,7 +452,7 @@ namespace PE {
 					{
 						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							auto save = serializationManager.SerializeEntityPrefab(1);
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 							prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
 							prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 							m_applyPrefab = true;
@@ -786,6 +786,7 @@ namespace PE {
 					std::string name;
 
 					name += EntityManager::GetInstance().Get<EntityDescriptor>(id).name;
+
 					if (usedNames.count(name))
 						name += " - " + std::to_string(id);
 					
@@ -902,7 +903,6 @@ namespace PE {
 				if (ImGui::Selectable("Delete Object"))
 				{
 						AddInfoLog("Object Deleted");
-
 						
 						if (m_currentSelectedObject != -1)
 						{
@@ -1035,7 +1035,7 @@ namespace PE {
 			{
 				if (m_objectIsSelected || m_isPrefabMode)
 				{
-					EntityID entityID = (m_isPrefabMode)? 1 : m_currentSelectedObject;
+					EntityID entityID = /*(m_isPrefabMode) ? 1 :*/ m_currentSelectedObject;
 					std::vector<ComponentID> components = EntityManager::GetInstance().GetComponentIDs(entityID);
 					int componentCount = 0; //unique id for imgui objects
 					bool hasScripts = false;
@@ -2682,7 +2682,7 @@ namespace PE {
 
 					if (hasScripts)
 					{
-						m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
+						//m_currentSelectedObject = (m_isPrefabMode) ? 1 : m_currentSelectedObject;
 						for (auto& [key, val] : LogicSystem::m_scriptContainer)
 						{
 							if (key == "GameStateController")
@@ -3670,10 +3670,10 @@ namespace PE {
 												{
 													OrangeCatAttackVariables& var = std::get<OrangeCatAttackVariables>(it->second.attackVariables);
 													ImGui::Text("Damage:"); ImGui::SameLine(); ImGui::InputInt("##OCAdamage", &(var.damage));
-													ImGui::Text("Stomp Radius:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stompRadius));
-													ImGui::Text("Stomp Lifetime:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stompLifeTime));
-													ImGui::Text("Stomp Force:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.stomopForce));
-
+													ImGui::Text("Seismic Radius:"); ImGui::SameLine(); ImGui::InputFloat("##GCAradius", &(var.seismicRadius));
+													ImGui::Text("Seismic Delay:"); ImGui::SameLine(); ImGui::InputFloat("##GCAdelay", &(var.seismicDelay));
+													ImGui::Text("Seismic Force:"); ImGui::SameLine(); ImGui::InputFloat("##GCAforce", &(var.seismicForce));
+													ImGui::Text("Seismic Anim Index:"); ImGui::SameLine(); ImGui::InputInt("##GCAindex", reinterpret_cast<int*>(&(var.seismicSlamAnimationIndex)));
 												}
 											}
 										
@@ -3944,6 +3944,7 @@ namespace PE {
 					// Calculate number of items per row with dynamic padding
 					int numItemPerRow = static_cast<int>(ImGui::GetContentRegionAvail().x / totalChildWidth);
 					if (numItemPerRow < 1) numItemPerRow = 1;
+
 
 
 					// list the files in the current showing directory as imgui text
@@ -4902,8 +4903,7 @@ namespace PE {
 					{
 						if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 						{
-							auto save = serializationManager.SerializeEntityPrefab(1);
-
+							nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 							std::ofstream outFile(prefabFP);
 							if (outFile)
 							{
@@ -4923,7 +4923,7 @@ namespace PE {
 						{
 							if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 							{
-								auto save = serializationManager.SerializeEntityPrefab(1);
+								nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 								prefabTP = EntityManager::GetInstance().Get<EntityDescriptor>(1).prefabType;
 								prefabCID = EntityManager::GetInstance().GetComponentIDs(1);
 								std::ofstream outFile(prefabFP);
@@ -5025,7 +5025,7 @@ namespace PE {
 									
 									if (EntityManager::GetInstance().Has<EntityDescriptor>(1))
 									{
-										auto save = serializationManager.SerializeEntityPrefab(1);
+										nlohmann::json save = serializationManager.SerializeEntityPrefab(1);
 
 										std::ofstream outFile(prefabFP);
 										if (outFile)

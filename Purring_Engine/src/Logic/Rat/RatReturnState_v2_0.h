@@ -58,6 +58,10 @@ namespace PE
 	  RatScript_v2_0_Data* p_data; // pointer to script instance data
 		GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
 		GameStates_v2_0 previousGameState; // The game state in the previous frame
+		bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
+
+		// Event listener IDs 
+		int m_collisionEventListener{}, m_collisionStayEventListener{}, m_collisionExitEventListener{};
 
 	private:
 		/*!***********************************************************************************
@@ -68,5 +72,45 @@ namespace PE
 		{
 				return previousGameState != gameStateController->currentState;
 		}
+
+		/*!***********************************************************************************
+		 \brief Displays and updates the rotation of the rat telegraphs.
+
+		 \param targetPosition - Position that is being targeted
+		*************************************************************************************/
+		void EnableTelegraphs(vec2 const& targetPosition);
+
+		/*!***********************************************************************************
+		 \brief Disables the rat telegraphs.
+		*************************************************************************************/
+		void DisableTelegraphs();
+
+		/*!***********************************************************************************
+		 \brief Checks if any cats entered or executed the rat's detection radius during
+						the last execution phase and decides whether to swap to the attacking or
+						hunting states respectively.
+		*************************************************************************************/
+		void CheckIfShouldChangeStates();
+
+
+		// --- COLLISION DETECTION --- // 
+
+		/*!***********************************************************************************
+		 \brief Called when a trigger enter or stay event has occured. If an event has
+			occurred between this script's rat's detection collider and a cat, the parent rat
+			is notified.
+
+		 \param[in,out] r_TE - Trigger event data.
+		*************************************************************************************/
+		void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
+
+		/*!***********************************************************************************
+		 \brief Called when a trigger exit event has occured. If an event has occurred
+			between this script's rat's detection collider and a cat, the parent rat
+			is notified.
+
+		 \param[in,out] r_TE - Trigger event data.
+		*************************************************************************************/
+		void OnTriggerExit(const Event<CollisionEvents>& r_TE);
 	};
 } // End of namespace PE

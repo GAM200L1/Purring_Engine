@@ -110,6 +110,16 @@ public:
     nlohmann::json SerializeEntityPrefab(int entityId);
 
     /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object as a prefab composite
+    *************************************************************************************/
+    nlohmann::json SerializeEntityComposite(int entityID);
+
+    /*!***********************************************************************************
+     \brief Serialize the entity with the given ID to a JSON object as a prefab composite
+    *************************************************************************************/
+    nlohmann::json SerializePrefabComposite();
+
+    /*!***********************************************************************************
      \brief Deserialize a JSON object to create an entity, returning its ID.
     *************************************************************************************/
     size_t DeserializeEntity(const nlohmann::json& r_j);
@@ -170,6 +180,12 @@ public:
     template<typename ComponentType>
     void SerializeComponent(int entityId, const std::string& jsonKey, nlohmann::json& json);
 
+    /*!***********************************************************************************
+    \brief Loads a prefab from file
+
+    \param[in] r_json  The path to the file to save to.
+    *************************************************************************************/
+    size_t LoadPrefabFromFile(nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:
@@ -245,9 +261,7 @@ private:
     *************************************************************************************/
     bool LoadGUISlider(const size_t& r_id, const nlohmann::json& r_json);
 
-    void ConvertJsonToExtension(nlohmann::json const& r_json, std::string const& r_fileName);
 
-    void ParseExtensionToJson(const std::string& r_extension, nlohmann::json& r_json);
 
     // ----- Private Methods ----- //
 private:

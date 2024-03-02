@@ -53,7 +53,7 @@ namespace PE
 		/*!***********************************************************************************
 		 \brief Unsubscribes from the collision events
 		*************************************************************************************/
-		virtual void StateCleanUp();
+		virtual void StateCleanUp();	
 
 		/*!***********************************************************************************
 			\brief Get the name of the state
@@ -67,16 +67,19 @@ namespace PE
 
 			\param targetId - ID of the entity to target.
 		*************************************************************************************/
-		void SetNewTarget(EntityID const targetId);
+		void SetHuntTarget(EntityID const targetId);
 
 		// --- COLLISION DETECTION --- // 
 
 		/*!***********************************************************************************
-		\brief Returns true if there are cats in the detection range, false otherwise.
-
-		\return bool - Returns true if there are cats in the detection range, false otherwise.
+		 \brief Checks if any cats entered or executed the rat's detection radius during
+						the last execution phase and decides whether to swap to the attacking or
+						hunting states respectively.
 		*************************************************************************************/
-		bool CheckCatsInDetectionRange();
+		void CheckIfShouldChangeStates();
+
+
+		// --- COLLISION DETECTION --- // 
 
 		/*!***********************************************************************************
 		 \brief Called when a trigger enter or stay event has occured. If an event has
@@ -99,7 +102,8 @@ namespace PE
 	private:
 		RatScript_v2_0_Data* p_data{ nullptr }; // pointer to script instance data
 		GameStateController_v2_0* gameStateController{ nullptr }; // pointer to the game state controller
-		GameStates_v2_0 previousGameState{ GameStates_v2_0::PLANNING }; // The game state in the previous frame
+		GameStates_v2_0 m_previousGameState{ GameStates_v2_0::PLANNING }; // The game state in the previous frame
+		bool m_planningRunOnce{ false }; // Set to true after target position has been set in the pause state, set to false one frame after the pause state has started.
 
 		EntityID targetId{}; // ID of the cat to target
 
@@ -152,9 +156,16 @@ namespace PE
 			*************************************************************************************/
 			inline bool StateJustChanged() const
 			{
-					return previousGameState != gameStateController->currentState;
+					return m_previousGameState != gameStateController->currentState;
 			}
 
-			void PickTargetPosition();
+			/*!***********************************************************************************
+				\brief Pick the position that the rat should move toward (in a straight line).
+
+				\return Returns a next viable target for the rat.
+			*************************************************************************************/
+			vec2 PickTargetPosition();
+
+			vec2 RotatePoint(vec2 PointA, vec2 PointB, float angle);
 	};
 } // End of namespace PE
