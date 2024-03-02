@@ -4519,7 +4519,7 @@ namespace PE {
 					ImGui::SameLine();
 					if (ImGui::Button("Load"))
 					{
-						std::string filePath = serializationManager.OpenFileExplorerRequestPath();
+						std::string filePath = serializationManager.OpenFileExplorerRequestPath(".anim");
 
 						// Check if filePath is not empty
 						if (!filePath.empty())

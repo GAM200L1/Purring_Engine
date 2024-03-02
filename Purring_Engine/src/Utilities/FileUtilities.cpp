@@ -60,48 +60,55 @@ namespace PE
 		std::vector<std::filesystem::path> resourceFiles;
 		std::vector<std::filesystem::path> metaFiles;
 
-		for (std::filesystem::directory_entry const& r_dirEntry : std::filesystem::recursive_directory_iterator{ "../Assets"})
+		try
 		{
-			std::filesystem::path filePath = r_dirEntry.path();
-			filePath.make_preferred();
-
-			if (filePath.has_extension())
+			for (std::filesystem::directory_entry const& r_dirEntry : std::filesystem::recursive_directory_iterator{ "../Assets" })
 			{
-				if (filePath.extension().string() == ".meta")
+				std::filesystem::path filePath = r_dirEntry.path();
+				filePath.make_preferred();
+
+				if (filePath.has_extension())
 				{
-					metaFiles.emplace_back(filePath);
+					if (filePath.extension().string() == ".meta")
+					{
+						metaFiles.emplace_back(filePath);
+					}
+					else
+					{
+						resourceFiles.emplace_back(filePath);
+					}
 				}
-				else
+			}
+
+			// loop through resource files and check if there is a corresponding meta file
+			for (std::filesystem::path& filePath : resourceFiles)
+			{
+				auto metaFileIt{ std::find(metaFiles.begin(), metaFiles.end(), filePath.string() + ".meta") };
+
+				// if there is a corresponding meta file, remove from metafile list
+				if (metaFileIt != metaFiles.end())
 				{
-					resourceFiles.emplace_back(filePath);
+					metaFiles.erase(metaFileIt);
 				}
+				else // there is no corresponding meta file, generate one and remove file from resource list
+				{
+					// generate meta file
+					std::cout << "Generate " + filePath.string() + ".meta" << std::endl;
+
+					GenerateMetaFile(filePath.string() + ".meta", filePath.extension().string());
+				}
+			}
+
+			// loop through orphaned meta files and delete them
+			for (std::filesystem::path& filePath : metaFiles)
+			{
+				std::cout << filePath.string() << std::endl;
+				std::filesystem::remove(filePath);
 			}
 		}
-
-		// loop through resource files and check if there is a corresponding meta file
-		for (std::filesystem::path& filePath : resourceFiles)
+		catch (std::filesystem::filesystem_error const&)
 		{
-			auto metaFileIt{ std::find(metaFiles.begin(), metaFiles.end(), filePath.string() + ".meta") };
-
-			// if there is a corresponding meta file, remove from metafile list
-			if (metaFileIt != metaFiles.end())
-			{
-				metaFiles.erase(metaFileIt);
-			}
-			else // there is no corresponding meta file, generate one and remove file from resource list
-			{
-				// generate meta file
-				std::cout << "Generate " + filePath.string() + ".meta" << std::endl;
-
-				GenerateMetaFile(filePath.string() + ".meta", filePath.extension().string());
-			}
-		}
-
-		// loop through orphaned meta files and delete them
-		for (std::filesystem::path& filePath : metaFiles)
-		{
-			std::cout << filePath.string() << std::endl;
-			std::filesystem::remove(filePath);
+			// file directory is open
 		}
 	}
 
