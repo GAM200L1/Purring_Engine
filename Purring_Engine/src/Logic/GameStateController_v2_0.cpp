@@ -1089,12 +1089,6 @@ namespace PE
 			CatController_v2_0* p_catManager = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);
 			p_catManager->UpdateDeployableCats(p_catManager->mainInstance);
 
-			for (auto flw : ptr->followers)
-			{
-				auto p_data = GETSCRIPTDATA(CatScript_v2_0, flw);
-				dat.saved.emplace_back(p_data->catType);
-			}
-			ptr->followers.clear();
 			m_isTransitioning = true;
 			m_isTransitioningIn = false;
 			m_timeSinceTransitionStarted = 0;

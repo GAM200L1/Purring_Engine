@@ -186,7 +186,7 @@ namespace PE
 		if (fadeInSpeed >= 1)
 		{
 			PlaySceneTransitionAudio();
-			SceneManager::GetInstance().LoadScene("Level1Scene.json");
+			SceneManager::GetInstance().LoadScene("Level1Scene.scene");
 		}
 	}
 

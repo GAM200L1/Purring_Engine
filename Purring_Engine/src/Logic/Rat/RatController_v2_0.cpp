@@ -38,12 +38,6 @@ namespace PE
 				RefreshRats(id); // I don't know if the rat controller's refresh
 				return static_cast<unsigned int>(m_cachedActiveRats.size());
 		}
-						}
-						catch (...) { }
-				}
-
-				return count;
-		}
 
 
 
@@ -56,7 +50,6 @@ namespace PE
 				m_scriptData[id].p_ratsV2Map = &(dynamic_cast<RatScript_v2_0*>(LogicSystem::m_scriptContainer[GETSCRIPTNAME(RatScript_v2_0)])->m_scriptData);
 		}
 
-				// Look for all the spawners in the scene
 
 		void RatController_v2_0::Update(EntityID id, float)
 		{
@@ -65,8 +58,6 @@ namespace PE
 
 				RefreshRats(id); // Refresh the cached rats
 
-		void RatController_v2_0::Update(EntityID id, float deltaTime)
-		{
 				if (!ratsPrinted)
 				{
 					auto const& myVec{ GetRats(id) };
@@ -76,11 +67,6 @@ namespace PE
 					}
 					ratsPrinted = true;
 				}
-				else
-				{
-					// If rats have already been printed, refresh the m_cachedActiveRats without printing
-					GetRats(id);
-		}
 		}
 
 
@@ -138,8 +124,6 @@ namespace PE
 					}
 					else
 					{
-				GETSCRIPTINSTANCEPOINTER(RatScript)->LoseHP(it->second.ratID, damage);
-
 						//// Subtract the damage from the rat's health
 						//it->second.ratHealth -= damage;
 
@@ -176,7 +160,6 @@ namespace PE
 				// Toggle the entity
 				EntityManager::GetInstance().Get<EntityDescriptor>(id).isActive = setToActive;
 			}
-				catch (...) { }
 		}
 
 		bool RatController_v2_0::IsRatAndIsAlive(EntityID id) const 

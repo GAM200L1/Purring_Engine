@@ -86,8 +86,6 @@ namespace PE
 		// Rat Idle
 		bool shouldPatrol{ false };						// Flag to determine if the said rat should patrol
 
-		std::map<std::string, std::string> animationStates;
-
 		bool isAlive{ true }; // True if the rat is alive and should be updated
 
 		bool shouldChangeState{};  // Flags that the state should change when [timeBeforeChangingState] is zero

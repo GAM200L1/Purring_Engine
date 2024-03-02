@@ -83,13 +83,6 @@ namespace PE
         void OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE);
 
         /*!***********************************************************************************
-            \brief Called when a trigger exit event has occurred
-
-            \param[in,out] r_TE - Trigger event data
-        *************************************************************************************/
-        void OnTriggerExit(const Event<CollisionEvents>& r_TE);
-
-        /*!***********************************************************************************
             \brief Returns the name of this state
 
             \return A string view representing the name of the state, useful for debugging and logging
@@ -97,23 +90,6 @@ namespace PE
         virtual std::string_view GetName() { return "Movement_v2_0"; }
 
     private:
-        /*!***********************************************************************************
-            \brief Calculates the next movement step for the rat based on its current position, target position, and other factors
-
-            \param[in] id - The entity ID of the rat
-            \param[in] deltaTime - Time elapsed since the last update call, used for frame rate independent movement
-            \return A boolean indicating whether a new position has been successfully calculated
-        *************************************************************************************/
-        bool CalculateMovement(EntityID id, float deltaTime);
-
-        /*!***********************************************************************************
-            \brief Checks if the rat has reached its destination
-
-            \param[in] newPosition - The new position of the rat after a movement calculation
-            \param[in] targetPosition - The target position the rat is moving towards
-            \return A boolean indicating whether the rat has reached its target position
-        *************************************************************************************/
-        bool CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition);
 
         /*!***********************************************************************************
             \brief Pointer to the game state controller, used to query and manage the overall game state
@@ -125,11 +101,6 @@ namespace PE
             \brief Pointer to data specific to the RatScript, containing information such as current position, health, etc.
         *************************************************************************************/
         RatScript_v2_0_Data* p_data{ nullptr };
-
-        /*!***********************************************************************************
-            \brief The minimum distance considered to be close enough to the target position for the movement to be considered complete
-        *************************************************************************************/
-        float minDistanceToTarget{ 1.0f };
 
         /*!***********************************************************************************
             \brief ID of the event listener for collision events, used to register and unregister the rat for collision notifications

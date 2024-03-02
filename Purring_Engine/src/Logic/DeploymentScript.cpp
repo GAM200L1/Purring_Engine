@@ -110,7 +110,6 @@ namespace PE
 			break;
 		}*/
 		}
-		}
 		
 		CircleCollider cc;
 
@@ -166,13 +165,11 @@ namespace PE
 		}
 		else
 		{
-			std::cout<<"not in deployment area"<<std::endl;
 			m_inNoGoArea = true;
 		}
 
 		if(m_inNoGoArea)
 		{ 
-			std::cout << "in no go area" << std::endl;
 			if (EntityManager::GetInstance().Has<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject))
 				EntityManager::GetInstance().Get<Graphics::Renderer>(m_scriptData[id].FollowingTextureObject).SetColor(1,0,0,.65f);
 		}

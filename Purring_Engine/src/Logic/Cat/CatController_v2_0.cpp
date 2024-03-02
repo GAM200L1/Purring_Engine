@@ -39,9 +39,6 @@ namespace PE
 		UpdateCurrentCats(id);
 		UpdateCachedCats(id);
 	}
-			}
-		}
-	}
 
 	void CatController_v2_0::Update(EntityID id, float deltaTime)
 	{
@@ -128,7 +125,6 @@ namespace PE
 				catToRemove = (GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.back();
 				(GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID))->followers.pop_back();
 			}
-			}
 			//else kill cat that has been hit
 			(GETSCRIPTDATA(CatScript_v2_0, catToRemove))->toggleDeathAnimation = true;
 
@@ -163,5 +159,4 @@ namespace PE
 		FollowScriptData_v2_0* p_followScript = GETSCRIPTDATA(FollowScript_v2_0, m_mainCatID);
 		return (std::find(p_followScript->followers.begin(), p_followScript->followers.end(), catID) != p_followScript->followers.end());
 	}
-
 }

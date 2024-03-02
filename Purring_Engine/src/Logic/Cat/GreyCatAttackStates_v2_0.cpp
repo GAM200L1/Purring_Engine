@@ -179,61 +179,6 @@ namespace PE
 		(GETSCRIPTDATA(CatScript_v2_0, id))->attackSelected = false;
 	}
 
-	void GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(EntityID id, float bulletRange, std::map<EnumCatAttackDirection_v2_0, EntityID>& r_telegraphIDs)
-	{
-		auto CreateOneTelegraph =
-			[&](bool isXAxis, bool isNegative)
-			{
-				Transform const& catTransform = EntityManager::GetInstance().Get<Transform>(id);
-
-				SerializationManager serializationManager;
-
-				EntityID telegraphID = serializationManager.LoadFromFile("PlayerAttackTelegraph.prefab");
-				Transform& telegraphTransform = EntityManager::GetInstance().Get<Transform>(telegraphID);
-
-				//EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).parent = id; // telegraph follows the cat entity
-				Hierarchy::GetInstance().AttachChild(id, telegraphID); // new way of attatching parent child
-				telegraphTransform.relPosition.Zero();
-				EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).isActive = false; // telegraph to not show until attack planning
-				EntityManager::GetInstance().Get<EntityDescriptor>(telegraphID).toSave = false; // telegraph to not show until attack planning
-
-
-				// set size of telegraph
-				telegraphTransform.height = catTransform.height * 0.75f;
-				telegraphTransform.width = catTransform.width * bulletRange;
-				EnumCatAttackDirection_v2_0 dir;
-				AABBCollider telegraphCollider;
-
-				// Set the dimensions of the telegraph based on the axis it's on
-				if (isXAxis)
-				{
-					telegraphTransform.relPosition.x = ((isNegative) ? -1.f : 1.f) * ((telegraphTransform.width * 0.5f) + (catTransform.width * 0.5f) + 10.f);
-					dir = (isNegative) ? EnumCatAttackDirection_v2_0::WEST : EnumCatAttackDirection_v2_0::EAST;
-				}
-				else
-				{
-					telegraphTransform.relOrientation = PE_PI * 0.5f;
-					telegraphTransform.relPosition.y = ((isNegative) ? -1.f : 1.f) * ((telegraphTransform.width * 0.5f) + (catTransform.width * 0.5f) + 10.f);
-
-					telegraphCollider.scaleOffset.x = telegraphTransform.height / telegraphTransform.width;
-					telegraphCollider.scaleOffset.y = telegraphTransform.width / telegraphTransform.height;
-
-					dir = (isNegative) ? EnumCatAttackDirection_v2_0::SOUTH : EnumCatAttackDirection_v2_0::NORTH;
-				}
-
-				// Configure the collider
-				EntityManager::GetInstance().Get<Collider>(telegraphID).colliderVariant = telegraphCollider;
-				EntityManager::GetInstance().Get<Collider>(telegraphID).isTrigger = true;
-
-				r_telegraphIDs.emplace(dir, telegraphID);
-			};
-
-		CreateOneTelegraph(true, false); // east
-		CreateOneTelegraph(true, true); // west
-		CreateOneTelegraph(false, false); // north
-		CreateOneTelegraph(false, true); // south
-	}
-
 	void GreyCatAttack_v2_0PLAN::OnMouseClick(const Event<MouseEvents>& r_ME)
 	{
 		MouseButtonPressedEvent MBPE = dynamic_cast<const MouseButtonPressedEvent&>(r_ME);
@@ -388,7 +333,6 @@ namespace PE
 
 	void GreyCatAttack_v2_0EXECUTE::ProjectileCollided(const Event<CollisionEvents>& r_CE)
 	{
-
 		if (r_CE.GetType() == CollisionEvents::OnCollisionEnter)
 		{
 			OnCollisionEnterEvent OCEE = dynamic_cast<const OnCollisionEnterEvent&>(r_CE);
@@ -405,17 +349,6 @@ namespace PE
 
 	void GreyCatAttack_v2_0EXECUTE::TriggerHit(const Event<CollisionEvents>& r_CE)
 	{
-		auto IsCatAndNotCaged =
-			[&](EntityID id)
-			{
-				if (GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(id))
-				{
-					if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id))
-						return true;
-				}
-				return false;
-			};
-
 		if (r_CE.GetType() == CollisionEvents::OnTriggerEnter)
 		{
 			OnTriggerEnterEvent OTEE = dynamic_cast<const OnTriggerEnterEvent&>(r_CE);
@@ -425,14 +358,6 @@ namespace PE
 
 	bool GreyCatAttack_v2_0EXECUTE::CollideCatOrRat(EntityID id1, EntityID id2)
 	{
-					if (!GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCatCaged(id))
-						return true;
-				}
-				return false;
-			};
-
-		//auto CheckExitPoint = [&](EntityID id) { return (EntityManager::GetInstance().Get<EntityDescriptor>(id).name.find("Exit Point") != std::string::npos) ? true : false; };
-
 		if (id1 != m_catID && id2 != m_catID)
 		{
 			CatController_v2_0* p_catController = GETSCRIPTINSTANCEPOINTER(CatController_v2_0);

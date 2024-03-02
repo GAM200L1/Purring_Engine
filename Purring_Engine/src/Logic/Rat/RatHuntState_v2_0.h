@@ -69,8 +69,6 @@ namespace PE
 		*************************************************************************************/
 		void SetHuntTarget(EntityID const targetId);
 
-		// --- COLLISION DETECTION --- // 
-
 		/*!***********************************************************************************
 		 \brief Checks if any cats entered or executed the rat's detection radius during
 						the last execution phase and decides whether to swap to the attacking or

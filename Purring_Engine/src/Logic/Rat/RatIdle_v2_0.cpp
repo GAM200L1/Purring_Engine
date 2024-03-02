@@ -47,7 +47,6 @@ namespace PE
         gameStateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);                   // Get GSM instance
         m_planningRunOnce = false;
 
-
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatIdle_v2_0::OnTriggerEnterAndStay, this);
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatIdle_v2_0::OnTriggerEnterAndStay, this);
         m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatIdle_v2_0::OnTriggerExit, this);
@@ -298,12 +297,6 @@ namespace PE
     {
         // disables all the UI from showing up
         RatScript_v2_0::ToggleEntity(p_data->telegraphArrowEntityID, false);
-        RatScript_v2_0::ToggleEntity(p_data->redTelegraphEntityID, false);
-        RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
-
-        if (EntityManager::GetInstance().Has<AnimationComponent>(id))
-            EntityManager::GetInstance().Get<Graphics::Renderer>(p_data->attackTelegraphEntityID).SetEnabled(false);
-
         gameStateController = nullptr;
     }
 

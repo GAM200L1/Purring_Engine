@@ -30,10 +30,6 @@
 
 namespace PE
 {
-    // Constructor
-    RatAttack_v2_0::RatAttack_v2_0() : gameStateController(nullptr), p_data(nullptr) {}
-
-
     void RatAttack_v2_0::StateEnter(EntityID id)
     {
         p_data = GETSCRIPTDATA(RatScript_v2_0, id);
@@ -86,7 +82,6 @@ namespace PE
                 RatScript_v2_0::ToggleEntity(p_data->attackTelegraphEntityID, false);
                 p_data->attacking = false;
                 p_data->finishedExecution = true;
-        }
 
                 ChangeStates();
             }
@@ -106,7 +101,6 @@ namespace PE
         gameStateController = nullptr;
         //std::cout << "[DEBUG] RatAttack_v2_0::StateExit - Rat ID: " << id << " exiting Attack state." << std::endl;
         p_data->hitCat = false;
-
     }
 
     void RatAttack_v2_0::RatHitCat(const Event<CollisionEvents>& r_TE)
@@ -190,7 +184,6 @@ namespace PE
             // the cat we're chasing is dead, return to the original position
             GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->ChangeStateToReturn(p_data->myID);
         }
-        catch (...) {}
     }
 
 

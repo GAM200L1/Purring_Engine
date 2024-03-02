@@ -36,8 +36,6 @@ namespace PE
     {
         // ----- Constructors ----- //
     public:
-        RatAttack_v2_0();
-
         virtual ~RatAttack_v2_0() { p_data = nullptr; };
 
         // ----- Public Functions ----- //
@@ -109,8 +107,6 @@ namespace PE
 
         // Attack state specific variables and data
         RatScript_v2_0_Data* p_data;
-        int m_attackEventListener{};
-        int m_attackStayEventListener{};
         float m_delay{};
         float m_attackDuration{};
 

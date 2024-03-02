@@ -649,7 +649,6 @@ namespace PE
 		 m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatAttackEXECUTE::RatHitCat, this);
 		 m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatAttackEXECUTE::RatHitCat, this);
 		 m_delay = p_data->attackDelay;
-		 
 	 }
 
 	 void RatAttackEXECUTE::StateUpdate(EntityID id, float deltaTime)

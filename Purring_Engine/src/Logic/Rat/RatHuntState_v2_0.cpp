@@ -164,13 +164,7 @@ namespace PE
 		int loopTimer = 360/15;
 		vec2 ratPosition{ RatScript_v2_0::GetEntityPosition(p_data->myID) };
 		vec2 finalTarget{ RatScript_v2_0::GetEntityPosition(targetId) };
-			float targetDistance{ (ratPosition - finalTarget).LengthSquared() };
 
-			// If the cat is farther than the rat's max dist
-			if (targetDistance > (p_data->maxMovementRange * p_data->maxMovementRange))
-			{
-					// Try to find a waypoint that's closer
-					vec2 closestTarget{ finalTarget }; float squaredDistance{ targetDistance };
 
 		//while (continueLoop)
 		//{

@@ -71,13 +71,6 @@ namespace PE
 		virtual void OnDetach(EntityID id);
 
 		/*!***********************************************************************************
-		 \brief Gets Cats that have been collected and are deployable
-
-		 \param[out] std::vector<EnumCatType> - Vector of Deployable Cats
-		*************************************************************************************/
-		std::vector<EnumCatType> GetDeployableCats();
-
-		/*!***********************************************************************************
 		 \brief Sets cat to play death animation, effectively removing it from scene
 
 		 \param[in] id - ID of cat to remove

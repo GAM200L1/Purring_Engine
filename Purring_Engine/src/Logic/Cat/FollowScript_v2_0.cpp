@@ -42,8 +42,6 @@ namespace PE
 	{
 		p_gamestateController = GETSCRIPTINSTANCEPOINTER(GameStateController_v2_0);		
 		m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, FollowScript_v2_0::CollisionCheck, this);
-		if (!EntityManager::GetInstance().Has<CatSaveData>(MAXSIZE_T))
-			EntityManager::GetInstance().Assign<CatSaveData>(MAXSIZE_T);
 	}
 
 	void FollowScript_v2_0::Update(EntityID id, float)
@@ -107,8 +105,6 @@ namespace PE
 
 				++index;
 				
-				EntityManager::GetInstance().Get<Transform>(follower).position = m_ScriptData[id].NextPosition[index];
-				++index;
 				//checking rotation to set can ignore this for now lets get position to work
 				if (scriptData[id].LookTowardsMovement)
 					EntityManager::GetInstance().Get<Transform>(follower).orientation = newRotation;

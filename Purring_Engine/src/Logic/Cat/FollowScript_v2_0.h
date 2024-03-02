@@ -31,11 +31,6 @@ namespace PE
 		vec2 prevPosition;
 		std::vector<vec2> nextPosition;
 
-		//for attaching through code
-		bool IsAttaching{ false };
-		//int NumberOfAttachers{ 0 };
-		std::vector<EntityID> ToAttach{};
-
 		//look towards movement
 		bool LookTowardsMovement{ false };
 
@@ -118,10 +113,7 @@ namespace PE
 		*************************************************************************************/
 		void CollisionCheck(const Event<CollisionEvents>& r_event);
 		
-		// ----- Destructor ----- //
-		virtual ~FollowScript_v2_0();
 	private:
-		std::map<EntityID, FollowScriptData_v2_0> m_ScriptData;
 		GameStateController_v2_0* p_gamestateController;
 
 

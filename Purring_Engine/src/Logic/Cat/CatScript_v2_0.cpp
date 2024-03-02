@@ -81,8 +81,6 @@ namespace PE
 			default: // main cat or grey cat
 			{
 				GreyCatAttackVariables& vars = std::get<GreyCatAttackVariables>(m_scriptData[id].attackVariables);
-				// create telegraphs
-				GreyCatAttack_v2_0PLAN::CreateProjectileTelegraphs(id, vars.bulletRange, vars.telegraphIDs);
 				// Creates an entity for the projectile
 				vars.CreateProjectileAndTelegraphs(id, (m_scriptData[id].catType == EnumCatType::MAINCAT)? true : false);
 				break; 
@@ -333,7 +331,6 @@ namespace PE
 			{
 				ChangeToPlanningState(id);
 				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0); // resets animation to 0
-				m_executionAnimationFinished = false; // reset attack animation
 			}
 		}
 	}
@@ -410,8 +407,6 @@ namespace PE
 				ChangeToAttack(id);
 			}
 		}
-			}
-		}
 		// executes attack and plays attack animation, plays idle animation if attack is finished early
 		else if (r_stateName == "AttackEXECUTE")
 		{
@@ -424,8 +419,6 @@ namespace PE
 				m_scriptData[id].executionAnimationFinished = true; // if attack animation finished set to true
 				m_scriptData[id].p_catAnimation->SetCurrentFrameIndex(0);
 			}
-			if (m_executionAnimationFinished)
-				PlayAnimation(id, "Idle");
 		}
 	}
 

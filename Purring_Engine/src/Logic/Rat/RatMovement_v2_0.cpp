@@ -44,14 +44,10 @@ namespace PE
         // Subscribe to the collision trigger events for the 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovement_v2_0::OnTriggerEnterAndStay, this);
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovement_v2_0::OnTriggerEnterAndStay, this);
-        //m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatMovement_v2_0::OnTriggerExit, this);
-
     }
 
     void RatMovement_v2_0::StateUpdate(EntityID id, float deltaTime)
     {
-        std::cout << "RatMovement_v2_0::StateUpdate - Rat ID: " << id << " is updating." << std::endl;
-
         if (gameStateController->currentState == GameStates_v2_0::PAUSE)
         {
             //std::cout << "RatMovement_v2_0::StateUpdate - Game is paused." << std::endl;
@@ -143,59 +139,6 @@ namespace PE
         GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->RatHitCat(p_data->myID, r_TE);
     }
 
-    bool RatMovement_v2_0::CalculateMovement(EntityID id, float deltaTime)
-    {
-        bool hasMoved = false;
-
-        // If there are no cats detected within the detection radius, exit early.
-        if (p_data->catsInDetectionRadius.empty()) return false;
-
-        vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
-
-        // Find the closest cat within the detection radius.
-        EntityID closestCat = 0;
-        float minDistance = std::numeric_limits<float>::max();
-        for (auto& catID : p_data->catsInDetectionRadius)
-        {
-            vec2 catPosition = RatScript_v2_0::GetEntityPosition(catID);
-            float distance = (catPosition - RatScript_v2_0::GetEntityPosition(id)).Length();
-            if (distance < minDistance)
-            {
-                minDistance = distance;
-                closestCat = catID;
-            }
-        }
-
-        // Move towards the closest cat if it's not within the attack radius.
-        if (minDistance > p_data->attackRadius)
-        {
-            vec2 oldPosition = RatScript_v2_0::GetEntityPosition(id);
-            vec2 directionToCat = (RatScript_v2_0::GetEntityPosition(closestCat) - oldPosition).GetNormalized();
-            vec2 newPosition = oldPosition + directionToCat * p_data->movementSpeed * deltaTime;
-            RatScript_v2_0::PositionEntity(id, newPosition);
-
-            // Determine if the rat has moved by comparing the old and new positions
-            if (newPosition != oldPosition)
-            {
-                hasMoved = true;
-            }
-        }
-        else
-        {
-            // If the closest cat is within the attack radius, the rat may initiate an attack
-            // but doesn't move, so hasMoved remains false
-        }
-
-        return hasMoved;
-    }
-
-
-    bool RatMovement_v2_0::CheckDestinationReached(const vec2& newPosition, const vec2& targetPosition)
-    {
-        bool reached = (newPosition - targetPosition).Length() <= minDistanceToTarget;
-        std::cout << "RatMovement_v2_0::CheckDestinationReached - Destination " << (reached ? "reached." : "not reached.") << std::endl;
-        return reached;
-    }
 
     void RatMovement_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
     {
