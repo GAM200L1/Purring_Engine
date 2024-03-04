@@ -78,6 +78,8 @@
 #include "Logic/Rat/RatIdle_v2_0.h"
 #include "Layers/LayerManager.h"
 #include "Logic/IntroCutsceneController.h"
+#include "Logic/Boss/BossRatScript.h"
+
 
 #include <glm/gtc/type_ptr.hpp>
 #include <glm/glm.hpp>
@@ -3356,6 +3358,125 @@ namespace PE {
 								}
 							}
 
+							if (key == "BossRatScript")
+							{
+								BossRatScript* p_script = dynamic_cast<BossRatScript*>(val);
+								auto it = p_script->GetScriptData().find(m_currentSelectedObject);
+								if (it != p_script->GetScriptData().end())
+								{
+									if (ImGui::CollapsingHeader("BossRatScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
+									{
+										int healthID = static_cast<int> (it->second.health);
+										int telegraphRadiusID = static_cast<int> (it->second.telegraphRadius);
+										float activationTimeID = (it->second.activationTime);
+										float attackDelayID = (it->second.attackDelay);
+										float jumpSpeedID =  (it->second.jumpSpeed);
+										int leftSideSlamID = static_cast<int> (it->second.leftSideSlam);
+										int rightSideSlamID = static_cast<int> (it->second.rightSideSlam);
+
+										ImGui::SeparatorText("Boss Rat Stats");
+										ImGui::Text("Boss Health: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##bhid", &healthID);
+										if (healthID != m_currentSelectedObject) { it->second.health = healthID; }
+
+
+										ImGui::SeparatorText("Bash Attack Stats");
+										ImGui::Text("Telegraph Radius: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##btrid", &telegraphRadiusID);
+										if (telegraphRadiusID != m_currentSelectedObject) { it->second.telegraphRadius = telegraphRadiusID; }	
+										
+										ImGui::Text("Activation Time: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##batid", &activationTimeID);
+										if (activationTimeID != m_currentSelectedObject) { it->second.activationTime = activationTimeID; }
+										
+										ImGui::Text("Attack Delay: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##badid", &attackDelayID);
+										if (attackDelayID != m_currentSelectedObject) { it->second.attackDelay = attackDelayID; }
+
+										ImGui::SeparatorText("Slam Attack Stats");
+										ImGui::Text("Jump Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjsid", &jumpSpeedID);
+										if (jumpSpeedID != m_currentSelectedObject) it->second.jumpSpeed = jumpSpeedID;
+
+										ImGui::SeparatorText("Telegraphs");
+										ImGui::Text("Left Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssid", &leftSideSlamID);
+										if (leftSideSlamID != m_currentSelectedObject) it->second.leftSideSlam = leftSideSlamID;
+
+										ImGui::Text("Right Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##brssid", &rightSideSlamID);
+										if (rightSideSlamID != m_currentSelectedObject) it->second.rightSideSlam = rightSideSlamID;
+
+										ImGui::SeparatorText("Animations");
+										int num{};
+										ImGui::Text("Add Animation state"); ImGui::SameLine();
+										bool worked{ false };
+										if (ImGui::Button("+"))
+										{
+											std::string str = "NewState";
+											while (!worked)
+											{
+												if (it->second.animationStates.count(str))
+												{
+													str += 1;
+												}
+												else
+												{
+													it->second.animationStates.emplace(str, "");
+													worked = true;
+												}
+											}
+										}
+										static std::pair<std::string, std::string> whoToRemove;
+										static bool rmFlag{ false };
+										for (auto& [k, v] : it->second.animationStates)
+										{
+											ImGui::Text("State: "); ImGui::SameLine();
+											std::string curr = (whoToRemove.first == k ? whoToRemove.first : k);
+											bool changed = ImGui::InputText(std::string("##" + k + std::to_string(++num)).c_str(), &curr);
+											if (!changed)
+											{
+												if (whoToRemove.first == k)
+												{
+													if (!ImGui::IsItemActivated())
+													{
+														rmFlag = true;
+													}
+												}
+											}
+											else
+											{
+												if (k != curr)
+												{
+													whoToRemove.first = k;
+													whoToRemove.second = curr;
+													rmFlag = false;
+												}
+
+											}
+
+
+											ImGui::Text("Animation: "); ImGui::SameLine();
+											bool bl = ImGui::BeginCombo(std::string("##Animation" + k + std::to_string(num)).c_str(), v.c_str());
+											if (bl)
+											{
+												if (EntityManager::GetInstance().Has<AnimationComponent>(entityID))
+												{
+													for (const auto& name : EntityManager::GetInstance().Get<AnimationComponent>(entityID).GetAnimationList())
+													{
+														if (ImGui::Selectable(name.c_str()))
+															v = name;
+													}
+												}
+												ImGui::EndCombo();
+											}
+											ImGui::Separator();
+										}
+										if (rmFlag)
+										{
+											it->second.animationStates.emplace(whoToRemove.second, it->second.animationStates.at(whoToRemove.first));
+											it->second.animationStates.erase(whoToRemove.first);
+											whoToRemove.first = "";
+											whoToRemove.second = "";
+											rmFlag = false;
+										}
+									}
+								}
+							}
+
 							if (key == "RatScript_v2_0")
 							{
 								RatScript_v2_0* p_Script = dynamic_cast<RatScript_v2_0*>(val);
@@ -3481,6 +3602,7 @@ namespace PE {
 								
 								}
 							}
+
 							if (key == "CatScript_v2_0")
 							{
 								CatScript_v2_0* p_script = dynamic_cast<CatScript_v2_0*>(val);

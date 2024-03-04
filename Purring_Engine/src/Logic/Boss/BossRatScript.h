@@ -37,9 +37,17 @@ namespace PE
 		bool finishExecution{true};
 
 		//bash attack variables
-		float TelegraphRaadius;
+		float telegraphRadius; // incase we want change, but not used for now
 		float attackDelay{.25f};
 		float activationTime{1.f};
+
+		//slam attack variables
+		float jumpSpeed{ 1000 };
+		bool isInSky{ false };
+		EntityID leftSideSlam; //need to be serialized
+		EntityID rightSideSlam;
+
+		std::map<std::string, std::string> animationStates;
 	};
 
 	class BossRatScript : public Script
@@ -50,7 +58,7 @@ namespace PE
 	public:
 		std::map<EntityID, BossRatScriptData> m_scriptData;
 		EntityID currentBoss;
-
+		int m_currentSlamTurnCounter{};
 		// ----- Constructors ----- //
 	public:
 		/*!***********************************************************************************

@@ -18,6 +18,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "BossRatExecuteState.h"
 #include "Logic/LogicSystem.h"
 #include "Logic/Boss/BossRatAttacks/BossRatBashAttack.h"
+#include "Logic/Boss/BossRatAttacks/BossRatSlamAttack.h"
 namespace PE
 {
 	void BossRatPlanningState::StateEnter(EntityID id)
@@ -45,16 +46,24 @@ namespace PE
 
 	void BossRatPlanningState::StateExit(EntityID)
 	{
-
+		if (p_script->m_currentSlamTurnCounter > 0)
+		--p_script->m_currentSlamTurnCounter;
 	}
 
 	void BossRatPlanningState::DecideAttack()
 	{
+		if (p_script->m_currentSlamTurnCounter > 0 && p_data->p_currentAttack)
+			return;
+
 		// Decides which attack to use
 		//will add the other attacks later, fixed on bash for now
 		if (p_data->p_currentAttack)
 			delete p_data->p_currentAttack;
-		p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
+
+		//attack 1
+		//p_data->p_currentAttack = new BossRatBashAttack(p_script->FindFurthestCat());
+		p_data->p_currentAttack = new BossRatSlamAttack(p_script->FindFurthestCat());
+		p_script->m_currentSlamTurnCounter = 3;
 	}
 
 } // End of namespace PE

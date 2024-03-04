@@ -100,7 +100,7 @@
 #include "Logic/MainMenuController.h"
 #include "Logic/IntroCutsceneController.h"
 
-
+#include "Logic/Boss/BossRatScript.h"
 
 
 #include "Logic/Cat/CatController_v2_0.h"
@@ -417,6 +417,16 @@ RTTR_REGISTRATION
         //.property("attackDelay", &PE::RatScriptData::attackDelay)
         .property("animationStates", &PE::RatScript_v2_0_Data::animationStates);
 
+
+    rttr::registration::class_<PE::BossRatScriptData>("BossRatScript")
+        .property("health", &PE::BossRatScriptData::health)
+        .property("attackDelay", &PE::BossRatScriptData::attackDelay)
+        .property("activationTime", &PE::BossRatScriptData::activationTime)
+        .property("telegraphRadius", &PE::BossRatScriptData::telegraphRadius)
+        .property("jumpSpeed", &PE::BossRatScriptData::jumpSpeed)
+        .property("leftSideSlam", &PE::BossRatScriptData::leftSideSlam)
+        .property("rightSideSlam", &PE::BossRatScriptData::rightSideSlam)
+        .property("animationStates", &PE::BossRatScriptData::animationStates);
 }
 
 PE::CoreApplication::CoreApplication()
