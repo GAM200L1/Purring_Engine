@@ -55,6 +55,12 @@ namespace PE
         void PlayAudioSound();
 
         /*!***********************************************************************************
+        \brief     Checks if the audio sound with the specified identifier is currently playing.
+        \param     r_id The identifier of the audio sound.
+        *************************************************************************************/
+        bool IsPlaying() const;
+
+        /*!***********************************************************************************
         \brief     Sets the volume for the audio sound with the specified identifier.
         \param     r_id The identifier of the audio sound.
         \param     volume The volume level to set.

@@ -76,6 +76,19 @@ namespace PE
         }
     }
 
+    bool AudioComponent::IsPlaying() const
+    {
+        bool isPlaying = false;
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            if (auto channel = audio->GetChannel())
+            {
+                channel->isPlaying(&isPlaying);
+            }
+        }
+        return isPlaying;
+    }
+
     void AudioComponent::SetVolume(float volume)
     {
         std::cout << "Setting volume for sound with id: " << m_audioKey << " to " << volume << std::endl;
