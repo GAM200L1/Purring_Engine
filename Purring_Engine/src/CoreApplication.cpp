@@ -424,6 +424,7 @@ RTTR_REGISTRATION
         .property("activationTime", &PE::BossRatScriptData::activationTime)
         .property("telegraphRadius", &PE::BossRatScriptData::telegraphRadius)
         .property("jumpSpeed", &PE::BossRatScriptData::jumpSpeed)
+        .property("slamSpeed", &PE::BossRatScriptData::slamSpeed)
         .property("leftSideSlam", &PE::BossRatScriptData::leftSideSlam)
         .property("rightSideSlam", &PE::BossRatScriptData::rightSideSlam)
         .property("animationStates", &PE::BossRatScriptData::animationStates);

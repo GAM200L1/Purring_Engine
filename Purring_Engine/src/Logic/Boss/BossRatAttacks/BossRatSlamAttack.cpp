@@ -81,7 +81,7 @@ namespace PE
 		Transform* bossTransform = &EntityManager::GetInstance().Get<Transform>(p_script->currentBoss);
 
 		if (bossTransform->position.y > 0)
-			bossTransform->position.y -= p_data->jumpSpeed * dt;
+			bossTransform->position.y -= p_data->slamSpeed * dt;
 		else
 		{
 			if (EntityManager::GetInstance().Has<Collider>(id))

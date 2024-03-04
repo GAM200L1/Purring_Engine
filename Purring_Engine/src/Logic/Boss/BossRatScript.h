@@ -43,6 +43,7 @@ namespace PE
 
 		//slam attack variables
 		float jumpSpeed{ 1000 };
+		float slamSpeed{ 1000 };
 		bool isInSky{ false };
 		EntityID leftSideSlam; //need to be serialized
 		EntityID rightSideSlam;

@@ -3371,6 +3371,7 @@ namespace PE {
 										float activationTimeID = (it->second.activationTime);
 										float attackDelayID = (it->second.attackDelay);
 										float jumpSpeedID =  (it->second.jumpSpeed);
+										float slamSpeed =  (it->second.slamSpeed);
 										int leftSideSlamID = static_cast<int> (it->second.leftSideSlam);
 										int rightSideSlamID = static_cast<int> (it->second.rightSideSlam);
 
@@ -3391,7 +3392,9 @@ namespace PE {
 
 										ImGui::SeparatorText("Slam Attack Stats");
 										ImGui::Text("Jump Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjsid", &jumpSpeedID);
-										if (jumpSpeedID != m_currentSelectedObject) it->second.jumpSpeed = jumpSpeedID;
+										if (jumpSpeedID != m_currentSelectedObject) it->second.jumpSpeed = jumpSpeedID;										
+										ImGui::Text("Fall Speed: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##bjsid", &slamSpeed);
+										if (slamSpeed != m_currentSelectedObject) it->second.jumpSpeed = slamSpeed;
 
 										ImGui::SeparatorText("Telegraphs");
 										ImGui::Text("Left Side ID: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##blssid", &leftSideSlamID);
