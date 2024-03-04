@@ -34,6 +34,7 @@
 #include "Cat/CatController_v2_0.h"
 #include "Cat/CatScript_v2_0.h"
 #include "Cat/FollowScript_v2_0.h"
+#include "AudioManager/GlobalMusicManager.h"
 
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
@@ -122,13 +123,14 @@ namespace PE
 		m_deploymentPhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Deployment_1429x415.png");
 		m_exexcutePhaseBanner = ResourceManager::GetInstance().LoadTexture("PhaseSplash_Execution_1429x415.png");
 
+		// toplaybgmfrom  GlobalMusicManager
+		GlobalMusicManager::GetInstance().PlayBackgroundMusic("../Assets/Audio/mus_BGM_Layer1_Loop.wav", true);
 
-
-		//start the background music
-		EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
-		if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
-			EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
-		EntityManager::GetInstance().RemoveEntity(bgm);
+		////start the background music
+		//EntityID bgm = m_serializationManager.LoadFromFile("AudioObject/Background Music_Prefab.json");
+		//if (EntityManager::GetInstance().Has<EntityDescriptor>(bgm))
+		//	EntityManager::GetInstance().Get<AudioComponent>(bgm).PlayAudioSound();
+		//EntityManager::GetInstance().RemoveEntity(bgm);
 
 		//start the background ambience
 		EntityID bga = m_serializationManager.LoadFromFile("AudioObject/Background Ambience_Prefab.json");

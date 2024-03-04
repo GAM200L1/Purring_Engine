@@ -144,6 +144,15 @@ namespace PE
         m_audioKey = newKey;
     }
 
+    FMOD::Channel* AudioComponent::GetChannel() const
+    {
+        if (auto audio = ResourceManager::GetInstance().GetAudio(m_audioKey))
+        {
+            return audio->GetChannel();
+        }
+        return nullptr;
+    }
+
     nlohmann::json AudioComponent::ToJson() const
     {
         nlohmann::json j;
