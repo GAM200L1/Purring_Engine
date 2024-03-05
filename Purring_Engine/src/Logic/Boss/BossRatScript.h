@@ -18,6 +18,7 @@ All content(c) 2024 DigiPen Institute of Technology Singapore.All rights reserve
 #include "Logic/Script.h"
 #include "Logic/GameStateController_v2_0.h"
 #include "Logic/Boss/BossRatAttacks/BossRatAttack.h"
+#include "Events/EventHandler.h"
 
 namespace PE
 {
@@ -49,6 +50,9 @@ namespace PE
 		EntityID rightSideSlam;
 
 		std::map<std::string, std::string> animationStates;
+
+
+		int m_collisionEventKey;
 	};
 
 	class BossRatScript : public Script
@@ -140,7 +144,7 @@ namespace PE
 		*************************************************************************************/
 		void CreateCheckStateManager(EntityID id);
 
-
+		void OnCollisionEnter(const Event<CollisionEvents>& r_collisionEnter);
 
 	private:
 		// ----- Private Variables ----- //

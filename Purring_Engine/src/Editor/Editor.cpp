@@ -3367,7 +3367,7 @@ namespace PE {
 									if (ImGui::CollapsingHeader("BossRatScript", ImGuiTreeNodeFlags_DefaultOpen | ImGuiTreeNodeFlags_Selected))
 									{
 										int healthID = static_cast<int> (it->second.health);
-										int telegraphRadiusID = static_cast<int> (it->second.telegraphRadius);
+										float telegraphRadiusID = it->second.telegraphRadius;
 										float activationTimeID = (it->second.activationTime);
 										float attackDelayID = (it->second.attackDelay);
 										float jumpSpeedID =  (it->second.jumpSpeed);
@@ -3381,7 +3381,7 @@ namespace PE {
 
 
 										ImGui::SeparatorText("Bash Attack Stats");
-										ImGui::Text("Telegraph Radius: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputInt("##btrid", &telegraphRadiusID);
+										ImGui::Text("Telegraph Radius: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##btrid", &telegraphRadiusID);
 										if (telegraphRadiusID != m_currentSelectedObject) { it->second.telegraphRadius = telegraphRadiusID; }	
 										
 										ImGui::Text("Activation Time: "); ImGui::SameLine(); ImGui::SetNextItemWidth(100.0f); ImGui::InputFloat("##batid", &activationTimeID);
