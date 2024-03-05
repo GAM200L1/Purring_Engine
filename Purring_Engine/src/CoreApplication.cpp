@@ -101,7 +101,7 @@
 #include "Logic/IntroCutsceneController.h"
 
 #include "Logic/Boss/BossRatScript.h"
-
+#include "Logic/ObjectAttachScript.h"
 
 #include "Logic/Cat/CatController_v2_0.h"
 #include "Logic/Cat/CatScript_v2_0.h"
@@ -303,6 +303,9 @@ RTTR_REGISTRATION
     rttr::registration::class_<PE::CameraManagerScriptData>("CameraManagerScript")
         .property("NumberOfCamera", &PE::CameraManagerScriptData::NumberOfCamera)
         .property("CameraIDs", &PE::CameraManagerScriptData::CameraIDs);
+
+    rttr::registration::class_<PE::ObjectAttachScriptData>("ObjectAttachScript")
+        .property("ObjectToAttachTo", &PE::ObjectAttachScriptData::ObjectToAttachTo);
 
     rttr::registration::class_<PE::CatScriptData>("CatScript")
         .property("isMainCat", &PE::CatScriptData::isMainCat)

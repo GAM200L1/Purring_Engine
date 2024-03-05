@@ -60,6 +60,8 @@
 
 #include "Boss/BossRatScript.h"
 
+#include "ObjectAttachScript.h"
+
 #ifndef GAMERELEASE
 #include "Editor/Editor.h"
 #endif // !GAMERELEASE
@@ -103,6 +105,7 @@ void PE::LogicSystem::InitializeSystem()
 	REGISTER_SCRIPT(FollowScript_v2_0);
 
 	REGISTER_SCRIPT(BossRatScript);
+	REGISTER_SCRIPT(ObjectAttachScript);
 }
 
 void PE::LogicSystem::UpdateSystem(float deltaTime)
