@@ -183,22 +183,21 @@ std::string SerializationManager::OpenFileExplorerRequestPath(std::string const&
     if (GetOpenFileNameW(&ofn) == TRUE)
     {
         std::wstring wfp = ofn.lpstrFile;
-        // check for extention
-        for (size_t i{ wfp.length() - 5 }, j{}; i < wfp.length(); ++i, ++j)
+        std::filesystem::path filepath = wfp;
+
+        // if extension does not match file open type
+        if (filepath.extension().string() != type)
         {
-            // add the extention if not match
-            if (wfp[i] != wjsonExt[j])
-            {
-                wfp.append(wjsonExt);
-                break;
-            }
+			filepath.replace_extension(type);
         }
-        int requiredSize = WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, nullptr, 0, nullptr, nullptr);
+		
+
+        int requiredSize = WideCharToMultiByte(CP_UTF8, 0, filepath.c_str(), -1, nullptr, 0, nullptr, nullptr);
 
         if (requiredSize > 0)
         {
             std::string fp(requiredSize, '\0');
-            if (WideCharToMultiByte(CP_UTF8, 0, wfp.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
+            if (WideCharToMultiByte(CP_UTF8, 0, filepath.c_str(), -1, &fp[0], requiredSize, nullptr, nullptr) > 0)
             {
                 return fp;
             }
@@ -269,10 +268,16 @@ void SerializationManager::SerializeScene(std::string const& filename, bool fp)
     if (fp)
     {
         filepath = filename;
+        filepath.make_preferred();
     }
     else
     {
         filepath = std::string{ "../Assets/Scenes/" } + filename;
+    }
+
+    if (filepath.has_extension())
+    {
+        filepath.replace_extension(".scene");
     }
 
     std::ofstream outFile(filepath);
