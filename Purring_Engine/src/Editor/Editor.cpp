@@ -5217,7 +5217,7 @@ namespace PE {
 							// if active scene is default scene, open file explorer to save new scene
 							if (SceneManager::GetInstance().GetActiveScene() == "Default_Scene.scene")
 							{
-								serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(), true);
+								serializationManager.SerializeScene(serializationManager.OpenFileExplorerRequestPath(".scene"), true);
 							}
 							else
 							{
