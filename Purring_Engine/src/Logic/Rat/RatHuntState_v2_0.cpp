@@ -37,9 +37,6 @@ namespace PE
 		m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatHunt_v2_0::OnTriggerEnterAndStay, this);
 		m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatHunt_v2_0::OnTriggerExit, this);
 
-		// Store the current position as the position to return to later
-		p_data->originalPosition = RatScript_v2_0::GetEntityPosition(id);
-
 		// Store the ID of the cat being targeted and reset the hunting state
 		SetHuntTarget(targetId);
 	}

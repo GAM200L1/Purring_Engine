@@ -79,6 +79,7 @@ namespace PE
 		int collisionDamage{ 1 };						// damage when touching the rat needs manual setting
 		int attackDamage{ 1 };							// damage when properly attacked by the rat needs manual setting
 
+		float attackRadius{ 101.f };
 		float attackDelay{ 0.f };						// delay before attacking cat, needs manual setting
 		bool attacking{ false };						// a check for whether the rat is close enough to the player to attack
 		bool hitCat{ false };							// a check for whether the rat has hit the player once in the entire execution sequence
@@ -100,11 +101,7 @@ namespace PE
 		std::set<EntityID> catsInDetectionRadius;
 		std::set<EntityID> catsExitedDetectionRadius;
 		EntityID targetedCat{}; // Cat to move towards in the hunting phase
-		
-		EntityID attackRadiusId{};
-		float attackRadius{101.f};
-		std::set<EntityID> attackRangeInDetectionRadius;
-		std::set<EntityID> attackRangeExitedDetectionRadius;
+		std::unordered_set<EntityID> attackedCats{}; // Cats that were attacked
 
 		float movementSpeed{ 200.f };
 		float maxMovementRange{ 100.f }; // Total distance that the rat will move in one execution phase
@@ -314,7 +311,6 @@ namespace PE
 
 
 		// ----- Rat stuff ----- //
-		void RatHitCat(EntityID id, const Event<CollisionEvents>& r_TE);
 
 		/*!***********************************************************************************
 		 \brief Deals damage to the cat that the attack collider collided with.
@@ -493,8 +489,9 @@ namespace PE
 		 \param[in] capMaximum - Set to true to shift the target position within the range
 					of the rat's maximum range per turn, false to allow the rat to exceed their
 					max range.
+		 \return Returns true if the target position is far enough away from the rat, false otherwise.
 		*************************************************************************************/
-		void SetTarget(EntityID id, EntityID targetId, bool const capMaximum);
+		bool SetTarget(EntityID id, EntityID targetId, bool const capMaximum);
 
 		/*!***********************************************************************************
 		 \brief Sets the position that the rat should move towards when CalculateMovement 
@@ -505,17 +502,15 @@ namespace PE
 		 \param[in] capMaximum - Set to true to shift the target position within the range 
 					of the rat's maximum range per turn, false to allow the rat to exceed their 
 					max range.
+		 \return Returns true if the target position is far enough away from the rat, false otherwise.
 		*************************************************************************************/
-		void SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum);
+		bool SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum);
 
 		// Returns true if the target has been reached, false otherwise
 		bool CalculateMovement(EntityID id, float deltaTime);
+		static bool CheckDestinationReached(EntityID id);
 		static bool CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition);
 		
-		void CatEnteredAttackRadius(EntityID const id, EntityID const catID);
-		void CatExitedAttackRadius(EntityID const id, EntityID const catID);
-
-
 
 		// ----- Private Members ----- //
 	private:
@@ -558,5 +553,7 @@ namespace PE
 		EntityID CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data);
 
 		void CreateRatPathTelegraph(RatScript_v2_0_Data& r_data);
+
+		void CreateRatAttackTelegraph(RatScript_v2_0_Data& r_data);
 	}; // end of class 
 }

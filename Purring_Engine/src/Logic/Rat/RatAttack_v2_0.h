@@ -68,11 +68,11 @@ namespace PE
         virtual void StateExit(EntityID id) override;
 
         /*!***********************************************************************************
-            \brief Handles the event when a rat successfully hits a cat during an attack.
+            \brief Clears dead cats from the set passed in.
 
-            \param[in,out] r_TE - Event data for the collision.
+            \param[in,out] catSet - Container of cats to clear dead cats from.
         *************************************************************************************/
-        void RatHitCat(const Event<CollisionEvents>& r_TE);
+        void ClearDeadCats(std::set<EntityID>& catSet);
 
 
         // --- COLLISION DETECTION --- // 

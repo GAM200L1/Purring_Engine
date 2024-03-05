@@ -53,8 +53,11 @@ namespace PE
 
 			// Create a detection radius and configure
 			it->second.detectionRadiusId = CreateDetectionRadius(it->second);
-			it->second.attackRadiusId = CreateAttackRangeRadius(it->second);
 			CreateRatPathTelegraph(it->second);
+			CreateRatAttackTelegraph(it->second);
+
+			// Store the position to return to
+			it->second.originalPosition = GetEntityPosition(id);
 
 			// Store the animation component
 			m_scriptData[id].p_ratAnimationComponent = &EntityManager::GetInstance().Get<AnimationComponent>(id);
@@ -150,7 +153,7 @@ namespace PE
 		void RatScript_v2_0::ToggleEntity(EntityID id, bool setToActive)
 		{
 			// Exit if the entity is not valid
-			if (!EntityManager::GetInstance().IsEntityValid(id)) { return; }
+			if (id == 0 || !EntityManager::GetInstance().IsEntityValid(id)) { return; }
 
 			// Toggle the entity
 			if(EntityManager::GetInstance().Has<EntityDescriptor>(id))
@@ -159,53 +162,48 @@ namespace PE
 
 		void RatScript_v2_0::PositionEntity(EntityID const transformId, vec2 const& r_position)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.position = r_position;
 			}
-			catch (...) { return; }
 		}
 
 		void RatScript_v2_0::PositionEntityRelative(EntityID const transformId, vec2 const& r_position)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.relPosition = r_position;
 			}
-			catch (...) { return; }
 		}
 
 		void RatScript_v2_0::ScaleEntity(EntityID const transformId, float const width, float const height)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.width = width;
 				r_transform.height = height;
 			}
-			catch (...) { return; }
 		}
 
 		void RatScript_v2_0::RotateEntity(EntityID const transformId, float const orientation)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.orientation = orientation;
 			}
-			catch (...) { return; }
 		}
 
 		void RatScript_v2_0::RotateEntityRelative(EntityID const transformId, float const orientation)
 		{
-			try
+			if (transformId != 0 || EntityManager::GetInstance().Has<Transform>(transformId))
 			{
 				Transform& r_transform{ EntityManager::GetInstance().Get<Transform>(transformId) }; // Get the transform of the player
 				r_transform.relOrientation = orientation;
 			}
-			catch (...) { return; }
 		}
 
 
@@ -510,9 +508,6 @@ namespace PE
 
 				it->second.catsInDetectionRadius.clear();
 				it->second.catsExitedDetectionRadius.clear();
-
-				it->second.attackRangeInDetectionRadius.clear();
-				it->second.attackRangeExitedDetectionRadius.clear();
 		}
 
 		void RatScript_v2_0::CatEntered(EntityID const id, EntityID const catID)
@@ -522,6 +517,10 @@ namespace PE
 
 			// Check if the cat is alive
 			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
+
+			if (it->second.catsInDetectionRadius.find(catID) == it->second.catsInDetectionRadius.end()) {
+					PlayDetectionAudio();
+			}
 
 			// Store the cat in the container
 			it->second.catsInDetectionRadius.insert(catID);
@@ -543,35 +542,6 @@ namespace PE
 
 			// Remove the cats in the exit container from the enter container
 			it->second.catsInDetectionRadius.erase(catID);
-		}
-
-		void RatScript_v2_0::CatEnteredAttackRadius(EntityID const id, EntityID const catID)
-		{
-			auto it = m_scriptData.find(id);
-			if (it == m_scriptData.end()) { return; }
-
-			// Check if the cat is alive
-			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
-
-			it->second.attackRangeInDetectionRadius.emplace(catID);
-
-			// Remove the cats in the exit container from the enter container
-			it->second.attackRangeExitedDetectionRadius.erase(catID);
-		}
-
-		void RatScript_v2_0::CatExitedAttackRadius(EntityID const id, EntityID const catID)
-		{
-			auto it = m_scriptData.find(id);
-			if (it == m_scriptData.end()) { return; }
-
-			// Check if the cat is alive
-			if (!(GETSCRIPTINSTANCEPOINTER(CatController_v2_0)->IsCat(catID))) { return; }
-
-			// Store the cat in the container
-			it->second.attackRangeExitedDetectionRadius.emplace(catID);
-
-			// Remove the cats in the exit container from the enter container
-			it->second.attackRangeInDetectionRadius.erase(catID);
 		}
 
 
@@ -634,47 +604,24 @@ namespace PE
 
 
 
-		void RatScript_v2_0::SetTarget(EntityID id, EntityID targetId, bool const capMaximum)
+		bool RatScript_v2_0::SetTarget(EntityID id, EntityID targetId, bool const capMaximum)
 		{
 				auto it = m_scriptData.find(id);
-				if (it == m_scriptData.end()) { return; }
+				if (it == m_scriptData.end()) { return false; }
 
 #ifdef DEBUG_PRINT
 				std::cout << "RatScript_v2_0::SetTarget(" << id << "): target id: " << targetId << ", ";
 #endif // DEBUG_PRINT
 
 				it->second.targetedCat = targetId;
-				vec2 targetPosition = RatScript_v2_0::GetEntityPosition(it->second.targetedCat);
-				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
-
-#ifdef DEBUG_PRINT
-				std::cout << "r_targetPosition: (" << targetPosition.x << ", " << targetPosition.y << "), capmax ? " << capMaximum << "\n";
-#endif // DEBUG_PRINT
-
-				// Calculate the distance and direction from the rat to the player cat
-				it->second.ratPlayerDistance = (targetPosition - ratPosition).Length();
-				if (capMaximum && it->second.ratPlayerDistance > it->second.maxMovementRange)
-				{
-						it->second.ratPlayerDistance = it->second.maxMovementRange;
-				}
-				it->second.directionFromRatToPlayerCat = (targetPosition - ratPosition).GetNormalized();
-				it->second.targetPosition = ratPosition + it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
-
-#ifdef DEBUG_PRINT
-				std::cout << "--- RatScript_v2_0::SetTarget(" << id << ") stats: \n"
-						<< "ratPosition: (" << ratPosition.x << ", " << ratPosition.y << ")\n"
-						<< "ratPlayerDistance: " << it->second.ratPlayerDistance << " (versus max range " << it->second.maxMovementRange << ")\n"
-						<< "directionFromRatToPlayerCat: (" << it->second.directionFromRatToPlayerCat.x << ", " << it->second.directionFromRatToPlayerCat.y << ")\n"
-						<< "targetPosition: (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n"
-						<< "--- end stats for SetTarget(" << id << ") ---" << std::endl;
-#endif // DEBUG_PRINT
+				return SetTarget(id, RatScript_v2_0::GetEntityPosition(targetId), capMaximum);
 		}
 
 
-		void RatScript_v2_0::SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum)
+		bool RatScript_v2_0::SetTarget(EntityID id, vec2 const& r_targetPosition, bool const capMaximum)
 		{
 				auto it = m_scriptData.find(id);
-				if (it == m_scriptData.end()) { return; }
+				if (it == m_scriptData.end()) { return false; }
 
 #ifdef DEBUG_PRINT
 				std::cout << "RatScript_v2_0::SetTarget(" << id << ") r_targetPosition: (" << r_targetPosition.x << ", " << r_targetPosition.y << "), capmax? " << capMaximum << "\n";
@@ -683,14 +630,24 @@ namespace PE
 				it->second.targetedCat = 0U;
 				vec2 ratPosition = RatScript_v2_0::GetEntityPosition(id);
 
-				// Calculate the distance and direction from the rat to the player cat
-				it->second.ratPlayerDistance = (r_targetPosition - ratPosition).Length();
-				if (capMaximum && it->second.ratPlayerDistance > it->second.maxMovementRange)
+				vec2 ratToTarget{ r_targetPosition - ratPosition };
+				if (CompareFloats(ratToTarget.x, 0.f) && CompareFloats(ratToTarget.y, 0.f))
 				{
-					it->second.ratPlayerDistance = it->second.maxMovementRange;
+						// If the rat is where the target is, just zero everything out
+						it->second.ratPlayerDistance = 0.f;
+						it->second.directionFromRatToPlayerCat.Zero();
+						it->second.targetPosition = ratPosition;
 				}
-				it->second.directionFromRatToPlayerCat = (r_targetPosition - ratPosition).GetNormalized();
-				it->second.targetPosition = ratPosition + it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
+				else
+				{
+						it->second.ratPlayerDistance = ratToTarget.Length();
+						if (capMaximum && it->second.ratPlayerDistance > it->second.maxMovementRange)
+						{
+								it->second.ratPlayerDistance = it->second.maxMovementRange;
+						}
+						it->second.directionFromRatToPlayerCat = ratToTarget.GetNormalized();
+						it->second.targetPosition = ratPosition + it->second.directionFromRatToPlayerCat * it->second.ratPlayerDistance;
+				}
 
 #ifdef DEBUG_PRINT
 				std::cout << "--- RatScript_v2_0::SetTarget(" << id << ") stats: \n"
@@ -700,6 +657,8 @@ namespace PE
 						<< "targetPosition: (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n"
 						<< "--- end stats for SetTarget(" << id << ") ---" << std::endl;
 #endif // DEBUG_PRINT
+
+				return (it->second.ratPlayerDistance > it->second.minDistanceToTarget);
 		}
 
 
@@ -708,7 +667,7 @@ namespace PE
 				auto it = m_scriptData.find(id);
 				if (it == m_scriptData.end()) { return false; }
 #ifdef DEBUG_PRINT
-				std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): ratPlayerDistance: " << it->second.ratPlayerDistance << ", curr pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
+				//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): ratPlayerDistance: " << it->second.ratPlayerDistance << ", curr pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
 #endif // DEBUG_PRINT
 				if (it->second.ratPlayerDistance > 0.f)
 				{
@@ -722,7 +681,7 @@ namespace PE
 						//		<< "), Remaining distance: " << it->second.ratPlayerDistance << std::endl;
 
 #ifdef DEBUG_PRINT
-						std::cout << "RatScript_v2_0::CalculateMovement(" << id << ") after moving: ratPlayerDistance: " << it->second.ratPlayerDistance << ", new pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
+						//std::cout << "RatScript_v2_0::CalculateMovement(" << id << ") after moving: ratPlayerDistance: " << it->second.ratPlayerDistance << ", new pos: (" << RatScript_v2_0::GetEntityPosition(id).x << ", " << RatScript_v2_0::GetEntityPosition(id).y << ")\n";
 #endif // DEBUG_PRINT
 
 						return CheckDestinationReached(it->second.minDistanceToTarget, newPosition, it->second.targetPosition);
@@ -730,7 +689,7 @@ namespace PE
 				else
 				{
 #ifdef DEBUG_PRINT
-						std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): dist to target is zero (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n";
+						//std::cout << "RatScript_v2_0::CalculateMovement(" << id << "): dist to target is zero (" << it->second.targetPosition.x << ", " << it->second.targetPosition.y << ")\n";
 #endif // DEBUG_PRINT
 						//std::cout << "RatMovement_v2_0::CalculateMovement - Rat ID: " << id << " has no movement or already at destination." << std::endl;
 						RatScript_v2_0::PositionEntity(id, it->second.targetPosition);
@@ -740,13 +699,21 @@ namespace PE
 		}
 
 
+		bool RatScript_v2_0::CheckDestinationReached(EntityID id)
+		{
+				RatScript_v2_0_Data* data = GETSCRIPTDATA(RatScript_v2_0, id);
+				if (!data) { return false; }
+				return CheckDestinationReached(data->minDistanceToTarget, GetEntityPosition(data->myID), data->targetPosition);
+		}
+
+
 		bool RatScript_v2_0::CheckDestinationReached(float const minDistanceToTarget, const vec2& newPosition, const vec2& targetPosition)
 		{
 				float distanceToTarget{ (newPosition - targetPosition).LengthSquared() };
 				bool reached = distanceToTarget <= (minDistanceToTarget * minDistanceToTarget);
 
 #ifdef DEBUG_PRINT
-				std::cout << "RatScript_v2_0::CheckDestinationReached(): distanceToTarget: " << distanceToTarget << ", minDistToTarget: " << (minDistanceToTarget * minDistanceToTarget) << ")\n";
+				//std::cout << "RatScript_v2_0::CheckDestinationReached(): distanceToTarget: " << distanceToTarget << ", minDistToTarget: " << (minDistanceToTarget * minDistanceToTarget) << ")\n";
 #endif // DEBUG_PRINT
 
 				return reached;
@@ -829,63 +796,35 @@ namespace PE
 			return radiusId;
 		}
 
-		EntityID RatScript_v2_0::CreateAttackRangeRadius(RatScript_v2_0_Data const& r_data)
-		{
-			SerializationManager serializationManager;
-			EntityID radiusId{ serializationManager.LoadFromFile("RatDetectionRadius.prefab") };
-			Hierarchy::GetInstance().AttachChild(r_data.myID, radiusId);
-			PositionEntity(radiusId, GetEntityPosition(r_data.myID));
-			PositionEntityRelative(radiusId, vec2{0.f, 0.f});
-
-			 // Add dynamic rigidbody
-			if (!EntityManager::GetInstance().Has<RigidBody>(radiusId))
-			{
-				EntityFactory::GetInstance().Assign(radiusId, { EntityManager::GetInstance().GetComponentID<RigidBody>() });
-			}
-
-			// Configure rigidbody
-			if (EntityManager::GetInstance().Has<RigidBody>(radiusId))
-			{
-				RigidBody& detectionRigidbody{ EntityManager::GetInstance().Get<RigidBody>(radiusId) };
-				detectionRigidbody.SetType(EnumRigidBodyType::DYNAMIC);
-			}
-
-			// Add circle collider
-			if (!EntityManager::GetInstance().Has<Collider>(radiusId))
-			{
-				EntityFactory::GetInstance().Assign(radiusId, { EntityManager::GetInstance().GetComponentID<Collider>() });
-			}
-
-			// Configure collider
-			if (EntityManager::GetInstance().Has<Collider>(radiusId))
-			{
-				Collider& detectionCollider{ EntityManager::GetInstance().Get<Collider>(radiusId) };
-				detectionCollider.colliderVariant = CircleCollider();
-				detectionCollider.isTrigger = true;
-				detectionCollider.collisionLayerIndex = detectionColliderLayer; // @TODO To configure the collision matrix of the game scene
-
-				CircleCollider& circleCollider{ std::get<CircleCollider>(detectionCollider.colliderVariant) };
-				circleCollider.scaleOffset = r_data.attackRadius;
-			}
-
-			return radiusId;
-		}
-
 
 		void RatScript_v2_0::CreateRatPathTelegraph(RatScript_v2_0_Data& r_data)
 		{
 				SerializationManager serializationManager;
 				r_data.pivotEntityID = EntityFactory::GetInstance().CreateEntity<Transform>();
 				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.pivotEntityID);
-				EntityManager::GetInstance().Get<Transform>(r_data.pivotEntityID).relPosition = vec2{ 0.f, 0.f };
+				PositionEntityRelative(r_data.pivotEntityID, vec2{ 0.f, 0.f });
 
 				vec2 ratScale{ GetEntityScale(r_data.myID) };
 				r_data.telegraphArrowEntityID = serializationManager.LoadFromFile("PawPrints.prefab");
 				ToggleEntity(r_data.telegraphArrowEntityID, false); // set to inactive, it will only show during planning phase
 				ScaleEntity(r_data.telegraphArrowEntityID, ratScale.x * 0.5f, ratScale.y * 0.5f);
 				Hierarchy::GetInstance().AttachChild(r_data.pivotEntityID, r_data.telegraphArrowEntityID); // attach child to parent
-				EntityManager::GetInstance().Get<Transform>(r_data.telegraphArrowEntityID).relPosition.Zero();	  // zero out the position (attach calculates to stay in the same position in the world)
-				EntityManager::GetInstance().Get<Transform>(r_data.telegraphArrowEntityID).relPosition.x = ratScale.x * 0.7f;
+				
+				PositionEntityRelative(r_data.telegraphArrowEntityID, vec2{ ratScale.x * 0.7f, 0.f });
+		}
+		
+
+		void RatScript_v2_0::CreateRatAttackTelegraph(RatScript_v2_0_Data& r_data)
+		{
+				SerializationManager serializationManager;
+
+				// create cross attack telegraph
+				r_data.attackTelegraphEntityID = serializationManager.LoadFromFile("GutterRatAttackTelegraph.prefab");
+				Hierarchy::GetInstance().AttachChild(r_data.myID, r_data.attackTelegraphEntityID);
+				ToggleEntity(r_data.attackTelegraphEntityID, false); // set to inactive, it will only show during planning phase if the cat is in the area
+				ScaleEntity(r_data.attackTelegraphEntityID, r_data.attackRadius, r_data.attackRadius);
+				PositionEntity(r_data.attackTelegraphEntityID, vec2{0.f, 0.f});
+				PositionEntityRelative(r_data.attackTelegraphEntityID, vec2{0.f, 0.f});
 		}
 
 } // End of namespace PE

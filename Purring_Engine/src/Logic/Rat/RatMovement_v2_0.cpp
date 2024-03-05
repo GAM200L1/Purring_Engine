@@ -44,6 +44,7 @@ namespace PE
         // Subscribe to the collision trigger events for the 
         m_collisionEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerEnter, RatMovement_v2_0::OnTriggerEnterAndStay, this);
         m_collisionStayEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerStay, RatMovement_v2_0::OnTriggerEnterAndStay, this);
+        m_collisionExitEventListener = ADD_COLLISION_EVENT_LISTENER(CollisionEvents::OnTriggerExit, RatMovement_v2_0::OnTriggerExit, this);
     }
 
     void RatMovement_v2_0::StateUpdate(EntityID id, float deltaTime)
@@ -126,6 +127,7 @@ namespace PE
     {
         REMOVE_KEY_COLLISION_LISTENER(m_collisionEventListener);
         REMOVE_KEY_COLLISION_LISTENER(m_collisionStayEventListener);
+        REMOVE_KEY_COLLISION_LISTENER(m_collisionExitEventListener);
     }
 
     void RatMovement_v2_0::StateExit(EntityID id)
@@ -133,12 +135,6 @@ namespace PE
         //std::cout << "RatMovement_v2_0::StateExit - Rat ID: " << id << " is exiting the movement state." << std::endl;
         p_data->ratPlayerDistance = 0.f;
     }
-
-    void RatMovement_v2_0::RatHitCat(const Event<CollisionEvents>& r_TE)
-    {
-        GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->RatHitCat(p_data->myID, r_TE);
-    }
-
 
     void RatMovement_v2_0::OnTriggerEnterAndStay(const Event<CollisionEvents>& r_TE)
     {
@@ -172,6 +168,25 @@ namespace PE
             {
                 GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatEntered(p_data->myID, OTSE.Entity1);
             }
+        }
+    }
+
+
+    void RatMovement_v2_0::OnTriggerExit(const Event<CollisionEvents>& r_TE)
+    {
+        if (!p_data) { return; }
+        else if (gameStateController->currentState != GameStates_v2_0::EXECUTE) { return; }
+
+        OnTriggerExitEvent OTEE = dynamic_cast<OnTriggerExitEvent const&>(r_TE);
+        // check if entity1 is the rat's detection collider and entity2 is cat
+        if ((OTEE.Entity1 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity2))
+        {
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity2);
+        }
+        // check if entity2 is the rat's detection collider and entity1 is cat
+        else if ((OTEE.Entity2 == p_data->detectionRadiusId) && RatScript_v2_0::GetIsCat(OTEE.Entity1))
+        {
+            GETSCRIPTINSTANCEPOINTER(RatScript_v2_0)->CatExited(p_data->myID, OTEE.Entity1);
         }
     }
 
