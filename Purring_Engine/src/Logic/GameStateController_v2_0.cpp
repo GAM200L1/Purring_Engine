@@ -143,7 +143,9 @@ namespace PE
 		EntityManager::GetInstance().RemoveEntity(bga);
 
 		ResetPhaseBanner(true);
+		m_nextTurnOnce = false;
 	}
+	
 	void GameStateController_v2_0::Update(EntityID id, float deltaTime)
 	{
 
@@ -735,18 +737,19 @@ namespace PE
 
 	void GameStateController_v2_0::NextState(EntityID)
 	{
-		if (currentState == GameStates_v2_0::PLANNING)
+		if (currentState == GameStates_v2_0::PLANNING && !m_nextTurnOnce)
 		{
 			SetGameState(GameStates_v2_0::EXECUTE);
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
+			m_nextTurnOnce = true;
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_exexcutePhaseBanner);
 			}
 		}
-		else if (currentState == GameStates_v2_0::EXECUTE)
+		else if (currentState == GameStates_v2_0::EXECUTE && !m_nextTurnOnce)
 		{
 			CurrentTurn++;
 			SetGameState(GameStates_v2_0::PLANNING);
@@ -755,6 +758,7 @@ namespace PE
 			PlayClickAudio();
 			PlayPhaseChangeAudio();
 			ResetPhaseBanner(true);
+			m_nextTurnOnce = true;
 			if (EntityManager::GetInstance().Has<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner))
 			{
 				EntityManager::GetInstance().Get<Graphics::GUIRenderer>(m_scriptData[m_currentGameStateControllerID].PhaseBanner).SetTextureKey(m_planningPhaseBanner);
@@ -883,6 +887,7 @@ namespace PE
 		if (fadeInSpeed >= 1)
 		{
 			DeactiveObject(m_scriptData[id].ExecuteCanvas);
+			m_nextTurnOnce = false;
 		}
 	}
 
@@ -923,6 +928,7 @@ namespace PE
 		if (fadeInSpeed >= 1)
 		{
 			DeactiveObject(m_scriptData[id].HUDCanvas);
+			m_nextTurnOnce = false;
 		}
 	}
 

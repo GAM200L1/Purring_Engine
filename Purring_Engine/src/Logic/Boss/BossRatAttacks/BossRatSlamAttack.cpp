@@ -84,6 +84,7 @@ namespace PE
 			bossTransform->position.y -= p_data->slamSpeed * dt;
 		else
 		{
+			bossTransform->position.y = 0;
 			if (EntityManager::GetInstance().Has<Collider>(id))
 				EntityManager::GetInstance().Get<Collider>(id).isTrigger = false;
 			p_data->finishExecution = true;
